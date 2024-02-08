@@ -257,12 +257,12 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-color: rgba(var(--color-background-100));
+  background-color: var(--color-neutral-30);
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-background-80));
+  background-color: var(--color-neutral-50);
 }
 
 .hide-vertical-scrollbar::-webkit-scrollbar {

@@ -54,7 +54,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
       HTMLAttributes: { class: "mt-4 mb-4" },
     },
     dropcursor: {
-      color: "rgba(var(--color-text-100))",
+      color: "var(--color-neutral-120)",
       width: 2,
     },
     gapcursor: false,

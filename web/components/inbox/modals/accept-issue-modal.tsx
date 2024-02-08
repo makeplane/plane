@@ -59,7 +59,7 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-neutral-component-surface-light text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
-                    <span className="place-items-center rounded-full bg-green-500/20 p-4">
+                    <span className="place-items-center rounded-full bg-success-component-surface-dark p-4">
                       <CheckCircle className="h-6 w-6 text-green-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">

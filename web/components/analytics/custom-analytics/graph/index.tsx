@@ -115,7 +115,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                     y={datum.y}
                     textAnchor={`${barGraphData.data.length > 7 ? "end" : "middle"}`}
                     fontSize={10}
-                    fill="rgb(var(--color-text-200))"
+                    fill="var(--color-neutral-110)"
                     className={`${barGraphData.data.length > 7 ? "-rotate-45" : ""}`}
                   >
                     {generateDisplayName(datum.value, analytics, params, "x_axis")}

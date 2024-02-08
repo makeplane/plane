@@ -140,7 +140,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             {is_editable && (
               <button
                 type="button"
-                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
+                className="rounded-md border border-red-500 p-2 text-danger-text-medium shadow-sm duration-300 hover:bg-danger-component-surface-dark focus:outline-none"
                 onClick={() => setDeleteIssueModal(true)}
               >
                 <Trash2 className="h-3.5 w-3.5" />

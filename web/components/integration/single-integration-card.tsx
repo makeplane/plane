@@ -116,7 +116,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
           <h3 className="flex items-center gap-2 text-sm font-medium">
             {integration.title}
             {workspaceIntegrations
-              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-green-500" />
+              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-success-text-medium" />
               : null}
           </h3>
           <p className="text-sm tracking-tight text-neutral-text-medium">

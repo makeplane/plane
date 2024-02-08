@@ -66,7 +66,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
           {editor.getAttributes("link").href ? (
             <button
               type="button"
-              className="flex items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
+              className="flex items-center rounded-sm p-1 text-danger-text-medium transition-all hover:bg-red-100 dark:hover:bg-red-800"
               onClick={() => {
                 unsetLinkEditor(editor);
                 setIsOpen(false);

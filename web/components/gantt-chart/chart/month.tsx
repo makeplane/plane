@@ -60,7 +60,7 @@ export const MonthChartView: FC<any> = () => {
                         }`}
                       >
                         {/* {monthDay?.today && (
-                          <div className="absolute top-0 bottom-0 w-[1px] bg-red-500" />
+                          <div className="absolute top-0 bottom-0 w-[1px] bg-danger-solid" />
                         )} */}
                       </div>
                     </div>

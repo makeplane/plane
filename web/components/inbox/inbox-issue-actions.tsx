@@ -322,7 +322,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 <Button
                   variant="neutral-primary"
                   size="sm"
-                  prependIcon={<CheckCircle2 className="text-green-500" size={14} strokeWidth={2} />}
+                  prependIcon={<CheckCircle2 className="text-success-text-medium" size={14} strokeWidth={2} />}
                   onClick={() => setAcceptIssueModal(true)}
                 >
                   Accept
@@ -335,7 +335,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 <Button
                   variant="neutral-primary"
                   size="sm"
-                  prependIcon={<XCircle className="text-red-500" size={14} strokeWidth={2} />}
+                  prependIcon={<XCircle className="text-danger-text-medium" size={14} strokeWidth={2} />}
                   onClick={() => setDeclineIssueModal(true)}
                 >
                   Decline
@@ -348,7 +348,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 <Button
                   variant="neutral-primary"
                   size="sm"
-                  prependIcon={<Trash2 className="text-red-500" size={14} strokeWidth={2} />}
+                  prependIcon={<Trash2 className="text-danger-text-medium" size={14} strokeWidth={2} />}
                   onClick={() => setDeleteIssueModal(true)}
                 >
                   Delete

@@ -69,7 +69,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-neutral-component-surface-medium p-3">
-              <ArchiveX className="h-4 w-4 flex-shrink-0 text-red-500" />
+              <ArchiveX className="h-4 w-4 flex-shrink-0 text-danger-text-medium" />
             </div>
             <div className="">
               <h4 className="text-sm font-medium">Auto-close issues</h4>

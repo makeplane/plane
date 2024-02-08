@@ -16,7 +16,7 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
   const priorityClasses = {
-    urgent: "bg-danger-90 text-red-500 border-danger-90",
+    urgent: "bg-danger-solid text-danger-text-medium border-danger-90",
     high: "bg-orange-30 text-orange-80 border-orange-80",
     medium: "bg-warning-20 text-warning-80 border-warning-80",
     low: "bg-primary-30 text-primary-90 border-primary-90",
@@ -64,7 +64,7 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
           size={size}
           className={cn(
             {
-              "text-red-500": priority === "urgent",
+              "text-danger-text-medium": priority === "urgent",
               "text-orange-500": priority === "high",
               "text-yellow-500": priority === "medium",
               "text-primary-text-subtle": priority === "low",

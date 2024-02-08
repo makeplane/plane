@@ -72,7 +72,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (
-          <div className="flex items-center gap-1 bg-green-500/20 text-green-700 rounded px-1.5 py-1">
+          <div className="flex items-center gap-1 bg-success-component-surface-dark text-green-700 rounded px-1.5 py-1">
             <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name}>
               <Link
                 href={`/${workspaceSlug}/projects/${projectId}/issues/${parentIssue?.id}`}
@@ -94,7 +94,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
                     handleParentIssue(null);
                   }}
                 >
-                  <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-red-500" />
+                  <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-danger-text-medium" />
                 </span>
               </Tooltip>
             )}

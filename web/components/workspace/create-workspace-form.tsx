@@ -178,9 +178,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               )}
             />
           </div>
-          {slugError && <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>}
+          {slugError && <span className="-mt-3 text-sm text-danger-text-medium">Workspace URL is already taken!</span>}
           {invalidSlug && (
-            <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
+            <span className="text-sm text-danger-text-medium">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
           )}
         </div>
         <div className="space-y-1 text-sm">
@@ -212,7 +212,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               )}
             />
             {errors.organization_size && (
-              <span className="text-sm text-red-500">{errors.organization_size.message}</span>
+              <span className="text-sm text-danger-text-medium">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

@@ -185,7 +185,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         handleAddToFavorites(e);
                       }}
                     >
-                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="var(--color-neutral-110)" />
                     </button>
                   )}
                 </span>

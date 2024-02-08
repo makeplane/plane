@@ -112,7 +112,9 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
               />
             )}
           />
-          {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
+          {errors.old_password && (
+            <span className="text-xs text-danger-text-medium">{errors.old_password.message}</span>
+          )}
         </div>
 
         <div className="flex flex-col gap-1 ">
@@ -135,7 +137,9 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
               />
             )}
           />
-          {errors.new_password && <span className="text-xs text-red-500">{errors.new_password.message}</span>}
+          {errors.new_password && (
+            <span className="text-xs text-danger-text-medium">{errors.new_password.message}</span>
+          )}
         </div>
 
         <div className="flex flex-col gap-1 ">
@@ -158,7 +162,9 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
               />
             )}
           />
-          {errors.confirm_password && <span className="text-xs text-red-500">{errors.confirm_password.message}</span>}
+          {errors.confirm_password && (
+            <span className="text-xs text-danger-text-medium">{errors.confirm_password.message}</span>
+          )}
         </div>
       </div>
 

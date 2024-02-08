@@ -158,7 +158,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
         )}
         {characterLimit && !disabled && (
           <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-neutral-component-surface-light p-0.5 text-xs text-neutral-text-medium">
-            <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
+            <span
+              className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-danger-text-medium" : ""}`}
+            >
               {watch("name").length}
             </span>
             /255

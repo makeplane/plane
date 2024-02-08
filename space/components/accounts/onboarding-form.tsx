@@ -99,7 +99,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
               required: "First name is required",
             })}
           />
-          {errors.first_name && <div className="text-sm text-red-500">{errors.first_name.message}</div>}
+          {errors.first_name && <div className="text-sm text-danger-text-medium">{errors.first_name.message}</div>}
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="lastName">Last Name</label>
@@ -112,7 +112,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
               required: "Last name is required",
             })}
           />
-          {errors.last_name && <div className="text-sm text-red-500">{errors.last_name.message}</div>}
+          {errors.last_name && <div className="text-sm text-danger-text-medium">{errors.last_name.message}</div>}
         </div>
         <div className="space-y-1 text-sm">
           <span>What{"'"}s your role?</span>
@@ -170,7 +170,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                 </Listbox>
               )}
             />
-            {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
+            {errors.role && <span className="text-sm text-danger-text-medium">{errors.role.message}</span>}
           </div>
         </div>
       </div>

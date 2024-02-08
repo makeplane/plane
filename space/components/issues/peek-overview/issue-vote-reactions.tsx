@@ -118,7 +118,7 @@ export const IssueVotes: React.FC = observer(() => {
             });
           }}
           className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
-            isDownVotedByUser ? "border-red-600 text-red-600" : "border-neutral-border-medium"
+            isDownVotedByUser ? "border-red-600 text-danger-text-medium" : "border-neutral-border-medium"
           }`}
         >
           <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>

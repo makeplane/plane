@@ -1,7 +1,5 @@
 import colors from "tailwindcss/colors";
 
-const convertToRGB = (variableName) => `rgba(var(${variableName}))`;
-
 /** @type {import('tailwindcss').Config} */
 export const darkMode = "class";
 export const content = {
@@ -328,22 +326,22 @@ export const theme = {
     typography: () => ({
       brand: {
         css: {
-          "--tw-prose-body": convertToRGB("--color-text-100"),
-          "--tw-prose-p": convertToRGB("--color-text-100"),
-          "--tw-prose-headings": convertToRGB("--color-text-100"),
-          "--tw-prose-lead": convertToRGB("--color-text-100"),
-          "--tw-prose-links": convertToRGB("--color-primary-100"),
-          "--tw-prose-bold": convertToRGB("--color-text-100"),
-          "--tw-prose-counters": convertToRGB("--color-text-100"),
-          "--tw-prose-bullets": convertToRGB("--color-text-100"),
-          "--tw-prose-hr": convertToRGB("--color-text-100"),
-          "--tw-prose-quotes": convertToRGB("--color-text-100"),
-          "--tw-prose-quote-borders": convertToRGB("--color-border-200"),
-          "--tw-prose-code": convertToRGB("--color-text-100"),
-          "--tw-prose-pre-code": convertToRGB("--color-text-100"),
-          "--tw-prose-pre-bg": convertToRGB("--color-background-100"),
-          "--tw-prose-th-borders": convertToRGB("--color-border-200"),
-          "--tw-prose-td-borders": convertToRGB("--color-border-200"),
+          "--tw-prose-body": "--color-neutral-120",
+          "--tw-prose-p": "--color-neutral-120",
+          "--tw-prose-headings": "--color-neutral-120",
+          "--tw-prose-lead": "--color-neutral-120",
+          "--tw-prose-links": "--color-primary-90",
+          "--tw-prose-bold": "--color-neutral-120",
+          "--tw-prose-counters": "--color-neutral-120",
+          "--tw-prose-bullets": "--color-neutral-120",
+          "--tw-prose-hr": "--color-neutral-120",
+          "--tw-prose-quotes": "--color-neutral-120",
+          "--tw-prose-quote-borders": "--color-neutral-70",
+          "--tw-prose-code": "--color-neutral-120",
+          "--tw-prose-pre-code": "--color-neutral-120",
+          "--tw-prose-pre-bg": "--color-neutral-30",
+          "--tw-prose-th-borders": "--color-neutral-70",
+          "--tw-prose-td-borders": "--color-neutral-70",
         },
       },
     }),

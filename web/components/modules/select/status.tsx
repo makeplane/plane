@@ -24,14 +24,16 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
       <CustomSelect
         value={value}
         label={
-          <div className={`flex items-center justify-center gap-2 text-xs ${error ? "text-red-500" : ""}`}>
+          <div className={`flex items-center justify-center gap-2 text-xs ${error ? "text-danger-text-medium" : ""}`}>
             {value ? (
               <ModuleStatusIcon status={value} />
             ) : (
-              <DoubleCircleIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-neutral-text-medium"}`} />
+              <DoubleCircleIcon
+                className={`h-3 w-3 ${error ? "text-danger-text-medium" : "text-neutral-text-medium"}`}
+              />
             )}
             {MODULE_STATUS.find((s) => s.value === value)?.label ?? (
-              <span className={`${error ? "text-red-500" : "text-neutral-text-medium"}`}>Status</span>
+              <span className={`${error ? "text-danger-text-medium" : "text-neutral-text-medium"}`}>Status</span>
             )}
           </div>
         }

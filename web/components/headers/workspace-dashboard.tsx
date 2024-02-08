@@ -39,7 +39,7 @@ export const WorkspaceDashboardHeader = () => {
             rel="noopener noreferrer"
             className="flex flex-shrink-0 items-center gap-1.5 rounded bg-neutral-component-surface-dark px-3 py-1.5"
           >
-            <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
+            <Zap size={14} strokeWidth={2} fill="var(--color-neutral-120)" />
             <span className="text-xs hidden sm:hidden md:block font-medium">{"What's new?"}</span>
           </a>
           <a

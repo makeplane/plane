@@ -223,7 +223,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             <div className="grid grid-cols-1 gap-6 px-8 lg:grid-cols-2 2xl:grid-cols-3">
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">
-                  First name<span className="text-red-500">*</span>
+                  First name<span className="text-danger-text-medium">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -245,7 +245,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                     />
                   )}
                 />
-                {errors.first_name && <span className="text-xs text-red-500">Please enter first name</span>}
+                {errors.first_name && <span className="text-xs text-danger-text-medium">Please enter first name</span>}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -272,7 +272,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
 
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">
-                  Email<span className="text-red-500">*</span>
+                  Email<span className="text-danger-text-medium">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -300,7 +300,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
 
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">
-                  Role<span className="text-red-500">*</span>
+                  Role<span className="text-danger-text-medium">*</span>
                 </h4>
                 <Controller
                   name="role"
@@ -324,12 +324,12 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                     </CustomSelect>
                   )}
                 />
-                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
+                {errors.role && <span className="text-xs text-danger-text-medium">Please select a role</span>}
               </div>
 
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">
-                  Display name<span className="text-red-500">*</span>
+                  Display name<span className="text-danger-text-medium">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -364,12 +364,14 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                     />
                   )}
                 />
-                {errors.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
+                {errors.display_name && (
+                  <span className="text-xs text-danger-text-medium">Please enter display name</span>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">
-                  Timezone<span className="text-red-500">*</span>
+                  Timezone<span className="text-danger-text-medium">*</span>
                 </h4>
 
                 <Controller
@@ -389,7 +391,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                     />
                   )}
                 />
-                {errors.role && <span className="text-xs text-red-500">Please select a time zone</span>}
+                {errors.role && <span className="text-xs text-danger-text-medium">Please select a time zone</span>}
               </div>
 
               <div className="flex items-center justify-between py-2">

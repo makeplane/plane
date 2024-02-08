@@ -6,7 +6,7 @@ export const ViewListIcon: React.FC<Props> = ({
   width = "24",
   height = "24",
   className,
-  color = "rgb(var(--color-text-200))",
+  color = "var(--color-neutral-110)",
 }) => (
   <svg
     width={width}

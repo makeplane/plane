@@ -130,7 +130,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   return (
     <div
       className={`border-b border-t border-neutral-border-medium bg-neutral-component-surface-light ${
-        errors && errors?.name && errors?.name?.message ? `border-red-500 bg-red-500/10` : ``
+        errors && errors?.name && errors?.name?.message ? `border-red-500 bg-danger-component-surface-dark` : ``
       }`}
     >
       {isOpen ? (

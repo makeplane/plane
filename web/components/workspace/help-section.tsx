@@ -62,7 +62,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
         }`}
       >
         {!isCollapsed && (
-          <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2.5 py-1.5 text-center text-sm font-medium text-green-500 outline-none">
+          <div className="w-1/2 cursor-default rounded-md bg-success-component-surface-dark px-2.5 py-1.5 text-center text-sm font-medium text-success-text-medium outline-none">
             Free Plan
           </div>
         )}

@@ -78,13 +78,13 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                           key={priority}
                           className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize ${
                             priority === "urgent"
-                              ? "bg-red-500/20 text-red-500"
+                              ? "bg-danger-component-surface-dark text-danger-text-medium"
                               : priority === "high"
                               ? "bg-orange-500/20 text-orange-500"
                               : priority === "medium"
                               ? "bg-yellow-500/20 text-yellow-500"
                               : priority === "low"
-                              ? "bg-green-500/20 text-green-500"
+                              ? "bg-success-component-surface-dark text-success-text-medium"
                               : "bg-neutral-component-surface-medium text-neutral-text-medium"
                           }`}
                         >

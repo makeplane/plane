@@ -10,14 +10,14 @@
   table-layout: fixed;
   margin: 0;
   margin-bottom: 3rem;
-  border: 1px solid rgba(var(--color-border-200));
+  border: 1px solid var(--color-neutral-70);
   width: 100%;
 }
 
 .tableWrapper table td,
 .tableWrapper table th {
   min-width: 1em;
-  border: 1px solid rgba(var(--color-border-200));
+  border: 1px solid var(--color-neutral-70);
   padding: 10px 15px;
   vertical-align: top;
   box-sizing: border-box;
@@ -113,7 +113,7 @@
 
 .tableWrapper .tableControls .rowsControlDiv {
   background-color: rgba(var(--color-primary-100));
-  border: 1px solid rgba(var(--color-border-200));
+  border: 1px solid var(--color-neutral-70);
   border-radius: 2px;
   background-size: 1.25rem;
   background-repeat: no-repeat;
@@ -128,7 +128,7 @@
 
 .tableWrapper .tableControls .columnsControlDiv {
   background-color: rgba(var(--color-primary-100));
-  border: 1px solid rgba(var(--color-border-200));
+  border: 1px solid var(--color-neutral-70);
   border-radius: 2px;
   background-size: 1.25rem;
   background-repeat: no-repeat;
@@ -142,8 +142,8 @@
 }
 .tableWrapper .tableControls .tableToolbox,
 .tableWrapper .tableControls .tableColorPickerToolbox {
-  border: 1px solid rgba(var(--color-border-300));
-  background-color: rgba(var(--color-background-100));
+  border: 1px solid var(--color-neutral-70);
+  background-color: var(--color-neutral-30);
   padding: 0.25rem;
   display: flex;
   flex-direction: column;
@@ -153,7 +153,7 @@
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem {
-  background-color: rgba(var(--color-background-100));
+  background-color: var(--color-neutral-30);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -173,7 +173,7 @@
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .iconContainer,
 .tableWrapper .tableControls .tableToolbox .toolboxItem .colorContainer,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .colorContainer {
-  border: 1px solid rgba(var(--color-border-300));
+  border: 1px solid var(--color-neutral-70);
   border-radius: 3px;
   padding: 4px;
   display: flex;
@@ -192,13 +192,13 @@
 }
 
 .tableToolbox {
-  background-color: rgba(var(--color-background-100));
+  background-color: var(--color-neutral-30);
 }
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem .label,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .label {
   font-size: 0.85rem;
-  color: rgba(var(--color-text-300));
+  color: var(--color-neutral-110);
 }
 
 .resize-cursor .tableWrapper .tableControls .rowsControl,

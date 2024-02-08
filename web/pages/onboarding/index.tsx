@@ -199,7 +199,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             <Menu.Items className={"absolute min-w-full"}>
                               <Menu.Item as="div">
                                 <div
-                                  className="mr-auto mt-2 rounded-md border border-red-400 bg-onboarding-background-200 p-3 text-base font-normal text-red-400 shadow-sm hover:cursor-pointer"
+                                  className="mr-auto mt-2 rounded-md border border-red-400 bg-onboarding-background-200 p-3 text-base font-normal text-danger-text-medium shadow-sm hover:cursor-pointer"
                                   onClick={() => {
                                     setShowDeleteAccountModal(true);
                                   }}

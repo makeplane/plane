@@ -82,13 +82,13 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
             <div
               className={`inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-left text-sm capitalize ${
                 priority?.key === "urgent"
-                  ? "border-red-500/20 bg-red-500/20 text-red-500"
+                  ? "border-red-500/20 bg-danger-component-surface-dark text-danger-text-medium"
                   : priority?.key === "high"
                     ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
                     : priority?.key === "medium"
                       ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
                       : priority?.key === "low"
-                        ? "border-green-500/20 bg-green-500/20 text-green-500"
+                        ? "border-green-500/20 bg-success-component-surface-dark text-success-text-medium"
                         : "border-neutral-border-medium bg-neutral-component-surface-dark"
               }`}
             >

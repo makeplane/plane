@@ -26,10 +26,10 @@ export const dueDateIconDetails = (
 
     if (timeDifference < 0) {
       iconName = "event_busy";
-      className = "text-red-500";
+      className = "text-danger-text-medium";
     } else if (timeDifference === 0) {
       iconName = "today";
-      className = "text-red-500";
+      className = "text-danger-text-medium";
     } else if (timeDifference === 24 * 60 * 60 * 1000) {
       iconName = "event";
       className = "text-yellow-500";

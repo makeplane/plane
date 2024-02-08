@@ -256,7 +256,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <Menu.Item
                       as="button"
                       type="button"
-                      className="w-full flex items-center gap-2 rounded px-2 py-1 text-sm text-red-600 hover:bg-sidebar-neutral-component-surface-dark font-medium"
+                      className="w-full flex items-center gap-2 rounded px-2 py-1 text-sm text-danger-text-medium hover:bg-sidebar-neutral-component-surface-dark font-medium"
                       onClick={handleSignOut}
                     >
                       <LogOut className="h-4 w-4 flex-shrink-0" />

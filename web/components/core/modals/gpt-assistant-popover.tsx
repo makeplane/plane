@@ -226,7 +226,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               </div>
             )}
             {invalidResponse && (
-              <div className="text-sm text-red-500">
+              <div className="text-sm text-danger-text-medium">
                 No response could be generated. This may be due to insufficient content or task information. Please try
                 again.
               </div>

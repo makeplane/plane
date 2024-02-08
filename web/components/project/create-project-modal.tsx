@@ -291,7 +291,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             />
                           )}
                         />
-                        <span className="text-xs text-red-500">{errors?.name?.message}</span>
+                        <span className="text-xs text-danger-text-medium">{errors?.name?.message}</span>
                       </div>
                       <div>
                         <Controller
@@ -326,7 +326,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             />
                           )}
                         />
-                        <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
+                        <span className="text-xs text-danger-text-medium">{errors?.identifier?.message}</span>
                       </div>
                       <div className="md:col-span-4">
                         <Controller

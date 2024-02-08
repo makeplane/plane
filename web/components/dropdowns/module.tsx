@@ -108,7 +108,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                           onChange(newModuleIds);
                         }}
                       >
-                        <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-red-500" />
+                        <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-danger-text-medium" />
                       </button>
                     </Tooltip>
                   )}

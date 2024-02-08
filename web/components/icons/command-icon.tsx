@@ -6,7 +6,7 @@ export const CommandIcon: FC<Props> = ({
   width = "81",
   height = "80",
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  color = "rgb(var(--color-text-200))",
+  color = "var(--color-neutral-110)",
   className,
 }) => (
   <svg

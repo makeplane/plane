@@ -144,13 +144,17 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
           />
           <button
             type="button"
-            className="grid place-items-center rounded bg-red-500 p-1.5"
+            className="grid place-items-center rounded bg-danger-solid p-1.5"
             onClick={() => setIsCreateToggle(false)}
             disabled={disabled}
           >
             <X className="h-4 w-4 text-white" />
           </button>
-          <button type="submit" className="grid place-items-center rounded bg-green-500 p-1.5" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="grid place-items-center rounded bg-success-solid p-1.5"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? <Loader className="h-4 w-4 text-white spin" /> : <Plus className="h-4 w-4 text-white" />}
           </button>
         </form>

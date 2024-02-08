@@ -253,7 +253,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
       {email && !emailRegex.test(email) && (
         <div className="">
           <span className="text-sm">🤥</span>{" "}
-          <span className="mt-1 text-xs text-red-500">That doesn{"'"}t look like an email address.</span>
+          <span className="mt-1 text-xs text-danger-text-medium">That doesn{"'"}t look like an email address.</span>
         </div>
       )}
     </div>

@@ -26,7 +26,7 @@ export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "ca
 const defaultValues: Partial<IState> = {
   name: "",
   description: "",
-  color: "rgb(var(--color-text-200))",
+  color: "var(--color-neutral-110)",
   group: "backlog",
 };
 

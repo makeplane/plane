@@ -137,7 +137,11 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
   return (
     <>
       <div
-        className={`${errors && errors?.name && errors?.name?.message ? `border border-red-500/20 bg-red-500/10` : ``}`}
+        className={`${
+          errors && errors?.name && errors?.name?.message
+            ? `border border-red-500/20 bg-danger-component-surface-dark`
+            : ``
+        }`}
       >
         {isOpen ? (
           <div className="shadow-custom-shadow-sm">

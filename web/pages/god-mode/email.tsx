@@ -29,7 +29,7 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
         </div>
         <div className="text-sm font-normal text-neutral-text-medium">
           Set it up below and please test your settings before you save them.{" "}
-          <span className="text-red-400">Misconfigs can lead to email bounces and errors.</span>
+          <span className="text-danger-text-medium">Misconfigs can lead to email bounces and errors.</span>
         </div>
       </div>
       {formattedConfig ? (

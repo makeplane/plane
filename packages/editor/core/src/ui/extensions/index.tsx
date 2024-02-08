@@ -59,7 +59,7 @@ export const CoreEditorExtensions = (
     },
     blockquote: false,
     dropcursor: {
-      color: "rgba(var(--color-text-100))",
+      color: "var(--color-neutral-120)",
       width: 2,
     },
   }),

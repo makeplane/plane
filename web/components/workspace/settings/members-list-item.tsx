@@ -191,7 +191,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
                   : "pointer-events-none opacity-0"
               }
             >
-              <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
+              <XCircle className="h-3.5 w-3.5 text-danger-text-medium" strokeWidth={2} />
             </button>
           </Tooltip>
         </div>

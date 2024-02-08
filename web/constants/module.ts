@@ -42,13 +42,13 @@ export const MODULE_STATUS: {
     value: "completed",
     color: "#16a34a",
     textColor: "text-green-600",
-    bgColor: "bg-green-100",
+    bgColor: "bg-success-component-surface-dark",
   },
   {
     label: "Cancelled",
     value: "cancelled",
     color: "#ef4444",
-    textColor: "text-red-500",
+    textColor: "text-danger-text-medium",
     bgColor: "bg-red-50",
   },
 ];

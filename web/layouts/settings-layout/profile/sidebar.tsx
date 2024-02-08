@@ -187,7 +187,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <button
               type="button"
               onClick={handleSignOut}
-              className="flex items-center justify-center gap-2 text-sm font-medium text-red-500"
+              className="flex items-center justify-center gap-2 text-sm font-medium text-danger-text-medium"
               disabled={isSigningOut}
             >
               <LogOut className="h-3.5 w-3.5" />

@@ -9,11 +9,11 @@
   z-index: 10;
   cursor: grab;
   border-radius: 2px;
-  background-color: rgb(var(--color-background-90));
+  background-color: var(--color-neutral-40);
 }
 
 .drag-handle:hover {
-  background-color: rgb(var(--color-background-80));
+  background-color: var(--color-neutral-50);
   transition: background-color 0.2s;
 }
 
@@ -48,6 +48,6 @@
 .drag-handle-dot {
   height: 2.75px;
   width: 3px;
-  background-color: rgba(var(--color-text-200));
+  background-color: var(--color-neutral-110);
   border-radius: 50%;
 }

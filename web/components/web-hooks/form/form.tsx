@@ -36,7 +36,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
   // store hooks
-  const {webhookSecretKey } = useWebhook();
+  const { webhookSecretKey } = useWebhook();
   // use form
   const {
     handleSubmit,
@@ -73,7 +73,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
                 <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
               )}
             />
-            {errors.url && <div className="text-xs text-red-500">{errors.url.message}</div>}
+            {errors.url && <div className="text-xs text-danger-text-medium">{errors.url.message}</div>}
           </div>
           {data && <WebhookToggle control={control} />}
           <div className="space-y-3">

@@ -87,7 +87,7 @@ export const CYCLE_STATUS: {
     value: "completed",
     color: "#16A34A",
     textColor: "text-green-600",
-    bgColor: "bg-green-50",
+    bgColor: "bg-success-component-surface-dark",
   },
   {
     label: "Draft",

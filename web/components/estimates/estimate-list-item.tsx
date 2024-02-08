@@ -54,7 +54,9 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
             <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">
               {estimate.name}
               {currentProjectDetails?.estimate && currentProjectDetails?.estimate === estimate.id && (
-                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-500">In use</span>
+                <span className="rounded bg-success-component-surface-dark px-2 py-0.5 text-xs text-success-text-medium">
+                  In use
+                </span>
               )}
             </h6>
             <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-neutral-text-medium">

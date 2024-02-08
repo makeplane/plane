@@ -29,8 +29,8 @@ export const INBOX_STATUS: {
     icon: XCircle,
     title: "Declined",
     description: () => <p>This issue has been declined.</p>,
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-red-500"),
-    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-red-500/10"),
+    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-danger-text-medium"),
+    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-danger-component-surface-dark"),
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "border-red-500"),
   },
   {
@@ -44,8 +44,10 @@ export const INBOX_STATUS: {
       ) : (
         <p>This issue has been snoozed till {renderFormattedDate(snoozedTillDate)}.</p>
       ),
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-red-500" : "text-neutral-text-medium"),
-    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "bg-red-500/10" : "bg-gray-500/10"),
+    textColor: (snoozeDatePassed: boolean = false) =>
+      snoozeDatePassed ? "text-danger-text-medium" : "text-neutral-text-medium",
+    bgColor: (snoozeDatePassed: boolean = false) =>
+      snoozeDatePassed ? "bg-danger-component-surface-dark" : "bg-gray-500/10",
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "border-red-500" : "border-gray-500"),
   },
   {
@@ -54,8 +56,8 @@ export const INBOX_STATUS: {
     icon: CheckCircle2,
     title: "Accepted",
     description: () => <p>This issue has been accepted.</p>,
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-green-500"),
-    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-green-500/10"),
+    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-success-text-medium"),
+    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-success-component-surface-dark"),
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "border-green-500"),
   },
   {

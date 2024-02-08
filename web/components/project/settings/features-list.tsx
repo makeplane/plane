@@ -35,7 +35,7 @@ const PROJECT_FEATURES_LIST = [
   {
     title: "Pages",
     description: "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <FileText className="h-4 w-4 flex-shrink-0 text-red-400" />,
+    icon: <FileText className="h-4 w-4 flex-shrink-0 text-danger-text-medium" />,
     property: "page_view",
   },
   {

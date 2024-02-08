@@ -125,7 +125,7 @@ export const Workspace: React.FC<Props> = (props) => {
             </div>
           )}
         />
-        {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
+        {errors.name && <span className="text-sm text-danger-text-medium">{errors.name.message}</span>}
         <p className="mb-1 mt-4 text-base text-neutral-text-subtle">You can edit the slug.</p>
         <Controller
           control={control}
@@ -153,9 +153,9 @@ export const Workspace: React.FC<Props> = (props) => {
             </div>
           )}
         />
-        {slugError && <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>}
+        {slugError && <span className="-mt-3 text-sm text-danger-text-medium">Workspace URL is already taken!</span>}
         {invalidSlug && (
-          <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
+          <span className="text-sm text-danger-text-medium">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
         )}
       </div>
       <Button variant="primary" type="submit" size="md">

@@ -328,7 +328,7 @@
 }
 
 body {
-  color: rgba(var(--color-text-100));
+  color: var(--color-neutral-120);
 }
 
 /* scrollbar style */
@@ -348,7 +348,7 @@ body {
 
 .horizontal-scroll-enable::-webkit-scrollbar-track {
   height: 7px;
-  background-color: rgba(var(--color-background-100));
+  background-color: var(--color-neutral-30);
 }
 
 .horizontal-scroll-enable::-webkit-scrollbar-thumb {
@@ -367,7 +367,7 @@ body {
 
 .vertical-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-background-90));
+  background-color: var(--color-neutral-40);
 }
 /* end scrollbar style */
 
@@ -446,7 +446,7 @@ body {
 ::-webkit-input-placeholder,
 ::placeholder,
 :-ms-input-placeholder {
-  color: rgb(var(--color-text-400));
+  color: var(--color-neutral-100);
 }
 
 .bp4-overlay-content {
@@ -476,7 +476,7 @@ div.web-view-spinner {
 div.web-view-spinner div {
   width: 6%;
   height: 16%;
-  background: rgb(var(--color-text-400));
+  background: var(--color-neutral-100);
   position: absolute;
   left: 49%;
   top: 43%;

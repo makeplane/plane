@@ -27,7 +27,7 @@ export const issuePriorityFilters: IIssuePriorityFilters[] = [
   {
     key: "urgent",
     title: "Urgent",
-    className: "bg-red-500 border-red-500 text-white",
+    className: "bg-danger-solid border-red-500 text-white",
     icon: "error",
   },
   {
@@ -45,7 +45,7 @@ export const issuePriorityFilters: IIssuePriorityFilters[] = [
   {
     key: "low",
     title: "Low",
-    className: "text-green-500 border-neutral-border-medium",
+    className: "text-success-text-medium border-neutral-border-medium",
     icon: "signal_cellular_alt_1_bar",
   },
   {

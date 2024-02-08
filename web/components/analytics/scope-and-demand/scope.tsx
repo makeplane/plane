@@ -11,7 +11,7 @@ type Props = {
 
 export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
   <div className="rounded-[10px] border border-neutral-border-medium">
-    <h5 className="p-3 text-xs text-green-500">SCOPE</h5>
+    <h5 className="p-3 text-xs text-success-text-medium">SCOPE</h5>
     <div className="divide-y divide-neutral-border-medium">
       <div>
         <h6 className="px-3 text-base font-medium">Pending issues</h6>

@@ -110,14 +110,26 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
           >
             {state.default ? (
               <Tooltip tooltipContent="Cannot delete the default state.">
-                <X className={`h-4 w-4 ${groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-red-500"}`} />
+                <X
+                  className={`h-4 w-4 ${
+                    groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-danger-text-medium"
+                  }`}
+                />
               </Tooltip>
             ) : groupLength === 1 ? (
               <Tooltip tooltipContent="Cannot have an empty group.">
-                <X className={`h-4 w-4 ${groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-red-500"}`} />
+                <X
+                  className={`h-4 w-4 ${
+                    groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-danger-text-medium"
+                  }`}
+                />
               </Tooltip>
             ) : (
-              <X className={`h-4 w-4 ${groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-red-500"}`} />
+              <X
+                className={`h-4 w-4 ${
+                  groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-danger-text-medium"
+                }`}
+              />
             )}
           </button>
         </div>

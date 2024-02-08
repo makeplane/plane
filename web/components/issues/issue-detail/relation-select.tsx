@@ -147,7 +147,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                             removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
                           }}
                         >
-                          <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-red-500" />
+                          <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-danger-text-medium" />
                         </span>
                       </Tooltip>
                     )}

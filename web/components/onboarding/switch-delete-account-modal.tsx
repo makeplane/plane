@@ -112,10 +112,10 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
                     <div className="flex items-center gap-x-4">
                       <div
                         className={`grid place-items-center rounded-full ${
-                          resolvedTheme === "dark" ? "bg-[#2F3135]" : "bg-red-500/20"
+                          resolvedTheme === "dark" ? "bg-[#2F3135]" : "bg-danger-component-surface-dark"
                         } p-4`}
                       >
-                        <Trash2 className="h-6 w-6 text-red-600" aria-hidden="true" />
+                        <Trash2 className="h-6 w-6 text-danger-text-medium" aria-hidden="true" />
                       </div>
                       <Dialog.Title as="h3" className="text-2xl font-medium leading-6 text-onboarding-text-100">
                         Not the right workspace?
@@ -143,7 +143,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
                     onClick={handleDeactivateAccount}
                     className={`${
                       resolvedTheme === "dark" ? "bg-[#2F3135]" : ""
-                    } rounded-sm border border-red-500 px-4 py-1.5 text-sm text-red-500`}
+                    } rounded-sm border border-red-500 px-4 py-1.5 text-sm text-danger-text-medium`}
                   >
                     {isDeactivating ? "Deleting..." : "Delete account"}
                   </button>

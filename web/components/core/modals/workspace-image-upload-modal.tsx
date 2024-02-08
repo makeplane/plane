@@ -160,7 +160,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-danger-text-medium">
                         {fileRejections[0].errors[0].code === "file-too-large"
                           ? "The image size cannot exceed 5 MB."
                           : "Please upload a file in a valid format."}

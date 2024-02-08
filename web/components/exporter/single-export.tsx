@@ -36,11 +36,11 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
           <span
             className={`rounded px-2 py-0.5 text-xs capitalize ${
               service.status === "completed"
-                ? "bg-green-500/20 text-green-500"
+                ? "bg-success-component-surface-dark text-success-text-medium"
                 : service.status === "processing"
                 ? "bg-yellow-500/20 text-yellow-500"
                 : service.status === "failed"
-                ? "bg-red-500/20 text-red-500"
+                ? "bg-danger-component-surface-dark text-danger-text-medium"
                 : service.status === "expired"
                 ? "bg-orange-500/20 text-orange-500"
                 : ""
@@ -67,7 +67,7 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
           )}
         </>
       ) : (
-        <div className="text-xs text-red-500">Expired</div>
+        <div className="text-xs text-danger-text-medium">Expired</div>
       )}
     </div>
   );

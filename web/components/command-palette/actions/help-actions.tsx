@@ -50,7 +50,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-neutral-text-medium">
-          <DiscordIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+          <DiscordIcon className="h-4 w-4" color="var(--color-neutral-110)" />
           Join our Discord
         </div>
       </Command.Item>
@@ -62,7 +62,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-neutral-text-medium">
-          <GithubIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+          <GithubIcon className="h-4 w-4" color="var(--color-neutral-110)" />
           Report a bug
         </div>
       </Command.Item>

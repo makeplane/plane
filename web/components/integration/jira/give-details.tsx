@@ -57,7 +57,9 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
-          {errors.metadata?.api_token && <p className="text-red-500 text-xs">{errors.metadata.api_token.message}</p>}
+          {errors.metadata?.api_token && (
+            <p className="text-danger-text-medium text-xs">{errors.metadata.api_token.message}</p>
+          )}
         </div>
       </div>
 
@@ -87,7 +89,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             )}
           />
           {errors.metadata?.project_key && (
-            <p className="text-red-500 text-xs">{errors.metadata.project_key.message}</p>
+            <p className="text-danger-text-medium text-xs">{errors.metadata.project_key.message}</p>
           )}
         </div>
       </div>
@@ -118,7 +120,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
-          {errors.metadata?.email && <p className="text-red-500 text-xs">{errors.metadata.email.message}</p>}
+          {errors.metadata?.email && <p className="text-danger-text-medium text-xs">{errors.metadata.email.message}</p>}
         </div>
       </div>
 
@@ -148,7 +150,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             )}
           />
           {errors.metadata?.cloud_hostname && (
-            <p className="text-red-500 text-xs">{errors.metadata.cloud_hostname.message}</p>
+            <p className="text-danger-text-medium text-xs">{errors.metadata.cloud_hostname.message}</p>
           )}
         </div>
       </div>

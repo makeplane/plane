@@ -73,7 +73,7 @@ export const badgeStyling: IBadgeStyling = {
   },
 
   success: {
-    default: `text-white bg-green-500`,
+    default: `text-white bg-success-solid`,
     hover: `hover:bg-green-600`,
     disabled: `cursor-not-allowed !bg-green-300`,
   },
@@ -110,13 +110,13 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !bg-red-300`,
   },
   "accent-destructive": {
-    default: `text-red-500 bg-red-50`,
-    hover: `hover:bg-red-100 hover:text-red-600`,
+    default: `text-danger-text-medium bg-red-50`,
+    hover: `hover:bg-red-100 hover:text-danger-text-medium`,
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "outline-destructive": {
-    default: `text-red-500 bg-neutral-component-surface-light border border-red-500`,
-    hover: `hover:text-red-600 hover:bg-red-50`,
+    default: `text-danger-text-medium bg-neutral-component-surface-light border border-red-500`,
+    hover: `hover:text-danger-text-medium hover:bg-red-50`,
     disabled: `cursor-not-allowed !text-red-300 border-red-300`,
   },
 };

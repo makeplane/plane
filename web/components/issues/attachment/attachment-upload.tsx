@@ -70,7 +70,7 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
         {isDragActive ? (
           <p>Drop here...</p>
         ) : fileError ? (
-          <p className="text-center text-red-500">{fileError}</p>
+          <p className="text-center text-danger-text-medium">{fileError}</p>
         ) : isLoading ? (
           <p className="text-center">Uploading...</p>
         ) : (

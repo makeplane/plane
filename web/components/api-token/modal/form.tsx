@@ -140,7 +140,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 />
               )}
             />
-            {errors.label && <span className="text-xs text-red-500">{errors.label.message}</span>}
+            {errors.label && <span className="text-xs text-danger-text-medium">{errors.label.message}</span>}
           </div>
           <Controller
             control={control}

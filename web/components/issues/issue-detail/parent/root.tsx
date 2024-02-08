@@ -60,7 +60,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
 
           <CustomMenu.MenuItem
             onClick={() => issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: null })}
-            className="flex items-center gap-2 py-2 text-red-500"
+            className="flex items-center gap-2 py-2 text-danger-text-medium"
           >
             <MinusCircle className="h-4 w-4" />
             <span> Remove Parent Issue</span>

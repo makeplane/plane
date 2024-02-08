@@ -27,7 +27,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
           >
-            <XCircle className="h-4 w-4 text-red-500" />
+            <XCircle className="h-4 w-4 text-danger-text-medium" />
           </button>
         </Tooltip>
         <div className="flex w-4/5 items-center">
@@ -35,7 +35,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
           <span
             className={`${
               token.is_active
-                ? "bg-green-500/10 text-green-500"
+                ? "bg-success-component-surface-dark text-success-text-medium"
                 : "bg-neutral-component-surface-dark text-neutral-text-subtle"
             } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
           >

@@ -134,10 +134,10 @@ export const ProfileSidebar = observer(() => {
                                 <div
                                   className={`rounded px-1 py-0.5 text-xs font-medium ${
                                     completedIssuePercentage <= 35
-                                      ? "bg-red-500/10 text-red-500"
+                                      ? "bg-danger-component-surface-dark text-danger-text-medium"
                                       : completedIssuePercentage <= 70
                                       ? "bg-yellow-500/10 text-yellow-500"
-                                      : "bg-green-500/10 text-green-500"
+                                      : "bg-success-component-surface-dark text-success-text-medium"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

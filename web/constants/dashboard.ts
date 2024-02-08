@@ -146,8 +146,8 @@ export const DURATION_FILTER_OPTIONS: {
 // random background colors for project cards
 export const PROJECT_BACKGROUND_COLORS = [
   "bg-gray-500/20",
-  "bg-green-500/20",
-  "bg-red-500/20",
+  "bg-success-component-surface-dark",
+  "bg-danger-component-surface-dark",
   "bg-orange-500/20",
   "bg-blue-500/20",
   "bg-yellow-500/20",

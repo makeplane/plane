@@ -107,7 +107,9 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                             />
 
                             {errors.close_in && (
-                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-sm text-danger-text-medium">
+                                Select a month between 1 and 12.
+                              </span>
                             )}
                           </>
                         ) : (
@@ -140,7 +142,9 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                               )}
                             />
                             {errors.archive_in && (
-                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-sm text-danger-text-medium">
+                                Select a month between 1 and 12.
+                              </span>
                             )}
                           </>
                         )}

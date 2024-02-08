@@ -23,7 +23,7 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
             : cycleStatus === "completed"
             ? "#3f76ff"
             : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
+            ? "var(--color-neutral-110)"
             : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`)}
@@ -67,7 +67,7 @@ export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
             : cycleStatus === "completed"
             ? "#3f76ff"
             : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
+            ? "var(--color-neutral-110)"
             : ""
         }`}
       />

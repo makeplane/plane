@@ -42,7 +42,7 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
           </div>
         )}
         theme={{
-          background: "rgb(var(--color-background-100))",
+          background: "var(--color-neutral-30)",
         }}
         enableArea
       />

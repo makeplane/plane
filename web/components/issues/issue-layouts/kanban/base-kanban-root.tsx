@@ -259,8 +259,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                   <div
                     className={`${
                       isDragStarted ? `opacity-100` : `opacity-0`
-                    } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-neutral-component-surface-light px-3 py-5 text-xs font-medium italic text-red-500 ${
-                      snapshot.isDraggingOver ? "bg-red-500 opacity-70 blur-2xl" : ""
+                    } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-neutral-component-surface-light px-3 py-5 text-xs font-medium italic text-danger-text-medium ${
+                      snapshot.isDraggingOver ? "bg-danger-solid opacity-70 blur-2xl" : ""
                     } transition duration-300`}
                     ref={provided.innerRef}
                     {...provided.droppableProps}

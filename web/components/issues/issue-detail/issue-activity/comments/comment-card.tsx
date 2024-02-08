@@ -136,16 +136,16 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               type="button"
               onClick={handleSubmit(onEnter)}
               disabled={isSubmitting}
-              className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
+              className="group rounded border border-green-500 bg-success-component-surface-dark p-2 shadow-md duration-300 hover:bg-success-solid"
             >
-              <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
+              <Check className="h-3 w-3 text-success-text-medium duration-300 group-hover:text-white" />
             </button>
             <button
               type="button"
-              className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+              className="group rounded border border-red-500 bg-danger-component-surface-dark p-2 shadow-md duration-300 hover:bg-danger-solid"
               onClick={() => setIsEditing(false)}
             >
-              <X className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
+              <X className="h-3 w-3 text-danger-text-medium duration-300 group-hover:text-white" />
             </button>
           </div>
         </form>

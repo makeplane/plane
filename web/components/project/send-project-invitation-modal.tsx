@@ -240,7 +240,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               }}
                             />
                             {errors.members && errors.members[index]?.member_id && (
-                              <span className="px-1 text-sm text-red-500">
+                              <span className="px-1 text-sm text-danger-text-medium">
                                 {errors.members[index]?.member_id?.message}
                               </span>
                             )}
@@ -279,7 +279,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                 )}
                               />
                               {errors.members && errors.members[index]?.role && (
-                                <span className="px-1 text-sm text-red-500">
+                                <span className="px-1 text-sm text-danger-text-medium">
                                   {errors.members[index]?.role?.message}
                                 </span>
                               )}

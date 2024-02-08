@@ -147,7 +147,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                     className="w-full text-xs sm:text-sm"
                                   />
                                   {errors.emails?.[index]?.email && (
-                                    <span className="ml-1 text-xs text-red-500">
+                                    <span className="ml-1 text-xs text-danger-text-medium">
                                       {errors.emails?.[index]?.email?.message}
                                     </span>
                                   )}

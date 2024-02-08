@@ -30,7 +30,7 @@ export const YearChartView: FC<any> = () => {
                     >
                       <div
                         className={`flex-shrink-0 border-b py-1 text-center text-sm font-medium capitalize ${
-                          _item?.today ? `border-red-500 text-red-500` : `border-neutral-border-medium`
+                          _item?.today ? `border-red-500 text-danger-text-medium` : `border-neutral-border-medium`
                         }`}
                       >
                         <div>{_item.title}</div>

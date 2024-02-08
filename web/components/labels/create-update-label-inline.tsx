@@ -24,7 +24,7 @@ type Props = {
 
 const defaultValues: Partial<IIssueLabel> = {
   name: "",
-  color: "rgb(var(--color-text-200))",
+  color: "var(--color-neutral-110)",
 };
 
 export const CreateUpdateLabelInline = observer(

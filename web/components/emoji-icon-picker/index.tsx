@@ -31,7 +31,7 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
-  const [activeColor, setActiveColor] = useState<string>("rgb(var(--color-text-200))");
+  const [activeColor, setActiveColor] = useState<string>("var(--color-neutral-110)");
   const [recentEmojis, setRecentEmojis] = useState<string[]>([]);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
