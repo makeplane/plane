@@ -60,7 +60,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               <CustomMenu.MenuItem
                 className="flex items-center gap-2"
               >
-                <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`} className="text-custom-text-300">{tab.label}</Link>
+                <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`} className="text-custom-text-300 w-full">{tab.label}</Link>
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
