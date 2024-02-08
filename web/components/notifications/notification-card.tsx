@@ -174,6 +174,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             onClick: () => {
               markNotificationReadStatusToggle(notification.id).then(() => {
                 captureEvent("Notification marked read", {
+                  issue_id: notification.data.issue.id,
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
@@ -195,6 +196,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
                 captureEvent("Notification archived", {
+                  issue_id: notification.data.issue.id,
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
@@ -248,6 +250,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
 
                   markSnoozeNotification(notification.id, item.value).then(() => {
                     captureEvent("Notification snoozed", {
+                      issue_id: notification.data.issue.id,
                       tab: selectedTab,
                       state: "SUCCESS",
                     });

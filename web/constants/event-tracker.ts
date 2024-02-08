@@ -25,6 +25,7 @@ export const getProjectEventPayload = (payload: any) => ({
   project_id: payload.id,
   identifier: payload.identifier,
   project_visibility: payload.network == 2 ? "Public" : "Private",
+  changed_properties: payload.changed_properties,
   lead_id: payload.project_lead,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -41,6 +42,7 @@ export const getCycleEventPayload = (payload: any) => ({
   start_date: payload.start_date,
   target_date: payload.target_date,
   cycle_status: payload.status,
+  changed_properties: payload.changed_properties,
   state: payload.state,
   element: payload.element,
 });

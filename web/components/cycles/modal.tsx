@@ -66,15 +66,16 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       });
   };
 
-  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId) return;
 
     const selectedProjectId = payload.project ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then((res) => {
+        const changed_properties = Object.keys(dirtyFields);
         captureCycleEvent({
           eventName: CYCLE_UPDATED,
-          payload: { ...res, state: "SUCCESS" },
+          payload: { ...res, changed_properties: changed_properties, state: "SUCCESS" },
         });
         setToastAlert({
           type: "success",
@@ -105,7 +106,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     return status;
   };
 
-  const handleFormSubmit = async (formData: Partial<ICycle>) => {
+  const handleFormSubmit = async (formData: Partial<ICycle>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<ICycle> = {
@@ -129,7 +130,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     }
 
     if (isDateValid) {
-      if (data) await handleUpdateCycle(data.id, payload);
+      if (data) await handleUpdateCycle(data.id, payload, dirtyFields);
       else {
         await handleCreateCycle(payload).then(() => {
           setCycleTab("all");
