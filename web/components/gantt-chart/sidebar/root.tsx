@@ -18,7 +18,7 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
     <div
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="min-h-full h-max w-1/4 flex-shrink-0 border-r-[0.5px] border-custom-border-200"
+      className="sticky left-0 z-10 min-h-full h-max w-1/4 flex-shrink-0 border-r-[0.5px] border-custom-border-200"
     >
       <div
         className="box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pl-8 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-[1] bg-custom-background-100"
@@ -30,7 +30,7 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
         <h6>Duration</h6>
       </div>
 
-      <div className="min-h-full h-max">
+      <div className="min-h-full h-max bg-custom-background-100">
         {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
       </div>
     </div>

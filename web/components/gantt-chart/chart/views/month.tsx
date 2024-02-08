@@ -18,14 +18,14 @@ export const MonthChartView: FC<any> = () => {
       <div className="absolute top-0 left-0 h-full w-max flex divide-x divide-custom-border-100/50">
         {monthBlocks?.map((block, rootIndex) => (
           <div key={`month-${block?.month}-${block?.year}`} className="relative">
-            {/* <div
-              className="w-full"
+            <div
+              className="w-full sticky top-0 bg-custom-background-100"
               style={{
                 height: `${HEADER_HEIGHT}px`,
               }}
             >
               <div className="h-1/2">
-                <div className="sticky left-0 inline-flex whitespace-nowrap px-3 py-2 text-xs font-medium capitalize">
+                <div className="sticky left-[410px] inline-flex whitespace-nowrap px-3 py-2 text-xs font-medium capitalize">
                   {block?.title}
                 </div>
               </div>
@@ -49,7 +49,7 @@ export const MonthChartView: FC<any> = () => {
                   </div>
                 ))}
               </div>
-            </div> */}
+            </div>
             <div className="h-full w-full flex divide-x divide-custom-border-100/50">
               {block?.children?.map((monthDay, index) => (
                 <div

@@ -91,7 +91,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
     <div
       // DO NOT REMOVE THE ID
       id="gantt-container"
-      className={cn("h-full w-full overflow-hidden overflow-y-auto flex border-t-[0.5px] border-custom-border-200", {
+      className={cn("h-full w-full overflow-auto flex border-t-[0.5px] border-custom-border-200", {
         "mb-8": bottomSpacing,
       })}
     >
@@ -105,10 +105,10 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
       <div
         // DO NOT REMOVE THE ID
         id="scroll-container"
-        className="relative min-h-full h-max w-3/4 flex-shrink-0 overflow-hidden overflow-x-auto"
+        className="relative min-h-full h-max w-3/4 flex-shrink-0"
         onScroll={onScroll}
       >
-        <div className="w-full flex sticky top-0 bg-custom-background-100 z-10">
+        {/* <div className="w-full flex sticky top-0 bg-custom-background-100 z-10">
           {monthBlocks?.map((block, rootIndex) => (
             <div key={`month-${block?.month}-${block?.year}`} className="relative">
               <div
@@ -145,7 +145,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
         <ActiveChartView />
         {currentViewData && (
           <GanttChartBlocksList
