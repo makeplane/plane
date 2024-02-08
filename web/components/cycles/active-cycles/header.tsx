@@ -23,7 +23,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
   const { getUserDetails } = useMember();
   const cycleOwnerDetails = cycle ? getUserDetails(cycle.owned_by) : undefined;
 
-  const daysLeft = findHowManyDaysLeft(cycle.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(cycle.end_date) ?? 0;
   const currentCycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
   return (
     <div className="flex items-center justify-between px-3 py-1.5 rounded-lg border-[0.5px] border-custom-border-100 bg-custom-background-90">
