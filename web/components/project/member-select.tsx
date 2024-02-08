@@ -19,20 +19,30 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
 
-  const options = projectMemberIds?.map((userId) => {
-    const memberDetails = getProjectMemberDetails(userId);
+  const options = projectMemberIds
+    ?.map((userId) => {
+      const memberDetails = getProjectMemberDetails(userId);
 
-    return {
-      value: `${memberDetails?.member.id}`,
-      query: `${memberDetails?.member.display_name}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
-          {memberDetails?.member.display_name}
-        </div>
-      ),
-    };
-  });
+      if (!memberDetails?.member) return;
+
+      return {
+        value: `${memberDetails?.member.id}`,
+        query: `${memberDetails?.member.display_name}`,
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+            {memberDetails?.member.display_name}
+          </div>
+        ),
+      };
+    })
+    .filter((option) => !!option) as
+    | {
+        value: string;
+        query: string;
+        content: React.JSX.Element;
+      }[]
+    | undefined;
   const selectedOption = getProjectMemberDetails(value);
 
   return (

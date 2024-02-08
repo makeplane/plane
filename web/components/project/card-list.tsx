@@ -1,28 +1,28 @@
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
 import { Loader } from "@plane/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-// icons
-import { Plus } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectCardList = observer(() => {
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
     currentUser,
   } = useUser();
   const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
-  const emptyStateImage = getEmptyStateImagePath("onboarding", "projects", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("onboarding", "projects", isLightMode);
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -64,7 +64,7 @@ export const ProjectCardList = observer(() => {
           primaryButton={{
             text: "Start your first project",
             onClick: () => {
-              setTrackElement("PROJECTS_EMPTY_STATE");
+              setTrackElement("Project empty state");
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}

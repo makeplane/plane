@@ -18,7 +18,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useApplication,useEventTracker, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
@@ -73,10 +73,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store hooks
-  const {
-    theme: themeStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { theme: themeStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -129,6 +127,12 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   const handleLeaveProjectModalClose = () => {
     setLeaveProjectModal(false);
+  };
+
+  const handleProjectClick = () => {
+    if (window.innerWidth < 768) {
+      themeStore.toggleSidebar();
+    }
   };
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
@@ -313,7 +317,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     return;
 
                   return (
-                    <Link key={item.name} href={item.href}>
+                    <Link key={item.name} href={item.href} onClick={handleProjectClick}>
                       <span className="block w-full">
                         <Tooltip
                           tooltipContent={`${project?.name}: ${item.name}`}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
-import { useApplication, useMember } from "hooks/store";
+import { useEventTracker, useMember } from "hooks/store";
 // components
 import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
 // ui
@@ -13,15 +13,15 @@ export const ProjectMemberList: React.FC = observer(() => {
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
 
   const searchedMembers = (projectMemberIds ?? []).filter((userId) => {
     const memberDetails = getProjectMemberDetails(userId);
+
+    if (!memberDetails?.member) return false;
 
     const fullName = `${memberDetails?.member.first_name} ${memberDetails?.member.last_name}`.toLowerCase();
     const displayName = memberDetails?.member.display_name.toLowerCase();

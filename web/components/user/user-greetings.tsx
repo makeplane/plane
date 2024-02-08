@@ -1,4 +1,7 @@
 import { FC } from "react";
+// hooks
+import { useCurrentTime } from "hooks/use-current-time";
+// types
 import { IUser } from "@plane/types";
 
 export interface IUserGreetingsView {
@@ -7,8 +10,8 @@ export interface IUserGreetingsView {
 
 export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
   const { user } = props;
-
-  const currentTime = new Date();
+  // current time hook
+  const { currentTime } = useCurrentTime();
 
   const hour = new Intl.DateTimeFormat("en-US", {
     hour12: false,

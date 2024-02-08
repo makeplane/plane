@@ -1,8 +1,9 @@
 import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
+import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -16,18 +17,21 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 import { NextPageWithLayout } from "lib/types";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
     currentUser,
   } = useUser();
   const { workspaceProjectIds } = useProject();
 
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "analytics", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "analytics", isLightMode);
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
@@ -68,7 +72,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
           primaryButton={{
             text: "Create Cycles and Modules first",
             onClick: () => {
-              setTrackElement("ANALYTICS_EMPTY_STATE");
+              setTrackElement("Analytics empty state");
               toggleCreateProjectModal(true);
             },
           }}

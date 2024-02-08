@@ -243,13 +243,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     .values("display_name", "assignee_id", "avatar")
                     .annotate(
                         total_issues=Count(
-                            "assignee_id",
+                            "id",
                             filter=Q(archived_at__isnull=True, is_draft=False),
                         ),
                     )
                     .annotate(
                         completed_issues=Count(
-                            "assignee_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=False,
                                 archived_at__isnull=True,
@@ -259,7 +259,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
                     .annotate(
                         pending_issues=Count(
-                            "assignee_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=True,
                                 archived_at__isnull=True,
@@ -282,13 +282,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     .values("label_name", "color", "label_id")
                     .annotate(
                         total_issues=Count(
-                            "label_id",
+                            "id",
                             filter=Q(archived_at__isnull=True, is_draft=False),
                         )
                     )
                     .annotate(
                         completed_issues=Count(
-                            "label_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=False,
                                 archived_at__isnull=True,
@@ -298,7 +298,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
                     .annotate(
                         pending_issues=Count(
-                            "label_id",
+                            "id",
                             filter=Q(
                                 completed_at__isnull=True,
                                 archived_at__isnull=True,
@@ -421,13 +421,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 total_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(archived_at__isnull=True, is_draft=False),
                 ),
             )
             .annotate(
                 completed_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -437,7 +437,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 pending_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -461,13 +461,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             .values("label_name", "color", "label_id")
             .annotate(
                 total_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(archived_at__isnull=True, is_draft=False),
                 ),
             )
             .annotate(
                 completed_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -477,7 +477,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 pending_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -601,16 +601,11 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
             .order_by(order_by)
             .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()

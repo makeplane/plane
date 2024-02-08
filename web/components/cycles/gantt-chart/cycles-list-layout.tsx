@@ -1,11 +1,8 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { KeyedMutator } from "swr";
 // hooks
 import { useCycle, useUser } from "hooks/store";
-// services
-import { CycleService } from "services/cycle.service";
 // components
 import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
 import { CycleGanttBlock } from "components/cycles";
@@ -17,14 +14,10 @@ import { EUserProjectRoles } from "constants/project";
 type Props = {
   workspaceSlug: string;
   cycleIds: string[];
-  mutateCycles?: KeyedMutator<ICycle[]>;
 };
 
-// services
-const cycleService = new CycleService();
-
 export const CyclesListGanttChartView: FC<Props> = observer((props) => {
-  const { cycleIds, mutateCycles } = props;
+  const { cycleIds } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -32,38 +25,15 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { getCycleById } = useCycle();
+  const { getCycleById, updateCycleDetails } = useCycle();
 
-  const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
-    if (!workspaceSlug) return;
-    mutateCycles &&
-      mutateCycles((prevData: any) => {
-        if (!prevData) return prevData;
+  const handleCycleUpdate = async (cycle: ICycle, data: IBlockUpdateData) => {
+    if (!workspaceSlug || !cycle) return;
 
-        const newList = prevData.map((p: any) => ({
-          ...p,
-          ...(p.id === cycle.id
-            ? {
-                start_date: payload.start_date ? payload.start_date : p.start_date,
-                target_date: payload.target_date ? payload.target_date : p.end_date,
-                sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
-              }
-            : {}),
-        }));
+    const payload: any = { ...data };
+    if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-        if (payload.sort_order) {
-          const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
-          newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
-        }
-
-        return newList;
-      }, false);
-
-    const newPayload: any = { ...payload };
-
-    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
-
-    cycleService.patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload);
+    await updateCycleDetails(workspaceSlug.toString(), cycle.project, cycle.id, payload);
   };
 
   const blockFormat = (blocks: (ICycle | null)[]) => {

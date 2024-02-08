@@ -1,24 +1,25 @@
 import { makeObservable } from "mobx";
 // services
-import { IssueService } from "services/issue";
+import { IssueArchiveService, IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
 import { TIssue } from "@plane/types";
 
 export interface IIssueStoreActions {
   // actions
-  fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  fetchIssue: (workspaceSlug: string, projectId: string, issueId: string, isArchived?: boolean) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<TIssue>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<TIssue>;
-  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<any>;
-  removeIssueFromModule: (
+  addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<any>;
+  removeModulesFromIssue: (
     workspaceSlug: string,
     projectId: string,
-    moduleId: string,
-    issueId: string
-  ) => Promise<TIssue>;
+    issueId: string,
+    moduleIds: string[]
+  ) => Promise<void>;
+  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
 }
 
 export interface IIssueStore extends IIssueStoreActions {
@@ -31,6 +32,7 @@ export class IssueStore implements IIssueStore {
   rootIssueDetailStore: IIssueDetail;
   // services
   issueService;
+  issueArchiveService;
 
   constructor(rootStore: IIssueDetail) {
     makeObservable(this, {});
@@ -38,6 +40,7 @@ export class IssueStore implements IIssueStore {
     this.rootIssueDetailStore = rootStore;
     // services
     this.issueService = new IssueService();
+    this.issueArchiveService = new IssueArchiveService();
   }
 
   // helper methods
@@ -47,12 +50,17 @@ export class IssueStore implements IIssueStore {
   };
 
   // actions
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, isArchived = false) => {
     try {
       const query = {
         expand: "state,assignees,labels,parent",
       };
-      const issue = (await this.issueService.retrieve(workspaceSlug, projectId, issueId, query)) as any;
+
+      let issue: any;
+
+      if (isArchived) issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId);
+      else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
+
       if (!issue) throw new Error("Issue not found");
 
       this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
@@ -136,15 +144,26 @@ export class IssueStore implements IIssueStore {
     return cycle;
   };
 
-  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
-    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.addIssueToModule(
+  addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
+    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.addModulesToIssue(
       workspaceSlug,
       projectId,
-      moduleId,
-      issueIds
+      issueId,
+      moduleIds
     );
-    if (issueIds && issueIds.length > 0)
-      await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueIds[0]);
+    if (moduleIds && moduleIds.length > 0)
+      await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    return _module;
+  };
+
+  removeModulesFromIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
+    const _module = await this.rootIssueDetailStore.rootIssueStore.moduleIssues.removeModulesFromIssue(
+      workspaceSlug,
+      projectId,
+      issueId,
+      moduleIds
+    );
+    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
     return _module;
   };
 

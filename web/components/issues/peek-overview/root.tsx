@@ -1,8 +1,9 @@
 import { FC, Fragment, useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssueDetail, useIssues, useUser } from "hooks/store";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // components
 import { IssueView } from "components/issues";
 // types
@@ -28,14 +29,27 @@ export type TIssuePeekOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
+  addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
+  removeIssueFromModule?: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueId: string
+  ) => Promise<void>;
+  removeModulesFromIssue?: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    moduleIds: string[]
+  ) => Promise<void>;
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { is_archived = false, onIssueUpdate } = props;
   // hooks
   const { setToastAlert } = useToast();
+  // router
+  const router = useRouter();
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -48,7 +62,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     removeIssue,
     issue: { getIssueById, fetchIssue },
   } = useIssueDetail();
-  const { addIssueToCycle, removeIssueFromCycle, addIssueToModule, removeIssueFromModule } = useIssueDetail();
+  const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
+    useIssueDetail();
+  const { captureIssueEvent } = useEventTracker();
   // state
   const [loader, setLoader] = useState(false);
 
@@ -86,7 +102,21 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               type: "success",
               message: "Issue updated successfully",
             });
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: router.asPath,
+          });
         } catch (error) {
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
           setToastAlert({
             title: "Issue update failed",
             type: "error",
@@ -96,12 +126,18 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
-          else await removeIssue(workspaceSlug, projectId, issueId);
+          let response;
+          if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
+          else response = await removeIssue(workspaceSlug, projectId, issueId);
           setToastAlert({
             title: "Issue deleted successfully",
             type: "success",
             message: "Issue deleted successfully",
+          });
+          captureIssueEvent({
+            eventName: "Issue deleted",
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            path: router.asPath,
           });
         } catch (error) {
           setToastAlert({
@@ -109,28 +145,40 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             type: "error",
             message: "Issue delete failed",
           });
+          captureIssueEvent({
+            eventName: "Issue deleted",
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
         }
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds)
-            .then((res) => {
-              updateIssue(workspaceSlug, projectId, res.id, res);
-              fetchIssue(workspaceSlug, projectId, res.id);
-              setToastAlert({
-                title: "Cycle added to issue successfully",
-                type: "success",
-                message: "Issue added to issue successfully",
-              });
-            })
-            .catch(() => {
-              setToastAlert({
-                type: "error",
-                title: "Error!",
-                message: "Selected issues could not be added to the cycle. Please try again.",
-              });
-            });
+          const response = await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          setToastAlert({
+            title: "Cycle added to issue successfully",
+            type: "success",
+            message: "Issue added to issue successfully",
+          });
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
         } catch (error) {
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: cycleId,
+            },
+            path: router.asPath,
+          });
           setToastAlert({
             title: "Cycle add to issue failed",
             type: "error",
@@ -140,11 +188,20 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          const response = await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setToastAlert({
             title: "Cycle removed from issue successfully",
             type: "success",
             message: "Cycle removed from issue successfully",
+          });
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: "",
+            },
+            path: router.asPath,
           });
         } catch (error) {
           setToastAlert({
@@ -152,28 +209,44 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             type: "error",
             message: "Cycle remove from issue failed",
           });
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "cycle_id",
+              change_details: "",
+            },
+            path: router.asPath,
+          });
         }
       },
-      addIssueToModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
+      addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
         try {
-          await addIssueToModule(workspaceSlug, projectId, moduleId, issueIds)
-            .then((res) => {
-              updateIssue(workspaceSlug, projectId, res.id, res);
-              fetchIssue(workspaceSlug, projectId, res.id);
-              setToastAlert({
-                title: "Module added to issue successfully",
-                type: "success",
-                message: "Module added to issue successfully",
-              });
-            })
-            .catch(() =>
-              setToastAlert({
-                type: "error",
-                title: "Error!",
-                message: "Selected issues could not be added to the module. Please try again.",
-              })
-            );
+          const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
+          setToastAlert({
+            title: "Module added to issue successfully",
+            type: "success",
+            message: "Module added to issue successfully",
+          });
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: moduleIds,
+            },
+            path: router.asPath,
+          });
         } catch (error) {
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: moduleIds,
+            },
+            path: router.asPath,
+          });
           setToastAlert({
             title: "Module add to issue failed",
             type: "error",
@@ -184,6 +257,45 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
           await removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+          setToastAlert({
+            title: "Module removed from issue successfully",
+            type: "success",
+            message: "Module removed from issue successfully",
+          });
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: "",
+            },
+            path: router.asPath,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: "Issue updated",
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            updates: {
+              changed_property: "module_id",
+              change_details: "",
+            },
+            path: router.asPath,
+          });
+          setToastAlert({
+            title: "Module remove from issue failed",
+            type: "error",
+            message: "Module remove from issue failed",
+          });
+        }
+      },
+      removeModulesFromIssue: async (
+        workspaceSlug: string,
+        projectId: string,
+        issueId: string,
+        moduleIds: string[]
+      ) => {
+        try {
+          await removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
           setToastAlert({
             title: "Module removed from issue successfully",
             type: "success",
@@ -206,8 +318,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeArchivedIssue,
       addIssueToCycle,
       removeIssueFromCycle,
-      addIssueToModule,
+      addModulesToIssue,
       removeIssueFromModule,
+      removeModulesFromIssue,
       setToastAlert,
       onIssueUpdate,
     ]

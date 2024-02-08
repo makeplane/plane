@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 // components
 import { Button } from "@plane/ui";
 // helpers
@@ -15,6 +15,7 @@ import { ROLE } from "constants/workspace";
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
+import {} from "hooks/store/use-event-tracker";
 
 type Props = {
   handleNextStep: () => void;
@@ -28,9 +29,7 @@ export const Invitations: React.FC<Props> = (props) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const { currentUser, updateCurrentUser } = useUser();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
@@ -63,7 +62,7 @@ export const Invitations: React.FC<Props> = (props) => {
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
-        postHogEventTracker("MEMBER_ACCEPTED", { ...res, state: "SUCCESS", accepted_from: "App" });
+        captureEvent("Member accepted", { ...res, state: "SUCCESS", accepted_from: "App" });
         await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
@@ -72,7 +71,7 @@ export const Invitations: React.FC<Props> = (props) => {
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker("MEMBER_ACCEPTED", { state: "FAILED", accepted_from: "App" });
+        captureEvent("Member accepted", { state: "FAILED", accepted_from: "App" });
       })
       .finally(() => setIsJoiningWorkspaces(false));
   };
@@ -99,7 +98,7 @@ export const Invitations: React.FC<Props> = (props) => {
                 >
                   <div className="flex-shrink-0">
                     <div className="grid h-9 w-9 place-items-center rounded">
-                      {invitedWorkspace.logo && invitedWorkspace.logo !== "" ? (
+                      {invitedWorkspace?.logo && invitedWorkspace.logo !== "" ? (
                         <img
                           src={invitedWorkspace.logo}
                           height="100%"
@@ -109,13 +108,13 @@ export const Invitations: React.FC<Props> = (props) => {
                         />
                       ) : (
                         <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
-                          {invitedWorkspace.name[0]}
+                          {invitedWorkspace?.name[0]}
                         </span>
                       )}
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{truncateText(invitedWorkspace.name, 30)}</div>
+                    <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
                     <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                   </div>
                   <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}>

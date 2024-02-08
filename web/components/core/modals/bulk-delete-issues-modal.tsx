@@ -17,9 +17,11 @@ import { IUser, TIssue } from "@plane/types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // store hooks
-import { useProject } from "hooks/store";
+import { useIssues, useProject } from "hooks/store";
 // components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -40,6 +42,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { getProjectById } = useProject();
+  const {
+    issues: { removeBulkIssues },
+  } = useIssues(EIssuesStoreType.PROJECT);
   // states
   const [query, setQuery] = useState("");
   // fetching project issues.
@@ -82,17 +87,13 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
 
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
-    await issueService
-      .bulkDeleteIssues(workspaceSlug as string, projectId as string, {
-        issue_ids: data.delete_issue_ids,
-      })
+    await removeBulkIssues(workspaceSlug as string, projectId as string, data.delete_issue_ids)
       .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Issues deleted successfully!",
         });
-
         handleClose();
       })
       .catch(() =>

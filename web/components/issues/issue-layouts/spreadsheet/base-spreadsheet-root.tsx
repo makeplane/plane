@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssues, useUser } from "hooks/store";
+import { useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
@@ -28,15 +28,23 @@ interface IBaseSpreadsheetRoot {
     [EIssueActions.REMOVE]?: (issue: TIssue) => void;
   };
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  isCompletedCycle?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions, canEditPropertiesBasedOnProject } = props;
+  const {
+    issueFiltersStore,
+    issueStore,
+    viewId,
+    QuickActions,
+    issueActions,
+    canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
+  } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
   // store hooks
-  const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -54,7 +62,6 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     },
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
-
 
   const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
 
@@ -97,8 +104,10 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
           issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
         }
         portalElement={portalElement}
+        readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [handleIssues]
   );
 
@@ -114,7 +123,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       quickAddCallback={issueStore.quickAddIssue}
       viewId={viewId}
       enableQuickCreateIssue={enableQuickAdd}
-      disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+      disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
     />
   );
 });

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
 import { WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
@@ -57,7 +57,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         <div className="mt-2">
           <AvatarGroup>
             {projectDetails.members?.map((member) => (
-              <Avatar src={member.member__avatar} name={member.member__display_name} />
+              <Avatar key={member.member_id} src={member.member__avatar} name={member.member__display_name} />
             ))}
           </AvatarGroup>
         </div>
@@ -72,13 +72,14 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const {
     commandPalette: { toggleCreateProjectModal },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
   const widgetStats = getWidgetStats<TRecentProjectsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const canCreateProject = currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   useEffect(() => {
     fetchWidgetStats(workspaceSlug, dashboardId, {
@@ -105,6 +106,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

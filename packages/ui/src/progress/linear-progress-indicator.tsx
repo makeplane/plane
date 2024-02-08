@@ -1,13 +1,20 @@
 import React from "react";
 import { Tooltip } from "../tooltip";
+import { cn } from "../../helpers";
 
 type Props = {
   data: any;
   noTooltip?: boolean;
   inPercentage?: boolean;
+  size?: "sm" | "md" | "lg";
 };
 
-export const LinearProgressIndicator: React.FC<Props> = ({ data, noTooltip = false, inPercentage = false }) => {
+export const LinearProgressIndicator: React.FC<Props> = ({
+  data,
+  noTooltip = false,
+  inPercentage = false,
+  size = "sm",
+}) => {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let progress = 0;
@@ -23,18 +30,24 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data, noTooltip = fal
     if (noTooltip) return <div style={style} />;
     else
       return (
-        <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}%`}>
-          <div style={style} className="first:rounded-l-full last:rounded-r-full" />
+        <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}${inPercentage ? "%" : ""}`}>
+          <div style={style} className="first:rounded-l-sm last:rounded-r-sm" />
         </Tooltip>
       );
   });
 
   return (
-    <div className="flex h-1 w-full items-center justify-between gap-1">
+    <div
+      className={cn("flex w-full items-center justify-between gap-[1px] rounded-sm", {
+        "h-2": size === "sm",
+        "h-3": size === "md",
+        "h-3.5": size === "lg",
+      })}
+    >
       {total === 0 ? (
-        <div className="flex h-full w-full gap-1 bg-neutral-500">{bars}</div>
+        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm">{bars}</div>
       ) : (
-        <div className="flex h-full w-full gap-1">{bars}</div>
+        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm">{bars}</div>
       )}
     </div>
   );

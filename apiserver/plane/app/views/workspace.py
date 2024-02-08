@@ -1346,9 +1346,8 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             )
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels")
+            .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()

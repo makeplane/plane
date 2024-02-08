@@ -29,7 +29,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
       [EIssueActions.UPDATE]: async (issue: TIssue) => {
         if (!workspaceSlug || !userId) return;
 
-        await issues.updateIssue(workspaceSlug, userId, issue.id, issue);
+        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue, userId);
       },
       [EIssueActions.DELETE]: async (issue: TIssue) => {
         if (!workspaceSlug || !userId) return;

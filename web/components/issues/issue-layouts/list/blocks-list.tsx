@@ -9,7 +9,7 @@ interface Props {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
 }
@@ -18,7 +18,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
   const { issueIds, issuesMap, handleIssues, quickActions, displayProperties, canEditProperties } = props;
 
   return (
-    <div className="relative h-full w-full divide-y-[0.5px] divide-custom-border-200">
+    <div className="relative h-full w-full">
       {issueIds && issueIds.length > 0 ? (
         issueIds.map((issueId: string) => {
           if (!issueId) return null;

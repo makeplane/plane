@@ -133,8 +133,8 @@ export class IssueDetail implements IIssueDetail {
   toggleRelationModal = (value: TIssueRelationTypes | null) => (this.isRelationModalOpen = value);
 
   // issue
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.issue.fetchIssue(workspaceSlug, projectId, issueId);
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, isArchived = false) =>
+    this.issue.fetchIssue(workspaceSlug, projectId, issueId, isArchived);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
@@ -143,8 +143,10 @@ export class IssueDetail implements IIssueDetail {
     this.issue.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
   removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) =>
     this.issue.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
-  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) =>
-    this.issue.addIssueToModule(workspaceSlug, projectId, moduleId, issueIds);
+  addModulesToIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) =>
+    this.issue.addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
+  removeModulesFromIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) =>
+    this.issue.removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) =>
     this.issue.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
 
