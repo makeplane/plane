@@ -954,13 +954,13 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .values("display_name", "assignee_id", "avatar")
             .annotate(
                 total_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(archived_at__isnull=True, is_draft=False),
                 ),
             )
             .annotate(
                 completed_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -970,7 +970,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
             .annotate(
                 pending_issues=Count(
-                    "assignee_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -993,13 +993,13 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .values("label_name", "color", "label_id")
             .annotate(
                 total_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(archived_at__isnull=True, is_draft=False),
                 )
             )
             .annotate(
                 completed_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -1009,7 +1009,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
             .annotate(
                 pending_issues=Count(
-                    "label_id",
+                    "id",
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -1023,6 +1023,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         assignee_distribution_data = [
             {
                 "display_name": item["display_name"],
+                "first_name": item["first_name"],
+                "last_name": item["last_name"],
                 "assignee_id": str(item["assignee_id"]),
                 "avatar": item["avatar"],
                 "total_issues": item["total_issues"],
