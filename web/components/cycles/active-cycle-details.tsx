@@ -150,7 +150,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     color: group.color,
   }));
 
-  const daysLeft = findHowManyDaysLeft(activeCycle.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(activeCycle.end_date) ?? 0;
 
   return (
     <div className="grid-row-2 grid divide-y rounded-[10px] border border-custom-border-200 bg-custom-background-100 shadow">

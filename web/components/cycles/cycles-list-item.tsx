@@ -140,7 +140,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
-  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
     <>

@@ -376,7 +376,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                 }}
               >
                 {currentCycle.value === "current"
-                  ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
+                  ? `${findHowManyDaysLeft(cycleDetails.end_date)} ${currentCycle.label}`
                   : `${currentCycle.label}`}
               </span>
             )}
