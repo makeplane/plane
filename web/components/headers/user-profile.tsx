@@ -41,13 +41,13 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink href="/profile" label="Activity Overview" />} />
         </Breadcrumbs>
-        <div className="flex gap-4">
+        <div className="flex gap-4 md:hidden">
           <CustomMenu
             maxHeight={"md"}
             className="flex flex-grow justify-center text-custom-text-200 text-sm"
             placement="bottom-start"
             customButton={
-              <div className="flex gap-2 items-center px-2 py-1.5 border rounded-md">
+              <div className="flex gap-2 items-center px-2 py-1.5 border border-custom-border-400 rounded-md">
                 <span className="flex flex-grow justify-center text-custom-text-200 text-sm">{type}</span>
                 <ChevronDown className="w-4 h-4 text-custom-text-400" />
               </div>

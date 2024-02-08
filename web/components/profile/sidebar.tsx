@@ -71,7 +71,7 @@ export const ProfileSidebar = observer(() => {
 
     window.addEventListener("resize", handleToggleProfileSidebar);
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  });
+  }, [themStore]);
 
   return (
     <div

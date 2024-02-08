@@ -32,7 +32,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
 
   return (
 
-    <section className="mx-auto mt-10  md:mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+    <section className="mx-auto mt-5  md:mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
       <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
         <SidebarHamburgerToggle />
         <h3 className="text-xl font-medium">Activity</h3>

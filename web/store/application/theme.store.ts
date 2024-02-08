@@ -18,7 +18,7 @@ export class ThemeStore implements IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined = undefined;
   theme: string | null = null;
-  profileSidebarCollapsed: boolean | undefined = undefined;
+  profileSidebarCollapsed: boolean | undefined = true;
   // root store
   rootStore;
 
@@ -51,6 +51,10 @@ export class ThemeStore implements IThemeStore {
     localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
   };
 
+  /**
+   * Toggle the profile sidebar collapsed state
+   * @param collapsed
+   */
   toggleProfileSidebar = (collapsed?: boolean) => {
     if (collapsed === undefined) {
       this.profileSidebarCollapsed = !this.profileSidebarCollapsed;

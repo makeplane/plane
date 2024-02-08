@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mutate } from "swr";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -63,6 +63,25 @@ export const ProfileLayoutSidebar = observer(() => {
     }
   });
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        toggleSidebar(true);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [toggleSidebar]);
+
+  const handleItemClick = () => {
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
+
   const handleSignOut = async () => {
     setIsSigningOut(true);
 
@@ -114,7 +133,7 @@ export const ProfileLayoutSidebar = observer(() => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
               return (
-                <Link key={link.key} href={link.href} className="block w-full">
+                <Link key={link.key} href={link.href} className="block w-full" onClick={handleItemClick}>
                   <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${link.highlight(router.pathname)
@@ -143,6 +162,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   href={`/${workspace.slug}`}
                   className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${sidebarCollapsed ? "justify-center" : `justify-between`
                     }`}
+                  onClick={handleItemClick}
                 >
                   <span
                     className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-custom-sidebar-background-80 ${sidebarCollapsed ? "justify-center" : ""
@@ -172,7 +192,7 @@ export const ProfileLayoutSidebar = observer(() => {
           )}
           <div className="mt-1.5">
             {WORKSPACE_ACTION_LINKS.map((link) => (
-              <Link className="block w-full" key={link.key} href={link.href}>
+              <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
                 <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${sidebarCollapsed ? "justify-center" : ""
