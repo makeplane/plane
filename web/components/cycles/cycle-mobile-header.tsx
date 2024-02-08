@@ -89,7 +89,7 @@ export const CycleMobileHeader = () => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-custom-border-200">
+      <div className="flex justify-evenly py-2 border-b border-neutral-border-medium">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"
@@ -110,7 +110,7 @@ export const CycleMobileHeader = () => {
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-l border-neutral-border-medium items-center text-custom-text-200 text-sm">
           <FiltersDropdown
             title="Filters"
             placement="bottom-end"
@@ -133,7 +133,7 @@ export const CycleMobileHeader = () => {
             />
           </FiltersDropdown>
         </div>
-        <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-l border-neutral-border-medium items-center text-custom-text-200 text-sm">
           <FiltersDropdown
             title="Display"
             placement="bottom-end"
@@ -158,7 +158,7 @@ export const CycleMobileHeader = () => {
 
         <span
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-custom-border-200"
+          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-neutral-border-medium"
         >
           Analytics
         </span>

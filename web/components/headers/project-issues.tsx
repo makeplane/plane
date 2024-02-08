@@ -116,7 +116,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         projectDetails={currentProjectDetails ?? undefined}
       />
       <div className="relative z-10 items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
+        <div className="flex items-center gap-2 p-4 border-b border-neutral-border-medium bg-custom-sidebar-background-100">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
             <SidebarHamburgerToggle />
             <div>
@@ -209,7 +209,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
                   {inboxDetails?.pending_issue_count > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
+                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-sidebar-neutral-border-medium bg-custom-sidebar-background-80 text-custom-text-100">
                       {inboxDetails?.pending_issue_count}
                     </span>
                   )}

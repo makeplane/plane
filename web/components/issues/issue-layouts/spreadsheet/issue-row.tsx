@@ -106,7 +106,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         {/* first column/ issue name and key column */}
         <td
           className={cn(
-            "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200 focus:border-custom-primary-70",
+            "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-neutral-border-medium focus:border-custom-primary-70",
             {
               "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
             }

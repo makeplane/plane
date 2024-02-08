@@ -45,7 +45,7 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
           className="flex-shrink-0 block sm:block md:hidden lg:hidden"
           maxHeight="lg"
           customButton={
-            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">
+            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-neutral-border-medium">
               {title}
             </span>
           }

@@ -531,7 +531,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
+          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-neutral-border-medium px-1.5 py-5">
             <Disclosure defaultOpen>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
@@ -597,7 +597,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ""
                         )}
                         {cycleDetails.total_issues > 0 && cycleDetails.distribution && (
-                          <div className="h-full w-full border-t border-custom-border-200 pt-5">
+                          <div className="h-full w-full border-t border-neutral-border-medium pt-5">
                             <SidebarProgressStats
                               distribution={cycleDetails.distribution}
                               groupedIssues={{

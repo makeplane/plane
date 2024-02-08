@@ -22,7 +22,7 @@ export const ProjectsHeader = observer(() => {
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-neutral-border-medium bg-custom-sidebar-background-100 p-4">
       <div className="flex flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <SidebarHamburgerToggle />
         <div>
@@ -36,7 +36,7 @@ export const ProjectsHeader = observer(() => {
       </div>
       <div className="flex w-full justify-end items-center gap-3">
         {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
-          <div className=" flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
+          <div className=" flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
             <Search className="h-3.5" />
             <input
               className="border-none w-full bg-transparent text-sm focus:outline-none"

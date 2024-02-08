@@ -291,7 +291,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
           >
             <Menu.Items
               className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
-          divide-custom-sidebar-border-200 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+          divide-custom-sidebar-border-200 rounded-md border border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}

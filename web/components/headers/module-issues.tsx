@@ -153,7 +153,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         moduleDetails={moduleDetails ?? undefined}
       />
       <div className="relative z-10 items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between border-b border-neutral-border-medium bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
             <SidebarHamburgerToggle />
             <Breadcrumbs>

@@ -21,7 +21,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
   return (
     <Tab.List
       as="div"
-      className="relative border-[0.5px] border-custom-border-200 rounded bg-custom-background-80 grid"
+      className="relative border-[0.5px] border-neutral-border-medium rounded bg-custom-background-80 grid"
       style={{
         gridTemplateColumns: `repeat(${tabsList.length}, 1fr)`,
       }}

@@ -76,7 +76,7 @@ export const ChartAddBlock: React.FC<Props> = (props) => {
         <Tooltip tooltipContent={buttonStartDate && renderFormattedDate(buttonStartDate)}>
           <button
             type="button"
-            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 bg-custom-background-80 p-1.5 rounded border border-custom-border-300 grid place-items-center text-custom-text-200 hover:text-custom-text-100"
+            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 bg-custom-background-80 p-1.5 rounded border border-neutral-border-medium grid place-items-center text-custom-text-200 hover:text-custom-text-100"
             style={{
               marginLeft: `${buttonXPosition}px`,
             }}

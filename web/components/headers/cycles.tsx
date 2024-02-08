@@ -46,7 +46,7 @@ export const CyclesHeader: FC = observer(() => {
 
   return (
     <div className="relative z-10 items-center justify-between gap-x-2 gap-y-4">
-      <div className="flex border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="flex border-b border-neutral-border-medium bg-custom-sidebar-background-100 p-4">
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
           <div>
@@ -99,7 +99,7 @@ export const CyclesHeader: FC = observer(() => {
       <div className="flex justify-center sm:hidden">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm py-2 border-b border-custom-border-200 bg-custom-sidebar-background-100"
+          className="flex flex-grow justify-center text-custom-text-200 text-sm py-2 border-b border-neutral-border-medium bg-custom-sidebar-background-100"
           // placement="bottom-start"
           customButton={
             <span className="flex items-center gap-2">
