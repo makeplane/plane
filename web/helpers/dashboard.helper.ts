@@ -44,3 +44,15 @@ export const getRedirectionFilters = (type: TIssuesListTypes): string => {
 
   return filterParams;
 };
+
+export const getTabKey = (duration: TDurationFilterOptions, tab: TIssuesListTypes | undefined): TIssuesListTypes => {
+  if (!tab) return "completed";
+
+  if (tab === "completed") return tab;
+
+  if (duration === "none") return "pending";
+  else {
+    if (["upcoming", "overdue"].includes(tab)) return tab;
+    else return "upcoming";
+  }
+};
