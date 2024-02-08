@@ -3,7 +3,7 @@ import { Menu } from "lucide-react";
 import { useApplication } from "hooks/store";
 import { observer } from "mobx-react";
 
-export const SidebarHamburgerToggle: FC = observer (() => {
+export const SidebarHamburgerToggle: FC = observer(() => {
   const { theme: themStore } = useApplication();
   return (
     <div

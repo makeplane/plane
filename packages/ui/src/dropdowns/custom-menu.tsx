@@ -48,7 +48,13 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsOpen(false);
+
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+
+  const handleOnClick = () => {
+    if (closeOnSelect) closeDropdown();
+  };
+
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   let menuItems = (
@@ -90,6 +96,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
       onKeyDown={handleKeyDown}
+      onClick={handleOnClick}
     >
       {({ open }) => (
         <>
@@ -98,7 +105,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               <button
                 ref={setReferenceElement}
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   openDropdown();
                   if (menuButtonOnClick) menuButtonOnClick();
                 }}
@@ -114,7 +122,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
@@ -138,7 +147,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         ? "cursor-not-allowed text-custom-text-200"
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}

@@ -21,6 +21,7 @@ import { USER_ACTIVITY } from "constants/fetch-keys";
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // type
 import { NextPageWithLayout } from "lib/types";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 const userService = new UserService();
 
@@ -30,8 +31,10 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const { currentUser } = useUser();
 
   return (
-    <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-      <div className="flex items-center border-b border-custom-border-100 pb-3.5">
+
+    <section className="mx-auto mt-5  md:mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+      <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
+        <SidebarHamburgerToggle />
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
       {userActivity ? (
@@ -94,12 +97,12 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
 
               const message =
                 activityItem.verb === "created" &&
-                activityItem.field !== "cycles" &&
-                activityItem.field !== "modules" &&
-                activityItem.field !== "attachment" &&
-                activityItem.field !== "link" &&
-                activityItem.field !== "estimate" &&
-                !activityItem.field ? (
+                  activityItem.field !== "cycles" &&
+                  activityItem.field !== "modules" &&
+                  activityItem.field !== "attachment" &&
+                  activityItem.field !== "link" &&
+                  activityItem.field !== "estimate" &&
+                  !activityItem.field ? (
                   <span>
                     created <IssueLink activity={activityItem} />
                   </span>
@@ -187,6 +190,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
         </Loader>
       )}
     </section>
+
   );
 });
 
