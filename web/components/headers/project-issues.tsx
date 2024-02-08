@@ -200,8 +200,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
               />
             </FiltersDropdown>
-
-            {currentProjectDetails?.inbox_view && inboxDetails && (
+          </div>
+          {currentProjectDetails?.inbox_view && inboxDetails && (
               <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
                 <span>
                   <Button variant="neutral-primary" size="sm" className="relative">
@@ -214,9 +214,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                   </Button>
                 </span>
               </Link>
-            )}
-
-          </div>
+          )}
           {canUserCreateIssue && (
             <>
               <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">

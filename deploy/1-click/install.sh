@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Check if the user has sudo access
 if command -v curl &> /dev/null; then
     sudo curl -sSL \
         -o /usr/local/bin/plane-app \
@@ -11,6 +12,6 @@ else
 fi
 
 sudo chmod +x /usr/local/bin/plane-app
-sudo sed -i 's/export BRANCH=${BRANCH:-master}/export BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
+sudo sed -i 's/export DEPLOY_BRANCH=${BRANCH:-master}/export DEPLOY_BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
 
-sudo  plane-app --help
+plane-app --help

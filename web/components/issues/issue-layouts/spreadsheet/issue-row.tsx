@@ -4,15 +4,16 @@ import { observer } from "mobx-react-lite";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 // constants
-import { SPREADSHEET_PROPERTY_DETAILS, SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
+import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import RenderIfVisible from "components/core/render-if-visible-HOC";
+import { IssueColumn } from "./issue-column";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
+import { useIssueDetail, useProject } from "hooks/store";
 // helper
 import { cn } from "helpers/common.helper";
 // types
@@ -139,7 +140,6 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   //hooks
   const { getProjectById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
-  const { captureIssueEvent } = useEventTracker();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const menuActionRef = useRef<HTMLDivElement | null>(null);
@@ -195,6 +195,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
             "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
           }
         )}
+        tabIndex={0}
       >
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
           <div
@@ -233,11 +234,11 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
-          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
         >
           <div className="w-full overflow-hidden">
             <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
-              <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100">
+              <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100" tabIndex={-1}>
                 {issueDetail.name}
               </div>
             </Tooltip>
@@ -245,40 +246,16 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         </ControlLink>
       </td>
       {/* Rest of the columns */}
-      {SPREADSHEET_PROPERTY_LIST.map((property) => {
-        const { Column } = SPREADSHEET_PROPERTY_DETAILS[property];
-
-        const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
-
-        return (
-          <WithDisplayPropertiesHOC
+      {SPREADSHEET_PROPERTY_LIST.map((property) => (
+          <IssueColumn
             displayProperties={displayProperties}
-            displayPropertyKey={property}
-            shouldRenderProperty={shouldRenderProperty}
-          >
-            <td className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100">
-              <Column
-                issue={issueDetail}
-                onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
-                  handleIssues({ ...issue, ...data }, EIssueActions.UPDATE).then(() => {
-                    captureIssueEvent({
-                      eventName: "Issue updated",
-                      payload: {
-                        ...issue,
-                        ...data,
-                        element: "Spreadsheet layout",
-                      },
-                      updates: updates,
-                      path: router.asPath,
-                    });
-                  })
-                }
-                disabled={disableUserActions}
-              />
-            </td>
-          </WithDisplayPropertiesHOC>
-        );
-      })}
+            issueDetail={issueDetail}
+            disableUserActions={disableUserActions}
+            property={property}
+            handleIssues={handleIssues}
+            isEstimateEnabled={isEstimateEnabled}
+          />
+        ))}
     </>
   );
 });
