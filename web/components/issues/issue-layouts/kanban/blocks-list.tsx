@@ -62,6 +62,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
                 isDragStarted={isDragStarted}
+                issueIds={issueIds} //passing to force render for virtualization whenever parent rerenders
               />
             );
           })}

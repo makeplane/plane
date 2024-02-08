@@ -35,6 +35,7 @@ interface Props {
   issueId: string;
   isScrolled: MutableRefObject<boolean>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
+  issueIds: string[];
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -49,6 +50,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     canEditProperties,
     isScrolled,
     containerRef,
+    issueIds,
   } = props;
 
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -64,6 +66,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
         placeholderChildren={<td colSpan={100} className="border-b-[0.5px]" />}
+        changingReference={issueIds}
       >
         <IssueRowDetails
           issueId={issueId}
@@ -96,6 +99,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             portalElement={portalElement}
             isScrolled={isScrolled}
             containerRef={containerRef}
+            issueIds={issueIds}
           />
         ))}
     </>

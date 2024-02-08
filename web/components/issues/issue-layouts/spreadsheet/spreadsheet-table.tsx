@@ -99,6 +99,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             portalElement={portalElement}
             containerRef={containerRef}
             isScrolled={isScrolled}
+            issueIds={issueIds}
           />
         ))}
       </tbody>

@@ -30,6 +30,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
               defaultHeight="3rem"
               root={containerRef}
               classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
+              changingReference={issueIds}
             >
               <IssueBlock
                 issueId={issueId}

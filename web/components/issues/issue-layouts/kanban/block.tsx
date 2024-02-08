@@ -28,6 +28,7 @@ interface IssueBlockProps {
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   isDragStarted?: boolean;
+  issueIds: string[]; //DO NOT REMOVE< needed to force render for virtualization
 }
 
 interface IssueDetailsBlockProps {
@@ -112,6 +113,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     canEditProperties,
     scrollableContainerRef,
     isDragStarted,
+    issueIds,
   } = props;
 
   const issue = issuesMap[issueId];
@@ -149,6 +151,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               horizonatlOffset={50}
               alwaysRender={snapshot.isDragging}
               pauseHeightUpdateWhileRendering={isDragStarted}
+              changingReference={issueIds}
             >
               <KanbanIssueDetailsBlock
                 issue={issue}

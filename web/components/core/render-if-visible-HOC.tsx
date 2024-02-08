@@ -12,6 +12,7 @@ type Props = {
   alwaysRender?: boolean;
   placeholderChildren?: ReactNode;
   pauseHeightUpdateWhileRendering?: boolean;
+  changingReference?: any;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {
@@ -26,6 +27,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     alwaysRender = false,
     placeholderChildren = null,
     pauseHeightUpdateWhileRendering = false,
+    changingReference,
   } = props;
   const [shouldVisible, setShouldVisible] = useState<boolean>(alwaysRender);
   const placeholderHeight = useRef<string>(defaultHeight);
@@ -51,6 +53,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
           rootMargin: `${verticalOffset}% ${horizonatlOffset}% ${verticalOffset}% ${horizonatlOffset}%`,
         }
       );
+      observer.unobserve(intersectionRef.current);
       observer.observe(intersectionRef.current);
       return () => {
         if (intersectionRef.current) {
@@ -58,7 +61,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
         }
       };
     }
-  }, [root?.current, intersectionRef, children]);
+  }, [root?.current, intersectionRef, children, changingReference]);
 
   //Set height after render
   useEffect(() => {
