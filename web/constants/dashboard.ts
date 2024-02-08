@@ -270,7 +270,7 @@ export const SIDEBAR_MENU_ITEMS: {
   {
     key: "all-issues",
     label: "All Issues",
-    href: `/workspace-views/all-issues`,
+    href: `/views/public/all-issues`,
     access: EUserWorkspaceRoles.GUEST,
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views`),
     Icon: CheckCircle,

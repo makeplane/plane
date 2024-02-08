@@ -14,12 +14,13 @@ type TViewDropdownItem = {
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  currentViewId: string | undefined;
+  currentViewId: string;
   searchQuery: string;
+  baseRoute: string;
 };
 
 export const ViewDropdownItem: FC<TViewDropdownItem> = (props) => {
-  const { workspaceSlug, projectId, viewId, viewType, currentViewId, searchQuery } = props;
+  const { workspaceSlug, projectId, viewId, viewType, currentViewId, searchQuery, baseRoute } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
@@ -43,7 +44,7 @@ export const ViewDropdownItem: FC<TViewDropdownItem> = (props) => {
               </div>
             )}
             <Link
-              href={`/${workspaceSlug}/workspace-views/${viewDetailStore?.id}`}
+              href={`${baseRoute}/${viewDetailStore?.id}`}
               className={`w-full h-full overflow-hidden relative flex items-center gap-1
                 ${
                   currentViewId === viewDetailStore?.id

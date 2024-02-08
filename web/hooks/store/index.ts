@@ -1,5 +1,5 @@
 export * from "./use-application";
-export * from "./use-event-tracker"
+export * from "./use-event-tracker";
 export * from "./use-calendar-view";
 export * from "./use-cycle";
 export * from "./use-dashboard";
@@ -24,5 +24,6 @@ export * from "./use-inbox";
 export * from "./use-inbox-issues";
 
 // new store
-export * from "./use-view";
-export * from "./use-view-detail";
+export * from "./views/use-view";
+export * from "./views/use-view-detail";
+export * from "./views/use-view-filters";

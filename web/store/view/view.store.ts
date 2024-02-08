@@ -3,7 +3,7 @@ import set from "lodash/set";
 // store
 import { RootStore } from "store/root.store";
 // types
-import { TViewService } from "services/view/types";
+import { TUserViewService, TViewService } from "services/view/types";
 import {
   TView,
   TViewFilters,
@@ -72,7 +72,12 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     display_properties: undefined,
   };
 
-  constructor(private store: RootStore, _view: TView, private service: TViewService) {
+  constructor(
+    private store: RootStore,
+    _view: TView,
+    private service: TViewService,
+    private userService: TUserViewService
+  ) {
     super();
     this.id = _view.id;
     this.workspace = _view.workspace;

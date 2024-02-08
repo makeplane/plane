@@ -5,14 +5,14 @@ import { TViewService } from "./types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ProjectViewMeService extends APIService implements TViewService {
+export class ProjectPublicViewService extends APIService implements TViewService {
   constructor() {
     super(API_BASE_URL);
   }
 
   async fetch(workspaceSlug: string, projectId: string | undefined = undefined): Promise<TView[] | undefined> {
     if (!projectId) return undefined;
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -25,7 +25,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -38,7 +38,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -52,7 +52,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.patch(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -65,7 +65,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<void | undefined> {
     if (!projectId) return undefined;
-    return this.delete(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -78,7 +78,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -91,7 +91,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.delete(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/lock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -104,7 +104,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/duplicate/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/duplicate/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -117,7 +117,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/favorite/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/favorite/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -130,7 +130,7 @@ export class ProjectViewMeService extends APIService implements TViewService {
     projectId: string | undefined = undefined
   ): Promise<TView | undefined> {
     if (!projectId) return undefined;
-    return this.delete(`/api/users/me/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/favorite/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/favorite/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

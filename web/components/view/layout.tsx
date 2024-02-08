@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { LucideIcon, List, Kanban, Calendar, Sheet, GanttChartSquare } from "lucide-react";
 // hooks
@@ -31,23 +31,24 @@ export const ViewLayoutRoot: FC<TViewLayoutRoot> = observer((props) => {
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
   return (
-    <div className="relative flex gap-0.5 items-center bg-custom-background-80 rounded-md p-1">
+    <div className="relative flex gap-0.5 items-center bg-custom-background-80 rounded p-1 h-8 shadow-custom-shadow-2xs">
       {LAYOUTS_DATA.map((layout) => (
-        <Tooltip tooltipContent={layout.title} position="bottom">
-          <div
-            key={layout.key}
-            className={`relative h-[24px] w-7 flex justify-center items-center overflow-hidden rounded transition-all cursor-pointer
+        <Fragment key={layout.key}>
+          <Tooltip tooltipContent={layout.title} position="bottom">
+            <div
+              className={`relative h-[24px] w-7 flex justify-center items-center overflow-hidden rounded transition-all cursor-pointer
             ${
               viewDetailStore?.filtersToUpdate?.display_filters?.layout === layout.key
                 ? `bg-custom-background-100 shadow-custom-shadow-2xs`
                 : `hover:bg-custom-background-100`
             }
           `}
-            onClick={() => viewOperations.setDisplayFilters({ layout: layout.key })}
-          >
-            <layout.icon size={12} />
-          </div>
-        </Tooltip>
+              onClick={() => viewOperations.setDisplayFilters({ layout: layout.key })}
+            >
+              <layout.icon size={12} />
+            </div>
+          </Tooltip>
+        </Fragment>
       ))}
     </div>
   );

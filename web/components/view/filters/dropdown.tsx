@@ -1,31 +1,39 @@
 import { FC, Fragment, ReactNode, useRef, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { Plus, Search } from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useView } from "hooks/store";
 // components
-import { ViewDropdownItem } from "../../";
+import { ViewFiltersRoot } from "../";
 // types
+import { TViewOperations } from "../types";
 import { TViewTypes } from "@plane/types";
-import { TViewOperations } from "../../types";
 
-type TViewDropdown = {
+type TViewFiltersDropdown = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
-  children?: ReactNode;
   baseRoute: string;
+  children?: ReactNode;
+  displayDropdownText?: boolean;
 };
 
-export const ViewDropdown: FC<TViewDropdown> = (props) => {
-  const { workspaceSlug, projectId, viewId: currentViewId, viewType, viewOperations, children, baseRoute } = props;
-  // hooks
-  const viewStore = useView(workspaceSlug, projectId, viewType);
-  // states
+export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) => {
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    viewOperations,
+    baseRoute,
+    children,
+    displayDropdownText = true,
+  } = props;
+  // state
   const [dropdownToggle, setDropdownToggle] = useState(false);
   const [query, setQuery] = useState("");
   // refs
@@ -69,7 +77,20 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
           {children ? (
             <span className="relative inline-block">{children}</span>
           ) : (
-            <span className="whitespace-nowrap">More...</span>
+            <div
+              className={`relative flex items-center gap-1 h-8 rounded px-2 transition-all
+                ${
+                  displayDropdownText
+                    ? `border border-custom-border-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80`
+                    : `hover:bg-custom-background-80`
+                }
+              `}
+            >
+              <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
+                <ListFilter size={14} />
+              </div>
+              {displayDropdownText && <div className="text-sm whitespace-nowrap">Filters</div>}
+            </div>
           )}
         </button>
       </Combobox.Button>
@@ -80,7 +101,7 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="my-1 w-64 p-2 space-y-2 rounded bg-custom-background-100 border-[0.5px] border-custom-border-300 shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-72 p-2 space-y-2 rounded bg-custom-background-100 border-[0.5px] border-custom-border-300 shadow-custom-shadow-rg focus:outline-none"
           >
             <div className="relative p-0.5 px-2 text-sm flex items-center gap-2 rounded border border-custom-border-100 bg-custom-background-90">
               <Search className="h-3 w-3 text-custom-text-300" strokeWidth={1.5} />
@@ -94,34 +115,19 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
               />
             </div>
 
-            <div className="max-h-60 space-y-0.5 overflow-y-scroll">
-              {viewStore?.viewIds &&
-                viewStore?.viewIds.length > 0 &&
-                viewStore?.viewIds.map((viewId) => (
-                  <Fragment key={viewId}>
-                    <ViewDropdownItem
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      viewId={viewId}
-                      viewType={viewType}
-                      currentViewId={currentViewId}
-                      searchQuery={query}
-                      baseRoute={baseRoute}
-                    />
-                  </Fragment>
-                ))}
-            </div>
-
-            <div
-              className="relative flex justify-center items-center gap-1 rounded p-1 py-1.5 transition-all border border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 cursor-pointer"
-              onClick={() => viewOperations?.localViewCreateEdit(undefined)}
-            >
-              <Plus className="w-3 h-3" />
-              <div className="text-sm">New view</div>
+            <div className="max-h-[460px] space-y-0.5 overflow-y-scroll mb-2">
+              <ViewFiltersRoot
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                viewType={viewType}
+                viewOperations={viewOperations}
+                baseRoute={baseRoute}
+              />
             </div>
           </div>
         </Combobox.Options>
       )}
     </Combobox>
   );
-};
+});

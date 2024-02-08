@@ -1,8 +1,65 @@
 // types
-import { TViewFilters, TViewDisplayFilters, TViewLayouts } from "@plane/types";
+import { TStateGroups, TIssuePriorities, TViewFilters, TViewDisplayFilters, TViewLayouts } from "@plane/types";
 
+// filters constants
+export const STATE_GROUP_PROPERTY: {
+  [key in TStateGroups]: {
+    label: string;
+    color: string;
+  };
+} = {
+  backlog: {
+    label: "Backlog",
+    color: "#d9d9d9",
+  },
+  unstarted: {
+    label: "Unstarted",
+    color: "#3f76ff",
+  },
+  started: {
+    label: "Started",
+    color: "#f59e0b",
+  },
+  completed: {
+    label: "Completed",
+    color: "#16a34a",
+  },
+  cancelled: {
+    label: "Canceled",
+    color: "#dc2626",
+  },
+};
+
+export const PRIORITIES_PROPERTY: {
+  [key in TIssuePriorities]: {
+    label: string;
+  };
+} = {
+  urgent: { label: "Urgent" },
+  high: { label: "High" },
+  medium: { label: "Medium" },
+  low: { label: "Low" },
+  none: { label: "None" },
+};
+
+export const DATE_PROPERTY: {
+  [key in string]: {
+    label: string;
+  };
+} = {
+  last_week: { label: "Last Week" },
+  "2_weeks_from_now": { label: "2 weeks from now" },
+  "1_month_from_now": { label: "1 month from now" },
+  "2_months_from_now": { label: "2 months from now" },
+  custom: { label: "Custom" },
+};
+
+// display filter constants
+
+// layout, filter, display filter and display properties permissions for views
 type TViewLayoutFilterProperties = {
   filters: Partial<keyof TViewFilters>[];
+  readonlyFilters?: Partial<keyof TViewFilters>[];
   display_filters: Partial<keyof TViewDisplayFilters>[];
   extra_options: ("sub_issue" | "show_empty_groups")[];
   display_properties: boolean;
@@ -34,17 +91,32 @@ type TFilterPermissions = {
   };
 };
 
-export const ALL_FILTER_PERMISSIONS: TFilterPermissions["all"] = {
+const ALL_FILTER_PERMISSIONS: TFilterPermissions["all"] = {
   layouts: ["spreadsheet"],
   spreadsheet: {
-    filters: ["project", "priority", "state_group", "assignees", "created_by", "labels", "start_date", "target_date"],
+    // filters: ["project", "priority", "state_group", "assignees", "created_by", "labels", "start_date", "target_date"],
+    filters: [
+      "project",
+      "module",
+      "cycle",
+      "priority",
+      "state",
+      "state_group",
+      "assignees",
+      "mentions",
+      "subscriber",
+      "created_by",
+      "labels",
+      "start_date",
+      "target_date",
+    ],
     display_filters: ["type"],
     extra_options: [],
     display_properties: true,
   },
 };
 
-export const PROFILE_FILTER_PERMISSIONS: TFilterPermissions["profile"] = {
+const PROFILE_FILTER_PERMISSIONS: TFilterPermissions["profile"] = {
   layouts: ["list", "kanban"],
   list: {
     filters: ["priority", "state_group", "labels", "start_date", "target_date"],
@@ -60,7 +132,7 @@ export const PROFILE_FILTER_PERMISSIONS: TFilterPermissions["profile"] = {
   },
 };
 
-export const PROJECT_FILTER_PERMISSIONS: TFilterPermissions["project"] = {
+const PROJECT_FILTER_PERMISSIONS: TFilterPermissions["project"] = {
   layouts: ["list", "kanban", "spreadsheet", "calendar", "gantt"],
   list: {
     filters: [
@@ -150,7 +222,7 @@ export const PROJECT_FILTER_PERMISSIONS: TFilterPermissions["project"] = {
   },
 };
 
-export const ARCHIVED_FILTER_PERMISSIONS: TFilterPermissions["archived"] = {
+const ARCHIVED_FILTER_PERMISSIONS: TFilterPermissions["archived"] = {
   layouts: ["list"],
   list: {
     filters: [
@@ -171,7 +243,7 @@ export const ARCHIVED_FILTER_PERMISSIONS: TFilterPermissions["archived"] = {
   },
 };
 
-export const DRAFT_FILTER_PERMISSIONS: TFilterPermissions["draft"] = {
+const DRAFT_FILTER_PERMISSIONS: TFilterPermissions["draft"] = {
   layouts: ["list", "kanban"],
   list: {
     filters: [

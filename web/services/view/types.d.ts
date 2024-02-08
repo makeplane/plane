@@ -21,10 +21,10 @@ export type TViewService = {
     data: Partial<TView>,
     projectId?: string
   ) => Promise<TView | undefined>;
-  remove?: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<void> | undefined;
-  lock?: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
-  unlock?: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
-  duplicate?: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
-  makeFavorite?: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
-  removeFavorite?: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
+  remove: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<void> | undefined;
+  lock: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
+  unlock: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
+  duplicate: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
+  makeFavorite: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
+  removeFavorite: (workspaceSlug: string, viewId: string, projectId?: string) => Promise<TView | undefined>;
 };

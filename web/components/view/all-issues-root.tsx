@@ -1,46 +1,73 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, Fragment, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Pencil } from "lucide-react";
 // hooks
 import { useView, useViewDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { ViewRoot, ViewCreateEditForm, ViewAppliedFiltersRoot, ViewLayoutRoot } from ".";
+import {
+  ViewRoot,
+  ViewCreateEditForm,
+  ViewLayoutRoot,
+  ViewFiltersRoot,
+  ViewFiltersDropdown,
+  ViewDisplayFiltersDropdown,
+  ViewDisplayPropertiesRoot,
+  ViewAppliedFiltersRoot,
+  ViewDuplicateConfirmationModal,
+  ViewDeleteConfirmationModal,
+} from ".";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
 import { VIEW_TYPES, viewLocalPayload } from "constants/view";
 // types
 import { TViewOperations } from "./types";
-import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties } from "@plane/types";
+import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties, TViewTypes } from "@plane/types";
 
 type TAllIssuesViewRoot = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
+  viewType: TViewTypes;
+  baseRoute: string;
+};
+
+type TViewOperationsToggle = {
+  type: "CREATE" | "EDIT" | "DUPLICATE" | "DELETE" | undefined;
+  viewId: string | undefined;
 };
 
 export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId } = props;
-  // states
-  const [currentCreateEditViewId, setCurrentCreateEditViewId] = useState<string | undefined>(undefined);
-  const [viewType, setViewType] = useState(VIEW_TYPES.WORKSPACE_VIEWS);
-  const workspaceViewTabOptions = [
-    {
-      key: VIEW_TYPES.WORKSPACE_YOUR_VIEWS,
-      title: "Your views",
-      onClick: () => VIEW_TYPES.WORKSPACE_YOUR_VIEWS != viewType && setViewType(VIEW_TYPES.WORKSPACE_YOUR_VIEWS),
-    },
-    {
-      key: VIEW_TYPES.WORKSPACE_VIEWS,
-      title: "Workspace Views",
-      onClick: () => VIEW_TYPES.WORKSPACE_VIEWS != viewType && setViewType(VIEW_TYPES.WORKSPACE_VIEWS),
-    },
-  ];
+  const { workspaceSlug, projectId, viewId, viewType, baseRoute } = props;
   // hooks
   const viewStore = useView(workspaceSlug, projectId, viewType);
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const { setToastAlert } = useToast();
+  // states
+  const [viewOperationsToggle, setViewOperationsToggle] = useState<TViewOperationsToggle>({
+    type: undefined,
+    viewId: undefined,
+  });
+  const handleViewOperationsToggle = (type: TViewOperationsToggle["type"], viewId: string | undefined) =>
+    setViewOperationsToggle({ type, viewId });
+
+  const workspaceViewTabOptions = useMemo(
+    () => [
+      {
+        key: VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS,
+        title: "Private",
+        href: `/${workspaceSlug}/views/private/assigned`,
+      },
+      {
+        key: VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS,
+        title: "Public",
+        href: `/${workspaceSlug}/views/public/all-issues`,
+      },
+    ],
+    [workspaceSlug]
+  );
 
   const viewOperations: TViewOperations = useMemo(
     () => ({
@@ -54,28 +81,19 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
       localViewCreateEdit: (viewId: string | undefined) => {
         if (viewId === undefined) {
           const viewPayload = viewLocalPayload;
-          setCurrentCreateEditViewId(viewPayload.id);
+          handleViewOperationsToggle("CREATE", viewPayload.id);
           viewStore?.localViewCreate(viewPayload as TView);
-        } else setCurrentCreateEditViewId(viewId);
+        } else handleViewOperationsToggle("EDIT", viewId);
       },
       localViewCreateEditClear: async (viewId: string | undefined) => {
-        console.log("viewId", viewId);
         if (viewId) viewStore?.remove(viewId);
-        setCurrentCreateEditViewId(undefined);
+        handleViewOperationsToggle(undefined, undefined);
       },
       fetch: async () => await viewStore?.fetch(),
       create: async (data: Partial<TView>) => {
         try {
           await viewStore?.create(data);
-          setCurrentCreateEditViewId(undefined);
-        } catch {
-          setToastAlert({ title: "Error", message: "Error creating view", type: "error" });
-        }
-      },
-      update: async () => {
-        try {
-          await viewDetailStore?.saveChanges();
-          setCurrentCreateEditViewId(undefined);
+          handleViewOperationsToggle(undefined, undefined);
         } catch {
           setToastAlert({ title: "Error", message: "Error creating view", type: "error" });
         }
@@ -83,8 +101,17 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
       remove: async (viewId: string) => {
         try {
           await viewStore?.remove(viewId);
+          handleViewOperationsToggle(undefined, undefined);
         } catch {
-          setToastAlert({ title: "Error", message: "Error creating view", type: "error" });
+          setToastAlert({ title: "Error", message: "Error removing view", type: "error" });
+        }
+      },
+      update: async () => {
+        try {
+          await viewDetailStore?.saveChanges();
+          handleViewOperationsToggle(undefined, undefined);
+        } catch {
+          setToastAlert({ title: "Error", message: "Error updating view", type: "error" });
         }
       },
     }),
@@ -92,8 +119,12 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
   );
 
   useEffect(() => {
-    if (workspaceSlug && viewId && viewType && viewStore)
-      viewStore?.fetch(viewStore?.viewIds.length > 0 ? "mutation-loader" : "init-loader");
+    const fetchViews = async () => {
+      await viewStore?.fetch(viewStore?.viewIds.length > 0 ? "mutation-loader" : "init-loader");
+      viewId && (await viewStore?.fetchById(viewId));
+    };
+
+    if (workspaceSlug && viewId && viewType && viewStore) fetchViews();
   }, [workspaceSlug, viewId, viewType, viewStore]);
 
   return (
@@ -107,18 +138,18 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
         </div>
         <div className="relative inline-flex items-center rounded border border-custom-border-200 bg-custom-background-80">
           {workspaceViewTabOptions.map((tab) => (
-            <div
+            <Link
               key={tab.key}
+              href={tab.href}
               className={`p-4 py-1.5 rounded text-sm transition-all cursor-pointer font-medium
                 ${
                   viewType === tab.key
                     ? "text-custom-text-100 bg-custom-background-100"
-                    : "text-custom-text-300 bg-custom-background-80 hover:text-custom-text-100"
+                    : "text-custom-text-200 bg-custom-background-80 hover:text-custom-text-100"
                 }`}
-              onClick={tab.onClick}
             >
               {tab.title}
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -136,8 +167,30 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
               viewId={viewId}
               viewType={viewType}
               viewOperations={viewOperations}
+              baseRoute={baseRoute}
             />
           </div>
+
+          <div className="p-5 border-b border-custom-border-300">
+            <ViewDisplayPropertiesRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              viewId={viewId}
+              viewType={viewType}
+              viewOperations={viewOperations}
+            />
+          </div>
+
+          {/* <div className="m-5 px-2 rounded border border-custom-border-300 w-[400px] max-h-[500px] overflow-hidden overflow-y-auto mx-auto bg-custom-background-100">
+            <ViewFiltersRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              viewId={viewId}
+              viewType={viewType}
+              viewOperations={viewOperations}
+              baseRoute={baseRoute}
+            />
+          </div> */}
 
           <div className="p-5 border-b border-custom-border-200 relative flex gap-2">
             {/* <div className="w-full">
@@ -150,7 +203,7 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
               />
             </div> */}
 
-            {/* <div className="flex-shrink-0 h-full">
+            <div className="flex-shrink-0 h-full">
               <ViewLayoutRoot
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
@@ -158,33 +211,62 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewType={viewType}
                 viewOperations={viewOperations}
               />
-            </div> */}
+            </div>
 
-            {/* <div className="flex-shrink-0 relative w-7 h-7 overflow-hidden border border-red-500 rounded flex justify-center items-center">
-              Filters
-            </div> */}
+            <div className="flex-shrink-0">
+              <ViewFiltersDropdown
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                viewType={viewType}
+                viewOperations={viewOperations}
+                baseRoute={baseRoute}
+                displayDropdownText={false}
+              />
+            </div>
 
-            {/* <div className="flex-shrink-0 relative w-7 h-7 overflow-hidden border border-red-500 rounded flex justify-center items-center">
-              Display Filters
-            </div> */}
+            <div className="flex-shrink-0">
+              <ViewDisplayFiltersDropdown
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                viewType={viewType}
+                viewOperations={viewOperations}
+                baseRoute={baseRoute}
+                displayDropdownText={false}
+              />
+            </div>
 
-            {/* {!viewDetailStore?.is_local_view && (
-              <div className="flex-shrink-0 h-full">
-                <div>Edit</div>
+            <div className="border border-custom-border-300 relative flex items-center gap-1 h-8 rounded px-2 transition-all text-custom-text-200 hover:text-custom-text-100 bg-custom-background-100 hover:bg-custom-background-80 cursor-pointer shadow-custom-shadow-2xs">
+              <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
+                <Pencil size={12} />
               </div>
-            )} */}
+            </div>
           </div>
         </>
       )}
 
-      {currentCreateEditViewId != undefined && (
-        <ViewCreateEditForm
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          viewId={currentCreateEditViewId}
-          viewType={viewType}
-          viewOperations={viewOperations}
-        />
+      {/* create edit modal */}
+      {viewOperationsToggle.type && viewOperationsToggle.viewId && (
+        <Fragment>
+          {["CREATE", "EDIT"].includes(viewOperationsToggle.type) && (
+            <ViewCreateEditForm
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              viewId={viewOperationsToggle.viewId}
+              viewType={viewType}
+              viewOperations={viewOperations}
+            />
+          )}
+
+          {["DUPLICATE"].includes(viewOperationsToggle.type) && (
+            <ViewDuplicateConfirmationModal viewId={viewOperationsToggle.viewId} viewOperations={viewOperations} />
+          )}
+
+          {["DELETE"].includes(viewOperationsToggle.type) && (
+            <ViewDeleteConfirmationModal viewId={viewOperationsToggle.viewId} viewOperations={viewOperations} />
+          )}
+        </Fragment>
       )}
     </div>
   );

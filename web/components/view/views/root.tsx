@@ -14,13 +14,14 @@ import { TViewTypes } from "@plane/types";
 type TViewRoot = {
   workspaceSlug: string;
   projectId: string | undefined;
-  viewId: string | undefined;
+  viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
+  baseRoute: string;
 };
 
 export const ViewRoot: FC<TViewRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations, baseRoute } = props;
   // hooks
   const viewStore = useView(workspaceSlug, projectId, viewType);
   // state
@@ -30,14 +31,14 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
     const handleViewTabsVisibility = () => {
       const tabContainer = document.getElementById("tab-container");
       const tabItemViewMore = document.getElementById("tab-item-view-more");
-      const itemWidth = 124;
+      const itemWidth = 128;
       if (!tabContainer || !tabItemViewMore) return;
 
       const containerWidth = tabContainer.clientWidth;
-      const itemViewMoreLeftOffset = tabItemViewMore.offsetLeft;
+      const itemViewMoreLeftOffset = tabItemViewMore.offsetLeft + (tabItemViewMore.clientWidth + 10);
       const itemViewMoreRightOffset = containerWidth - itemViewMoreLeftOffset;
 
-      if (itemViewMoreLeftOffset + (tabItemViewMore.clientWidth + 10) > containerWidth) {
+      if (itemViewMoreLeftOffset > containerWidth) {
         const itemsToRender = Math.floor(containerWidth / itemWidth);
         setItemsToRenderViewCount(itemsToRender);
       }
@@ -54,6 +55,13 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
     return () => window.removeEventListener("resize", () => handleViewTabsVisibility());
   }, [viewStore?.viewIds]);
 
+  const viewIds = viewStore?.viewIds?.slice(0, itemsToRenderViewsCount || viewStore?.viewIds.length) || [];
+
+  if (!viewIds.includes(viewId)) {
+    viewIds.pop();
+    viewIds.push(viewId);
+  }
+
   return (
     <div className="relative flex justify-between px-5 gap-2">
       {viewStore?.viewIds && viewStore?.viewIds.length > 0 && (
@@ -62,7 +70,7 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
           id="tab-container"
           className="relative flex items-center w-full overflow-hidden"
         >
-          {viewStore?.viewIds?.slice(0, itemsToRenderViewsCount || viewStore?.viewIds.length).map((_viewId) => (
+          {viewIds.map((_viewId) => (
             <Fragment key={_viewId}>
               <ViewItem
                 workspaceSlug={workspaceSlug}
@@ -70,6 +78,7 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewItemId={_viewId}
+                baseRoute={baseRoute}
               />
             </Fragment>
           ))}
@@ -82,6 +91,7 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
+                baseRoute={baseRoute}
               >
                 <div className="text-sm font-semibold mb-1 p-2 px-2.5 text-custom-text-200 cursor-pointer hover:bg-custom-background-80 whitespace-nowrap rounded relative flex items-center gap-1">
                   <span>

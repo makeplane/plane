@@ -5,7 +5,7 @@ import { TViewService } from "./types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class WorkspaceMeViewService extends APIService implements TViewService {
+export class WorkspacePrivateViewService extends APIService implements TViewService {
   constructor() {
     super(API_BASE_URL);
   }

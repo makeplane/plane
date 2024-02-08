@@ -3,8 +3,9 @@ import { useContext } from "react";
 import { StoreContext } from "contexts/store-context";
 // types
 import { ViewRootStore } from "store/view/view-root.store";
-// types
 import { TViewTypes } from "@plane/types";
+// constants
+import { VIEW_TYPES } from "constants/view";
 
 export const useView = (
   workspaceSlug: string,
@@ -17,16 +18,16 @@ export const useView = (
   if (!workspaceSlug || !viewType) return undefined;
 
   switch (viewType) {
-    case "WORKSPACE_YOUR_VIEWS":
-      return context.view.workspaceViewMeStore;
-    case "WORKSPACE_VIEWS":
-      return context.view.workspaceViewStore;
-    case "PROJECT_YOUR_VIEWS":
-      if (!projectId) throw new Error("useView hook must require projectId");
-      return context.view.projectViewMeStore;
-    case "PROJECT_VIEWS":
-      if (!projectId) throw new Error("useView hook must require projectId");
-      return context.view.projectViewStore;
+    case VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS:
+      return context.view.workspacePrivateViewStore;
+    case VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS:
+      return context.view.workspacePublicViewStore;
+    case VIEW_TYPES.PROJECT_PRIVATE_VIEWS:
+      if (!projectId) return undefined;
+      return context.view.projectPrivateViewStore;
+    case VIEW_TYPES.PROJECT_PUBLIC_VIEWS:
+      if (!projectId) return undefined;
+      return context.view.projectPublicViewStore;
     default:
       return undefined;
   }

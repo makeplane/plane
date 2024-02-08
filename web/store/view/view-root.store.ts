@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import reverse from "lodash/reverse";
@@ -6,7 +7,7 @@ import reverse from "lodash/reverse";
 import { RootStore } from "store/root.store";
 import { ViewStore } from "./view.store";
 // types
-import { TViewService } from "services/view/types";
+import { TUserViewService, TViewService } from "services/view/types";
 import { TView } from "@plane/types";
 
 export type TLoader = "init-loader" | "mutation-loader" | "submitting" | undefined;
@@ -17,11 +18,11 @@ type TViewRootStore = {
   viewMap: Record<string, ViewStore>;
   // computed
   viewIds: string[];
-  // helper actions
   viewById: (viewId: string) => ViewStore | undefined;
   // actions
   localViewCreate: (view: TView) => Promise<void>;
   fetch: (_loader?: TLoader) => Promise<void>;
+  fetchById: (viewId: string) => Promise<void>;
   create: (view: Partial<TView>) => Promise<void>;
   remove: (viewId: string) => Promise<void>;
   duplicate: (viewId: string) => Promise<void>;
@@ -32,7 +33,12 @@ export class ViewRootStore implements TViewRootStore {
   loader: TLoader = "init-loader";
   viewMap: Record<string, ViewStore> = {};
 
-  constructor(private store: RootStore, private service: TViewService, private defaultViews: TView[] = []) {
+  constructor(
+    private store: RootStore,
+    private defaultViews: TView[] = [],
+    private service: TViewService,
+    private userService: TUserViewService
+  ) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
@@ -42,6 +48,7 @@ export class ViewRootStore implements TViewRootStore {
       // actions
       localViewCreate: action,
       fetch: action,
+      fetchById: action,
       create: action,
       remove: action,
       duplicate: action,
@@ -54,19 +61,16 @@ export class ViewRootStore implements TViewRootStore {
     const localViews = views.filter((view) => view.is_local_view);
     let apiViews = views.filter((view) => !view.is_local_view && !view.is_create);
     apiViews = reverse(sortBy(apiViews, "sort_order"));
-
     const _viewIds = [...localViews.map((view) => view.id), ...apiViews.map((view) => view.id)];
-
     return _viewIds as string[];
   }
 
-  // helper actions
-  viewById = (viewId: string) => this.viewMap?.[viewId] || undefined;
+  viewById = computedFn((viewId: string) => this.viewMap?.[viewId] || undefined);
 
   // actions
   localViewCreate = async (view: TView) => {
     runInAction(() => {
-      if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
+      if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
     });
   };
 
@@ -75,23 +79,54 @@ export class ViewRootStore implements TViewRootStore {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug) return;
 
+      this.loader = _loader;
+
       if (this.defaultViews && this.defaultViews.length > 0)
         runInAction(() => {
           this.defaultViews?.forEach((view) => {
-            if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
+            if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
           });
         });
 
-      this.loader = _loader;
       const views = await this.service.fetch(workspaceSlug, projectId);
       if (!views) return;
 
       runInAction(() => {
         views.forEach((view) => {
-          if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
+          if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
         });
         this.loader = undefined;
       });
+    } catch {}
+  };
+
+  fetchById = async (viewId: string) => {
+    try {
+      const { workspaceSlug, projectId } = this.store.app.router;
+      if (!workspaceSlug || !viewId) return;
+
+      const userView = await this.userService.fetch(workspaceSlug, projectId);
+      if (!userView) return;
+
+      if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
+        const view = { ...this.viewById(viewId) };
+        if (!view) return;
+
+        runInAction(() => {
+          view.display_filters = userView.display_filters;
+          view.display_properties = userView.display_properties;
+        });
+      } else {
+        const view = await this.service.fetchById(workspaceSlug, viewId, projectId);
+        if (!view) return;
+
+        view?.display_filters && (view.display_filters = userView.display_filters);
+        view?.display_properties && (view.display_properties = userView.display_properties);
+
+        runInAction(() => {
+          if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
+        });
+      }
     } catch {}
   };
 
@@ -104,7 +139,7 @@ export class ViewRootStore implements TViewRootStore {
       if (!view) return;
 
       runInAction(() => {
-        if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
+        if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
       });
 
       if (data.id) this.remove(data.id);
@@ -134,7 +169,7 @@ export class ViewRootStore implements TViewRootStore {
       if (!view) return;
 
       runInAction(() => {
-        if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service));
+        if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
       });
     } catch {}
   };

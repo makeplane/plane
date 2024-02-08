@@ -24,8 +24,6 @@ import { GlobalViewRootStore } from "./view/root.store";
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
-  view: GlobalViewRootStore;
-  // old store structure
   app: IAppRootStore;
   eventTracker: IEventTrackerStore;
   user: IUserRootStore;
@@ -44,9 +42,9 @@ export class RootStore {
   mention: IMentionStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
+  view: GlobalViewRootStore;
 
   constructor() {
-    this.view = new GlobalViewRootStore(this);
     // old store structure
     this.app = new AppRootStore(this);
     this.eventTracker = new EventTrackerStore(this);
@@ -67,6 +65,7 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.view = new GlobalViewRootStore(this);
   }
 
   resetOnSignout() {
@@ -86,5 +85,6 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.view = new GlobalViewRootStore(this);
   }
 }

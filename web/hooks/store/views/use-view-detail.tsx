@@ -5,6 +5,8 @@ import { StoreContext } from "contexts/store-context";
 import { TViewStore } from "store/view/view.store";
 // types
 import { TViewTypes } from "@plane/types";
+// constants
+import { VIEW_TYPES } from "constants/view";
 
 export const useViewDetail = (
   workspaceSlug: string,
@@ -18,16 +20,16 @@ export const useViewDetail = (
   if (!workspaceSlug || !viewId) return undefined;
 
   switch (viewType) {
-    case "WORKSPACE_YOUR_VIEWS":
-      return context.view.workspaceViewMeStore.viewById(viewId);
-    case "WORKSPACE_VIEWS":
-      return context.view.workspaceViewStore.viewById(viewId);
-    case "PROJECT_YOUR_VIEWS":
-      if (!projectId) throw new Error("useView hook must require projectId");
-      return context.view.projectViewMeStore.viewById(viewId);
-    case "PROJECT_VIEWS":
-      if (!projectId) throw new Error("useView hook must require projectId");
-      return context.view.projectViewStore.viewById(viewId);
+    case VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS:
+      return context.view.workspacePrivateViewStore.viewById(viewId);
+    case VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS:
+      return context.view.workspacePublicViewStore.viewById(viewId);
+    case VIEW_TYPES.PROJECT_PRIVATE_VIEWS:
+      if (!projectId) return undefined;
+      return context.view.projectPrivateViewStore.viewById(viewId);
+    case VIEW_TYPES.PROJECT_PUBLIC_VIEWS:
+      if (!projectId) return undefined;
+      return context.view.projectPublicViewStore.viewById(viewId);
     default:
       return undefined;
   }

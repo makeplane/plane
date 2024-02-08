@@ -5,10 +5,10 @@ import {
 } from "./filter";
 
 export type TViewTypes =
-  | "WORKSPACE_YOUR_VIEWS"
-  | "WORKSPACE_VIEWS"
-  | "PROJECT_VIEWS"
-  | "PROJECT_YOUR_VIEWS";
+  | "WORKSPACE_PRIVATE_VIEWS"
+  | "WORKSPACE_PUBLIC_VIEWS"
+  | "PROJECT_PRIVATE_VIEWS"
+  | "PROJECT_PUBLIC_VIEWS";
 
 declare enum EViewAccess {
   "public" = 0,

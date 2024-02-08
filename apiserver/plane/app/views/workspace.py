@@ -1516,11 +1516,9 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug):
-        (
-            workspace_properties,
-            _,
-        ) = WorkspaceUserProperties.objects.get_or_create(
-            user=request.user, workspace__slug=slug
+        workspace = Workspace.objects.get(slug=slug)
+        workspace_properties, _ = WorkspaceUserProperties.objects.get_or_create(
+            user=request.user, workspace=workspace
         )
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)
