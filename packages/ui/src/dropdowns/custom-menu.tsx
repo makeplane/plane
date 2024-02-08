@@ -48,7 +48,13 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => setIsOpen(false);
+
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+
+  const handleOnClick = () => {
+    if (closeOnSelect) closeDropdown();
+  };
+
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   let menuItems = (
@@ -90,6 +96,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
       onKeyDown={handleKeyDown}
+      onClick={handleOnClick}
     >
       {({ open }) => (
         <>
