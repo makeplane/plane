@@ -73,8 +73,10 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
+  // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByPriorityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const selectedDuration = widgetDetails?.widget_filters.duration ?? "none";
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -84,7 +86,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
       filters,
     });
 
-    const filterDates = getCustomDates(filters.target_date ?? widgetDetails.widget_filters.target_date ?? "none");
+    const filterDates = getCustomDates(filters.duration ?? selectedDuration);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -92,7 +94,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(widgetDetails?.widget_filters.target_date ?? "none");
+    const filterDates = getCustomDates(selectedDuration);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -139,10 +141,10 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
           Assigned by priority
         </Link>
         <DurationFilterDropdown
-          value={widgetDetails.widget_filters.target_date ?? "none"}
+          value={selectedDuration}
           onChange={(val) =>
             handleUpdateFilters({
-              target_date: val,
+              duration: val,
             })
           }
         />
