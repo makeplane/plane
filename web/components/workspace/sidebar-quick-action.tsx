@@ -79,7 +79,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                 commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
             >
-              <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
+              <PenSquare className="h-4 w-4 text-sidebar-neutral-text-medium" />
               {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
             </button>
 
@@ -98,7 +98,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                   }`}
                 >
                   <ChevronUp
-                    className={`h-4 w-4 rotate-180 transform !text-custom-sidebar-text-300 transition-transform duration-300 ${
+                    className={`h-4 w-4 rotate-180 transform !text-sidebar-neutral-text-medium transition-transform duration-300 ${
                       isDraftButtonOpen ? "rotate-0" : ""
                     }`}
                   />
@@ -112,9 +112,9 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                   <div className="h-full w-full">
                     <button
                       onClick={() => setIsDraftIssueModalOpen(true)}
-                      className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-3 py-[10px] text-sm text-custom-text-300 shadow"
+                      className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-3 py-[10px] text-sm text-neutral-text-medium shadow"
                     >
-                      <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
+                      <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-sidebar-neutral-text-medium" />
                       Last Drafted Issue
                     </button>
                   </div>
@@ -134,7 +134,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
           }`}
           onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
         >
-          <Search className="h-4 w-4 text-custom-sidebar-text-300" />
+          <Search className="h-4 w-4 text-sidebar-neutral-text-medium" />
           {!isAuthorizedUser && !isSidebarCollapsed && <span className="text-xs font-medium">Open command menu</span>}
         </button>
       </div>

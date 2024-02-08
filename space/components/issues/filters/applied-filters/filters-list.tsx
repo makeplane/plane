@@ -33,7 +33,7 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
             key={filterKey}
             className="flex flex-wrap items-center gap-2 rounded-md border border-neutral-border-medium px-2 py-1 capitalize"
           >
-            <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-xs text-neutral-text-medium">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "priority" && (
                 <AppliedPriorityFilters handleRemove={(val) => handleRemoveFilter("priority", val)} values={value} />
@@ -57,7 +57,7 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
 
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-neutral-text-medium hover:text-neutral-text-medium"
                 onClick={() => handleRemoveFilter(filterKey, null)}
               >
                 <X size={12} strokeWidth={2} />
@@ -69,7 +69,7 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
       <button
         type="button"
         onClick={handleRemoveAllFilters}
-        className="flex items-center gap-2 rounded-md border border-neutral-border-medium px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
+        className="flex items-center gap-2 rounded-md border border-neutral-border-medium px-2 py-1 text-xs text-neutral-text-medium hover:text-neutral-text-medium"
       >
         Clear all
         <X size={12} strokeWidth={2} />

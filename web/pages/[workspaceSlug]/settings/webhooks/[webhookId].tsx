@@ -77,7 +77,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   if (!isAdmin)
     return (
       <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        <p className="text-sm text-neutral-text-medium">You are not authorized to access this page.</p>
       </div>
     );
 

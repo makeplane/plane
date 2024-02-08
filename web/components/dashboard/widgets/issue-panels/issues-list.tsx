@@ -66,7 +66,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
           <></>
         ) : issues.length > 0 ? (
           <>
-            <div className="mt-7 mx-6 border-b-[0.5px] border-neutral-border-medium grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
+            <div className="mt-7 mx-6 border-b-[0.5px] border-neutral-border-medium grid grid-cols-6 gap-1 text-xs text-neutral-text-medium pb-1">
               <h6
                 className={cn("pl-1 flex items-center gap-1 col-span-4", {
                   "col-span-6": type === "assigned" && tab === "completed",

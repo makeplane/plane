@@ -152,7 +152,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                             {enableReorder && (
                               <button
                                 type="button"
-                                className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
+                                className="flex flex-shrink-0 rounded p-0.5 text-sidebar-neutral-text-medium opacity-0 group-hover:opacity-100"
                                 {...provided.dragHandleProps}
                               >
                                 <MoreVertical className="h-3.5 w-3.5" />
@@ -164,7 +164,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                                 <IssueGanttSidebarBlock data={block.data} />
                               </div>
                               {duration !== undefined && (
-                                <div className="flex-shrink-0 text-sm text-custom-text-200">
+                                <div className="flex-shrink-0 text-sm text-neutral-text-medium">
                                   <span>
                                     {duration} day{duration > 1 ? "s" : ""}
                                   </span>

@@ -29,7 +29,7 @@ export const IssueLink: FC<TIssueLink> = (props) => {
         }`}
         target={activity.issue === null ? "_self" : "_blank"}
         rel={activity.issue === null ? "" : "noopener noreferrer"}
-        className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
       >
         {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}{" "}
         <span className="font-normal">{activity.issue_detail?.name}</span>

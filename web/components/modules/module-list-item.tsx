@@ -151,7 +151,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   ) : progress === 100 ? (
                     <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
                   ) : (
-                    <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
+                    <span className="text-xs text-neutral-text-medium">{`${progress}%`}</span>
                   )}
                 </CircularProgressIndicator>
               </span>
@@ -160,7 +160,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               </Tooltip>
             </div>
             <button onClick={openModuleOverview} className="z-10 hidden flex-shrink-0 group-hover:flex">
-              <Info className="h-4 w-4 text-custom-text-400" />
+              <Info className="h-4 w-4 text-neutral-text-subtle" />
             </button>
           </div>
 
@@ -180,7 +180,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </div>
 
             {renderDate && (
-              <span className="flex w-40 items-center justify-center gap-2 text-xs text-custom-text-300">
+              <span className="flex w-40 items-center justify-center gap-2 text-xs text-neutral-text-medium">
                 {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
               </span>
             )}
@@ -195,7 +195,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   </AvatarGroup>
                 ) : (
                   <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-neutral-component-surface-dark">
-                    <User2 className="h-4 w-4 text-custom-text-400" />
+                    <User2 className="h-4 w-4 text-neutral-text-subtle" />
                   </span>
                 )}
               </div>
@@ -208,7 +208,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                 </button>
               ) : (
                 <button type="button" onClick={handleAddToFavorites} className="z-[1]">
-                  <Star className="h-3.5 w-3.5 text-custom-text-300" />
+                  <Star className="h-3.5 w-3.5 text-neutral-text-medium" />
                 </button>
               ))}
 

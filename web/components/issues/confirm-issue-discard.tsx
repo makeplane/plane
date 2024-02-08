@@ -58,11 +58,11 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                         Draft Issue
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-custom-text-200">Would you like to save this issue in drafts?</p>
+                        <p className="text-sm text-neutral-text-medium">Would you like to save this issue in drafts?</p>
                       </div>
                     </div>
                   </div>

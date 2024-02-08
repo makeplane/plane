@@ -99,7 +99,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     );
 
   return (
-    <div className="relative flex flex-col h-full w-full overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+    <div className="relative flex flex-col h-full w-full overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-neutral-text-medium">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <div ref={containerRef} className="horizontal-scroll-enable h-full w-full">
         <SpreadsheetTable

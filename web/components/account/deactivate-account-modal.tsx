@@ -90,13 +90,16 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                   <div className="">
                     <div className="flex items-start gap-x-4">
                       <div className="grid place-items-center rounded-full bg-red-500/20 p-2 sm:p-2 md:p-4 lg:p-4 mt-3 sm:mt-3 md:mt-0 lg:mt-0 ">
-                        <Trash2 className="h-4 w-4 sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6 text-red-600" aria-hidden="true" />
+                        <Trash2
+                          className="h-4 w-4 sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6 text-red-600"
+                          aria-hidden="true"
+                        />
                       </div>
                       <div>
-                        <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-custom-text-100">
+                        <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-neutral-text-strong">
                           Deactivate your account?
                         </Dialog.Title>
-                        <p className="mt-6 list-disc pr-4 text-base font-normal text-custom-text-200">
+                        <p className="mt-6 list-disc pr-4 text-base font-normal text-neutral-text-medium">
                           Once deactivated, you can{"'"}t be assigned issues and be billed for your workspace.To
                           reactivate your account, you will need an invite to a workspace at this email address.
                         </p>

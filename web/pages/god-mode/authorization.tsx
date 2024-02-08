@@ -66,8 +66,8 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   return (
     <div className="flex flex-col gap-8">
       <div className="mb-2 border-b border-neutral-border-subtle pb-3">
-        <div className="pb-1 text-xl font-medium text-custom-text-100">Single sign-on and OAuth</div>
-        <div className="text-sm font-normal text-custom-text-300">
+        <div className="pb-1 text-xl font-medium text-neutral-text-strong">Single sign-on and OAuth</div>
+        <div className="text-sm font-normal text-neutral-text-medium">
           Make your teams life easy by letting them sign-up with their Google and GitHub accounts, and below are the
           settings.
         </div>
@@ -77,10 +77,10 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
           <div className="flex w-full flex-col gap-12 border-b border-neutral-border-subtle pb-8 lg:w-2/5">
             <div className="pointer-events-none mr-4 flex items-center gap-14 opacity-50">
               <div className="grow">
-                <div className="text-sm font-medium text-custom-text-100">
+                <div className="text-sm font-medium text-neutral-text-strong">
                   Turn Magic Links {Boolean(parseInt(enableMagicLogin)) ? "off" : "on"}
                 </div>
-                <div className="text-xs font-normal text-custom-text-300">
+                <div className="text-xs font-normal text-neutral-text-medium">
                   <p>Slack-like emails for authentication.</p>
                   You need to have set up email{" "}
                   <Link href="email">
@@ -105,10 +105,10 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
             </div>
             <div className="mr-4 flex items-center gap-14">
               <div className="grow">
-                <div className="text-sm font-medium text-custom-text-100">
+                <div className="text-sm font-medium text-neutral-text-strong">
                   Let your users log in via the methods below
                 </div>
-                <div className="text-xs font-normal text-custom-text-300">
+                <div className="text-xs font-normal text-neutral-text-medium">
                   Toggling this off will disable all previous configs. Users will only be able to login with an e-mail
                   and password combo.
                 </div>
@@ -128,10 +128,10 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
             </div>
             {/* <div className="flex items-center gap-14 mr-4">
               <div className="grow">
-                <div className="text-custom-text-100 font-medium text-sm">
+                <div className="text-neutral-text-strong font-medium text-sm">
                   Turn Email Password {Boolean(parseInt(enableEmailPassword)) ? "off" : "on"}
                 </div>
-                <div className="text-custom-text-300 font-normal text-xs">UX Copy Required!</div>
+                <div className="text-neutral-text-medium font-normal text-xs">UX Copy Required!</div>
               </div>
               <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
                 <ToggleSwitch

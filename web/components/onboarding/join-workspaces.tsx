@@ -72,7 +72,7 @@ export const JoinWorkspaces: React.FC<Props> = observer((props) => {
           />
           <div className="my-8 flex items-center md:w-1/2">
             <hr className="w-full border-onboarding-border-100" />
-            <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">Or</p>
+            <p className="mx-3 flex-shrink-0 text-center text-sm text-neutral-text-subtle">Or</p>
             <hr className="w-full border-onboarding-border-100" />
           </div>
           <div className="w-full">

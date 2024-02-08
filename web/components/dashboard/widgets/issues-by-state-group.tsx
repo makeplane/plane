@@ -133,7 +133,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned`}
-          className="text-lg font-semibold text-custom-text-300 hover:underline"
+          className="text-lg font-semibold text-neutral-text-medium hover:underline"
         >
           Assigned by state
         </Link>
@@ -195,9 +195,9 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
                         backgroundColor: item.color,
                       }}
                     />
-                    <span className="text-custom-text-300 text-sm font-medium capitalize">{item.label}</span>
+                    <span className="text-neutral-text-medium text-sm font-medium capitalize">{item.label}</span>
                   </div>
-                  <span className="text-custom-text-400 text-sm">{item.value.toFixed(0)}%</span>
+                  <span className="text-neutral-text-subtle text-sm">{item.value.toFixed(0)}%</span>
                 </div>
               ))}
             </div>

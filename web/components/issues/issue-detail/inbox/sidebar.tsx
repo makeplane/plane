@@ -45,7 +45,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
           {currentIssueState && (
             <StateGroupIcon className="h-4 w-4" stateGroup={currentIssueState.group} color={currentIssueState.color} />
           )}
-          <h4 className="text-lg font-medium text-custom-text-300">
+          <h4 className="text-lg font-medium text-neutral-text-medium">
             {projectDetails?.identifier}-{issue?.sequence_id}
           </h4>
         </div>
@@ -57,7 +57,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex flex-col gap-3">
             {/* State */}
             <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-neutral-text-medium">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
@@ -76,7 +76,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
             {/* Assignee */}
             <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-neutral-text-medium">
                 <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
@@ -91,7 +91,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                  issue?.assignee_ids.length > 0 ? "" : "text-neutral-text-subtle"
                 }`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
@@ -100,7 +100,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
             {/* Priority */}
             <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-neutral-text-medium">
                 <Signal className="h-4 w-4 flex-shrink-0" />
                 <span>Priority</span>
               </div>
@@ -120,7 +120,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex flex-col gap-3">
             {/* Due Date */}
             <div className="flex items-center gap-2 h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-neutral-text-medium">
                 <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
@@ -137,14 +137,14 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonVariant="transparent-with-text"
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+                buttonClassName={`text-sm ${issue?.target_date ? "" : "text-neutral-text-subtle"}`}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
               />
             </div>
             {/* Labels */}
             <div className="flex items-center gap-2 min-h-8">
-              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-neutral-text-medium">
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <span>Labels</span>
               </div>

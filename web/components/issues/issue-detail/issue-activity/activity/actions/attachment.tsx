@@ -31,7 +31,7 @@ export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((p
             href={`${activity.new_value}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+            className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
           >
             attachment
           </a>

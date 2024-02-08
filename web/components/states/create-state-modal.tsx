@@ -119,7 +119,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-neutral-component-surface-light px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                       Create State
                     </Dialog.Title>
                     <div className="mt-2 space-y-3">
@@ -132,7 +132,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
                           }}
                           render={({ field: { value, onChange, ref } }) => (
                             <>
-                              <label htmlFor="name" className="mb-2 text-custom-text-200">
+                              <label htmlFor="name" className="mb-2 text-neutral-text-medium">
                                 Name
                               </label>
                               <Input
@@ -177,8 +177,8 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
                           {({ open }) => (
                             <>
                               <Popover.Button
-                                className={`group inline-flex items-center rounded-md bg-neutral-component-surface-light text-base font-medium hover:text-custom-text-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                                  open ? "text-custom-text-100" : "text-custom-text-200"
+                                className={`group inline-flex items-center rounded-md bg-neutral-component-surface-light text-base font-medium hover:text-neutral-text-strong focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                  open ? "text-neutral-text-strong" : "text-neutral-text-medium"
                                 }`}
                               >
                                 <span>Color</span>
@@ -191,7 +191,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
                                   />
                                 )}
                                 <ChevronDown
-                                  className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
+                                  className={`ml-2 h-5 w-5 group-hover:text-neutral-text-medium ${
                                     open ? "text-gray-600" : "text-gray-400"
                                   }`}
                                   aria-hidden="true"
@@ -222,7 +222,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
                         </Popover>
                       </div>
                       <div>
-                        <label htmlFor="description" className="mb-2 text-custom-text-200">
+                        <label htmlFor="description" className="mb-2 text-neutral-text-medium">
                           Description
                         </label>
                         <Controller

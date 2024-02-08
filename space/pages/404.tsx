@@ -10,7 +10,7 @@ const Custom404Error = () => (
           <Image src={notFoundImage} layout="fill" alt="404- Page not found" />
         </div>
         <div className="text-xl font-medium">Oops! Something went wrong.</div>
-        <div className="text-sm text-custom-text-200">
+        <div className="text-sm text-neutral-text-medium">
           Sorry, the page you are looking for cannot be found. It may have been removed, had its name changed, or is
           temporarily unavailable.
         </div>

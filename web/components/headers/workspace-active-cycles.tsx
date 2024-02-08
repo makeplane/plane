@@ -17,7 +17,7 @@ export const WorkspaceActiveCycleHeader = observer(() => (
             link={
               <BreadcrumbLink
                 label="Active Cycles"
-                icon={<ContrastIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
+                icon={<ContrastIcon className="h-4 w-4 text-neutral-text-medium rotate-180" />}
               />
             }
           />

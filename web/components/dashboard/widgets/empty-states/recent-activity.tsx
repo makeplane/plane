@@ -15,7 +15,7 @@ export const RecentActivityEmptyState = () => {
       <div className="h-24 w-24">
         <Image src={image} className="w-full h-full" alt="Issues by state group" />
       </div>
-      <p className="text-sm font-medium text-custom-text-300">
+      <p className="text-sm font-medium text-neutral-text-medium">
         All your issue activities across
         <br />
         projects will show up here.

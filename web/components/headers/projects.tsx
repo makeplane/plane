@@ -29,14 +29,16 @@ export const ProjectsHeader = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
+              link={
+                <BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-neutral-text-medium" />} />
+              }
             />
           </Breadcrumbs>
         </div>
       </div>
       <div className="flex w-full justify-end items-center gap-3">
         {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
-          <div className=" flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
+          <div className=" flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-custom-background-100 px-2.5 py-1.5 text-neutral-text-subtle">
             <Search className="h-3.5" />
             <input
               className="border-none w-full bg-transparent text-sm focus:outline-none"

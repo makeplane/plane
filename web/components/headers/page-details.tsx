@@ -59,7 +59,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages`}
                   label="Pages"
-                  icon={<FileText className="h-4 w-4 text-custom-text-300" />}
+                  icon={<FileText className="h-4 w-4 text-neutral-text-medium" />}
                 />
               }
             />
@@ -68,7 +68,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
               link={
                 <BreadcrumbLink
                   label={pageDetails?.name ?? "Page"}
-                  icon={<FileText className="h-4 w-4 text-custom-text-300" />}
+                  icon={<FileText className="h-4 w-4 text-neutral-text-medium" />}
                 />
               }
             />

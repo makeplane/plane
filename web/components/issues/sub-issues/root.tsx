@@ -264,7 +264,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   return (
     <div className="h-full w-full space-y-2">
       {!subIssues ? (
-        <div className="py-3 text-center text-sm  font-medium text-custom-text-300">Loading...</div>
+        <div className="py-3 text-center text-sm  font-medium text-neutral-text-medium">Loading...</div>
       ) : (
         <>
           {subIssues && subIssues?.length > 0 ? (
@@ -377,7 +377,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           ) : (
             !disabled && (
               <div className="flex items-center justify-between">
-                <div className="py-2 text-xs italic text-custom-text-300">No Sub-Issues yet</div>
+                <div className="py-2 text-xs italic text-neutral-text-medium">No Sub-Issues yet</div>
                 <div>
                   <CustomMenu
                     label={

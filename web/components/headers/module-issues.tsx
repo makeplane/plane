@@ -180,7 +180,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     </span>
                     <Link
                       href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                      className="block md:hidden pl-2 text-custom-text-300"
+                      className="block md:hidden pl-2 text-neutral-text-medium"
                     >
                       ...
                     </Link>
@@ -193,7 +193,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   <BreadcrumbLink
                     href={`/${workspaceSlug}/projects/${projectId}/modules`}
                     label="Modules"
-                    icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<DiceIcon className="h-4 w-4 text-neutral-text-medium" />}
                   />
                 }
               />
@@ -283,7 +283,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               <PanelRight
                 className={cn(
                   "w-4 h-4 block md:hidden",
-                  !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200"
+                  !isSidebarCollapsed ? "text-[#3E63DD]" : "text-neutral-text-medium"
                 )}
               />
             </button>

@@ -27,9 +27,9 @@ export const IssueParentActivity: FC<TIssueParentActivity> = observer((props) =>
       <>
         {activity.new_value ? `set the parent to ` : `removed the parent `}
         {activity.new_value ? (
-          <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+          <span className="font-medium text-neutral-text-strong">{activity.new_value}</span>
         ) : (
-          <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+          <span className="font-medium text-neutral-text-strong">{activity.old_value}</span>
         )}
         {showIssue && (activity.new_value ? ` for ` : ` from `)}
         {showIssue && <IssueLink activityId={activityId} />}.

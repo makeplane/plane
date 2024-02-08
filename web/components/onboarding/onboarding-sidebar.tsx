@@ -176,8 +176,10 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
                     />
                   </div>
                   <div className="mx-2 flex w-full flex-shrink items-center justify-between truncate">
-                    <h4 className="truncate text-base font-medium text-custom-text-100">{workspaceName}</h4>
-                    <ChevronDown className={`mx-1 h-4 w-4 flex-shrink-0 text-custom-sidebar-text-400 duration-300`} />
+                    <h4 className="truncate text-base font-medium text-neutral-text-strong">{workspaceName}</h4>
+                    <ChevronDown
+                      className={`mx-1 h-4 w-4 flex-shrink-0 text-sidebar-neutral-text-subtle duration-300`}
+                    />
                   </div>
                   <div className="flex flex-shrink-0">
                     <Avatar
@@ -206,8 +208,8 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
               />
             </div>
             <div className="mx-2 flex w-full flex-shrink items-center justify-between truncate">
-              <h4 className="truncate text-base font-medium text-custom-text-100">{workspaceName}</h4>
-              <ChevronDown className={`mx-1 h-4 w-4 flex-shrink-0 text-custom-sidebar-text-400 duration-300`} />
+              <h4 className="truncate text-base font-medium text-neutral-text-strong">{workspaceName}</h4>
+              <ChevronDown className={`mx-1 h-4 w-4 flex-shrink-0 text-sidebar-neutral-text-subtle duration-300`} />
             </div>
             <div className="flex flex-shrink-0">
               <Avatar
@@ -229,7 +231,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
             className={`group relative flex w-full items-center justify-between gap-1 rounded border border-onboarding-border-100 px-3 shadow-custom-shadow-2xs`}
           >
             <div className={`relative flex flex-shrink-0 flex-grow items-center gap-2 rounded py-1.5 outline-none`}>
-              <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
+              <PenSquare className="h-4 w-4 text-sidebar-neutral-text-medium" />
               {<span className="text-sm font-medium">New Issue</span>}
             </div>
           </div>
@@ -258,11 +260,11 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
 
       {showProject && (
         <div className="px-4 pt-4">
-          <p className="pb-4 text-base font-semibold text-custom-text-300">Projects</p>
+          <p className="pb-4 text-base font-semibold text-neutral-text-medium">Projects</p>
 
           <div className="px-3">
             {" "}
-            <div className="mb-3 flex w-4/5 items-center justify-between text-base font-medium text-custom-text-200">
+            <div className="mb-3 flex w-4/5 items-center justify-between text-base font-medium text-neutral-text-medium">
               <div className="flex items-center gap-x-2">
                 <Image src={projectEmoji} alt="Plane Logo" className="h-4 w-4" />
                 <span> Plane</span>
@@ -273,7 +275,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
             {projectLinks.map((link) => (
               <a className="ml-6 block w-full" key={link.name}>
                 <div
-                  className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-custom-sidebar-text-200 
+                  className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium text-sidebar-neutral-text-medium 
                     outline-none  focus:bg-sidebar-neutral-component-surface-dark
                 `}
                 >

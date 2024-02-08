@@ -119,17 +119,17 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
                   </div>
 
                   <span>
-                    <p className="text-sm leading-7 text-custom-text-200">
+                    <p className="text-sm leading-7 text-neutral-text-medium">
                       Are you sure you want to delete workspace{" "}
                       <span className="break-words font-semibold">{data?.name}</span>? All of the data related to the
                       workspace will be permanently removed. This action cannot be undone.
                     </p>
                   </span>
 
-                  <div className="text-custom-text-200">
+                  <div className="text-neutral-text-medium">
                     <p className="break-words text-sm ">
-                      Enter the workspace name <span className="font-medium text-custom-text-100">{data?.name}</span> to
-                      continue:
+                      Enter the workspace name{" "}
+                      <span className="font-medium text-neutral-text-strong">{data?.name}</span> to continue:
                     </p>
                     <Controller
                       control={control}
@@ -151,9 +151,9 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
                     />
                   </div>
 
-                  <div className="text-custom-text-200">
+                  <div className="text-neutral-text-medium">
                     <p className="text-sm">
-                      To confirm, type <span className="font-medium text-custom-text-100">delete my workspace</span>{" "}
+                      To confirm, type <span className="font-medium text-neutral-text-strong">delete my workspace</span>{" "}
                       below:
                     </p>
                     <Controller

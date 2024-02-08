@@ -40,7 +40,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Repository</h4>
-            <p className="text-xs text-custom-text-200">
+            <p className="text-xs text-neutral-text-medium">
               Select the repository that you want the issues to be imported from.
             </p>
           </div>
@@ -54,7 +54,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
                     integration={integration}
                     value={value ? value.id : null}
                     label={
-                      value ? `${value.full_name}` : <span className="text-custom-text-200">Select Repository</span>
+                      value ? `${value.full_name}` : <span className="text-neutral-text-medium">Select Repository</span>
                     }
                     onChange={onChange}
                     characterLimit={50}
@@ -67,7 +67,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Project</h4>
-            <p className="text-xs text-custom-text-200">Select the project to import the issues to.</p>
+            <p className="text-xs text-neutral-text-medium">Select the project to import the issues to.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             {workspaceProjectIds && (
@@ -78,7 +78,11 @@ export const GithubImportData: FC<Props> = observer((props) => {
                   <CustomSearchSelect
                     value={value}
                     label={
-                      value ? getProjectById(value)?.name : <span className="text-custom-text-200">Select Project</span>
+                      value ? (
+                        getProjectById(value)?.name
+                      ) : (
+                        <span className="text-neutral-text-medium">Select Project</span>
+                      )
                     }
                     onChange={onChange}
                     options={options}
@@ -92,7 +96,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Sync Issues</h4>
-            <p className="text-xs text-custom-text-200">Set whether you want to sync the issues or not.</p>
+            <p className="text-xs text-neutral-text-medium">Set whether you want to sync the issues or not.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             <Controller

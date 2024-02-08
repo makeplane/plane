@@ -45,16 +45,16 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
       ) : (
         <>
           {!inboxIssueId ? (
-            <div className="grid h-full place-items-center p-4 text-custom-text-200">
+            <div className="grid h-full place-items-center p-4 text-neutral-text-medium">
               <div className="grid h-full place-items-center">
                 <div className="my-5 flex flex-col items-center gap-4">
                   <Inbox size={60} strokeWidth={1.5} />
                   {inboxIssuesList && inboxIssuesList.length > 0 ? (
-                    <span className="text-custom-text-200">
+                    <span className="text-neutral-text-medium">
                       {inboxIssuesList?.length} issues found. Select an issue from the sidebar to view its details.
                     </span>
                   ) : (
-                    <span className="text-custom-text-200">No issues found</span>
+                    <span className="text-neutral-text-medium">No issues found</span>
                   )}
                 </div>
               </div>

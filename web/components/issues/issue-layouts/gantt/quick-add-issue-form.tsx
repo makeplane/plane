@@ -29,7 +29,7 @@ const Inputs: FC<IInputProps> = (props) => {
 
   return (
     <div className="flex w-full items-center gap-3">
-      <div className="text-xs font-medium text-custom-text-400">{projectDetail?.identifier ?? "..."}</div>
+      <div className="text-xs font-medium text-neutral-text-subtle">{projectDetail?.identifier ?? "..."}</div>
       <input
         type="text"
         autoComplete="off"
@@ -37,7 +37,7 @@ const Inputs: FC<IInputProps> = (props) => {
         {...register(formKey, {
           required: "Issue title is required.",
         })}
-        className="w-full rounded-md bg-transparent px-2 py-3 text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent px-2 py-3 text-sm font-medium leading-5 text-neutral-text-medium outline-none"
       />
     </div>
   );
@@ -148,7 +148,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
             >
               <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail ?? null} />
             </form>
-            <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
+            <div className="px-3 py-2 text-xs italic text-neutral-text-medium">{`Press 'Enter' to add another issue`}</div>
           </div>
         ) : (
           <div

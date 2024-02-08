@@ -74,7 +74,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   return (
     <>
       <div
-        className="flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer border border-neutral-border-subtle rounded-full text-xs p-0.5 px-2 hover:bg-neutral-component-surface-medium text-custom-text-300 hover:text-custom-text-200"
+        className="flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer border border-neutral-border-subtle rounded-full text-xs p-0.5 px-2 hover:bg-neutral-component-surface-medium text-neutral-text-medium hover:text-neutral-text-medium"
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">

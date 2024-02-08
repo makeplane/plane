@@ -71,7 +71,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
 
   const label = (
     <div
-      className={`flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer rounded-full text-xs p-0.5 px-2 hover:bg-neutral-component-surface-medium py-0.5 text-custom-text-300 hover:text-custom-text-200 border border-neutral-border-subtle`}
+      className={`flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer rounded-full text-xs p-0.5 px-2 hover:bg-neutral-component-surface-medium py-0.5 text-neutral-text-medium hover:text-neutral-text-medium border border-neutral-border-subtle`}
     >
       <div className="flex-shrink-0">
         <Tag className="h-2.5 w-2.5" />
@@ -110,9 +110,9 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
             {...attributes.popper}
           >
             <div className="flex w-full items-center justify-start rounded border border-neutral-border-medium bg-neutral-component-surface-medium px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-300" />
+              <Search className="h-3.5 w-3.5 text-neutral-text-medium" />
               <Combobox.Input
-                className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent px-2 py-1 text-xs text-neutral-text-medium placeholder:text-neutral-text-subtle focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
@@ -121,7 +121,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
             </div>
             <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
               {isLoading ? (
-                <p className="text-center text-custom-text-200">Loading...</p>
+                <p className="text-center text-neutral-text-medium">Loading...</p>
               ) : filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <Combobox.Option
@@ -129,7 +129,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                     value={option.value}
                     className={({ selected }) =>
                       `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-neutral-component-surface-dark ${
-                        selected ? "text-custom-text-100" : "text-custom-text-200"
+                        selected ? "text-neutral-text-strong" : "text-neutral-text-medium"
                       }`
                     }
                   >
@@ -147,7 +147,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                 ))
               ) : (
                 <span className="flex items-center gap-2 p-1">
-                  <p className="text-left text-custom-text-200 ">No matching results</p>
+                  <p className="text-left text-neutral-text-medium ">No matching results</p>
                 </span>
               )}
             </div>

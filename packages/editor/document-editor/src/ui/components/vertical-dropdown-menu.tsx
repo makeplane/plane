@@ -27,7 +27,7 @@ export interface IVerticalDropdownMenuProps {
 const VerticalDropdownItem = ({ Icon, label, action }: IVerticalDropdownItemProps) => (
   <CustomMenu.MenuItem onClick={action} className="flex items-center gap-2">
     <Icon className="h-3 w-3" />
-    <div className="text-custom-text-300">{label}</div>
+    <div className="text-neutral-text-medium">{label}</div>
   </CustomMenu.MenuItem>
 );
 

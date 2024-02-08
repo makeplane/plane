@@ -17,7 +17,7 @@ export const IssueUpdateStatus: React.FC<Props> = (props) => {
   return (
     <>
       {issueDetail && (
-        <h4 className="mr-4 text-lg font-medium text-custom-text-300">
+        <h4 className="mr-4 text-lg font-medium text-neutral-text-medium">
           {getProjectById(issueDetail.project_id)?.identifier}-{issueDetail.sequence_id}
         </h4>
       )}
@@ -29,7 +29,9 @@ export const IssueUpdateStatus: React.FC<Props> = (props) => {
         {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
           <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
         )}
-        <span className="text-sm text-custom-text-300">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
+        <span className="text-sm text-neutral-text-medium">
+          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+        </span>
       </div>
     </>
   );

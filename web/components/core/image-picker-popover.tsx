@@ -151,7 +151,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   return (
     <Popover className="relative z-[2]" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
-        className="rounded border border-neutral-border-medium bg-neutral-component-surface-light px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
+        className="rounded border border-neutral-border-medium bg-neutral-component-surface-light px-2 py-1 text-xs text-neutral-text-medium hover:text-neutral-text-strong"
         onClick={handleOnClick}
         disabled={disabled}
       >
@@ -178,7 +178,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       key={tab.key}
                       className={({ selected }) =>
                         `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
-                          selected ? "bg-custom-primary text-white" : "text-custom-text-100"
+                          selected ? "bg-custom-primary text-white" : "text-neutral-text-strong"
                         }`
                       }
                     >
@@ -232,7 +232,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                           ))}
                         </div>
                       ) : (
-                        <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
+                        <p className="pt-7 text-center text-xs text-neutral-text-medium">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4">
@@ -271,7 +271,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                           ))}
                         </div>
                       ) : (
-                        <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
+                        <p className="pt-7 text-center text-xs text-neutral-text-medium">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4 pt-4">
@@ -300,7 +300,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       >
                         <button
                           type="button"
-                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-neutral-component-surface-medium px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-neutral-component-surface-medium px-2 py-0.5 text-xs font-medium text-neutral-text-medium"
                         >
                           Edit
                         </button>
@@ -316,7 +316,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                           </>
                         ) : (
                           <div>
-                            <span className="mt-2 block text-sm font-medium text-custom-text-200">
+                            <span className="mt-2 block text-sm font-medium text-neutral-text-medium">
                               {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>
                           </div>
@@ -333,7 +333,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       </p>
                     )}
 
-                    <p className="text-sm text-custom-text-200">
+                    <p className="text-sm text-neutral-text-medium">
                       File formats supported- .jpeg, .jpg, .png, .webp, .svg
                     </p>
 

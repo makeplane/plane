@@ -20,7 +20,7 @@ export const WorkspaceSettingsSidebar = () => {
   return (
     <div className="flex w-80 flex-col gap-6 px-5">
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-semibold text-custom-sidebar-text-400">SETTINGS</span>
+        <span className="text-xs font-semibold text-sidebar-neutral-text-subtle">SETTINGS</span>
         <div className="flex w-full flex-col gap-1">
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>
@@ -31,7 +31,7 @@ export const WorkspaceSettingsSidebar = () => {
                       className={`rounded-md px-4 py-2 text-sm font-medium ${
                         link.highlight(router.asPath, `/${workspaceSlug}`)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
-                          : "text-custom-sidebar-text-200 hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
+                          : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
                       }`}
                     >
                       {link.label}

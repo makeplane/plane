@@ -132,7 +132,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
                     disabled={disabled}
-                    className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
+                    className={`relative grid place-items-center rounded p-1 text-neutral-text-medium outline-none hover:text-neutral-text-strong ${
                       disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-neutral-component-surface-dark"
                     } ${buttonClassName}`}
                     tabIndex={customButtonTabIndex}
@@ -146,10 +146,10 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     ref={setReferenceElement}
                     type="button"
                     className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 ${
-                      open ? "bg-neutral-component-surface-medium text-custom-text-100" : "text-custom-text-200"
+                      open ? "bg-neutral-component-surface-medium text-neutral-text-strong" : "text-neutral-text-medium"
                     } ${noBorder ? "" : "border border-neutral-border-medium shadow-sm focus:outline-none"} ${
                       disabled
-                        ? "cursor-not-allowed text-custom-text-200"
+                        ? "cursor-not-allowed text-neutral-text-medium"
                         : "cursor-pointer hover:bg-neutral-component-surface-dark"
                     } ${buttonClassName}`}
                     onClick={() => {
@@ -181,7 +181,7 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
         <button
           type="button"
           className={cn(
-            "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200",
+            "w-full select-none truncate rounded px-1 py-1.5 text-left text-neutral-text-medium",
             {
               "bg-neutral-component-surface-dark": active,
             },

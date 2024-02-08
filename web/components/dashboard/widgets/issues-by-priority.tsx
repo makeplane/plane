@@ -134,7 +134,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned`}
-          className="text-lg font-semibold text-custom-text-300 hover:underline"
+          className="text-lg font-semibold text-neutral-text-medium hover:underline"
         >
           Assigned by priority
         </Link>
@@ -179,7 +179,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
               enableGridY={false}
               layers={[CustomBarsLayer]}
             />
-            <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
+            <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-neutral-text-medium">
               {chartData.map((item) => (
                 <p
                   key={item.priority}

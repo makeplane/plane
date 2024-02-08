@@ -70,7 +70,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
                 </Tooltip>
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-custom-text-200">
+              <div className="flex items-center gap-3 text-xs text-neutral-text-medium">
                 <span>{getFileExtension(attachment.asset).toUpperCase()}</span>
                 <span>{convertBytesToSize(attachment.attributes.size)}</span>
               </div>
@@ -84,7 +84,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
               setAttachmentDeleteModal(true);
             }}
           >
-            <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+            <X className="h-4 w-4 text-neutral-text-medium hover:text-neutral-text-strong" />
           </button>
         )}
       </div>

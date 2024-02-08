@@ -48,7 +48,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
                   <card.icon className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-custom-text-400">{card.title}</p>
+                  <p className="text-sm text-neutral-text-subtle">{card.title}</p>
                   <p className="text-xl font-semibold">{card.value}</p>
                 </div>
               </span>

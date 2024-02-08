@@ -32,7 +32,7 @@ export const IssueLinkActivity: FC<TIssueLinkActivity> = observer((props) => {
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
             >
               link
             </a>
@@ -44,7 +44,7 @@ export const IssueLinkActivity: FC<TIssueLinkActivity> = observer((props) => {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
             >
               link
             </a>
@@ -56,7 +56,7 @@ export const IssueLinkActivity: FC<TIssueLinkActivity> = observer((props) => {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
             >
               link
             </a>

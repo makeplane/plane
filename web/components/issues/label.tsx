@@ -18,7 +18,7 @@ export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 })
               className="flex flex-shrink-0 cursor-default items-center rounded-md border border-neutral-border-medium px-2.5 py-1 text-xs shadow-sm"
             >
               <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name}>
-                <div className="flex items-center gap-1.5 text-custom-text-200">
+                <div className="flex items-center gap-1.5 text-neutral-text-medium">
                   <span
                     className="h-2 w-2 flex-shrink-0 rounded-full"
                     style={{
@@ -34,7 +34,7 @@ export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 })
       ) : (
         <div className="flex flex-shrink-0 cursor-default items-center rounded-md border border-neutral-border-medium px-2.5 py-1 text-xs shadow-sm">
           <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labelDetails.map((l) => l.name).join(", ")}>
-            <div className="flex items-center gap-1.5 text-custom-text-200">
+            <div className="flex items-center gap-1.5 text-neutral-text-medium">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
               {`${labelDetails.length} Labels`}
             </div>

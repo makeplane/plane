@@ -30,7 +30,7 @@ export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
         }
         position="top-left"
       >
-        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-neutral-text-strong">{data?.name}</div>
       </Tooltip>
     </div>
   );

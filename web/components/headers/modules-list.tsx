@@ -60,7 +60,7 @@ export const ModulesListHeader: React.FC = observer(() => {
             />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Modules" icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />}
+              link={<BreadcrumbLink label="Modules" icon={<DiceIcon className="h-4 w-4 text-neutral-text-medium" />} />}
             />
           </Breadcrumbs>
         </div>
@@ -79,7 +79,7 @@ export const ModulesListHeader: React.FC = observer(() => {
                 <layout.icon
                   strokeWidth={2}
                   className={`h-3.5 w-3.5 ${
-                    modulesView == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                    modulesView == layout.key ? "text-neutral-text-strong" : "text-neutral-text-medium"
                   }`}
                 />
               </button>

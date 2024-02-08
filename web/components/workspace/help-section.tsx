@@ -70,7 +70,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent="Shortcuts">
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 ${
+              className={`grid place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong ${
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleShortcutModal(true)}
@@ -81,7 +81,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent="Help">
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 ${
+              className={`grid place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong ${
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => setIsNeedHelpOpen((prev) => !prev)}
@@ -92,7 +92,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
 
           <button
             type="button"
-            className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:hidden"
+            className="grid place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong md:hidden"
             onClick={() => toggleSidebar()}
           >
             <MoveLeft className="h-3.5 w-3.5" />
@@ -101,7 +101,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`}>
             <button
               type="button"
-              className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:grid ${
+              className={`hidden place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong md:grid ${
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}
@@ -134,7 +134,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
                       <Link href={href} key={name} target="_blank">
                         <span className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-neutral-component-surface-dark">
                           <div className="grid flex-shrink-0 place-items-center">
-                            <Icon className="h-3.5 w-3.5 text-custom-text-200" size={14} />
+                            <Icon className="h-3.5 w-3.5 text-neutral-text-medium" size={14} />
                           </div>
                           <span className="text-xs">{name}</span>
                         </span>
@@ -149,7 +149,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
                         className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-neutral-component-surface-dark"
                       >
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-custom-text-200" />
+                          <Icon className="h-3.5 w-3.5 text-neutral-text-medium" />
                         </div>
                         <span className="text-xs">{name}</span>
                       </button>

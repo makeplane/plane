@@ -38,8 +38,8 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
               className="focus:outline-none"
             >
               <Link href={`/${workspaceSlug}${setting.href}`}>
-                <div className="flex items-center gap-2 text-custom-text-200">
-                  <setting.Icon className="h-4 w-4 text-custom-text-200" />
+                <div className="flex items-center gap-2 text-neutral-text-medium">
+                  <setting.Icon className="h-4 w-4 text-neutral-text-medium" />
                   {setting.label}
                 </div>
               </Link>

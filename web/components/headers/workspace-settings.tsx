@@ -32,7 +32,7 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/settings`}
                   label="Settings"
-                  icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                  icon={<Settings className="h-4 w-4 text-neutral-text-medium" />}
                 />
               }
             />
@@ -45,7 +45,7 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
           className="flex-shrink-0 block sm:block md:hidden lg:hidden"
           maxHeight="lg"
           customButton={
-            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-neutral-border-medium">
+            <span className="text-xs px-1.5 py-1 border rounded-md text-neutral-text-medium border-neutral-border-medium">
               {title}
             </span>
           }

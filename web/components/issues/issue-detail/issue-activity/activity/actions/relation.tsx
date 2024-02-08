@@ -40,9 +40,9 @@ export const IssueRelationActivity: FC<TIssueRelationActivity> = observer((props
           (activity.old_value === "" ? `marked that this issue relates to ` : `removed the relation from `)}
 
         {activity.old_value === "" ? (
-          <span className="font-medium text-custom-text-100">{activity.new_value}.</span>
+          <span className="font-medium text-neutral-text-strong">{activity.new_value}.</span>
         ) : (
-          <span className="font-medium text-custom-text-100">{activity.old_value}.</span>
+          <span className="font-medium text-neutral-text-strong">{activity.old_value}.</span>
         )}
       </>
     </IssueActivityBlockComponent>

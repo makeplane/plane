@@ -92,7 +92,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
         )
       ) : (
         <div className="grid h-full place-items-center p-5">
-          <div className="space-y-4 text-custom-text-200">
+          <div className="space-y-4 text-neutral-text-medium">
             <p className="text-sm">There was some error in fetching the data.</p>
             <div className="flex items-center justify-center gap-2">
               <Button variant="primary" onClick={() => mutateDefaultAnalytics()}>

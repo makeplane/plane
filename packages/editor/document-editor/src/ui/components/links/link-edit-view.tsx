@@ -16,7 +16,7 @@ const InputView = ({
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => (
   <div className="flex flex-col gap-1">
-    <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
+    <label className="inline-block font-semibold text-xs text-neutral-text-subtle">{label}</label>
     <input
       placeholder={placeholder}
       onClick={(e) => {

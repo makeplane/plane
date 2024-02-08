@@ -53,14 +53,14 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
         <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>
           <h6 className="text-sm font-medium">{addSpaceIfCamelCase(state.name)}</h6>
-          <p className="text-xs text-custom-text-200">{state.description}</p>
+          <p className="text-xs text-neutral-text-medium">{state.description}</p>
         </div>
       </div>
       <div className="group flex items-center gap-2.5">
         {index !== 0 && (
           <button
             type="button"
-            className="hidden text-custom-text-200 group-hover:inline-block"
+            className="hidden text-neutral-text-medium group-hover:inline-block"
             onClick={() => handleMove(state, "up")}
           >
             <ArrowUp className="h-4 w-4" />
@@ -69,7 +69,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
         {!(index === groupLength - 1) && (
           <button
             type="button"
-            className="hidden text-custom-text-200 group-hover:inline-block"
+            className="hidden text-neutral-text-medium group-hover:inline-block"
             onClick={() => handleMove(state, "down")}
           >
             <ArrowDown className="h-4 w-4" />
@@ -78,11 +78,11 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
 
         <div className=" hidden items-center gap-2.5 group-hover:flex">
           {state.default ? (
-            <span className="text-xs text-custom-text-200">Default</span>
+            <span className="text-xs text-neutral-text-medium">Default</span>
           ) : (
             <button
               type="button"
-              className="hidden text-xs text-custom-sidebar-text-400 group-hover:inline-block"
+              className="hidden text-xs text-sidebar-neutral-text-subtle group-hover:inline-block"
               onClick={handleMakeDefault}
               disabled={isSubmitting}
             >
@@ -94,7 +94,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
             className="grid place-items-center opacity-0 group-hover:opacity-100"
             onClick={handleEditState}
           >
-            <Pencil className="h-3.5 w-3.5 text-custom-text-200" />
+            <Pencil className="h-3.5 w-3.5 text-neutral-text-medium" />
           </button>
 
           <button
@@ -110,14 +110,14 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
           >
             {state.default ? (
               <Tooltip tooltipContent="Cannot delete the default state.">
-                <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
+                <X className={`h-4 w-4 ${groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-red-500"}`} />
               </Tooltip>
             ) : groupLength === 1 ? (
               <Tooltip tooltipContent="Cannot have an empty group.">
-                <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
+                <X className={`h-4 w-4 ${groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-red-500"}`} />
               </Tooltip>
             ) : (
-              <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
+              <X className={`h-4 w-4 ${groupLength < 1 ? "text-sidebar-neutral-text-subtle" : "text-red-500"}`} />
             )}
           </button>
         </div>

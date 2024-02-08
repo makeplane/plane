@@ -40,7 +40,7 @@ const Inputs = (props: any) => {
 
   return (
     <>
-      <h4 className="w-20 text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="w-20 text-xs leading-5 text-neutral-text-subtle">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
@@ -48,7 +48,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full rounded-md bg-transparent py-3 text-sm leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent py-3 text-sm leading-5 text-neutral-text-medium outline-none"
       />
     </>
   );
@@ -208,7 +208,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
       )}
 
       {isOpen && (
-        <p className="ml-3 mt-3 text-xs italic text-custom-text-200">
+        <p className="ml-3 mt-3 text-xs italic text-neutral-text-medium">
           Press {"'"}Enter{"'"} to add another issue
         </p>
       )}

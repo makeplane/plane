@@ -76,21 +76,21 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
             />
             {showPassword ? (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(false)}
               >
                 <EyeOff className="h-4 w-4" />
               </button>
             ) : (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(true)}
               >
                 <Eye className="h-4 w-4" />
               </button>
             )}
           </div>
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             You will find your access key in your Unsplash developer console.{" "}
             <a
               href="https://unsplash.com/documentation#creating-a-developer-account"

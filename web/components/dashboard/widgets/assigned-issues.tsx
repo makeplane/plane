@@ -75,7 +75,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       <div className="flex items-center justify-between gap-2 p-6 pl-7">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}
-          className="text-lg font-semibold text-custom-text-300 hover:underline"
+          className="text-lg font-semibold text-neutral-text-medium hover:underline"
         >
           Assigned to you
         </Link>

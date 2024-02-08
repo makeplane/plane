@@ -69,7 +69,7 @@ export const NotificationPopover = observer(() => {
                   className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
-                      : "text-custom-sidebar-text-200 hover:bg-sidebar-neutral-component-surface-dark"
+                      : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark"
                   } ${isSidebarCollapsed ? "justify-center" : ""}`}
                 >
                   <Bell className="h-4 w-4" />
@@ -134,7 +134,7 @@ export const NotificationPopover = observer(() => {
                             <div role="status">
                               <svg
                                 aria-hidden="true"
-                                className="mr-2 h-6 w-6 animate-spin fill-blue-600 text-custom-text-200"
+                                className="mr-2 h-6 w-6 animate-spin fill-blue-600 text-neutral-text-medium"
                                 viewBox="0 0 100 101"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"

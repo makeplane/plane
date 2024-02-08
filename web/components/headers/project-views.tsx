@@ -62,7 +62,10 @@ export const ProjectViewsHeader: React.FC = observer(() => {
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
-                  <BreadcrumbLink label="Views" icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink
+                    label="Views"
+                    icon={<PhotoFilterIcon className="h-4 w-4 text-neutral-text-medium" />}
+                  />
                 }
               />
             </Breadcrumbs>

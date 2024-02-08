@@ -63,7 +63,7 @@ export const EditorHeader = (props: IEditorHeader) => {
           <AlertLabel
             Icon={Lock}
             backgroundColor="bg-neutral-component-surface-dark"
-            textColor="text-custom-text-300"
+            textColor="text-neutral-text-medium"
             label="Locked"
           />
         )}
@@ -85,7 +85,7 @@ export const EditorHeader = (props: IEditorHeader) => {
             {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
               <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
             )}
-            <span className="text-sm text-custom-text-300">
+            <span className="text-sm text-neutral-text-medium">
               {isSubmitting === "submitting" ? "Saving..." : "Saved"}
             </span>
           </div>

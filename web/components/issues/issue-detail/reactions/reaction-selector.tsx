@@ -31,7 +31,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                 size === "sm" ? "h-6 w-6" : size === "md" ? "h-7 w-7" : "h-8 w-8"
               }`}
             >
-              <SmilePlus className="h-3.5 w-3.5 text-custom-text-100" />
+              <SmilePlus className="h-3.5 w-3.5 text-neutral-text-strong" />
             </span>
           </Popover.Button>
           <Transition

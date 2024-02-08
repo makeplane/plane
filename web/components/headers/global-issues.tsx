@@ -118,9 +118,9 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                   label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
                   icon={
                     activeLayout === "spreadsheet" ? (
-                      <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                      <LayersIcon className="h-4 w-4 text-neutral-text-medium" />
                     ) : (
-                      <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+                      <PhotoFilterIcon className="h-4 w-4 text-neutral-text-medium" />
                     )
                   }
                 />
@@ -142,7 +142,9 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                       <layout.icon
                         size={14}
                         strokeWidth={2}
-                        className={`${activeLayout === layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
+                        className={`${
+                          activeLayout === layout.key ? "text-neutral-text-strong" : "text-neutral-text-medium"
+                        }`}
                       />
                     </div>
                   </Tooltip>

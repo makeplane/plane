@@ -107,11 +107,11 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               </span>
             </Link>
             <div className="flex items-center">
-              <p className="text-xs text-custom-text-300">{userDetails.member.display_name}</p>
+              <p className="text-xs text-neutral-text-medium">{userDetails.member.display_name}</p>
               {isAdmin && (
                 <>
-                  <Dot height={16} width={16} className="text-custom-text-300" />
-                  <p className="text-xs text-custom-text-300">{userDetails.member.email}</p>
+                  <Dot height={16} width={16} className="text-neutral-text-medium" />
+                  <p className="text-xs text-neutral-text-medium">{userDetails.member.email}</p>
                 </>
               )}
             </div>
@@ -124,7 +124,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               <div className="item-center flex gap-1 rounded px-2 py-0.5">
                 <span
                   className={`flex items-center rounded text-xs font-medium ${
-                    userDetails.member.id !== currentUser?.id ? "" : "text-custom-text-400"
+                    userDetails.member.id !== currentUser?.id ? "" : "text-neutral-text-subtle"
                   }`}
                 >
                   {ROLE[userDetails.role]}

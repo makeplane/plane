@@ -30,7 +30,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
 
               return (
                 <div className="rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark p-2 text-xs">
-                  <span className="font-medium text-custom-text-200">
+                  <span className="font-medium text-neutral-text-medium">
                     {assignee ? assignee.assignees__display_name : "No assignee"}:{" "}
                   </span>
                   {datum.value}

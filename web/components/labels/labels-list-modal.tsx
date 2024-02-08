@@ -81,11 +81,11 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
               <Combobox>
                 <div className="relative m-1">
                   <Search
-                    className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                    className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-neutral-text-strong text-opacity-40"
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-neutral-text-strong outline-none focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     onChange={(e) => setQuery(e.target.value)}
                   />
@@ -95,7 +95,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                   {filteredLabels.length > 0 && (
                     <li className="p-2">
                       {query === "" && (
-                        <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Labels</h2>
+                        <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-neutral-text-strong">Labels</h2>
                       )}
                       <ul className="text-sm text-gray-700">
                         {filteredLabels.map((label) => {
@@ -113,8 +113,8 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                                   name: label.name,
                                 }}
                                 className={({ active }) =>
-                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                    active ? "bg-neutral-component-surface-dark text-custom-text-100" : ""
+                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-neutral-text-medium ${
+                                    active ? "bg-neutral-component-surface-dark text-neutral-text-strong" : ""
                                   }`
                                 }
                                 onClick={() => {
@@ -139,10 +139,10 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                 {query !== "" && filteredLabels.length === 0 && (
                   <div className="px-6 py-14 text-center sm:px-14">
                     <LayerStackIcon
-                      className="mx-auto h-6 w-6 text-custom-text-100 text-opacity-40"
+                      className="mx-auto h-6 w-6 text-neutral-text-strong text-opacity-40"
                       aria-hidden="true"
                     />
-                    <p className="mt-4 text-sm text-custom-text-100">
+                    <p className="mt-4 text-sm text-neutral-text-strong">
                       We couldn{"'"}t find any label with that term. Please try again.
                     </p>
                   </div>

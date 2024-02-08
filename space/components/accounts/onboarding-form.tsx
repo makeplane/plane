@@ -127,7 +127,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     type="button"
                     className={`flex w-full items-center justify-between gap-1 rounded-md border border-neutral-border-medium px-3 py-2 text-sm shadow-sm duration-300 focus:outline-none`}
                   >
-                    <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
+                    <span className={value ? "" : "text-neutral-text-subtle"}>{value || "Select your role..."}</span>
                     <ChevronDown className="h-3 w-3" aria-hidden="true" strokeWidth={2} />
                   </Listbox.Button>
 
@@ -151,7 +151,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                             className={({ active, selected }) =>
                               `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                                 active || selected ? "bg-neutral-component-surface-dark" : ""
-                              } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                              } ${selected ? "text-neutral-text-strong" : "text-neutral-text-medium"}`
                             }
                           >
                             {({ selected }) => (

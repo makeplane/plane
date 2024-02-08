@@ -122,11 +122,11 @@ export const ProjectSidebarList: FC = observer(() => {
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
-                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark">
+                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-sidebar-neutral-text-subtle hover:bg-sidebar-neutral-component-surface-dark">
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark"
+                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-sidebar-neutral-text-subtle hover:bg-sidebar-neutral-component-surface-dark"
                             >
                               Favorites
                               {open ? (
@@ -200,11 +200,11 @@ export const ProjectSidebarList: FC = observer(() => {
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
-                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark">
+                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-sidebar-neutral-text-subtle hover:bg-sidebar-neutral-component-surface-dark">
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-sidebar-neutral-component-surface-dark"
+                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-sidebar-neutral-text-subtle hover:bg-sidebar-neutral-component-surface-dark"
                             >
                               Your projects
                               {open ? (
@@ -266,7 +266,7 @@ export const ProjectSidebarList: FC = observer(() => {
         {isAuthorizedUser && joinedProjects && joinedProjects.length === 0 && (
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
+            className="flex w-full items-center gap-2 px-3 text-sm text-sidebar-neutral-text-medium"
             onClick={() => {
               setTrackElement("Sidebar");
               toggleCreateProjectModal(true);

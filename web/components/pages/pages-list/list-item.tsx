@@ -155,11 +155,11 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
       <li>
         <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}>
-          <div className="relative rounded p-4 text-custom-text-200 hover:bg-neutral-component-surface-dark">
+          <div className="relative rounded p-4 text-neutral-text-medium hover:bg-neutral-component-surface-dark">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 overflow-hidden">
                 <FileText className="h-4 w-4 shrink-0" />
-                <p className="mr-2 truncate text-sm text-custom-text-100">{name}</p>
+                <p className="mr-2 truncate text-sm text-neutral-text-strong">{name}</p>
                 {label_details.length > 0 &&
                   label_details.map((label: IIssueLabel) => (
                     <div
@@ -186,7 +186,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                       archived_at
                     )}`}
                   >
-                    <p className="text-sm text-custom-text-200">{renderFormattedTime(archived_at)}</p>
+                    <p className="text-sm text-neutral-text-medium">{renderFormattedTime(archived_at)}</p>
                   </Tooltip>
                 ) : (
                   <Tooltip
@@ -194,7 +194,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
                       updated_at
                     )}`}
                   >
-                    <p className="text-sm text-custom-text-200">{renderFormattedTime(updated_at)}</p>
+                    <p className="text-sm text-neutral-text-medium">{renderFormattedTime(updated_at)}</p>
                   </Tooltip>
                 )}
                 {isEditingAllowed && (

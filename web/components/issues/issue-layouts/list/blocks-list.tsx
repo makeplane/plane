@@ -36,7 +36,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
           );
         })
       ) : (
-        <div className="bg-neutral-component-surface-light p-3 text-sm text-custom-text-400">No issues</div>
+        <div className="bg-neutral-component-surface-light p-3 text-sm text-neutral-text-subtle">No issues</div>
       )}
     </div>
   );

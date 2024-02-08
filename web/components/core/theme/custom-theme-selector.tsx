@@ -76,11 +76,11 @@ export const CustomThemeSelector: React.FC = observer(() => {
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-semibold text-custom-text-100">Customize your theme</h3>
+        <h3 className="text-lg font-semibold text-neutral-text-strong">Customize your theme</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Background color</h3>
+              <h3 className="text-left text-sm font-medium text-neutral-text-medium">Background color</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -106,7 +106,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Text color</h3>
+              <h3 className="text-left text-sm font-medium text-neutral-text-medium">Text color</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -132,7 +132,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Primary(Theme) color</h3>
+              <h3 className="text-left text-sm font-medium text-neutral-text-medium">Primary(Theme) color</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -158,7 +158,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Sidebar background color</h3>
+              <h3 className="text-left text-sm font-medium text-neutral-text-medium">Sidebar background color</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -186,7 +186,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Sidebar text color</h3>
+              <h3 className="text-left text-sm font-medium text-neutral-text-medium">Sidebar text color</h3>
               <div className="w-full">
                 <Controller
                   control={control}

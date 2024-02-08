@@ -39,30 +39,30 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
                 )}
                 <h5 className="flex items-center gap-1">
                   <p className="break-words">{truncateText(project.name, 20)}</p>
-                  <span className="ml-1 text-xs text-custom-text-200">({project.identifier})</span>
+                  <span className="ml-1 text-xs text-neutral-text-medium">({project.identifier})</span>
                 </h5>
               </div>
               <div className="mt-4 w-full space-y-3 pl-2">
                 <div className="flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2">
-                    <Users className="text-custom-text-200" size={14} strokeWidth={2} />
+                    <Users className="text-neutral-text-medium" size={14} strokeWidth={2} />
                     <h6>Total members</h6>
                   </div>
-                  <span className="text-custom-text-200">{project.total_members}</span>
+                  <span className="text-neutral-text-medium">{project.total_members}</span>
                 </div>
                 <div className="flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2">
-                    <Contrast className="text-custom-text-200" size={14} strokeWidth={2} />
+                    <Contrast className="text-neutral-text-medium" size={14} strokeWidth={2} />
                     <h6>Total cycles</h6>
                   </div>
-                  <span className="text-custom-text-200">{project.total_cycles}</span>
+                  <span className="text-neutral-text-medium">{project.total_cycles}</span>
                 </div>
                 <div className="flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2">
-                    <LayoutGrid className="text-custom-text-200" size={14} strokeWidth={2} />
+                    <LayoutGrid className="text-neutral-text-medium" size={14} strokeWidth={2} />
                     <h6>Total modules</h6>
                   </div>
-                  <span className="text-custom-text-200">{project.total_modules}</span>
+                  <span className="text-neutral-text-medium">{project.total_modules}</span>
                 </div>
               </div>
             </div>

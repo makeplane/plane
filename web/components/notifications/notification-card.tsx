@@ -74,7 +74,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </div>
         ) : (
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-component-surface-dark">
-            <span className="text-lg font-medium text-custom-text-100">
+            <span className="text-lg font-medium text-neutral-text-strong">
               {notification.triggered_by_details.is_bot ? (
                 notification.triggered_by_details.first_name?.[0]?.toUpperCase()
               ) : notification.triggered_by_details.display_name?.[0] ? (
@@ -137,14 +137,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         )}
 
         <div className="flex justify-between gap-2 text-xs">
-          <p className="text-custom-text-300">
+          <p className="text-neutral-text-medium">
             {truncateText(
               `${notification.data.issue.identifier}-${notification.data.issue.sequence_id} ${notification.data.issue.name}`,
               50
             )}
           </p>
           {notification.snoozed_till ? (
-            <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
+            <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-neutral-text-medium">
               <Clock className="h-4 w-4" />
               <span>
                 Till {renderFormattedDate(notification.snoozed_till)},{" "}
@@ -152,7 +152,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               </span>
             </p>
           ) : (
-            <p className="flex-shrink-0 text-custom-text-300">{calculateTimeAgo(notification.created_at)}</p>
+            <p className="flex-shrink-0 text-neutral-text-medium">{calculateTimeAgo(notification.created_at)}</p>
           )}
         </div>
       </div>
@@ -161,7 +161,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           {
             id: 1,
             name: notification.read_at ? "Mark as unread" : "Mark as read",
-            icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
+            icon: <MessageSquare className="h-3.5 w-3.5 text-neutral-text-medium" />,
             onClick: () => {
               markNotificationReadStatusToggle(notification.id).then(() => {
                 setToastAlert({
@@ -175,9 +175,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             id: 2,
             name: notification.archived_at ? "Unarchive" : "Archive",
             icon: notification.archived_at ? (
-              <ArchiveRestore className="h-3.5 w-3.5 text-custom-text-300" />
+              <ArchiveRestore className="h-3.5 w-3.5 text-neutral-text-medium" />
             ) : (
-              <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-300" />
+              <ArchiveIcon className="h-3.5 w-3.5 text-neutral-text-medium" />
             ),
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
@@ -213,7 +213,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             }}
             customButton={
               <div className="flex w-full items-center gap-x-2 rounded bg-neutral-component-surface-dark p-0.5 text-sm hover:bg-neutral-component-surface-light">
-                <Clock className="h-3.5 w-3.5 text-custom-text-300" />
+                <Clock className="h-3.5 w-3.5 text-neutral-text-medium" />
               </div>
             }
             optionsClassName="!z-20"

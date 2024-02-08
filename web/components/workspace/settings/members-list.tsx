@@ -55,7 +55,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
         ? searchedMemberIds?.map((memberId) => <WorkspaceMembersListItem key={memberId} memberId={memberId} />)
         : null}
       {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
-        <h4 className="mt-16 text-center text-sm text-custom-text-400">No matching members</h4>
+        <h4 className="mt-16 text-center text-sm text-neutral-text-subtle">No matching members</h4>
       )}
     </div>
   );

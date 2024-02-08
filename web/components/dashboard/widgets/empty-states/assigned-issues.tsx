@@ -24,7 +24,7 @@ export const AssignedIssuesEmptyState: React.FC<Props> = (props) => {
       <div className="h-24 w-24">
         <Image src={image} className="w-full h-full" alt="Assigned issues" />
       </div>
-      <p className="text-sm font-medium text-custom-text-300 whitespace-pre-line">{typeDetails.title}</p>
+      <p className="text-sm font-medium text-neutral-text-medium whitespace-pre-line">{typeDetails.title}</p>
     </div>
   );
 };

@@ -55,8 +55,8 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
             selectedOption.member.display_name
           ) : (
             <div className="flex items-center gap-2">
-              <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-              <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
+              <Ban className="h-3.5 w-3.5 rotate-90 text-sidebar-neutral-text-subtle" />
+              <span className="py-0.5 text-sm text-sidebar-neutral-text-subtle">None</span>
             </div>
           )}
         </div>
@@ -71,8 +71,8 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
             query: "none",
             content: (
               <div className="flex items-center gap-2">
-                <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-                <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
+                <Ban className="h-3.5 w-3.5 rotate-90 text-sidebar-neutral-text-subtle" />
+                <span className="py-0.5 text-sm text-sidebar-neutral-text-subtle">None</span>
               </div>
             ),
           },

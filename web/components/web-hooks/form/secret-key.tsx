@@ -92,7 +92,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       {(data || webhookSecretKey) && (
         <div className="space-y-2">
           {webhookId && <div className="text-sm font-medium">Secret key</div>}
-          <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
+          <div className="text-xs text-neutral-text-subtle">Generate a token to sign-in to the webhook payload</div>
           <div className="flex items-center gap-4">
             <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-neutral-border-medium px-2 py-1.5">
               <div className="select-none overflow-hidden font-medium">
@@ -111,7 +111,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
                   {SECRET_KEY_OPTIONS.map((option) => (
                     <Tooltip key={option.key} tooltipContent={option.label}>
                       <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
-                        <option.Icon className="h-3 w-3 text-custom-text-400" />
+                        <option.Icon className="h-3 w-3 text-neutral-text-subtle" />
                       </button>
                     </Tooltip>
                   ))}

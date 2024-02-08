@@ -52,8 +52,8 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
           }}
           className="focus:outline-none"
         >
-          <div className="flex items-center gap-2 text-custom-text-200">
-            <Settings className="h-4 w-4 text-custom-text-200" />
+          <div className="flex items-center gap-2 text-neutral-text-medium">
+            <Settings className="h-4 w-4 text-neutral-text-medium" />
             {theme.label}
           </div>
         </Command.Item>

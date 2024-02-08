@@ -66,7 +66,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
               type="button"
               className={`flex items-center justify-between gap-1 text-xs ${
                 disabled
-                  ? "cursor-not-allowed text-custom-text-200"
+                  ? "cursor-not-allowed text-neutral-text-medium"
                   : "cursor-pointer hover:bg-neutral-component-surface-dark"
               } ${customButtonClassName}`}
               onClick={openDropdown}
@@ -83,7 +83,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
                 input ? "px-3 py-2 text-sm" : "px-2 py-1 text-xs"
               } ${
                 disabled
-                  ? "cursor-not-allowed text-custom-text-200"
+                  ? "cursor-not-allowed text-neutral-text-medium"
                   : "cursor-pointer hover:bg-neutral-component-surface-dark"
               } ${buttonClassName}`}
               onClick={openDropdown}
@@ -126,7 +126,7 @@ const Option = (props: ICustomSelectItemProps) => {
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200",
+          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-neutral-text-medium",
           {
             "bg-neutral-component-surface-dark": active,
           },

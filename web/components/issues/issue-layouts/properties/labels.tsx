@@ -110,7 +110,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-custom-text-200">
+    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-neutral-text-medium">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
@@ -124,7 +124,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                       !disabled && "cursor-pointer"
                     } h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-neutral-border-medium px-2.5 py-1 text-xs`}
                   >
-                    <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+                    <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-neutral-text-medium">
                       <span
                         className="h-2 w-2 flex-shrink-0 rounded-full"
                         style={{
@@ -151,7 +151,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 .map((l) => l?.name)
                 .join(", ")}
             >
-              <div className="flex h-full items-center gap-1.5 text-custom-text-200">
+              <div className="flex h-full items-center gap-1.5 text-neutral-text-medium">
                 <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
                 {`${value.length} Labels`}
               </div>
@@ -189,7 +189,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           type="button"
           className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
             disabled
-              ? "cursor-not-allowed text-custom-text-200"
+              ? "cursor-not-allowed text-neutral-text-medium"
               : value.length <= maxRender
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-neutral-component-surface-dark"
@@ -209,9 +209,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           {...attributes.popper}
         >
           <div className="flex w-full items-center justify-start rounded border border-neutral-border-medium bg-neutral-component-surface-medium px-2">
-            <Search className="h-3.5 w-3.5 text-custom-text-300" />
+            <Search className="h-3.5 w-3.5 text-neutral-text-medium" />
             <Combobox.Input
-              className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              className="w-full bg-transparent px-2 py-1 text-xs text-neutral-text-medium placeholder:text-neutral-text-subtle focus:outline-none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
@@ -220,7 +220,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
           <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {isLoading ? (
-              <p className="text-center text-custom-text-200">Loading...</p>
+              <p className="text-center text-neutral-text-medium">Loading...</p>
             ) : filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <Combobox.Option
@@ -229,7 +229,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   className={({ active, selected }) =>
                     `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
                       active ? "bg-custom-background-80" : ""
-                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    } ${selected ? "text-neutral-text-strong" : "text-neutral-text-medium"}`
                   }
                 >
                   {({ selected }) => (
@@ -246,7 +246,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ))
             ) : (
               <span className="flex items-center gap-2 p-1">
-                <p className="text-left text-custom-text-200 ">No matching results</p>
+                <p className="text-left text-neutral-text-medium ">No matching results</p>
               </span>
             )}
           </div>

@@ -148,11 +148,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             >
               <div className="flex items-center gap-4">
                 <button onClick={removeRoutePeekId}>
-                  <MoveRight className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                  <MoveRight className="h-4 w-4 text-neutral-text-subtle hover:text-neutral-text-medium" />
                 </button>
 
                 <button onClick={redirectToIssueDetail}>
-                  <MoveDiagonal className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                  <MoveDiagonal className="h-4 w-4 text-neutral-text-subtle hover:text-neutral-text-medium" />
                 </button>
                 {currentMode && (
                   <div className="flex flex-shrink-0 items-center gap-2">
@@ -161,7 +161,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       onChange={(val: any) => setPeekMode(val)}
                       customButton={
                         <button type="button" className="">
-                          <currentMode.icon className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                          <currentMode.icon className="h-4 w-4 text-neutral-text-subtle hover:text-neutral-text-medium" />
                         </button>
                       }
                     >
@@ -170,8 +170,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           <div
                             className={`flex items-center gap-1.5 ${
                               currentMode.key === mode.key
-                                ? "text-custom-text-200"
-                                : "text-custom-text-400 hover:text-custom-text-200"
+                                ? "text-neutral-text-medium"
+                                : "text-neutral-text-subtle hover:text-neutral-text-medium"
                             }`}
                           >
                             <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
@@ -190,11 +190,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                   )}
                   <button onClick={handleCopyText}>
-                    <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+                    <Link2 className="h-4 w-4 -rotate-45 text-neutral-text-medium hover:text-neutral-text-medium" />
                   </button>
                   {!disabled && (
                     <button onClick={() => toggleDeleteIssueModal(true)}>
-                      <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                      <Trash2 className="h-4 w-4 text-neutral-text-medium hover:text-neutral-text-medium" />
                     </button>
                   )}
                 </div>
@@ -230,11 +230,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disabled={disabled}
                         />
 
-                        <IssueActivity
-                          workspaceSlug={workspaceSlug}
-                          projectId={projectId}
-                          issueId={issueId}
-                        />
+                        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                       </div>
                     ) : (
                       <div className={`flex h-full w-full overflow-auto`}>
@@ -250,11 +246,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
 
-                            <IssueActivity
-                              workspaceSlug={workspaceSlug}
-                              projectId={projectId}
-                              issueId={issueId}
-                            />
+                            <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                           </div>
                         </div>
                         <div

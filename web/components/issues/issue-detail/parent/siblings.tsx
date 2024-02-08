@@ -35,13 +35,13 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = (props) => {
   return (
     <div>
       {isLoading ? (
-        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
+        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-neutral-text-medium">
           Loading
         </div>
       ) : subIssueIds && subIssueIds.length > 0 ? (
         subIssueIds.map((issueId) => currentIssue.id != issueId && <IssueParentSiblingItem issueId={issueId} />)
       ) : (
-        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
+        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-neutral-text-medium">
           No sibling issues
         </div>
       )}

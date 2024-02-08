@@ -64,7 +64,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
           <div className="w-3/4">
             {stateGroup && (
               <div className="inline-flex rounded bg-neutral-component-surface-dark px-2.5 py-0.5 text-sm">
-                <div className="flex items-center gap-1.5 text-left text-custom-text-100">
+                <div className="flex items-center gap-1.5 text-left text-neutral-text-strong">
                   <StateGroupIcon stateGroup={state.group} color={state.color} />
                   {addSpaceIfCamelCase(state?.name ?? "")}
                 </div>
@@ -108,14 +108,14 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
           </div>
           <div>
             {issueDetails.target_date ? (
-              <div className="flex h-6 items-center gap-1 rounded border border-neutral-border-subtle bg-neutral-component-surface-dark px-2.5 py-1 text-xs text-custom-text-100">
+              <div className="flex h-6 items-center gap-1 rounded border border-neutral-border-subtle bg-neutral-component-surface-dark px-2.5 py-1 text-xs text-neutral-text-strong">
                 <span className={`material-symbols-rounded -my-0.5 text-sm ${dueDateIcon.className}`}>
                   {dueDateIcon.iconName}
                 </span>
                 {renderFullDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-custom-text-200">Empty</span>
+              <span className="text-neutral-text-medium">Empty</span>
             )}
           </div>
         </div>

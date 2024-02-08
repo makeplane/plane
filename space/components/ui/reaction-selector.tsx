@@ -35,7 +35,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                 size === "sm" ? "h-6 w-6" : size === "md" ? "h-7 w-7" : "h-8 w-8"
               }`}
             >
-              <Icon iconName="add_reaction" className="scale-125 text-custom-text-100" />
+              <Icon iconName="add_reaction" className="scale-125 text-neutral-text-strong" />
             </span>
           </Popover.Button>
           <Transition

@@ -41,7 +41,7 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-neutral-text-medium hover:text-neutral-text-medium"
                 onClick={() => handleRemove(projectId)}
               >
                 <X size={10} strokeWidth={2} />

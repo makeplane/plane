@@ -32,7 +32,7 @@ export const CustomCodeInlineExtension = Mark.create<CodeOptions>({
   addOptions() {
     return {
       HTMLAttributes: {
-        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-[2px] font-mono font-medium text-custom-text-1000",
+        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-[2px] font-mono font-medium text-neutral-text-strong0",
         spellcheck: "false",
       },
     };

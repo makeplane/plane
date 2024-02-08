@@ -183,16 +183,16 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 </span>
               )}
               <button onClick={openCycleOverview}>
-                <Info className="h-4 w-4 text-custom-text-400" />
+                <Info className="h-4 w-4 text-neutral-text-subtle" />
               </button>
             </div>
           </div>
 
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-custom-text-200">
-                <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount}</span>
+              <div className="flex items-center gap-1.5 text-neutral-text-medium">
+                <LayersIcon className="h-4 w-4 text-neutral-text-medium" />
+                <span className="text-xs text-neutral-text-medium">{issueCount}</span>
               </div>
               {cycleDetails.assignees.length > 0 && (
                 <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
@@ -230,11 +230,11 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
 
             <div className="flex items-center justify-between">
               {isDateValid ? (
-                <span className="text-xs text-custom-text-300">
+                <span className="text-xs text-neutral-text-medium">
                   {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
                 </span>
               ) : (
-                <span className="text-xs text-custom-text-400">No due date</span>
+                <span className="text-xs text-neutral-text-subtle">No due date</span>
               )}
               <div className="z-10 flex items-center gap-1.5">
                 {isEditingAllowed &&
@@ -244,7 +244,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                     </button>
                   ) : (
                     <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                      <Star className="h-3.5 w-3.5 text-neutral-text-medium" />
                     </button>
                   ))}
                 <CustomMenu ellipsis className="z-10">

@@ -34,7 +34,7 @@ export const IssueKanbanView = observer(() => {
                   ))}
                 </div>
               ) : (
-                <div className="flex items-center justify-center gap-2 pt-10 text-center text-sm font-medium text-custom-text-200">
+                <div className="flex items-center justify-center gap-2 pt-10 text-center text-sm font-medium text-neutral-text-medium">
                   <Icon iconName="stack" />
                   No issues in this state
                 </div>

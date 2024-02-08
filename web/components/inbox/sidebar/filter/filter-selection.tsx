@@ -108,7 +108,7 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
       />
 
       {filtersLength > 0 && (
-        <div className="absolute -right-2 -top-2 z-10 grid h-4 w-4 place-items-center rounded-full border border-neutral-border-medium bg-neutral-component-surface-dark text-[0.65rem] text-custom-text-100">
+        <div className="absolute -right-2 -top-2 z-10 grid h-4 w-4 place-items-center rounded-full border border-neutral-border-medium bg-neutral-component-surface-dark text-[0.65rem] text-neutral-text-strong">
           <span>{filtersLength}</span>
         </div>
       )}

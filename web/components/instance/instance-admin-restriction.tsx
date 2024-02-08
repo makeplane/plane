@@ -19,38 +19,38 @@ export const InstanceAdminRestriction: FC<InstanceAdminRestrictionProps> = ({ re
         <div className="text-center">
           <Image src={AccessDeniedImg} height="250" width="550" alt="AccessDeniedImg" />
           <h3 className="text-3xl font-semibold">God mode needs a god role</h3>
-          <p className="text-base text-custom-text-300">Doesn’t look like you have that role.</p>
+          <p className="text-base text-neutral-text-medium">Doesn’t look like you have that role.</p>
         </div>
         <div className="my-8 flex flex-col gap-2 text-center">
           <div>
-            <p className="text-xs font-medium tracking-tight text-custom-text-400">Do we have a god role?</p>
-            <p className="text-sm text-custom-text-300">Yes.</p>
+            <p className="text-xs font-medium tracking-tight text-neutral-text-subtle">Do we have a god role?</p>
+            <p className="text-sm text-neutral-text-medium">Yes.</p>
           </div>
           <div>
-            <p className="text-xs font-medium tracking-tight text-custom-text-400">Do we call it god role?</p>
-            <p className="text-sm text-custom-text-300">No. Obviously not.</p>
+            <p className="text-xs font-medium tracking-tight text-neutral-text-subtle">Do we call it god role?</p>
+            <p className="text-sm text-neutral-text-medium">No. Obviously not.</p>
           </div>
           <div>
-            <p className="text-xs font-medium tracking-tight text-custom-text-400">Can you get it?</p>
-            <p className="text-sm text-custom-text-300">Maybe. Ask your god.</p>
+            <p className="text-xs font-medium tracking-tight text-neutral-text-subtle">Can you get it?</p>
+            <p className="text-sm text-neutral-text-medium">Maybe. Ask your god.</p>
           </div>
           <div>
-            <p className="text-xs font-medium tracking-tight text-custom-text-400">
+            <p className="text-xs font-medium tracking-tight text-neutral-text-subtle">
               Are we being intentionally cryptic?
             </p>
-            <p className="text-sm text-custom-text-300">Yes.</p>
+            <p className="text-sm text-neutral-text-medium">Yes.</p>
           </div>
           <div>
-            <p className="text-xs font-medium tracking-tight text-custom-text-400">
+            <p className="text-xs font-medium tracking-tight text-neutral-text-subtle">
               Is this for the security of your workspaces?
             </p>
-            <p className="text-sm text-custom-text-300">Absolutely!</p>
+            <p className="text-sm text-neutral-text-medium">Absolutely!</p>
           </div>
           <div>
-            <p className="text-xs font-medium tracking-tight text-custom-text-400">
+            <p className="text-xs font-medium tracking-tight text-neutral-text-subtle">
               Are you the god here and still seeing this?
             </p>
-            <p className="text-sm text-custom-text-300">
+            <p className="text-sm text-neutral-text-medium">
               Sorry, God.{" "}
               <a
                 href="https://discord.com/channels/1031547764020084846/1094927053867995176"

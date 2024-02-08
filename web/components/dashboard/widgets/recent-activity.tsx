@@ -35,7 +35,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
 
   return (
     <div className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
-      <Link href="/profile/activity" className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline">
+      <Link href="/profile/activity" className="text-lg font-semibold text-neutral-text-medium mx-7 hover:underline">
         Your issue activities
       </Link>
       {widgetStats.length > 0 ? (
@@ -45,7 +45,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
               <div className="flex-shrink-0">
                 {activity.field ? (
                   activity.new_value === "restore" ? (
-                    <History className="h-3.5 w-3.5 text-custom-text-200" />
+                    <History className="h-3.5 w-3.5 text-neutral-text-medium" />
                   ) : (
                     <div className="h-6 w-6 flex justify-center">
                       <ActivityIcon activity={activity} />
@@ -67,8 +67,8 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                 )}
               </div>
               <div className="-mt-1 break-words">
-                <p className="text-sm text-custom-text-200">
-                  <span className="font-medium text-custom-text-100">
+                <p className="text-sm text-neutral-text-medium">
+                  <span className="font-medium text-neutral-text-strong">
                     {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
                   </span>
                   {activity.field ? (
@@ -79,7 +79,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-custom-text-200">{calculateTimeAgo(activity.created_at)}</p>
+                <p className="text-xs text-neutral-text-medium">{calculateTimeAgo(activity.created_at)}</p>
               </div>
             </div>
           ))}

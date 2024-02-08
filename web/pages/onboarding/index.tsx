@@ -174,7 +174,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                       )}
                       <div>
                         {step != 1 && (
-                          <p className="text-sm font-medium text-custom-text-200">
+                          <p className="text-sm font-medium text-neutral-text-medium">
                             {currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
@@ -186,7 +186,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                         <Menu>
                           <Menu.Button className={"flex items-center gap-x-2"}>
                             <span className="text-base font-medium">{user.email}</span>
-                            <ChevronDown className="h-4 w-4 text-custom-text-300" />
+                            <ChevronDown className="h-4 w-4 text-neutral-text-medium" />
                           </Menu.Button>
                           <Transition
                             enter="transition duration-100 ease-out"

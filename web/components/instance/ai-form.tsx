@@ -75,7 +75,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
               />
             )}
           />
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             Choose an OpenAI engine.{" "}
             <a
               href="https://platform.openai.com/docs/models/overview"
@@ -110,21 +110,21 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
             />
             {showPassword ? (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(false)}
               >
                 <EyeOff className="h-4 w-4" />
               </button>
             ) : (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(true)}
               >
                 <Eye className="h-4 w-4" />
               </button>
             )}
           </div>
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             You will find your API key{" "}
             <a
               href="https://platform.openai.com/api-keys"

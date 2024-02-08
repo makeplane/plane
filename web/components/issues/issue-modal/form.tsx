@@ -277,7 +277,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 )}
               />
             )}
-            <h3 className="text-xl font-semibold leading-6 text-custom-text-100">
+            <h3 className="text-xl font-semibold leading-6 text-neutral-text-strong">
               {data?.id ? "Update" : "Create"} issue
             </h3>
           </div>
@@ -290,7 +290,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     backgroundColor: selectedParentIssue.state__color,
                   }}
                 />
-                <span className="flex-shrink-0 text-custom-text-200">
+                <span className="flex-shrink-0 text-neutral-text-medium">
                   {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                 </span>
                 <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
@@ -591,10 +591,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-neutral-border-medium text-custom-text-200 px-2 py-1 text-xs hover:bg-neutral-component-surface-dark"
+                      className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-neutral-border-medium text-neutral-text-medium px-2 py-1 text-xs hover:bg-neutral-component-surface-dark"
                     >
                       {watch("parent_id") ? (
-                        <div className="flex items-center gap-1 text-custom-text-200">
+                        <div className="flex items-center gap-1 text-neutral-text-medium">
                           <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
                           <span className="whitespace-nowrap">
                             {selectedParentIssue &&
@@ -603,7 +603,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           </span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1 text-custom-text-300">
+                        <div className="flex items-center gap-1 text-neutral-text-medium">
                           <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
                           <span className="whitespace-nowrap">Add parent</span>
                         </div>

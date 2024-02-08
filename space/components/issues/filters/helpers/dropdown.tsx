@@ -30,7 +30,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
           <>
             <Popover.Button as={React.Fragment}>
               <Button ref={setReferenceElement} variant="neutral-primary" size="sm">
-                <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+                <div className={`${open ? "text-neutral-text-strong" : "text-neutral-text-medium"}`}>
                   <span>{title}</span>
                 </div>
               </Button>

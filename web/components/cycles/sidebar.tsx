@@ -346,7 +346,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center gap-3.5">
             <button onClick={handleCopyText}>
-              <LinkIcon className="h-3 w-3 text-custom-text-300" />
+              <LinkIcon className="h-3 w-3 text-neutral-text-medium" />
             </button>
             {!isCompleted && isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
@@ -382,18 +382,18 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               </span>
             )}
           </div>
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{cycleDetails.name}</h4>
+          <h4 className="w-full break-words text-xl font-semibold text-neutral-text-strong">{cycleDetails.name}</h4>
         </div>
 
         {cycleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-neutral-text-medium">
             {cycleDetails.description}
           </span>
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <CalendarClock className="h-4 w-4" />
               <span className="text-base">Start date</span>
             </div>
@@ -403,14 +403,14 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={isCompleted || !isEditingAllowed}
                     >
                       <span
                         className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("start_date") ? "" : "text-custom-text-400"
+                          watch("start_date") ? "" : "text-neutral-text-subtle"
                         }`}
                       >
                         {renderFormattedDate(startDate) ?? "No date selected"}
@@ -450,7 +450,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <CalendarCheck2 className="h-4 w-4" />
               <span className="text-base">Target date</span>
             </div>
@@ -460,14 +460,14 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={isCompleted || !isEditingAllowed}
                     >
                       <span
                         className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("end_date") ? "" : "text-custom-text-400"
+                          watch("end_date") ? "" : "text-neutral-text-subtle"
                         }`}
                       >
                         {renderFormattedDate(endDate) ?? "No date selected"}
@@ -507,25 +507,25 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <UserCircle2 className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
             <div className="flex w-1/2 items-center rounded-sm">
               <div className="flex items-center gap-2.5">
                 <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
-                <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
+                <span className="text-sm text-neutral-text-medium">{cycleOwnerDetails?.display_name}</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
             <div className="flex w-1/2 items-center">
-              <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
+              <span className="px-1.5 text-sm text-neutral-text-medium">{issueCount}</span>
             </div>
           </div>
         </div>
@@ -540,7 +540,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                     disabled={!isStartValid || !isEndValid}
                   >
                     <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">Progress</span>
+                      <span className="font-medium text-neutral-text-medium">Progress</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">
@@ -555,8 +555,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                         <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                       ) : (
                         <div className="flex items-center gap-1">
-                          <AlertCircle height={14} width={14} className="text-custom-text-200" />
-                          <span className="text-xs italic text-custom-text-200">
+                          <AlertCircle height={14} width={14} className="text-neutral-text-medium" />
+                          <span className="text-xs italic text-neutral-text-medium">
                             {cycleDetails?.start_date && cycleDetails?.end_date
                               ? "This cycle isn't active yet."
                               : "Invalid date. Please enter valid date."}
@@ -573,7 +573,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                         cycleDetails.end_date ? (
                           <div className="h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
-                              <div className="flex items-center gap-3 text-custom-text-100">
+                              <div className="flex items-center gap-3 text-neutral-text-strong">
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
                                   <span>Ideal</span>

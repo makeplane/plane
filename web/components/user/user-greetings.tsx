@@ -41,7 +41,7 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
       <h3 className="text-xl font-semibold">
         Good {greeting}, {user?.first_name} {user?.last_name}
       </h3>
-      <h6 className="flex items-center gap-2 font-medium text-custom-text-400">
+      <h6 className="flex items-center gap-2 font-medium text-neutral-text-subtle">
         <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
         <div>
           {weekDay}, {date} {timeString}

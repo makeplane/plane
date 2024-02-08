@@ -26,7 +26,7 @@ export const AppliedStateFilters: React.FC<Props> = (props) => {
             {stateDetails.name}
             <button
               type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              className="grid place-items-center text-neutral-text-medium hover:text-neutral-text-medium"
               onClick={() => handleRemove(stateId)}
             >
               <X size={10} strokeWidth={2} />

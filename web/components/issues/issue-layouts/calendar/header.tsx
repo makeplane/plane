@@ -96,7 +96,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="rounded bg-neutral-component-surface-dark px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
+          className="rounded bg-neutral-component-surface-dark px-2.5 py-1 text-xs font-medium text-neutral-text-medium hover:text-neutral-text-strong"
           onClick={handleToday}
         >
           Today

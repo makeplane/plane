@@ -113,7 +113,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   return (
     <div className="space-y-3 pt-3">
       {/* header */}
-      <div className="text-lg text-custom-text-100">Activity</div>
+      <div className="text-lg text-neutral-text-strong">Activity</div>
 
       {/* rendering activity */}
       <div className="space-y-3">
@@ -124,8 +124,8 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               className={`relative flex items-center px-2 py-1.5 gap-1 cursor-pointer transition-all rounded 
             ${
               tab.key === activityTab
-                ? `text-custom-text-100 bg-neutral-component-surface-dark`
-                : `text-custom-text-200 hover:bg-neutral-component-surface-dark`
+                ? `text-neutral-text-strong bg-neutral-component-surface-dark`
+                : `text-neutral-text-medium hover:bg-neutral-component-surface-dark`
             }`}
               onClick={() => setActivityTab(tab.key)}
             >

@@ -34,21 +34,21 @@ interface Props {
 }
 
 const HeadingPrimary: CustomComponent = ({ children }) => (
-  <h1 className="text-lg font-semibold text-custom-text-100">{children}</h1>
+  <h1 className="text-lg font-semibold text-neutral-text-strong">{children}</h1>
 );
 
 const HeadingSecondary: CustomComponent = ({ children }) => (
-  <h3 className="text-base font-semibold text-custom-text-100">{children}</h3>
+  <h3 className="text-base font-semibold text-neutral-text-strong">{children}</h3>
 );
 
-const Paragraph: CustomComponent = ({ children }) => <p className="text-sm text-custom-text-200">{children}</p>;
+const Paragraph: CustomComponent = ({ children }) => <p className="text-sm text-neutral-text-medium">{children}</p>;
 
 const OrderedList: CustomComponent = ({ children }) => (
-  <ol className="mb-4 ml-8 list-decimal text-sm text-custom-text-200">{children}</ol>
+  <ol className="mb-4 ml-8 list-decimal text-sm text-neutral-text-medium">{children}</ol>
 );
 
 const UnorderedList: CustomComponent = ({ children }) => (
-  <ul className="mb-4 ml-8 list-disc text-sm text-custom-text-200">{children}</ul>
+  <ul className="mb-4 ml-8 list-disc text-sm text-neutral-text-medium">{children}</ul>
 );
 
 const Link: CustomComponent = ({ href, children }) => (

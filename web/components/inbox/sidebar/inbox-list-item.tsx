@@ -66,7 +66,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
         >
           <div className="flex items-center justify-between gap-x-2">
             <div className="relative flex items-center gap-x-2 overflow-hidden">
-              <p className="flex-shrink-0 text-xs text-custom-text-200">
+              <p className="flex-shrink-0 text-xs text-neutral-text-medium">
                 {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
               </p>
               <h5 className="truncate text-sm">{issue.name}</h5>
@@ -87,7 +87,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
               <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
             </Tooltip>
             <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}>
-              <div className="flex items-center gap-1 rounded border border-neutral-border-medium px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">
+              <div className="flex items-center gap-1 rounded border border-neutral-border-medium px-2 py-[0.19rem] text-xs text-neutral-text-medium shadow-sm">
                 <CalendarDays size={12} strokeWidth={1.5} />
                 <span>{renderFormattedDate(issue.created_at ?? "")}</span>
               </div>

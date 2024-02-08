@@ -37,7 +37,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
                     backgroundColor: datum.color,
                   }}
                 />
-                <span className="font-medium text-custom-text-200">{datum.data.priority}:</span>
+                <span className="font-medium text-neutral-text-medium">{datum.data.priority}:</span>
                 <span>{datum.value}</span>
               </div>
             )}

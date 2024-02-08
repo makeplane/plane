@@ -15,7 +15,7 @@ export const ProfileEmptyState: React.FC<Props> = ({ title, description, image }
         <Image src={image} width={32} alt={title} />
       </div>
       <h6 className="mb-3 mt-3.5 text-base font-semibold">{title}</h6>
-      {description && <p className="text-sm text-custom-text-300">{description}</p>}
+      {description && <p className="text-sm text-neutral-text-medium">{description}</p>}
     </div>
   </div>
 );

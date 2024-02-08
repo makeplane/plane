@@ -46,8 +46,8 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-neutral-component-surface-dark ${
-        isMenuActive ? "bg-neutral-component-surface-dark text-custom-text-100" : "text-custom-text-200"
+      className={`w-full cursor-pointer rounded p-1 text-sidebar-neutral-text-subtle hover:bg-neutral-component-surface-dark ${
+        isMenuActive ? "bg-neutral-component-surface-dark text-neutral-text-strong" : "text-neutral-text-medium"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -78,7 +78,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                   href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                   target="_blank"
                   onClick={() => handleIssuePeekOverview(issue)}
-                  className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+                  className="w-full line-clamp-1 cursor-pointer text-sm text-neutral-text-strong"
                 >
                   <>
                     {issue?.tempId !== undefined && (
@@ -106,7 +106,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                             backgroundColor: stateColor,
                           }}
                         />
-                        <div className="flex-shrink-0 text-xs text-custom-text-300">
+                        <div className="flex-shrink-0 text-xs text-neutral-text-medium">
                           {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
                         </div>
                         <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>

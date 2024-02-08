@@ -94,7 +94,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <DoubleCircleIcon className="h-3.5 w-3.5" />
           Change state...
         </div>
@@ -107,7 +107,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <Signal className="h-3.5 w-3.5" />
           Change priority...
         </div>
@@ -120,7 +120,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <UserGroupIcon className="h-3.5 w-3.5" />
           Assign to...
         </div>
@@ -132,7 +132,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           {issueDetails?.assignee_ids.includes(currentUser?.id ?? "") ? (
             <>
               <UserMinus2 className="h-3.5 w-3.5" />
@@ -147,7 +147,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         </div>
       </Command.Item>
       <Command.Item onSelect={deleteIssue} className="focus:outline-none">
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <Trash2 className="h-3.5 w-3.5" />
           Delete issue
         </div>
@@ -159,7 +159,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <LinkIcon className="h-3.5 w-3.5" />
           Copy issue URL
         </div>

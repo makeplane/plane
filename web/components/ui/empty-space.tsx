@@ -18,12 +18,12 @@ const EmptySpace: React.FC<EmptySpaceProps> = ({ title, description, children, I
     <div className="max-w-lg">
       {Icon ? (
         <div className="mb-4">
-          <Icon className="h-14 w-14 text-custom-text-200" />
+          <Icon className="h-14 w-14 text-neutral-text-medium" />
         </div>
       ) : null}
 
-      <h2 className="text-lg font-medium text-custom-text-100">{title}</h2>
-      <div className="mt-1 text-sm text-custom-text-200">{description}</div>
+      <h2 className="text-lg font-medium text-neutral-text-strong">{title}</h2>
+      <div className="mt-1 text-sm text-neutral-text-medium">{description}</div>
       <ul
         role="list"
         className="mt-6 divide-y divide-neutral-border-medium border-b border-t border-neutral-border-medium"
@@ -60,12 +60,15 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Ico
           <Icon className="h-6 w-6 text-white" aria-hidden="true" />
         </span>
       </div>
-      <div className="min-w-0 flex-1 text-custom-text-200">
-        <div className="text-sm font-medium group-hover:text-custom-text-100">{title}</div>
+      <div className="min-w-0 flex-1 text-neutral-text-medium">
+        <div className="text-sm font-medium group-hover:text-neutral-text-strong">{title}</div>
         {description ? <div className="text-sm">{description}</div> : null}
       </div>
       <div className="flex-shrink-0 self-center">
-        <ChevronRight className="h-5 w-5 text-custom-text-200 group-hover:text-custom-text-100" aria-hidden="true" />
+        <ChevronRight
+          className="h-5 w-5 text-neutral-text-medium group-hover:text-neutral-text-strong"
+          aria-hidden="true"
+        />
       </div>
     </div>
   );

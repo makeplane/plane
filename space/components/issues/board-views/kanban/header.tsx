@@ -22,8 +22,8 @@ export const IssueKanBanHeader = observer(({ state }: { state: IIssueState }) =>
       <div className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="14" width="14" />
       </div>
-      <div className="mr-1 truncate font-semibold capitalize text-custom-text-200">{state?.name}</div>
-      <span className="flex-shrink-0 rounded-full text-custom-text-300">
+      <div className="mr-1 truncate font-semibold capitalize text-neutral-text-medium">{state?.name}</div>
+      <span className="flex-shrink-0 rounded-full text-neutral-text-medium">
         {store.issue.getCountOfIssuesByState(state.id)}
       </span>
     </div>

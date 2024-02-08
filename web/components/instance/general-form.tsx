@@ -83,7 +83,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
             type="email"
             value={instanceAdmins[0].user_detail.email ?? ""}
             placeholder="Admin email"
-            className="w-full cursor-not-allowed !text-custom-text-400"
+            className="w-full cursor-not-allowed !text-neutral-text-subtle"
             disabled
           />
         </div>
@@ -95,7 +95,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
             name="instance_id"
             type="text"
             value={instance.instance_id}
-            className="w-full cursor-not-allowed rounded-md font-medium !text-custom-text-400"
+            className="w-full cursor-not-allowed rounded-md font-medium !text-neutral-text-subtle"
             disabled
           />
         </div>
@@ -103,8 +103,8 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
 
       {/* <div className="flex items-center gap-12 pt-4">
         <div>
-          <div className="text-custom-text-100 font-medium text-sm">Share anonymous usage instance</div>
-          <div className="text-custom-text-300 font-normal text-xs">
+          <div className="text-neutral-text-strong font-medium text-sm">Share anonymous usage instance</div>
+          <div className="text-neutral-text-medium font-normal text-xs">
             Help us understand how you use Plane so we can build better for you.
           </div>
         </div>

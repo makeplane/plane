@@ -29,7 +29,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
         <div className="relative px-14 flex flex-col gap-7 justify-center lg:w-1/2">
           <div className="flex flex-col gap-2 max-w-64">
             <h2 className="text-2xl font-semibold">On-demand snapshots of all your cycles</h2>
-            <p className="text-base font-medium text-custom-text-300">
+            <p className="text-base font-medium text-neutral-text-medium">
               Monitor cycles across projects, track high-priority issues, and zoom in cycles that need attention.
             </p>
           </div>
@@ -80,7 +80,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
               <h3 className="font-medium">{item.title}</h3>
               <item.icon className="text-blue-500 h-4 w-4" />
             </div>
-            <span className="text-sm text-custom-text-300">{item.description}</span>
+            <span className="text-sm text-neutral-text-medium">{item.description}</span>
           </div>
         ))}
       </div>

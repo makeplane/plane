@@ -107,7 +107,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 backgroundColor: currentIssueStateDetail?.color,
               }}
             />
-            <div className="flex-shrink-0 text-xs text-custom-text-200">
+            <div className="flex-shrink-0 text-xs text-neutral-text-medium">
               {projectDetail?.identifier}-{issue?.sequence_id}
             </div>
 
@@ -115,7 +115,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
               target="_blank"
               onClick={() => handleIssuePeekOverview(issue)}
-              className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+              className="w-full line-clamp-1 cursor-pointer text-sm text-neutral-text-strong"
             >
               <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
                 <span>{issue.name}</span>

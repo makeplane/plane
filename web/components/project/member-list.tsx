@@ -35,7 +35,7 @@ export const ProjectMemberList: React.FC = observer(() => {
 
       <div className="flex items-center justify-between gap-4 border-b border-neutral-border-subtle py-3.5">
         <h4 className="text-xl font-medium">Members</h4>
-        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-neutral-component-surface-light px-2.5 py-1.5 text-custom-text-400">
+        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-neutral-component-surface-light px-2.5 py-1.5 text-neutral-text-subtle">
           <Search className="h-3.5 w-3.5" />
           <input
             className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none"
@@ -68,7 +68,7 @@ export const ProjectMemberList: React.FC = observer(() => {
             ? searchedMembers.map((userId) => <ProjectMemberListItem key={userId} userId={userId} />)
             : null}
           {searchedMembers.length === 0 && (
-            <h4 className="text-sm mt-16 text-center text-custom-text-400">No matching members</h4>
+            <h4 className="text-sm mt-16 text-center text-neutral-text-subtle">No matching members</h4>
           )}
         </div>
       )}

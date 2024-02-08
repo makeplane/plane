@@ -96,7 +96,7 @@ export const JiraImporterRoot: React.FC = () => {
   return (
     <div className="mt-4 flex h-full flex-col space-y-2">
       <Link href={`/${workspaceSlug}/settings/imports`}>
-        <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+        <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-neutral-text-medium hover:text-neutral-text-strong">
           <div>
             <ArrowLeft className="h-3 w-3" />
           </div>
@@ -132,7 +132,9 @@ export const JiraImporterRoot: React.FC = () => {
                   }`}
                 >
                   <integration.icon
-                    className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
+                    className={`h-5 w-5 ${
+                      index <= activeIntegrationState() ? "text-white" : "text-neutral-text-subtle"
+                    }`}
                   />
                 </button>
                 {index < integrationWorkflowData.length - 1 && (

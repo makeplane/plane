@@ -13,7 +13,7 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails }) => {
 
   return (
     <div className="space-y-2">
-      <h6 className="font-medium text-custom-text-200">
+      <h6 className="font-medium text-neutral-text-medium">
         {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
       </h6>
       <h4 className="break-words text-2xl font-semibold">{issueDetails.name}</h4>

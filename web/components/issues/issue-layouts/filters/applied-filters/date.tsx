@@ -41,7 +41,7 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
           <span className="normal-case">{getDateLabel(date)}</span>
           <button
             type="button"
-            className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+            className="grid place-items-center text-neutral-text-medium hover:text-neutral-text-medium"
             onClick={() => handleRemove(date)}
           >
             <X size={10} strokeWidth={2} />

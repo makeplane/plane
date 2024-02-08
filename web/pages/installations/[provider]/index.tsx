@@ -63,7 +63,7 @@ const AppPostInstallation: NextPageWithLayout = () => {
 
   return (
     <div className="absolute left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-neutral-component-surface-dark">
-      <h2 className="text-2xl text-custom-text-100">Installing. Please wait...</h2>
+      <h2 className="text-2xl text-neutral-text-strong">Installing. Please wait...</h2>
       <Spinner />
     </div>
   );

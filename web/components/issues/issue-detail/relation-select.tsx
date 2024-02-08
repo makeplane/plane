@@ -18,7 +18,7 @@ export type TRelationObject = { className: string; icon: (size: number) => React
 
 export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
   relates_to: {
-    className: "bg-neutral-component-surface-dark text-custom-text-200",
+    className: "bg-neutral-component-surface-dark text-neutral-text-medium",
     icon: (size) => <RelatedIcon height={size} width={size} />,
     placeholder: "Add related issues",
   },
@@ -33,7 +33,7 @@ export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> =
     placeholder: "None",
   },
   duplicate: {
-    className: "bg-neutral-component-surface-dark text-custom-text-200",
+    className: "bg-neutral-component-surface-dark text-neutral-text-medium",
     icon: (size) => <CopyPlus size={size} />,
     placeholder: "None",
   },
@@ -147,7 +147,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                             removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
                           }}
                         >
-                          <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                          <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-red-500" />
                         </span>
                       </Tooltip>
                     )}
@@ -156,12 +156,12 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
               })}
             </div>
           ) : (
-            <span className="text-sm text-custom-text-400">{issueRelationObject[relationKey].placeholder}</span>
+            <span className="text-sm text-neutral-text-subtle">{issueRelationObject[relationKey].placeholder}</span>
           )}
           {!disabled && (
             <span
               className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
-                "text-custom-text-400": relationIssueIds.length === 0,
+                "text-neutral-text-subtle": relationIssueIds.length === 0,
               })}
             >
               <Pencil className="h-2.5 w-2.5 flex-shrink-0" />

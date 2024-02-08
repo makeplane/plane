@@ -306,7 +306,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                 )}
               />
             )}
-            <h3 className="text-xl font-semibold leading-6 text-custom-text-100">
+            <h3 className="text-xl font-semibold leading-6 text-neutral-text-strong">
               {status ? "Update" : "Create"} issue
             </h3>
           </div>
@@ -321,7 +321,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                       backgroundColor: selectedParentIssue.state__color,
                     }}
                   />
-                  <span className="flex-shrink-0 text-custom-text-200">
+                  <span className="flex-shrink-0 text-neutral-text-medium">
                     {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
                   <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>

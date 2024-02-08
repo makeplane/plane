@@ -145,12 +145,12 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                   >
                     <div className="relative m-1">
                       <Search
-                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-neutral-text-strong text-opacity-40"
                         aria-hidden="true"
                       />
                       <input
                         type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-neutral-text-strong outline-none focus:ring-0 sm:text-sm"
                         placeholder="Search..."
                         onChange={(event) => setQuery(event.target.value)}
                       />
@@ -163,11 +163,11 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">
+                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-neutral-text-strong">
                               Select issues to delete
                             </h2>
                           )}
-                          <ul className="text-sm text-custom-text-200">
+                          <ul className="text-sm text-neutral-text-medium">
                             {filteredIssues.map((issue) => (
                               <BulkDeleteIssuesModalItem
                                 issue={issue}
@@ -181,7 +181,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                       ) : (
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayersIcon height="56" width="56" />
-                          <h3 className="text-custom-text-200">
+                          <h3 className="text-neutral-text-medium">
                             No issues found. Create a new issue with{" "}
                             <pre className="inline rounded bg-neutral-component-surface-dark px-2 py-1">C</pre>.
                           </h3>

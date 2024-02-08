@@ -32,7 +32,7 @@ export const EmptyState: React.FC<Props> = ({
     </div>
     <div className="absolute flex w-full flex-col items-center pt-[30vh] text-center md:pt-[35vh] lg:pt-[45vh]">
       <h6 className="mt-6 text-xl font-semibold">{title}</h6>
-      {description && <p className="mb-7 text-custom-text-300">{description}</p>}
+      {description && <p className="mb-7 text-neutral-text-medium">{description}</p>}
       <div className="flex items-center gap-4">
         {primaryButton && (
           <Button

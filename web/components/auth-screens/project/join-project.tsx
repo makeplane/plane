@@ -37,9 +37,9 @@ export const JoinProject: React.FC = () => {
       <div className="h-44 w-72">
         <Image src={JoinProjectImg} height="176" width="288" alt="JoinProject" />
       </div>
-      <h1 className="text-xl font-medium text-custom-text-100">You are not a member of this project</h1>
+      <h1 className="text-xl font-medium text-neutral-text-strong">You are not a member of this project</h1>
 
-      <div className="w-full max-w-md text-base text-custom-text-200">
+      <div className="w-full max-w-md text-base text-neutral-text-medium">
         <p className="mx-auto w-full text-sm md:w-3/4">
           You are not a member of this project, but you can join this project by clicking the button below.
         </p>

@@ -30,7 +30,7 @@ export const IssueTargetDateActivity: FC<TIssueTargetDateActivity> = observer((p
         {activity.new_value ? `set the due date to ` : `removed the due date `}
         {activity.new_value && (
           <>
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-neutral-text-strong">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
         {showIssue && (activity.new_value ? ` for ` : ` from `)}

@@ -314,7 +314,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             <Button variant="primary" type="submit" loading={isLoading} disabled={!isAdmin}>
               {isLoading ? "Updating..." : "Update project"}
             </Button>
-            <span className="text-sm italic text-custom-sidebar-text-400">
+            <span className="text-sm italic text-sidebar-neutral-text-subtle">
               Created on {renderFormattedDate(project?.created_at)}
             </span>
           </>

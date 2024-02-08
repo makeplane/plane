@@ -60,7 +60,9 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         disabled={disableSelect}
         className="w-full h-full group"
         buttonContainerClassName="w-full"
-        buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
+        buttonClassName={`min-h-8 text-sm justify-between ${
+          issue?.module_ids?.length ? "" : "text-neutral-text-subtle"
+        }`}
         buttonVariant="transparent-with-text"
         hideIcon
         dropdownArrow

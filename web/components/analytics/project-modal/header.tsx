@@ -19,14 +19,14 @@ export const ProjectAnalyticsModalHeader: React.FC<Props> = observer((props) => 
       <div className="flex items-center gap-2">
         <button
           type="button"
-          className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
+          className="grid place-items-center p-1 text-neutral-text-medium hover:text-neutral-text-strong"
           onClick={() => setFullScreen((prevData) => !prevData)}
         >
           {fullScreen ? <Shrink size={14} strokeWidth={2} /> : <Expand size={14} strokeWidth={2} />}
         </button>
         <button
           type="button"
-          className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
+          className="grid place-items-center p-1 text-neutral-text-medium hover:text-neutral-text-strong"
           onClick={handleClose}
         >
           <X size={14} strokeWidth={2} />

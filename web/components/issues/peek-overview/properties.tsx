@@ -68,7 +68,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
       <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>
         {/* state */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
             <span>State</span>
           </div>
@@ -88,7 +88,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* assignee */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
             <span>Assignees</span>
           </div>
@@ -102,7 +102,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm justify-between ${
+              issue?.assignee_ids.length > 0 ? "" : "text-neutral-text-subtle"
+            }`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -111,7 +113,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* priority */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <Signal className="h-4 w-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
@@ -128,7 +130,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <CalendarClock className="h-4 w-4 flex-shrink-0" />
             <span>Start date</span>
           </div>
@@ -145,7 +147,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm ${issue?.start_date ? "" : "text-neutral-text-subtle"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
             // TODO: add this logic
@@ -155,7 +157,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* due date */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
@@ -172,7 +174,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm ${issue?.target_date ? "" : "text-neutral-text-subtle"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
             // TODO: add this logic
@@ -183,7 +185,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* estimate */}
         {isEstimateEnabled && (
           <div className="flex w-full items-center gap-3 h-8">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
               <Triangle className="h-4 w-4 flex-shrink-0" />
               <span>Estimate</span>
             </div>
@@ -195,7 +197,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               buttonVariant="transparent-with-text"
               className="w-3/4 flex-grow group"
               buttonContainerClassName="w-full text-left"
-              buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
+              buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-neutral-text-subtle"}`}
               placeholder="None"
               hideIcon
               dropdownArrow
@@ -206,7 +208,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {projectDetails?.module_view && (
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <span>Module</span>
             </div>
@@ -223,7 +225,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {projectDetails?.cycle_view && (
           <div className="flex w-full items-center gap-3 h-8">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
               <ContrastIcon className="h-4 w-4 flex-shrink-0" />
               <span>Cycle</span>
             </div>
@@ -240,7 +242,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* parent */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
             <p>Parent</p>
           </div>
@@ -256,7 +258,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* relates to */}
         <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <RelatedIcon className="h-4 w-4 flex-shrink-0" />
             <span>Relates to</span>
           </div>
@@ -272,7 +274,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* blocking */}
         <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <XCircle className="h-4 w-4 flex-shrink-0" />
             <span>Blocking</span>
           </div>
@@ -288,7 +290,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* blocked by */}
         <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <CircleDot className="h-4 w-4 flex-shrink-0" />
             <span>Blocked by</span>
           </div>
@@ -304,7 +306,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* duplicate of */}
         <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <CopyPlus className="h-4 w-4 flex-shrink-0" />
             <span>Duplicate of</span>
           </div>
@@ -320,7 +322,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         {/* label */}
         <div className="flex w-full items-center gap-3 min-h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-neutral-text-medium">
             <Tag className="h-4 w-4 flex-shrink-0" />
             <span>Labels</span>
           </div>

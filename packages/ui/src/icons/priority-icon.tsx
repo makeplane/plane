@@ -68,7 +68,7 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
               "text-orange-500": priority === "high",
               "text-yellow-500": priority === "medium",
               "text-custom-primary-100": priority === "low",
-              "text-custom-text-200": priority === "none",
+              "text-neutral-text-medium": priority === "none",
             },
             className
           )}

@@ -67,7 +67,7 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
           className="flex-shrink-0 block sm:block md:hidden lg:hidden"
           maxHeight="lg"
           customButton={
-            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-neutral-border-medium">
+            <span className="text-xs px-1.5 py-1 border rounded-md text-neutral-text-medium border-neutral-border-medium">
               {title}
             </span>
           }

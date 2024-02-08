@@ -19,7 +19,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
           className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-sidebar-neutral-border-medium text-center text-sm hover:bg-sidebar-neutral-component-surface-medium"
           onClick={() => router.back()}
         >
-          <MoveLeft className="h-4 w-4 text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100" />
+          <MoveLeft className="h-4 w-4 text-sidebar-neutral-text-medium group-hover:text-sidebar-neutral-text-strong" />
         </button>
         {children}
       </div>

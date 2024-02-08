@@ -88,10 +88,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
           className={({ selected }) =>
             `w-full  ${
               roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
-            } px-3 py-1 text-custom-text-100 ${
+            } px-3 py-1 text-neutral-text-strong ${
               selected
-                ? "bg-neutral-component-surface-light text-custom-text-300 shadow-custom-shadow-2xs"
-                : "text-custom-text-400 hover:text-custom-text-300"
+                ? "bg-neutral-component-surface-light text-neutral-text-medium shadow-custom-shadow-2xs"
+                : "text-neutral-text-subtle hover:text-neutral-text-medium"
             }`
           }
         >
@@ -101,10 +101,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
           className={({ selected }) =>
             `w-full ${
               roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
-            } px-3 py-1 text-custom-text-100 ${
+            } px-3 py-1 text-neutral-text-strong ${
               selected
-                ? "bg-neutral-component-surface-light text-custom-text-300 shadow-custom-shadow-2xs"
-                : "text-custom-text-400 hover:text-custom-text-300"
+                ? "bg-neutral-component-surface-light text-neutral-text-medium shadow-custom-shadow-2xs"
+                : "text-neutral-text-subtle hover:text-neutral-text-medium"
             }`
           }
         >
@@ -114,17 +114,17 @@ export const SidebarProgressStats: React.FC<Props> = ({
           className={({ selected }) =>
             `w-full ${
               roundedTab ? "rounded-3xl border border-neutral-border-medium" : "rounded"
-            } px-3 py-1  text-custom-text-100 ${
+            } px-3 py-1  text-neutral-text-strong ${
               selected
-                ? "bg-neutral-component-surface-light text-custom-text-300 shadow-custom-shadow-2xs"
-                : "text-custom-text-400 hover:text-custom-text-300"
+                ? "bg-neutral-component-surface-light text-neutral-text-medium shadow-custom-shadow-2xs"
+                : "text-neutral-text-subtle hover:text-neutral-text-medium"
             }`
           }
         >
           States
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex w-full items-center justify-between text-custom-text-200">
+      <Tab.Panels className="flex w-full items-center justify-between text-neutral-text-medium">
         <Tab.Panel as="div" className="flex min-h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
           {distribution?.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
@@ -178,7 +178,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-component-surface-dark">
                 <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
               </div>
-              <h6 className="text-base text-custom-text-300">No assignees yet</h6>
+              <h6 className="text-base text-neutral-text-medium">No assignees yet</h6>
             </div>
           )}
         </Tab.Panel>
@@ -218,7 +218,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-component-surface-dark">
                 <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
               </div>
-              <h6 className="text-base text-custom-text-300">No labels yet</h6>
+              <h6 className="text-base text-neutral-text-medium">No labels yet</h6>
             </div>
           )}
         </Tab.Panel>

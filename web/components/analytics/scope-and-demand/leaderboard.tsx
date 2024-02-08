@@ -44,7 +44,7 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
                   {user.display_name !== "" ? user?.display_name?.[0] : "?"}
                 </div>
               )}
-              <span className="break-words text-custom-text-200">
+              <span className="break-words text-neutral-text-medium">
                 {user.display_name !== "" ? `${user.display_name}` : "No assignee"}
               </span>
             </div>

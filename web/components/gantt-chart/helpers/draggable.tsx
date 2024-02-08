@@ -228,7 +228,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
       {/* move to left side hidden block button */}
       {isBlockHiddenOnLeft && (
         <div
-          className="fixed z-[1] ml-1 mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-neutral-border-medium bg-neutral-component-surface-dark text-custom-text-200 hover:text-custom-text-100"
+          className="fixed z-[1] ml-1 mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-neutral-border-medium bg-neutral-component-surface-dark text-neutral-text-medium hover:text-neutral-text-strong"
           onClick={handleScrollToBlock}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
@@ -237,7 +237,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
       {/* move to right side hidden block button */}
       {isBlockHiddenOnRight && (
         <div
-          className="fixed right-1 z-[1] mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-neutral-border-medium bg-neutral-component-surface-dark text-custom-text-200 hover:text-custom-text-100"
+          className="fixed right-1 z-[1] mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-neutral-border-medium bg-neutral-component-surface-dark text-neutral-text-medium hover:text-neutral-text-strong"
           onClick={handleScrollToBlock}
         >
           <ArrowRight className="h-3.5 w-3.5" />

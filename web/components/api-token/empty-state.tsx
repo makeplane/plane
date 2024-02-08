@@ -19,7 +19,7 @@ export const ApiTokenEmptyState: React.FC<Props> = (props) => {
       <div className="flex w-full flex-col items-center text-center">
         <Image src={emptyApiTokens} className="w-52 sm:w-60" alt="empty" />
         <h6 className="mb-3 mt-6 text-xl font-semibold sm:mt-8">No API tokens</h6>
-        <p className="mb-7 text-custom-text-300 sm:mb-8">
+        <p className="mb-7 text-neutral-text-medium sm:mb-8">
           Create API tokens for safe and easy data sharing with external apps, maintaining control and security.
         </p>
         <Button className="flex items-center gap-1.5" onClick={onClick}>

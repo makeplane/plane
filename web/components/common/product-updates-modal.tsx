@@ -55,7 +55,10 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     <span>Product Updates</span>
                     <span>
                       <button type="button" onClick={() => setIsOpen(false)}>
-                        <X className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
+                        <X
+                          className="h-6 w-6 text-neutral-text-medium hover:text-neutral-text-strong"
+                          aria-hidden="true"
+                        />
                       </button>
                     </span>
                   </Dialog.Title>
@@ -63,7 +66,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     <div className="mt-4 h-full space-y-4 overflow-y-auto">
                       {updates.map((item, index) => (
                         <React.Fragment key={item.id}>
-                          <div className="flex items-center gap-3 text-xs text-custom-text-200">
+                          <div className="flex items-center gap-3 text-xs text-neutral-text-medium">
                             <span className="flex items-center rounded-full border border-neutral-border-medium bg-neutral-component-surface-medium px-3 py-1.5 text-xs">
                               {item.tag_name}
                             </span>

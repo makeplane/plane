@@ -93,7 +93,7 @@ export const CYCLE_STATUS: {
     label: "Draft",
     value: "draft",
     color: "#525252",
-    textColor: "text-custom-text-300",
+    textColor: "text-neutral-text-medium",
     bgColor: "bg-neutral-component-surface-medium",
   },
 ];

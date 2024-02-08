@@ -92,7 +92,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
         <button
           type="button"
           ref={setReferenceElement}
-          className="h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200"
+          className="h-full flex cursor-pointer items-center gap-2 text-xs text-neutral-text-medium"
           onClick={handleOnClick}
         >
           {label ? (
@@ -123,9 +123,9 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-neutral-border-subtle bg-neutral-component-surface-medium px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <Search className="h-3.5 w-3.5 text-neutral-text-subtle" strokeWidth={1.5} />
               <Combobox.Input
-                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-1 text-xs text-neutral-text-medium placeholder:text-neutral-text-subtle focus:outline-none"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
@@ -145,7 +145,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                             className={({ active }) =>
                               `${
                                 active ? "bg-neutral-component-surface-dark" : ""
-                              } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                              } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-neutral-text-medium`
                             }
                             value={label.id}
                           >
@@ -170,7 +170,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                     } else
                       return (
                         <div className="border-y border-neutral-border-medium">
-                          <div className="flex select-none items-center gap-2 truncate p-2 text-custom-text-100">
+                          <div className="flex select-none items-center gap-2 truncate p-2 text-neutral-text-strong">
                             <Component className="h-3 w-3" /> {label.name}
                           </div>
                           <div>
@@ -180,7 +180,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                                 className={({ active }) =>
                                   `${
                                     active ? "bg-neutral-component-surface-dark" : ""
-                                  } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                                  } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-neutral-text-medium`
                                 }
                                 value={child.id}
                               >
@@ -207,10 +207,10 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                       );
                   })
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+                  <p className="text-neutral-text-subtle italic py-1 px-1.5">No matching results</p>
                 )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+                <p className="text-neutral-text-subtle italic py-1 px-1.5">Loading...</p>
               )}
               <button
                 type="button"

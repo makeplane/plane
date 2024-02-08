@@ -70,7 +70,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
+        <h3 className="text-lg font-medium leading-6 text-neutral-text-strong">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
             <Controller

@@ -45,7 +45,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-custom-text-200">{projectDetails?.identifier}</span>
+          <span className="text-[0.65rem] text-neutral-text-medium">{projectDetails?.identifier}</span>
           {projectDetails?.name}
         </div>
       ),

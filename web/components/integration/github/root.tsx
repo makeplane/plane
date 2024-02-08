@@ -161,7 +161,7 @@ export const GithubImporterRoot: React.FC = () => {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="mt-4 space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-neutral-text-medium hover:text-neutral-text-strong">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </span>
@@ -187,7 +187,9 @@ export const GithubImporterRoot: React.FC = () => {
                     }`}
                   >
                     <integration.icon
-                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
+                      className={`h-5 w-5 ${
+                        index <= activeIntegrationState() ? "text-white" : "text-neutral-text-subtle"
+                      }`}
                     />
                   </div>
                   {index < integrationWorkflowData.length - 1 && (

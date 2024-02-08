@@ -76,7 +76,7 @@ export const ProfileSidebar = observer(() => {
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-neutral-component-surface-medium text-custom-text-100 capitalize">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-neutral-component-surface-medium text-neutral-text-strong capitalize">
                   {userProjectsData.user_data.first_name?.[0]}
                 </div>
               )}
@@ -87,12 +87,12 @@ export const ProfileSidebar = observer(() => {
               <h4 className="text-lg font-semibold">
                 {userProjectsData.user_data.first_name} {userProjectsData.user_data.last_name}
               </h4>
-              <h6 className="text-sm text-custom-text-200">({userProjectsData.user_data.display_name})</h6>
+              <h6 className="text-sm text-neutral-text-medium">({userProjectsData.user_data.display_name})</h6>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
                 <div key={detail.label} className="flex items-center gap-4 text-sm">
-                  <div className="w-2/5 flex-shrink-0 text-custom-text-200">{detail.label}</div>
+                  <div className="w-2/5 flex-shrink-0 text-neutral-text-medium">{detail.label}</div>
                   <div className="w-3/5 break-words font-medium">{detail.value}</div>
                 </div>
               ))}
@@ -122,7 +122,7 @@ export const ProfileSidebar = observer(() => {
                                 {renderEmoji(project.icon_prop)}
                               </div>
                             ) : (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-neutral-component-surface-medium text-xs uppercase text-custom-text-100">
+                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-neutral-component-surface-medium text-xs uppercase text-neutral-text-strong">
                                 {project?.name.charAt(0)}
                               </div>
                             )}
@@ -189,7 +189,7 @@ export const ProfileSidebar = observer(() => {
                                 />
                               </div>
                             )}
-                            <div className="mt-7 space-y-5 text-sm text-custom-text-200">
+                            <div className="mt-7 space-y-5 text-sm text-neutral-text-medium">
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-sm bg-[#203b80]" />

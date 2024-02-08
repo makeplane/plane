@@ -21,7 +21,7 @@ export const ProfileSidebarTime: React.FC<Props> = (props) => {
 
   return (
     <span>
-      {timeString} <span className="text-custom-text-200">{timeZone}</span>
+      {timeString} <span className="text-neutral-text-medium">{timeZone}</span>
     </span>
   );
 };

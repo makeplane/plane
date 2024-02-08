@@ -21,7 +21,7 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => (
               }}
             />
             <div className="-mt-1 space-y-1">
-              <p className="text-sm capitalize text-custom-text-400">
+              <p className="text-sm capitalize text-neutral-text-subtle">
                 {group.state_group === "unstarted"
                   ? "Not Started"
                   : group.state_group === "started"

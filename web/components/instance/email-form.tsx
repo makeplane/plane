@@ -153,14 +153,14 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
             />
             {showPassword ? (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(false)}
               >
                 <EyeOff className="h-4 w-4" />
               </button>
             ) : (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(true)}
               >
                 <Eye className="h-4 w-4" />
@@ -189,7 +189,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
               />
             )}
           />
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             This is the email address your users will see when getting emails from this instance. You will need to
             verify this address.
           </p>
@@ -199,10 +199,12 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       <div className="flex w-full max-w-md flex-col gap-y-10 px-1">
         <div className="mr-8 flex items-center gap-10 pt-4">
           <div className="grow">
-            <div className="text-sm font-medium text-custom-text-100">
+            <div className="text-sm font-medium text-neutral-text-strong">
               Turn TLS {Boolean(parseInt(watch("EMAIL_USE_TLS"))) ? "off" : "on"}
             </div>
-            <div className="text-xs font-normal text-custom-text-300">Use this if your email domain supports TLS.</div>
+            <div className="text-xs font-normal text-neutral-text-medium">
+              Use this if your email domain supports TLS.
+            </div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -223,10 +225,10 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
 
         {/* <div className="flex items-center gap-10 pt-4 mr-8">
           <div className="grow">
-            <div className="text-custom-text-100 font-medium text-sm">
+            <div className="text-neutral-text-strong font-medium text-sm">
               Turn SSL {Boolean(parseInt(watch("EMAIL_USE_SSL"))) ? "off" : "on"}
             </div>
-            <div className="text-custom-text-300 font-normal text-xs">
+            <div className="text-neutral-text-medium font-normal text-xs">
               Most email domains support SSL. Use this to secure comms between this instance and your users.
             </div>
           </div>

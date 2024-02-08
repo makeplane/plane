@@ -42,7 +42,7 @@ const Inputs = (props: any) => {
 
   return (
     <>
-      <h4 className="text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-xs leading-5 text-neutral-text-subtle">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
@@ -50,7 +50,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full rounded-md bg-transparent py-1.5 pr-2 text-xs font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent py-1.5 pr-2 text-xs font-medium leading-5 text-neutral-text-medium outline-none"
       />
     </>
   );

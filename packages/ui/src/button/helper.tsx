@@ -55,10 +55,10 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
-    default: `text-custom-text-200 bg-neutral-component-surface-light border border-neutral-border-medium`,
+    default: `text-neutral-text-medium bg-neutral-component-surface-light border border-neutral-border-medium`,
     hover: `hover:bg-neutral-component-surface-medium`,
-    pressed: `focus:text-custom-text-300 focus:bg-neutral-component-surface-medium`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
+    pressed: `focus:text-neutral-text-medium focus:bg-neutral-component-surface-medium`,
+    disabled: `cursor-not-allowed !text-neutral-text-subtle`,
   },
   "link-primary": {
     default: `text-custom-primary-100 bg-neutral-component-surface-light`,

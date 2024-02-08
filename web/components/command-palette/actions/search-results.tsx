@@ -34,7 +34,7 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
                   value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
                   className="focus:outline-none"
                 >
-                  <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
+                  <div className="flex items-center gap-2 overflow-hidden text-neutral-text-medium">
                     {currentSection.icon}
                     <p className="block flex-1 truncate">{currentSection.itemName(item)}</p>
                   </div>

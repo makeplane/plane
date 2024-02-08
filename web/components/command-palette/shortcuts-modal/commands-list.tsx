@@ -60,16 +60,16 @@ export const ShortcutCommandsList: React.FC<Props> = (props) => {
                 {category.shortcuts.map((shortcut) => (
                   <div key={shortcut.keys} className="mt-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs text-custom-text-200">{shortcut.description}</h4>
+                      <h4 className="text-xs text-neutral-text-medium">{shortcut.description}</h4>
                       <div className="flex items-center gap-x-1.5">
                         {shortcut.keys.split(",").map((key) => (
                           <div key={key} className="flex items-center gap-1">
                             {key === "Ctrl" ? (
                               <div className="grid h-6 min-w-[1.5rem] place-items-center rounded-sm border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-medium px-1.5">
-                                <Command className="h-2.5 w-2.5 text-custom-text-200" />
+                                <Command className="h-2.5 w-2.5 text-neutral-text-medium" />
                               </div>
                             ) : (
-                              <kbd className="grid h-6 min-w-[1.5rem] place-items-center rounded-sm border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-medium px-1.5 text-[10px] text-custom-text-200">
+                              <kbd className="grid h-6 min-w-[1.5rem] place-items-center rounded-sm border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-medium px-1.5 text-[10px] text-neutral-text-medium">
                                 {key}
                               </kbd>
                             )}
@@ -84,7 +84,7 @@ export const ShortcutCommandsList: React.FC<Props> = (props) => {
           );
         })
       ) : (
-        <p className="flex justify-center text-center text-sm text-custom-text-200">
+        <p className="flex justify-center text-center text-sm text-neutral-text-medium">
           No shortcuts found for{" "}
           <span className="font-semibold italic">
             {`"`}

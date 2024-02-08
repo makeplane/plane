@@ -28,7 +28,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Personal Access Token</h3>
-          <p className="text-sm text-custom-text-200">
+          <p className="text-sm text-neutral-text-medium">
             Get to know your access token by navigating to{" "}
             <Link href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noreferrer">
               <span className="text-custom-primary underline">Atlassian Settings</span>
@@ -64,7 +64,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Project Key</h3>
-          <p className="text-sm text-custom-text-200">If XXX-123 is your issue, then enter XXX</p>
+          <p className="text-sm text-neutral-text-medium">If XXX-123 is your issue, then enter XXX</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -95,7 +95,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
-          <p className="text-sm text-custom-text-200">Enter the Email account that you use in Jira account</p>
+          <p className="text-sm text-neutral-text-medium">Enter the Email account that you use in Jira account</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -125,7 +125,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Installation or Cloud Host Name</h3>
-          <p className="text-sm text-custom-text-200">Enter your companies cloud host name</p>
+          <p className="text-sm text-neutral-text-medium">Enter your companies cloud host name</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -156,7 +156,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import to project</h3>
-          <p className="text-sm text-custom-text-200">Select which project you want to import to.</p>
+          <p className="text-sm text-neutral-text-medium">Select which project you want to import to.</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -173,7 +173,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     {value && value.trim() !== "" ? (
                       getProjectById(value)?.name
                     ) : (
-                      <span className="text-custom-text-200">Select a project</span>
+                      <span className="text-neutral-text-medium">Select a project</span>
                     )}
                   </span>
                 }
@@ -192,7 +192,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     );
                   })
                 ) : (
-                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200">
+                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-neutral-text-medium">
                     <p>You don{"'"}t have any project. Please create a project first.</p>
                   </div>
                 )}
@@ -203,9 +203,9 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                       setTrackElement("Jira import detail page");
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}
-                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
+                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-neutral-text-medium"
                   >
-                    <Plus className="h-4 w-4 text-custom-text-200" />
+                    <Plus className="h-4 w-4 text-neutral-text-medium" />
                     <span>Create new project</span>
                   </button>
                 </div>

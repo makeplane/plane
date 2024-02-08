@@ -13,7 +13,7 @@ export const MODULE_STATUS: {
     label: "Backlog",
     value: "backlog",
     color: "#a3a3a2",
-    textColor: "text-custom-text-400",
+    textColor: "text-neutral-text-subtle",
     bgColor: "bg-neutral-component-surface-dark",
   },
   {
@@ -34,7 +34,7 @@ export const MODULE_STATUS: {
     label: "Paused",
     value: "paused",
     color: "#525252",
-    textColor: "text-custom-text-300",
+    textColor: "text-neutral-text-medium",
     bgColor: "bg-neutral-component-surface-medium",
   },
   {

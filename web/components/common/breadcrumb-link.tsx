@@ -15,7 +15,7 @@ export const BreadcrumbLink: React.FC<Props> = (props) => {
         <div className="flex flex-wrap items-center gap-2.5">
           {href ? (
             <Link
-              className="flex items-center gap-1 text-sm font-medium text-custom-text-300 hover:text-custom-text-100"
+              className="flex items-center gap-1 text-sm font-medium text-neutral-text-medium hover:text-neutral-text-strong"
               href={href}
             >
               {icon && (
@@ -24,7 +24,7 @@ export const BreadcrumbLink: React.FC<Props> = (props) => {
               <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
             </Link>
           ) : (
-            <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
+            <div className="flex cursor-default items-center gap-1 text-sm font-medium text-neutral-text-strong">
               {icon && <div className="flex h-5 w-5 items-center justify-center overflow-hidden">{icon}</div>}
               <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
             </div>

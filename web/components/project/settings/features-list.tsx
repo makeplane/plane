@@ -87,7 +87,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
             </div>
             <div className="">
               <h4 className="text-sm font-medium">{feature.title}</h4>
-              <p className="text-sm tracking-tight text-custom-text-200">{feature.description}</p>
+              <p className="text-sm tracking-tight text-neutral-text-medium">{feature.description}</p>
             </div>
           </div>
           <ToggleSwitch

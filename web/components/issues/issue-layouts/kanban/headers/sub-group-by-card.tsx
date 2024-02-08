@@ -32,8 +32,8 @@ export const HeaderSubGroupByCard = observer(
       </div>
 
       <div className="flex flex-shrink-0 items-center gap-1 text-sm">
-        <div className="line-clamp-1 text-custom-text-100">{title}</div>
-        <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
+        <div className="line-clamp-1 text-neutral-text-strong">{title}</div>
+        <div className="pl-2 text-sm font-medium text-neutral-text-medium">{count || 0}</div>
       </div>
     </div>
   )

@@ -32,8 +32,8 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   return (
     <div>
       <div className="space-y-3">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">Key created</h3>
-        <p className="text-sm text-custom-text-400">
+        <h3 className="text-lg font-medium leading-6 text-neutral-text-strong">Key created</h3>
+        <p className="text-sm text-neutral-text-subtle">
           Copy and save this secret key in Plane Pages. You can{"'"}t see this key after you hit Close. A CSV file
           containing the key has been downloaded.
         </p>
@@ -45,11 +45,11 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       >
         {tokenDetails.token}
         <Tooltip tooltipContent="Copy secret key">
-          <Copy className="h-4 w-4 text-custom-text-400" />
+          <Copy className="h-4 w-4 text-neutral-text-subtle" />
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">
-        <p className="text-xs text-custom-text-400">
+        <p className="text-xs text-neutral-text-subtle">
           {tokenDetails.expired_at ? `Expires ${renderFormattedDate(tokenDetails.expired_at)}` : "Never expires"}
         </p>
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>

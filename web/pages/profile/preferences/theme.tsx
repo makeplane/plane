@@ -54,8 +54,8 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
           </div>
           <div className="grid grid-cols-12 gap-4 py-6 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
-              <p className="text-sm text-custom-text-200">Select or customize your interface color scheme.</p>
+              <h4 className="text-lg font-semibold text-neutral-text-strong">Theme</h4>
+              <p className="text-sm text-neutral-text-medium">Select or customize your interface color scheme.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />

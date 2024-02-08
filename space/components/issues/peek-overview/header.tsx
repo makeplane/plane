@@ -97,7 +97,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
                       className={({ active, selected }) =>
                         `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                           active || selected ? "bg-neutral-component-surface-dark" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        } ${selected ? "text-neutral-text-strong" : "text-neutral-text-medium"}`
                       }
                     >
                       {({ selected }) => (

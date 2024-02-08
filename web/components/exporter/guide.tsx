@@ -67,7 +67,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                     <div>
                       <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                      <p className="text-sm tracking-tight text-custom-text-200">{service.description}</p>
+                      <p className="text-sm tracking-tight text-neutral-text-medium">{service.description}</p>
                     </div>
                   </div>
                   <div className="flex-shrink-0">
@@ -140,7 +140,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   </div>
                 ) : (
-                  <p className="px-4 py-6 text-sm text-custom-text-200">No previous export available.</p>
+                  <p className="px-4 py-6 text-sm text-neutral-text-medium">No previous export available.</p>
                 )
               ) : (
                 <Loader className="mt-6 grid grid-cols-1 gap-3">

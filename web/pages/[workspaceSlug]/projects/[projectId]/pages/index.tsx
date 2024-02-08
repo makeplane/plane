@@ -122,7 +122,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
           )}
           <div className="flex h-full flex-col space-y-5 overflow-hidden p-6">
             <div className="flex justify-between gap-4">
-              <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
+              <h3 className="text-2xl font-semibold text-neutral-text-strong">Pages</h3>
             </div>
             <Tab.Group
               as={Fragment}

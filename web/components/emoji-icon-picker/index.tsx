@@ -85,7 +85,7 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
                           setOpenColorPicker(false);
                         }}
                         className={`-my-1 w-1/2 border-b pb-2 text-center text-sm font-medium outline-none transition-colors ${
-                          selected ? "" : "border-transparent text-custom-text-200"
+                          selected ? "" : "border-transparent text-neutral-text-medium"
                         }`}
                       >
                         {tab.title}
@@ -98,7 +98,7 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
                 <Tab.Panel>
                   {recentEmojis.length > 0 && (
                     <div className="py-2">
-                      <h3 className="mb-2 text-xs text-custom-text-200">Recent</h3>
+                      <h3 className="mb-2 text-xs text-neutral-text-medium">Recent</h3>
                       <div className="grid grid-cols-8 gap-2">
                         {recentEmojis.map((emoji) => (
                           <button

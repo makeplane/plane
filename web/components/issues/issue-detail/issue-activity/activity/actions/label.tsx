@@ -36,7 +36,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
               }}
               aria-hidden="true"
             />
-            <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
+            <span className="flex-shrink truncate font-medium text-neutral-text-strong">{activity.new_value}</span>
           </span>
         ) : (
           <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-neutral-border-medium px-2 py-0.5 text-xs">
@@ -47,7 +47,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
               }}
               aria-hidden="true"
             />
-            <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.old_value}</span>
+            <span className="flex-shrink truncate font-medium text-neutral-text-strong">{activity.old_value}</span>
           </span>
         )}
         {showIssue && (activity.old_value === "" ? ` to ` : ` from `)}

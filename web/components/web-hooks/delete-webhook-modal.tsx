@@ -90,7 +90,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
                   </span>
                 </div>
 
-                <p className="mt-4 text-sm text-custom-text-200">
+                <p className="mt-4 text-sm text-neutral-text-medium">
                   Are you sure you want to delete this webhook? Future events will not be delivered to this webhook.
                   This action cannot be undone.
                 </p>

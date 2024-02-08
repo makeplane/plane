@@ -149,7 +149,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
             className={cn(
               "clickable block h-full max-w-full outline-none",
               {
-                "cursor-not-allowed text-custom-text-200": disabled,
+                "cursor-not-allowed text-neutral-text-medium": disabled,
                 "cursor-pointer": !disabled,
               },
               buttonContainerClassName
@@ -190,9 +190,9 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-neutral-border-subtle bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <Search className="h-3.5 w-3.5 text-neutral-text-subtle" strokeWidth={1.5} />
               <Combobox.Input
-                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-1 text-xs text-neutral-text-medium placeholder:text-neutral-text-subtle focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
@@ -209,7 +209,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                       className={({ active, selected }) =>
                         `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
                           active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        } ${selected ? "text-neutral-text-strong" : "text-neutral-text-medium"}`
                       }
                     >
                       {({ selected }) => (
@@ -221,10 +221,10 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
                     </Combobox.Option>
                   ))
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+                  <p className="text-neutral-text-subtle italic py-1 px-1.5">No matching results</p>
                 )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+                <p className="text-neutral-text-subtle italic py-1 px-1.5">Loading...</p>
               )}
             </div>
           </div>

@@ -81,7 +81,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <Pencil className="h-3 w-3 stroke-[1.5] text-neutral-text-medium" />
               </button>
               <a
                 href={linkDetail.url}
@@ -89,7 +89,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-neutral-component-surface-dark"
               >
-                <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-neutral-text-medium" />
               </a>
               <button
                 type="button"
@@ -107,7 +107,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
         </div>
 
         <div className="px-5">
-          <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
+          <p className="mt-0.5 stroke-[1.5] text-xs text-neutral-text-medium">
             Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
             by{" "}

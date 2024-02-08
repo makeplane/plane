@@ -55,7 +55,7 @@ export const ProjectDetailsView = observer(() => {
       {workspace_slug && <IssuePeekOverview />}
 
       {issueStore?.loader && !issueStore.issues ? (
-        <div className="py-10 text-center text-sm text-custom-text-100">Loading...</div>
+        <div className="py-10 text-center text-sm text-neutral-text-strong">Loading...</div>
       ) : (
         <>
           {issueStore?.error ? (
@@ -67,7 +67,7 @@ export const ProjectDetailsView = observer(() => {
                   </div>
                 </div>
                 <h1 className="mt-12 text-3xl font-semibold">Oops! Something went wrong.</h1>
-                <p className="mt-4 text-custom-text-300">The public board does not exist. Please check the URL.</p>
+                <p className="mt-4 text-neutral-text-medium">The public board does not exist. Please check the URL.</p>
               </div>
             </div>
           ) : (

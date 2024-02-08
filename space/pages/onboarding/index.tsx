@@ -30,7 +30,7 @@ const OnBoardingPage = () => {
               <img src={`${imagePrefix}/plane-logos/blue-without-text.png`} alt="Plane logo" />
             </div>
           </div>
-          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm font-medium text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
+          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm font-medium text-neutral-text-strong sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
             {user?.email}
           </div>
         </div>

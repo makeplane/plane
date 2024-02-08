@@ -155,7 +155,7 @@ const IssueSuggestionList = ({
             <div className={"flex h-full w-full flex-col"} key={`${section}-container`} id={`${section}-container`}>
               <h6
                 className={
-                  "sticky top-0 z-[10] bg-neutral-component-surface-light px-2 py-1 text-xs font-medium text-custom-text-400"
+                  "sticky top-0 z-[10] bg-neutral-component-surface-light px-2 py-1 text-xs font-medium text-neutral-text-subtle"
                 }
               >
                 {section}
@@ -164,16 +164,16 @@ const IssueSuggestionList = ({
                 {sectionItems.map((item: IssueSuggestionProps, index: number) => (
                   <button
                     className={cn(
-                      `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
+                      `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-neutral-text-medium hover:bg-custom-primary-100/5 hover:text-neutral-text-strong`,
                       {
-                        "bg-custom-primary-100/5  text-custom-text-100":
+                        "bg-custom-primary-100/5  text-neutral-text-strong":
                           section === currentSection && index === selectedIndex,
                       }
                     )}
                     key={item.identifier}
                     onClick={() => selectItem(section, index)}
                   >
-                    <h5 className="whitespace-nowrap text-xs text-custom-text-300">{item.identifier}</h5>
+                    <h5 className="whitespace-nowrap text-xs text-neutral-text-medium">{item.identifier}</h5>
                     <PriorityIcon priority={item.priority} />
                     <div>
                       <p className="flex-grow truncate text-xs">{item.title}</p>

@@ -21,7 +21,7 @@ export const WorkspaceAnalyticsHeader = () => {
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
-                  <BreadcrumbLink label="Analytics" icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink label="Analytics" icon={<BarChart2 className="h-4 w-4 text-neutral-text-medium" />} />
                 }
               />
             </Breadcrumbs>

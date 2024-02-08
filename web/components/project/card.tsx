@@ -170,7 +170,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
         </div>
 
         <div className="flex h-[104px] w-full flex-col justify-between rounded-b p-4">
-          <p className="line-clamp-2 break-words text-sm text-custom-text-300">{project.description}</p>
+          <p className="line-clamp-2 break-words text-sm text-neutral-text-medium">{project.description}</p>
           <div className="item-center flex justify-between">
             <Tooltip
               tooltipHeading="Members"
@@ -180,7 +180,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               position="top"
             >
               {projectMembersIds && projectMembersIds.length > 0 ? (
-                <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
+                <div className="flex cursor-pointer items-center gap-2 text-neutral-text-medium">
                   <AvatarGroup showTooltip={false}>
                     {projectMembersIds.map((memberId) => {
                       const member = project.members?.find((m) => m.member_id === memberId);
@@ -192,12 +192,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   </AvatarGroup>
                 </div>
               ) : (
-                <span className="text-sm italic text-custom-text-400">No Member Yet</span>
+                <span className="text-sm italic text-neutral-text-subtle">No Member Yet</span>
               )}
             </Tooltip>
             {(isOwner || isMember) && (
               <Link
-                className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark hover:text-custom-text-200"
+                className="flex items-center justify-center rounded p-1 text-neutral-text-subtle hover:bg-neutral-component-surface-dark hover:text-neutral-text-medium"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}

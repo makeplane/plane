@@ -45,7 +45,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                       <div className="relative px-1">
                         {activityItem.field ? (
                           activityItem.new_value === "restore" && (
-                            <History className="h-3.5 w-3.5 text-custom-text-200" />
+                            <History className="h-3.5 w-3.5 text-neutral-text-medium" />
                           )
                         ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
                           <img
@@ -63,8 +63,8 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                           </div>
                         )}
 
-                        <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-neutral-component-surface-dark text-custom-text-200 ring-white">
-                          <MessageSquare className="h-6 w-6 !text-2xl text-custom-text-200" aria-hidden="true" />
+                        <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-neutral-component-surface-dark text-neutral-text-medium ring-white">
+                          <MessageSquare className="h-6 w-6 !text-2xl text-neutral-text-medium" aria-hidden="true" />
                         </span>
                       </div>
                       <div className="min-w-0 flex-1">
@@ -74,7 +74,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                               ? activityItem.actor_detail.first_name + " Bot"
                               : activityItem.actor_detail.display_name}
                           </div>
-                          <p className="mt-0.5 text-xs text-custom-text-200">
+                          <p className="mt-0.5 text-xs text-neutral-text-medium">
                             Commented {calculateTimeAgo(activityItem.created_at)}
                           </p>
                         </div>
@@ -119,7 +119,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                                 <div className="flex h-6 w-6 items-center justify-center">
                                   {activityItem.field ? (
                                     activityItem.new_value === "restore" ? (
-                                      <History className="h-5 w-5 text-custom-text-200" />
+                                      <History className="h-5 w-5 text-neutral-text-medium" />
                                     ) : (
                                       <ActivityIcon activity={activityItem} />
                                     )
@@ -143,7 +143,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                             </div>
                           </div>
                           <div className="min-w-0 flex-1 border-b border-neutral-border-subtle py-4">
-                            <div className="flex gap-1 break-words text-sm text-custom-text-200">
+                            <div className="flex gap-1 break-words text-sm text-neutral-text-medium">
                               {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                 <span className="text-gray font-medium">Plane</span>
                               ) : activityItem.actor_detail.is_bot ? (

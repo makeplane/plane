@@ -18,7 +18,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 // hooks
-import { useApplication,useEventTracker, useProject } from "hooks/store";
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
@@ -158,7 +158,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 >
                   <button
                     type="button"
-                    className={`absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-custom-sidebar-text-400 ${
+                    className={`absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-sidebar-neutral-text-subtle ${
                       isCollapsed ? "" : "group-hover:!flex"
                     } ${project.sort_order === null ? "cursor-not-allowed opacity-60" : ""} ${
                       isMenuActive ? "!flex" : ""
@@ -196,13 +196,13 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </span>
                     )}
 
-                    {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
+                    {!isCollapsed && <p className="truncate text-sidebar-neutral-text-medium">{project.name}</p>}
                   </div>
                   {!isCollapsed && (
                     <ChevronDown
                       className={`hidden h-4 w-4 flex-shrink-0 ${open ? "rotate-180" : ""} ${
                         isMenuActive ? "!block" : ""
-                      }  mb-0.5 text-custom-sidebar-text-400 duration-300 group-hover:!block`}
+                      }  mb-0.5 text-sidebar-neutral-text-subtle duration-300 group-hover:!block`}
                     />
                   )}
                 </Disclosure.Button>
@@ -213,14 +213,14 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   customButton={
                     <div
                       ref={actionSectionRef}
-                      className="my-auto mt-1.5 w-full cursor-pointer px-1 text-custom-sidebar-text-400 duration-300"
+                      className="my-auto mt-1.5 w-full cursor-pointer px-1 text-sidebar-neutral-text-subtle duration-300"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <MoreHorizontal className="h-3.5 w-3.5" />
                     </div>
                   }
                   className={`hidden flex-shrink-0 group-hover:block ${isMenuActive ? "!block" : ""}`}
-                  buttonClassName="!text-custom-sidebar-text-400"
+                  buttonClassName="!text-sidebar-neutral-text-subtle"
                   ellipsis
                   placement="bottom-start"
                 >
@@ -251,7 +251,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {isAdmin && (
                     <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
                       <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-sidebar-neutral-component-surface-dark">
+                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-sidebar-neutral-text-medium transition-all duration-300 hover:bg-sidebar-neutral-component-surface-dark">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
                         <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
@@ -272,7 +272,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem>
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                       <div className="flex items-center justify-start gap-2">
-                        <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                        <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-neutral-text-medium" />
                         <span>Draft Issues</span>
                       </div>
                     </Link>
@@ -329,7 +329,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                             className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
                               router.asPath.includes(item.href)
                                 ? "bg-primary-component-surface-light text-primary-text-subtle"
-                                : "text-custom-sidebar-text-300 hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
+                                : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
                             } ${isCollapsed ? "justify-center" : ""}`}
                           >
                             <item.Icon className="h-4 w-4 stroke-[1.5]" />

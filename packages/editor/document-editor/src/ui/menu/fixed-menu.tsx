@@ -85,9 +85,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
+              "grid h-7 w-7 place-items-center rounded text-neutral-text-medium hover:bg-neutral-component-surface-dark",
               {
-                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
               }
             )}
           >
@@ -102,15 +102,15 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
+              "grid h-7 w-7 place-items-center rounded text-neutral-text-medium hover:bg-neutral-component-surface-dark",
               {
-                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
               }
             )}
           >
             <item.icon
               className={cn("h-4 w-4", {
-                "text-custom-text-100": item.isActive(),
+                "text-neutral-text-strong": item.isActive(),
               })}
             />
           </button>
@@ -123,15 +123,15 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
+              "grid h-7 w-7 place-items-center rounded text-neutral-text-medium hover:bg-neutral-component-surface-dark",
               {
-                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
               }
             )}
           >
             <item.icon
               className={cn("h-4 w-4", {
-                "text-custom-text-100": item.isActive(),
+                "text-neutral-text-strong": item.isActive(),
               })}
             />
           </button>
@@ -144,15 +144,15 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-neutral-component-surface-dark",
+              "grid h-7 w-7 place-items-center rounded text-neutral-text-medium hover:bg-neutral-component-surface-dark",
               {
-                "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
               }
             )}
           >
             <item.icon
               className={cn("h-4 w-4", {
-                "text-custom-text-100": item.isActive(),
+                "text-neutral-text-strong": item.isActive(),
               })}
             />
           </button>

@@ -23,7 +23,10 @@ export const WorkspaceDashboardHeader = () => {
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
-                  <BreadcrumbLink label="Dashboard" icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink
+                    label="Dashboard"
+                    icon={<LayoutGrid className="h-4 w-4 text-neutral-text-medium" />}
+                  />
                 }
               />
             </Breadcrumbs>

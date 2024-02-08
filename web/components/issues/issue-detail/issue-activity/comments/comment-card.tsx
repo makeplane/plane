@@ -151,7 +151,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
         </form>
         <div className={`relative ${isEditing ? "hidden" : ""}`}>
           {showAccessSpecifier && (
-            <div className="absolute right-2.5 top-2.5 z-[1] text-custom-text-300">
+            <div className="absolute right-2.5 top-2.5 z-[1] text-neutral-text-medium">
               {comment.access === "INTERNAL" ? <Lock className="h-3 w-3" /> : <Globe2 className="h-3 w-3" />}
             </div>
           )}

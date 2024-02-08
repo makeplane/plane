@@ -142,7 +142,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
                 label="Views"
-                icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<PhotoFilterIcon className="h-4 w-4 text-neutral-text-medium" />}
               />
             }
           />

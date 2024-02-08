@@ -166,7 +166,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                   </span>
                 )}
                 <button onClick={openModuleOverview}>
-                  <Info className="h-4 w-4 text-custom-text-400" />
+                  <Info className="h-4 w-4 text-neutral-text-subtle" />
                 </button>
               </div>
             </div>
@@ -174,9 +174,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-custom-text-200">
-                <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
+              <div className="flex items-center gap-1.5 text-neutral-text-medium">
+                <LayersIcon className="h-4 w-4 text-neutral-text-medium" />
+                <span className="text-xs text-neutral-text-medium">{issueCount ?? "0 Issue"}</span>
               </div>
               {moduleDetails.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${moduleDetails.members_detail.length} Members`}>
@@ -215,12 +215,12 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-between">
               {isDateValid ? (
                 <>
-                  <span className="text-xs text-custom-text-300">
+                  <span className="text-xs text-neutral-text-medium">
                     {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
                   </span>
                 </>
               ) : (
-                <span className="text-xs text-custom-text-400">No due date</span>
+                <span className="text-xs text-neutral-text-subtle">No due date</span>
               )}
 
               <div className="z-10 flex items-center gap-1.5">
@@ -231,7 +231,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                     </button>
                   ) : (
                     <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                      <Star className="h-3.5 w-3.5 text-neutral-text-medium" />
                     </button>
                   ))}
 

@@ -177,7 +177,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     </span>
                     <Link
                       href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                      className="block md:hidden pl-2 text-custom-text-300"
+                      className="block md:hidden pl-2 text-neutral-text-medium"
                     >
                       ...
                     </Link>
@@ -190,7 +190,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   <BreadcrumbLink
                     label="Cycles"
                     href={`/${workspaceSlug}/projects/${projectId}/cycles`}
-                    icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<ContrastIcon className="h-4 w-4 text-neutral-text-medium" />}
                   />
                 }
               />
@@ -275,7 +275,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
             onClick={toggleSidebar}
           >
-            <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+            <PanelRight
+              className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-neutral-text-medium")}
+            />
           </button>
         </div>
         <div className="block sm:block md:hidden">

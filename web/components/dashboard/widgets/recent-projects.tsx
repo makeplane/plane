@@ -51,7 +51,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         )}
       </div>
       <div className="flex-grow truncate">
-        <h6 className="text-sm text-custom-text-300 font-medium group-hover:underline group-hover:text-custom-text-100 truncate">
+        <h6 className="text-sm text-neutral-text-medium font-medium group-hover:underline group-hover:text-neutral-text-strong truncate">
           {projectDetails.name}
         </h6>
         <div className="mt-2">
@@ -94,7 +94,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
     <div className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
       <Link
         href={`/${workspaceSlug}/projects`}
-        className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline"
+        className="text-lg font-semibold text-neutral-text-medium mx-7 hover:underline"
       >
         Your projects
       </Link>
@@ -113,7 +113,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
             <div className="h-[3.375rem] w-[3.375rem] bg-custom-primary-100/20 text-custom-primary-100 grid place-items-center rounded border border-dashed border-custom-primary-60 flex-shrink-0">
               <Plus className="h-6 w-6" />
             </div>
-            <p className="text-sm text-custom-text-300 font-medium group-hover:underline group-hover:text-custom-text-100">
+            <p className="text-sm text-neutral-text-medium font-medium group-hover:underline group-hover:text-neutral-text-strong">
               Create new project
             </p>
           </button>

@@ -103,15 +103,18 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-custom-text-200">
+                    <p className="text-sm leading-7 text-neutral-text-medium">
                       Are you sure you want to delete import from{" "}
-                      <span className="break-words font-semibold capitalize text-custom-text-100">{data?.service}</span>
+                      <span className="break-words font-semibold capitalize text-neutral-text-strong">
+                        {data?.service}
+                      </span>
                       ? All of the data related to the import will be permanently removed. This action cannot be undone.
                     </p>
                   </span>
                   <div>
-                    <p className="text-sm text-custom-text-200">
-                      To confirm, type <span className="font-medium text-custom-text-100">delete import</span> below:
+                    <p className="text-sm text-neutral-text-medium">
+                      To confirm, type <span className="font-medium text-neutral-text-strong">delete import</span>{" "}
+                      below:
                     </p>
                     <Input
                       id="typeDelete"

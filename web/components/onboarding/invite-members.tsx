@@ -222,7 +222,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                           className={({ active, selected }) =>
                             `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                               active || selected ? "bg-onboarding-background-400/40" : ""
-                            } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
+                            } ${selected ? "text-onboarding-text-100" : "text-neutral-text-medium"}`
                           }
                         >
                           {({ selected }) => (
@@ -246,7 +246,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
             className="ml-3 hidden place-items-center self-center rounded group-hover:grid"
             onClick={() => remove(index)}
           >
-            <XCircle className="h-3.5 w-3.5 text-custom-text-400" />
+            <XCircle className="h-3.5 w-3.5 text-neutral-text-subtle" />
           </button>
         )}
       </div>

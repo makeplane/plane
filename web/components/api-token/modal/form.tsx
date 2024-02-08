@@ -115,7 +115,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-4">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">Create token</h3>
+        <h3 className="text-lg font-medium leading-6 text-neutral-text-strong">Create token</h3>
         <div className="space-y-3">
           <div>
             <Controller
@@ -168,7 +168,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                       customButton={
                         <div
                           className={`flex items-center gap-2 rounded border-[0.5px] border-neutral-border-medium px-2 py-1 ${
-                            neverExpires ? "text-custom-text-400" : ""
+                            neverExpires ? "text-neutral-text-subtle" : ""
                           }`}
                         >
                           <Calendar className="h-3 w-3" />
@@ -204,7 +204,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                         customDate ? "w-[7.5rem]" : ""
                       } ${
                         neverExpires
-                          ? "!cursor-not-allowed text-custom-text-400"
+                          ? "!cursor-not-allowed text-neutral-text-subtle"
                           : "hover:bg-neutral-component-surface-dark"
                       }`}
                     >
@@ -217,7 +217,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
               )}
             </div>
             {!neverExpires && (
-              <span className="text-xs text-custom-text-400">
+              <span className="text-xs text-neutral-text-subtle">
                 {watch("expired_at") === "custom"
                   ? customDate
                     ? `Expires ${renderFormattedDate(customDate)}`

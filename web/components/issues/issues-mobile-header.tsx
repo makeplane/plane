@@ -90,10 +90,10 @@ export const IssuesMobileHeader = () => {
       <div className="flex justify-evenly py-2 border-b border-neutral-border-medium">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm"
+          className="flex flex-grow justify-center text-neutral-text-medium text-sm"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>}
-          customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+          customButton={<span className="flex flex-grow justify-center text-neutral-text-medium text-sm">Layout</span>}
+          customButtonClassName="flex flex-grow justify-center text-neutral-text-medium text-sm"
           closeOnSelect
         >
           {layouts.map((layout, index) => (
@@ -104,18 +104,18 @@ export const IssuesMobileHeader = () => {
               className="flex items-center gap-2"
             >
               <layout.icon className="w-3 h-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
+              <div className="text-neutral-text-medium">{layout.title}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-neutral-border-medium items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-l border-neutral-border-medium items-center text-neutral-text-medium text-sm">
           <FiltersDropdown
             title="Filters"
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-custom-text-200 text-sm">
+              <span className="flex items-center text-neutral-text-medium text-sm">
                 Filters
-                <ChevronDown className="text-custom-text-200  h-4 w-4 ml-2" />
+                <ChevronDown className="text-neutral-text-medium  h-4 w-4 ml-2" />
               </span>
             }
           >
@@ -131,14 +131,14 @@ export const IssuesMobileHeader = () => {
             />
           </FiltersDropdown>
         </div>
-        <div className="flex flex-grow justify-center border-l border-neutral-border-medium items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-l border-neutral-border-medium items-center text-neutral-text-medium text-sm">
           <FiltersDropdown
             title="Display"
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-custom-text-200 text-sm">
+              <span className="flex items-center text-neutral-text-medium text-sm">
                 Display
-                <ChevronDown className="text-custom-text-200 h-4 w-4 ml-2" />
+                <ChevronDown className="text-neutral-text-medium h-4 w-4 ml-2" />
               </span>
             }
           >
@@ -156,7 +156,7 @@ export const IssuesMobileHeader = () => {
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-neutral-border-medium"
+          className="flex flex-grow justify-center text-neutral-text-medium text-sm border-l border-neutral-border-medium"
         >
           Analytics
         </button>

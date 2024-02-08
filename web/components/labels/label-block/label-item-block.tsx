@@ -53,7 +53,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
             : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
         } ${isLabelGroup && "-top-0.5"}`}
       >
-        <CustomMenu ellipsis buttonClassName="h-4 w-4 leading-4 text-custom-sidebar-text-400">
+        <CustomMenu ellipsis buttonClassName="h-4 w-4 leading-4 text-sidebar-neutral-text-subtle">
           {customMenuItems.map(
             ({ isVisible, onClick, CustomIcon, text, key }) =>
               isVisible && (
@@ -69,7 +69,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
         {!isLabelGroup && (
           <div className="py-0.5">
             <button className="flex h-4 w-4 items-center justify-start gap-2" onClick={() => handleLabelDelete(label)}>
-              <X className="h-4 w-4  flex-shrink-0 text-custom-sidebar-text-400" />
+              <X className="h-4 w-4  flex-shrink-0 text-sidebar-neutral-text-subtle" />
             </button>
           </div>
         )}

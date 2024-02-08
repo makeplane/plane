@@ -107,9 +107,9 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         <div className="text-xl font-medium 2xl:text-2xl">Delete Cycle</div>
                       </div>
                       <span>
-                        <p className="text-sm text-custom-text-200">
+                        <p className="text-sm text-neutral-text-medium">
                           Are you sure you want to delete cycle{' "'}
-                          <span className="break-words font-medium text-custom-text-100">{cycle?.name}</span>
+                          <span className="break-words font-medium text-neutral-text-strong">{cycle?.name}</span>
                           {'"'}? All of the data related to the cycle will be permanently removed. This action cannot be
                           undone.
                         </p>

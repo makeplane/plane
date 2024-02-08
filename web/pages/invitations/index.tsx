@@ -125,7 +125,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
             )}
           </div>
         </div>
-        <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
+        <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-neutral-text-strong sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
           {currentUser?.email}
         </div>
       </div>
@@ -168,10 +168,12 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
-                        <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                        <p className="text-xs text-neutral-text-medium">{ROLE[invitation.role]}</p>
                       </div>
                       <span
-                        className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}
+                        className={`flex-shrink-0 ${
+                          isSelected ? "text-custom-primary-100" : "text-neutral-text-medium"
+                        }`}
                       >
                         <CheckCircle2 className="h-5 w-5" />
                       </span>

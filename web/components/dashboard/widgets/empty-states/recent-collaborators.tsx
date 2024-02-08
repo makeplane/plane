@@ -18,7 +18,7 @@ export const RecentCollaboratorsEmptyState = () => {
 
   return (
     <div className="mt-7 mb-16 px-36 flex flex-col lg:flex-row items-center justify-between gap-x-24 gap-y-16">
-      <p className="text-sm font-medium text-custom-text-300 lg:w-2/5 flex-shrink-0 text-center lg:text-left">
+      <p className="text-sm font-medium text-neutral-text-medium lg:w-2/5 flex-shrink-0 text-center lg:text-left">
         Compare your activities with the top
         <br />
         seven in your project.

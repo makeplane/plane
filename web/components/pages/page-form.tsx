@@ -37,7 +37,9 @@ export const PageForm: React.FC<Props> = (props) => {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
       <div className="space-y-4">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{pageStore ? "Update" : "Create"} Page</h3>
+        <h3 className="text-lg font-medium leading-6 text-neutral-text-strong">
+          {pageStore ? "Update" : "Create"} Page
+        </h3>
         <div className="space-y-3">
           <div>
             <Controller
@@ -86,7 +88,7 @@ export const PageForm: React.FC<Props> = (props) => {
                     >
                       <access.icon
                         className={`h-3.5 w-3.5 ${
-                          value === access.key ? "text-custom-text-100" : "text-custom-text-400"
+                          value === access.key ? "text-neutral-text-strong" : "text-neutral-text-subtle"
                         }`}
                         strokeWidth={2}
                       />

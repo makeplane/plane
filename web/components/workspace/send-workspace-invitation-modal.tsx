@@ -112,11 +112,11 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                   }}
                 >
                   <div className="space-y-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                       Invite people to collaborate
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">Invite members to work on your workspace.</p>
+                      <p className="text-sm text-neutral-text-medium">Invite members to work on your workspace.</p>
                     </div>
 
                     <div className="mb-3 space-y-4">
@@ -186,7 +186,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                               className="-ml-3 place-items-center self-center rounded"
                               onClick={() => remove(index)}
                             >
-                              <X className="h-3.5 w-3.5 text-custom-text-200" />
+                              <X className="h-3.5 w-3.5 text-neutral-text-medium" />
                             </button>
                           )}
                         </div>

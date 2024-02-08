@@ -22,7 +22,7 @@ export const ProfileSettingsHeader: FC<IProfileSettingHeader> = (props) => {
                 <BreadcrumbLink
                   href="/profile"
                   label="My Profile"
-                  icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                  icon={<Settings className="h-4 w-4 text-neutral-text-medium" />}
                 />
               }
             />

@@ -94,18 +94,18 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
                     handleParentIssue(null);
                   }}
                 >
-                  <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                  <X className="h-2.5 w-2.5 text-neutral-text-medium hover:text-red-500" />
                 </span>
               </Tooltip>
             )}
           </div>
         ) : (
-          <span className="text-sm text-custom-text-400">Add parent issue</span>
+          <span className="text-sm text-neutral-text-subtle">Add parent issue</span>
         )}
         {!disabled && (
           <span
             className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
-              "text-custom-text-400": !issue.parent_id && !parentIssue,
+              "text-neutral-text-subtle": !issue.parent_id && !parentIssue,
             })}
           >
             <Pencil className="h-2.5 w-2.5 flex-shrink-0" />

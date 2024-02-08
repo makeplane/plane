@@ -44,7 +44,7 @@ export const INBOX_STATUS: {
       ) : (
         <p>This issue has been snoozed till {renderFormattedDate(snoozedTillDate)}.</p>
       ),
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-red-500" : "text-custom-text-200"),
+    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-red-500" : "text-neutral-text-medium"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "bg-red-500/10" : "bg-gray-500/10"),
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "border-red-500" : "border-gray-500"),
   },
@@ -77,7 +77,7 @@ export const INBOX_STATUS: {
         .
       </p>
     ),
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-custom-text-200"),
+    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-neutral-text-medium"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-gray-500/10"),
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "border-gray-500"),
   },

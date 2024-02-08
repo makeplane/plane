@@ -83,8 +83,8 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-neutral-component-surface-dark ${
-        isMenuActive ? "bg-neutral-component-surface-dark text-custom-text-100" : "text-custom-text-200"
+      className={`w-full cursor-pointer rounded p-1 text-sidebar-neutral-text-subtle hover:bg-neutral-component-surface-dark ${
+        isMenuActive ? "bg-neutral-component-surface-dark text-neutral-text-strong" : "text-neutral-text-medium"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -118,7 +118,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
               style={issueDetail.parent_id && nestingLevel !== 0 ? { paddingLeft } : {}}
             >
-              <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
+              <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-neutral-text-strong">
                 <span
                   className={`flex items-center justify-center font-medium  group-hover:opacity-0 ${
                     isMenuActive ? "opacity-0" : "opacity-100"
@@ -137,7 +137,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
               {issueDetail.sub_issues_count > 0 && (
                 <div className="flex h-6 w-6 items-center justify-center">
                   <button
-                    className="h-5 w-5 cursor-pointer rounded-sm hover:bg-neutral-component-surface-medium hover:text-custom-text-100"
+                    className="h-5 w-5 cursor-pointer rounded-sm hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong"
                     onClick={() => handleToggleExpand()}
                   >
                     <ChevronRight className={`h-3.5 w-3.5 ${isExpanded ? "rotate-90" : ""}`} />
@@ -150,12 +150,12 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
             target="_blank"
             onClick={() => handleIssuePeekOverview(issueDetail)}
-            className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+            className="clickable w-full line-clamp-1 cursor-pointer text-sm text-neutral-text-strong"
           >
             <div className="w-full overflow-hidden">
               <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
                 <div
-                  className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
+                  className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-neutral-text-strong"
                   tabIndex={-1}
                 >
                   {issueDetail.name}

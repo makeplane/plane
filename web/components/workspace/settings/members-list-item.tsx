@@ -122,11 +122,11 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
               </span>
             </Link>
             <div className="flex items-center">
-              <p className="text-xs text-custom-text-300">{memberDetails.member.display_name}</p>
+              <p className="text-xs text-neutral-text-medium">{memberDetails.member.display_name}</p>
               {isAdmin && (
                 <>
-                  <Dot height={16} width={16} className="text-custom-text-300" />
-                  <p className="text-xs text-custom-text-300">{memberDetails.member.email}</p>
+                  <Dot height={16} width={16} className="text-neutral-text-medium" />
+                  <p className="text-xs text-neutral-text-medium">{memberDetails.member.email}</p>
                 </>
               )}
             </div>
@@ -138,7 +138,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
               <div className="item-center flex gap-1 rounded px-2 py-0.5">
                 <span
                   className={`flex items-center rounded text-xs font-medium ${
-                    hasRoleChangeAccess ? "" : "text-custom-sidebar-text-400"
+                    hasRoleChangeAccess ? "" : "text-sidebar-neutral-text-subtle"
                   }`}
                 >
                   {ROLE[memberDetails.role]}

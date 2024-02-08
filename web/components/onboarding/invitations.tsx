@@ -115,9 +115,11 @@ export const Invitations: React.FC<Props> = (props) => {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                    <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                    <p className="text-xs text-neutral-text-medium">{ROLE[invitation.role]}</p>
                   </div>
-                  <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}>
+                  <span
+                    className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-neutral-text-medium"}`}
+                  >
                     <CheckCircle2 className="h-5 w-5" />
                   </span>
                 </div>
@@ -132,17 +134,17 @@ export const Invitations: React.FC<Props> = (props) => {
       <div className="mt-8 flex items-center justify-between rounded-sm bg-onboarding-background-300/30 px-4 py-3">
         <div className="flex items-center">
           <Search className="mr-2 h-4  w-4" />
-          <span className="text-sm text-custom-text-200">Don&apos;t see your workspace?</span>
+          <span className="text-sm text-neutral-text-medium">Don&apos;t see your workspace?</span>
         </div>
 
         <div>
           <div
-            className="rounded-md border border-neutral-border-medium bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
+            className="rounded-md border border-neutral-border-medium bg-onboarding-background-200 py-3 text-center text-sm font-medium text-neutral-text-medium hover:cursor-pointer"
             onClick={setTryDiffAccount}
           >
             Try a different email address
           </div>
-          <p className="mt-2 text-xs text-custom-text-300">
+          <p className="mt-2 text-xs text-neutral-text-medium">
             Your right e-mail address could be from a Google or GitHub login.
           </p>
         </div>
@@ -160,12 +162,12 @@ const EmptyInvitation = ({ email, setTryDiffAccount }: { email: string; setTryDi
       We couldn’t find any existing workspaces for the email address {email}
     </p>
     <div
-      className="mt-6 rounded-md border border-neutral-border-medium bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
+      className="mt-6 rounded-md border border-neutral-border-medium bg-onboarding-background-200 py-3 text-center text-sm font-medium text-neutral-text-medium hover:cursor-pointer"
       onClick={setTryDiffAccount}
     >
       Try a different email address
     </div>
-    <p className="mt-2 text-center text-xs text-custom-text-300">
+    <p className="mt-2 text-center text-xs text-neutral-text-medium">
       Your right e-mail address could be from a Google or GitHub login.
     </p>
   </div>

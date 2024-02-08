@@ -92,7 +92,7 @@ export const Workspace: React.FC<Props> = (props) => {
   return (
     <form className="mt-5 md:w-2/3" onSubmit={handleSubmit(handleCreateWorkspace)}>
       <div className="mb-5">
-        <p className="mb-1 text-base text-custom-text-400">Name it.</p>
+        <p className="mb-1 text-base text-neutral-text-subtle">Name it.</p>
         <Controller
           control={control}
           name="name"
@@ -120,13 +120,13 @@ export const Workspace: React.FC<Props> = (props) => {
                 placeholder="Enter workspace name..."
                 ref={ref}
                 hasError={Boolean(errors.name)}
-                className="h-[46px] w-full border-onboarding-border-100 text-base placeholder:text-base placeholder:text-custom-text-400/50"
+                className="h-[46px] w-full border-onboarding-border-100 text-base placeholder:text-base placeholder:text-neutral-text-subtle/50"
               />
             </div>
           )}
         />
         {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
-        <p className="mb-1 mt-4 text-base text-custom-text-400">You can edit the slug.</p>
+        <p className="mb-1 mt-4 text-base text-neutral-text-subtle">You can edit the slug.</p>
         <Controller
           control={control}
           name="slug"

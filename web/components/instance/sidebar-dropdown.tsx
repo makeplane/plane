@@ -70,17 +70,17 @@ export const InstanceSidebarDropdown = observer(() => {
           }`}
         >
           <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-sidebar-neutral-component-surface-dark">
-            <UserCog2 className="h-5 w-5 text-custom-text-200" />
+            <UserCog2 className="h-5 w-5 text-neutral-text-medium" />
           </div>
 
           {!sidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-base font-medium text-custom-text-200">Instance admin</h4>
+              <h4 className="grow truncate text-base font-medium text-neutral-text-medium">Instance admin</h4>
               <Tooltip position="bottom-left" tooltipContent="Exit God Mode">
                 <div className="flex-shrink-0">
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
-                      <LogIn className="h-5 w-5 rotate-180 text-custom-text-200" />
+                      <LogIn className="h-5 w-5 rotate-180 text-neutral-text-medium" />
                     </span>
                   </Link>
                 </div>
@@ -116,7 +116,7 @@ export const InstanceSidebarDropdown = observer(() => {
           divide-sidebar-neutral-border-medium rounded-md border border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-light px-1 py-2 text-xs shadow-lg outline-none"
             >
               <div className="flex flex-col gap-2.5 pb-2">
-                <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+                <span className="px-2 text-sidebar-neutral-text-medium">{currentUser?.email}</span>
                 {PROFILE_LINKS.map((link) => (
                   <Menu.Item key={link.key} as="button" type="button">
                     <Link href={link.link}>

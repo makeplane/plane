@@ -26,7 +26,7 @@ export const ContentBrowser = (props: ContentBrowserProps) => {
             )
           )
         ) : (
-          <p className="mt-3 text-xs text-custom-text-400">Headings will be displayed here for navigation</p>
+          <p className="mt-3 text-xs text-neutral-text-subtle">Headings will be displayed here for navigation</p>
         )}
       </div>
     </div>

@@ -191,12 +191,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 </span>
               </div>
 
-              <div className="flex items-center justify-start gap-5 text-custom-text-200">
+              <div className="flex items-center justify-start gap-5 text-neutral-text-medium">
                 <div className="flex items-start gap-1">
                   <CalendarDays className="h-4 w-4" />
                   <span>{renderFormattedDate(startDate)}</span>
                 </div>
-                <ArrowRight className="h-4 w-4 text-custom-text-200" />
+                <ArrowRight className="h-4 w-4 text-neutral-text-medium" />
                 <div className="flex items-start gap-1">
                   <Target className="h-4 w-4" />
                   <span>{renderFormattedDate(endDate)}</span>
@@ -204,7 +204,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2.5 text-custom-text-200">
+                <div className="flex items-center gap-2.5 text-neutral-text-medium">
                   {cycleOwnerDetails?.avatar && cycleOwnerDetails?.avatar !== "" ? (
                     <img
                       src={cycleOwnerDetails?.avatar}
@@ -218,11 +218,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       {cycleOwnerDetails?.display_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
+                  <span className="text-neutral-text-medium">{cycleOwnerDetails?.display_name}</span>
                 </div>
 
                 {activeCycle.assignees.length > 0 && (
-                  <div className="flex items-center gap-1 text-custom-text-200">
+                  <div className="flex items-center gap-1 text-neutral-text-medium">
                     <AvatarGroup>
                       {activeCycle.assignees.map((assignee) => (
                         <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
@@ -232,7 +232,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                 )}
               </div>
 
-              <div className="flex items-center gap-4 text-custom-text-200">
+              <div className="flex items-center gap-4 text-neutral-text-medium">
                 <div className="flex gap-2">
                   <LayersIcon className="h-4 w-4 flex-shrink-0" />
                   {activeCycle.total_issues} issues
@@ -254,7 +254,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
         </div>
         <div className="col-span-2 grid grid-cols-1 divide-y border-neutral-border-medium md:grid-cols-2 md:divide-x md:divide-y-0">
           <div className="flex h-60 flex-col border-neutral-border-medium">
-            <div className="flex h-full w-full flex-col p-4 text-custom-text-200">
+            <div className="flex h-full w-full flex-col p-4 text-neutral-text-medium">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
                 <LinearProgressIndicator size="md" data={progressIndicatorData} inPercentage />
@@ -305,12 +305,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         tooltipHeading="Issue ID"
                         tooltipContent={`${currentProjectDetails?.identifier}-${issue.sequence_id}`}
                       >
-                        <span className="flex-shrink-0 text-xs text-custom-text-200">
+                        <span className="flex-shrink-0 text-xs text-neutral-text-medium">
                           {currentProjectDetails?.identifier}-{issue.sequence_id}
                         </span>
                       </Tooltip>
                       <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                        <span className="text-[0.825rem] text-custom-text-100">{truncateText(issue.name, 30)}</span>
+                        <span className="text-[0.825rem] text-neutral-text-strong">{truncateText(issue.name, 30)}</span>
                       </Tooltip>
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -333,7 +333,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   </Link>
                 ))
               ) : (
-                <div className="flex items-center justify-center h-full text-sm text-custom-text-200">
+                <div className="flex items-center justify-center h-full text-sm text-neutral-text-medium">
                   There are no high priority issues present in this cycle.
                 </div>
               )
@@ -348,7 +348,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
         </div>
         <div className="flex flex-col  border-neutral-border-medium p-4 max-h-60">
           <div className="flex items-start justify-between gap-4 py-1.5 text-xs">
-            <div className="flex items-center gap-3 text-custom-text-100">
+            <div className="flex items-center gap-3 text-neutral-text-strong">
               <div className="flex items-center justify-center gap-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#a9bbd0]" />
                 <span>Ideal</span>
@@ -360,7 +360,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             </div>
             <div className="flex items-center gap-1">
               <span>
-                <LayersIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
+                <LayersIcon className="h-5 w-5 flex-shrink-0 text-neutral-text-medium" />
               </span>
               <span>
                 Pending Issues -{" "}

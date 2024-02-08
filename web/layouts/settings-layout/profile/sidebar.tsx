@@ -88,13 +88,13 @@ export const ProfileLayoutSidebar = observer(() => {
               <ChevronLeft className="h-5 w-5" strokeWidth={1} />
             </span>
             {!sidebarCollapsed && (
-              <h4 className="truncate text-lg font-semibold text-custom-text-200">Profile settings</h4>
+              <h4 className="truncate text-lg font-semibold text-neutral-text-medium">Profile settings</h4>
             )}
           </div>
         </Link>
         <div className="flex flex-shrink-0 flex-col overflow-x-hidden px-4">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
+            <h6 className="rounded px-1.5 text-sm font-semibold text-sidebar-neutral-text-subtle">Your account</h6>
           )}
           <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
@@ -107,7 +107,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                         link.highlight(router.pathname)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
-                          : "text-custom-sidebar-text-200 hover:bg-sidebar-neutral-component-surface-dark"
+                          : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark"
                       } ${sidebarCollapsed ? "justify-center" : ""}`}
                     >
                       {<link.Icon className="h-4 w-4" />}
@@ -121,7 +121,7 @@ export const ProfileLayoutSidebar = observer(() => {
         </div>
         <div className="flex flex-col overflow-x-hidden px-4">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
+            <h6 className="rounded px-1.5 text-sm font-semibold text-sidebar-neutral-text-subtle">Workspaces</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
             <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
@@ -154,7 +154,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       )}
                     </span>
                     {!sidebarCollapsed && (
-                      <p className="truncate text-sm text-custom-sidebar-text-200">{workspace.name}</p>
+                      <p className="truncate text-sm text-sidebar-neutral-text-medium">{workspace.name}</p>
                     )}
                   </span>
                 </Link>
@@ -166,7 +166,7 @@ export const ProfileLayoutSidebar = observer(() => {
               <Link className="block w-full" key={link.key} href={link.href}>
                 <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                   <div
-                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark ${
+                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-sidebar-neutral-text-medium outline-none hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -195,14 +195,14 @@ export const ProfileLayoutSidebar = observer(() => {
             </button>
             <button
               type="button"
-              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:hidden"
+              className="grid place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong md:hidden"
               onClick={() => toggleSidebar()}
             >
               <MoveLeft className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
-              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:grid ${
+              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong md:grid ${
                 sidebarCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}

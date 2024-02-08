@@ -37,7 +37,7 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
         sliceTooltip={(datum) => (
           <div className="rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark p-2 text-xs">
             {datum.slice.points[0].data.yFormatted}
-            <span className="text-custom-text-200"> issues closed in </span>
+            <span className="text-neutral-text-medium"> issues closed in </span>
             {datum.slice.points[0].data.xFormatted}
           </div>
         )}

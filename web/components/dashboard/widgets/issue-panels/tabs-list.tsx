@@ -43,11 +43,11 @@ export const TabsList: React.FC<Props> = observer((props) => {
         <Tab
           key={tab.key}
           className={cn(
-            "relative z-[1] font-semibold text-xs rounded py-1.5 text-custom-text-400 focus:outline-none",
+            "relative z-[1] font-semibold text-xs rounded py-1.5 text-neutral-text-subtle focus:outline-none",
             "transition duration-500",
             {
-              "text-custom-text-100 bg-custom-background-100": selectedTab === tab.key,
-              "hover:text-custom-text-300": selectedTab !== tab.key,
+              "text-neutral-text-strong bg-custom-background-100": selectedTab === tab.key,
+              "hover:text-neutral-text-medium": selectedTab !== tab.key,
               // // right shadow
               // "shadow-[2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== tabsList.length - 1,
               // // left shadow

@@ -71,7 +71,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
               <Dialog.Panel className="relative transform rounded-lg bg-neutral-component-surface-light px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                       Customise Time Range
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
@@ -99,7 +99,9 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     placeholder="Enter Months"
                                     className="w-full border-neutral-border-medium"
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-sm text-neutral-text-medium">
+                                    Months
+                                  </span>
                                 </div>
                               )}
                             />
@@ -131,7 +133,9 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     placeholder="Enter Months"
                                     className="w-full border-neutral-border-medium"
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-sm text-neutral-text-medium">
+                                    Months
+                                  </span>
                                 </div>
                               )}
                             />

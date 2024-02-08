@@ -88,12 +88,14 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                 </div>
                 <div className="flex flex-col overflow-hidden ">
                   <p className="truncate break-all text-sm font-medium  leading-4">{view.name}</p>
-                  {view?.description && <p className="break-all text-xs text-custom-text-200">{view.description}</p>}
+                  {view?.description && (
+                    <p className="break-all text-xs text-neutral-text-medium">{view.description}</p>
+                  )}
                 </div>
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <p className="hidden rounded bg-neutral-component-surface-dark px-2 py-1 text-xs text-custom-text-200 group-hover:block">
+                  <p className="hidden rounded bg-neutral-component-surface-dark px-2 py-1 text-xs text-neutral-text-medium group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
                   {isEditingAllowed &&

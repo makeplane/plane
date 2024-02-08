@@ -24,7 +24,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
   if (!isAdmin)
     return (
       <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        <p className="text-sm text-neutral-text-medium">You are not authorized to access this page.</p>
       </div>
     );
 
@@ -38,7 +38,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
       <div className="px-4 py-6">
         <div>
           <h4 className="text-md mb-1 leading-6">Current plan</h4>
-          <p className="mb-3 text-sm text-custom-text-200">You are currently using the free plan</p>
+          <p className="mb-3 text-sm text-neutral-text-medium">You are currently using the free plan</p>
           <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
             <Button variant="neutral-primary">View Plans</Button>
           </a>

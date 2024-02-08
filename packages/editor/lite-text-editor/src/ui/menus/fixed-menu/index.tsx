@@ -108,8 +108,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                 <access.icon
                   className={`h-3.5 w-3.5 ${
                     props.commentAccessSpecifier?.accessValue === access.key
-                      ? "text-custom-text-100"
-                      : "text-custom-text-400"
+                      ? "text-neutral-text-strong"
+                      : "text-neutral-text-subtle"
                   }`}
                   strokeWidth={2}
                 />
@@ -127,15 +127,15 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-neutral-text-subtle hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
                     }
                   )}
                 >
                   <item.icon
                     className={cn("h-3.5 w-3.5", {
-                      "text-custom-text-100": item.isActive(),
+                      "text-neutral-text-strong": item.isActive(),
                     })}
                     strokeWidth={2.5}
                   />
@@ -150,15 +150,15 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-neutral-text-subtle hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
                     }
                   )}
                 >
                   <item.icon
                     className={cn("h-3.5 w-3.5", {
-                      "text-custom-text-100": item.isActive(),
+                      "text-neutral-text-strong": item.isActive(),
                     })}
                     strokeWidth={2.5}
                   />
@@ -173,15 +173,15 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-neutral-text-subtle hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
                     }
                   )}
                 >
                   <item.icon
                     className={cn("h-3.5 w-3.5", {
-                      "text-custom-text-100": item.isActive(),
+                      "text-neutral-text-strong": item.isActive(),
                     })}
                     strokeWidth={2.5}
                   />
@@ -196,15 +196,15 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   type="button"
                   onClick={item.command}
                   className={cn(
-                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-neutral-component-surface-dark",
+                    "grid aspect-square place-items-center rounded-sm p-1 text-neutral-text-subtle hover:bg-neutral-component-surface-dark",
                     {
-                      "bg-neutral-component-surface-dark text-custom-text-100": item.isActive(),
+                      "bg-neutral-component-surface-dark text-neutral-text-strong": item.isActive(),
                     }
                   )}
                 >
                   <item.icon
                     className={cn("h-3.5 w-3.5", {
-                      "text-custom-text-100": item.isActive(),
+                      "text-neutral-text-strong": item.isActive(),
                     })}
                     strokeWidth={2.5}
                   />

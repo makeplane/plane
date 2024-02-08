@@ -26,7 +26,7 @@ export const InstanceAdminHeader: FC<IInstanceAdminHeader> = observer((props) =>
                   <BreadcrumbLink
                     href="/god-mode"
                     label="Settings"
-                    icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                    icon={<Settings className="h-4 w-4 text-neutral-text-medium" />}
                   />
                 }
               />

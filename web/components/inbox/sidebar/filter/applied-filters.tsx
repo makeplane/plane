@@ -66,7 +66,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
               key={key}
               className="flex items-center gap-x-2 rounded-full border border-neutral-border-medium bg-neutral-component-surface-dark px-2 py-1"
             >
-              <span className="capitalize text-custom-text-200">{replaceUnderscoreIfSnakeCase(key)}:</span>
+              <span className="capitalize text-neutral-text-medium">{replaceUnderscoreIfSnakeCase(key)}:</span>
               {filters[filterKey]?.length < 0 ? (
                 <span className="inline-flex items-center px-2 py-0.5 font-medium">None</span>
               ) : (
@@ -85,7 +85,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                               ? "bg-yellow-500/20 text-yellow-500"
                               : priority === "low"
                               ? "bg-green-500/20 text-green-500"
-                              : "bg-neutral-component-surface-medium text-custom-text-200"
+                              : "bg-neutral-component-surface-medium text-neutral-text-medium"
                           }`}
                         >
                           <div className="relative flex items-center gap-1">
@@ -123,7 +123,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                       {filters.inbox_status?.map((status) => (
                         <div
                           key={status}
-                          className="inline-flex items-center gap-x-1 rounded-full bg-neutral-component-surface-medium px-2 py-0.5 capitalize text-custom-text-200"
+                          className="inline-flex items-center gap-x-1 rounded-full bg-neutral-component-surface-medium px-2 py-0.5 capitalize text-neutral-text-medium"
                         >
                           <IssueStatusLabel status={status} />
                           <button
@@ -161,7 +161,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
       <button
         type="button"
         onClick={handleClearAllFilters}
-        className="flex items-center gap-x-1 rounded-full border border-neutral-border-medium bg-neutral-component-surface-dark px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
+        className="flex items-center gap-x-1 rounded-full border border-neutral-border-medium bg-neutral-component-surface-dark px-3 py-1.5 text-neutral-text-medium hover:text-neutral-text-strong"
       >
         <span>Clear all</span>
         <X className="h-3 w-3" />

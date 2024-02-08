@@ -269,7 +269,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center gap-3.5">
             <button onClick={handleCopyText}>
-              <LinkIcon className="h-3 w-3 text-custom-text-300" />
+              <LinkIcon className="h-3 w-3 text-neutral-text-medium" />
             </button>
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
@@ -327,18 +327,18 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
+          <h4 className="w-full break-words text-xl font-semibold text-neutral-text-strong">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-neutral-text-medium">
             {moduleDetails.description}
           </span>
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <CalendarClock className="h-4 w-4" />
 
               <span className="text-base">Start date</span>
@@ -349,14 +349,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
                         className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("start_date") ? "" : "text-custom-text-400"
+                          watch("start_date") ? "" : "text-neutral-text-subtle"
                         }`}
                       >
                         {renderFormattedDate(startDate) ?? "No date selected"}
@@ -395,7 +395,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <CalendarCheck2 className="h-4 w-4" />
               <span className="text-base">Target date</span>
             </div>
@@ -405,14 +405,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-custom-background-80 ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
                         className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("target_date") ? "" : "text-custom-text-400"
+                          watch("target_date") ? "" : "text-neutral-text-subtle"
                         }`}
                       >
                         {renderFormattedDate(endDate) ?? "No date selected"}
@@ -452,14 +452,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-neutral-text-medium">
             {moduleDetails.description}
           </span>
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <UserCircle2 className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
@@ -483,7 +483,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <UserGroupIcon className="h-4 w-4" />
               <span className="text-base">Members</span>
             </div>
@@ -509,12 +509,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-1/2 items-center justify-start gap-2 text-neutral-text-medium">
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
             <div className="flex w-1/2 items-center">
-              <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
+              <span className="px-1.5 text-sm text-neutral-text-medium">{issueCount}</span>
             </div>
           </div>
         </div>
@@ -529,7 +529,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     disabled={!isStartValid || !isEndValid}
                   >
                     <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">Progress</span>
+                      <span className="font-medium text-neutral-text-medium">Progress</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">
@@ -544,8 +544,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                         <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                       ) : (
                         <div className="flex items-center gap-1">
-                          <AlertCircle height={14} width={14} className="text-custom-text-200" />
-                          <span className="text-xs italic text-custom-text-200">
+                          <AlertCircle height={14} width={14} className="text-neutral-text-medium" />
+                          <span className="text-xs italic text-neutral-text-medium">
                             {moduleDetails?.start_date && moduleDetails?.target_date
                               ? "This module isn't active yet."
                               : "Invalid date. Please enter valid date."}
@@ -560,7 +560,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                         {moduleDetails.start_date && moduleDetails.target_date ? (
                           <div className=" h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
-                              <div className="flex items-center gap-3 text-custom-text-100">
+                              <div className="flex items-center gap-3 text-neutral-text-strong">
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
                                   <span>Ideal</span>
@@ -614,7 +614,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
                     <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">Links</span>
+                      <span className="font-medium text-neutral-text-medium">Links</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">
@@ -653,8 +653,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                         ) : (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                              <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
+                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-neutral-text-medium" />
+                              <span className="p-0.5 text-xs text-neutral-text-medium">No links added yet</span>
                             </div>
                             <button
                               className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"

@@ -356,10 +356,10 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                   {viewOptions.map((option) => (
                                     <div
                                       key={option.key}
-                                      className={`relative m-1 flex cursor-pointer items-center justify-between gap-2 rounded-sm p-1 px-2 text-custom-text-200 ${
+                                      className={`relative m-1 flex cursor-pointer items-center justify-between gap-2 rounded-sm p-1 px-2 text-neutral-text-medium ${
                                         value.includes(option.key)
-                                          ? "bg-neutral-component-surface-dark text-custom-text-100"
-                                          : "hover:bg-neutral-component-surface-dark hover:text-custom-text-100"
+                                          ? "bg-neutral-component-surface-dark text-neutral-text-strong"
+                                          : "hover:bg-neutral-component-surface-dark hover:text-neutral-text-strong"
                                       }`}
                                       onClick={() => {
                                         const _views =
@@ -457,7 +457,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
                   {/* modal handlers */}
                   <div className="relative flex items-center justify-between border-t border-neutral-border-medium px-6 py-5">
-                    <div className="flex items-center gap-1 text-sm text-custom-text-400">
+                    <div className="flex items-center gap-1 text-sm text-neutral-text-subtle">
                       <Globe2 className="h-4 w-4" />
                       <div className="text-sm">Anyone with the link can access</div>
                     </div>

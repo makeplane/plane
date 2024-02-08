@@ -108,11 +108,13 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
         <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `w-full flex-row`}`}>
           <div
-            className={`line-clamp-1 font-medium text-custom-text-100 ${verticalAlignPosition ? `vertical-lr` : ``}`}
+            className={`line-clamp-1 font-medium text-neutral-text-strong ${
+              verticalAlignPosition ? `vertical-lr` : ``
+            }`}
           >
             {title}
           </div>
-          <div className={`text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}>
+          <div className={`text-sm font-medium text-neutral-text-medium ${verticalAlignPosition ? `` : `pl-2`}`}>
             {count || 0}
           </div>
         </div>

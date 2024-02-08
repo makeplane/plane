@@ -75,7 +75,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
               />
             )}
           />
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             Your client ID lives in your Google API Console.{" "}
             <a
               href="https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#creatingcred"
@@ -104,7 +104,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
             <p className="text-sm font-medium">{originURL}</p>
             <Copy size={18} color="#B9B9B9" />
           </Button>
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             We will auto-generate this. Paste this into your Authorized JavaScript origins field. For this OAuth client{" "}
             <a
               href="https://console.cloud.google.com/apis/credentials/oauthclient"

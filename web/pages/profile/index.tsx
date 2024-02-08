@@ -170,7 +170,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                     <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                       {!watch("avatar") || watch("avatar") === "" ? (
                         <div className="h-16 w-16 rounded-md bg-neutral-component-surface-dark p-2">
-                          <User2 className="h-full w-full text-custom-text-200" />
+                          <User2 className="h-full w-full text-neutral-text-medium" />
                         </div>
                       ) : (
                         <div className="relative h-16 w-16 overflow-hidden">
@@ -206,7 +206,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
 
             <div className="item-center mt-4 flex justify-between px-8">
               <div className="flex flex-col">
-                <div className="item-center flex text-lg font-semibold text-custom-text-100">
+                <div className="item-center flex text-lg font-semibold text-neutral-text-strong">
                   <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
                 </div>
                 <span className="text-sm tracking-tight">{watch("email")}</span>

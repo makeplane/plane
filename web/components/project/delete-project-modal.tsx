@@ -131,16 +131,16 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-custom-text-200">
+                    <p className="text-sm leading-7 text-neutral-text-medium">
                       Are you sure you want to delete project{" "}
                       <span className="break-words font-semibold">{project?.name}</span>? All of the data related to the
                       project will be permanently removed. This action cannot be undone
                     </p>
                   </span>
-                  <div className="text-custom-text-200">
+                  <div className="text-neutral-text-medium">
                     <p className="break-words text-sm ">
-                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
-                      to continue:
+                      Enter the project name{" "}
+                      <span className="font-medium text-neutral-text-strong">{project?.name}</span> to continue:
                     </p>
                     <Controller
                       control={control}
@@ -161,9 +161,9 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                       )}
                     />
                   </div>
-                  <div className="text-custom-text-200">
+                  <div className="text-neutral-text-medium">
                     <p className="text-sm">
-                      To confirm, type <span className="font-medium text-custom-text-100">delete my project</span>{" "}
+                      To confirm, type <span className="font-medium text-neutral-text-strong">delete my project</span>{" "}
                       below:
                     </p>
                     <Controller

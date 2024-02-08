@@ -33,10 +33,10 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
       }`}
     >
       <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-neutral-component-surface-dark" aria-hidden={true} />
-      <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-10 bg-neutral-component-surface-dark text-custom-text-200">
+      <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-10 bg-neutral-component-surface-dark text-neutral-text-medium">
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
-      <div className="w-full text-custom-text-200">
+      <div className="w-full text-neutral-text-medium">
         <IssueUser activityId={activityId} />
         <span> {children} </span>
         <span>

@@ -21,7 +21,7 @@ export const IssueUser: FC<TIssueUser> = (props) => {
   return (
     <a
       href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
-      className="hover:underline text-custom-text-100 font-medium capitalize"
+      className="hover:underline text-neutral-text-strong font-medium capitalize"
     >
       {activity.actor_detail?.display_name}
     </a>

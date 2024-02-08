@@ -39,10 +39,10 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-neutral-component-surface-light p-2.5 pb-0">
         <div className="flex items-center gap-1.5 rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-medium px-1.5 py-1 text-xs">
-          <Search className="text-custom-text-400" size={12} strokeWidth={2} />
+          <Search className="text-neutral-text-subtle" size={12} strokeWidth={2} />
           <input
             type="text"
-            className="w-full bg-neutral-component-surface-medium outline-none placeholder:text-custom-text-400"
+            className="w-full bg-neutral-component-surface-medium outline-none placeholder:text-neutral-text-subtle"
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
@@ -50,7 +50,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <X className="text-custom-text-300" size={12} strokeWidth={2} />
+              <X className="text-neutral-text-medium" size={12} strokeWidth={2} />
             </button>
           )}
         </div>

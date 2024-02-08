@@ -69,7 +69,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
   return (
     <Disclosure
       as="div"
-      className={`rounded border-[0.5px] border-neutral-border-medium text-custom-text-100 ${
+      className={`rounded border-[0.5px] border-neutral-border-medium text-neutral-text-strong ${
         groupDragSnapshot.combineTargetFor ? "bg-neutral-component-surface-dark" : "bg-neutral-component-surface-light"
       }`}
       defaultOpen
@@ -114,7 +114,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                     <Disclosure.Button>
                       <span>
                         <ChevronDown
-                          className={`h-4 w-4 text-custom-sidebar-text-400 ${!open ? "rotate-90 transform" : ""}`}
+                          className={`h-4 w-4 text-sidebar-neutral-text-subtle ${!open ? "rotate-90 transform" : ""}`}
                         />
                       </span>
                     </Disclosure.Button>

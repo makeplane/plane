@@ -66,7 +66,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
     <>
       <div className="flex items-center justify-between px-5 pt-5">
         <h2 className="mb-2 text-xl font-semibold">Notifications</h2>
-        <div className="flex items-center justify-center gap-x-4 text-custom-text-200">
+        <div className="flex items-center justify-center gap-x-4 text-neutral-text-medium">
           <Tooltip tooltipContent="Refresh">
             <button
               type="button"
@@ -166,7 +166,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 className={`whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium outline-none ${
                   tab.value === selectedTab
                     ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent text-custom-text-200"
+                    : "border-transparent text-neutral-text-medium"
                 }`}
               >
                 {tab.label}
@@ -175,7 +175,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                     className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
                       tab.value === selectedTab
                         ? "bg-custom-primary-100 text-white"
-                        : "bg-neutral-component-surface-dark text-custom-text-200"
+                        : "bg-neutral-component-surface-dark text-neutral-text-medium"
                     }`}
                   >
                     {getNumberCount(tab.unreadCount)}

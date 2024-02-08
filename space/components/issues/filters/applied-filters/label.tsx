@@ -29,7 +29,7 @@ export const AppliedLabelsFilters: React.FC<Props> = (props) => {
             <span className="normal-case">{labelDetails.name}</span>
             <button
               type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              className="grid place-items-center text-neutral-text-medium hover:text-neutral-text-medium"
               onClick={() => handleRemove(labelId)}
             >
               <X size={10} strokeWidth={2} />

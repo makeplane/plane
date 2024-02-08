@@ -101,14 +101,14 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                         Delete Page
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-custom-text-200">
+                        <p className="text-sm text-neutral-text-medium">
                           Are you sure you want to delete page-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{name}</span>? The Page will be
-                          deleted permanently. This action cannot be undone.
+                          <span className="break-words font-medium text-neutral-text-strong">{name}</span>? The Page
+                          will be deleted permanently. This action cannot be undone.
                         </p>
                       </div>
                     </div>

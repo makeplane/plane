@@ -191,7 +191,7 @@ export const CommandModal: React.FC = observer(() => {
                     }`}
                   >
                     {issueDetails && (
-                      <div className="overflow-hidden truncate rounded-md bg-neutral-component-surface-dark p-2 text-xs font-medium text-custom-text-200">
+                      <div className="overflow-hidden truncate rounded-md bg-neutral-component-surface-dark p-2 text-xs font-medium text-neutral-text-medium">
                         {projectDetails?.identifier}-{issueDetails.sequence_id} {issueDetails.name}
                       </div>
                     )}
@@ -215,12 +215,12 @@ export const CommandModal: React.FC = observer(() => {
                   </div>
                   <div className="relative">
                     <Search
-                      className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-200"
+                      className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-text-medium"
                       aria-hidden="true"
                       strokeWidth={2}
                     />
                     <Command.Input
-                      className="w-full border-0 border-b border-neutral-border-medium bg-transparent p-4 pl-11 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                      className="w-full border-0 border-b border-neutral-border-medium bg-transparent p-4 pl-11 text-sm text-neutral-text-strong outline-none placeholder:text-neutral-text-subtle focus:ring-0"
                       placeholder={placeholder}
                       value={searchTerm}
                       onValueChange={(e) => setSearchTerm(e)}
@@ -231,7 +231,7 @@ export const CommandModal: React.FC = observer(() => {
 
                   <Command.List className="max-h-96 overflow-scroll p-2">
                     {searchTerm !== "" && (
-                      <h5 className="mx-[3px] my-4 text-xs text-custom-text-100">
+                      <h5 className="mx-[3px] my-4 text-xs text-neutral-text-strong">
                         Search results for{" "}
                         <span className="font-medium">
                           {'"'}
@@ -243,7 +243,7 @@ export const CommandModal: React.FC = observer(() => {
                     )}
 
                     {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      <div className="my-4 text-center text-sm text-custom-text-200">No results found.</div>
+                      <div className="my-4 text-center text-sm text-neutral-text-medium">No results found.</div>
                     )}
 
                     {(isLoading || isSearching) && (
@@ -283,7 +283,7 @@ export const CommandModal: React.FC = observer(() => {
                             }}
                             className="focus:bg-neutral-component-surface-dark"
                           >
-                            <div className="flex items-center gap-2 text-custom-text-200">
+                            <div className="flex items-center gap-2 text-neutral-text-medium">
                               <LayersIcon className="h-3.5 w-3.5" />
                               Create new issue
                             </div>
@@ -301,7 +301,7 @@ export const CommandModal: React.FC = observer(() => {
                               }}
                               className="focus:outline-none"
                             >
-                              <div className="flex items-center gap-2 text-custom-text-200">
+                              <div className="flex items-center gap-2 text-neutral-text-medium">
                                 <FolderPlus className="h-3.5 w-3.5" />
                                 Create new project
                               </div>
@@ -322,7 +322,7 @@ export const CommandModal: React.FC = observer(() => {
                             }}
                             className="focus:outline-none"
                           >
-                            <div className="flex items-center gap-2 text-custom-text-200">
+                            <div className="flex items-center gap-2 text-neutral-text-medium">
                               <Settings className="h-3.5 w-3.5" />
                               Search settings...
                             </div>
@@ -330,7 +330,7 @@ export const CommandModal: React.FC = observer(() => {
                         </Command.Group>
                         <Command.Group heading="Account">
                           <Command.Item onSelect={createNewWorkspace} className="focus:outline-none">
-                            <div className="flex items-center gap-2 text-custom-text-200">
+                            <div className="flex items-center gap-2 text-neutral-text-medium">
                               <FolderPlus className="h-3.5 w-3.5" />
                               Create new workspace
                             </div>
@@ -343,7 +343,7 @@ export const CommandModal: React.FC = observer(() => {
                             }}
                             className="focus:outline-none"
                           >
-                            <div className="flex items-center gap-2 text-custom-text-200">
+                            <div className="flex items-center gap-2 text-neutral-text-medium">
                               <Settings className="h-3.5 w-3.5" />
                               Change interface theme...
                             </div>

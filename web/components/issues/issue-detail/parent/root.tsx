@@ -43,16 +43,16 @@ export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5">
               <span className="block h-2 w-2 rounded-full" style={{ backgroundColor: stateColor }} />
-              <span className="flex-shrink-0 text-custom-text-200">
+              <span className="flex-shrink-0 text-neutral-text-medium">
                 {getProjectById(parentIssue.project_id)?.identifier}-{parentIssue?.sequence_id}
               </span>
             </div>
-            <span className="truncate text-custom-text-100">{(parentIssue?.name ?? "").substring(0, 50)}</span>
+            <span className="truncate text-neutral-text-strong">{(parentIssue?.name ?? "").substring(0, 50)}</span>
           </div>
         </Link>
 
         <CustomMenu ellipsis optionsClassName="p-1.5">
-          <div className="border-b border-neutral-border-medium text-xs font-medium text-custom-text-200">
+          <div className="border-b border-neutral-border-medium text-xs font-medium text-neutral-text-medium">
             Sibling issues
           </div>
 

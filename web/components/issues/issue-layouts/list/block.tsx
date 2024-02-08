@@ -60,7 +60,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         )}
       >
         {displayProperties && displayProperties?.key && (
-          <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+          <div className="flex-shrink-0 text-xs font-medium text-neutral-text-medium">
             {projectDetails?.identifier}-{issue.sequence_id}
           </div>
         )}
@@ -78,7 +78,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
             href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
             target="_blank"
             onClick={() => handleIssuePeekOverview(issue)}
-            className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+            className="w-full line-clamp-1 cursor-pointer text-sm text-neutral-text-strong"
           >
             <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
               <span>{issue.name}</span>

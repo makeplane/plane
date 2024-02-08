@@ -36,7 +36,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
             className={`${
               token.is_active
                 ? "bg-green-500/10 text-green-500"
-                : "bg-neutral-component-surface-dark text-custom-text-400"
+                : "bg-neutral-component-surface-dark text-neutral-text-subtle"
             } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
           >
             {token.is_active ? "Active" : "Expired"}
@@ -46,7 +46,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
           {token.description.trim() !== "" && (
             <p className="mb-1 max-w-[70%] break-words text-sm">{token.description}</p>
           )}
-          <p className="mb-1 text-xs leading-6 text-custom-text-400">
+          <p className="mb-1 text-xs leading-6 text-neutral-text-subtle">
             {token.is_active
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at!)}`

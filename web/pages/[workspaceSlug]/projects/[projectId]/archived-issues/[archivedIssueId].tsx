@@ -98,7 +98,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         <div className="flex h-full overflow-hidden">
           <div className="h-full w-full space-y-2 divide-y-2 divide-neutral-border-medium overflow-y-auto p-5">
             {issue?.archived_at && (
-              <div className="flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium px-2.5 py-2 text-sm text-custom-text-200">
+              <div className="flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium bg-neutral-component-surface-medium px-2.5 py-2 text-sm text-neutral-text-medium">
                 <div className="flex items-center gap-2">
                   <ArchiveIcon className="h-3.5 w-3.5" />
                   <p>This issue has been archived by Plane.</p>

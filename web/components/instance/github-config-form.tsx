@@ -77,7 +77,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
               />
             )}
           />
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             You will get this from your{" "}
             <a
               href="https://github.com/settings/applications/new"
@@ -111,14 +111,14 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             />
             {showPassword ? (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(false)}
               >
                 <EyeOff className="h-4 w-4" />
               </button>
             ) : (
               <button
-                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                className="absolute right-3 top-2.5 flex items-center justify-center text-neutral-text-subtle"
                 onClick={() => setShowPassword(true)}
               >
                 <Eye className="h-4 w-4" />
@@ -126,7 +126,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             )}
           </div>
 
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             Your client secret is also found in your{" "}
             <a
               href="https://github.com/settings/applications/new"
@@ -155,7 +155,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             <p className="text-sm font-medium">{originURL}</p>
             <Copy size={18} color="#B9B9B9" />
           </Button>
-          <p className="text-xs text-custom-text-400">
+          <p className="text-xs text-neutral-text-subtle">
             We will auto-generate this. Paste this into the Authorization callback URL field{" "}
             <a
               href="https://github.com/settings/applications/new"

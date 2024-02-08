@@ -30,7 +30,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
 
   return (
     <>
-      <span className="text-base font-medium text-custom-text-400">
+      <span className="text-base font-medium text-neutral-text-subtle">
         {projectDetails?.identifier}-{issue?.sequence_id}
       </span>
       <IssueDescriptionForm

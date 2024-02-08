@@ -19,7 +19,7 @@ export const AppliedPriorityFilters: React.FC<Props> = (props) => {
             {priority}
             <button
               type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              className="grid place-items-center text-neutral-text-medium hover:text-neutral-text-medium"
               onClick={() => handleRemove(priority)}
             >
               <X size={10} strokeWidth={2} />

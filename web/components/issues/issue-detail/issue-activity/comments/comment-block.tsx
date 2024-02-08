@@ -55,7 +55,7 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = (props) => {
                 ? comment.actor_detail.first_name + " Bot"
                 : comment.actor_detail.display_name}
             </div>
-            <div className="text-xs text-custom-text-200">commented {calculateTimeAgo(comment.created_at)}</div>
+            <div className="text-xs text-neutral-text-medium">commented {calculateTimeAgo(comment.created_at)}</div>
           </div>
           <div>{children}</div>
         </div>

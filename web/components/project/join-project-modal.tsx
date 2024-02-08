@@ -70,7 +70,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-neutral-component-surface-light px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                     Join Project?
                   </Dialog.Title>
                   <p>

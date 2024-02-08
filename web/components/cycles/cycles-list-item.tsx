@@ -173,7 +173,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   ) : progress === 100 ? (
                     <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
                   ) : (
-                    <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
+                    <span className="text-xs text-neutral-text-medium">{`${progress}%`}</span>
                   )}
                 </CircularProgressIndicator>
               </div>
@@ -188,7 +188,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               </div>
 
               <button onClick={openCycleOverview} className="flex-shrink-0 z-10 invisible group-hover:visible">
-                <Info className="h-4 w-4 text-custom-text-400" />
+                <Info className="h-4 w-4 text-neutral-text-subtle" />
               </button>
             </div>
 
@@ -207,7 +207,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
             )}
           </div>
           <div className="flex-shrink-0 relative overflow-hidden flex w-full items-center justify-between md:justify-end gap-2.5 md:w-auto md:flex-shrink-0 ">
-            <div className="text-xs text-custom-text-300">
+            <div className="text-xs text-neutral-text-medium">
               {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
             </div>
 
@@ -222,7 +222,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                     </AvatarGroup>
                   ) : (
                     <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-                      <User2 className="h-4 w-4 text-custom-text-400" />
+                      <User2 className="h-4 w-4 text-neutral-text-subtle" />
                     </span>
                   )}
                 </div>
@@ -236,7 +236,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                     </button>
                   ) : (
                     <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                      <Star className="h-3.5 w-3.5 text-neutral-text-medium" />
                     </button>
                   )}
 

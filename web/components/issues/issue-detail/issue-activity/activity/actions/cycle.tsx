@@ -33,7 +33,7 @@ export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -45,7 +45,7 @@ export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate"> {activity.new_value}</span>
             </a>
@@ -57,7 +57,7 @@ export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate"> {activity.new_value}</span>
             </a>

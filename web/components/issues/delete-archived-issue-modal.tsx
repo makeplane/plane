@@ -105,9 +105,9 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm text-custom-text-200">
+                    <p className="text-sm text-neutral-text-medium">
                       Are you sure you want to delete issue{" "}
-                      <span className="break-words font-medium text-custom-text-100">
+                      <span className="break-words font-medium text-neutral-text-strong">
                         {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the archived issue will be permanently removed. This action

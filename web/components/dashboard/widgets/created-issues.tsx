@@ -72,7 +72,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       <div className="flex items-center justify-between gap-2 p-6 pl-7">
         <Link
           href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
-          className="text-lg font-semibold text-custom-text-300 hover:underline"
+          className="text-lg font-semibold text-neutral-text-medium hover:underline"
         >
           Created by you
         </Link>

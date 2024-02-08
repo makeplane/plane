@@ -43,7 +43,7 @@ export const IssueGanttBlock = ({ data }: { data: TIssue }) => {
         }
         position="top-left"
       >
-        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-neutral-text-strong">{data?.name}</div>
       </Tooltip>
     </div>
   );
@@ -74,13 +74,13 @@ export const IssueGanttSidebarBlock = ({ data }: { data: TIssue }) => {
       href={`/${workspaceSlug}/projects/${data.project_id}/issues/${data.id}`}
       target="_blank"
       onClick={handleIssuePeekOverview}
-      className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+      className="w-full line-clamp-1 cursor-pointer text-sm text-neutral-text-strong"
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
         {currentStateDetails != undefined && (
           <StateGroupIcon stateGroup={currentStateDetails?.group} color={currentStateDetails?.color} />
         )}
-        <div className="flex-shrink-0 text-xs text-custom-text-300">
+        <div className="flex-shrink-0 text-xs text-neutral-text-medium">
           {getProjectById(data?.project_id)?.identifier} {data?.sequence_id}
         </div>
         <Tooltip tooltipHeading="Title" tooltipContent={data.name}>

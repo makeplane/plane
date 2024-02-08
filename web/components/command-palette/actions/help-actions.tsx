@@ -25,7 +25,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <Rocket className="h-3.5 w-3.5" />
           Open keyboard shortcuts
         </div>
@@ -37,7 +37,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <FileText className="h-3.5 w-3.5" />
           Open Plane documentation
         </div>
@@ -49,7 +49,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <DiscordIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
           Join our Discord
         </div>
@@ -61,7 +61,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <GithubIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
           Report a bug
         </div>
@@ -73,7 +73,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = (props) => {
         }}
         className="focus:outline-none"
       >
-        <div className="flex items-center gap-2 text-custom-text-200">
+        <div className="flex items-center gap-2 text-neutral-text-medium">
           <MessageSquare className="h-3.5 w-3.5" />
           Chat with us
         </div>

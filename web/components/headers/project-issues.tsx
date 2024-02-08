@@ -155,7 +155,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
                   link={
-                    <BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+                    <BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-neutral-text-medium" />} />
                   }
                 />
               </Breadcrumbs>
@@ -209,7 +209,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
                   {inboxDetails?.pending_issue_count > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-sidebar-neutral-border-medium bg-custom-sidebar-background-80 text-custom-text-100">
+                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-sidebar-neutral-border-medium bg-custom-sidebar-background-80 text-neutral-text-strong">
                       {inboxDetails?.pending_issue_count}
                     </span>
                   )}

@@ -12,7 +12,7 @@ const CustomProjectNotPublishedError = () => (
         <div className="text-xl font-medium">
           Oops! The page you{`'`}re looking for isn{`'`}t live at the moment.
         </div>
-        <div className="text-sm text-custom-text-200">
+        <div className="text-sm text-neutral-text-medium">
           If this is your project, login to your workspace to adjust its visibility settings and make it public.
         </div>
       </div>

@@ -132,7 +132,7 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
             </div>
           )}
         />
-        <p className="pb-2 text-xs text-custom-text-200">
+        <p className="pb-2 text-xs text-neutral-text-medium">
           Use your email address if you are the instance admin. <br /> Use your admin’s e-mail if you are not.
         </p>
         <Button variant="primary" className="w-full" size="xl" type="submit" loading={isSubmitting}>

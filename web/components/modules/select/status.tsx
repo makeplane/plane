@@ -28,10 +28,10 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
             {value ? (
               <ModuleStatusIcon status={value} />
             ) : (
-              <DoubleCircleIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
+              <DoubleCircleIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-neutral-text-medium"}`} />
             )}
             {MODULE_STATUS.find((s) => s.value === value)?.label ?? (
-              <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>
+              <span className={`${error ? "text-red-500" : "text-neutral-text-medium"}`}>Status</span>
             )}
           </div>
         }

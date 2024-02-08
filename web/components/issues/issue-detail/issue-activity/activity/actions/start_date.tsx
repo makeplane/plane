@@ -30,7 +30,7 @@ export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((pro
         {activity.new_value ? `set the start date to ` : `removed the start date `}
         {activity.new_value && (
           <>
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-neutral-text-strong">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
         {showIssue && (activity.new_value ? ` for ` : ` from `)}

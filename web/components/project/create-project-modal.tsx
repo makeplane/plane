@@ -365,7 +365,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                                       {currentNetwork.label}
                                     </>
                                   ) : (
-                                    <span className="text-custom-text-400">Select Network</span>
+                                    <span className="text-neutral-text-subtle">Select Network</span>
                                   )}
                                 </div>
                               }

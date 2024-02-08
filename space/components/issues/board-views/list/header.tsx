@@ -23,7 +23,9 @@ export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
         <StateGroupIcon stateGroup={state.group} color={state.color} height="14" width="14" />
       </div>
       <div className="mr-1 font-medium capitalize">{state?.name}</div>
-      <div className="text-sm font-medium text-custom-text-200">{store.issue.getCountOfIssuesByState(state.id)}</div>
+      <div className="text-sm font-medium text-neutral-text-medium">
+        {store.issue.getCountOfIssuesByState(state.id)}
+      </div>
     </div>
   );
 });

@@ -136,24 +136,24 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                 >
                   <div className="relative m-1">
                     <Search
-                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-neutral-text-strong text-opacity-40"
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-neutral-text-strong outline-none placeholder:text-neutral-text-subtle focus:ring-0"
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
 
-                  <div className="flex flex-col-reverse gap-4 p-2 text-[0.825rem] text-custom-text-200 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col-reverse gap-4 p-2 text-[0.825rem] text-neutral-text-medium sm:flex-row sm:items-center sm:justify-between">
                     {selectedIssues.length > 0 ? (
                       <div className="mt-1 flex flex-wrap items-center gap-2">
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark py-1 pl-2 text-xs text-custom-text-100"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark py-1 pl-2 text-xs text-neutral-text-strong"
                           >
                             {issue.project__identifier}-{issue.sequence_id}
                             <button
@@ -161,7 +161,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                               className="group p-1"
                               onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                             >
-                              <X className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <X className="h-3 w-3 text-neutral-text-medium group-hover:text-neutral-text-strong" />
                             </button>
                           </div>
                         ))}
@@ -175,7 +175,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       <Tooltip tooltipContent="Toggle workspace level search">
                         <div
                           className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
-                            isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
+                            isWorkspaceLevel ? "text-neutral-text-strong" : "text-neutral-text-medium"
                           }`}
                         >
                           <ToggleSwitch
@@ -196,9 +196,9 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
 
                   <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
                     {searchTerm !== "" && (
-                      <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
+                      <h5 className="mx-2 text-[0.825rem] text-neutral-text-medium">
                         Search results for{" "}
-                        <span className="text-custom-text-100">
+                        <span className="text-neutral-text-strong">
                           {'"'}
                           {searchTerm}
                           {'"'}
@@ -210,7 +210,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                         <LayersIcon height="52" width="52" />
-                        <h3 className="text-custom-text-200">
+                        <h3 className="text-neutral-text-medium">
                           No issues found. Create a new issue with{" "}
                           <pre className="inline rounded bg-neutral-component-surface-dark px-2 py-1 text-sm">C</pre>.
                         </h3>
@@ -225,7 +225,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                         <Loader.Item height="40px" />
                       </Loader>
                     ) : (
-                      <ul className={`text-sm text-custom-text-100 ${issues.length > 0 ? "p-2" : ""}`}>
+                      <ul className={`text-sm text-neutral-text-strong ${issues.length > 0 ? "p-2" : ""}`}>
                         {issues.map((issue) => {
                           const selected = selectedIssues.some((i) => i.id === issue.id);
 
@@ -236,9 +236,9 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                               htmlFor={`issue-${issue.id}`}
                               value={issue}
                               className={({ active }) =>
-                                `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                  active ? "bg-neutral-component-surface-dark text-custom-text-100" : ""
-                                } ${selected ? "text-custom-text-100" : ""}`
+                                `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-neutral-text-medium ${
+                                  active ? "bg-neutral-component-surface-dark text-neutral-text-strong" : ""
+                                } ${selected ? "text-neutral-text-strong" : ""}`
                               }
                             >
                               <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                               <a
                                 href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                                 target="_blank"
-                                className="z-1 relative hidden text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                className="z-1 relative hidden text-neutral-text-medium hover:text-neutral-text-strong group-hover:block"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
                               >

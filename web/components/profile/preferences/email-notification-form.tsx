@@ -57,19 +57,19 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
     <>
       <div className="flex gap-2 items-center pt-6 mb-2 pb-6 border-b border-neutral-border-subtle">
         <div className="grow">
-          <div className="pb-1 text-xl font-medium text-custom-text-100">Email notifications</div>
-          <div className="text-sm font-normal text-custom-text-300">
+          <div className="pb-1 text-xl font-medium text-neutral-text-strong">Email notifications</div>
+          <div className="text-sm font-normal text-neutral-text-medium">
             Stay in the loop on Issues you are subscribed to. Enable this to get notified.
           </div>
         </div>
       </div>
-      <div className="pt-2 text-lg font-medium text-custom-text-100">Notify me when:</div>
+      <div className="pt-2 text-lg font-medium text-neutral-text-strong">Notify me when:</div>
       {/* Notification Settings */}
       <div className="flex flex-col py-2">
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Property changes</div>
-            <div className="text-sm font-normal text-custom-text-300">
+            <div className="pb-1 text-base font-medium text-neutral-text-strong">Property changes</div>
+            <div className="text-sm font-normal text-neutral-text-medium">
               Notify me when issue’s properties like assignees, priority, estimates or anything else changes.
             </div>
           </div>
@@ -90,8 +90,8 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center pt-6 pb-2">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">State Change</div>
-            <div className="text-sm font-normal text-custom-text-300">
+            <div className="pb-1 text-base font-medium text-neutral-text-strong">State Change</div>
+            <div className="text-sm font-normal text-neutral-text-medium">
               Notify me when the issues moves to a different state
             </div>
           </div>
@@ -115,8 +115,10 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center border-0 border-l-[3px] border-neutral-border-medium pl-3">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Issue completed</div>
-            <div className="text-sm font-normal text-custom-text-300">Notify me only when an issue is completed</div>
+            <div className="pb-1 text-base font-medium text-neutral-text-strong">Issue completed</div>
+            <div className="text-sm font-normal text-neutral-text-medium">
+              Notify me only when an issue is completed
+            </div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -135,8 +137,8 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Comments</div>
-            <div className="text-sm font-normal text-custom-text-300">
+            <div className="pb-1 text-base font-medium text-neutral-text-strong">Comments</div>
+            <div className="text-sm font-normal text-neutral-text-medium">
               Notify me when someone leaves a comment on the issue
             </div>
           </div>
@@ -157,8 +159,8 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Mentions</div>
-            <div className="text-sm font-normal text-custom-text-300">
+            <div className="pb-1 text-base font-medium text-neutral-text-strong">Mentions</div>
+            <div className="text-sm font-normal text-neutral-text-medium">
               Notify me only when someone mentions me in the comments or description
             </div>
           </div>

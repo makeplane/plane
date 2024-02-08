@@ -70,9 +70,9 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm text-custom-text-200">
+                    <p className="text-sm text-neutral-text-medium">
                       Are you sure you want to delete issue{" "}
-                      <span className="break-words font-medium text-custom-text-100">
+                      <span className="break-words font-medium text-neutral-text-strong">
                         {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? The issue will only be deleted from the inbox and this action cannot be undone.

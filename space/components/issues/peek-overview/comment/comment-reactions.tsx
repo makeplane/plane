@@ -103,7 +103,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                     handleReactionClick(reaction);
                   });
                 }}
-                className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
+                className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-neutral-text-strong ${
                   commentReactions?.some(
                     (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
                   )

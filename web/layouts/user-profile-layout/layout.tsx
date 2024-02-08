@@ -35,7 +35,7 @@ export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
         {isAuthorized || !isAuthorizedPath ? (
           <div className={`w-full overflow-hidden md:h-full ${className}`}>{children}</div>
         ) : (
-          <div className="grid h-full w-full place-items-center text-custom-text-200">
+          <div className="grid h-full w-full place-items-center text-neutral-text-medium">
             You do not have the permission to access this page.
           </div>
         )}

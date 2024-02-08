@@ -33,14 +33,14 @@ export const NotAuthorizedView: React.FC<Props> = observer((props) => {
             alt="ProjectSettingImg"
           />
         </div>
-        <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
+        <h1 className="text-xl font-medium text-neutral-text-strong">Oops! You are not authorized to view this page</h1>
 
-        <div className="w-full max-w-md text-base text-custom-text-200">
+        <div className="w-full max-w-md text-base text-neutral-text-medium">
           {currentUser ? (
             <p>
               You have signed in as {currentUser.email}. <br />
               <Link href={`/?next_path=${next_path}`}>
-                <span className="font-medium text-custom-text-100">Sign in</span>
+                <span className="font-medium text-neutral-text-strong">Sign in</span>
               </Link>{" "}
               with different account that has access to this page.
             </p>
@@ -48,7 +48,7 @@ export const NotAuthorizedView: React.FC<Props> = observer((props) => {
             <p>
               You need to{" "}
               <Link href={`/?next_path=${next_path}`}>
-                <span className="font-medium text-custom-text-100">Sign in</span>
+                <span className="font-medium text-neutral-text-strong">Sign in</span>
               </Link>{" "}
               with an account that has access to this page.
             </p>

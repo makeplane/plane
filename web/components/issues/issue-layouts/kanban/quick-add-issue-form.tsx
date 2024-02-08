@@ -22,14 +22,14 @@ const Inputs = (props: any) => {
 
   return (
     <div className="w-full">
-      <h4 className="text-xs font-medium leading-5 text-custom-text-300">{projectDetail?.identifier ?? "..."}</h4>
+      <h4 className="text-xs font-medium leading-5 text-neutral-text-medium">{projectDetail?.identifier ?? "..."}</h4>
       <input
         autoComplete="off"
         placeholder="Issue Title"
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-sm font-medium leading-5 text-neutral-text-medium outline-none"
       />
     </div>
   );
@@ -142,7 +142,7 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetail={projectDetail} />
           </form>
-          <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
+          <div className="px-3 py-2 text-xs italic text-neutral-text-medium">{`Press 'Enter' to add another issue`}</div>
         </div>
       ) : (
         <div

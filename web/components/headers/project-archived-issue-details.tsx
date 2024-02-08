@@ -72,7 +72,7 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archived-issues`}
                   label="Archived Issues"
-                  icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<LayersIcon className="h-4 w-4 text-neutral-text-medium" />}
                 />
               }
             />

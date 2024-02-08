@@ -13,7 +13,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
   <div className="space-y-3 rounded-[10px] border border-neutral-border-medium p-3">
     <h5 className="text-xs text-red-500">DEMAND</h5>
     <div>
-      <h4 className="text-base font-medium text-custom-text-100">Total open tasks</h4>
+      <h4 className="text-base font-medium text-neutral-text-strong">Total open tasks</h4>
       <h3 className="mt-1 text-xl font-semibold">{defaultAnalytics.open_issues}</h3>
     </div>
     <div className="space-y-6">
@@ -31,11 +31,11 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                   }}
                 />
                 <h6 className="capitalize">{group.state_group}</h6>
-                <span className="ml-1 rounded-3xl bg-neutral-component-surface-dark px-2 py-0.5 text-[0.65rem] text-custom-text-200">
+                <span className="ml-1 rounded-3xl bg-neutral-component-surface-dark px-2 py-0.5 text-[0.65rem] text-neutral-text-medium">
                   {group.state_count}
                 </span>
               </div>
-              <p className="text-custom-text-200">{percentage}%</p>
+              <p className="text-neutral-text-medium">{percentage}%</p>
             </div>
             <div className="bar relative h-1 w-full rounded bg-neutral-component-surface-dark">
               <div
@@ -51,7 +51,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
       })}
     </div>
     <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-neutral-border-medium bg-neutral-component-surface-dark p-2 text-xs">
-      <p className="flex items-center gap-1 text-custom-text-200">
+      <p className="flex items-center gap-1 text-neutral-text-medium">
         <Triangle className="h-4 w-4" />
         <span>Estimate Demand:</span>
       </p>

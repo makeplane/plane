@@ -54,7 +54,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
         }}
       />
       <span
-        className={`font-medium text-custom-text-200 ${
+        className={`font-medium text-neutral-text-medium ${
           params.segment
             ? params.segment === "priority" || params.segment === "state__group"
               ? "capitalize"

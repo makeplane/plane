@@ -13,7 +13,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => (
       <div key={index} className="flex flex-wrap items-center gap-2.5">
         {child}
         {index !== React.Children.count(children) - 1 && (
-          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
+          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-neutral-text-subtle" aria-hidden="true" />
         )}
       </div>
     ))}

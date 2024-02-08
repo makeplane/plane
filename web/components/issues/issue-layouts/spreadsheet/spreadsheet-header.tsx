@@ -27,11 +27,11 @@ export const SpreadsheetHeader = (props: Props) => {
         >
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <span className="flex h-full w-24 flex-shrink-0 items-center px-4 py-2.5">
-              <span className="mr-1.5 text-custom-text-400">#</span>ID
+              <span className="mr-1.5 text-neutral-text-subtle">#</span>ID
             </span>
           </WithDisplayPropertiesHOC>
           <span className="flex h-full w-full flex-grow items-center justify-center px-4 py-2.5">
-            <LayersIcon className="mr-1.5 h-4 w-4 text-custom-text-400" />
+            <LayersIcon className="mr-1.5 h-4 w-4 text-neutral-text-subtle" />
             Issue
           </span>
         </th>

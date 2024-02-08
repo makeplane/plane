@@ -28,7 +28,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           }}
           className="focus:outline-none"
         >
-          <div className="flex items-center gap-2 text-custom-text-200">
+          <div className="flex items-center gap-2 text-neutral-text-medium">
             <ContrastIcon className="h-3.5 w-3.5" />
             Create new cycle
           </div>
@@ -44,7 +44,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           }}
           className="focus:outline-none"
         >
-          <div className="flex items-center gap-2 text-custom-text-200">
+          <div className="flex items-center gap-2 text-neutral-text-medium">
             <DiceIcon className="h-3.5 w-3.5" />
             Create new module
           </div>
@@ -60,7 +60,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           }}
           className="focus:outline-none"
         >
-          <div className="flex items-center gap-2 text-custom-text-200">
+          <div className="flex items-center gap-2 text-neutral-text-medium">
             <PhotoFilterIcon className="h-3.5 w-3.5" />
             Create new view
           </div>
@@ -76,7 +76,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           }}
           className="focus:outline-none"
         >
-          <div className="flex items-center gap-2 text-custom-text-200">
+          <div className="flex items-center gap-2 text-neutral-text-medium">
             <FileText className="h-3.5 w-3.5" />
             Create new page
           </div>

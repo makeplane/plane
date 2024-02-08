@@ -40,13 +40,13 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
           }`}`}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
-          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
         >
           <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
           <span className="font-normal">{activity.issue_detail?.name}</span>
         </a>
       ) : (
-        <span className="inline-flex items-center gap-1 font-medium text-custom-text-100 whitespace-nowrap">
+        <span className="inline-flex items-center gap-1 font-medium text-neutral-text-strong whitespace-nowrap">
           {" an Issue"}{" "}
         </span>
       )}
@@ -65,7 +65,7 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
       }`}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center font-medium text-custom-text-100 hover:underline"
+      className="inline-flex items-center font-medium text-neutral-text-strong hover:underline"
     >
       {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
     </a>
@@ -99,7 +99,7 @@ const EstimatePoint = observer((props: { point: string }) => {
   const estimateValue = getEstimatePointValue(Number(point), null);
 
   return (
-    <span className="font-medium text-custom-text-100">
+    <span className="font-medium text-neutral-text-strong">
       {areEstimatesEnabledForCurrentProject
         ? estimateValue
         : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
@@ -169,7 +169,7 @@ const activityDetails: {
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
             >
               attachment
             </a>
@@ -264,7 +264,7 @@ const activityDetails: {
             added a new label{" "}
             <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-neutral-border-medium px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
+              <span className="flex-shrink truncate font-medium text-neutral-text-strong">{activity.new_value}</span>
             </span>
             {showIssue && (
               <span className="">
@@ -280,7 +280,7 @@ const activityDetails: {
             removed the label{" "}
             <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-neutral-border-medium px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.old_value}</span>
+              <span className="flex-shrink truncate font-medium text-neutral-text-strong">{activity.old_value}</span>
             </span>
             {showIssue && (
               <span>
@@ -303,7 +303,7 @@ const activityDetails: {
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
             >
               link
             </a>
@@ -323,7 +323,7 @@ const activityDetails: {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
             >
               link
             </a>
@@ -343,7 +343,7 @@ const activityDetails: {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-neutral-text-strong hover:underline"
             >
               link
             </a>
@@ -370,7 +370,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -384,7 +384,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -398,7 +398,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
             </a>
@@ -417,7 +417,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -431,7 +431,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -445,7 +445,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-neutral-text-strong hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
             </a>
@@ -473,7 +473,7 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the parent <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            removed the parent <span className="font-medium text-neutral-text-strong">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -485,7 +485,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the parent to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            set the parent to <span className="font-medium text-neutral-text-strong">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -501,7 +501,7 @@ const activityDetails: {
     message: (activity, showIssue) => (
       <>
         set the priority to{" "}
-        <span className="font-medium text-custom-text-100">
+        <span className="font-medium text-neutral-text-strong">
           {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "None"}
         </span>
         {showIssue && (
@@ -520,13 +520,14 @@ const activityDetails: {
         return (
           <>
             marked that {showIssue ? <IssueLink activity={activity} /> : "this issue"} relates to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-neutral-text-strong">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed the relation from <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the relation from <span className="font-medium text-neutral-text-strong">{activity.old_value}</span>
+            .
           </>
         );
     },
@@ -538,13 +539,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is blocking issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-neutral-text-strong">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed the blocking issue <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the blocking issue{" "}
+            <span className="font-medium text-neutral-text-strong">{activity.old_value}</span>.
           </>
         );
     },
@@ -556,14 +558,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is being blocked by{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-neutral-text-strong">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} being blocked by issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <span className="font-medium text-neutral-text-strong">{activity.old_value}</span>.
           </>
         );
     },
@@ -575,14 +577,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} as duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-neutral-text-strong">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} as a duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <span className="font-medium text-neutral-text-strong">{activity.old_value}</span>.
           </>
         );
     },
@@ -591,7 +593,7 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        set the state to <span className="font-medium text-neutral-text-strong">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -620,7 +622,7 @@ const activityDetails: {
         return (
           <>
             set the start date to{" "}
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-neutral-text-strong">{renderFormattedDate(activity.new_value)}</span>
             {showIssue && (
               <>
                 {" "}
@@ -650,7 +652,7 @@ const activityDetails: {
         return (
           <>
             set the due date to{" "}
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-neutral-text-strong">{renderFormattedDate(activity.new_value)}</span>
             {showIssue && (
               <>
                 {" "}

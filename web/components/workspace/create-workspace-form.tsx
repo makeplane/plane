@@ -152,7 +152,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceUrl">Workspace URL</label>
           <div className="flex w-full items-center rounded-md border-[0.5px] border-neutral-border-medium px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
+            <span className="whitespace-nowrap text-sm text-neutral-text-medium">
+              {window && window.location.host}/
+            </span>
             <Controller
               control={control}
               name="slug"
@@ -194,7 +196,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">Select organization size</span>
+                      <span className="text-neutral-text-subtle">Select organization size</span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-neutral-border-medium !shadow-none"

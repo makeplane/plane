@@ -203,7 +203,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
               <Dialog.Panel className="relative transform rounded-lg bg-neutral-component-surface-light p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-5">
-                    <h3 className="text-xl font-semibold leading-6 text-custom-text-100">Create Inbox Issue</h3>
+                    <h3 className="text-xl font-semibold leading-6 text-neutral-text-strong">Create Inbox Issue</h3>
                     <div className="space-y-3">
                       <div className="mt-2 space-y-3">
                         <div>

@@ -61,7 +61,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             calendarLayout === "month" // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
-                : "text-custom-text-300"
+                : "text-neutral-text-medium"
               : "font-medium" // if week layout, highlight all days
           } ${
             date.date.getDay() === 0 || date.date.getDay() === 6
@@ -113,7 +113,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   <div className="flex items-center px-2.5 py-1">
                     <button
                       type="button"
-                      className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-neutral-component-surface-dark hover:text-custom-text-300"
+                      className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-neutral-text-subtle font-medium  hover:bg-neutral-component-surface-dark hover:text-neutral-text-medium"
                       onClick={() => setShowAllIssues((prevData) => !prevData)}
                     >
                       {showAllIssues ? "Hide" : totalIssues - 4 + " more"}

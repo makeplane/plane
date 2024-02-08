@@ -99,7 +99,7 @@ export const ModuleForm: React.FC<Props> = ({
               )}
             />
           )}
-          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Module</h3>
+          <h3 className="text-xl font-medium leading-6 text-neutral-text-medium">{status ? "Update" : "New"} Module</h3>
         </div>
 
         <div className="space-y-3">

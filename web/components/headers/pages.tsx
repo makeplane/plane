@@ -57,7 +57,7 @@ export const PagesHeader = observer(() => {
             />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Pages" icon={<FileText className="h-4 w-4 text-custom-text-300" />} />}
+              link={<BreadcrumbLink label="Pages" icon={<FileText className="h-4 w-4 text-neutral-text-medium" />} />}
             />
           </Breadcrumbs>
         </div>

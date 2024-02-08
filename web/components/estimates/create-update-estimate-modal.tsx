@@ -274,7 +274,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                           .map((_, i) => (
                             <div className="flex items-center">
                               <span className="flex h-full items-center rounded-lg bg-neutral-component-surface-dark">
-                                <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
+                                <span className="rounded-lg px-2 text-sm text-neutral-text-medium">{i + 1}</span>
                                 <span className="rounded-r-lg bg-neutral-component-surface-light">
                                   <Controller
                                     control={control}

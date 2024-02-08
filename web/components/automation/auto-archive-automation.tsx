@@ -43,11 +43,11 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-neutral-component-surface-medium p-3">
-              <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-custom-text-100" />
+              <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-neutral-text-strong" />
             </div>
             <div className="">
               <h4 className="text-sm font-medium">Auto-archive closed issues</h4>
-              <p className="text-sm tracking-tight text-custom-text-200">
+              <p className="text-sm tracking-tight text-neutral-text-medium">
                 Plane will auto archive issues that have been completed or cancelled.
               </p>
             </div>
@@ -90,7 +90,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
 
                       <button
                         type="button"
-                        className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-neutral-component-surface-dark"
+                        className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-neutral-text-medium hover:bg-neutral-component-surface-dark"
                         onClick={() => setmonthModal(true)}
                       >
                         Customise Time Range

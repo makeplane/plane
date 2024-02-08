@@ -101,7 +101,7 @@ export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) 
                   type="button"
                   onClick={() => issueCommentReactionOperations.react(reaction)}
                   key={reaction}
-                  className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
+                  className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-neutral-text-strong ${
                     userReactions.includes(reaction) ? "bg-custom-primary-100/10" : "bg-neutral-component-surface-dark"
                   }`}
                 >

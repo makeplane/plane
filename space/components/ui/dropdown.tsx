@@ -83,7 +83,7 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
             }
             setOpen((prev) => !prev);
           }}
-          className={`flex w-full items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 hover:bg-neutral-component-surface-dark ${
+          className={`flex w-full items-center gap-1 rounded px-1 py-1.5 text-neutral-text-medium hover:bg-neutral-component-surface-dark ${
             isSelected ? "bg-neutral-component-surface-dark" : ""
           }`}
         >
@@ -109,8 +109,8 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       {({ open }) => (
         <>
           <Popover.Button
-            className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-neutral-component-surface-medium hover:text-custom-text-100 focus:outline-none ${
-              open ? "bg-neutral-component-surface-medium text-custom-text-100" : "text-custom-text-200"
+            className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong focus:outline-none ${
+              open ? "bg-neutral-component-surface-medium text-neutral-text-strong" : "text-neutral-text-medium"
             }`}
           >
             {typeof button === "function" ? button() : button}

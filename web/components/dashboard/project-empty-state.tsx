@@ -24,7 +24,7 @@ export const DashboardProjectEmptyState = observer(() => {
   return (
     <div className="h-full flex flex-col justify-center lg:w-3/5 mx-auto space-y-4">
       <h4 className="text-xl font-semibold">Overview of your projects, activity, and metrics</h4>
-      <p className="text-custom-text-300">
+      <p className="text-neutral-text-medium">
         Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this
         page will transform into a space that helps you progress. Admins will also see items which help their team
         progress.

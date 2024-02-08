@@ -43,7 +43,7 @@ export const ProjectCardList = observer(() => {
       {workspaceProjectIds.length > 0 ? (
         <div className="h-full w-full overflow-y-auto p-8">
           {searchedProjects.length == 0 ? (
-            <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
+            <div className="mt-10 w-full text-center text-neutral-text-subtle">No matching projects</div>
           ) : (
             <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
               {searchedProjects.map((projectId) => {

@@ -103,11 +103,11 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                 >
                   <div className="relative m-1">
                     <Search
-                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-neutral-text-strong text-opacity-40"
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-neutral-text-strong outline-none placeholder:text-neutral-text-subtle focus:ring-0 sm:text-sm"
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -118,7 +118,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                     <Tooltip tooltipContent="Toggle workspace level search">
                       <div
                         className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
-                          isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
+                          isWorkspaceLevel ? "text-neutral-text-strong" : "text-neutral-text-medium"
                         }`}
                       >
                         <ToggleSwitch
@@ -138,9 +138,9 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                   </div>
                   <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
                     {searchTerm !== "" && (
-                      <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
+                      <h5 className="mx-2 text-[0.825rem] text-neutral-text-medium">
                         Search results for{" "}
-                        <span className="text-custom-text-100">
+                        <span className="text-neutral-text-strong">
                           {'"'}
                           {searchTerm}
                           {'"'}
@@ -152,7 +152,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                     {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                         <LayersIcon height="52" width="52" />
-                        <h3 className="text-custom-text-200">
+                        <h3 className="text-neutral-text-medium">
                           No issues found. Create a new issue with{" "}
                           <pre className="inline rounded bg-neutral-component-surface-dark px-2 py-1 text-sm">C</pre>.
                         </h3>
@@ -173,9 +173,9 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                             key={issue.id}
                             value={issue}
                             className={({ active, selected }) =>
-                              `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                active ? "bg-neutral-component-surface-dark text-custom-text-100" : ""
-                              } ${selected ? "text-custom-text-100" : ""}`
+                              `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-neutral-text-medium ${
+                                active ? "bg-neutral-component-surface-dark text-neutral-text-strong" : ""
+                              } ${selected ? "text-neutral-text-strong" : ""}`
                             }
                           >
                             <div className="flex flex-grow items-center gap-2 truncate">
@@ -193,7 +193,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                             <a
                               href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                               target="_blank"
-                              className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                              className="z-1 relative hidden flex-shrink-0 text-neutral-text-medium hover:text-neutral-text-strong group-hover:block"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
                             >

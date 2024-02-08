@@ -71,11 +71,11 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                         {isCurrentUser ? "Leave project?" : `Remove ${data?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-custom-text-200">
+                        <p className="text-sm text-neutral-text-medium">
                           Are you sure you want to remove member-{" "}
                           <span className="font-bold">{data?.display_name}</span>? They will no longer have access to
                           this project. This action cannot be undone.

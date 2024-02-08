@@ -95,7 +95,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
               type="button"
               ref={setReferenceElement}
               className={`flex items-center gap-1.5 rounded bg-neutral-component-surface-dark px-2.5 py-1 text-xs outline-none hover:bg-neutral-component-surface-dark ${
-                open ? "text-custom-text-100" : "text-custom-text-200"
+                open ? "text-neutral-text-strong" : "text-neutral-text-medium"
               }`}
             >
               <div className="font-medium">Options</div>

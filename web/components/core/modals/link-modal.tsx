@@ -94,12 +94,12 @@ export const LinkModal: FC<Props> = (props) => {
                 <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
                   <div>
                     <div className="space-y-5">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-neutral-text-strong">
                         {status ? "Update Link" : "Add Link"}
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
                         <div>
-                          <label htmlFor="url" className="mb-2 text-custom-text-200">
+                          <label htmlFor="url" className="mb-2 text-neutral-text-medium">
                             URL
                           </label>
                           <Controller
@@ -125,7 +125,7 @@ export const LinkModal: FC<Props> = (props) => {
                           />
                         </div>
                         <div>
-                          <label htmlFor="title" className="mb-2 text-custom-text-200">
+                          <label htmlFor="title" className="mb-2 text-neutral-text-medium">
                             {`Title (optional)`}
                           </label>
                           <Controller

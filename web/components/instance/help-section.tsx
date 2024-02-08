@@ -52,7 +52,7 @@ export const InstanceHelpSection: FC = () => {
       <div className={`flex items-center gap-1 ${sidebarCollapsed ? "flex-col justify-center" : "w-full justify-end"}`}>
         <button
           type="button"
-          className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 ${
+          className={`grid place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong ${
             sidebarCollapsed ? "w-full" : ""
           }`}
           onClick={() => setIsNeedHelpOpen((prev) => !prev)}
@@ -61,14 +61,14 @@ export const InstanceHelpSection: FC = () => {
         </button>
         <button
           type="button"
-          className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:hidden"
+          className="grid place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong md:hidden"
           onClick={() => toggleSidebar()}
         >
           <MoveLeft className="h-3.5 w-3.5" />
         </button>
         <button
           type="button"
-          className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-neutral-component-surface-medium hover:text-custom-text-100 md:grid ${
+          className={`hidden place-items-center rounded-md p-1.5 text-neutral-text-medium outline-none hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong md:grid ${
             sidebarCollapsed ? "w-full" : ""
           }`}
           onClick={() => toggleSidebar()}
@@ -100,7 +100,7 @@ export const InstanceHelpSection: FC = () => {
                     <Link href={href} key={name} target="_blank">
                       <div className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-neutral-component-surface-dark">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-custom-text-200" size={14} />
+                          <Icon className="h-3.5 w-3.5 text-neutral-text-medium" size={14} />
                         </div>
                         <span className="text-xs">{name}</span>
                       </div>
@@ -115,7 +115,7 @@ export const InstanceHelpSection: FC = () => {
                       className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-neutral-component-surface-dark"
                     >
                       <div className="grid flex-shrink-0 place-items-center">
-                        <Icon className="h-3.5 w-3.5 text-custom-text-200" />
+                        <Icon className="h-3.5 w-3.5 text-neutral-text-medium" />
                       </div>
                       <span className="text-xs">{name}</span>
                     </button>

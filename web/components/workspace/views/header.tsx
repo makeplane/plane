@@ -29,7 +29,7 @@ const ViewTab = observer((props: { viewId: string }) => {
         className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
           viewId === globalViewId
             ? "border-custom-primary-100 text-custom-primary-100"
-            : "border-transparent hover:border-neutral-border-medium hover:text-custom-text-400"
+            : "border-transparent hover:border-neutral-border-medium hover:text-neutral-text-subtle"
         }`}
       >
         {view.name}
@@ -72,7 +72,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
                 className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
                   tab.key === globalViewId
                     ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent hover:border-neutral-border-medium hover:text-custom-text-400"
+                    : "border-transparent hover:border-neutral-border-medium hover:text-neutral-text-subtle"
                 }`}
               >
                 {tab.label}
@@ -88,7 +88,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
         {isAuthorizedUser && (
           <button
             type="button"
-            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-neutral-component-surface-light py-3 hover:border-neutral-border-medium hover:text-custom-text-400"
+            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-neutral-component-surface-light py-3 hover:border-neutral-border-medium hover:text-neutral-text-subtle"
             onClick={() => setCreateViewModal(true)}
           >
             <Plus className="h-4 w-4 text-custom-primary-200" />

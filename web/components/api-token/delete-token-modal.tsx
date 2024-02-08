@@ -97,12 +97,12 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-neutral-border-medium bg-neutral-component-surface-light text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-3 p-4">
                   <div className="flex w-full items-center justify-start">
-                    <h3 className="text-lg font-medium leading-6 text-custom-text-100">
+                    <h3 className="text-lg font-medium leading-6 text-neutral-text-strong">
                       Are you sure you want to delete the token?
                     </h3>
                   </div>
                   <span>
-                    <p className="text-sm text-custom-text-400">
+                    <p className="text-sm text-neutral-text-subtle">
                       Any application using this token will no longer have the access to Plane data. This action cannot
                       be undone.
                     </p>

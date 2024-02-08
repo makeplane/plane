@@ -30,8 +30,8 @@ export const NavbarIssueBoardView = observer(() => {
                 key={viewKey}
                 className={`flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-sm ${
                   viewKey === activeBoard
-                    ? `bg-neutral-component-surface-dark text-custom-text-200`
-                    : `text-custom-text-300 hover:bg-neutral-component-surface-dark`
+                    ? `bg-neutral-component-surface-dark text-neutral-text-medium`
+                    : `text-neutral-text-medium hover:bg-neutral-component-surface-dark`
                 }`}
                 onClick={() => handleCurrentBoardView(viewKey)}
                 title={viewKey}

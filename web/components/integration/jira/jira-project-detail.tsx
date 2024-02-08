@@ -105,7 +105,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
   if (error) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <p className="text-sm text-custom-text-200">
+        <p className="text-sm text-neutral-text-medium">
           Something went wrong. Please{" "}
           <button
             onClick={() => setCurrentStep({ state: "import-configure" })}
@@ -125,28 +125,28 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import Data</h3>
-          <p className="text-sm text-custom-text-200">Import Completed. We have found:</p>
+          <p className="text-sm text-neutral-text-medium">Import Completed. We have found:</p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.issues}</h4>
-            <p className="text-sm text-custom-text-200">Issues</p>
+            <p className="text-sm text-neutral-text-medium">Issues</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.states}</h4>
-            <p className="text-sm text-custom-text-200">States</p>
+            <p className="text-sm text-neutral-text-medium">States</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.modules}</h4>
-            <p className="text-sm text-custom-text-200">Modules</p>
+            <p className="text-sm text-neutral-text-medium">Modules</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.labels}</h4>
-            <p className="text-sm text-custom-text-200">Labels</p>
+            <p className="text-sm text-neutral-text-medium">Labels</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.users?.length}</h4>
-            <p className="text-sm text-custom-text-200">Users</p>
+            <p className="text-sm text-neutral-text-medium">Users</p>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import Epics</h3>
-          <p className="text-sm text-custom-text-200">Import epics as modules</p>
+          <p className="text-sm text-neutral-text-medium">Import epics as modules</p>
         </div>
         <div className="col-span-1">
           <Controller

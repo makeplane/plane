@@ -52,11 +52,14 @@ export const ShortcutsModal: FC<Props> = (props) => {
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-lg font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
-                      <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
+                      <X
+                        className="h-4 w-4 text-neutral-text-medium hover:text-neutral-text-strong"
+                        aria-hidden="true"
+                      />
                     </button>
                   </Dialog.Title>
                   <div className="flex w-full items-center rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-medium px-2">
-                    <Search className="h-3.5 w-3.5 text-custom-text-200" />
+                    <Search className="h-3.5 w-3.5 text-neutral-text-medium" />
                     <Input
                       id="search"
                       name="search"
@@ -64,7 +67,7 @@ export const ShortcutsModal: FC<Props> = (props) => {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Search for shortcuts"
-                      className="w-full border-none bg-transparent py-1 text-xs text-custom-text-200 outline-none"
+                      className="w-full border-none bg-transparent py-1 text-xs text-neutral-text-medium outline-none"
                       autoFocus
                       tabIndex={1}
                     />

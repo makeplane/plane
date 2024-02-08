@@ -30,11 +30,11 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             <h4 className="break-words font-medium">Analytics for {cycleDetails.name}</h4>
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
-                <h6 className="text-custom-text-200">Lead</h6>
+                <h6 className="text-neutral-text-medium">Lead</h6>
                 <span>{cycleOwnerDetails?.display_name}</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <h6 className="text-custom-text-200">Start Date</h6>
+                <h6 className="text-neutral-text-medium">Start Date</h6>
                 <span>
                   {cycleDetails.start_date && cycleDetails.start_date !== ""
                     ? renderFormattedDate(cycleDetails.start_date)
@@ -42,7 +42,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <h6 className="text-custom-text-200">Target Date</h6>
+                <h6 className="text-neutral-text-medium">Target Date</h6>
                 <span>
                   {cycleDetails.end_date && cycleDetails.end_date !== ""
                     ? renderFormattedDate(cycleDetails.end_date)
@@ -56,11 +56,11 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             <h4 className="break-words font-medium">Analytics for {moduleDetails.name}</h4>
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
-                <h6 className="text-custom-text-200">Lead</h6>
+                <h6 className="text-neutral-text-medium">Lead</h6>
                 <span>{moduleDetails.lead_detail?.display_name}</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <h6 className="text-custom-text-200">Start Date</h6>
+                <h6 className="text-neutral-text-medium">Start Date</h6>
                 <span>
                   {moduleDetails.start_date && moduleDetails.start_date !== ""
                     ? renderFormattedDate(moduleDetails.start_date)
@@ -68,7 +68,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <h6 className="text-custom-text-200">Target Date</h6>
+                <h6 className="text-neutral-text-medium">Target Date</h6>
                 <span>
                   {moduleDetails.target_date && moduleDetails.target_date !== ""
                     ? renderFormattedDate(moduleDetails.target_date)
@@ -95,7 +95,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             </div>
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
-                <h6 className="text-custom-text-200">Network</h6>
+                <h6 className="text-neutral-text-medium">Network</h6>
                 <span>{NETWORK_CHOICES.find((n) => n.key === projectDetails?.network)?.label ?? ""}</span>
               </div>
             </div>

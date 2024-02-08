@@ -228,7 +228,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
         {title && (
           <div className="flex items-center gap-2 text-lg font-medium">
             <div>{title}</div>
-            {/* <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
+            {/* <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-neutral-text-strong">
               Gantt View Beta
             </div> */}
           </div>
@@ -288,7 +288,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
         }`}
       >
         <div id="gantt-sidebar" className="flex h-full w-1/4 flex-col border-r border-neutral-border-medium">
-          <div className="box-border flex h-[60px] flex-shrink-0 items-end justify-between gap-2 border-b border-neutral-border-medium pb-2 pl-10 pr-4 text-sm font-medium text-custom-text-300">
+          <div className="box-border flex h-[60px] flex-shrink-0 items-end justify-between gap-2 border-b border-neutral-border-medium pb-2 pl-10 pr-4 text-sm font-medium text-neutral-text-medium">
             <h6>{title}</h6>
             <h6>Duration</h6>
           </div>

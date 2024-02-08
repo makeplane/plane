@@ -46,8 +46,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             <div>
               <Menu.Button
                 onClick={() => setOpenChildFor(null)}
-                className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-neutral-component-surface-medium hover:text-custom-text-100 focus:outline-none ${
-                  open ? "bg-neutral-component-surface-medium text-custom-text-100" : "text-custom-text-200"
+                className={`group flex items-center justify-between gap-2 rounded-md border border-neutral-border-medium px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-neutral-component-surface-medium hover:text-neutral-text-strong focus:outline-none ${
+                  open ? "bg-neutral-component-surface-medium text-neutral-text-strong" : "text-neutral-text-medium"
                 }`}
               >
                 {label}
@@ -89,7 +89,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                           <div
                             className={`${
                               active || option.selected ? "bg-neutral-component-surface-dark" : ""
-                            } flex items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 ${
+                            } flex items-center gap-1 rounded px-1 py-1.5 text-neutral-text-medium ${
                               direction === "right" ? "justify-between" : ""
                             }`}
                           >
@@ -119,7 +119,9 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         {option.children ? (
                           <div className="space-y-1 p-1">
                             {option.children.length === 0 ? (
-                              <p className="px-1 py-1.5 text-center text-custom-text-200">No {option.label} found</p> //if no children found, show this message.
+                              <p className="px-1 py-1.5 text-center text-neutral-text-medium">
+                                No {option.label} found
+                              </p> //if no children found, show this message.
                             ) : (
                               option.children.map((child) => {
                                 if (child.element) return child.element;
@@ -131,7 +133,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                                       onClick={() => onSelect(child.value)}
                                       className={`${
                                         child.selected ? "bg-neutral-component-surface-dark" : ""
-                                      } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-neutral-component-surface-dark`}
+                                      } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-neutral-text-medium hover:bg-neutral-component-surface-dark`}
                                     >
                                       {child.label}{" "}
                                       <Check

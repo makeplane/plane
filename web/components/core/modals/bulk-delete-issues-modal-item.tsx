@@ -16,7 +16,7 @@ export const BulkDeleteIssuesModalItem: React.FC<any> = observer((props) => {
       value={issue.id}
       className={({ active }) =>
         `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-          active ? "bg-neutral-component-surface-dark text-custom-text-100" : ""
+          active ? "bg-neutral-component-surface-dark text-neutral-text-strong" : ""
         }`
       }
     >

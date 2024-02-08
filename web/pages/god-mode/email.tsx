@@ -23,11 +23,11 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   return (
     <div className="flex flex-col gap-8">
       <div className="mb-2 border-b border-neutral-border-subtle pb-3">
-        <div className="pb-1 text-xl font-medium text-custom-text-100">Secure emails from your own instance</div>
-        <div className="text-sm font-normal text-custom-text-300">
+        <div className="pb-1 text-xl font-medium text-neutral-text-strong">Secure emails from your own instance</div>
+        <div className="text-sm font-normal text-neutral-text-medium">
           Plane can send useful emails to you and your users from your own instance without talking to the Internet.
         </div>
-        <div className="text-sm font-normal text-custom-text-300">
+        <div className="text-sm font-normal text-neutral-text-medium">
           Set it up below and please test your settings before you save them.{" "}
           <span className="text-red-400">Misconfigs can lead to email bounces and errors.</span>
         </div>
