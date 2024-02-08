@@ -56,6 +56,9 @@ export const getModuleEventPayload = (payload: any) => ({
   start_date: payload.start_date,
   target_date: payload.target_date,
   module_status: payload.status,
+  lead_id: payload.lead,
+  changed_properties: payload.changed_properties,
+  member_ids: payload.members,
   state: payload.state,
   element: payload.element,
 });

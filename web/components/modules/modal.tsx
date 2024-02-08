@@ -78,7 +78,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleUpdateModule = async (payload: Partial<IModule>) => {
+  const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId || !data) return;
 
     const selectedProjectId = payload.project ?? projectId.toString();
@@ -93,7 +93,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         });
         captureModuleEvent({
           eventName: MODULE_UPDATED,
-          payload: { ...res, state: "SUCCESS" },
+          payload: { ...res, changed_properties: Object.keys(dirtyFields), state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -109,14 +109,14 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleFormSubmit = async (formData: Partial<IModule>) => {
+  const handleFormSubmit = async (formData: Partial<IModule>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<IModule> = {
       ...formData,
     };
     if (!data) await handleCreateModule(payload);
-    else await handleUpdateModule(payload);
+    else await handleUpdateModule(payload, dirtyFields);
   };
 
   useEffect(() => {
