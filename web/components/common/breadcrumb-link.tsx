@@ -11,7 +11,7 @@ export const BreadcrumbLink: React.FC<Props> = (props) => {
   const { href, label, icon } = props;
   return (
     <Tooltip tooltipContent={label} position="bottom">
-      <li className="flex items-center space-x-2">
+      <li className="flex items-center space-x-2" tabIndex={-1}>
         <div className="flex flex-wrap items-center gap-2.5">
           {href ? (
             <Link
