@@ -49,23 +49,14 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     setIsOpen(true);
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => {
-    isOpen && onMenuClose && onMenuClose();
-    setIsOpen(false);
-  };
+  const closeDropdown = () => setIsOpen(false);
 
-  const handleOnChange = () => {
+  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+
+  const handleOnClick = () => {
     if (closeOnSelect) closeDropdown();
   };
 
-  const selectActiveItem = () => {
-    const activeItem: HTMLElement | undefined | null = dropdownRef.current?.querySelector(
-      `[data-headlessui-state="active"] button`
-    );
-    activeItem?.click();
-  };
-
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen, selectActiveItem);
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   let menuItems = (
@@ -100,8 +91,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
-      onKeyDownCapture={handleKeyDown}
-      onChange={handleOnChange}
+      onKeyDown={handleKeyDown}
+      onClick={handleOnClick}
     >
       {({ open }) => (
         <>
@@ -110,7 +101,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               <button
                 ref={setReferenceElement}
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   openDropdown();
                   if (menuButtonOnClick) menuButtonOnClick();
                 }}
@@ -127,7 +119,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
@@ -152,7 +145,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         ? "cursor-not-allowed text-custom-text-200"
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
