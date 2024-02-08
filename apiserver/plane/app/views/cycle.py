@@ -1025,7 +1025,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .order_by("label_name")
         )
 
-        new_cycle.transferred_cycle = {
+        old_cycle.progress_snapshot = {
             "total_issues": old_cycle.first().total_issues,
             "completed_issues": old_cycle.first().completed_issues,
             "cancelled_issues": old_cycle.first().cancelled_issues,
@@ -1035,14 +1035,16 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             "total_estimates": old_cycle.first().total_estimates,
             "completed_estimates": old_cycle.first().completed_estimates,
             "started_estimates": old_cycle.first().started_estimates,
-            "completion_chart": completion_chart,
+            "distribution":{
+                "assignees": json.dumps(list(assignee_distribution), cls=DjangoJSONEncoder),
+                "labels": json.dumps(list(label_distribution), cls=DjangoJSONEncoder),
+                "completion_chart": completion_chart,
+            },
             "name": old_cycle.first().name,
-            "label_distribution": json.dumps(list(label_distribution), cls=DjangoJSONEncoder),
-            "assignee_distribution": json.dumps(list(assignee_distribution), cls=DjangoJSONEncoder),
             "start_date": str(old_cycle.first().start_date),
             "end_date": str(old_cycle.first().end_date),
         }
-        new_cycle.save(update_fields=["transferred_cycle"])
+        old_cycle.save(update_fields=["progress_snapshot"])
 
         if (
             new_cycle.end_date is not None

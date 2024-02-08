@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='cycle',
-            name='transferred_cycle',
+            name='progress_snapshot',
             field=models.JSONField(default=dict),
         ),
     ]
