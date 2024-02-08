@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangleIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useEventTracker, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -34,9 +34,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const {
     membership: { leaveProject },
   } = useUser();
@@ -65,7 +63,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
             .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
-              postHogEventTracker("PROJECT_MEMBER_LEAVE", {
+              captureEvent("Project member leave", {
                 state: "SUCCESS",
               });
             })
@@ -75,7 +73,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
-              postHogEventTracker("PROJECT_MEMBER_LEAVE", {
+              captureEvent("Project member leave", {
                 state: "FAILED",
               });
             });

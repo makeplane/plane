@@ -112,12 +112,8 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 project_id=self.kwargs.get("project_id")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(
                 Prefetch(
                     "issue_reactions",
@@ -125,7 +121,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 )
             )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1087,12 +1082,31 @@ class IssueArchiveViewSet(BaseViewSet):
             .filter(archived_at__isnull=False)
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))            
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
         )
 
     @method_decorator(gzip_page)
@@ -1120,22 +1134,6 @@ class IssueArchiveViewSet(BaseViewSet):
         issue_queryset = (
             self.get_queryset()
             .filter(**filters)
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
         )
 
         # Priority Ordering
@@ -1670,7 +1668,35 @@ class IssueDraftViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.annotate(
+            Issue.objects.filter(
+                project_id=self.kwargs.get("project_id")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(is_draft=True)
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
                 )
@@ -1678,22 +1704,7 @@ class IssueDraftViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(is_draft=True)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-        )
+        ).distinct()
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
@@ -1719,22 +1730,6 @@ class IssueDraftViewSet(BaseViewSet):
         issue_queryset = (
             self.get_queryset()
             .filter(**filters)
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
         )
 
         # Priority Ordering
@@ -1831,7 +1826,10 @@ class IssueDraftViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            issue = (
+                self.get_queryset().filter(pk=serializer.data["id"]).first()
+            )
+            return Response(IssueSerializer(issue).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
@@ -1867,10 +1865,13 @@ class IssueDraftViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk, is_draft=True
+        issue = self.get_queryset().filter(pk=pk).first()
+        return Response(
+            IssueSerializer(
+                issue, fields=self.fields, expand=self.expand
+            ).data,
+            status=status.HTTP_200_OK,
         )
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(

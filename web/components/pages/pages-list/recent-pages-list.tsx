@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
@@ -14,6 +15,8 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { EUserProjectRoles } from "constants/project";
 
 export const RecentPagesList: FC = observer(() => {
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
@@ -22,7 +25,8 @@ export const RecentPagesList: FC = observer(() => {
   } = useUser();
   const { recentProjectPages } = useProjectPages();
 
-  const EmptyStateImagePath = getEmptyStateImagePath("pages", "recent", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("pages", "recent", isLightMode);
 
   // FIXME: replace any with proper type
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value: any) => value.length === 0);

@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -58,6 +59,9 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails } = useProject();
+  const { captureIssueEvent } = useEventTracker();
+  // router
+  const router = useRouter();
   // form info
   const {
     reset,
@@ -155,13 +159,26 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
 
     try {
       quickAddCallback &&
-        (await quickAddCallback(currentWorkspace.slug, currentProjectDetails.id, { ...payload } as TIssue, viewId));
+        (await quickAddCallback(currentWorkspace.slug, currentProjectDetails.id, { ...payload } as TIssue, viewId).then(
+          (res) => {
+            captureIssueEvent({
+              eventName: "Issue created",
+              payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
+              path: router.asPath,
+            });
+          }
+        ));
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
     } catch (err: any) {
+      captureIssueEvent({
+        eventName: "Issue created",
+        payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
+        path: router.asPath,
+      });
       console.error(err);
       setToastAlert({
         type: "error",

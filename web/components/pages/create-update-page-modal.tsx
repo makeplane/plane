@@ -1,8 +1,6 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import { useApplication } from "hooks/store";
 // components
 import { PageForm } from "./page-form";
 // types
@@ -25,10 +23,6 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   const { workspaceSlug } = router.query;
 
   const { createPage } = useProjectPages();
-  // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
 
   const createProjectPage = async (payload: IPage) => {
     if (!workspaceSlug) return;

@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Tab } from "@headlessui/react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
@@ -48,7 +49,9 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  // store
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
     currentUser,
     currentUserLoader,
@@ -94,7 +97,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     }
   };
 
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "pages", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "pages", isLightMode);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 

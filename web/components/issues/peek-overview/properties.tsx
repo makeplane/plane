@@ -99,7 +99,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             projectId={projectId}
             placeholder="Add assignees"
             multiple
-            buttonVariant={issue?.assignee_ids?.length > 0 ? "transparent-without-text" : "transparent-with-text"}
+            buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"}`}
@@ -148,6 +148,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            // TODO: add this logic
+            // showPlaceholderIcon
           />
         </div>
 
@@ -173,6 +175,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            // TODO: add this logic
+            // showPlaceholderIcon
           />
         </div>
 
@@ -201,7 +205,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         )}
 
         {projectDetails?.module_view && (
-          <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <span>Module</span>
@@ -251,8 +255,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         </div>
 
         {/* relates to */}
-        <div className="flex items-center gap-3 min-h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+        <div className="flex gap-3 min-h-8">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
             <RelatedIcon className="h-4 w-4 flex-shrink-0" />
             <span>Relates to</span>
           </div>
@@ -267,8 +271,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         </div>
 
         {/* blocking */}
-        <div className="flex items-center gap-3 min-h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+        <div className="flex gap-3 min-h-8">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
             <XCircle className="h-4 w-4 flex-shrink-0" />
             <span>Blocking</span>
           </div>
@@ -283,8 +287,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         </div>
 
         {/* blocked by */}
-        <div className="flex items-center gap-3 min-h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+        <div className="flex gap-3 min-h-8">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
             <CircleDot className="h-4 w-4 flex-shrink-0" />
             <span>Blocked by</span>
           </div>
@@ -299,8 +303,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         </div>
 
         {/* duplicate of */}
-        <div className="flex items-center gap-3 min-h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+        <div className="flex gap-3 min-h-8">
+          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
             <CopyPlus className="h-4 w-4 flex-shrink-0" />
             <span>Duplicate of</span>
           </div>

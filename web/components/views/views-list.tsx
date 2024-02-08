@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
+import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useProjectView, useUser } from "hooks/store";
 // components
@@ -14,6 +15,8 @@ import { EUserProjectRoles } from "constants/project";
 export const ProjectViewsList = observer(() => {
   // states
   const [query, setQuery] = useState("");
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     commandPalette: { toggleCreateViewModal },
@@ -43,7 +46,8 @@ export const ProjectViewsList = observer(() => {
 
   const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "views", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "views", isLightMode);
 
   const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
 

@@ -81,7 +81,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import size from "lodash/size";
+import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 // components
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
@@ -26,11 +27,11 @@ export const ProjectEmptyState: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
     currentUser,
@@ -40,16 +41,13 @@ export const ProjectEmptyState: React.FC = observer(() => {
   const userFilters = issuesFilter?.issueFilters?.filters;
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
-  const currentLayoutEmptyStateImagePath = getEmptyStateImagePath(
-    "empty-filters",
-    activeLayout ?? "list",
-    currentUser?.theme.theme === "light"
-  );
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "issues", currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const currentLayoutEmptyStateImagePath = getEmptyStateImagePath("empty-filters", activeLayout ?? "list", isLightMode);
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "issues", isLightMode);
 
   const issueFilterCount = size(
     Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([key, value]) => value && Array.isArray(value) && value.length > 0)
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
     )
   );
 
@@ -90,7 +88,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
             text: "Create your first issue",
 
             onClick: () => {
-              setTrackElement("PROJECT_EMPTY_STATE");
+              setTrackElement("Project issue empty state");
               commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             },
           },

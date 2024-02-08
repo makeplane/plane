@@ -94,7 +94,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
         cycle: cycleId.toString(),
       }));
     }
-    if (moduleId && !prePopulateDataProps?.module_id) {
+    if (moduleId && !prePopulateDataProps?.module_ids) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
@@ -123,7 +123,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
         cycle: cycleId.toString(),
       }));
     }
-    if (moduleId && !prePopulateDataProps?.module_id) {
+    if (moduleId && !prePopulateDataProps?.module_ids) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
@@ -233,11 +233,11 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     });
   };
 
-  const addIssueToModule = async (issueId: string, moduleId: string) => {
+  const addIssueToModule = async (issueId: string, moduleIds: string[]) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await moduleService.addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
-      issues: [issueId],
+    await moduleService.addModulesToIssue(workspaceSlug as string, activeProject ?? "", issueId as string, {
+      modules: moduleIds,
     });
   };
 
@@ -248,7 +248,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
       .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
         if (payload.cycle_id && payload.cycle_id !== "") await addIssueToCycle(res.id, payload.cycle_id);
-        if (payload.module_id && payload.module_id !== "") await addIssueToModule(res.id, payload.module_id);
+        if (payload.module_ids && payload.module_ids.length > 0) await addIssueToModule(res.id, payload.module_ids);
 
         setToastAlert({
           type: "success",

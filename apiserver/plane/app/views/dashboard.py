@@ -100,7 +100,7 @@ def dashboard_assigned_issues(self, request, slug):
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
-        .prefetch_related("assignees", "labels")
+        .prefetch_related("assignees", "labels", "issue_module__module")
         .prefetch_related(
             Prefetch(
                 "issue_relation",
@@ -110,7 +110,6 @@ def dashboard_assigned_issues(self, request, slug):
             )
         )
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
-        .annotate(module_id=F("issue_module__module_id"))
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -145,6 +144,23 @@ def dashboard_assigned_issues(self, request, slug):
             output_field=CharField(),
         )
     ).order_by("priority_order")
+
+    if issue_type == "pending":
+        pending_issues_count = assigned_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        ).count()
+        pending_issues = assigned_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        )[:5]
+        return Response(
+            {
+                "issues": IssueSerializer(
+                    pending_issues, many=True, expand=self.expand
+                ).data,
+                "count": pending_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     if issue_type == "completed":
         completed_issues_count = assigned_issues.filter(
@@ -221,9 +237,8 @@ def dashboard_created_issues(self, request, slug):
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
-        .prefetch_related("assignees", "labels")
+        .prefetch_related("assignees", "labels", "issue_module__module")
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
-        .annotate(module_id=F("issue_module__module_id"))
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -258,6 +273,23 @@ def dashboard_created_issues(self, request, slug):
             output_field=CharField(),
         )
     ).order_by("priority_order")
+
+    if issue_type == "pending":
+        pending_issues_count = created_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        ).count()
+        pending_issues = created_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        )[:5]
+        return Response(
+            {
+                "issues": IssueSerializer(
+                    pending_issues, many=True, expand=self.expand
+                ).data,
+                "count": pending_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     if issue_type == "completed":
         completed_issues_count = created_issues.filter(

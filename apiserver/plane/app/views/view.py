@@ -87,12 +87,8 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(
                 Prefetch(
                     "issue_reactions",
@@ -127,7 +123,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             .filter(**filters)
             .filter(project__project_projectmember__member=self.request.user)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -149,13 +144,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
             )
         )
 

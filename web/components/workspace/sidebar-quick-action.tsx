@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateDraftIssueModal } from "components/issues";
@@ -14,11 +14,8 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
-  const {
-    theme: themeStore,
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { theme: themeStore, commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

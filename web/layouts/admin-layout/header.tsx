@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Breadcrumbs } from "@plane/ui";
 // icons
 import { Settings } from "lucide-react";
+import { BreadcrumbLink } from "components/common";
 
 export interface IInstanceAdminHeader {
   title?: string;
@@ -21,11 +22,15 @@ export const InstanceAdminHeader: FC<IInstanceAdminHeader> = observer((props) =>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                icon={<Settings className="h-4 w-4 text-custom-text-300" />}
-                label="Settings"
-                link="/god-mode"
+                link={
+                  <BreadcrumbLink
+                    href="/god-mode"
+                    label="Settings"
+                    icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                  />
+                }
               />
-              <Breadcrumbs.BreadcrumbItem type="text" label={title} />
+              <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={title} />} />
             </Breadcrumbs>
           </div>
         )}

@@ -172,4 +172,9 @@ def create_user_notification(sender, instance, created, **kwargs):
         from plane.db.models import UserNotificationPreference
         UserNotificationPreference.objects.create(
             user=instance,
+            property_change=False,
+            state_change=False,
+            comment=False,
+            mention=False,
+            issue_completed=False,
         )

@@ -89,8 +89,8 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="">
                     <div className="flex items-start gap-x-4">
-                      <div className="grid place-items-center rounded-full bg-red-500/20 p-4">
-                        <Trash2 className="h-6 w-6 text-red-600" aria-hidden="true" />
+                      <div className="grid place-items-center rounded-full bg-red-500/20 p-2 sm:p-2 md:p-4 lg:p-4 mt-3 sm:mt-3 md:mt-0 lg:mt-0 ">
+                        <Trash2 className="h-4 w-4 sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6 text-red-600" aria-hidden="true" />
                       </div>
                       <div>
                         <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-custom-text-100">

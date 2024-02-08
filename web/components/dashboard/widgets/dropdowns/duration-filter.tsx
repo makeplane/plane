@@ -26,11 +26,11 @@ export const DurationFilterDropdown: React.FC<Props> = (props) => {
       placement="bottom-end"
       closeOnSelect
     >
-      {DURATION_FILTER_OPTIONS.map((option) => (
-        <CustomMenu.MenuItem key={option.key} onClick={() => onChange(option.key)}>
-          {option.label}
-        </CustomMenu.MenuItem>
-      ))}
+        {DURATION_FILTER_OPTIONS.map((option) => (
+          <CustomMenu.MenuItem key={option.key} onClick={() => onChange(option.key)}>
+            {option.label}
+          </CustomMenu.MenuItem>
+        ))}
     </CustomMenu>
   );
 };

@@ -4,14 +4,17 @@ import { observer } from "mobx-react-lite";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 // constants
-import { SPREADSHEET_PROPERTY_DETAILS, SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
+import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IssueColumn } from "./issue-column";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { useIssueDetail, useProject } from "hooks/store";
+// helper
+import { cn } from "helpers/common.helper";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -48,7 +51,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
   const { workspaceSlug } = router.query;
   //hooks
   const { getProjectById } = useProject();
-  const { setPeekIssue } = useIssueDetail();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -95,9 +98,21 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
 
   return (
     <>
-      <tr>
+      <tr
+        className={cn({
+          "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue?.issueId === issueDetail.id,
+        })}
+      >
         {/* first column/ issue name and key column */}
-        <td className="sticky group left-0 h-11  w-[28rem] flex items-center bg-neutral-component-surface-light text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-l-0 after:border-neutral-border-subtle before:absolute before:h-full before:right-0 before:border before:border-l-0 before:border-neutral-border-subtle">
+        <td
+          className={cn(
+            "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200 focus:border-custom-primary-70",
+            {
+              "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
+            }
+          )}
+          tabIndex={0}
+        >
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
             <div
               className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
@@ -135,11 +150,14 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
             target="_blank"
             onClick={() => handleIssuePeekOverview(issueDetail)}
-            className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+            className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
           >
             <div className="w-full overflow-hidden">
               <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
-                <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100">
+                <div
+                  className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
+                  tabIndex={-1}
+                >
                   {issueDetail.name}
                 </div>
               </Tooltip>
@@ -147,29 +165,16 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           </ControlLink>
         </td>
         {/* Rest of the columns */}
-        {SPREADSHEET_PROPERTY_LIST.map((property) => {
-          const { Column } = SPREADSHEET_PROPERTY_DETAILS[property];
-
-          const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
-
-          return (
-            <WithDisplayPropertiesHOC
-              displayProperties={displayProperties}
-              displayPropertyKey={property}
-              shouldRenderProperty={shouldRenderProperty}
-            >
-              <td className="h-11 w-full min-w-[8rem] bg-neutral-component-surface-light text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-neutral-border-subtle border-r-[1px] border-neutral-border-subtle">
-                <Column
-                  issue={issueDetail}
-                  onChange={(issue: TIssue, data: Partial<TIssue>) =>
-                    handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)
-                  }
-                  disabled={disableUserActions}
-                />
-              </td>
-            </WithDisplayPropertiesHOC>
-          );
-        })}
+        {SPREADSHEET_PROPERTY_LIST.map((property) => (
+          <IssueColumn
+            displayProperties={displayProperties}
+            issueDetail={issueDetail}
+            disableUserActions={disableUserActions}
+            property={property}
+            handleIssues={handleIssues}
+            isEstimateEnabled={isEstimateEnabled}
+          />
+        ))}
       </tr>
 
       {isExpanded &&

@@ -157,6 +157,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
       window.removeEventListener("keydown", handleEnterKeyPress);
       window.removeEventListener("keydown", handleEscapeKeyPress);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, handleSubmit, onClose]);
 
   const responseActionButton = response !== "" && (

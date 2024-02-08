@@ -4,12 +4,12 @@ import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
 // components
 import { KanbanIssueBlock } from "components/issues";
-import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
   issuesMap: IIssueMap;
+  peekIssueId?: string;
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
@@ -23,6 +23,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     sub_group_id,
     columnId,
     issuesMap,
+    peekIssueId,
     issueIds,
     displayProperties,
     isDragDisabled,
@@ -43,22 +44,19 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
             if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
 
             return (
-              <Draggable key={draggableId} draggableId={draggableId} index={index} isDragDisabled={isDragDisabled}>
-                {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                  <KanbanIssueBlock
-                    key={`kanban-issue-block-${issueId}`}
-                    issueId={issueId}
-                    issuesMap={issuesMap}
-                    displayProperties={displayProperties}
-                    handleIssues={handleIssues}
-                    quickActions={quickActions}
-                    provided={provided}
-                    snapshot={snapshot}
-                    isDragDisabled={isDragDisabled}
-                    canEditProperties={canEditProperties}
-                  />
-                )}
-              </Draggable>
+              <KanbanIssueBlock
+                key={draggableId}
+                peekIssueId={peekIssueId}
+                issueId={issueId}
+                issuesMap={issuesMap}
+                displayProperties={displayProperties}
+                handleIssues={handleIssues}
+                quickActions={quickActions}
+                draggableId={draggableId}
+                index={index}
+                isDragDisabled={isDragDisabled}
+                canEditProperties={canEditProperties}
+              />
             );
           })}
         </>

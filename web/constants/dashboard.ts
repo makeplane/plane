@@ -122,20 +122,24 @@ export const DURATION_FILTER_OPTIONS: {
   label: string;
 }[] = [
   {
+    key: "none",
+    label: "None",
+  },
+  {
     key: "today",
-    label: "Today",
+    label: "Due today",
   },
   {
     key: "this_week",
-    label: "This week",
+    label: " Due this week",
   },
   {
     key: "this_month",
-    label: "This month",
+    label: "Due this month",
   },
   {
     key: "this_year",
-    label: "This year",
+    label: "Due this year",
   },
 ];
 
@@ -152,7 +156,7 @@ export const PROJECT_BACKGROUND_COLORS = [
 ];
 
 // assigned and created issues widgets tabs list
-export const ISSUES_TABS_LIST: {
+export const FILTERED_ISSUES_TABS_LIST: {
   key: TIssuesListTypes;
   label: string;
 }[] = [
@@ -170,7 +174,27 @@ export const ISSUES_TABS_LIST: {
   },
 ];
 
+// assigned and created issues widgets tabs list
+export const UNFILTERED_ISSUES_TABS_LIST: {
+  key: TIssuesListTypes;
+  label: string;
+}[] = [
+  {
+    key: "pending",
+    label: "Pending",
+  },
+  {
+    key: "completed",
+    label: "Marked completed",
+  },
+];
+
 export const ASSIGNED_ISSUES_EMPTY_STATES = {
+  pending: {
+    title: "Issues assigned to you that are pending\nwill show up here.",
+    darkImage: UpcomingIssuesDark,
+    lightImage: UpcomingIssuesLight,
+  },
   upcoming: {
     title: "Upcoming issues assigned to\nyou will show up here.",
     darkImage: UpcomingIssuesDark,
@@ -189,6 +213,11 @@ export const ASSIGNED_ISSUES_EMPTY_STATES = {
 };
 
 export const CREATED_ISSUES_EMPTY_STATES = {
+  pending: {
+    title: "Issues created by you that are pending\nwill show up here.",
+    darkImage: UpcomingIssuesDark,
+    lightImage: UpcomingIssuesLight,
+  },
   upcoming: {
     title: "Upcoming issues you created\nwill show up here.",
     darkImage: UpcomingIssuesDark,

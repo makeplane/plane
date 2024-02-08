@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { useApplication, useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -25,9 +25,7 @@ const defaultValues = {
 export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureProjectEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
   const { deleteProject } = useProject();
   // router
@@ -63,17 +61,15 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
-        postHogEventTracker(
-          "PROJECT_DELETED",
-          {
-            state: "SUCCESS",
-          },
-          {
+        captureProjectEvent({
+          eventName: "Project deleted",
+          payload: { ...project, state: "SUCCESS", element: "Project general settings" },
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
             groupId: currentWorkspace?.id!,
-          }
-        );
+          },
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -81,17 +77,15 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         });
       })
       .catch(() => {
-        postHogEventTracker(
-          "PROJECT_DELETED",
-          {
-            state: "FAILED",
-          },
-          {
+        captureProjectEvent({
+          eventName: "Project deleted",
+          payload: { ...project, state: "FAILED", element: "Project general settings" },
+          group: {
             isGrouping: true,
             groupType: "Workspace_metrics",
             groupId: currentWorkspace?.id!,
-          }
-        );
+          },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",

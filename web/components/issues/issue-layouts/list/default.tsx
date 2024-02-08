@@ -37,6 +37,7 @@ export interface IGroupByList {
   storeType: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   viewId?: string;
+  isCompletedCycle?: boolean;
 }
 
 const GroupByList: React.FC<IGroupByList> = (props) => {
@@ -55,6 +56,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     disableIssueCreation,
     storeType,
     addIssuesToView,
+    isCompletedCycle = false,
   } = props;
   // store hooks
   const member = useMember();
@@ -115,7 +117,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                     title={_list.name || ""}
                     count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
                     issuePayload={_list.payload}
-                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
+                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
                     storeType={storeType}
                     addIssuesToView={addIssuesToView}
                   />
@@ -132,7 +134,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                   />
                 )}
 
-                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && (
+                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
                   <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
@@ -168,6 +170,7 @@ export interface IList {
   disableIssueCreation?: boolean;
   storeType: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  isCompletedCycle?: boolean;
 }
 
 export const List: React.FC<IList> = (props) => {
@@ -186,6 +189,7 @@ export const List: React.FC<IList> = (props) => {
     disableIssueCreation,
     storeType,
     addIssuesToView,
+    isCompletedCycle = false,
   } = props;
 
   return (
@@ -205,6 +209,7 @@ export const List: React.FC<IList> = (props) => {
         disableIssueCreation={disableIssueCreation}
         storeType={storeType}
         addIssuesToView={addIssuesToView}
+        isCompletedCycle={isCompletedCycle}
       />
     </div>
   );

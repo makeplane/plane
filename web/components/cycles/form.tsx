@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // components
 import { DateDropdown, ProjectDropdown } from "components/dropdowns";
@@ -11,19 +12,28 @@ import { ICycle } from "@plane/types";
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
   handleClose: () => void;
+  status: boolean;
   projectId: string;
   setActiveProject: (projectId: string) => void;
   data?: ICycle | null;
 };
 
+const defaultValues: Partial<ICycle> = {
+  name: "",
+  description: "",
+  start_date: null,
+  end_date: null,
+};
+
 export const CycleForm: React.FC<Props> = (props) => {
-  const { handleFormSubmit, handleClose, projectId, setActiveProject, data } = props;
+  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data } = props;
   // form data
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
     watch,
+    reset,
   } = useForm<ICycle>({
     defaultValues: {
       project: projectId,
@@ -33,6 +43,13 @@ export const CycleForm: React.FC<Props> = (props) => {
       end_date: data?.end_date || null,
     },
   });
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...data,
+    });
+  }, [data, reset]);
 
   const startDate = watch("start_date");
   const endDate = watch("end_date");

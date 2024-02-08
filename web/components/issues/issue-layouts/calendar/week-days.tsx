@@ -26,6 +26,7 @@ type Props = {
     viewId?: string
   ) => Promise<TIssue | undefined>;
   viewId?: string;
+  readOnly?: boolean;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
@@ -39,6 +40,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     disableIssueCreation,
     quickAddCallback,
     viewId,
+    readOnly = false,
   } = props;
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
@@ -67,6 +69,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             disableIssueCreation={disableIssueCreation}
             quickAddCallback={quickAddCallback}
             viewId={viewId}
+            readOnly={readOnly}
           />
         );
       })}

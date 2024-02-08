@@ -6,7 +6,8 @@ import { MoreHorizontal } from "lucide-react";
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// ui
+// helpers
+import { cn } from "helpers/common.helper";
 // types
 import { TIssue, TIssueMap } from "@plane/types";
 import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
@@ -16,17 +17,18 @@ type Props = {
   issueIdList: string[] | null;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   showAllIssues?: boolean;
+  isDragDisabled?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
-  const { issues, issueIdList, quickActions, showAllIssues = false } = props;
+  const { issues, issueIdList, quickActions, showAllIssues = false, isDragDisabled = false } = props;
   // hooks
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
   const { getProjectById } = useProject();
   const { getProjectStates } = useProjectState();
-  const { setPeekIssue } = useIssueDetail();
+  const { peekIssue, setPeekIssue } = useIssueDetail();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
@@ -64,7 +66,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
           getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
 
         return (
-          <Draggable key={issue.id} draggableId={issue.id} index={index}>
+          <Draggable key={issue.id} draggableId={issue.id} index={index} isDragDisabled={isDragDisabled}>
             {(provided, snapshot) => (
               <div
                 className="relative cursor-pointer p-1 px-2"
@@ -84,11 +86,18 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                     )}
 
                     <div
-                      className={`group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-neutral-border-subtle px-1 py-1.5 shadow-custom-shadow-2xs ${
-                        snapshot.isDragging
-                          ? "bg-neutral-component-surface-medium shadow-custom-shadow-rg"
-                          : "bg-neutral-component-surface-light hover:bg-neutral-component-surface-medium"
-                      }`}
+                      className={cn(
+                        "group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-custom-border-200 hover:border-custom-border-400 px-1 py-1.5 ",
+                        {
+                          "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100":
+                            snapshot.isDragging,
+                        },
+                        { "bg-custom-background-100 hover:bg-custom-background-90": !snapshot.isDragging },
+                        {
+                          "border border-custom-primary-70 hover:border-custom-primary-70":
+                            peekIssue?.issueId === issue.id,
+                        }
+                      )}
                     >
                       <div className="flex h-full items-center gap-1.5">
                         <span

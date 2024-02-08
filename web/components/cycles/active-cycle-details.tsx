@@ -2,8 +2,9 @@ import { MouseEvent } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import { useTheme } from "next-themes";
 // hooks
-import { useCycle, useIssues, useProject, useUser } from "hooks/store";
+import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { SingleProgressStats } from "components/core";
@@ -43,6 +44,7 @@ interface IActiveCycleDetails {
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { currentUser } = useUser();
   const {
@@ -56,6 +58,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     removeCycleFromFavorites,
   } = useCycle();
   const { currentProjectDetails } = useProject();
+  const { getUserDetails } = useMember();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -65,6 +68,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   );
 
   const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
+  const cycleOwnerDetails = activeCycle ? getUserDetails(activeCycle.owned_by) : undefined;
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && currentProjectActiveCycleId
@@ -76,7 +80,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   );
 
   const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["active"];
-  const emptyStateImage = getEmptyStateImagePath("cycle", "active", currentUser?.theme.theme === "light");
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("cycle", "active", isLightMode);
 
   if (!activeCycle && isLoading)
     return (
@@ -144,7 +150,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     color: group.color,
   }));
 
-  const daysLeft = findHowManyDaysLeft(activeCycle.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(activeCycle.end_date) ?? 0;
 
   return (
     <div className="grid-row-2 grid divide-y rounded-[10px] border border-neutral-border-medium bg-neutral-component-surface-light shadow">
@@ -161,7 +167,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                     <h3 className="break-words text-lg font-semibold">{truncateText(activeCycle.name, 70)}</h3>
                   </Tooltip>
                 </span>
-                <span className="flex items-center gap-1 capitalize">
+                <span className="flex items-center gap-1">
                   <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
                     {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}
                   </span>
@@ -199,20 +205,20 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
 
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5 text-custom-text-200">
-                  {activeCycle.owned_by.avatar && activeCycle.owned_by.avatar !== "" ? (
+                  {cycleOwnerDetails?.avatar && cycleOwnerDetails?.avatar !== "" ? (
                     <img
-                      src={activeCycle.owned_by.avatar}
+                      src={cycleOwnerDetails?.avatar}
                       height={16}
                       width={16}
                       className="rounded-full"
-                      alt={activeCycle.owned_by.display_name}
+                      alt={cycleOwnerDetails?.display_name}
                     />
                   ) : (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-component-surface-light capitalize">
-                      {activeCycle.owned_by.display_name.charAt(0)}
+                      {cycleOwnerDetails?.display_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-custom-text-200">{activeCycle.owned_by.display_name}</span>
+                  <span className="text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
                 </div>
 
                 {activeCycle.assignees.length > 0 && (
@@ -251,7 +257,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             <div className="flex h-full w-full flex-col p-4 text-custom-text-200">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
-                <LinearProgressIndicator data={progressIndicatorData} inPercentage />
+                <LinearProgressIndicator size="md" data={progressIndicatorData} inPercentage />
               </div>
               <div className="mt-2 flex flex-col items-center gap-1">
                 {Object.keys(groupedIssues).map((group, index) => (

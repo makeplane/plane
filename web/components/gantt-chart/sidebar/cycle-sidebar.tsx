@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
 import { useChart } from "components/gantt-chart/hooks";
@@ -83,7 +82,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
 
   return (
     <DragDropContext onDragEnd={handleOrderChange}>
-      <StrictModeDroppable droppableId="gantt-sidebar">
+      <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
@@ -94,7 +93,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "");
+                  const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
                   return (
                     <Draggable
@@ -131,9 +130,11 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
                               <div className="flex-grow truncate">
                                 <CycleGanttSidebarBlock data={block.data} />
                               </div>
-                              <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                {duration} day{duration > 1 ? "s" : ""}
-                              </div>
+                              {duration !== undefined && (
+                                <div className="flex-shrink-0 text-sm text-custom-text-200">
+                                  {duration} day{duration > 1 ? "s" : ""}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -153,7 +154,7 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
             </>
           </div>
         )}
-      </StrictModeDroppable>
+      </Droppable>
     </DragDropContext>
   );
 };

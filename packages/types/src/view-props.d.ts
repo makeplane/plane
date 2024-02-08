@@ -64,8 +64,7 @@ export type TIssueParams =
   | "order_by"
   | "type"
   | "sub_issue"
-  | "show_empty_groups"
-  | "start_target_date";
+  | "show_empty_groups";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -93,7 +92,6 @@ export interface IIssueDisplayFilterOptions {
   layout?: TIssueLayouts;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
-  start_target_date?: boolean;
   sub_issue?: boolean;
   type?: TIssueTypeFilters;
 }

@@ -1,10 +1,10 @@
-import { FC, useEffect, useState, useRef } from "react";
+import { FC, useEffect, useState, useRef, use } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -64,6 +64,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { getProjectById } = useProject();
+  const { captureIssueEvent } = useEventTracker();
 
   const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
 
@@ -100,13 +101,24 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
 
     try {
       quickAddCallback &&
-        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId));
+        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId).then((res) => {
+          captureIssueEvent({
+            eventName: "Issue created",
+            payload: { ...res, state: "SUCCESS", element: "List quick add" },
+            path: router.asPath,
+          });
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
     } catch (err: any) {
+      captureIssueEvent({
+        eventName: "Issue created",
+        payload: { ...payload, state: "FAILED", element: "List quick add" },
+        path: router.asPath,
+      });
       setToastAlert({
         type: "error",
         title: "Error!",

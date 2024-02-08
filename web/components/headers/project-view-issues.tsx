@@ -6,6 +6,7 @@ import Link from "next/link";
 // hooks
 import {
   useApplication,
+  useEventTracker,
   useIssues,
   useLabel,
   useMember,
@@ -16,6 +17,8 @@ import {
 } from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
@@ -39,9 +42,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { setTrackElement } = useEventTracker();
   const {
     commandPalette: { toggleCreateIssueModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
   const {
     membership: { currentProjectRole },
@@ -107,32 +110,41 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-neutral-border-medium bg-sidebar-neutral-component-surface-light p-4">
       <div className="flex items-center gap-2">
+        <SidebarHamburgerToggle />
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            label={currentProjectDetails?.name ?? "Project"}
-            icon={
-              currentProjectDetails?.emoji ? (
-                <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                  {renderEmoji(currentProjectDetails.emoji)}
-                </span>
-              ) : currentProjectDetails?.icon_prop ? (
-                <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                  {renderEmoji(currentProjectDetails.icon_prop)}
-                </div>
-              ) : (
-                <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                  {currentProjectDetails?.name.charAt(0)}
-                </span>
-              )
+            link={
+              <BreadcrumbLink
+                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                label={currentProjectDetails?.name ?? "Project"}
+                icon={
+                  currentProjectDetails?.emoji ? (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      {renderEmoji(currentProjectDetails.emoji)}
+                    </span>
+                  ) : currentProjectDetails?.icon_prop ? (
+                    <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
+                      {renderEmoji(currentProjectDetails.icon_prop)}
+                    </div>
+                  ) : (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      {currentProjectDetails?.name.charAt(0)}
+                    </span>
+                  )
+                }
+              />
             }
-            link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
           />
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />}
-            label="Views"
-            link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
+            link={
+              <BreadcrumbLink
+                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
+                label="Views"
+                icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />}
+              />
+            }
           />
           <Breadcrumbs.BreadcrumbItem
             type="component"

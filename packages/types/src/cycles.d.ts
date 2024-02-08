@@ -30,7 +30,7 @@ export interface ICycle {
   is_favorite: boolean;
   issue: string;
   name: string;
-  owned_by: IUser;
+  owned_by: string;
   project: string;
   project_detail: IProjectLite;
   status: TCycleGroups;

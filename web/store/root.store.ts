@@ -1,6 +1,7 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // root stores
 import { AppRootStore, IAppRootStore } from "./application";
+import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
@@ -22,6 +23,7 @@ enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
   app: IAppRootStore;
+  eventTracker: IEventTrackerStore;
   user: IUserRootStore;
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
@@ -41,6 +43,7 @@ export class RootStore {
 
   constructor() {
     this.app = new AppRootStore(this);
+    this.eventTracker = new EventTrackerStore(this);
     this.user = new UserRootStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);

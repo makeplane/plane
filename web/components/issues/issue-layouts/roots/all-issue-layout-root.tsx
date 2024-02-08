@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import isEmpty from "lodash/isEmpty";
+import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
 import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
 // components
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
@@ -25,6 +26,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // store
@@ -41,12 +44,14 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const { workspaceProjectIds } = useProject();
+  const { setTrackElement } = useEventTracker();
 
   const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
   const currentViewDetails = ALL_ISSUES_EMPTY_STATE_DETAILS[currentView as keyof typeof ALL_ISSUES_EMPTY_STATE_DETAILS];
 
-  const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, currentUser?.theme.theme === "light");
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, isLightMode);
 
   // filter init from the query params
 
@@ -57,6 +62,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
     ) {
       const routerQueryParams = { ...router.query };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { ["workspaceSlug"]: _workspaceSlug, ["globalViewId"]: _globalViewId, ...filters } = routerQueryParams;
 
       let issueFilters: any = {};
@@ -143,9 +149,15 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !globalViewId) return;
 
-      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_FILTERS, { ...updatedDisplayFilter });
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        { ...updatedDisplayFilter },
+        globalViewId.toString()
+      );
     },
     [updateFilters, workspaceSlug]
   );
@@ -190,12 +202,18 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
                   ? currentView !== "custom-view" && currentView !== "subscribed"
                     ? {
                         text: "Create new issue",
-                        onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT),
+                        onClick: () => {
+                          setTrackElement("All issues empty state");
+                          commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                        },
                       }
                     : undefined
                   : {
                       text: "Start your first project",
-                      onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
+                      onClick: () => {
+                        setTrackElement("All issues empty state");
+                        commandPaletteStore.toggleCreateProjectModal(true);
+                      },
                     }
               }
               disabled={!isEditingAllowed}

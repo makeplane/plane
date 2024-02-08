@@ -7,17 +7,14 @@ import { useLabel, useMember, useUser, useIssues } from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TStaticViewTypes,
-} from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -110,19 +107,24 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-neutral-border-medium bg-sidebar-neutral-component-surface-light p-4">
-        <div>
+      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="relative flex gap-2">
+          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              icon={
-                activeLayout === "spreadsheet" ? (
-                  <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                ) : (
-                  <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
-                )
+              link={
+                <BreadcrumbLink
+                  label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
+                  icon={
+                    activeLayout === "spreadsheet" ? (
+                      <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                    ) : (
+                      <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+                    )
+                  }
+                />
               }
-              label={`All ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
             />
           </Breadcrumbs>
         </div>

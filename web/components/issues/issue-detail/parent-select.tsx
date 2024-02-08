@@ -63,7 +63,8 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
           "group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none",
           {
             "cursor-not-allowed": disabled,
-            "hover:bg-neutral-component-surface-dark": !disabled,
+            "hover:bg-custom-background-80": !disabled,
+            "bg-custom-background-80": isParentIssueModalOpen,
           },
           className
         )}
@@ -71,16 +72,21 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (
-          <div className="flex items-center gap-1 bg-success-component-surface-light text-success-text-medium rounded px-1.5 py-1">
-            <Link
-              href={`/${workspaceSlug}/projects/${projectId}/issues/${parentIssue?.id}`}
-              className="text-xs font-medium"
-            >
-              {parentIssueProjectDetails?.identifier}-{parentIssue.sequence_id}
-            </Link>
+          <div className="flex items-center gap-1 bg-green-500/20 text-green-700 rounded px-1.5 py-1">
+            <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name}>
+              <Link
+                href={`/${workspaceSlug}/projects/${projectId}/issues/${parentIssue?.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {parentIssueProjectDetails?.identifier}-{parentIssue.sequence_id}
+              </Link>
+            </Tooltip>
 
             {!disabled && (
-              <Tooltip tooltipContent="Remove">
+              <Tooltip tooltipContent="Remove" position="bottom">
                 <span
                   onClick={(e) => {
                     e.preventDefault();
@@ -96,7 +102,15 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
         ) : (
           <span className="text-sm text-custom-text-400">Add parent issue</span>
         )}
-        {!disabled && <Pencil className="h-4 w-4 flex-shrink-0 hidden group-hover:inline" />}
+        {!disabled && (
+          <span
+            className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
+              "text-custom-text-400": !issue.parent_id && !parentIssue,
+            })}
+          >
+            <Pencil className="h-2.5 w-2.5 flex-shrink-0" />
+          </span>
+        )}
       </button>
     </>
   );

@@ -13,7 +13,6 @@ type TIssueActivity = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled: boolean;
 };
 
 type TActivityTabs = "all" | "activity" | "comments";
@@ -43,7 +42,7 @@ export type TActivityOperations = {
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled } = props;
+  const { workspaceSlug, projectId, issueId } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { setToastAlert } = useToast();
@@ -147,14 +146,11 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
               />
-              {!disabled && (
-                <IssueCommentCreate
-                  workspaceSlug={workspaceSlug}
-                  activityOperations={activityOperations}
-                  disabled={disabled}
-                  showAccessSpecifier={project.is_deployed}
-                />
-              )}
+              <IssueCommentCreate
+                workspaceSlug={workspaceSlug}
+                activityOperations={activityOperations}
+                showAccessSpecifier={project.is_deployed}
+              />
             </div>
           ) : activityTab === "activity" ? (
             <IssueActivityRoot issueId={issueId} />
@@ -166,14 +162,11 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 activityOperations={activityOperations}
                 showAccessSpecifier={project.is_deployed}
               />
-              {!disabled && (
-                <IssueCommentCreate
-                  workspaceSlug={workspaceSlug}
-                  activityOperations={activityOperations}
-                  disabled={disabled}
-                  showAccessSpecifier={project.is_deployed}
-                />
-              )}
+              <IssueCommentCreate
+                workspaceSlug={workspaceSlug}
+                activityOperations={activityOperations}
+                showAccessSpecifier={project.is_deployed}
+              />
             </div>
           )}
         </div>
