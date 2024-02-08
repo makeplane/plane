@@ -1020,6 +1020,30 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .order_by("label_name")
         )
 
+        assignee_distribution_data = [
+            {
+                "display_name": item["display_name"],
+                "assignee_id": str(item["assignee_id"]),
+                "avatar": item["avatar"],
+                "total_issues": item["total_issues"],
+                "completed_issues": item["completed_issues"],
+                "pending_issues": item["pending_issues"],
+            }
+            for item in assignee_distribution
+        ]
+
+        label_distribution_data = [
+            {
+                "label_name": item["label_name"],
+                "color": item["color"],
+                "label_id": str(item["label_id"]),
+                "total_issues": item["total_issues"],
+                "completed_issues": item["completed_issues"],
+                "pending_issues": item["pending_issues"],
+            }
+            for item in label_distribution
+        ]
+
         current_cycle = Cycle.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         ).first()
@@ -1035,8 +1059,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             "completed_estimates": old_cycle.first().completed_estimates,
             "started_estimates": old_cycle.first().started_estimates,
             "distribution":{
-                "labels": list(label_distribution),
-                "assignees": list(assignee_distribution),
+                "labels": label_distribution_data,
+                "assignees": assignee_distribution_data,
                 "completion_chart": completion_chart,
             },
         }
