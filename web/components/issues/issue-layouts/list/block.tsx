@@ -51,10 +51,11 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     <>
       <div
         className={cn(
-          "relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm border border-transparent border-b-custom-border-200 last:border-b-transparent",
+          "relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm border border-transparent border-b-custom-border-200",
           {
             "border border-custom-primary-70 hover:border-custom-primary-70":
               peekIssue && peekIssue.issueId === issue.id,
+            "last:border-b-transparent": peekIssue?.issueId !== issue.id,
           }
         )}
       >
@@ -68,16 +69,22 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
         )}
 
-        <ControlLink
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
-          target="_blank"
-          onClick={() => handleIssuePeekOverview(issue)}
-          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
-        >
+        {issue?.is_draft ? (
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <span>{issue.name}</span>
           </Tooltip>
-        </ControlLink>
+        ) : (
+          <ControlLink
+            href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
+            target="_blank"
+            onClick={() => handleIssuePeekOverview(issue)}
+            className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          >
+            <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <span>{issue.name}</span>
+            </Tooltip>
+          </ControlLink>
+        )}
 
         <div className="ml-auto flex flex-shrink-0 items-center gap-2">
           {!issue?.tempId ? (

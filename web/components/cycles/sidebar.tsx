@@ -353,6 +353,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const issueCount =
     cycleDetails.total_issues === 0 ? "0 Issue" : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -410,8 +411,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   backgroundColor: `${currentCycle.color}20`,
                 }}
               >
-                {currentCycle.value === "current"
-                  ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
+                {currentCycle.value === "current" && daysLeft !== undefined
+                  ? `${daysLeft} ${currentCycle.label}`
                   : `${currentCycle.label}`}
               </span>
             )}
