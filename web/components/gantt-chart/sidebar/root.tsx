@@ -1,7 +1,7 @@
 // components
 import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 // constants
-import { HEADER_HEIGHT } from "../constants";
+import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 
 type Props = {
   blocks: IGanttBlock[] | null;
@@ -18,10 +18,13 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
     <div
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="sticky left-0 z-10 min-h-full h-max w-1/4 flex-shrink-0 border-r-[0.5px] border-custom-border-200"
+      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200"
+      style={{
+        width: `${SIDEBAR_WIDTH}px`,
+      }}
     >
       <div
-        className="box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pl-8 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-[1] bg-custom-background-100"
+        className="box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pl-8 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
         style={{
           height: `${HEADER_HEIGHT}px`,
         }}

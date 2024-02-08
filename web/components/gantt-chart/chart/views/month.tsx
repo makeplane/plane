@@ -6,7 +6,7 @@ import { cn } from "helpers/common.helper";
 // types
 import { IMonthBlock } from "../../views";
 // constants
-import { HEADER_HEIGHT } from "components/gantt-chart/constants";
+import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "components/gantt-chart/constants";
 
 export const MonthChartView: FC<any> = () => {
   // chart hook
@@ -19,13 +19,18 @@ export const MonthChartView: FC<any> = () => {
         {monthBlocks?.map((block, rootIndex) => (
           <div key={`month-${block?.month}-${block?.year}`} className="relative">
             <div
-              className="w-full sticky top-0 bg-custom-background-100"
+              className="w-full sticky top-0 z-[5] bg-custom-background-100"
               style={{
                 height: `${HEADER_HEIGHT}px`,
               }}
             >
               <div className="h-1/2">
-                <div className="sticky left-[410px] inline-flex whitespace-nowrap px-3 py-2 text-xs font-medium capitalize">
+                <div
+                  className="sticky inline-flex whitespace-nowrap px-3 py-2 text-xs font-medium capitalize"
+                  style={{
+                    left: `${SIDEBAR_WIDTH}px`,
+                  }}
+                >
                   {block?.title}
                 </div>
               </div>

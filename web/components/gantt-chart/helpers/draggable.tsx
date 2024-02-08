@@ -4,6 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { IGanttBlock, useChart } from "components/gantt-chart";
 // helpers
 import { cn } from "helpers/common.helper";
+// constants
+import { SIDEBAR_WIDTH } from "../constants";
 
 type Props = {
   block: IGanttBlock;
@@ -34,9 +36,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     const ganttContainer = document.querySelector("#gantt-container") as HTMLDivElement;
     const ganttSidebar = document.querySelector("#gantt-sidebar") as HTMLDivElement;
 
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
-
-    if (!ganttContainer || !ganttSidebar || !scrollContainer) return 0;
+    if (!ganttContainer || !ganttSidebar) return 0;
 
     const posFromLeft = e.clientX;
     // manually scroll to left if reached the left end while dragging
@@ -45,7 +45,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
 
       delWidth = -5;
 
-      scrollContainer.scrollBy(delWidth, 0);
+      ganttContainer.scrollBy(delWidth, 0);
     } else delWidth = e.movementX;
 
     // manually scroll to right if reached the right end while dragging
@@ -55,7 +55,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
 
       delWidth = 5;
 
-      scrollContainer.scrollBy(delWidth, 0);
+      ganttContainer.scrollBy(delWidth, 0);
     } else delWidth = e.movementX;
 
     return delWidth;
@@ -201,7 +201,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   };
   // scroll to a hidden block
   const handleScrollToBlock = () => {
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
     if (!scrollContainer || !block.position) return;
     // update container's scroll position to the block's position
     scrollContainer.scrollLeft = block.position.marginLeft - 4;
@@ -212,8 +212,8 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     block.position?.width &&
     scrollLeft > block.position.marginLeft + block.position.width;
 
-  const intersectionRoot = document.querySelector("#scroll-container") as HTMLDivElement;
   useEffect(() => {
+    const intersectionRoot = document.querySelector("#gantt-container") as HTMLDivElement;
     const resizableBlock = resizableRef.current;
     if (!resizableBlock || !intersectionRoot) return;
 
@@ -223,7 +223,10 @@ export const ChartDraggable: React.FC<Props> = (props) => {
           setIsHidden(!entry.isIntersecting);
         });
       },
-      { root: intersectionRoot }
+      {
+        root: intersectionRoot,
+        rootMargin: `0px 0px 0px -${SIDEBAR_WIDTH}px`,
+      }
     );
 
     observer.observe(resizableBlock);
@@ -231,7 +234,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     return () => {
       observer.unobserve(resizableBlock);
     };
-  }, [block.data.name, intersectionRoot]);
+  }, [block.data.name]);
 
   return (
     <>
@@ -239,7 +242,10 @@ export const ChartDraggable: React.FC<Props> = (props) => {
       {isHidden && (
         <button
           type="button"
-          className="sticky left-1 z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          className="sticky z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          style={{
+            left: `${SIDEBAR_WIDTH + 4}px`,
+          }}
           onClick={handleScrollToBlock}
         >
           <ArrowRight

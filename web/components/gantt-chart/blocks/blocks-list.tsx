@@ -10,7 +10,7 @@ import { cn } from "helpers/common.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "../types";
 // constants
-import { BLOCK_HEIGHT } from "../constants";
+import { BLOCK_HEIGHT, HEADER_HEIGHT } from "../constants";
 
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
@@ -84,6 +84,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
       className="h-full"
       style={{
         width: `${itemsContainerWidth}px`,
+        marginTop: `${HEADER_HEIGHT}px`,
       }}
     >
       {blocks?.map((block) => {

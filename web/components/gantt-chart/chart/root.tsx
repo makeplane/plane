@@ -21,6 +21,8 @@ import { cn } from "helpers/common.helper";
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
 import { currentViewDataWithView } from "../data";
+// constants
+import { SIDEBAR_WIDTH } from "../constants";
 
 type ChartViewRootProps = {
   border: boolean;
@@ -144,7 +146,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   }, []);
 
   const updatingCurrentLeftScrollPosition = (width: number) => {
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
     if (!scrollContainer) return;
 
     scrollContainer.scrollLeft = width + scrollContainer?.scrollLeft;
@@ -152,7 +154,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   };
 
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLDivElement;
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
     if (!scrollContainer) return;
 
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
@@ -174,7 +176,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     // if (currentView === "year")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
 
-    scrollWidth = daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
+    scrollWidth =
+      daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width) + SIDEBAR_WIDTH / 2;
 
     scrollContainer.scrollLeft = scrollWidth;
   };
