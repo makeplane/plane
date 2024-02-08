@@ -105,7 +105,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               <button
                 ref={setReferenceElement}
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   openDropdown();
                   if (menuButtonOnClick) menuButtonOnClick();
                 }}
@@ -121,7 +122,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
@@ -145,7 +147,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         ? "cursor-not-allowed text-custom-text-200"
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
