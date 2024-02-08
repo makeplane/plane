@@ -5,6 +5,7 @@ export type MemberDropdownProps = TDropdownProps & {
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   placeholder?: string;
+  onClose?: () => void;
 } & (
     | {
         multiple: false;

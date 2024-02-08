@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from "react";
+import React, { FC, useState, useRef, useEffect, Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
@@ -20,7 +20,7 @@ import {
   CycleDropdown,
   DateDropdown,
   EstimateDropdown,
-  ModuleSelectDropdown,
+  ModuleDropdown,
   PriorityDropdown,
   ProjectDropdown,
   ProjectMemberDropdown,
@@ -55,8 +55,9 @@ export interface IssueFormProps {
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
   onClose: () => void;
-  onSubmit: (values: Partial<TIssue>) => Promise<void>;
+  onSubmit: (values: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
+  isDraft: boolean;
 }
 
 // services
@@ -72,6 +73,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     projectId: defaultProjectId,
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
+    isDraft,
   } = props;
   // states
   const [labelModal, setLabelModal] = useState(false);
@@ -132,12 +134,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         parent_id: formData.parent_id,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   const issueName = watch("name");
 
-  const handleFormSubmit = async (formData: Partial<TIssue>) => {
-    await onSubmit(formData);
+  const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
+    await onSubmit(formData, is_draft_issue);
 
     setGptAssistantModal(false);
 
@@ -247,7 +250,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           }}
         />
       )}
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
             {/* Don't show project selection if editing an issue */}
@@ -267,6 +270,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                       }}
                       buttonVariant="border-with-text"
+                      // TODO: update tabIndex logic
                       tabIndex={19}
                     />
                   </div>
@@ -547,18 +551,17 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     name="module_ids"
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
-                        <ModuleSelectDropdown
-                          workspaceSlug={workspaceSlug.toString()}
+                        <ModuleDropdown
                           projectId={projectId}
-                          value={value || undefined}
-                          onChange={(moduleId) => {
-                            onChange(moduleId);
+                          value={value ?? []}
+                          onChange={(moduleIds) => {
+                            onChange(moduleIds);
                             handleFormChange();
                           }}
                           buttonVariant="border-with-text"
                           tabIndex={13}
-                          multiple={true}
-                          showCount={true}
+                          multiple
+                          showCount
                         />
                       </div>
                     )}
@@ -669,7 +672,34 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={17}>
               Discard
             </Button>
-            <Button type="submit" variant="primary" size="sm" loading={isSubmitting} tabIndex={18}>
+
+            {isDraft && (
+              <Fragment>
+                {data?.id ? (
+                  <Button
+                    variant="neutral-primary"
+                    size="sm"
+                    loading={isSubmitting}
+                    onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
+                    tabIndex={18}
+                  >
+                    {isSubmitting ? "Moving" : "Move from draft"}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="neutral-primary"
+                    size="sm"
+                    loading={isSubmitting}
+                    onClick={handleSubmit((data) => handleFormSubmit(data, true))}
+                    tabIndex={18}
+                  >
+                    {isSubmitting ? "Saving" : "Save as draft"}
+                  </Button>
+                )}
+              </Fragment>
+            )}
+
+            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={isDraft ? 19 : 18}>
               {data?.id ? (isSubmitting ? "Updating" : "Update issue") : isSubmitting ? "Creating" : "Create issue"}
             </Button>
           </div>

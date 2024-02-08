@@ -7,33 +7,25 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { useApplication, useCycle } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// components
+import { DropdownButton } from "./buttons";
 // icons
-import { ContrastIcon, Tooltip } from "@plane/ui";
+import { ContrastIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { ICycle } from "@plane/types";
 import { TDropdownProps } from "./types";
+// constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string | null) => void;
+  onClose?: () => void;
   projectId: string;
   value: string | null;
-};
-
-type ButtonProps = {
-  className?: string;
-  cycle: ICycle | null;
-  hideIcon: boolean;
-  hideText?: boolean;
-  dropdownArrow: boolean;
-  isActive?: boolean;
-  dropdownArrowClassName: string;
-  placeholder: string;
-  tooltip: boolean;
 };
 
 type DropdownOptions =
@@ -43,100 +35,6 @@ type DropdownOptions =
       content: JSX.Element;
     }[]
   | undefined;
-
-const BorderButton = (props: ButtonProps) => {
-  const {
-    className,
-    cycle,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Cycle" tooltipContent={cycle?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          { "bg-custom-background-80": isActive },
-          className
-        )}
-      >
-        {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}{" "}
-        {!hideText && <span className="flex-grow truncate">{cycle?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const BackgroundButton = (props: ButtonProps) => {
-  const {
-    className,
-    cycle,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Cycle" tooltipContent={cycle?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
-          className
-        )}
-      >
-        {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{cycle?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const TransparentButton = (props: ButtonProps) => {
-  const {
-    className,
-    cycle,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="Cycle" tooltipContent={cycle?.name ?? placeholder} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          { "bg-custom-background-80": isActive },
-          className
-        )}
-      >
-        {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
-        {!hideText && <span className="flex-grow truncate">{cycle?.name ?? placeholder}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
 
 export const CycleDropdown: React.FC<Props> = observer((props) => {
   const {
@@ -150,11 +48,12 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     dropdownArrowClassName = "",
     hideIcon = false,
     onChange,
+    onClose,
     placeholder = "Cycle",
     placement,
     projectId,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
     value,
   } = props;
   // states
@@ -221,13 +120,36 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
 
   const selectedCycle = value ? getCycleById(value) : null;
 
-  const openDropdown = () => {
-    setIsOpen(true);
+  const onOpen = () => {
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (!isOpen) return;
+    setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+    onClose && onClose();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const dropdownOnChange = (val: string | null) => {
+    onChange(val);
+    handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
 
   return (
     <Combobox
@@ -236,7 +158,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
       tabIndex={tabIndex}
       className={cn("h-full", className)}
       value={value}
-      onChange={onChange}
+      onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
     >
@@ -245,8 +167,8 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={openDropdown}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+            onClick={handleOnClick}
           >
             {button}
           </button>
@@ -262,77 +184,24 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
               },
               buttonContainerClassName
             )}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
-            {/* TODO: move button components to a single file for each dropdown */}
-            {buttonVariant === "border-with-text" ? (
-              <BorderButton
-                cycle={selectedCycle}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "border-without-text" ? (
-              <BorderButton
-                cycle={selectedCycle}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton
-                cycle={selectedCycle}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton
-                cycle={selectedCycle}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton
-                cycle={selectedCycle}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton
-                cycle={selectedCycle}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                hideText
-                placeholder={placeholder}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : null}
+            <DropdownButton
+              className={buttonClassName}
+              isActive={isOpen}
+              tooltipHeading="Cycle"
+              tooltipContent={selectedCycle?.name ?? placeholder}
+              showTooltip={showTooltip}
+              variant={buttonVariant}
+            >
+              {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                <span className="flex-grow truncate">{selectedCycle?.name ?? placeholder}</span>
+              )}
+              {dropdownArrow && (
+                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              )}
+            </DropdownButton>
           </button>
         )}
       </Combobox.Button>
@@ -366,7 +235,6 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
-                      onClick={closeDropdown}
                     >
                       {({ selected }) => (
                         <>

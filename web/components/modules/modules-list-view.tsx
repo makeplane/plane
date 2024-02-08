@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useModule, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useModule, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
@@ -20,6 +20,7 @@ export const ModulesListView: React.FC = observer(() => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
     currentUser,
@@ -106,7 +107,10 @@ export const ModulesListView: React.FC = observer(() => {
           }}
           primaryButton={{
             text: "Build your first module",
-            onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
+            onClick: () => {
+              setTrackElement("Module empty state");
+              commandPaletteStore.toggleCreateModuleModal(true);
+            },
           }}
           size="lg"
           disabled={!isEditingAllowed}

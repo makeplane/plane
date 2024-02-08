@@ -6,7 +6,7 @@ import { Disclosure, Popover, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
-import { useApplication, useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
@@ -66,15 +66,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { getCycleById, updateCycleDetails } = useCycle();
+  const { getUserDetails } = useMember();
 
   const cycleDetails = getCycleById(cycleId);
+  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by) : undefined;
 
   const { setToastAlert } = useToast();
 
@@ -317,13 +317,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
   const issueCount =
-    cycleDetails.total_issues === 0
-      ? "0 Issue"
-      : cycleDetails.total_issues === cycleDetails.completed_issues
-      ? cycleDetails.total_issues > 1
-        ? `${cycleDetails.total_issues}`
-        : `${cycleDetails.total_issues}`
-      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+    cycleDetails.total_issues === 0 ? "0 Issue" : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -381,8 +376,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   backgroundColor: `${currentCycle.color}20`,
                 }}
               >
-                {currentCycle.value === "current"
-                  ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
+                {currentCycle.value === "current" && daysLeft !== undefined
+                  ? `${daysLeft} ${currentCycle.label}`
                   : `${currentCycle.label}`}
               </span>
             )}
@@ -518,8 +513,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
             <div className="flex w-1/2 items-center rounded-sm">
               <div className="flex items-center gap-2.5">
-                <Avatar name={cycleDetails.owned_by.display_name} src={cycleDetails.owned_by.avatar} />
-                <span className="text-sm text-custom-text-200">{cycleDetails.owned_by.display_name}</span>
+                <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
+                <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
               </div>
             </div>
           </div>
@@ -573,7 +568,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {isStartValid && isEndValid ? (
+                        {cycleDetails.distribution?.completion_chart &&
+                        cycleDetails.start_date &&
+                        cycleDetails.end_date ? (
                           <div className="h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
                               <div className="flex items-center gap-3 text-custom-text-100">
@@ -589,9 +586,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                distribution={cycleDetails.distribution?.completion_chart ?? {}}
-                                startDate={cycleDetails.start_date ?? ""}
-                                endDate={cycleDetails.end_date ?? ""}
+                                distribution={cycleDetails.distribution?.completion_chart}
+                                startDate={cycleDetails.start_date}
+                                endDate={cycleDetails.end_date}
                                 totalIssues={cycleDetails.total_issues}
                               />
                             </div>

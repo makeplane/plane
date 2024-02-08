@@ -220,6 +220,30 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                issue = Issue.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    external_id=request.data.get("external_id"),
+                    external_source=request.data.get("external_source"),
+                ).first()
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists",
+                        "id": str(issue.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
             serializer.save()
 
             # Track the issue
@@ -256,6 +280,26 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             partial=True,
         )
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (issue.external_id != str(request.data.get("external_id")))
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get(
+                        "external_source", issue.external_source
+                    ),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists",
+                        "id": str(issue.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
             serializer.save()
             issue_activity.delay(
                 type="issue.activity.updated",
@@ -263,6 +307,8 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 actor_id=str(request.user.id),
                 issue_id=str(pk),
                 project_id=str(project_id),
+                external_id__isnull=False,
+                external_source__isnull=False,
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
@@ -318,6 +364,30 @@ class LabelAPIEndpoint(BaseAPIView):
         try:
             serializer = LabelSerializer(data=request.data)
             if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Label.objects.filter(
+                        project_id=project_id,
+                        workspace__slug=slug,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).exists()
+                ):
+                    label = Label.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        external_id=request.data.get("external_id"),
+                        external_source=request.data.get("external_source"),
+                    ).first()
+                    return Response(
+                        {
+                            "error": "Label with the same external id and external source already exists",
+                            "id": str(label.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
+
                 serializer.save(project_id=project_id)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
@@ -326,11 +396,17 @@ class LabelAPIEndpoint(BaseAPIView):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         except IntegrityError:
+            label = Label.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                name=request.data.get("name"),
+            ).first()
             return Response(
                 {
-                    "error": "Label with the same name already exists in the project"
+                    "error": "Label with the same name already exists in the project",
+                    "id": str(label.id),
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def get(self, request, slug, project_id, pk=None):
@@ -357,6 +433,25 @@ class LabelAPIEndpoint(BaseAPIView):
         label = self.get_queryset().get(pk=pk)
         serializer = LabelSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (label.external_id != str(request.data.get("external_id")))
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get(
+                        "external_source", label.external_source
+                    ),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Label with the same external id and external source already exists",
+                        "id": str(label.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -38,10 +38,6 @@ x-app-env : &app-env
     - EMAIL_USE_SSL=${EMAIL_USE_SSL:-0}
     - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
     - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
-    # OPENAI SETTINGS - Deprecated can be configured through admin panel
-    - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
-    - OPENAI_API_KEY=${OPENAI_API_KEY:-""}
-    - GPT_ENGINE=${GPT_ENGINE:-"gpt-3.5-turbo"}
     # LOGIN/SIGNUP SETTINGS - Deprecated can be configured through admin panel
     - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
     - ENABLE_EMAIL_PASSWORD=${ENABLE_EMAIL_PASSWORD:-1}
