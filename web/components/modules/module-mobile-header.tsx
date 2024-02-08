@@ -77,7 +77,7 @@ export const ModuleMobileHeader = () => {
     );
 
     return (
-        <>
+        <div className="block md:hidden">
             <ProjectAnalyticsModal
                 isOpen={analyticsModal}
                 onClose={() => setAnalyticsModal(false)}
@@ -157,6 +157,6 @@ export const ModuleMobileHeader = () => {
                     Analytics
                 </button>
             </div>
-        </>
+        </div>
     );
 };
