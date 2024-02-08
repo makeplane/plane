@@ -21,6 +21,7 @@ import { USER_ACTIVITY } from "constants/fetch-keys";
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // type
 import { NextPageWithLayout } from "lib/types";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 const userService = new UserService();
 
@@ -30,8 +31,9 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const { currentUser } = useUser();
 
   return (
-    <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-      <div className="flex items-center border-b border-neutral-border-subtle pb-3.5">
+    <section className="mx-auto mt-5  md:mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+      <div className="flex items-center border-b border-neutral-border-subtle gap-4 pb-3.5">
+        <SidebarHamburgerToggle />
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
       {userActivity ? (

@@ -208,9 +208,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         <Tooltip tooltipContent="Snooze">
           <CustomMenu
             className="flex items-center"
-            menuButtonOnClick={(e: { stopPropagation: () => void }) => {
-              e.stopPropagation();
-            }}
             customButton={
               <div className="flex w-full items-center gap-x-2 rounded bg-neutral-component-surface-dark p-0.5 text-sm hover:bg-neutral-component-surface-light">
                 <Clock className="h-3.5 w-3.5 text-neutral-text-medium" />
