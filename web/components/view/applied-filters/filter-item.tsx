@@ -1,9 +1,10 @@
 import { FC } from "react";
-import { User, X } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 // hooks
-import { useViewDetail } from "hooks/store";
+import { useViewFilter } from "hooks/store";
 // types
 import { TViewFilters, TViewTypes } from "@plane/types";
+import { TViewOperations } from "../types";
 
 type TViewAppliedFiltersItem = {
   workspaceSlug: string;
@@ -11,33 +12,30 @@ type TViewAppliedFiltersItem = {
   viewId: string;
   viewType: TViewTypes;
   filterKey: keyof TViewFilters;
-  filterId: string;
+  propertyId: string;
+  viewOperations: TViewOperations;
 };
 
 export const ViewAppliedFiltersItem: FC<TViewAppliedFiltersItem> = (props) => {
-  const { workspaceSlug, projectId, viewId, viewType, filterKey, filterId } = props;
+  const { workspaceSlug, projectId, filterKey, propertyId, viewOperations } = props;
   // hooks
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewFilterHelper = useViewFilter(workspaceSlug, projectId);
+
+  const propertyDetail = viewFilterHelper?.propertyDetails(filterKey, propertyId) || undefined;
 
   const removeFilterOption = () => {
-    const filters = viewDetailStore?.appliedFilters?.filters;
-    if (!filters) return;
-    const filterValues = filters[filterKey];
-    const updatedFilterValues = filterValues.filter((value) => value !== filterId);
-    viewDetailStore?.setFilters({ [filterKey]: updatedFilterValues });
+    viewOperations?.setFilters(filterKey, propertyId);
   };
 
   return (
     <div
-      key={`filter_value_${filterKey}_${filterId}`}
-      className="border border-custom-border-200 rounded relative flex items-center gap-1 px-1 py-0.5"
+      key={`filter_value_${filterKey}_${propertyId}`}
+      className="bg-custom-background-80 rounded relative flex items-center gap-1.5 p-1.5 py-1"
     >
       <div className="flex-shrink-0 w-4 h-4 relative flex justify-center items-center overflow-hidden">
-        <User size={12} />
+        {propertyDetail?.icon || <ImagePlus size={14} />}
       </div>
-      <div className="text-xs">
-        {filterKey} - {filterId}
-      </div>
+      <div className="text-xs">{propertyDetail?.label || propertyId}</div>
       <div
         className="flex-shrink-0 w-3.5 h-3.5 relative flex justify-center items-center overflow-hidden rounded-full transition-all cursor-pointer bg-custom-background-80 hover:bg-custom-background-90 text-custom-text-300 hover:text-custom-text-200"
         onClick={removeFilterOption}

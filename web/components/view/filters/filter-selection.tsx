@@ -5,21 +5,18 @@ import { observer } from "mobx-react-lite";
 import { useViewDetail } from "hooks/store";
 // types
 import { TViewFilters, TViewTypes } from "@plane/types";
-import { TViewOperations } from "../types";
 
 type TViewFilterSelection = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  viewOperations: TViewOperations;
-  baseRoute: string;
   filterKey: keyof TViewFilters;
   propertyId: string;
 };
 
 export const ViewFilterSelection: FC<TViewFilterSelection> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, baseRoute, filterKey, propertyId } = props;
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyId } = props;
 
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 

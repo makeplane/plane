@@ -10,10 +10,8 @@ import {
   ViewRoot,
   ViewCreateEditForm,
   ViewLayoutRoot,
-  ViewFiltersRoot,
   ViewFiltersDropdown,
   ViewDisplayFiltersDropdown,
-  ViewDisplayPropertiesRoot,
   ViewAppliedFiltersRoot,
   ViewDuplicateConfirmationModal,
   ViewDeleteConfirmationModal,
@@ -73,11 +71,12 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
     () => ({
       setName: (name: string) => viewDetailStore?.setName(name),
       setDescription: (name: string) => viewDetailStore?.setDescription(name),
-      setFilters: (filters: Partial<TViewFilters>) => viewDetailStore?.setFilters(filters),
+      setFilters: (filterKey: keyof TViewFilters, filterValue: "clear_all" | string) =>
+        viewDetailStore?.setFilters(filterKey, filterValue),
       setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) =>
         viewDetailStore?.setDisplayFilters(display_filters),
-      setDisplayProperties: (display_properties: Partial<TViewDisplayProperties>) =>
-        viewDetailStore?.setDisplayProperties(display_properties),
+      setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) =>
+        viewDetailStore?.setDisplayProperties(displayPropertyKey),
       localViewCreateEdit: (viewId: string | undefined) => {
         if (viewId === undefined) {
           const viewPayload = viewLocalPayload;
@@ -171,29 +170,8 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
             />
           </div>
 
-          <div className="p-5 border-b border-custom-border-300">
-            <ViewDisplayPropertiesRoot
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              viewId={viewId}
-              viewType={viewType}
-              viewOperations={viewOperations}
-            />
-          </div>
-
-          {/* <div className="m-5 px-2 rounded border border-custom-border-300 w-[400px] max-h-[500px] overflow-hidden overflow-y-auto mx-auto bg-custom-background-100">
-            <ViewFiltersRoot
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              viewId={viewId}
-              viewType={viewType}
-              viewOperations={viewOperations}
-              baseRoute={baseRoute}
-            />
-          </div> */}
-
-          <div className="p-5 border-b border-custom-border-200 relative flex gap-2">
-            {/* <div className="w-full">
+          <div className="p-5 py-2 border-b border-custom-border-200 relative flex gap-2">
+            <div className="w-full overflow-hidden">
               <ViewAppliedFiltersRoot
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
@@ -201,9 +179,9 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewType={viewType}
                 viewOperations={viewOperations}
               />
-            </div> */}
+            </div>
 
-            <div className="flex-shrink-0 h-full">
+            <div className="flex-shrink-0">
               <ViewLayoutRoot
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
@@ -220,7 +198,6 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
-                baseRoute={baseRoute}
                 displayDropdownText={false}
               />
             </div>
@@ -232,12 +209,11 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
-                baseRoute={baseRoute}
                 displayDropdownText={false}
               />
             </div>
 
-            <div className="border border-custom-border-300 relative flex items-center gap-1 h-8 rounded px-2 transition-all text-custom-text-200 hover:text-custom-text-100 bg-custom-background-100 hover:bg-custom-background-80 cursor-pointer shadow-custom-shadow-2xs">
+            <div className="border border-custom-border-300 relative flex items-center gap-1 h-7 rounded px-2 transition-all text-custom-text-200 hover:text-custom-text-100 bg-custom-background-100 hover:bg-custom-background-80 cursor-pointer shadow-custom-shadow-2xs">
               <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
                 <Pencil size={12} />
               </div>

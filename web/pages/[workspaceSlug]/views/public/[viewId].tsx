@@ -15,8 +15,8 @@ const GlobalViewIssuesPage: NextPageWithLayout = () => {
 
   if (!workspaceSlug || !viewId) return <></>;
   return (
-    <div className="h-full overflow-hidden bg-custom-background-100">
-      <div className="flex h-full w-full flex-col border-b border-custom-border-300">
+    <div className="w-full h-full overflow-hidden bg-custom-background-100 relative flex flex-col">
+      <div className="flex-shrink-0 w-full">
         <AllIssuesViewRoot
           workspaceSlug={workspaceSlug.toString()}
           projectId={undefined}
@@ -25,6 +25,7 @@ const GlobalViewIssuesPage: NextPageWithLayout = () => {
           baseRoute={`/${workspaceSlug?.toString()}/views/public`}
         />
       </div>
+      <div className="w-full h-full overflow-hidden">Issues render</div>
     </div>
   );
 };

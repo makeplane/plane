@@ -1,4 +1,5 @@
 import isEmpty from "lodash/isEmpty";
+import get from "lodash/get";
 // types
 import {
   TViewFilters,
@@ -11,19 +12,19 @@ import {
 export class FiltersHelper {
   // computed filters
   computedFilters = (filters: TViewFilters, defaultValues?: Partial<TViewFilters>): TViewFilters => ({
-    project: defaultValues?.project || filters?.project || [],
-    module: defaultValues?.module || filters?.module || [],
-    cycle: defaultValues?.cycle || filters?.cycle || [],
-    priority: defaultValues?.priority || filters?.priority || [],
-    state: defaultValues?.state || filters?.state || [],
-    state_group: defaultValues?.state_group || filters?.state_group || [],
-    assignees: defaultValues?.assignees || filters?.assignees || [],
-    mentions: defaultValues?.mentions || filters?.mentions || [],
-    subscriber: defaultValues?.subscriber || filters?.subscriber || [],
-    created_by: defaultValues?.created_by || filters?.created_by || [],
-    labels: defaultValues?.labels || filters?.labels || [],
-    start_date: defaultValues?.start_date || filters?.start_date || [],
-    target_date: defaultValues?.target_date || filters?.target_date || [],
+    project: get(defaultValues, "project", get(filters, "project", [])),
+    module: get(defaultValues, "module", get(filters, "module", [])),
+    cycle: get(defaultValues, "cycle", get(filters, "cycle", [])),
+    priority: get(defaultValues, "priority", get(filters, "priority", [])),
+    state: get(defaultValues, "state", get(filters, "state", [])),
+    state_group: get(defaultValues, "state_group", get(filters, "state_group", [])),
+    assignees: get(defaultValues, "assignees", get(filters, "assignees", [])),
+    mentions: get(defaultValues, "mentions", get(filters, "mentions", [])),
+    subscriber: get(defaultValues, "subscriber", get(filters, "subscriber", [])),
+    created_by: get(defaultValues, "created_by", get(filters, "created_by", [])),
+    labels: get(defaultValues, "labels", get(filters, "labels", [])),
+    start_date: get(defaultValues, "start_date", get(filters, "start_date", [])),
+    target_date: get(defaultValues, "target_date", get(filters, "target_date", [])),
   });
 
   // computed display filters
@@ -49,19 +50,19 @@ export class FiltersHelper {
     displayProperties: TViewDisplayProperties,
     defaultValues?: Partial<TViewDisplayProperties>
   ): TViewDisplayProperties => ({
-    assignee: defaultValues?.assignee || displayProperties?.assignee || true,
-    start_date: defaultValues?.start_date || displayProperties?.start_date || true,
-    due_date: defaultValues?.due_date || displayProperties?.due_date || true,
-    labels: defaultValues?.labels || displayProperties?.labels || true,
-    priority: defaultValues?.priority || displayProperties?.priority || true,
-    state: defaultValues?.state || displayProperties?.state || true,
-    sub_issue_count: defaultValues?.sub_issue_count || displayProperties?.sub_issue_count || true,
-    attachment_count: defaultValues?.attachment_count || displayProperties?.attachment_count || true,
-    link: defaultValues?.link || displayProperties?.link || true,
-    estimate: defaultValues?.estimate || displayProperties?.estimate || true,
-    key: defaultValues?.key || displayProperties?.key || true,
-    created_on: defaultValues?.created_on || displayProperties?.created_on || true,
-    updated_on: defaultValues?.updated_on || displayProperties?.updated_on || true,
+    assignee: get(defaultValues, "assignee", get(displayProperties, "assignee", true)),
+    start_date: get(defaultValues, "start_date", get(displayProperties, "start_date", true)),
+    due_date: get(defaultValues, "due_date", get(displayProperties, "due_date", true)),
+    labels: get(defaultValues, "labels", get(displayProperties, "labels", true)),
+    priority: get(defaultValues, "priority", get(displayProperties, "priority", true)),
+    state: get(defaultValues, "state", get(displayProperties, "state", true)),
+    sub_issue_count: get(defaultValues, "sub_issue_count", get(displayProperties, "sub_issue_count", true)),
+    attachment_count: get(defaultValues, "attachment_count", get(displayProperties, "attachment_count", true)),
+    link: get(defaultValues, "link", get(displayProperties, "link", true)),
+    estimate: get(defaultValues, "estimate", get(displayProperties, "estimate", true)),
+    key: get(defaultValues, "key", get(displayProperties, "key", true)),
+    created_on: get(defaultValues, "created_on", get(displayProperties, "created_on", true)),
+    updated_on: get(defaultValues, "updated_on", get(displayProperties, "updated_on", true)),
   });
 
   // compute filters and display_filters issue query parameters

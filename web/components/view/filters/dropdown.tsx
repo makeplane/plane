@@ -7,6 +7,8 @@ import { ListFilter, Search } from "lucide-react";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { ViewFiltersRoot } from "../";
+// ui
+import { Tooltip } from "@plane/ui";
 // types
 import { TViewOperations } from "../types";
 import { TViewTypes } from "@plane/types";
@@ -17,22 +19,12 @@ type TViewFiltersDropdown = {
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
-  baseRoute: string;
   children?: ReactNode;
   displayDropdownText?: boolean;
 };
 
 export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    viewId,
-    viewType,
-    viewOperations,
-    baseRoute,
-    children,
-    displayDropdownText = true,
-  } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations, children, displayDropdownText = true } = props;
   // state
   const [dropdownToggle, setDropdownToggle] = useState(false);
   const [query, setQuery] = useState("");
@@ -77,20 +69,22 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
           {children ? (
             <span className="relative inline-block">{children}</span>
           ) : (
-            <div
-              className={`relative flex items-center gap-1 h-8 rounded px-2 transition-all
+            <Tooltip tooltipContent={"Filters"} position="bottom">
+              <div
+                className={`relative flex items-center gap-1 h-7 rounded px-2 transition-all
                 ${
                   displayDropdownText
                     ? `border border-custom-border-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80`
                     : `hover:bg-custom-background-80`
                 }
               `}
-            >
-              <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
-                <ListFilter size={14} />
+              >
+                <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
+                  <ListFilter size={14} />
+                </div>
+                {displayDropdownText && <div className="text-sm whitespace-nowrap">Filters</div>}
               </div>
-              {displayDropdownText && <div className="text-sm whitespace-nowrap">Filters</div>}
-            </div>
+            </Tooltip>
           )}
         </button>
       </Combobox.Button>
@@ -122,7 +116,6 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
-                baseRoute={baseRoute}
               />
             </div>
           </div>

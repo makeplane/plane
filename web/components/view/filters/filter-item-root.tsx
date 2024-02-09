@@ -1,10 +1,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react-lite";
-import concat from "lodash/concat";
-import pull from "lodash/pull";
-import uniq from "lodash/uniq";
 // hooks
-import { useViewFilter, useViewDetail } from "hooks/store";
+import { useViewFilter } from "hooks/store";
 // components
 import { ViewFiltersItem, ViewFilterSelection } from "../";
 // types
@@ -17,15 +14,13 @@ type TViewFiltersItemRoot = {
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
-  baseRoute: string;
   filterKey: keyof TViewFilters;
 };
 
 export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, baseRoute, filterKey } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations, filterKey } = props;
   // hooks
   const viewFilterHelper = useViewFilter(workspaceSlug, projectId);
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   // state
   const [viewAll, setViewAll] = useState(false);
 
@@ -33,13 +28,7 @@ export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) =>
 
   const filterPropertyIds = propertyIds.length > 5 ? (viewAll ? propertyIds : propertyIds.slice(0, 5)) : propertyIds;
 
-  const handlePropertySelection = (_propertyId: string) => {
-    const _propertyIds = viewDetailStore?.appliedFilters?.filters?.[filterKey] || [];
-    const isSelected = _propertyIds?.includes(_propertyId) || false;
-    viewOperations?.setFilters({
-      [filterKey]: isSelected ? pull(_propertyIds, _propertyId) : uniq(concat(_propertyIds, [_propertyId])),
-    });
-  };
+  const handlePropertySelection = (_propertyId: string) => viewOperations?.setFilters(filterKey, _propertyId);
 
   if (propertyIds.length <= 0)
     return <div className="text-xs italic py-1 text-custom-text-300">No items are available.</div>;
@@ -56,18 +45,12 @@ export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) =>
             projectId={projectId}
             viewId={viewId}
             viewType={viewType}
-            viewOperations={viewOperations}
-            baseRoute={baseRoute}
             filterKey={filterKey}
             propertyId={propertyId}
           />
           <ViewFiltersItem
             workspaceSlug={workspaceSlug}
             projectId={projectId}
-            viewId={viewId}
-            viewType={viewType}
-            viewOperations={viewOperations}
-            baseRoute={baseRoute}
             filterKey={filterKey}
             propertyId={propertyId}
           />

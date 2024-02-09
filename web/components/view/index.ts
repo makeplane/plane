@@ -25,6 +25,7 @@ export * from "./display-filters/root";
 
 // view display properties
 export * from "./display-properties/root";
+export * from "./display-properties/property-selection";
 
 // view applied filters
 export * from "./applied-filters/root";

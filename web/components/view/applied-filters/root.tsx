@@ -19,7 +19,7 @@ type TViewAppliedFiltersRoot = {
 };
 
 export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
@@ -28,16 +28,14 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
       ? Object.keys(viewDetailStore?.appliedFilters?.filters)
       : undefined;
 
-  const clearAllFilters = () => {
-    const clearedFilters: Partial<Record<keyof TViewFilters, string[]>> = {};
-    filterKeys?.forEach((key) => {
-      const _key = key as keyof TViewFilters;
-      clearedFilters[_key] = [];
-    });
-    viewDetailStore?.setFilters(clearedFilters);
-  };
+  const clearAllFilters = () => viewDetailStore?.setFilters(undefined, "clear_all");
 
-  if (!filterKeys) return <></>;
+  if (!filterKeys || !viewDetailStore?.isFiltersApplied)
+    return (
+      <div className="relative w-full text-sm text-custom-text-200 inline-block truncate line-clamp-1 pt-1.5">
+        No filters applied. Apply filters to create views.
+      </div>
+    );
   return (
     <div className="relative flex items-center gap-2 flex-wrap">
       {filterKeys.map((key) => {
@@ -50,12 +48,14 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
               viewId={viewId}
               viewType={viewType}
               filterKey={filterKey}
+              viewOperations={viewOperations}
             />
           </Fragment>
         );
       })}
+
       <div
-        className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 py-1 cursor-pointer transition-all hover:bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100 min-h-[32px]"
+        className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 px-2 cursor-pointer transition-all hover:bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100 min-h-[36px]"
         onClick={clearAllFilters}
       >
         <div className="text-xs">Clear All</div>

@@ -1,5 +1,8 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import concat from "lodash/concat";
+import pull from "lodash/pull";
 // store
 import { RootStore } from "store/root.store";
 // types
@@ -24,12 +27,13 @@ export type TViewStore = TView & {
   // computed
   appliedFilters: TViewFilterProps | undefined;
   appliedFiltersQueryParams: string | undefined;
+  isFiltersApplied: boolean;
   // helper actions
   setName: (name: string) => void;
   setDescription: (description: string) => void;
-  setFilters: (filters: Partial<TViewFilters>) => void;
+  setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => void;
   setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
-  setDisplayProperties: (display_properties: Partial<TViewDisplayProperties>) => void;
+  setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) => void;
   resetChanges: () => void;
   saveChanges: () => Promise<void>;
   // actions
@@ -132,6 +136,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       // computed
       appliedFilters: computed,
       appliedFiltersQueryParams: computed,
+      isFiltersApplied: computed,
       // helper actions
       setName: action,
       setFilters: action,
@@ -164,6 +169,16 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     return this.computeAppliedFiltersQueryParameters(filters, [])?.query || undefined;
   }
 
+  get isFiltersApplied() {
+    const filters = this.appliedFilters?.filters;
+    let isFiltersApplied = false;
+    Object.keys(filters).forEach((key) => {
+      const _key = key as keyof TViewFilters;
+      if (filters[_key]?.length > 0) isFiltersApplied = true;
+    });
+    return isFiltersApplied;
+  }
+
   // helper actions
   setName = (name: string) => {
     runInAction(() => {
@@ -177,13 +192,18 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     });
   };
 
-  setFilters = (filters: Partial<TViewFilters>) => {
+  setFilters = (filterKey: keyof TViewFilters | undefined = undefined, filterValue: "clear_all" | string) => {
     runInAction(() => {
       this.loader = "submit";
-      Object.keys(filters).forEach((key) => {
-        const _key = key as keyof TViewFilters;
-        set(this.filtersToUpdate, ["filters", _key], filters[_key]);
-      });
+      if (filterKey === undefined) {
+        if (filterValue === "clear_all") set(this.filtersToUpdate, ["filters"], {});
+        this.loader = undefined;
+      } else
+        update(this.filtersToUpdate, ["filters", filterKey], (_values = []) => {
+          if (filterValue === "clear_all") return [];
+          if (_values.includes(filterValue)) return pull(_values, filterValue);
+          return concat(_values, filterValue);
+        });
     });
   };
 
@@ -210,12 +230,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     });
   };
 
-  setDisplayProperties = async (display_properties: Partial<TViewDisplayProperties>) => {
+  setDisplayProperties = async (displayPropertyKey: keyof TViewDisplayProperties) => {
     runInAction(() => {
-      Object.keys(display_properties).forEach((key) => {
-        const _key = key as keyof TViewDisplayProperties;
-        set(this.filtersToUpdate, ["display_properties", _key], display_properties[_key]);
-      });
+      update(this.filtersToUpdate, ["display_properties", displayPropertyKey], (_value: boolean = true) => !_value);
     });
   };
 

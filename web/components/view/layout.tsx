@@ -31,7 +31,7 @@ export const ViewLayoutRoot: FC<TViewLayoutRoot> = observer((props) => {
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
   return (
-    <div className="relative flex gap-0.5 items-center bg-custom-background-80 rounded p-1 h-8 shadow-custom-shadow-2xs">
+    <div className="relative flex gap-0.5 items-center bg-custom-background-80 rounded p-1 h-7 shadow-custom-shadow-2xs">
       {LAYOUTS_DATA.map((layout) => (
         <Fragment key={layout.key}>
           <Tooltip tooltipContent={layout.title} position="bottom">

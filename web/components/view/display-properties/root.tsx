@@ -1,4 +1,7 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
+import { observer } from "mobx-react-lite";
+// components
+import { ViewDisplayPropertySelection } from "../";
 // types
 import { TViewDisplayProperties, TViewTypes } from "@plane/types";
 import { TViewOperations } from "../types";
@@ -11,7 +14,7 @@ type TViewDisplayPropertiesRoot = {
   viewOperations: TViewOperations;
 };
 
-export const ViewDisplayPropertiesRoot: FC<TViewDisplayPropertiesRoot> = (props) => {
+export const ViewDisplayPropertiesRoot: FC<TViewDisplayPropertiesRoot> = observer((props) => {
   const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
 
   const displayProperties: Partial<keyof TViewDisplayProperties>[] = [
@@ -31,20 +34,17 @@ export const ViewDisplayPropertiesRoot: FC<TViewDisplayPropertiesRoot> = (props)
   return (
     <div className="relative flex items-center flex-wrap gap-2">
       {displayProperties.map((property) => (
-        <div
-          key={property}
-          className={`relative flex items-center gap-1 text-xs rounded p-0.5 px-2 border transition-all capitalize cursor-pointer
-            ${
-              false
-                ? `border-custom-primary-100 bg-custom-primary-100`
-                : `border-custom-border-300 hover:bg-custom-background-80`
-            }
-          `}
-          onClick={() => {}}
-        >
-          {["key"].includes(property) ? "ID" : property.replaceAll("_", " ")}
-        </div>
+        <Fragment key={property}>
+          <ViewDisplayPropertySelection
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            viewId={viewId}
+            viewType={viewType}
+            viewOperations={viewOperations}
+            property={property}
+          />
+        </Fragment>
       ))}
     </div>
   );
-};
+});

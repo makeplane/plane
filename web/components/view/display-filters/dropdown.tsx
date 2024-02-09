@@ -7,6 +7,8 @@ import { MonitorDot } from "lucide-react";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { ViewDisplayPropertiesRoot } from "../";
+// ui
+import { Tooltip } from "@plane/ui";
 // types
 import { TViewOperations } from "../types";
 import { TViewTypes } from "@plane/types";
@@ -17,22 +19,12 @@ type TViewDisplayFiltersDropdown = {
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
-  baseRoute: string;
   children?: ReactNode;
   displayDropdownText?: boolean;
 };
 
 export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    viewId,
-    viewType,
-    viewOperations,
-    baseRoute,
-    children,
-    displayDropdownText = true,
-  } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations, children, displayDropdownText = true } = props;
   // state
   const [dropdownToggle, setDropdownToggle] = useState(false);
   // refs
@@ -74,22 +66,24 @@ export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = obser
           onClick={handleDropdownToggle}
         >
           {children ? (
-            <span className="relative inline-block">{children}</span>
+            <div className="relative inline-block">{children}</div>
           ) : (
-            <div
-              className={`relative flex items-center gap-1 h-8 rounded px-2 transition-all
+            <Tooltip tooltipContent={"Display"} position="bottom">
+              <div
+                className={`relative flex items-center gap-1 h-7 rounded px-2 transition-all
                 ${
                   displayDropdownText
                     ? `border border-custom-border-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80`
                     : `hover:bg-custom-background-80`
                 }
               `}
-            >
-              <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
-                <MonitorDot size={14} />
+              >
+                <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
+                  <MonitorDot size={14} />
+                </div>
+                {displayDropdownText && <div className="text-sm whitespace-nowrap">Display</div>}
               </div>
-              {displayDropdownText && <div className="text-sm whitespace-nowrap">Display</div>}
-            </div>
+            </Tooltip>
           )}
         </button>
       </Combobox.Button>

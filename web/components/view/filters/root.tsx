@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import concat from "lodash/concat";
 import uniq from "lodash/uniq";
 import filter from "lodash/filter";
@@ -19,11 +19,10 @@ type TViewFiltersRoot = {
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
-  baseRoute: string;
 };
 
 export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, baseRoute } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   // state
@@ -62,7 +61,6 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
               viewId={viewId}
               viewType={viewType}
               viewOperations={viewOperations}
-              baseRoute={baseRoute}
               filterKey={filterKey}
             />
           )}
