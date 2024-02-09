@@ -174,9 +174,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
             !disabled ? (
               <RichTextEditor
                 cancelUploadImage={fileService.cancelUpload}
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug, projectId, issueId)}
                 deleteFile={fileService.getDeleteImageFunction(workspaceId)}
                 restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                getAsset={fileService.getAttachAssetToIssueFile(workspaceSlug, projectId, issueId)}
                 value={localIssueDescription.description_html}
                 rerenderOnPropsChange={localIssueDescription}
                 setShouldShowAlert={setShowAlert}

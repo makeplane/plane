@@ -11,7 +11,7 @@ import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
 import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
 import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 
-import { ImageExtension } from "src/ui/extensions/image";
+import { ImageExtension } from "src/ui/extensions/image/image";
 
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
@@ -34,7 +34,8 @@ export const CoreEditorExtensions = (
   },
   deleteFile: DeleteImage,
   restoreFile: RestoreImage,
-  cancelUploadImage?: () => any
+  cancelUploadImage?: () => any,
+  getAsset?: any
 ) => [
   StarterKit.configure({
     bulletList: {
@@ -79,7 +80,7 @@ export const CoreEditorExtensions = (
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtension(deleteFile, restoreFile, cancelUploadImage).configure({
+  ImageExtension(deleteFile, restoreFile, cancelUploadImage, getAsset).configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
     },
