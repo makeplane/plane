@@ -12,6 +12,8 @@ import { Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
+import { APIService } from "services/api.service";
+
 export type AuthType = "sign-in" | "sign-up";
 
 export const SignInView = observer(() => {
@@ -20,6 +22,8 @@ export const SignInView = observer(() => {
     config: { envConfig },
   } = useApplication();
   const { currentUser } = useUser();
+  const { data: session }: any = useSession();
+  console.log("session", session);
   // sign in redirection hook
   const { isRedirecting, handleRedirection } = useSignInRedirection();
 
