@@ -48,64 +48,59 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const projectDetails = getProjectById(issue.project_id);
 
   return (
-    <>
-      <div
-        className={cn(
-          "relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm border border-transparent border-b-custom-border-200",
-          {
-            "border border-custom-primary-70 hover:border-custom-primary-70":
+    <div
+      className={cn("min-h-12 relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm", {
+        "border border-custom-primary-70 hover:border-custom-primary-70":
               peekIssue && peekIssue.issueId === issue.id,
-            "last:border-b-transparent": peekIssue?.issueId !== issue.id,
-          }
-        )}
-      >
-        {displayProperties && displayProperties?.key && (
-          <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-            {projectDetails?.identifier}-{issue.sequence_id}
-          </div>
-        )}
+            "last:border-b-transparent": peekIssue?.issueId !== issue.id
+      })}
+    >
+      {displayProperties && displayProperties?.key && (
+        <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+          {projectDetails?.identifier}-{issue.sequence_id}
+        </div>
+      )}
 
-        {issue?.tempId !== undefined && (
-          <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-        )}
+      {issue?.tempId !== undefined && (
+        <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+      )}
 
-        {issue?.is_draft ? (
+      {issue?.is_draft ? (
+        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <span>{issue.name}</span>
+        </Tooltip>
+      ) : (
+        <ControlLink
+          href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
+          target="_blank"
+          onClick={() => handleIssuePeekOverview(issue)}
+          className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+        >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <span>{issue.name}</span>
           </Tooltip>
-        ) : (
-          <ControlLink
-            href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
-            target="_blank"
-            onClick={() => handleIssuePeekOverview(issue)}
-            className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
-          >
-            <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-              <span>{issue.name}</span>
-            </Tooltip>
-          </ControlLink>
-        )}
+        </ControlLink>
+      )}
 
-        <div className="ml-auto flex flex-shrink-0 items-center gap-2">
-          {!issue?.tempId ? (
-            <>
-              <IssueProperties
-                className="relative flex items-center gap-2 whitespace-nowrap"
-                issue={issue}
-                isReadOnly={!canEditIssueProperties}
-                handleIssues={updateIssue}
-                displayProperties={displayProperties}
-                activeLayout="List"
-              />
-              {quickActions(issue)}
-            </>
-          ) : (
-            <div className="h-4 w-4">
-              <Spinner className="h-4 w-4" />
-            </div>
-          )}
-        </div>
+      <div className="ml-auto flex flex-shrink-0 items-center gap-2">
+        {!issue?.tempId ? (
+          <>
+            <IssueProperties
+              className="relative flex items-center gap-2 whitespace-nowrap"
+              issue={issue}
+              isReadOnly={!canEditIssueProperties}
+              handleIssues={updateIssue}
+              displayProperties={displayProperties}
+              activeLayout="List"
+            />
+            {quickActions(issue)}
+          </>
+        ) : (
+          <div className="h-4 w-4">
+            <Spinner className="h-4 w-4" />
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 });
