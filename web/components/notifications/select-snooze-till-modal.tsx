@@ -109,7 +109,12 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   };
 
   const handleClose = () => {
-    onClose();
+    // This is a workaround to fix the issue of the Notification popover modal close on closing this modal
+    const closeTimeout = setTimeout(() => {
+      onClose();
+      clearTimeout(closeTimeout);
+    }, 50);
+
     const timeout = setTimeout(() => {
       reset({ ...defaultValues });
       clearTimeout(timeout);
@@ -142,7 +147,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all w-full sm:w-full sm:!max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex items-center justify-between">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -156,8 +161,8 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex items-center gap-3">
-                    <div className="flex-1">
+                  <div className="mt-5 flex flex-col md:!flex-row md:items-center gap-3">
+                    <div className="flex-1 pb-3 md:pb-0">
                       <h6 className="mb-2 block text-sm font-medium text-custom-text-400">Pick a date</h6>
                       <Controller
                         name="date"

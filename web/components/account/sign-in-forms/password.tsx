@@ -7,7 +7,7 @@ import { Eye, EyeOff, XCircle } from "lucide-react";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
-import { useApplication } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 // components
 import { ESignInSteps, ForgotPasswordPopover } from "components/account";
 // ui
@@ -16,6 +16,8 @@ import { Button, Input } from "@plane/ui";
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "@plane/types";
+// constants
+import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
 
 type Props = {
   email: string;
@@ -46,6 +48,7 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   const {
     config: { envConfig },
   } = useApplication();
+  const { captureEvent } = useEventTracker();
   // derived values
   const isSmtpConfigured = envConfig?.is_smtp_configured;
   // form info
@@ -72,7 +75,13 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
 
     await authService
       .passwordSignIn(payload)
-      .then(async () => await onSubmit())
+      .then(async () => {
+        captureEvent(SIGN_IN_WITH_PASSWORD, {
+          state: "SUCCESS",
+          first_time: false,
+        });
+        await onSubmit();
+      })
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -182,9 +191,10 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
               </div>
             )}
           />
-          <div className="w-full text-right mt-2 pb-3">
+          <div className="mt-2 w-full pb-3 text-right">
             {isSmtpConfigured ? (
               <Link
+                onClick={() => captureEvent(FORGOT_PASSWORD)}
                 href={`/accounts/forgot-password?email=${email}`}
                 className="text-xs font-medium text-custom-primary-100"
               >

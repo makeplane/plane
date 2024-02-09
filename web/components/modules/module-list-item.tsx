@@ -16,6 +16,7 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   moduleId: string;
@@ -36,7 +37,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -46,13 +47,21 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the module to favorites. Please try again.",
+    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
+      .then(() => {
+        captureEvent(MODULE_FAVORITED, {
+          module_id: moduleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the module to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -60,13 +69,21 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't remove the module from favorites. Please try again.",
+    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
+      .then(() => {
+        captureEvent(MODULE_UNFAVORITED, {
+          module_id: moduleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the module from favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {

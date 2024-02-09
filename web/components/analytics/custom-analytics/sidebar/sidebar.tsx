@@ -19,6 +19,7 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
+import { cn } from "helpers/common.helper";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
@@ -138,11 +139,17 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const selectedProjects = params.project && params.project.length > 0 ? params.project : workspaceProjectIds;
 
   return (
-    <div className={`relative w-full h-full flex flex-col space-y-4 px-5 py-4`}>
+    <div
+      className={cn(
+        "relative h-full flex w-full gap-2 justify-between items-start px-5 py-4 bg-custom-sidebar-background-100",
+        !isProjectLevel ? "flex-col" : ""
+      )}
+    >
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
           <LayersIcon height={14} width={14} />
-          {analytics ? analytics.total : "..."} Issues
+          {analytics ? analytics.total : "..."}{" "}
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Issues</div>
         </div>
         {isProjectLevel && (
           <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
@@ -158,7 +165,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      <div className="h-full w-full overflow-hidden">
+      <div className={cn("h-full w-full overflow-hidden", isProjectLevel ? "hidden" : "block")}>
         <>
           {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
             <CustomAnalyticsSidebarProjectsList projectIds={selectedProjects} />
@@ -167,20 +174,20 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
         </>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 justify-self-end">
+      <div className="flex flex-wrap items-center gap-2 justify-end">
         <Button
           variant="neutral-primary"
-          prependIcon={<RefreshCw className="h-3.5 w-3.5" />}
+          prependIcon={<RefreshCw className="h-3 md:h-3.5 w-3 md:w-3.5" />}
           onClick={() => {
             if (!workspaceSlug) return;
 
             mutate(ANALYTICS(workspaceSlug.toString(), params));
           }}
         >
-          Refresh
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Refresh</div>
         </Button>
         <Button variant="primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
-          Export as CSV
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Export as CSV</div>
         </Button>
       </div>
     </div>

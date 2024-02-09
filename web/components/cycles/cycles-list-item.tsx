@@ -18,6 +18,7 @@ import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // types
 import { TCycleGroups } from "@plane/types";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -37,7 +38,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   // router
   const router = useRouter();
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -63,26 +64,42 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_FAVORITED, {
+          cycle_id: cycleId,
+          element: "List layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_UNFAVORITED, {
+          cycle_id: cycleId,
+          element: "List layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
@@ -159,9 +176,9 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
-        <div className="group flex flex-col md:flex-row w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
-          <div className="relative w-full flex items-center justify-between gap-3 overflow-hidden">
-            <div className="relative w-full flex items-center gap-3 overflow-hidden">
+        <div className="group flex w-full flex-col items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90 md:flex-row">
+          <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+            <div className="relative flex w-full items-center gap-3 overflow-hidden">
               <div className="flex-shrink-0">
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {isCompleted ? (
@@ -181,20 +198,20 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               <div className="relative flex items-center gap-2.5 overflow-hidden">
                 <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
                 <Tooltip tooltipContent={cycleDetails.name} position="top">
-                  <span className="truncate line-clamp-1 inline-block overflow-hidden text-base font-medium">
+                  <span className="line-clamp-1 inline-block overflow-hidden truncate text-base font-medium">
                     {cycleDetails.name}
                   </span>
                 </Tooltip>
               </div>
 
-              <button onClick={openCycleOverview} className="flex-shrink-0 z-10 invisible group-hover:visible">
+              <button onClick={openCycleOverview} className="invisible z-10 flex-shrink-0 group-hover:visible">
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>
 
             {currentCycle && (
               <div
-                className="flex-shrink-0 relative flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
+                className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
                 style={{
                   color: currentCycle.color,
                   backgroundColor: `${currentCycle.color}20`,
@@ -206,12 +223,12 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               </div>
             )}
           </div>
-          <div className="flex-shrink-0 relative overflow-hidden flex w-full items-center justify-between md:justify-end gap-2.5 md:w-auto md:flex-shrink-0 ">
+          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 overflow-hidden md:w-auto md:flex-shrink-0 md:justify-end ">
             <div className="text-xs text-custom-text-300">
               {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
             </div>
 
-            <div className="flex-shrink-0 relative flex items-center gap-3">
+            <div className="relative flex flex-shrink-0 items-center gap-3">
               <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
                 <div className="flex w-10 cursor-default items-center justify-center">
                   {cycleDetails.assignees.length > 0 ? (

@@ -30,7 +30,7 @@ export const ProfileSidebar = observer(() => {
   const { workspaceSlug, userId } = router.query;
   // store hooks
   const { currentUser } = useUser();
-  const { theme: themStore } = useApplication();
+  const { theme: themeStore } = useApplication();
   const ref = useRef<HTMLDivElement>(null);
 
   const { data: userProjectsData } = useSWR(
@@ -41,9 +41,9 @@ export const ProfileSidebar = observer(() => {
   );
 
   useOutsideClickDetector(ref, () => {
-    if (themStore.profileSidebarCollapsed === false) {
+    if (themeStore.profileSidebarCollapsed === false) {
       if (window.innerWidth < 768) {
-        themStore.toggleProfileSidebar();
+        themeStore.toggleProfileSidebar();
       }
     }
   });
@@ -62,22 +62,22 @@ export const ProfileSidebar = observer(() => {
   useEffect(() => {
     const handleToggleProfileSidebar = () => {
       if (window && window.innerWidth < 768) {
-        themStore.toggleProfileSidebar(true);
+        themeStore.toggleProfileSidebar(true);
       }
-      if (window && themStore.profileSidebarCollapsed && window.innerWidth >= 768) {
-        themStore.toggleProfileSidebar(false);
+      if (window && themeStore.profileSidebarCollapsed && window.innerWidth >= 768) {
+        themeStore.toggleProfileSidebar(false);
       }
     };
 
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, [themStore]);
+  }, [themeStore]);
 
   return (
     <div
       className={`flex-shrink-0 overflow-hidden overflow-y-auto shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
-      style={themStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+      style={themeStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
         <>
