@@ -109,7 +109,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   };
 
   const handleClose = () => {
-    // This is a workaround to fix the issue of the Notification popover modeal close on closing this modal
+    // This is a workaround to fix the issue of the Notification popover modal close on closing this modal
     const closeTimeout = setTimeout(() => {
       onClose();
       clearTimeout(closeTimeout);
