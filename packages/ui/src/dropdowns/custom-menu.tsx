@@ -54,10 +54,6 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     setIsOpen(false);
   };
 
-  const handleOnChange = () => {
-    if (closeOnSelect) closeDropdown();
-  };
-
   const selectActiveItem = () => {
     const activeItem: HTMLElement | undefined | null = dropdownRef.current?.querySelector(
       `[data-headlessui-state="active"] button`

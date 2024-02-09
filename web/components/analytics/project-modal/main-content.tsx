@@ -20,13 +20,15 @@ export const ProjectAnalyticsModalMainContent: React.FC<Props> = observer((props
 
   return (
     <Tab.Group as={React.Fragment}>
-      <Tab.List as="div" className="space-x-2 border-b border-neutral-border-medium p-5 pt-0">
+      <Tab.List as="div" className="flex space-x-2 border-b border-neutral-border-medium px-0 md:px-5 py-0 md:py-3">
         {ANALYTICS_TABS.map((tab) => (
           <Tab
             key={tab.key}
             className={({ selected }) =>
-              `rounded-3xl border border-neutral-border-medium px-4 py-2 text-xs hover:bg-neutral-component-surface-dark ${
-                selected ? "bg-neutral-component-surface-dark" : ""
+              `rounded-0 w-full md:w-max md:rounded-3xl border-b md:border border-neutral-border-medium focus:outline-none px-0 md:px-4 py-2 text-xs hover:bg-neutral-component-surface-dark ${
+                selected
+                  ? "border-primary-border-subtle text-primary-text-subtle md:bg-neutral-component-surface-dark md:text-neutral-text-medium md:border-neutral-border-medium"
+                  : "border-transparent"
               }`
             }
             onClick={() => {}}

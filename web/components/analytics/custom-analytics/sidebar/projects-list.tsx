@@ -17,9 +17,9 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
   const { getProjectById } = useProject();
 
   return (
-    <div className="hidden h-full overflow-hidden md:flex md:flex-col">
+    <div className="relative flex flex-col gap-4 h-full">
       <h4 className="font-medium">Selected Projects</h4>
-      <div className="mt-4 h-full space-y-6 overflow-y-auto">
+      <div className="relative space-y-6 overflow-hidden overflow-y-auto">
         {projectIds.map((projectId) => {
           const project = getProjectById(projectId);
 

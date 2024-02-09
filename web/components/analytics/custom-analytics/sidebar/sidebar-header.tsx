@@ -26,7 +26,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
     <>
       {projectId ? (
         cycleDetails ? (
-          <div className="hidden h-full overflow-y-auto md:block">
+          <div className="h-full overflow-y-auto">
             <h4 className="break-words font-medium">Analytics for {cycleDetails.name}</h4>
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
@@ -52,7 +52,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             </div>
           </div>
         ) : moduleDetails ? (
-          <div className="hidden h-full overflow-y-auto md:block">
+          <div className="h-full overflow-y-auto">
             <h4 className="break-words font-medium">Analytics for {moduleDetails.name}</h4>
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
@@ -78,7 +78,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             </div>
           </div>
         ) : (
-          <div className="hidden h-full overflow-y-auto md:flex md:flex-col">
+          <div className="h-full overflow-y-auto">
             <div className="flex items-center gap-1">
               {projectDetails?.emoji ? (
                 <div className="grid h-6 w-6 flex-shrink-0 place-items-center">{renderEmoji(projectDetails.emoji)}</div>

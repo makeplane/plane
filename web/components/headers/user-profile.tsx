@@ -33,6 +33,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 
   const { theme: themStore } = useApplication();
+
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-neutral-border-medium bg-sidebar-neutral-component-surface-light p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
@@ -50,9 +51,9 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               className="flex flex-grow justify-center text-neutral-text-medium text-sm"
               placement="bottom-start"
               customButton={
-                <div className="flex gap-2 items-center px-2 py-1.5 border border-custom-border-400 rounded-md">
+                <div className="flex gap-2 items-center px-2 py-1.5 border border-neutral-border-strong rounded-md">
                   <span className="flex flex-grow justify-center text-neutral-text-medium text-sm">{type}</span>
-                  <ChevronDown className="w-4 h-4 text-custom-text-400" />
+                  <ChevronDown className="w-4 h-4 text-neutral-text-subtle" />
                 </div>
               }
               customButtonClassName="flex flex-grow justify-center text-neutral-text-medium text-sm"
@@ -64,7 +65,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
                   <Link
                     key={tab.route}
                     href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
-                    className="text-custom-text-300 w-full"
+                    className="text-neutral-text-medium w-full"
                   >
                     {tab.label}
                   </Link>
@@ -75,7 +76,6 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               className="transition-all block md:hidden"
               onClick={() => {
                 themStore.toggleProfileSidebar();
-                console.log(themStore.profileSidebarCollapsed);
               }}
             >
               <PanelRight

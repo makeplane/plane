@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { KanBan } from "./default";
@@ -80,6 +81,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
     viewId?: string
   ) => Promise<TIssue | undefined>;
   viewId?: string;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
@@ -99,6 +101,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     addIssuesToView,
     quickAddCallback,
     viewId,
+    scrollableContainerRef,
+    isDragStarted,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -150,6 +154,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   addIssuesToView={addIssuesToView}
                   quickAddCallback={quickAddCallback}
                   viewId={viewId}
+                  scrollableContainerRef={scrollableContainerRef}
+                  isDragStarted={isDragStarted}
                 />
               </div>
             )}
@@ -183,6 +189,7 @@ export interface IKanBanSwimLanes {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -204,6 +211,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     addIssuesToView,
     quickAddCallback,
     viewId,
+    scrollableContainerRef,
   } = props;
 
   const member = useMember();
@@ -249,6 +257,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
+          scrollableContainerRef={scrollableContainerRef}
         />
       )}
     </div>

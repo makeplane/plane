@@ -19,18 +19,18 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
+import { cn } from "helpers/common.helper";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
   params: IAnalyticsParams;
-  fullScreen: boolean;
   isProjectLevel: boolean;
 };
 
 const analyticsService = new AnalyticsService();
 
 export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
-  const { analytics, params, fullScreen, isProjectLevel = false } = props;
+  const { analytics, params, isProjectLevel = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -140,16 +140,16 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`flex items-center justify-between space-y-2 px-5 py-2.5 ${
-        fullScreen
-          ? "overflow-hidden border-l border-neutral-border-medium md:h-full md:flex-col md:items-start md:space-y-4 md:border-l md:border-neutral-border-medium md:py-5"
-          : ""
-      }`}
+      className={cn(
+        "relative h-full flex w-full gap-2 justify-between items-start px-5 py-4 bg-sidebar-neutral-component-surface-light",
+        !isProjectLevel ? "flex-col" : ""
+      )}
     >
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1 rounded-md bg-neutral-component-surface-dark px-3 py-1 text-xs text-neutral-text-medium">
           <LayersIcon height={14} width={14} />
-          {analytics ? analytics.total : "..."} Issues
+          {analytics ? analytics.total : "..."}{" "}
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Issues</div>
         </div>
         {isProjectLevel && (
           <div className="flex items-center gap-1 rounded-md bg-neutral-component-surface-dark px-3 py-1 text-xs text-neutral-text-medium">
@@ -164,30 +164,30 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
           </div>
         )}
       </div>
-      <div className="h-full w-full overflow-hidden">
-        {fullScreen ? (
-          <>
-            {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
-              <CustomAnalyticsSidebarProjectsList projectIds={selectedProjects} />
-            )}
-            <CustomAnalyticsSidebarHeader />
-          </>
-        ) : null}
+
+      <div className={cn("h-full w-full overflow-hidden", isProjectLevel ? "hidden" : "block")}>
+        <>
+          {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
+            <CustomAnalyticsSidebarProjectsList projectIds={selectedProjects} />
+          )}
+          <CustomAnalyticsSidebarHeader />
+        </>
       </div>
-      <div className="flex flex-wrap items-center gap-2 justify-self-end">
+
+      <div className="flex flex-wrap items-center gap-2 justify-end">
         <Button
           variant="outline-neutral"
-          prependIcon={<RefreshCw className="h-3.5 w-3.5" />}
+          prependIcon={<RefreshCw className="h-3 md:h-3.5 w-3 md:w-3.5" />}
           onClick={() => {
             if (!workspaceSlug) return;
 
             mutate(ANALYTICS(workspaceSlug.toString(), params));
           }}
         >
-          Refresh
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Refresh</div>
         </Button>
         <Button variant="primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
-          Export as CSV
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Export as CSV</div>
         </Button>
       </div>
     </div>

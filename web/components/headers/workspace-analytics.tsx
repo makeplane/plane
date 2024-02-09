@@ -1,13 +1,35 @@
 import { useRouter } from "next/router";
-import { ArrowLeft, BarChart2 } from "lucide-react";
+import { BarChart2, PanelRight } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { useApplication } from "hooks/store";
+import { observer } from "mobx-react";
+import { cn } from "helpers/common.helper";
+import { useEffect } from "react";
 
-export const WorkspaceAnalyticsHeader = () => {
+export const WorkspaceAnalyticsHeader = observer(() => {
   const router = useRouter();
+  const { analytics_tab } = router.query;
+
+  const { theme: themeStore } = useApplication();
+
+  useEffect(() => {
+    const handleToggleWorkspaceAnalyticsSidebar = () => {
+      if (window && window.innerWidth < 768) {
+        themeStore.toggleWorkspaceAnalyticsSidebar(true);
+      }
+      if (window && themeStore.workspaceAnalyticsSidebarCollapsed && window.innerWidth >= 768) {
+        themeStore.toggleWorkspaceAnalyticsSidebar(false);
+      }
+    };
+
+    window.addEventListener("resize", handleToggleWorkspaceAnalyticsSidebar);
+    handleToggleWorkspaceAnalyticsSidebar();
+    return () => window.removeEventListener("resize", handleToggleWorkspaceAnalyticsSidebar);
+  }, [themeStore]);
 
   return (
     <>
@@ -16,7 +38,7 @@ export const WorkspaceAnalyticsHeader = () => {
       >
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
-          <div>
+          <div className="flex items-center justify-between w-full">
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -25,9 +47,14 @@ export const WorkspaceAnalyticsHeader = () => {
                 }
               />
             </Breadcrumbs>
+            {analytics_tab === 'custom' &&
+              <button className="block md:hidden" onClick={() => { themeStore.toggleWorkspaceAnalyticsSidebar() }}>
+                <PanelRight className={cn("w-4 h-4 block md:hidden", !themeStore.workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200")} />
+              </button>
+            }
           </div>
         </div>
       </div>
     </>
   );
-};
+});
