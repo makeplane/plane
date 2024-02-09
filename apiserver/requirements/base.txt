@@ -1,6 +1,6 @@
 # base requirements
 
-Django==4.2.7
+Django==4.2.10
 psycopg==3.1.12
 djangorestframework==3.14.0
 redis==4.6.0
