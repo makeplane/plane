@@ -147,6 +147,9 @@ export const theme = {
     danger: generateColorShades("danger"),
     info: generateColorShades("info"),
     orange: generateSaturatedColorShades("orange"),
+    pink: generateSaturatedColorShades("pink"),
+    purple: generateSaturatedColorShades("purple"),
+    violet: generateSaturatedColorShades("violet"),
     sidebar: {
       neutral: generateSidebarColorShades("neutral"),
     },
