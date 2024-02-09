@@ -9,36 +9,36 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { VIEW_TYPES } from "constants/view";
 
-const WorkspacePrivateViewPage: NextPageWithLayout = () => {
+const ProjectPrivateViewPage: NextPageWithLayout = () => {
   const router = useRouter();
-  const { workspaceSlug, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query;
 
   const workspaceViewTabOptions = useMemo(
     () => [
       {
-        key: VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS,
+        key: VIEW_TYPES.PROJECT_PRIVATE_VIEWS,
         title: "Private",
-        href: `/${workspaceSlug}/views/private/assigned`,
+        href: `/${workspaceSlug}/projects/${projectId}/views/private`,
       },
       {
-        key: VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS,
+        key: VIEW_TYPES.PROJECT_PUBLIC_VIEWS,
         title: "Public",
-        href: `/${workspaceSlug}/views/public/all-issues`,
+        href: `/${workspaceSlug}/projects/${projectId}/views/public`,
       },
     ],
-    [workspaceSlug]
+    [workspaceSlug, projectId]
   );
 
-  if (!workspaceSlug || !viewId) return <></>;
+  if (!workspaceSlug || !projectId || !viewId) return <></>;
   return (
     <div className="h-full overflow-hidden bg-custom-background-100">
       <div className="flex h-full w-full flex-col border-b border-custom-border-300">
         <AllIssuesViewRoot
           workspaceSlug={workspaceSlug.toString()}
-          projectId={undefined}
+          projectId={projectId.toString()}
           viewId={viewId.toString()}
-          viewType={VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS}
-          baseRoute={`/${workspaceSlug?.toString()}/views/private`}
+          viewType={VIEW_TYPES.PROJECT_PRIVATE_VIEWS}
+          baseRoute={`/${workspaceSlug?.toString()}/projects/${projectId}/views/private`}
           workspaceViewTabOptions={workspaceViewTabOptions}
         />
       </div>
@@ -46,8 +46,8 @@ const WorkspacePrivateViewPage: NextPageWithLayout = () => {
   );
 };
 
-WorkspacePrivateViewPage.getLayout = function getLayout(page: ReactElement) {
+ProjectPrivateViewPage.getLayout = function getLayout(page: ReactElement) {
   return <AppLayout header={<></>}>{page}</AppLayout>;
 };
 
-export default WorkspacePrivateViewPage;
+export default ProjectPrivateViewPage;

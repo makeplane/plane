@@ -3,7 +3,7 @@ import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties } from
 export type TViewOperations = {
   setName: (name: string) => void;
   setDescription: (description: string) => void;
-  setFilters: (filterKey: keyof TViewFilters, filterValue: "clear_all" | string) => void;
+  setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => void;
   setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
   setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) => void;
 

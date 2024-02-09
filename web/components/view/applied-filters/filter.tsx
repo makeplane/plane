@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import isEmpty from "lodash/isEmpty";
 import { X } from "lucide-react";
 // hooks
-import { useViewDetail } from "hooks/store";
+import { useViewDetail, useViewFilter } from "hooks/store";
 // components
 import { ViewAppliedFiltersItem } from "./filter-item";
 // types
@@ -17,12 +17,16 @@ type TViewAppliedFilters = {
   viewType: TViewTypes;
   filterKey: keyof TViewFilters;
   viewOperations: TViewOperations;
+  propertyVisibleCount?: number | undefined;
 };
 
 export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, filterKey, viewOperations } = props;
-
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, viewOperations, propertyVisibleCount } = props;
+  // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewFilterStore = useViewFilter(workspaceSlug, projectId);
+
+  const currentDefaultFilterDetails = viewFilterStore?.propertyDefaultDetails(filterKey);
 
   const propertyValues =
     viewDetailStore?.appliedFilters?.filters && !isEmpty(viewDetailStore?.appliedFilters?.filters)
@@ -36,9 +40,12 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
     <div className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 px-2 min-h-[32px]">
       <div className="flex-shrink-0 text-xs text-custom-text-200 capitalize">{filterKey.replaceAll("_", " ")}</div>
       <div className="relative flex items-center gap-1.5 flex-wrap">
-        {propertyValues.length >= 100 ? (
+        {propertyVisibleCount && propertyValues.length >= propertyVisibleCount ? (
           <div className="text-xs font-medium bg-custom-primary-100/20 rounded relative flex items-center gap-1 p-1 px-2">
-            {propertyValues.length} {filterKey.replaceAll("_", " ")}s
+            <div className="flex-shrink-0 w-4-h-4">{currentDefaultFilterDetails?.icon}</div>
+            <div className="whitespace-nowrap">
+              {propertyValues.length} {currentDefaultFilterDetails?.label}
+            </div>
           </div>
         ) : (
           <>

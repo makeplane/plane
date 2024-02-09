@@ -21,7 +21,14 @@ export const ViewFilterSelection: FC<TViewFilterSelection> = observer((props) =>
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
   const propertyIds = viewDetailStore?.appliedFilters?.filters?.[filterKey] || [];
-  const isSelected = propertyIds?.includes(propertyId) || false;
+
+  const isSelected = ["start_date", "target_date"].includes(filterKey)
+    ? propertyId === "custom"
+      ? propertyIds.filter((id) => id.includes("-")).length > 0
+        ? true
+        : false
+      : propertyIds?.includes(propertyId)
+    : propertyIds?.includes(propertyId) || false;
 
   return (
     <div

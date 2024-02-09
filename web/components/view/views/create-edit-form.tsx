@@ -5,7 +5,7 @@ import { Briefcase, Globe2, Plus, X } from "lucide-react";
 // hooks
 import { useViewDetail, useProject } from "hooks/store";
 // components
-import { ViewAppliedFiltersRoot } from "../";
+import { ViewAppliedFiltersRoot, ViewFiltersDropdown } from "../";
 // ui
 import { Input, Button } from "@plane/ui";
 // types
@@ -85,7 +85,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem] py-5 border-[0.1px] border-custom-border-100">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem] py-5 border-[0.1px] border-custom-border-100">
                 <div className="p-3 px-5 relative flex items-center gap-2">
                   {projectId && projectDetails ? (
                     <div className="relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
@@ -121,13 +121,27 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                 </div>
 
                 <div className="p-3 px-5 relative flex justify-between items-center gap-2">
-                  <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
-                    <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
-                      <Plus className="w-3 h-3" />
+                  <ViewFiltersDropdown
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    viewId={viewId}
+                    viewType={viewType}
+                    viewOperations={viewOperations}
+                    dropdownPlacement="right"
+                  >
+                    <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
+                      <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
+                        <Plus className="w-3 h-3" />
+                      </div>
+                      <div className="text-xs">Filters</div>
                     </div>
-                    <div className="text-xs">Filters</div>
-                  </div>
-                  <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-dashed border-custom-border-100 bg-custom-background-80">
+                  </ViewFiltersDropdown>
+                  <div
+                    className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-dashed border-custom-border-100 bg-custom-background-80"
+                    onClick={() => {
+                      viewOperations.setFilters(undefined, "clear_all");
+                    }}
+                  >
                     <div className="text-xs">Clear all filters</div>
                     <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
                       <X className="w-3 h-3" />
@@ -135,13 +149,14 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                   </div>
                 </div>
 
-                <div className="p-3 px-5 relative bg-custom-background-80">
+                <div className="p-3 px-5 relative bg-custom-background-90 max-h-36 overflow-hidden overflow-y-auto">
                   <ViewAppliedFiltersRoot
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     viewId={viewId}
                     viewType={viewType}
                     viewOperations={viewOperations}
+                    propertyVisibleCount={undefined}
                   />
                 </div>
 

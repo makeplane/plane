@@ -2,6 +2,7 @@ import { FC, Fragment, ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
+import { Placement } from "@popperjs/core";
 import { ListFilter, Search } from "lucide-react";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -21,13 +22,24 @@ type TViewFiltersDropdown = {
   viewOperations: TViewOperations;
   children?: ReactNode;
   displayDropdownText?: boolean;
+  dropdownPlacement?: Placement;
 };
 
 export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, children, displayDropdownText = true } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    viewOperations,
+    children,
+    displayDropdownText = true,
+    dropdownPlacement = "bottom-start",
+  } = props;
   // state
   const [dropdownToggle, setDropdownToggle] = useState(false);
   const [query, setQuery] = useState("");
+  const [dateCustomFilterToggle, setDateCustomFilterToggle] = useState<string | undefined>(undefined);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -35,12 +47,18 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: dropdownPlacement,
     modifiers: [
       {
         name: "preventOverflow",
         options: {
           padding: 12,
+        },
+      },
+      {
+        name: "offset",
+        options: {
+          offset: [0, 10],
         },
       },
     ],
@@ -55,7 +73,7 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
     else handleDropdownClose();
   };
 
-  useOutsideClickDetector(dropdownRef, handleDropdownClose);
+  useOutsideClickDetector(dropdownRef, () => dateCustomFilterToggle === undefined && handleDropdownClose());
 
   return (
     <Combobox as="div" ref={dropdownRef}>
@@ -109,13 +127,15 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
               />
             </div>
 
-            <div className="max-h-[460px] space-y-0.5 overflow-y-scroll mb-2">
+            <div className="max-h-[500px] space-y-0.5 overflow-y-scroll mb-2">
               <ViewFiltersRoot
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
+                dateCustomFilterToggle={dateCustomFilterToggle}
+                setDateCustomFilterToggle={setDateCustomFilterToggle}
               />
             </div>
           </div>

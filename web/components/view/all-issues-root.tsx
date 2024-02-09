@@ -1,7 +1,7 @@
 import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { CheckCircle, Pencil } from "lucide-react";
+import { CheckCircle, ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // hooks
 import { useView, useViewDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -19,7 +19,7 @@ import {
 // ui
 import { Spinner } from "@plane/ui";
 // constants
-import { VIEW_TYPES, viewLocalPayload } from "constants/view";
+import { viewLocalPayload } from "constants/view";
 // types
 import { TViewOperations } from "./types";
 import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties, TViewTypes } from "@plane/types";
@@ -30,6 +30,7 @@ type TAllIssuesViewRoot = {
   viewId: string;
   viewType: TViewTypes;
   baseRoute: string;
+  workspaceViewTabOptions: { key: TViewTypes; title: string; href: string }[];
 };
 
 type TViewOperationsToggle = {
@@ -38,7 +39,7 @@ type TViewOperationsToggle = {
 };
 
 export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, baseRoute } = props;
+  const { workspaceSlug, projectId, viewId, viewType, baseRoute, workspaceViewTabOptions } = props;
   // hooks
   const viewStore = useView(workspaceSlug, projectId, viewType);
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
@@ -51,28 +52,22 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
   const handleViewOperationsToggle = (type: TViewOperationsToggle["type"], viewId: string | undefined) =>
     setViewOperationsToggle({ type, viewId });
 
-  const workspaceViewTabOptions = useMemo(
-    () => [
-      {
-        key: VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS,
-        title: "Private",
-        href: `/${workspaceSlug}/views/private/assigned`,
-      },
-      {
-        key: VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS,
-        title: "Public",
-        href: `/${workspaceSlug}/views/public/all-issues`,
-      },
-    ],
-    [workspaceSlug]
+  const viewDetailCreateStore = useViewDetail(
+    workspaceSlug,
+    projectId,
+    viewOperationsToggle?.viewId || viewId,
+    viewType
   );
 
   const viewOperations: TViewOperations = useMemo(
     () => ({
       setName: (name: string) => viewDetailStore?.setName(name),
       setDescription: (name: string) => viewDetailStore?.setDescription(name),
-      setFilters: (filterKey: keyof TViewFilters, filterValue: "clear_all" | string) =>
-        viewDetailStore?.setFilters(filterKey, filterValue),
+      setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => {
+        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
+          viewDetailCreateStore?.setFilters(filterKey, filterValue);
+        else viewDetailStore?.setFilters(filterKey, filterValue);
+      },
       setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) =>
         viewDetailStore?.setDisplayFilters(display_filters),
       setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) =>
@@ -114,17 +109,24 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
         }
       },
     }),
-    [viewStore, viewDetailStore, setToastAlert]
+    [viewStore, viewDetailStore, setToastAlert, viewOperationsToggle, viewDetailCreateStore]
   );
 
+  // fetch all issues
   useEffect(() => {
     const fetchViews = async () => {
       await viewStore?.fetch(viewStore?.viewIds.length > 0 ? "mutation-loader" : "init-loader");
+    };
+    if (workspaceSlug && viewType && viewStore) fetchViews();
+  }, [workspaceSlug, projectId, viewType, viewStore]);
+
+  // fetch view by id
+  useEffect(() => {
+    const fetchViews = async () => {
       viewId && (await viewStore?.fetchById(viewId));
     };
-
     if (workspaceSlug && viewId && viewType && viewStore) fetchViews();
-  }, [workspaceSlug, viewId, viewType, viewStore]);
+  }, [workspaceSlug, projectId, viewId, viewType, viewStore]);
 
   return (
     <div className="relative w-full h-full">
@@ -170,7 +172,7 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
             />
           </div>
 
-          <div className="p-5 py-2 border-b border-custom-border-200 relative flex gap-2">
+          <div className="p-5 py-2 border-b border-custom-border-200 relative flex items-start gap-1">
             <div className="w-full overflow-hidden">
               <ViewAppliedFiltersRoot
                 workspaceSlug={workspaceSlug}
@@ -178,6 +180,7 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
+                propertyVisibleCount={5}
               />
             </div>
 
@@ -198,7 +201,7 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
-                displayDropdownText={false}
+                displayDropdownText={true}
               />
             </div>
 
@@ -209,13 +212,22 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
-                displayDropdownText={false}
+                displayDropdownText={true}
               />
             </div>
 
-            <div className="border border-custom-border-300 relative flex items-center gap-1 h-7 rounded px-2 transition-all text-custom-text-200 hover:text-custom-text-100 bg-custom-background-100 hover:bg-custom-background-80 cursor-pointer shadow-custom-shadow-2xs">
+            <div className="relative flex items-center gap-1 rounded px-2 h-7 transition-all hover:bg-custom-background-80 cursor-pointer">
               <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
                 <Pencil size={12} />
+              </div>
+            </div>
+
+            <div className=" relative flex items-center rounded h-7 transition-all cursor-pointer bg-custom-primary-100/20 text-custom-primary-100">
+              <div className="text-sm px-3 font-medium h-full border-r border-white/50 flex justify-center items-center rounded-l transition-all hover:bg-custom-primary-100/30">
+                Update
+              </div>
+              <div className="flex-shrink-0 px-1.5 hover:bg-custom-primary-100/30 h-full flex justify-center items-center rounded-r transition-all">
+                <ChevronDown size={16} />
               </div>
             </div>
           </div>

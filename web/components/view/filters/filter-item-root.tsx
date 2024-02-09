@@ -1,9 +1,10 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useViewFilter } from "hooks/store";
+import { useViewDetail, useViewFilter } from "hooks/store";
 // components
 import { ViewFiltersItem, ViewFilterSelection } from "../";
+import { DateFilterModal } from "components/core";
 // types
 import { TViewOperations } from "../types";
 import { TViewFilters, TViewTypes } from "@plane/types";
@@ -15,11 +16,23 @@ type TViewFiltersItemRoot = {
   viewType: TViewTypes;
   viewOperations: TViewOperations;
   filterKey: keyof TViewFilters;
+  dateCustomFilterToggle: string | undefined;
+  setDateCustomFilterToggle: (value: string | undefined) => void;
 };
 
 export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, filterKey } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    viewOperations,
+    filterKey,
+    dateCustomFilterToggle,
+    setDateCustomFilterToggle,
+  } = props;
   // hooks
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const viewFilterHelper = useViewFilter(workspaceSlug, projectId);
   // state
   const [viewAll, setViewAll] = useState(false);
@@ -28,7 +41,24 @@ export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) =>
 
   const filterPropertyIds = propertyIds.length > 5 ? (viewAll ? propertyIds : propertyIds.slice(0, 5)) : propertyIds;
 
-  const handlePropertySelection = (_propertyId: string) => viewOperations?.setFilters(filterKey, _propertyId);
+  const handlePropertySelection = (_propertyId: string) => {
+    if (["start_date", "target_date"].includes(filterKey)) {
+      if (_propertyId === "custom") {
+        const _propertyIds = viewDetailStore?.appliedFilters?.filters?.[filterKey] || [];
+        const selectedDates = _propertyIds.filter((id) => id.includes("-"));
+        if (selectedDates.length > 0)
+          selectedDates.forEach((date: string) => viewOperations?.setFilters(filterKey, date));
+        else setDateCustomFilterToggle(filterKey);
+      } else viewOperations?.setFilters(filterKey, _propertyId);
+    } else viewOperations?.setFilters(filterKey, _propertyId);
+  };
+
+  const handleCustomDateSelection = (selectedDates: string[]) => {
+    selectedDates.forEach((date: string) => {
+      viewOperations?.setFilters(filterKey, date);
+      setDateCustomFilterToggle(undefined);
+    });
+  };
 
   if (propertyIds.length <= 0)
     return <div className="text-xs italic py-1 text-custom-text-300">No items are available.</div>;
@@ -64,6 +94,15 @@ export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) =>
         >
           {viewAll ? "View less" : "View all"}
         </div>
+      )}
+
+      {dateCustomFilterToggle === filterKey && (
+        <DateFilterModal
+          handleClose={() => setDateCustomFilterToggle(undefined)}
+          isOpen={dateCustomFilterToggle === filterKey ? true : false}
+          onSelect={handleCustomDateSelection}
+          title="Start date"
+        />
       )}
     </div>
   );

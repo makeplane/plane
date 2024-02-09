@@ -1,17 +1,31 @@
 import { ReactNode } from "react";
+import { Briefcase, CalendarDays, CircleUser, Tag } from "lucide-react";
 // hooks
 import { useProject, useModule, useCycle, useProjectState, useMember, useLabel } from "hooks/store";
 // ui
-import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import {
+  Avatar,
+  ContrastIcon,
+  CycleGroupIcon,
+  DiceIcon,
+  DoubleCircleIcon,
+  PriorityIcon,
+  StateGroupIcon,
+} from "@plane/ui";
 // types
 import { TIssuePriorities, TStateGroups, TViewFilters } from "@plane/types";
 // constants
 import { STATE_GROUP_PROPERTY, PRIORITIES_PROPERTY, DATE_PROPERTY } from "constants/view/filters";
-import { Briefcase, CalendarDays } from "lucide-react";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 
 type TFilterPropertyDetails = {
+  icon: ReactNode;
+  label: string;
+};
+
+type TFilterPropertyDefaultDetails = {
   icon: ReactNode;
   label: string;
 };
@@ -68,6 +82,80 @@ export const useViewFilter = (workspaceSlug: string, projectId: string | undefin
         return Object.keys(DATE_PROPERTY) || undefined;
       case "target_date":
         return Object.keys(DATE_PROPERTY) || undefined;
+      default:
+        return undefined;
+    }
+  };
+
+  const propertyDefaultDetails = (filterKey: keyof TViewFilters): TFilterPropertyDefaultDetails | undefined => {
+    if (!filterKey) return undefined;
+
+    switch (filterKey) {
+      case "project":
+        return {
+          icon: <Briefcase size={12} />,
+          label: "Projects",
+        };
+      case "module":
+        return {
+          icon: <DiceIcon className="w-3 h-3" />,
+          label: "Modules",
+        };
+      case "cycle":
+        return {
+          icon: <ContrastIcon className="w-3 h-3" />,
+          label: "Cycles",
+        };
+      case "priority":
+        return {
+          icon: <PriorityIcon priority="high" withContainer size={10} />,
+          label: "Priorities",
+        };
+      case "state":
+        return {
+          icon: <DoubleCircleIcon className="w-3 h-3" />,
+          label: "States",
+        };
+      case "state_group":
+        return {
+          icon: <DoubleCircleIcon className="w-3 h-3" />,
+          label: "State Groups",
+        };
+      case "assignees":
+        return {
+          icon: <CircleUser size={12} />,
+          label: "Assignees",
+        };
+      case "mentions":
+        return {
+          icon: <CircleUser size={12} />,
+          label: "Mentions",
+        };
+      case "subscriber":
+        return {
+          icon: <CircleUser size={12} />,
+          label: "Subscribers",
+        };
+      case "created_by":
+        return {
+          icon: <CircleUser size={12} />,
+          label: "Creators",
+        };
+      case "labels":
+        return {
+          icon: <Tag size={12} />,
+          label: "Labels",
+        };
+      case "start_date":
+        return {
+          icon: <CalendarDays size={12} />,
+          label: "Start Dates",
+        };
+      case "target_date":
+        return {
+          icon: <CalendarDays size={12} />,
+          label: "Target Dates",
+        };
       default:
         return undefined;
     }
@@ -200,19 +288,39 @@ export const useViewFilter = (workspaceSlug: string, projectId: string | undefin
           label: labelPropertyDetail.name,
         };
       case "start_date":
-        const startDatePropertyDetail = DATE_PROPERTY?.[propertyId];
-        if (!startDatePropertyDetail) return undefined;
-        return {
-          icon: <CalendarDays size={12} />,
-          label: startDatePropertyDetail.label,
-        };
+        if (propertyId.includes("-")) {
+          const customDateString = propertyId.split(";");
+          return {
+            icon: <CalendarDays size={12} />,
+            label: `${customDateString[1].charAt(0).toUpperCase()}${customDateString[1].slice(1)} ${renderFormattedDate(
+              customDateString[0]
+            )}`,
+          };
+        } else {
+          const startDatePropertyDetail = DATE_PROPERTY?.[propertyId];
+          if (!startDatePropertyDetail) return undefined;
+          return {
+            icon: <CalendarDays size={12} />,
+            label: startDatePropertyDetail.label,
+          };
+        }
       case "target_date":
-        const targetDatePropertyDetail = DATE_PROPERTY?.[propertyId];
-        if (!targetDatePropertyDetail) return undefined;
-        return {
-          icon: <CalendarDays size={12} />,
-          label: targetDatePropertyDetail.label,
-        };
+        if (propertyId.includes("-")) {
+          const customDateString = propertyId.split(";");
+          return {
+            icon: <CalendarDays size={12} />,
+            label: `${customDateString[1].charAt(0).toUpperCase()}${customDateString[1].slice(1)} ${renderFormattedDate(
+              customDateString[0]
+            )}`,
+          };
+        } else {
+          const targetDatePropertyDetail = DATE_PROPERTY?.[propertyId];
+          if (!targetDatePropertyDetail) return undefined;
+          return {
+            icon: <CalendarDays size={12} />,
+            label: targetDatePropertyDetail.label,
+          };
+        }
       default:
         return undefined;
     }
@@ -220,6 +328,7 @@ export const useViewFilter = (workspaceSlug: string, projectId: string | undefin
 
   return {
     filterIdsWithKey,
+    propertyDefaultDetails,
     propertyDetails,
   };
 };

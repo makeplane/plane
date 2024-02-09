@@ -19,10 +19,20 @@ type TViewFiltersRoot = {
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
+  dateCustomFilterToggle: string | undefined;
+  setDateCustomFilterToggle: (value: string | undefined) => void;
 };
 
 export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    viewOperations,
+    dateCustomFilterToggle,
+    setDateCustomFilterToggle,
+  } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   // state
@@ -62,6 +72,8 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
               viewType={viewType}
               viewOperations={viewOperations}
               filterKey={filterKey}
+              dateCustomFilterToggle={dateCustomFilterToggle}
+              setDateCustomFilterToggle={setDateCustomFilterToggle}
             />
           )}
         </div>

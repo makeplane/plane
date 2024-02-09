@@ -16,10 +16,20 @@ type TViewAppliedFiltersRoot = {
   viewId: string;
   viewType: TViewTypes;
   viewOperations: TViewOperations;
+  propertyVisibleCount?: number | undefined;
+  showClearAll?: boolean;
 };
 
 export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    viewOperations,
+    propertyVisibleCount = undefined,
+    showClearAll = false,
+  } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
@@ -28,7 +38,7 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
       ? Object.keys(viewDetailStore?.appliedFilters?.filters)
       : undefined;
 
-  const clearAllFilters = () => viewDetailStore?.setFilters(undefined, "clear_all");
+  const clearAllFilters = () => viewOperations?.setFilters(undefined, "clear_all");
 
   if (!filterKeys || !viewDetailStore?.isFiltersApplied)
     return (
@@ -49,20 +59,23 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
               viewType={viewType}
               filterKey={filterKey}
               viewOperations={viewOperations}
+              propertyVisibleCount={propertyVisibleCount}
             />
           </Fragment>
         );
       })}
 
-      <div
-        className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 px-2 cursor-pointer transition-all hover:bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100 min-h-[36px]"
-        onClick={clearAllFilters}
-      >
-        <div className="text-xs">Clear All</div>
-        <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4">
-          <X size={10} />
+      {showClearAll && (
+        <div
+          className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 px-2 cursor-pointer transition-all hover:bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100 min-h-[36px]"
+          onClick={clearAllFilters}
+        >
+          <div className="text-xs">Clear All</div>
+          <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4">
+            <X size={10} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 });

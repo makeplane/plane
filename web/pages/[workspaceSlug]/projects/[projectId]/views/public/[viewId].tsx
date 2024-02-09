@@ -9,19 +9,19 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { VIEW_TYPES } from "constants/view";
 
-const WorkspacePrivateViewPage: NextPageWithLayout = () => {
+const ProjectPublicViewPage: NextPageWithLayout = () => {
   const router = useRouter();
-  const { workspaceSlug, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query;
 
   const workspaceViewTabOptions = useMemo(
     () => [
       {
-        key: VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS,
+        key: VIEW_TYPES.PROJECT_PRIVATE_VIEWS,
         title: "Private",
         href: `/${workspaceSlug}/views/private/assigned`,
       },
       {
-        key: VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS,
+        key: VIEW_TYPES.PROJECT_PUBLIC_VIEWS,
         title: "Public",
         href: `/${workspaceSlug}/views/public/all-issues`,
       },
@@ -31,23 +31,24 @@ const WorkspacePrivateViewPage: NextPageWithLayout = () => {
 
   if (!workspaceSlug || !viewId) return <></>;
   return (
-    <div className="h-full overflow-hidden bg-custom-background-100">
-      <div className="flex h-full w-full flex-col border-b border-custom-border-300">
+    <div className="w-full h-full overflow-hidden bg-custom-background-100 relative flex flex-col">
+      <div className="flex-shrink-0 w-full">
         <AllIssuesViewRoot
           workspaceSlug={workspaceSlug.toString()}
           projectId={undefined}
           viewId={viewId.toString()}
-          viewType={VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS}
-          baseRoute={`/${workspaceSlug?.toString()}/views/private`}
+          viewType={VIEW_TYPES.PROJECT_PUBLIC_VIEWS}
+          baseRoute={`/${workspaceSlug?.toString()}/views/public`}
           workspaceViewTabOptions={workspaceViewTabOptions}
         />
       </div>
+      <div className="w-full h-full overflow-hidden">Issues render</div>
     </div>
   );
 };
 
-WorkspacePrivateViewPage.getLayout = function getLayout(page: ReactElement) {
+ProjectPublicViewPage.getLayout = function getLayout(page: ReactElement) {
   return <AppLayout header={<></>}>{page}</AppLayout>;
 };
 
-export default WorkspacePrivateViewPage;
+export default ProjectPublicViewPage;

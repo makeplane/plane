@@ -47,10 +47,10 @@ export const DATE_PROPERTY: {
     label: string;
   };
 } = {
-  last_week: { label: "Last Week" },
-  "2_weeks_from_now": { label: "2 weeks from now" },
-  "1_month_from_now": { label: "1 month from now" },
-  "2_months_from_now": { label: "2 months from now" },
+  "1_weeks;after;fromnow": { label: "1 week from now" },
+  "2_weeks;after;fromnow": { label: "2 weeks from now" },
+  "1_months;after;fromnow": { label: "1 month from now" },
+  "2_months;after;fromnow": { label: "2 months from now" },
   custom: { label: "Custom" },
 };
 
@@ -110,7 +110,8 @@ const ALL_FILTER_PERMISSIONS: TFilterPermissions["all"] = {
       "start_date",
       "target_date",
     ],
-    display_filters: ["type"],
+    // display_filters: ["type"],
+    display_filters: ["group_by", "sub_group_by", "order_by", "type"],
     extra_options: [],
     display_properties: true,
   },

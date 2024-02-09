@@ -64,48 +64,46 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
 
   return (
     <div className="relative flex justify-between px-5 gap-2">
-      {viewStore?.viewIds && viewStore?.viewIds.length > 0 && (
-        <div
-          key={`views_list_${viewId}`}
-          id="tab-container"
-          className="relative flex items-center w-full overflow-hidden"
-        >
-          {viewIds.map((_viewId) => (
-            <Fragment key={_viewId}>
-              <ViewItem
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                viewId={viewId}
-                viewType={viewType}
-                viewItemId={_viewId}
-                baseRoute={baseRoute}
-              />
-            </Fragment>
-          ))}
+      <div className="w-full">
+        {viewStore?.viewIds && viewStore?.viewIds.length > 0 && (
+          <div id="tab-container" className="relative flex items-center w-full overflow-hidden">
+            {viewIds.map((_viewId) => (
+              <Fragment key={_viewId}>
+                <ViewItem
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  viewId={viewId}
+                  viewType={viewType}
+                  viewItemId={_viewId}
+                  baseRoute={baseRoute}
+                />
+              </Fragment>
+            ))}
 
-          <div id="tab-item-view-more" className="min-w-[90px]">
-            {viewStore?.viewIds.length <= (itemsToRenderViewsCount || viewStore?.viewIds.length) ? null : (
-              <ViewDropdown
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                viewId={viewId}
-                viewType={viewType}
-                viewOperations={viewOperations}
-                baseRoute={baseRoute}
-              >
-                <div className="text-sm font-semibold mb-1 p-2 px-2.5 text-custom-text-200 cursor-pointer hover:bg-custom-background-80 whitespace-nowrap rounded relative flex items-center gap-1">
-                  <span>
-                    <Plus size={12} />
-                  </span>
-                  <span>
-                    {viewStore?.viewIds.length - (itemsToRenderViewsCount || viewStore?.viewIds.length)} More...
-                  </span>
-                </div>
-              </ViewDropdown>
-            )}
+            <div id="tab-item-view-more" className="min-w-[90px]">
+              {viewStore?.viewIds.length <= (itemsToRenderViewsCount || viewStore?.viewIds.length) ? null : (
+                <ViewDropdown
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  viewId={viewId}
+                  viewType={viewType}
+                  viewOperations={viewOperations}
+                  baseRoute={baseRoute}
+                >
+                  <div className="text-sm font-semibold mb-1 p-2 px-2.5 text-custom-text-200 cursor-pointer hover:bg-custom-background-80 whitespace-nowrap rounded relative flex items-center gap-1">
+                    <span>
+                      <Plus size={12} />
+                    </span>
+                    <span>
+                      {viewStore?.viewIds.length - (itemsToRenderViewsCount || viewStore?.viewIds.length)} More...
+                    </span>
+                  </div>
+                </ViewDropdown>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="flex-shrink-0 my-auto pb-1">
         <Button size="sm" prependIcon={<Plus />} onClick={() => viewOperations?.localViewCreateEdit(undefined)}>
