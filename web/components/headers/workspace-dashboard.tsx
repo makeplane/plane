@@ -10,6 +10,8 @@ import { useEventTracker } from "hooks/store";
 import { BreadcrumbLink } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+// constants
+import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "constants/event-tracker";
 
 export const WorkspaceDashboardHeader = () => {
   // hooks
@@ -35,7 +37,7 @@ export const WorkspaceDashboardHeader = () => {
         <div className="flex items-center gap-3 px-3">
           <a
             onClick={() =>
-              captureEvent("Changelog redirected", {
+              captureEvent(CHANGELOG_REDIRECTED, {
                 element: "navbar",
               })
             }
@@ -49,7 +51,7 @@ export const WorkspaceDashboardHeader = () => {
           </a>
           <a
             onClick={() =>
-              captureEvent("Github redirected", {
+              captureEvent(GITHUB_REDIRECTED, {
                 element: "navbar",
               })
             }

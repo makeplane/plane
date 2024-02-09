@@ -18,6 +18,7 @@ import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // types
 import { TCycleGroups } from "@plane/types";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -65,7 +66,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
     addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
       .then(() => {
-        captureEvent("Cycle favorited", {
+        captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "List layout",
           state: "SUCCESS",
@@ -86,7 +87,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
     removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
       .then(() => {
-        captureEvent("Cycle unfavorited", {
+        captureEvent(CYCLE_UNFAVORITED, {
           cycle_id: cycleId,
           element: "List layout",
           state: "SUCCESS",

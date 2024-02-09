@@ -16,6 +16,7 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   moduleId: string;
@@ -48,7 +49,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
     addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
       .then(() => {
-        captureEvent("Module favorited", {
+        captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
@@ -70,7 +71,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
     removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
       .then(() => {
-        captureEvent("Module unfavorited", {
+        captureEvent(MODULE_UNFAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",

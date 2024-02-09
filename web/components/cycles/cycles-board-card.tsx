@@ -16,6 +16,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 //.types
 import { TCycleGroups } from "@plane/types";
 
@@ -92,7 +93,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
 
     addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
       .then(() => {
-        captureEvent("Cycle favorited", {
+        captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "Grid layout",
           state: "SUCCESS",
@@ -113,7 +114,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
 
     removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
       .then(() => {
-        captureEvent("Cycle unfavorited", {
+        captureEvent(CYCLE_UNFAVORITED, {
           cycle_id: cycleId,
           element: "Grid layout",
           state: "SUCCESS",

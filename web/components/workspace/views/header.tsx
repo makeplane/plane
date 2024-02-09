@@ -9,6 +9,7 @@ import { useEventTracker, useGlobalView, useUser } from "hooks/store";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // constants
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+import { GLOBAL_VIEW_OPENED } from "constants/event-tracker";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -55,7 +56,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   useEffect(() => {
     if (!globalViewId) return;
 
-    captureEvent("Global view opened", {
+    captureEvent(GLOBAL_VIEW_OPENED, {
       view_id: globalViewId,
       view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
         ? "Default"

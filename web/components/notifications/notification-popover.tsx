@@ -13,6 +13,8 @@ import { Loader, Tooltip } from "@plane/ui";
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
+// constants
+import { SIDEBAR_CLICKED } from "constants/event-tracker";
 
 export const NotificationPopover = observer(() => {
   // store hooks
@@ -68,7 +70,7 @@ export const NotificationPopover = observer(() => {
               <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed}>
                 <Popover.Button
                   onClick={() =>
-                    captureEvent("Sidenav clicked", {
+                    captureEvent(SIDEBAR_CLICKED, {
                       destination: "notifications",
                     })
                   }

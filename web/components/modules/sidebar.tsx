@@ -34,7 +34,7 @@ import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
-import { MODULE_UPDATED } from "constants/event-tracker";
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -100,7 +100,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
       .then(() => {
-        captureEvent("Module link created",{
+        captureEvent(MODULE_LINK_CREATED, {
           module_id: moduleId,
           state: "SUCCESS",
         });
@@ -126,7 +126,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
       .then(() => {
-        captureEvent("Module link updated",{
+        captureEvent(MODULE_LINK_UPDATED, {
           module_id: moduleId,
           state: "SUCCESS",
         });
@@ -150,7 +150,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
-        captureEvent("Module link deleted",{
+        captureEvent(MODULE_LINK_DELETED, {
           module_id: moduleId,
           state: "SUCCESS",
         });

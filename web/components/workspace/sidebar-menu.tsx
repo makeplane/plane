@@ -12,6 +12,7 @@ import { Crown } from "lucide-react";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { SIDEBAR_MENU_ITEMS } from "constants/dashboard";
+import { SIDEBAR_CLICKED } from "constants/event-tracker";
 // helper
 import { cn } from "helpers/common.helper";
 
@@ -32,7 +33,7 @@ export const WorkspaceSidebarMenu = observer(() => {
     if (window.innerWidth < 768) {
       themeStore.toggleSidebar();
     }
-    captureEvent("Sidenav clicked", {
+    captureEvent(SIDEBAR_CLICKED, {
       destination: itemKey,
     });
   };
