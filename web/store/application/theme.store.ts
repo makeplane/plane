@@ -8,10 +8,12 @@ export interface IThemeStore {
   theme: string | null;
   sidebarCollapsed: boolean | undefined;
   profileSidebarCollapsed: boolean | undefined;
+  workspaceAnalyticsSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
   setTheme: (theme: any) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
+  toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
 }
 
 export class ThemeStore implements IThemeStore {
@@ -19,6 +21,7 @@ export class ThemeStore implements IThemeStore {
   sidebarCollapsed: boolean | undefined = undefined;
   theme: string | null = null;
   profileSidebarCollapsed: boolean | undefined = undefined;
+  workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   // root store
   rootStore;
 
@@ -28,10 +31,12 @@ export class ThemeStore implements IThemeStore {
       sidebarCollapsed: observable.ref,
       theme: observable.ref,
       profileSidebarCollapsed: observable.ref,
+      workspaceAnalyticsSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
       setTheme: action,
       toggleProfileSidebar: action,
+      toggleWorkspaceAnalyticsSidebar: action
       // computed
     });
     // root store
@@ -62,6 +67,19 @@ export class ThemeStore implements IThemeStore {
       this.profileSidebarCollapsed = collapsed;
     }
     localStorage.setItem("profile_sidebar_collapsed", this.profileSidebarCollapsed.toString());
+  };
+
+  /**
+   * Toggle the profile sidebar collapsed state
+   * @param collapsed
+   */
+  toggleWorkspaceAnalyticsSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.workspaceAnalyticsSidebarCollapsed = !this.workspaceAnalyticsSidebarCollapsed;
+    } else {
+      this.workspaceAnalyticsSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("workspace_analytics_sidebar_collapsed", this.workspaceAnalyticsSidebarCollapsed.toString());
   };
 
   /**
