@@ -1023,8 +1023,6 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         assignee_distribution_data = [
             {
                 "display_name": item["display_name"],
-                "first_name": item["first_name"],
-                "last_name": item["last_name"],
                 "assignee_id": str(item["assignee_id"]) if item["assignee_id"] else None,
                 "avatar": item["avatar"],
                 "total_issues": item["total_issues"],
