@@ -49,9 +49,19 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     setIsOpen(true);
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
+  const closeDropdown = () => {
+    isOpen && onMenuClose && onMenuClose();
+    setIsOpen(false);
+  };
 
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
+  const selectActiveItem = () => {
+    const activeItem: HTMLElement | undefined | null = dropdownRef.current?.querySelector(
+      `[data-headlessui-state="active"] button`
+    );
+    activeItem?.click();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen, selectActiveItem);
 
   const handleOnClick = () => {
     if (closeOnSelect) closeDropdown();
@@ -91,7 +101,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
-      onKeyDown={handleKeyDown}
+      onKeyDownCapture={handleKeyDown}
       onClick={handleOnClick}
     >
       {({ open }) => (
