@@ -4,11 +4,12 @@ import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // store hooks
-import { useGlobalView, useUser } from "hooks/store";
+import { useEventTracker, useGlobalView, useUser } from "hooks/store";
 // components
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // constants
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+import { GLOBAL_VIEW_OPENED } from "constants/event-tracker";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -49,10 +50,18 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
+  const { captureEvent } = useEventTracker();
 
   // bring the active view to the centre of the header
   useEffect(() => {
     if (!globalViewId) return;
+
+    captureEvent(GLOBAL_VIEW_OPENED, {
+      view_id: globalViewId,
+      view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
+        ? "Default"
+        : "Custom",
+    });
 
     const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
 

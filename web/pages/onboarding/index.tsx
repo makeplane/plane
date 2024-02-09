@@ -24,6 +24,8 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import { IUser, TOnboardingSteps } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
+// constants
+import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
 
 // services
 const workspaceService = new WorkspaceService();
@@ -79,7 +81,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     await updateUserOnBoard()
       .then(() => {
-        captureEvent("User onboarding completed", {
+        captureEvent(USER_ONBOARDING_COMPLETED, {
           user_role: user.role,
           email: user.email,
           user_id: user.id,

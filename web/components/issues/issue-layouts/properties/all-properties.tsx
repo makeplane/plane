@@ -18,6 +18,8 @@ import {
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
+// constants
+import { ISSUE_UPDATED } from "constants/event-tracker";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -40,7 +42,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handleState = (stateId: string) => {
     handleIssues({ ...issue, state_id: stateId }).then(() => {
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: router.asPath,
         updates: {
@@ -54,7 +56,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handlePriority = (value: TIssuePriorities) => {
     handleIssues({ ...issue, priority: value }).then(() => {
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: router.asPath,
         updates: {
@@ -68,7 +70,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handleLabel = (ids: string[]) => {
     handleIssues({ ...issue, label_ids: ids }).then(() => {
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: router.asPath,
         updates: {
@@ -82,7 +84,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handleAssignee = (ids: string[]) => {
     handleIssues({ ...issue, assignee_ids: ids }).then(() => {
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: router.asPath,
         updates: {
@@ -96,7 +98,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handleStartDate = (date: Date | null) => {
     handleIssues({ ...issue, start_date: date ? renderFormattedPayloadDate(date) : null }).then(() => {
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: router.asPath,
         updates: {
@@ -110,7 +112,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handleTargetDate = (date: Date | null) => {
     handleIssues({ ...issue, target_date: date ? renderFormattedPayloadDate(date) : null }).then(() => {
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: router.asPath,
         updates: {
@@ -124,7 +126,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handleEstimate = (value: number | null) => {
     handleIssues({ ...issue, estimate_point: value }).then(() => {
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: router.asPath,
         updates: {

@@ -10,6 +10,8 @@ import useLocalStorage from "hooks/use-local-storage";
 import { CycleForm } from "components/cycles";
 // types
 import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
+// constants
+import { CYCLE_CREATED, CYCLE_UPDATED } from "constants/event-tracker";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -47,7 +49,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Cycle created successfully.",
         });
         captureCycleEvent({
-          eventName: "Cycle created",
+          eventName: CYCLE_CREATED,
           payload: { ...res, state: "SUCCESS" },
         });
       })
@@ -58,18 +60,23 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: err.detail ?? "Error in creating cycle. Please try again.",
         });
         captureCycleEvent({
-          eventName: "Cycle created",
+          eventName: CYCLE_CREATED,
           payload: { ...payload, state: "FAILED" },
         });
       });
   };
 
-  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId) return;
 
     const selectedProjectId = payload.project ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
-      .then(() => {
+      .then((res) => {
+        const changed_properties = Object.keys(dirtyFields);
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: { ...res, changed_properties: changed_properties, state: "SUCCESS" },
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -77,6 +84,10 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         });
       })
       .catch((err) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: { ...payload, state: "FAILED" },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -95,7 +106,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     return status;
   };
 
-  const handleFormSubmit = async (formData: Partial<ICycle>) => {
+  const handleFormSubmit = async (formData: Partial<ICycle>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<ICycle> = {
@@ -119,7 +130,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     }
 
     if (isDateValid) {
-      if (data) await handleUpdateCycle(data.id, payload);
+      if (data) await handleUpdateCycle(data.id, payload, dirtyFields);
       else {
         await handleCreateCycle(payload).then(() => {
           setCycleTab("all");

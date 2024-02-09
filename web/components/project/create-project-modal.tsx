@@ -18,6 +18,7 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PROJECT_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -134,13 +135,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           state: "SUCCESS",
         };
         captureProjectEvent({
-          eventName: "Project created",
+          eventName: PROJECT_CREATED,
           payload: newPayload,
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: res.workspace,
-          },
         });
         setToastAlert({
           type: "success",
@@ -160,16 +156,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             message: err.data[key],
           });
           captureProjectEvent({
-            eventName: "Project created",
+            eventName: PROJECT_CREATED,
             payload: {
               ...payload,
               state: "FAILED",
-            },
-            group: {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            },
+            }
           });
         });
       });

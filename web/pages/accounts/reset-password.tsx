@@ -7,6 +7,7 @@ import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
+import { useEventTracker } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
@@ -21,6 +22,8 @@ import { checkEmailValidity } from "helpers/string.helper";
 import { NextPageWithLayout } from "lib/types";
 // icons
 import { Eye, EyeOff } from "lucide-react";
+// constants
+import { NEW_PASS_CREATED } from "constants/event-tracker";
 
 type TResetPasswordFormValues = {
   email: string;
@@ -41,6 +44,8 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const { uidb64, token, email } = router.query;
   // states
   const [showPassword, setShowPassword] = useState(false);
+  // store hooks
+  const { captureEvent } = useEventTracker();
   // toast
   const { setToastAlert } = useToast();
   // sign in redirection hook
@@ -66,14 +71,22 @@ const ResetPasswordPage: NextPageWithLayout = () => {
 
     await authService
       .resetPassword(uidb64.toString(), token.toString(), payload)
-      .then(() => handleRedirection())
-      .catch((err) =>
+      .then(() => {
+        captureEvent(NEW_PASS_CREATED, {
+          state: "SUCCESS",
+        });
+        handleRedirection();
+      })
+      .catch((err) => {
+        captureEvent(NEW_PASS_CREATED, {
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   return (

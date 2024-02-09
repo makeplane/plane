@@ -13,6 +13,7 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { Spinner } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
 
 export const WorkspaceDashboardView = observer(() => {
   // theme
@@ -37,9 +38,8 @@ export const WorkspaceDashboardView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        captureEvent("User tour complete", {
+        captureEvent(PRODUCT_TOUR_COMPLETED, {
           user_id: currentUser?.id,
-          email: currentUser?.email,
           state: "SUCCESS",
         });
       })
@@ -84,7 +84,7 @@ export const WorkspaceDashboardView = observer(() => {
               primaryButton={{
                 text: "Build your first project",
                 onClick: () => {
-                  setTrackElement("Dashboard");
+                  setTrackElement("Dashboard empty state");
                   toggleCreateProjectModal(true);
                 },
               }}

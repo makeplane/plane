@@ -12,6 +12,8 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { createIssuePayload } from "helpers/issue.helper";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 const Inputs = (props: any) => {
   const { register, setFocus, projectDetail } = props;
@@ -106,7 +108,7 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           viewId
         ).then((res) => {
           captureIssueEvent({
-            eventName: "Issue created",
+            eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Kanban quick add" },
             path: router.asPath,
           });
@@ -118,7 +120,7 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
       });
     } catch (err: any) {
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
         path: router.asPath,
       });

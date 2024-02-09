@@ -18,6 +18,7 @@ import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
@@ -28,6 +29,9 @@ import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { MEMBER_INVITED } from "constants/event-tracker";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // assets
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
@@ -267,6 +271,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   const { setToastAlert } = useToast();
   const { resolvedTheme } = useTheme();
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const {
     control,
@@ -305,6 +311,17 @@ export const InviteMembers: React.FC<Props> = (props) => {
         })),
       })
       .then(async () => {
+        captureEvent(MEMBER_INVITED, {
+          emails: [
+            ...payload.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
+          project_id: undefined,
+          state: "SUCCESS",
+          element: "Onboarding",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -313,13 +330,18 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
         await nextStep();
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureEvent(MEMBER_INVITED, {
+          project_id: undefined,
+          state: "FAILED",
+          element: "Onboarding",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error,
-        })
-      );
+        });
+      });
   };
 
   const appendField = () => {

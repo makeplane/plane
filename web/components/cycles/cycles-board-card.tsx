@@ -16,6 +16,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 //.types
 import { TCycleGroups } from "@plane/types";
 
@@ -33,7 +34,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   // router
   const router = useRouter();
   // store
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -90,39 +91,55 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_FAVORITED, {
+          cycle_id: cycleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_UNFAVORITED, {
+          cycle_id: cycleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Cycles page board layout");
+    setTrackElement("Cycles page grid layout");
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Cycles page board layout");
+    setTrackElement("Cycles page grid layout");
     setDeleteModal(true);
   };
 

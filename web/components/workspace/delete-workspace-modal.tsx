@@ -11,6 +11,8 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // types
 import type { IWorkspace } from "@plane/types";
+// constants
+import { WORKSPACE_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -28,7 +30,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const { captureEvent } = useEventTracker();
+  const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
   // toast alert
   const { setToastAlert } = useToast();
@@ -59,9 +61,13 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         handleClose();
         router.push("/");
-        captureEvent("Workspace deleted", {
-          res,
-          state: "SUCCESS",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "SUCCESS",
+            element: "Workspace general settings page",
+          },
         });
         setToastAlert({
           type: "success",
@@ -75,8 +81,13 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         });
-        captureEvent("Workspace deleted", {
-          state: "FAILED",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "FAILED",
+            element: "Workspace general settings page",
+          },
         });
       });
   };

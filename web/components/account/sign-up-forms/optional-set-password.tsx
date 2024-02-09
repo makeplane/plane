@@ -4,12 +4,14 @@ import { Controller, useForm } from "react-hook-form";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // constants
 import { ESignUpSteps } from "components/account";
+import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "constants/event-tracker";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 
@@ -37,6 +39,8 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
   // states
   const [isGoingToWorkspace, setIsGoingToWorkspace] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // store hooks
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -66,21 +70,34 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Password created successfully.",
         });
+        captureEvent(SETUP_PASSWORD, {
+          state: "SUCCESS",
+          first_time: true,
+        });
         await handleSignInRedirection();
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureEvent(SETUP_PASSWORD, {
+          state: "FAILED",
+          first_time: true,
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   const handleGoToWorkspace = async () => {
     setIsGoingToWorkspace(true);
-
-    await handleSignInRedirection().finally(() => setIsGoingToWorkspace(false));
+    await handleSignInRedirection().finally(() => {
+      captureEvent(PASSWORD_CREATE_SKIPPED, {
+        state: "SUCCESS",
+        first_time: true,
+      });
+      setIsGoingToWorkspace(false);
+    });
   };
 
   return (

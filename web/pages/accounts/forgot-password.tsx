@@ -7,6 +7,7 @@ import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
+import { useEventTracker } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
@@ -19,6 +20,7 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import { checkEmailValidity } from "helpers/string.helper";
 // type
 import { NextPageWithLayout } from "lib/types";
+import { FORGOT_PASS_LINK } from "constants/event-tracker";
 
 type TForgotPasswordFormValues = {
   email: string;
@@ -35,6 +37,8 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
   // router
   const router = useRouter();
   const { email } = router.query;
+  // store hooks
+  const { captureEvent } = useEventTracker();
   // toast
   const { setToastAlert } = useToast();
   // timer
@@ -57,6 +61,9 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
         email: formData.email,
       })
       .then(() => {
+        captureEvent(FORGOT_PASS_LINK, {
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Email sent",
@@ -65,13 +72,16 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
         });
         setResendCodeTimer(30);
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureEvent(FORGOT_PASS_LINK, {
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   return (

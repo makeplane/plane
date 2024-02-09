@@ -4,12 +4,14 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { usePage } from "hooks/store";
+import { useEventTracker, usePage } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
 import { useProjectPages } from "hooks/store/use-project-page";
+// constants
+import { PAGE_DELETED } from "constants/event-tracker";
 
 type TConfirmPageDeletionProps = {
   pageId: string;
@@ -27,6 +29,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deletePage } = useProjectPages();
+  const { capturePageEvent } = useEventTracker();
   const pageStore = usePage(pageId);
 
   // toast alert
@@ -49,6 +52,13 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
     // Delete Page will only delete the page from the archive page map, at this point only archived pages can be deleted
     await deletePage(workspaceSlug.toString(), projectId as string, pageId)
       .then(() => {
+        capturePageEvent({
+          eventName: PAGE_DELETED,
+          payload: {
+            ...pageStore,
+            state: "SUCCESS",
+          },
+        });
         handleClose();
         setToastAlert({
           type: "success",
@@ -57,6 +67,13 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         });
       })
       .catch(() => {
+        capturePageEvent({
+          eventName: PAGE_DELETED,
+          payload: {
+            ...pageStore,
+            state: "FAILED",
+          },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",

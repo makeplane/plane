@@ -26,6 +26,7 @@ export interface IWorkspaceMemberStore {
   // computed
   workspaceMemberIds: string[] | null;
   workspaceMemberInvitationIds: string[] | null;
+  memberMap: Record<string, IWorkspaceMembership> | null;
   // computed actions
   getSearchedWorkspaceMemberIds: (searchQuery: string) => string[] | null;
   getSearchedWorkspaceInvitationIds: (searchQuery: string) => string[] | null;
@@ -68,6 +69,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       // computed
       workspaceMemberIds: computed,
       workspaceMemberInvitationIds: computed,
+      memberMap: computed,
       // actions
       fetchWorkspaceMembers: action,
       updateMember: action,
@@ -98,6 +100,12 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     ]);
     const memberIds = members.map((m) => m.member);
     return memberIds;
+  }
+
+  get memberMap() {
+    const workspaceSlug = this.routerStore.workspaceSlug;
+    if (!workspaceSlug) return null;
+    return this.workspaceMemberMap?.[workspaceSlug] ?? {};
   }
 
   get workspaceMemberInvitationIds() {

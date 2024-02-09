@@ -4,12 +4,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
-import { useGlobalView } from "hooks/store";
+import { useGlobalView, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
 import { IWorkspaceView } from "@plane/types";
+// constants
+import { GLOBAL_VIEW_DELETED } from "constants/event-tracker";
 
 type Props = {
   data: IWorkspaceView;
@@ -26,6 +28,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { deleteGlobalView } = useGlobalView();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -39,13 +42,23 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
     setIsDeleteLoading(true);
 
     await deleteGlobalView(workspaceSlug.toString(), data.id)
-      .catch(() =>
+      .then(() => {
+        captureEvent(GLOBAL_VIEW_DELETED, {
+          view_id: data.id,
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        captureEvent(GLOBAL_VIEW_DELETED, {
+          view_id: data.id,
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Something went wrong while deleting the view. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => {
         setIsDeleteLoading(false);
         handleClose();

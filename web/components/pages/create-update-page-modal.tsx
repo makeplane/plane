@@ -3,10 +3,14 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // components
 import { PageForm } from "./page-form";
+// hooks
+import { useEventTracker } from "hooks/store";
 // types
 import { IPage } from "@plane/types";
 import { useProjectPages } from "hooks/store/use-project-page";
 import { IPageStore } from "store/page.store";
+// constants
+import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   // data?: IPage | null;
@@ -21,12 +25,30 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store hooks
   const { createPage } = useProjectPages();
+  const { capturePageEvent } = useEventTracker();
 
   const createProjectPage = async (payload: IPage) => {
     if (!workspaceSlug) return;
-    await createPage(workspaceSlug.toString(), projectId, payload);
+    await createPage(workspaceSlug.toString(), projectId, payload)
+      .then((res) => {
+        capturePageEvent({
+          eventName: PAGE_CREATED,
+          payload: {
+            ...res,
+            state: "SUCCESS",
+          },
+        });
+      })
+      .catch(() => {
+        capturePageEvent({
+          eventName: PAGE_CREATED,
+          payload: {
+            state: "FAILED",
+          },
+        });
+      });
   };
 
   const handleFormSubmit = async (formData: IPage) => {
@@ -39,6 +61,14 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
         if (pageStore.access !== formData.access) {
           formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
         }
+        capturePageEvent({
+          eventName: PAGE_UPDATED,
+          payload: {
+            ...pageStore,
+            state: "SUCCESS",
+          },
+        });
+        console.log("Page updated successfully", pageStore);
       } else {
         await createProjectPage(formData);
       }

@@ -7,12 +7,15 @@ import { UserService } from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
+import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
+// constants
+import { CODE_VERIFIED } from "constants/event-tracker";
 
 type Props = {
   email: string;
@@ -41,6 +44,8 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
+  // store hooks
+  const { captureEvent } = useEventTracker();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
   // form info
@@ -69,17 +74,22 @@ export const SignInUniqueCodeForm: React.FC<Props> = (props) => {
     await authService
       .magicSignIn(payload)
       .then(async () => {
+        captureEvent(CODE_VERIFIED, {
+          state: "SUCCESS",
+        });
         const currentUser = await userService.currentUser();
-
         await onSubmit(currentUser.is_password_autoset);
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureEvent(CODE_VERIFIED, {
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   const handleSendNewCode = async (formData: TUniqueCodeFormValues) => {

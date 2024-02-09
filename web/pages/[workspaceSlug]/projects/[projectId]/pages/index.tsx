@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -60,6 +60,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
 
   const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
     useProjectPages();
@@ -194,7 +195,10 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
           description="Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
           primaryButton={{
             text: "Create your first page",
-            onClick: () => toggleCreatePageModal(true),
+            onClick: () => {
+              setTrackElement("Pages empty state");
+              toggleCreatePageModal(true);
+            },
           }}
           comicBox={{
             title: "A page can be a doc or a doc of docs.",

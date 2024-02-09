@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMember, useProject, useUser } from "hooks/store";
+import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
@@ -14,6 +14,7 @@ import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";
+import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 
 type Props = {
   userId: string;
@@ -35,6 +36,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },
   } = useMember();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -48,8 +50,11 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     if (userDetails.member.id === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
+          captureEvent(PROJECT_MEMBER_LEAVE, {
+            state: "SUCCESS",
+            element: "Project settings members page",
+          });
           await fetchProjects(workspaceSlug.toString());
-
           router.push(`/${workspaceSlug}/projects`);
         })
         .catch((err) =>

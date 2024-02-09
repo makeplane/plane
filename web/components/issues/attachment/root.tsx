@@ -38,7 +38,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
             title: "Attachment uploaded",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: "Issue attachment added",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "attachment",
@@ -47,7 +47,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: "Issue attachment added",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
           });
           setToastAlert({
@@ -67,7 +67,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
             title: "Attachment removed",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: "Issue attachment deleted",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "attachment",
@@ -76,7 +76,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: "Issue attachment deleted",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "attachment",

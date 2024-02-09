@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { FileText, Plus } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
@@ -25,6 +25,7 @@ export const PagesHeader = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
+  const { setTrackElement } = useEventTracker();
 
   const canUserCreatePage =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -64,7 +65,15 @@ export const PagesHeader = observer(() => {
       </div>
       {canUserCreatePage && (
         <div className="flex items-center gap-2">
-          <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => toggleCreatePageModal(true)}>
+          <Button
+            variant="primary"
+            prependIcon={<Plus />}
+            size="sm"
+            onClick={() => {
+              setTrackElement("Project pages page");
+              toggleCreatePageModal(true);
+            }}
+          >
             Create Page
           </Button>
         </div>

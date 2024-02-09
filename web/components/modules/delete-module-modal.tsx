@@ -11,6 +11,8 @@ import { Button } from "@plane/ui";
 import { AlertTriangle } from "lucide-react";
 // types
 import type { IModule } from "@plane/types";
+// constants
+import { MODULE_DELETED } from "constants/event-tracker";
 
 type Props = {
   data: IModule;
@@ -51,7 +53,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           message: "Module deleted successfully.",
         });
         captureModuleEvent({
-          eventName: "Module deleted",
+          eventName: MODULE_DELETED,
           payload: { ...data, state: "SUCCESS" },
         });
       })
@@ -62,7 +64,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           message: "Module could not be deleted. Please try again.",
         });
         captureModuleEvent({
-          eventName: "Module deleted",
+          eventName: MODULE_DELETED,
           payload: { ...data, state: "FAILED" },
         });
       })
