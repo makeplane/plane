@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
@@ -48,8 +48,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   // refs
   const snoozeRef = useRef<HTMLDivElement | null>(null);
 
-  if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
-
   const moreOptions = [
     {
       id: 1,
@@ -82,7 +80,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       },
     },
   ];
-  
+
   const snoozeOptionOnClick = (date: Date | null) => {
     if (!date) {
       setSelectedNotificationForSnooze(notification.id);
@@ -109,7 +107,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       document.removeEventListener("mousedown", handleClickOutside, true);
       document.removeEventListener("touchend", handleClickOutside, true);
     };
-  }, [setshowSnoozeOptions]);
+  }, []);
+
+  if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
 
   return (
     <Link

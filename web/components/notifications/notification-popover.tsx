@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { Bell } from "lucide-react";
 import { observer } from "mobx-react-lite";
