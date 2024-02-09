@@ -9,6 +9,8 @@ import useToast from "hooks/use-toast";
 import { ModuleForm } from "components/modules";
 // types
 import type { IModule } from "@plane/types";
+// constants
+import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -59,7 +61,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: "Module created successfully.",
         });
         captureModuleEvent({
-          eventName: "Module created",
+          eventName: MODULE_CREATED,
           payload: { ...res, state: "SUCCESS" },
         });
       })
@@ -70,13 +72,13 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: err.detail ?? "Module could not be created. Please try again.",
         });
         captureModuleEvent({
-          eventName: "Module created",
+          eventName: MODULE_CREATED,
           payload: { ...data, state: "FAILED" },
         });
       });
   };
 
-  const handleUpdateModule = async (payload: Partial<IModule>) => {
+  const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId || !data) return;
 
     const selectedProjectId = payload.project ?? projectId.toString();
@@ -90,8 +92,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: "Module updated successfully.",
         });
         captureModuleEvent({
-          eventName: "Module updated",
-          payload: { ...res, state: "SUCCESS" },
+          eventName: MODULE_UPDATED,
+          payload: { ...res, changed_properties: Object.keys(dirtyFields), state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -101,20 +103,20 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: err.detail ?? "Module could not be updated. Please try again.",
         });
         captureModuleEvent({
-          eventName: "Module updated",
+          eventName: MODULE_UPDATED,
           payload: { ...data, state: "FAILED" },
         });
       });
   };
 
-  const handleFormSubmit = async (formData: Partial<IModule>) => {
+  const handleFormSubmit = async (formData: Partial<IModule>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<IModule> = {
       ...formData,
     };
     if (!data) await handleCreateModule(payload);
-    else await handleUpdateModule(payload);
+    else await handleUpdateModule(payload, dirtyFields);
   };
 
   useEffect(() => {

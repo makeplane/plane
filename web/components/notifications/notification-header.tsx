@@ -2,10 +2,19 @@ import React from "react";
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
 // ui
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
+// hooks
+import { useEventTracker } from "hooks/store";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 // type
 import type { NotificationType, NotificationCount } from "@plane/types";
+// constants
+import {
+  ARCHIVED_NOTIFICATIONS,
+  NOTIFICATIONS_READ,
+  SNOOZED_NOTIFICATIONS,
+  UNREAD_NOTIFICATIONS,
+} from "constants/event-tracker";
 
 type NotificationHeaderProps = {
   notificationCount?: NotificationCount | null;
@@ -39,6 +48,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
     setSelectedTab,
     markAllNotificationsAsRead,
   } = props;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const notificationTabs: Array<{
     label: string;
@@ -84,6 +95,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setSnoozed(false);
                 setArchived(false);
                 setReadNotification((prev) => !prev);
+                captureEvent(UNREAD_NOTIFICATIONS);
               }}
             >
               <ListFilter className="h-3.5 w-3.5" />
@@ -97,7 +109,12 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             }
             closeOnSelect
           >
-            <CustomMenu.MenuItem onClick={markAllNotificationsAsRead}>
+            <CustomMenu.MenuItem
+              onClick={() => {
+                markAllNotificationsAsRead();
+                captureEvent(NOTIFICATIONS_READ);
+              }}
+            >
               <div className="flex items-center gap-2">
                 <CheckCheck className="h-3.5 w-3.5" />
                 Mark all as read
@@ -108,6 +125,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setArchived(false);
                 setReadNotification(false);
                 setSnoozed((prev) => !prev);
+                captureEvent(SNOOZED_NOTIFICATIONS);
               }}
             >
               <div className="flex items-center gap-2">
@@ -120,6 +138,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setSnoozed(false);
                 setReadNotification(false);
                 setArchived((prev) => !prev);
+                captureEvent(ARCHIVED_NOTIFICATIONS);
               }}
             >
               <div className="flex items-center gap-2">

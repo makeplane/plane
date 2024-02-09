@@ -3,7 +3,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Bell } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 import useUserNotification from "hooks/use-user-notifications";
 // components
 import { EmptyState } from "components/common";
@@ -13,10 +13,13 @@ import { Loader, Tooltip } from "@plane/ui";
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
+// constants
+import { SIDEBAR_CLICKED } from "constants/event-tracker";
 
 export const NotificationPopover = observer(() => {
   // store hooks
   const { theme: themeStore } = useApplication();
+  const { captureEvent } = useEventTracker();
 
   const {
     notifications,
@@ -66,6 +69,11 @@ export const NotificationPopover = observer(() => {
             <>
               <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed}>
                 <Popover.Button
+                  onClick={() =>
+                    captureEvent(SIDEBAR_CLICKED, {
+                      destination: "notifications",
+                    })
+                  }
                   className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
@@ -120,6 +128,7 @@ export const NotificationPopover = observer(() => {
                               key={notification.id}
                               isSnoozedTabOpen={snoozed}
                               closePopover={closePopover}
+                              selectedTab={selectedTab}
                               notification={notification}
                               markNotificationArchivedStatus={markNotificationArchivedStatus}
                               markNotificationReadStatus={markNotificationAsRead}

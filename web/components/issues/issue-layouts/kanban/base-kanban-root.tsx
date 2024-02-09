@@ -25,6 +25,7 @@ import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
+import { ISSUE_DELETED } from "constants/event-tracker";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
@@ -212,7 +213,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       setDeleteIssueModal(false);
       setDragState({});
       captureIssueEvent({
-        eventName: "Issue deleted",
+        eventName: ISSUE_DELETED,
         payload: { id: dragState.draggedIssueId!, state: "FAILED", element: "Kanban layout drag & drop" },
         path: router.asPath,
       });
