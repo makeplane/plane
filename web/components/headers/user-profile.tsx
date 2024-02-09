@@ -64,7 +64,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
-          <button className="transition-all block md:hidden" onClick={() => { themStore.toggleProfileSidebar(); console.log(themStore.profileSidebarCollapsed) }}>
+          <button className="transition-all block md:hidden" onClick={() => { themStore.toggleProfileSidebar() }}>
             <PanelRight className={
               cn("w-4 h-4 block md:hidden", !themStore.profileSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")
             } />
