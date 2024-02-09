@@ -54,7 +54,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const totalIssues = issueIdList?.length ?? 0;
   return (
     <>
-      <div className="group relative flex h-full w-full flex-col bg-neutral-component-surface-medium">
+      <div className="group relative flex h-full w-full flex-col">
         {/* header */}
         <div
           className={`flex-shrink-0 px-2 py-1 text-right text-xs ${
@@ -63,11 +63,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 ? "font-medium"
                 : "text-neutral-text-medium"
               : "font-medium" // if week layout, highlight all days
-          } ${
-            date.date.getDay() === 0 || date.date.getDay() === 6
-              ? "bg-neutral-component-surface-medium"
-              : "bg-neutral-component-surface-light"
-          }`}
+          } ${[0, 6].includes(date.date.getDay()) ? "bg-neutral-component-surface-light" : ""}`}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {date.date.getDate()}
@@ -79,9 +75,9 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             {(provided, snapshot) => (
               <div
                 className={`h-full w-full select-none overflow-y-auto ${
-                  snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
-                    ? "bg-neutral-component-surface-medium"
-                    : "bg-neutral-component-surface-light"
+                  snapshot.isDraggingOver || [0, 6].includes(date.date.getDay())
+                    ? "bg-neutral-component-surface-light"
+                    : ""
                 } ${calendarLayout === "month" ? "min-h-[9rem]" : ""}`}
                 {...provided.droppableProps}
                 ref={provided.innerRef}

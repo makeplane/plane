@@ -140,7 +140,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
           axis: {
             domain: {
               line: {
-                stroke: "rgb(var(--color-border))",
+                stroke: "var(--color-neutral-70)",
                 strokeWidth: 1,
               },
             },

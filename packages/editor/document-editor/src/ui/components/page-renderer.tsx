@@ -156,13 +156,13 @@ export const PageRenderer = (props: IPageRenderer) => {
       {!readonly ? (
         <input
           onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
+          className="-mt-2 w-full break-words border-none pr-5 text-4xl font-bold outline-none bg-transparent"
           value={pageTitle}
         />
       ) : (
         <input
           onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full overflow-x-clip break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
+          className="-mt-2 w-full overflow-x-clip break-words border-none pr-5 text-4xl font-bold outline-none"
           value={pageTitle}
           disabled
         />

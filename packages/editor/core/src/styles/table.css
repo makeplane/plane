@@ -43,7 +43,7 @@
 .tableWrapper table th {
   font-weight: bold;
   text-align: left;
-  background-color: rgba(var(--color-primary-100));
+  background-color: var(--color-primary-90);
 }
 
 .tableWrapper table th * {
@@ -112,7 +112,7 @@
 }
 
 .tableWrapper .tableControls .rowsControlDiv {
-  background-color: rgba(var(--color-primary-100));
+  background-color: var(--color-primary-90);
   border: 1px solid var(--color-neutral-70);
   border-radius: 2px;
   background-size: 1.25rem;
@@ -127,7 +127,7 @@
 }
 
 .tableWrapper .tableControls .columnsControlDiv {
-  background-color: rgba(var(--color-primary-100));
+  background-color: var(--color-primary-90);
   border: 1px solid var(--color-neutral-70);
   border-radius: 2px;
   background-size: 1.25rem;
@@ -166,7 +166,7 @@
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem:hover,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem:hover {
-  background-color: rgba(var(--color-background-100), 0.5);
+  background-color: var(--color-neutral-30);
 }
 
 .tableWrapper .tableControls .tableToolbox .toolboxItem .iconContainer,

@@ -38,7 +38,7 @@ export const ProjectsHeader = observer(() => {
       </div>
       <div className="flex w-full justify-end items-center gap-3">
         {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
-          <div className=" flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-custom-background-100 px-2.5 py-1.5 text-neutral-text-subtle">
+          <div className=" flex items-center justify-start gap-1 rounded-md border border-neutral-border-medium bg-neutral-component-surface-light px-2.5 py-1.5 text-neutral-text-subtle">
             <Search className="h-3.5" />
             <input
               className="border-none w-full bg-transparent text-sm focus:outline-none"

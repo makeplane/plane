@@ -9,7 +9,7 @@ import { GlobalIssuesHeader } from "components/headers";
 import { NextPageWithLayout } from "lib/types";
 
 const GlobalViewIssuesPage: NextPageWithLayout = () => (
-  <div className="h-full overflow-hidden bg-neutral-component-surface-light">
+  <div className="h-full overflow-hidden">
     <div className="flex h-full w-full flex-col border-b border-neutral-border-medium">
       <GlobalViewsHeader />
       <AllIssueLayoutRoot />

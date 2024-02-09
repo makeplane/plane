@@ -159,7 +159,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
-        <div className="group flex flex-col md:flex-row w-full items-center justify-between gap-5 border-b border-neutral-border-subtle bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
+        <div className="group flex flex-col md:flex-row w-full items-center justify-between gap-5 border-b border-neutral-border-subtle bg-neutral-component-surface-light px-5 py-6 text-sm hover:bg-neutral-component-surface-medium">
           <div className="relative w-full flex items-center justify-between gap-3 overflow-hidden">
             <div className="relative w-full flex items-center gap-3 overflow-hidden">
               <div className="flex-shrink-0">

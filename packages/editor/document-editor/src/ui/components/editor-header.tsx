@@ -83,7 +83,7 @@ export const EditorHeader = (props: IEditorHeader) => {
             }`}
           >
             {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
-              <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
+              <RefreshCw className="h-4 w-4 stroke-neutral-text-medium" />
             )}
             <span className="text-sm text-neutral-text-medium">
               {isSubmitting === "submitting" ? "Saving..." : "Saved"}

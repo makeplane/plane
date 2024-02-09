@@ -290,8 +290,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
-          divide-sidebar-neutral-border-medium rounded-md border border-sidebar-neutral-border-medium bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+              className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left flex-col divide-y
+          divide-sidebar-neutral-border-medium rounded-md border border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-light px-1 py-2 text-xs shadow-lg outline-none"
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
@@ -330,7 +330,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 <div className="p-2 pb-0">
                   <Link href="/god-mode">
                     <Menu.Item as="button" type="button" className="w-full">
-                      <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-primary-text-subtle hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+                      <span className="flex w-full items-center justify-center rounded bg-primary-component-surface-light px-2 py-1 text-sm font-medium text-primary-text-subtle hover:bg-primary-component-surface-medium">
                         Enter God Mode
                       </span>
                     </Menu.Item>

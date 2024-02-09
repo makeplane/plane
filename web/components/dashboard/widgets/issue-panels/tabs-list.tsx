@@ -28,7 +28,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
     >
       <div
         className={cn(
-          "absolute top-1/2 left-[1px] bg-custom-background-100 rounded-[3px] transition-all duration-500 ease-in-out",
+          "absolute top-1/2 left-[1px] bg-neutral-component-surface-light rounded-[3px] transition-all duration-500 ease-in-out",
           {
             // right shadow
             "shadow-[2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== tabsList.length - 1,
@@ -48,7 +48,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
           className={cn(
             "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-neutral-text-subtle focus:outline-none transition duration-500",
             {
-              "text-neutral-text-strong bg-custom-background-100": selectedTab === tab.key,
+              "text-neutral-text-strong bg-neutral-component-surface-light": selectedTab === tab.key,
               "hover:text-neutral-text-medium": selectedTab !== tab.key,
             }
           )}

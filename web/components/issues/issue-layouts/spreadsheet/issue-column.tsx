@@ -38,7 +38,7 @@ export const IssueColumn = observer((props: Props) => {
     >
       <td
         tabIndex={0}
-        className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-neutral-border-subtle border-r-[1px] border-neutral-border-subtle focus:border-custom-primary-70"
+        className="h-11 w-full min-w-[8rem] bg-neutral-component-surface-light text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-neutral-border-subtle border-r-[1px] border-neutral-border-subtle focus:border-custom-primary-70"
         ref={tableCellRef}
       >
         <Column

@@ -37,7 +37,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
-        <div className="flex h-full flex-col overflow-hidden bg-neutral-component-surface-light">
+        <div className="flex h-full flex-col overflow-hidden">
           <Tab.Group as={Fragment}>
             <Tab.List as="div" className="space-x-2 border-b border-neutral-border-medium px-5 py-3">
               {ANALYTICS_TABS.map((tab) => (

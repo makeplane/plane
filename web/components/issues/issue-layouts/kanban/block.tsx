@@ -130,11 +130,11 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
           ref={provided.innerRef}
         >
           {issue.tempId !== undefined && (
-            <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+            <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-neutral-component-surface-light/20" />
           )}
           <div
             className={cn(
-              "space-y-2 rounded border-[0.5px] border-neutral-border-medium bg-custom-background-100 px-3 py-2 text-sm transition-all hover:border-neutral-border-strong",
+              "space-y-2 rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-3 py-2 text-sm transition-all hover:border-neutral-border-strong",
               { "hover:cursor-grab": !isDragDisabled },
               { "border-custom-primary-100": snapshot.isDragging },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }

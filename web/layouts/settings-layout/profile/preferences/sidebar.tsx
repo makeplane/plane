@@ -28,7 +28,7 @@ export const ProfilePreferenceSettingsSidebar = () => {
               <div
                 className={`rounded-md px-4 py-2 text-sm font-medium ${
                   (link.label === "Import" ? router.asPath.includes(link.href) : router.asPath === link.href)
-                    ? "bg-custom-primary-100/10 text-primary-text-subtle"
+                    ? "bg-primary-component-surface-light text-primary-text-subtle"
                     : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
                 }`}
               >

@@ -133,8 +133,10 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                       <Tooltip key={layout.key} tooltipContent={layout.title}>
                         <button
                           type="button"
-                          className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                            cycleLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                          className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-neutral-component-surface-light ${
+                            cycleLayout == layout.key
+                              ? "bg-neutral-component-surface-light shadow-custom-shadow-2xs"
+                              : ""
                           }`}
                           onClick={() => handleCurrentLayout(layout.key as TCycleLayout)}
                         >

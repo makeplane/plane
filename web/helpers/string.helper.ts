@@ -76,7 +76,7 @@ export const copyUrlToClipboard = async (path: string) => {
 };
 
 export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-primary-100))";
+  if (!string) return "var(--color-primary-90)";
 
   string = `${string}`;
 
@@ -171,10 +171,10 @@ export const getFetchKeysForIssueMutation = (options: {
   const ganttFetchKey = cycleId
     ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
     : moduleId
-      ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
-      : viewId
-        ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
-        : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
+    ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
+    : viewId
+    ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
+    : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
 
   return {
     ...ganttFetchKey,

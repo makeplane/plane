@@ -71,7 +71,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col min-h-96">
+    <div className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col min-h-96">
       <div className="flex items-center justify-between gap-2 p-6 pl-7">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}

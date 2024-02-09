@@ -3,7 +3,7 @@
 }
 
 [cmdk-group-heading] {
-  color: rgb(var(--color-text-secondary));
+  color: var(--color-neutral-110);
   font-size: 0.75rem;
   margin: 0 0 0.25rem 0.25rem;
 }

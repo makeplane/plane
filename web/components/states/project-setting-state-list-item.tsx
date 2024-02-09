@@ -48,7 +48,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 rounded border-[0.5px] border-neutral-border-medium bg-neutral-component-surface-light px-4 py-3">
+    <div className="group flex items-center justify-between gap-2 rounded border-[0.5px] border-neutral-border-medium px-4 py-3">
       <div className="flex items-center gap-3">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>

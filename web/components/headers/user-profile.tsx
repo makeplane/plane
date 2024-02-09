@@ -47,15 +47,15 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
           <div className="flex gap-4 md:hidden">
             <CustomMenu
               maxHeight={"md"}
-              className="flex flex-grow justify-center text-custom-text-200 text-sm"
+              className="flex flex-grow justify-center text-neutral-text-medium text-sm"
               placement="bottom-start"
               customButton={
                 <div className="flex gap-2 items-center px-2 py-1.5 border border-custom-border-400 rounded-md">
-                  <span className="flex flex-grow justify-center text-custom-text-200 text-sm">{type}</span>
+                  <span className="flex flex-grow justify-center text-neutral-text-medium text-sm">{type}</span>
                   <ChevronDown className="w-4 h-4 text-custom-text-400" />
                 </div>
               }
-              customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+              customButtonClassName="flex flex-grow justify-center text-neutral-text-medium text-sm"
               closeOnSelect
             >
               <></>
@@ -81,7 +81,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               <PanelRight
                 className={cn(
                   "w-4 h-4 block md:hidden",
-                  !themStore.profileSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200"
+                  !themStore.profileSidebarCollapsed ? "text-[#3E63DD]" : "text-neutral-text-medium"
                 )}
               />
             </button>

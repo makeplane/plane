@@ -52,7 +52,7 @@ export const RecentPagesList: FC = observer(() => {
 
             return (
               <div key={key}>
-                <h2 className="sticky top-0 z-[1] mb-2 bg-neutral-component-surface-light text-xl font-semibold capitalize">
+                <h2 className="sticky top-0 z-[1] mb-2 text-xl font-semibold capitalize">
                   {replaceUnderscoreIfSnakeCase(key)}
                 </h2>
                 <PagesListView pageIds={recentProjectPages[key]} />

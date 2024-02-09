@@ -8,7 +8,7 @@ import { NextPageWithLayout } from "lib/types";
 import { AppLayout } from "layouts/app-layout";
 
 const ProjectIssuesPage: NextPageWithLayout = () => (
-  <div className="h-full w-full bg-neutral-page-surface-default">
+  <div className="h-full w-full">
     <ProjectLayoutRoot />
   </div>
 );

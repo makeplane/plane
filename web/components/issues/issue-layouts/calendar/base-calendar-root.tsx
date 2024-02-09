@@ -91,7 +91,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   return (
     <>
-      <div className="h-full w-full overflow-hidden bg-neutral-component-surface-light pt-4">
+      <div className="h-full w-full overflow-hidden pt-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <CalendarChart
             issuesFilterStore={issuesFilterStore}

@@ -117,7 +117,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // check if the project member apis is loading
   if (!projectMemberInfo && projectId && hasPermissionToProject[projectId.toString()] === null)
     return (
-      <div className="grid h-screen place-items-center bg-neutral-component-surface-light p-4">
+      <div className="grid h-screen place-items-center bg-neutral-page-surface-default p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <Spinner />
         </div>
@@ -130,7 +130,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // check if the project info is not found.
   if (!projectExists && projectId && hasPermissionToProject[projectId.toString()] === false)
     return (
-      <div className="container grid h-screen place-items-center bg-neutral-component-surface-light">
+      <div className="container grid h-screen place-items-center bg-neutral-page-surface-default">
         <EmptyState
           title="No such project exists"
           description="Try creating a new project"

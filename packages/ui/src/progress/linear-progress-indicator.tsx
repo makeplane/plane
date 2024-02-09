@@ -45,9 +45,13 @@ export const LinearProgressIndicator: React.FC<Props> = ({
       })}
     >
       {total === 0 ? (
-        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm">{bars}</div>
+        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-neutral-component-surface-medium rounded-sm">
+          {bars}
+        </div>
       ) : (
-        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm">{bars}</div>
+        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-neutral-component-surface-medium rounded-sm">
+          {bars}
+        </div>
       )}
     </div>
   );

@@ -59,7 +59,7 @@ export const InstanceAdminSidebarMenu = () => {
                 <div
                   className={`group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none ${
                     isActive
-                      ? "bg-custom-primary-100/10 text-primary-text-subtle"
+                      ? "bg-primary-component-surface-light text-primary-text-subtle"
                       : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
                   } ${sidebarCollapsed ? "justify-center" : ""}`}
                 >

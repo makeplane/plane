@@ -197,7 +197,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     th {
       font-weight: bold;
       text-align: left;
-      background-color: rgb(var(--color-primary-100));
+      background-color: var(--color-primary-90);
     }
 
     td:hover {

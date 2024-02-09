@@ -240,13 +240,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       />
 
       {showLoader && issues?.loader === "init-loader" && (
-        <div className="fixed right-2 top-16 z-30 flex h-10 w-10 items-center justify-center rounded bg-neutral-component-surface-dark shadow-custom-shadow-sm">
+        <div className="fixed right-2 top-16 z-30 flex h-10 w-10 items-center justify-center bg-neutral-component-surface-dark rounded shadow-custom-shadow-sm">
           <Spinner className="h-5 w-5" />
         </div>
       )}
 
-      <div className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90">
-        <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
+      <div className="horizontal-scroll-enable relative h-full w-full overflow-auto">
+        <div className="relative h-max w-max min-w-full px-2">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {/* drag and delete component */}
             <div

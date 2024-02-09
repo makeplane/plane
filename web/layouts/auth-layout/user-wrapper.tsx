@@ -42,15 +42,14 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
 
-  if (!currentUser && !currentUserError) {
+  if (!currentUser && !currentUserError)
     return (
-      <div className="grid h-screen place-items-center bg-neutral-component-surface-light p-4">
+      <div className="grid h-screen place-items-center bg-neutral-page-surface-default p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <Spinner />
         </div>
       </div>
     );
-  }
 
   if (currentUserError) {
     const redirectTo = router.asPath;

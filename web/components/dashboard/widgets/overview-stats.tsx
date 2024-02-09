@@ -64,7 +64,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
 
   return (
     <div
-      className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2  p-0.5 hover:shadow-custom-shadow-4xl duration-300
+      className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2  p-0.5 hover:shadow-custom-shadow-4xl duration-300
         [&>div>a>div]:border-r
         [&>div:last-child>a>div]:border-0
         [&>div>a>div]:border-neutral-border-medium

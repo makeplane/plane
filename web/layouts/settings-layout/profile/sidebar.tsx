@@ -103,7 +103,7 @@ export const ProfileLayoutSidebar = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-light duration-300 md:relative 
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-sidebar-neutral-border-medium bg-sidebar-neutral-page-surface-default duration-300 md:relative 
         ${sidebarCollapsed ? "-ml-[280px]" : ""}
         sm:${sidebarCollapsed ? "-ml-[280px]" : ""}
         md:ml-0 ${sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
@@ -139,7 +139,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                         link.highlight(router.pathname)
-                          ? "bg-custom-primary-100/10 text-primary-text-subtle"
+                          ? "bg-primary-component-surface-light text-primary-text-subtle"
                           : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark"
                       } ${sidebarCollapsed ? "justify-center" : ""}`}
                     >

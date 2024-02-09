@@ -1,8 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { observer } from "mobx-react";
-// hooks
-import { useUser } from "hooks/store";
+import { useTheme } from "next-themes";
 // ui
 import { getButtonStyling } from "@plane/ui";
 // icons
@@ -12,18 +10,18 @@ import { cn } from "helpers/common.helper";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "constants/cycle";
 
-export const WorkspaceActiveCyclesUpgrade = observer(() => {
-  // store hooks
-  const { currentUser } = useUser();
-
-  const isDarkMode = currentUser?.theme.theme === "dark";
+export const WorkspaceActiveCyclesUpgrade = () => {
+  // next-themes
+  const { resolvedTheme } = useTheme();
+  // derived values
+  const isDarkMode = resolvedTheme === "dark";
 
   return (
     <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full">
       <div
         className={cn("flex item-center justify-between rounded-xl min-h-[25rem]", {
-          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": currentUser?.theme.theme === "dark",
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": currentUser?.theme.theme === "light",
+          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme === "dark",
+          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": resolvedTheme === "light",
         })}
       >
         <div className="relative px-14 flex flex-col gap-7 justify-center lg:w-1/2">
@@ -86,4 +84,4 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
       </div>
     </div>
   );
-});
+};

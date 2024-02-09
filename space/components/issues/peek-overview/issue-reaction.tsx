@@ -11,7 +11,7 @@ export const IssueReactions: React.FC = () => {
           <div className="flex items-center gap-2">
             <IssueVotes />
           </div>
-          <div className="h-8 w-0.5 bg-custom-background-200" />
+          <div className="h-8 w-0.5" />
         </>
       )}
       {projectStore?.deploySettings?.reactions && (

@@ -132,7 +132,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   };
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-neutral-border-medium w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96 flex flex-col">
+    <div className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96 flex flex-col">
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned`}

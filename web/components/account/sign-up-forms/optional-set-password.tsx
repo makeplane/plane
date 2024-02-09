@@ -135,12 +135,12 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
                 />
                 {showPassword ? (
                   <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-neutral-text-subtle hover:cursor-pointer"
                     onClick={() => setShowPassword(false)}
                   />
                 ) : (
                   <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-neutral-text-subtle hover:cursor-pointer"
                     onClick={() => setShowPassword(true)}
                   />
                 )}

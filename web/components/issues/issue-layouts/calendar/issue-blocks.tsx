@@ -89,10 +89,13 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                       className={cn(
                         "group/calendar-block flex h-8 w-full items-center justify-between gap-1.5 rounded border-[0.5px] border-neutral-border-medium hover:border-neutral-border-strong px-1 py-1.5 ",
                         {
-                          "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100":
+                          "bg-neutral-component-surface-medium shadow-custom-shadow-rg border-custom-primary-100":
                             snapshot.isDragging,
                         },
-                        { "bg-custom-background-100 hover:bg-custom-background-90": !snapshot.isDragging },
+                        {
+                          "bg-neutral-component-surface-light hover:bg-neutral-component-surface-medium":
+                            !snapshot.isDragging,
+                        },
                         {
                           "border border-custom-primary-70 hover:border-custom-primary-70":
                             peekIssue?.issueId === issue.id,

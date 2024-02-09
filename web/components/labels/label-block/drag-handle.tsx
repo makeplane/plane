@@ -17,8 +17,8 @@ export const DragHandle = (props: IDragHandle) => {
       }`}
       {...dragHandleProps}
     >
-      <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400" />
-      <MoreVertical className="-ml-5 h-3.5 w-3.5 stroke-custom-text-400" />
+      <MoreVertical className="h-3.5 w-3.5 stroke-neutral-text-subtle" />
+      <MoreVertical className="-ml-5 h-3.5 w-3.5 stroke-neutral-text-subtle" />
     </button>
   );
 };

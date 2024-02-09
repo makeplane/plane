@@ -15,7 +15,7 @@ export const InstanceAdminSidebar: FC<IInstanceAdminSidebar> = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-light duration-300 md:relative ${
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-sidebar-neutral-border-medium bg-sidebar-neutral-page-surface-default duration-300 md:relative ${
         sidebarCollapsed ? "" : "md:w-[280px]"
       } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >

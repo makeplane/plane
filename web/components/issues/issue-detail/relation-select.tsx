@@ -125,7 +125,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                 return (
                   <div
                     key={relationIssueId}
-                    className={`group flex items-center gap-1 rounded px-1.5 pt-1 pb-1 leading-3 hover:bg-custom-background-90 ${issueRelationObject[relationKey].className}`}
+                    className={`group flex items-center gap-1 rounded px-1.5 pt-1 pb-1 leading-3 hover:bg-neutral-component-surface-medium ${issueRelationObject[relationKey].className}`}
                   >
                     <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name}>
                       <Link

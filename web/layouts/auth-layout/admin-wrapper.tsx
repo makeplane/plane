@@ -23,9 +23,8 @@ export const AdminAuthWrapper: FC<IAdminAuthWrapper> = observer(({ children }) =
     "";
 
   // if user does not have admin access to the instance
-  if (isUserInstanceAdmin !== undefined && isUserInstanceAdmin === false) {
+  if (isUserInstanceAdmin !== undefined && isUserInstanceAdmin === false)
     return <InstanceAdminRestriction redirectWorkspaceSlug={redirectWorkspaceSlug} />;
-  }
 
   return <>{children}</>;
 });

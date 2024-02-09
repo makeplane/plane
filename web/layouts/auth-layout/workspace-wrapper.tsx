@@ -4,7 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useMember, useProject, useUser } from "hooks/store";
+import { useMember, useProject, useUser } from "hooks/store";
 // icons
 import { Button, Spinner } from "@plane/ui";
 
@@ -60,7 +60,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     membership.hasPermissionToCurrentWorkspace === false
   ) {
     return (
-      <div className={`h-screen w-full overflow-hidden bg-neutral-component-surface-light`}>
+      <div className="h-screen w-full overflow-hidden bg-neutral-page-surface-default">
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">

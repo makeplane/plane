@@ -295,18 +295,18 @@
     --color-info-120: #c2e6ff;
 
     /* saturated colors */
-    --color-orange-10: #fefcfb;
-    --color-orange-20: #fff7ed;
-    --color-orange-30: #ffefd6;
-    --color-orange-40: #ffdfb5;
-    --color-orange-50: #ffd19a;
-    --color-orange-60: #ffc182;
-    --color-orange-70: #f5ae73;
-    --color-orange-80: #ec9455;
+    --color-orange-10: #17120e;
+    --color-orange-20: #1e160f;
+    --color-orange-30: #331e0b;
+    --color-orange-40: #462100;
+    --color-orange-50: #562800;
+    --color-orange-60: #66350c;
+    --color-orange-70: #7e451d;
+    --color-orange-80: #a35829;
     --color-orange-90: #f76b15;
-    --color-orange-100: #ef5f00;
-    --color-orange-110: #cc4e00;
-    --color-orange-120: #582d1d;
+    --color-orange-100: #ff801f;
+    --color-orange-110: #ffa057;
+    --color-orange-120: #ffe0c2;
   }
 
   [data-theme="dark-contrast"] {
@@ -329,6 +329,7 @@
 
 body {
   color: var(--color-neutral-120);
+  background-color: var(--color-neutral-0);
 }
 
 /* scrollbar style */
