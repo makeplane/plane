@@ -139,24 +139,28 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
 
 
-
 class Profile(TimeAuditModel):
+    id = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        db_index=True,
+        primary_key=True,
+    )
     # User
-    user = models.OneToOneField("db.User", on_delete=models.CASCADE, related_name="profile")
-
+    user = models.OneToOneField(
+        "db.User", on_delete=models.CASCADE, related_name="profile"
+    )
     # General
     theme = models.JSONField(default=dict)
-
     # Onboarding
     is_tour_completed = models.BooleanField(default=False)
     onboarding_step = models.JSONField(default=get_default_onboarding)
     use_case = models.TextField(blank=True, null=True)
-    role = models.CharField(max_length=300, null=True, blank=True) # job role
+    role = models.CharField(max_length=300, null=True, blank=True)  # job role
     is_onboarded = models.BooleanField(default=False)
-    
     # Last visited workspace
     last_workspace_id = models.UUIDField(null=True)
-
     # address data
     billing_address_country = models.CharField(max_length=255, default="INDIA")
     billing_address = models.JSONField(null=True)
@@ -169,28 +173,55 @@ class Profile(TimeAuditModel):
         ordering = ("-created_at",)
 
 
-
 class Account(TimeAuditModel):
+    id = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        db_index=True,
+        primary_key=True,
+    )
     user = models.ForeignKey(
         "db.User", on_delete=models.CASCADE, related_name="accounts"
     )
     provider_account_id = models.CharField(max_length=255)
     provider = models.CharField(
-        choices=(("google", "Google"), ("github", "Github"))
+        choices=(("google", "Google"), ("github", "Github")),
     )
     access_token = models.TextField()
     access_token_expired_at = models.DateTimeField(null=True)
     refresh_token = models.TextField(null=True, blank=True)
-    refresh_token_expired_at = models.DateTimeField(null=True)    
+    refresh_token_expired_at = models.DateTimeField(null=True)
     last_connected_at = models.DateTimeField(default=timezone.now)
     metadata = models.JSONField(default=dict)
 
     class Meta:
+        unique_together = ["provider", "provider_account_id"]
         verbose_name = "Account"
         verbose_name_plural = "Accounts"
         db_table = "accounts"
         ordering = ("-created_at",)
 
+
+class Session(TimeAuditModel):
+    id = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        db_index=True,
+        primary_key=True,
+    )
+    user = models.ForeignKey(
+        "db.User", on_delete=models.CASCADE, related_name="sessions"
+    )
+    expires = models.DateTimeField()
+    token = models.TextField(unique=True)
+
+    class Meta:
+        verbose_name = "Session"
+        verbose_name_plural = "Sessions"
+        db_table = "sessions"
+        ordering = ("-created_at",)
 
 
 @receiver(post_save, sender=User)

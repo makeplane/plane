@@ -200,11 +200,3 @@ class ProfileEndpoint(BaseAPIView):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class AccountEndpoint(BaseAPIView):
-
-    def get(self, request):
-        accounts = Account.objects.filter(user=request.user)
-        serializer = AccountSerializer(accounts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -30,8 +30,9 @@ from plane.app.serializers import (
     ChangePasswordSerializer,
     ResetPasswordSerializer,
     UserSerializer,
+    AccountSerializer,
 )
-from plane.db.models import User, WorkspaceMemberInvite
+from plane.db.models import User, WorkspaceMemberInvite, Account
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.forgot_password_task import forgot_password
 from plane.license.models import Instance
@@ -481,3 +482,43 @@ class EmailCheckEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_200_OK,
                 )
+
+
+class AccountEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, provider, provider_id):
+        try:
+            account = Account.objects.get(
+                provider_account_id=provider_id, provider=provider
+            )
+            serializer = AccountSerializer(account)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response(
+                {"error": "Account does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+class SessionEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, provider, provider_id):
+        try:
+            account = Account.objects.get(
+                provider_account_id=provider_id, provider=provider
+            )
+            serializer = AccountSerializer(account)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response(
+                {"error": "Account does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+    

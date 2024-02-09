@@ -17,6 +17,7 @@ from plane.app.views import (
     ForgotPasswordEndpoint,
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
+    AccountEndpoint,
     ## End Auth Extender
     # API Tokens
     ApiTokenEndpoint,
@@ -26,7 +27,7 @@ from plane.app.views import (
 
 urlpatterns = [
     #  Social Auth
-    path("email-check/", EmailCheckEndpoint.as_view(), name="email"),
+    path("auth/email-check/", EmailCheckEndpoint.as_view(), name="email"),
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
     # Auth
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
@@ -57,13 +58,18 @@ urlpatterns = [
         ForgotPasswordEndpoint.as_view(),
         name="forgot-password",
     ),
+    # Auth
+    path(
+        "auth/accounts/<str:provider>/<str:provider_id>/",
+        AccountEndpoint.as_view(),
+        name="accounts",
+    ),
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
     path(
         "api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"
     ),
     ## End API Tokens
-
     ## Google
     path("auth/google/", GoogleAuthEndpoint.as_view(), name="google-auth"),
 ]

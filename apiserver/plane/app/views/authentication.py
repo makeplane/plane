@@ -3,6 +3,7 @@ import os
 import uuid
 import json
 from datetime import datetime
+import pytz
 
 # Django imports
 from django.utils import timezone
@@ -241,9 +242,11 @@ class SignInEndpoint(BaseAPIView):
             [
                 WorkspaceMember(
                     workspace_id=project_member_invite.workspace_id,
-                    role=project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
-                    else 15,
+                    role=(
+                        project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
+                        else 15
+                    ),
                     member=user,
                     created_by_id=project_member_invite.created_by_id,
                 )
@@ -257,9 +260,11 @@ class SignInEndpoint(BaseAPIView):
             [
                 ProjectMember(
                     workspace_id=project_member_invite.workspace_id,
-                    role=project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
-                    else 15,
+                    role=(
+                        project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
+                        else 15
+                    ),
                     member=user,
                     created_by_id=project_member_invite.created_by_id,
                 )
@@ -395,9 +400,11 @@ class MagicSignInEndpoint(BaseAPIView):
                     [
                         WorkspaceMember(
                             workspace_id=project_member_invite.workspace_id,
-                            role=project_member_invite.role
-                            if project_member_invite.role in [5, 10, 15]
-                            else 15,
+                            role=(
+                                project_member_invite.role
+                                if project_member_invite.role in [5, 10, 15]
+                                else 15
+                            ),
                             member=user,
                             created_by_id=project_member_invite.created_by_id,
                         )
@@ -411,9 +418,11 @@ class MagicSignInEndpoint(BaseAPIView):
                     [
                         ProjectMember(
                             workspace_id=project_member_invite.workspace_id,
-                            role=project_member_invite.role
-                            if project_member_invite.role in [5, 10, 15]
-                            else 15,
+                            role=(
+                                project_member_invite.role
+                                if project_member_invite.role in [5, 10, 15]
+                                else 15
+                            ),
                             member=user,
                             created_by_id=project_member_invite.created_by_id,
                         )
@@ -485,16 +494,22 @@ class GoogleAuthEndpoint(BaseAPIView):
                     ),
                     "access_token": request.data.get("access_token"),
                     "refresh_token": request.data.get("refresh_token", None),
-                    "access_token_expired_at": datetime.fromtimestamp(
-                        request.data.get("access_token_expired_at")
-                    )
-                    if request.data.get("access_token_expired_at")
-                    else None,
-                    "refresh_token_expired_at": datetime.fromtimestamp(
-                        request.data.get("refresh_token_expired_at")
-                    )
-                    if request.data.get("refresh_token_expired_at")
-                    else None,
+                    "access_token_expired_at": (
+                        datetime.fromtimestamp(
+                            request.data.get("access_token_expired_at"),
+                            tz=pytz.utc,
+                        )
+                        if request.data.get("access_token_expired_at")
+                        else None
+                    ),
+                    "refresh_token_expired_at": (
+                        datetime.fromtimestamp(
+                            request.data.get("refresh_token_expired_at"),
+                            tz=pytz.utc,
+                        )
+                        if request.data.get("refresh_token_expired_at")
+                        else None
+                    ),
                 },
             )
             if not created:
@@ -502,7 +517,8 @@ class GoogleAuthEndpoint(BaseAPIView):
                 account.access_token = request.data.get("access_token")
                 account.access_token_expired_at = (
                     datetime.fromtimestamp(
-                        request.data.get("access_token_expired_at")
+                        request.data.get("access_token_expired_at"),
+                        tz=pytz.utc,
                     )
                     if request.data.get("access_token_expired_at")
                     else None
@@ -532,23 +548,29 @@ class GoogleAuthEndpoint(BaseAPIView):
             user = User.objects.create(email=email, username=uuid.uuid4().hex)
             user.set_password(uuid.uuid4().hex)
 
-            account= Account.objects.create(
+            account = Account.objects.create(
                 user=user,
                 provider="google",
                 provider_account_id=request.data.get("provider_account_id"),
                 access_token=request.data.get("access_token"),
-                access_token_expired_at=datetime.fromtimestamp(
-                    request.data.get("access_token_expired_at")
-                )
-                if request.data.get("access_token_expired_at")
-                else None,
+                access_token_expired_at=(
+                    datetime.fromtimestamp(
+                        request.data.get("access_token_expired_at"),
+                        tz=pytz.utc,
+                    )
+                    if request.data.get("access_token_expired_at")
+                    else None
+                ),
                 refresh_token=request.data.get("refresh_token", None),
-                refresh_token_expired_at=datetime.fromtimestamp(
-                    request.data.get("refresh_token_expired_at")
-                )
-                if request.data.get("refresh_token_expired_at")
-                else None,
-                metadata=request.data.get("metadata", {})
+                refresh_token_expired_at=(
+                    datetime.fromtimestamp(
+                        request.data.get("refresh_token_expired_at"),
+                        tz=pytz.utc,
+                    )
+                    if request.data.get("refresh_token_expired_at")
+                    else None
+                ),
+                metadata=request.data.get("metadata", {}),
             )
 
             _ = Profile.objects.create(user=user)

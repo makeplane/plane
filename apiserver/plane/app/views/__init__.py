@@ -19,7 +19,6 @@ from .user import (
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
     ProfileEndpoint,
-    AccountEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -96,6 +95,7 @@ from .auth_extended import (
     SetUserPasswordEndpoint,
     EmailCheckEndpoint,
     MagicGenerateEndpoint,
+    AccountEndpoint,
 )
 
 

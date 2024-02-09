@@ -4,7 +4,6 @@ from plane.app.views import (
     ## User
     UserEndpoint,
     ProfileEndpoint,
-    AccountEndpoint,
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
@@ -44,11 +43,6 @@ urlpatterns = [
     path(
         "users/me/profile/",
         ProfileEndpoint.as_view(),
-        name="accounts",
-    ),
-    path(
-        "users/me/accounts/",
-        AccountEndpoint.as_view(),
         name="accounts",
     ),
     path(
