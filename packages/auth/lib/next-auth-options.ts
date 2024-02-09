@@ -42,12 +42,21 @@ const getNextAuthProviders = (configs: TAuthConfig) => {
   return providers;
 };
 
-export const getAuthOptions = (config: TAuthConfig, BASE_URL: string) => ({
-  Providers: getNextAuthProviders(config),
-  adapter: PlaneAuthAdapter(BASE_URL),
+export const getAuthOptions = (res: any, config: TAuthConfig) => ({
+  providers: getNextAuthProviders(config),
+  adapter: PlaneAuthAdapter(),
   callbacks: {
     signIn,
     jwt,
-    session,
+    async session({ session, token }: any) {
+      console.log("SESSION CALLBACKS");
+      session.access_token = token?.access_token;
+      session.user.id = token?.id;
+      // res.setHeader(
+      //   "Set-Cookie",
+      //   `api_access_token=${token?.access_token}; path=/;`
+      // );
+      return token;
+    },
   },
 });

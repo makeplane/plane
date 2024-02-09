@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const googleSignIn = async ({ account, user }: any) => {
+  console.log("SIGN IN CALLBACKS");
   try {
     const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
     const { access_token, refresh_token } = await axios
