@@ -39,6 +39,7 @@ import {
 import { ICycle } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_UPDATED } from "constants/event-tracker";
 // fetch-keys
 import { CYCLE_STATUS } from "constants/cycle";
 
@@ -67,7 +68,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
   // store hooks
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureCycleEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -83,10 +84,32 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     defaultValues,
   });
 
-  const submitChanges = (data: Partial<ICycle>) => {
+  const submitChanges = (data: Partial<ICycle>, changedProperty: string) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
+    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data)
+      .then((res) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: {
+            ...res,
+            changed_properties: [changedProperty],
+            element: "Right side-peek",
+            state: "SUCCESS",
+          },
+        });
+      })
+
+      .catch((_) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: {
+            ...data,
+            element: "Right side-peek",
+            state: "FAILED",
+          },
+        });
+      });
   };
 
   const handleCopyText = () => {
@@ -146,10 +169,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          });
+          submitChanges(
+            {
+              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+            },
+            "start_date"
+          );
           setToastAlert({
             type: "success",
             title: "Success!",
@@ -174,10 +200,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
 
       if (isDateValid) {
-        submitChanges({
-          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-        });
+        submitChanges(
+          {
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+          },
+          "start_date"
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -219,10 +248,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          });
+          submitChanges(
+            {
+              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+            },
+            "end_date"
+          );
           setToastAlert({
             type: "success",
             title: "Success!",
@@ -246,10 +278,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
 
       if (isDateValid) {
-        submitChanges({
-          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-        });
+        submitChanges(
+          {
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+          },
+          "end_date"
+        );
         setToastAlert({
           type: "success",
           title: "Success!",

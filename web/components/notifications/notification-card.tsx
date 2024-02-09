@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 import Link from "next/link";
+import { Menu } from "@headlessui/react";
+import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // icons
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 // constants
@@ -13,10 +15,12 @@ import { snoozeOptions } from "constants/notification";
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // type
-import type { IUserNotification } from "@plane/types";
-import { Menu } from "@headlessui/react";
+import type { IUserNotification, NotificationType } from "@plane/types";
+// constants
+import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 
 type NotificationCardProps = {
+  selectedTab: NotificationType;
   notification: IUserNotification;
   isSnoozedTabOpen: boolean;
   closePopover: () => void;
@@ -29,6 +33,7 @@ type NotificationCardProps = {
 
 export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
+    selectedTab,
     notification,
     isSnoozedTabOpen,
     closePopover,
@@ -38,6 +43,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
     setSelectedNotificationForSnooze,
     markSnoozeNotification,
   } = props;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -115,6 +122,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
     <Link
       onClick={() => {
         markNotificationReadStatus(notification.id);
+        captureEvent(ISSUE_OPENED, {
+          issue_id: notification.data.issue.id,
+          element: "notification",
+        });
         closePopover();
       }}
       href={`/${workspaceSlug}/projects/${notification.project}/${
@@ -301,15 +312,55 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           )}
         </div>
       </div>
-      <div className="absolute right-3 top-3 hidden gap-x-3 py-1 md:group-hover:flex">
-        {moreOptions.map((item) => (
+      <div className="absolute right-3 top-3 hidden gap-x-3 py-1 group-hover:flex">
+        {[
+          {
+            id: 1,
+            name: notification.read_at ? "Mark as unread" : "Mark as read",
+            icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
+            onClick: () => {
+              markNotificationReadStatusToggle(notification.id).then(() => {
+                captureEvent(NOTIFICATIONS_READ, {
+                  issue_id: notification.data.issue.id,
+                  tab: selectedTab,
+                  state: "SUCCESS",
+                });
+                setToastAlert({
+                  title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
+                  type: "success",
+                });
+              });
+            },
+          },
+          {
+            id: 2,
+            name: notification.archived_at ? "Unarchive" : "Archive",
+            icon: notification.archived_at ? (
+              <ArchiveRestore className="h-3.5 w-3.5 text-custom-text-300" />
+            ) : (
+              <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-300" />
+            ),
+            onClick: () => {
+              markNotificationArchivedStatus(notification.id).then(() => {
+                captureEvent(NOTIFICATION_ARCHIVED, {
+                  issue_id: notification.data.issue.id,
+                  tab: selectedTab,
+                  state: "SUCCESS",
+                });
+                setToastAlert({
+                  title: notification.archived_at ? "Notification un-archived" : "Notification archived",
+                  type: "success",
+                });
+              });
+            },
+          },
+        ].map((item) => (
           <Tooltip tooltipContent={item.name}>
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-
                 item.onClick();
               }}
               key={item.id}
@@ -335,7 +386,23 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  snoozeOptionOnClick(item.value);
+
+                  if (!item.value) {
+                    setSelectedNotificationForSnooze(notification.id);
+                    return;
+                  }
+
+                  markSnoozeNotification(notification.id, item.value).then(() => {
+                    captureEvent(NOTIFICATION_SNOOZED, {
+                      issue_id: notification.data.issue.id,
+                      tab: selectedTab,
+                      state: "SUCCESS",
+                    });
+                    setToastAlert({
+                      title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
+                      type: "success",
+                    });
+                  });
                 }}
               >
                 {item.label}

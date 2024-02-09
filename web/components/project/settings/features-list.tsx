@@ -51,12 +51,11 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { setTrackElement, captureEvent } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   const {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails, updateProject } = useProject();
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // toast alert
@@ -91,14 +90,9 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
           <ToggleSwitch
             value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
-              setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
               captureEvent(`Toggle ${feature.title.toLowerCase()}`, {
-                workspace_id: currentWorkspace?.id,
-                workspace_slug: currentWorkspace?.slug,
-                project_id: currentProjectDetails?.id,
-                project_name: currentProjectDetails?.name,
-                project_identifier: currentProjectDetails?.identifier,
                 enabled: !currentProjectDetails?.[feature.property as keyof IProject],
+                element: "Project settings feature page",
               });
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],

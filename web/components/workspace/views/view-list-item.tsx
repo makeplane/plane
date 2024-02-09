@@ -4,7 +4,7 @@ import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Pencil, Trash2 } from "lucide-react";
 // store hooks
-import { useGlobalView } from "hooks/store";
+import { useEventTracker, useGlobalView } from "hooks/store";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // ui
@@ -25,6 +25,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { getViewDetailsById } = useGlobalView();
+  const {setTrackElement} = useEventTracker();
   // derived data
   const view = getViewDetailsById(viewId);
 
@@ -59,6 +60,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        setTrackElement("List view");
                         setUpdateViewModal(true);
                       }}
                     >

@@ -5,7 +5,7 @@ import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // constants
 import { THEMES } from "constants/themes";
 // layouts
@@ -37,6 +37,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
     currentUser,
     membership: { currentProjectRole, currentWorkspaceRole },
   } = useUser();
+  const { currentWorkspace } = useWorkspace();
   const {
     config: { envConfig },
   } = useApplication();
@@ -49,6 +50,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
             <CrispWrapper user={currentUser}>
               <PostHogProvider
                 user={currentUser}
+                currentWorkspaceId= {currentWorkspace?.id}
                 workspaceRole={currentWorkspaceRole}
                 projectRole={currentProjectRole}
                 posthogAPIKey={envConfig?.posthog_api_key || null}
