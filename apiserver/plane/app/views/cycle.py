@@ -1025,7 +1025,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 "display_name": item["display_name"],
                 "first_name": item["first_name"],
                 "last_name": item["last_name"],
-                "assignee_id": str(item["assignee_id"]),
+                "assignee_id": str(item["assignee_id"]) if item["assignee_id"] else None,
                 "avatar": item["avatar"],
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
@@ -1038,7 +1038,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             {
                 "label_name": item["label_name"],
                 "color": item["color"],
-                "label_id": str(item["label_id"]),
+                "label_id": str(item["label_id"]) if item["label_id"] else None,
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
                 "pending_issues": item["pending_issues"],
