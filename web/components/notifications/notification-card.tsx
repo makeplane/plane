@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
+import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
@@ -14,6 +14,7 @@ import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // type
 import type { IUserNotification } from "@plane/types";
+import { Menu } from "@headlessui/react";
 
 type NotificationCardProps = {
   notification: IUserNotification;
@@ -40,8 +41,73 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // states
+  const [showSnoozeOptions, setshowSnoozeOptions] = React.useState(false);
+  // toast alert
   const { setToastAlert } = useToast();
+  // refs
+  const snoozeRef = useRef<HTMLDivElement | null>(null);
+
+  const moreOptions = [
+    {
+      id: 1,
+      name: notification.read_at ? "Mark as unread" : "Mark as read",
+      icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
+      onClick: () => {
+        markNotificationReadStatusToggle(notification.id).then(() => {
+          setToastAlert({
+            title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
+            type: "success",
+          });
+        });
+      },
+    },
+    {
+      id: 2,
+      name: notification.archived_at ? "Unarchive" : "Archive",
+      icon: notification.archived_at ? (
+        <ArchiveRestore className="h-3.5 w-3.5 text-custom-text-300" />
+      ) : (
+        <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-300" />
+      ),
+      onClick: () => {
+        markNotificationArchivedStatus(notification.id).then(() => {
+          setToastAlert({
+            title: notification.archived_at ? "Notification un-archived" : "Notification archived",
+            type: "success",
+          });
+        });
+      },
+    },
+  ];
+
+  const snoozeOptionOnClick = (date: Date | null) => {
+    if (!date) {
+      setSelectedNotificationForSnooze(notification.id);
+      return;
+    }
+    markSnoozeNotification(notification.id, date).then(() => {
+      setToastAlert({
+        title: `Notification snoozed till ${renderFormattedDate(date)}`,
+        type: "success",
+      });
+    });
+  };
+
+  // close snooze options on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (snoozeRef.current && !snoozeRef.current?.contains(event.target)) {
+        setshowSnoozeOptions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside, true);
+    document.addEventListener("touchend", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, true);
+      document.removeEventListener("touchend", handleClickOutside, true);
+    };
+  }, []);
 
   if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
 
@@ -87,57 +153,136 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         )}
       </div>
       <div className="w-full space-y-2.5 overflow-hidden">
-        {!notification.message ? (
-          <div className="w-full break-words text-sm">
-            <span className="font-semibold">
-              {notification.triggered_by_details.is_bot
-                ? notification.triggered_by_details.first_name
-                : notification.triggered_by_details.display_name}{" "}
-            </span>
-            {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.verb}{" "}
-            {notification.data.issue_activity.field === "comment"
-              ? "commented"
-              : notification.data.issue_activity.field === "None"
-              ? null
-              : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
-            {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
-              ? "to"
-              : ""}
-            <span className="font-semibold">
-              {" "}
-              {notification.data.issue_activity.field !== "None" ? (
-                notification.data.issue_activity.field !== "comment" ? (
-                  notification.data.issue_activity.field === "target_date" ? (
-                    renderFormattedDate(notification.data.issue_activity.new_value)
-                  ) : notification.data.issue_activity.field === "attachment" ? (
-                    "the issue"
-                  ) : notification.data.issue_activity.field === "description" ? (
-                    stripAndTruncateHTML(notification.data.issue_activity.new_value, 55)
+        <div className="flex items-start">
+          {!notification.message ? (
+            <div className="w-full break-words text-sm">
+              <span className="font-semibold">
+                {notification.triggered_by_details.is_bot
+                  ? notification.triggered_by_details.first_name
+                  : notification.triggered_by_details.display_name}{" "}
+              </span>
+              {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.verb}{" "}
+              {notification.data.issue_activity.field === "comment"
+                ? "commented"
+                : notification.data.issue_activity.field === "None"
+                ? null
+                : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
+              {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
+                ? "to"
+                : ""}
+              <span className="font-semibold">
+                {" "}
+                {notification.data.issue_activity.field !== "None" ? (
+                  notification.data.issue_activity.field !== "comment" ? (
+                    notification.data.issue_activity.field === "target_date" ? (
+                      renderFormattedDate(notification.data.issue_activity.new_value)
+                    ) : notification.data.issue_activity.field === "attachment" ? (
+                      "the issue"
+                    ) : notification.data.issue_activity.field === "description" ? (
+                      stripAndTruncateHTML(notification.data.issue_activity.new_value, 55)
+                    ) : (
+                      notification.data.issue_activity.new_value
+                    )
                   ) : (
-                    notification.data.issue_activity.new_value
+                    <span>
+                      {`"`}
+                      {notification.data.issue_activity.new_value.length > 55
+                        ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
+                        : notification.data.issue_activity.issue_comment}
+                      {`"`}
+                    </span>
                   )
                 ) : (
-                  <span>
-                    {`"`}
-                    {notification.data.issue_activity.new_value.length > 55
-                      ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
-                      : notification.data.issue_activity.issue_comment}
-                    {`"`}
-                  </span>
-                )
-              ) : (
-                "the issue and assigned it to you."
+                  "the issue and assigned it to you."
+                )}
+              </span>
+            </div>
+          ) : (
+            <div className="w-full break-words text-sm">
+              <span className="semi-bold">{notification.message}</span>
+            </div>
+          )}
+          <div className="flex md:hidden items-start">
+            <Menu as="div" className={" w-min text-left"}>
+              {({ open }) => (
+                <>
+                  <Menu.Button as={React.Fragment}>
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex w-full items-center gap-x-2 rounded p-0.5 text-sm"
+                    >
+                      <MoreVertical className="h-3.5 w-3.5 text-custom-text-300" />
+                    </button>
+                  </Menu.Button>
+                  {open && (
+                    <Menu.Items className={"absolute right-0 z-10"} static>
+                      <div
+                        className={
+                          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap"
+                        }
+                      >
+                        {moreOptions.map((item) => (
+                          <Menu.Item as="div">
+                            {({ close }) => (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  item.onClick();
+                                  close();
+                                }}
+                                className="flex gap-x-2 items-center p-1.5"
+                              >
+                                {item.icon}
+                                {item.name}
+                              </button>
+                            )}
+                          </Menu.Item>
+                        ))}
+                        <Menu.Item as="div">
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setshowSnoozeOptions(true);
+                            }}
+                            className="flex gap-x-2 items-center p-1.5"
+                          >
+                            <Clock className="h-3.5 w-3.5 text-custom-text-300" />
+                            Snooze
+                          </div>
+                        </Menu.Item>
+                      </div>
+                    </Menu.Items>
+                  )}
+                </>
               )}
-            </span>
+            </Menu>
+            {showSnoozeOptions && (
+              <div
+                ref={snoozeRef}
+                className="absolute right-36 z-20 my-1 top-24 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap"
+              >
+                {snoozeOptions.map((item) => (
+                  <p
+                    className="p-1.5"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setshowSnoozeOptions(false);
+                      snoozeOptionOnClick(item.value);
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="w-full break-words text-sm">
-            <span className="semi-bold">{notification.message}</span>
-          </div>
-        )}
+        </div>
 
         <div className="flex justify-between gap-2 text-xs">
-          <p className="text-custom-text-300">
+          <p className="text-custom-text-300 line-clamp-1">
             {truncateText(
               `${notification.data.issue.identifier}-${notification.data.issue.sequence_id} ${notification.data.issue.name}`,
               50
@@ -152,43 +297,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               </span>
             </p>
           ) : (
-            <p className="flex-shrink-0 text-custom-text-300">{calculateTimeAgo(notification.created_at)}</p>
+            <p className="flex-shrink-0 text-custom-text-300 mt-auto">{calculateTimeAgo(notification.created_at)}</p>
           )}
         </div>
       </div>
-      <div className="absolute right-3 top-3 hidden gap-x-3 py-1 group-hover:flex">
-        {[
-          {
-            id: 1,
-            name: notification.read_at ? "Mark as unread" : "Mark as read",
-            icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
-            onClick: () => {
-              markNotificationReadStatusToggle(notification.id).then(() => {
-                setToastAlert({
-                  title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
-                  type: "success",
-                });
-              });
-            },
-          },
-          {
-            id: 2,
-            name: notification.archived_at ? "Unarchive" : "Archive",
-            icon: notification.archived_at ? (
-              <ArchiveRestore className="h-3.5 w-3.5 text-custom-text-300" />
-            ) : (
-              <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-300" />
-            ),
-            onClick: () => {
-              markNotificationArchivedStatus(notification.id).then(() => {
-                setToastAlert({
-                  title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-                  type: "success",
-                });
-              });
-            },
-          },
-        ].map((item) => (
+      <div className="absolute right-3 top-3 hidden gap-x-3 py-1 md:group-hover:flex">
+        {moreOptions.map((item) => (
           <Tooltip tooltipContent={item.name}>
             <button
               type="button"
@@ -221,18 +335,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-
-                  if (!item.value) {
-                    setSelectedNotificationForSnooze(notification.id);
-                    return;
-                  }
-
-                  markSnoozeNotification(notification.id, item.value).then(() => {
-                    setToastAlert({
-                      title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
-                      type: "success",
-                    });
-                  });
+                  snoozeOptionOnClick(item.value);
                 }}
               >
                 {item.label}
