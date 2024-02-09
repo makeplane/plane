@@ -191,7 +191,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         {renderEmoji(project.icon_prop)}
                       </div>
                     ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-primary-solid uppercase text-white">
                         {project?.name.charAt(0)}
                       </span>
                     )}

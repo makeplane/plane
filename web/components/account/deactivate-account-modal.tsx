@@ -108,7 +108,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                   </div>
                 </div>
                 <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="neutral-primary" onClick={onClose}>
+                  <Button variant="outline-neutral" onClick={onClose}>
                     Cancel
                   </Button>
                   <Button variant="danger" onClick={handleDeleteAccount}>

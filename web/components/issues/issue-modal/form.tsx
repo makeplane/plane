@@ -669,7 +669,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             <span className="text-xs">Create more</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={17}>
+            <Button variant="outline-neutral" size="sm" onClick={onClose} tabIndex={17}>
               Discard
             </Button>
 
@@ -677,7 +677,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               <Fragment>
                 {data?.id ? (
                   <Button
-                    variant="neutral-primary"
+                    variant="outline-neutral"
                     size="sm"
                     loading={isSubmitting}
                     onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
@@ -687,7 +687,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   </Button>
                 ) : (
                   <Button
-                    variant="neutral-primary"
+                    variant="outline-neutral"
                     size="sm"
                     loading={isSubmitting}
                     onClick={handleSubmit((data) => handleFormSubmit(data, true))}

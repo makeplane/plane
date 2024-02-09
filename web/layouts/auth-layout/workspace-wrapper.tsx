@@ -73,7 +73,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <span>
-                  <Button variant="neutral-primary" size="sm">
+                  <Button variant="outline-neutral" size="sm">
                     Check pending invites
                   </Button>
                 </span>

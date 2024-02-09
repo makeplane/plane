@@ -176,7 +176,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
       </div>
       <div className="flex flex-wrap items-center gap-2 justify-self-end">
         <Button
-          variant="neutral-primary"
+          variant="outline-neutral"
           prependIcon={<RefreshCw className="h-3.5 w-3.5" />}
           onClick={() => {
             if (!workspaceSlug) return;

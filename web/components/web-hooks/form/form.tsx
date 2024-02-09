@@ -93,7 +93,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
           </div>
         ) : (
           <div className="mt-4 flex justify-end gap-2">
-            <Button variant="neutral-primary" onClick={handleClose}>
+            <Button variant="outline-neutral" onClick={handleClose}>
               Discard
             </Button>
             {!webhookSecretKey && (

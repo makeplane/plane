@@ -32,7 +32,7 @@ export const dueDateIconDetails = (
       className = "text-danger-text-medium";
     } else if (timeDifference === 24 * 60 * 60 * 1000) {
       iconName = "event";
-      className = "text-yellow-500";
+      className = "text-warning-text-subtle";
     } else {
       iconName = "calendar_today";
       className = "";

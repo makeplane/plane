@@ -86,7 +86,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
                   : priority?.key === "high"
                     ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
                     : priority?.key === "medium"
-                      ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                      ? "border-yellow-500/20 bg-warning-component-surface-light text-warning-text-subtle"
                       : priority?.key === "low"
                         ? "border-green-500/20 bg-success-component-surface-dark text-success-text-medium"
                         : "border-neutral-border-medium bg-neutral-component-surface-dark"

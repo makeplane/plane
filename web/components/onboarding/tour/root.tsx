@@ -142,7 +142,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
-                    <Button variant="neutral-primary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
+                    <Button variant="outline-neutral" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
                       Back
                     </Button>
                   )}

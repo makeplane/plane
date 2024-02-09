@@ -151,7 +151,7 @@ export const Avatar: React.FC<Props> = (props) => {
               shape
             )} ${className}`}
             style={{
-              backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
+              backgroundColor: fallbackBackgroundColor ?? "var(--color-primary-90)",
               color: fallbackTextColor ?? "#ffffff",
             }}
           >

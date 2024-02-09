@@ -45,7 +45,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         ) : projectDetails.icon_prop ? (
           <div className="grid h-7 w-7 flex-shrink-0 place-items-center">{renderEmoji(projectDetails.icon_prop)}</div>
         ) : (
-          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-primary-solid uppercase text-white">
             {projectDetails.name.charAt(0)}
           </span>
         )}

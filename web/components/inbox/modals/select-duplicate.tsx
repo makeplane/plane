@@ -180,7 +180,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
                       <Button variant="primary" size="sm" onClick={handleSubmit}>

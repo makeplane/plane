@@ -178,7 +178,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                     </Button>
                   )}
                   <div className="flex items-center gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button

@@ -105,7 +105,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="outline-neutral" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
                     <Button

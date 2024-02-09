@@ -117,7 +117,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 <div className="flex items-center gap-2 truncate">
                   <div
                     className={`relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
+                      !activeWorkspace?.logo && "rounded bg-primary-solid text-white"
                     }`}
                   >
                     {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
@@ -180,7 +180,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                                 <div className="flex items-center justify-start gap-2.5 truncate">
                                   <span
                                     className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                                      !workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                                      !workspace?.logo && "rounded bg-primary-solid text-white"
                                     }`}
                                   >
                                     {workspace?.logo && workspace.logo !== "" ? (

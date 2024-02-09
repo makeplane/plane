@@ -58,7 +58,7 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
               <Popover.Button as={React.Fragment}>
                 <Button
                   ref={setReferenceElement}
-                  variant="neutral-primary"
+                  variant="outline-neutral"
                   size="sm"
                   className="border-none !bg-transparent"
                 >

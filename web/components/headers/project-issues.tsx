@@ -138,7 +138,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                               {renderEmoji(currentProjectDetails.icon_prop)}
                             </div>
                           ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-primary-solid uppercase text-white">
                               {currentProjectDetails?.name.charAt(0)}
                             </span>
                           )
@@ -206,7 +206,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           {currentProjectDetails?.inbox_view && inboxDetails && (
             <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
               <span>
-                <Button variant="neutral-primary" size="sm" className="relative">
+                <Button variant="outline-neutral" size="sm" className="relative">
                   Inbox
                   {inboxDetails?.pending_issue_count > 0 && (
                     <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-dark text-neutral-text-strong">
@@ -222,7 +222,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               <Button
                 className="hidden md:block"
                 onClick={() => setAnalyticsModal(true)}
-                variant="neutral-primary"
+                variant="outline-neutral"
                 size="sm"
               >
                 Analytics
@@ -234,7 +234,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 }}
                 size="sm"
                 prependIcon={<Plus />}
-                variant="accent-primary"
+                variant="primary"
               >
                 Add Issue
               </Button>

@@ -120,7 +120,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="outline-neutral" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>

@@ -120,7 +120,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
             </div>
             {data && (
               <div>
-                <Button onClick={handleRegenerateSecretKey} variant="accent-primary" loading={isRegenerating}>
+                <Button onClick={handleRegenerateSecretKey} variant="surface-primary" loading={isRegenerating}>
                   <RefreshCw className="h-3 w-3" />
                   {isRegenerating ? "Re-generating..." : "Re-generate key"}
                 </Button>

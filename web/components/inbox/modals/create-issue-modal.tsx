@@ -330,7 +330,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                       <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="neutral-primary" size="sm" onClick={() => handleClose()}>
+                      <Button variant="outline-neutral" size="sm" onClick={() => handleClose()}>
                         Discard
                       </Button>
                       <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>

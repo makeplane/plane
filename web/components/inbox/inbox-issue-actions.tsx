@@ -268,7 +268,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
               <div className="flex-shrink-0">
                 <Popover className="relative">
                   <Popover.Button as="button" type="button">
-                    <Button variant="neutral-primary" prependIcon={<Clock size={14} strokeWidth={2} />} size="sm">
+                    <Button variant="outline-neutral" prependIcon={<Clock size={14} strokeWidth={2} />} size="sm">
                       Snooze
                     </Button>
                   </Popover.Button>
@@ -307,7 +307,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             {isAllowed && issueStatus.status === -2 && (
               <div className="flex-shrink-0">
                 <Button
-                  variant="neutral-primary"
+                  variant="outline-neutral"
                   size="sm"
                   prependIcon={<FileStack size={14} strokeWidth={2} />}
                   onClick={() => setSelectDuplicateIssue(true)}
@@ -320,7 +320,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             {isAllowed && (issueStatus.status === 0 || issueStatus.status === -2) && (
               <div className="flex-shrink-0">
                 <Button
-                  variant="neutral-primary"
+                  variant="outline-neutral"
                   size="sm"
                   prependIcon={<CheckCircle2 className="text-success-text-medium" size={14} strokeWidth={2} />}
                   onClick={() => setAcceptIssueModal(true)}
@@ -333,7 +333,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             {isAllowed && issueStatus.status === -2 && (
               <div className="flex-shrink-0">
                 <Button
-                  variant="neutral-primary"
+                  variant="outline-neutral"
                   size="sm"
                   prependIcon={<XCircle className="text-danger-text-medium" size={14} strokeWidth={2} />}
                   onClick={() => setDeclineIssueModal(true)}
@@ -346,7 +346,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             {(isAllowed || currentUser?.id === issue?.created_by) && (
               <div className="flex-shrink-0">
                 <Button
-                  variant="neutral-primary"
+                  variant="outline-neutral"
                   size="sm"
                   prependIcon={<Trash2 className="text-danger-text-medium" size={14} strokeWidth={2} />}
                   onClick={() => setDeleteIssueModal(true)}

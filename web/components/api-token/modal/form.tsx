@@ -238,7 +238,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
           <span className="text-xs">Never expires</span>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="outline-neutral" size="sm" onClick={handleClose}>
             Discard
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>

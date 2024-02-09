@@ -224,7 +224,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </Button>
         {!secondaryButton && (
-          <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+          <Button variant="outline-neutral" type="button" size="md" onClick={() => router.back()}>
             Go back
           </Button>
         )}

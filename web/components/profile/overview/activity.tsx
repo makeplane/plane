@@ -52,7 +52,7 @@ export const ProfileActivity = observer(() => {
                         className="rounded"
                       />
                     ) : (
-                      <div className="grid h-6 w-6 place-items-center rounded border-2 bg-gray-700 text-xs text-white">
+                      <div className="grid h-6 w-6 place-items-center rounded border-2 bg-primary-solid text-xs text-white">
                         {activity.actor_detail.display_name?.charAt(0)}
                       </div>
                     )}

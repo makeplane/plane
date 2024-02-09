@@ -51,7 +51,7 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
                     ) : currentProjectDetails?.icon_prop ? (
                       renderEmoji(currentProjectDetails.icon_prop)
                     ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-primary-solid uppercase text-white">
                         {currentProjectDetails?.name.charAt(0)}
                       </span>
                     )

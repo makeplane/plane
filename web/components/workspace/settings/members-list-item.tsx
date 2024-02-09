@@ -110,7 +110,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
             </Link>
           ) : (
             <Link href={`/${workspaceSlug}/profile/${memberDetails.member.id}`}>
-              <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
+              <span className="relative flex h-10 w-10 items-center justify-center rounded bg-primary-solid p-4 capitalize text-white">
                 {(memberDetails.member.email ?? memberDetails.member.display_name ?? "?")[0]}
               </span>
             </Link>

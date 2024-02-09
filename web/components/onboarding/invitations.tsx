@@ -107,7 +107,7 @@ export const Invitations: React.FC<Props> = (props) => {
                           alt={invitedWorkspace.name}
                         />
                       ) : (
-                        <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
+                        <span className="grid h-9 w-9 place-items-center rounded bg-primary-solid px-3 py-1.5 uppercase text-white">
                           {invitedWorkspace?.name[0]}
                         </span>
                       )}

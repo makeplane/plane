@@ -127,7 +127,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     </h6>
                   )}
                   <div className="flex justify-end gap-4">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button

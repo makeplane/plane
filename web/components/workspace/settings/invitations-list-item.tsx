@@ -81,7 +81,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
       />
       <div className="group flex items-center justify-between px-3 py-4 hover:bg-neutral-component-surface-medium">
         <div className="flex items-center gap-x-4 gap-y-2">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded bg-primary-solid p-4 capitalize text-white">
             {(invitationDetails.email ?? "?")[0]}
           </span>
           <div>
@@ -89,7 +89,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
           </div>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
+          <div className="flex items-center justify-center rounded bg-warning-component-surface-light px-2.5 py-1 text-center text-xs font-medium text-warning-text-subtle">
             <p>Pending</p>
           </div>
           <CustomSelect

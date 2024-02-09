@@ -76,7 +76,7 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSu
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" tabIndex={1} onClick={handleDecline} loading={isDeclining}>

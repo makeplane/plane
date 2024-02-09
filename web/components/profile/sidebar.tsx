@@ -166,7 +166,7 @@ export const ProfileSidebar = observer(() => {
                                     completedIssuePercentage <= 35
                                       ? "bg-danger-component-surface-medium text-danger-text-medium"
                                       : completedIssuePercentage <= 70
-                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      ? "bg-warning-component-surface-light text-warning-text-subtle"
                                       : "bg-success-component-surface-medium text-success-text-medium"
                                   }`}
                                 >

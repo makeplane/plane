@@ -55,11 +55,11 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                             alt={activityItem.actor_detail.display_name}
                             height={30}
                             width={30}
-                            className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
+                            className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-primary-solid text-white"
                           />
                         ) : (
                           <div
-                            className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}
+                            className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-primary-solid text-white`}
                           >
                             {activityItem.actor_detail.display_name?.charAt(0)}
                           </div>
@@ -135,7 +135,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                                     />
                                   ) : (
                                     <div
-                                      className={`grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white`}
+                                      className={`grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-primary-solid text-xs text-white`}
                                     >
                                       {activityItem.actor_detail.display_name?.charAt(0)}
                                     </div>

@@ -32,7 +32,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => 
   const buttonIconStyle = getIconStyling(size);
 
   return (
-    <button ref={ref} type={type} className={cn(buttonStyle, className)} disabled={disabled || loading} {...rest}>
+    <button
+      ref={ref}
+      type={type}
+      className={cn("outline-none", buttonStyle, className)}
+      disabled={disabled || loading}
+      {...rest}
+    >
       {prependIcon && <div className={buttonIconStyle}>{React.cloneElement(prependIcon, { strokeWidth: 2 })}</div>}
       {children}
       {appendIcon && <div className={buttonIconStyle}>{React.cloneElement(appendIcon, { strokeWidth: 2 })}</div>}

@@ -40,7 +40,7 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
                   />
                 </div>
               ) : (
-                <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 text-[11px] capitalize text-white">
+                <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-primary-solid text-[11px] capitalize text-white">
                   {user.display_name !== "" ? user?.display_name?.[0] : "?"}
                 </div>
               )}

@@ -82,7 +82,7 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
                     </div>
                   </div>
                   <div className="flex justify-end gap-2 p-4 sm:px-6">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button

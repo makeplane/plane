@@ -24,7 +24,7 @@ export const GeneratedHookDetails: React.FC<Props> = (props) => {
       </div>
       <WebhookSecretKey data={webhookDetails} />
       <div className="mt-6 flex justify-end">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="outline-neutral" size="sm" onClick={handleClose}>
           Close
         </Button>
       </div>

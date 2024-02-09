@@ -29,7 +29,7 @@ export const SingleImport: React.FC<Props> = ({ service, refreshing, handleDelet
             service.status === "completed"
               ? "bg-success-component-surface-dark text-success-text-medium"
               : service.status === "processing"
-              ? "bg-yellow-500/20 text-yellow-500"
+              ? "bg-warning-component-surface-light text-warning-text-subtle"
               : service.status === "failed"
               ? "bg-danger-component-surface-dark text-danger-text-medium"
               : ""

@@ -637,11 +637,11 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleDiscard}>
+            <Button variant="outline-neutral" size="sm" onClick={handleDiscard}>
               Discard
             </Button>
             <Button
-              variant="neutral-primary"
+              variant="outline-neutral"
               size="sm"
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>

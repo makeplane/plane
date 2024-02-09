@@ -260,7 +260,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           />
         )}
       />
-      <Button variant="neutral-primary" onClick={handleClose} size="sm">
+      <Button variant="outline-neutral" onClick={handleClose} size="sm">
         Cancel
       </Button>
       <Button

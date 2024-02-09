@@ -82,7 +82,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
           }}
           secondaryButton={
             <Button
-              variant="neutral-primary"
+              variant="outline-neutral"
               prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
               onClick={() => setModuleIssuesListModal(true)}
               disabled={!isEditingAllowed}

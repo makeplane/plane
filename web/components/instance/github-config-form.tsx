@@ -141,7 +141,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Origin URL</h4>
           <Button
-            variant="neutral-primary"
+            variant="outline-neutral"
             className="flex items-center justify-between py-2"
             onClick={() => {
               navigator.clipboard.writeText(originURL);

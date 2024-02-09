@@ -39,7 +39,7 @@ export const issuePriorityFilters: IIssuePriorityFilters[] = [
   {
     key: "medium",
     title: "Medium",
-    className: "text-yellow-500 border-neutral-border-medium",
+    className: "text-warning-text-subtle border-neutral-border-medium",
     icon: "signal_cellular_alt_2_bar",
   },
   {

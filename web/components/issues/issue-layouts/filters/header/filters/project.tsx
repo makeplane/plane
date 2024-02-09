@@ -61,7 +61,7 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
                           {renderEmoji(project.icon_prop)}
                         </div>
                       ) : (
-                        <span className="mr-1 grid flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                        <span className="mr-1 grid flex-shrink-0 place-items-center rounded bg-primary-solid uppercase text-white">
                           {project?.name.charAt(0)}
                         </span>
                       )

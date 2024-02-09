@@ -162,7 +162,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="outline-neutral" size="sm" onClick={handleClose}>
           Cancel
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>

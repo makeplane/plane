@@ -55,7 +55,7 @@ export const EmptyState: React.FC<Props> = ({
   const secondaryButtonElement = secondaryButton && (
     <Button
       size={size === "sm" ? "md" : "lg"}
-      variant="neutral-primary"
+      variant="outline-neutral"
       prependIcon={secondaryButton.icon}
       onClick={secondaryButton.onClick}
       disabled={disabled}

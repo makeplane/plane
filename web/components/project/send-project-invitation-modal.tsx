@@ -311,7 +311,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
                       <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>

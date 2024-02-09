@@ -160,7 +160,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                               alt={invitation.workspace.name}
                             />
                           ) : (
-                            <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
+                            <span className="grid h-9 w-9 place-items-center rounded bg-primary-solid px-3 py-1.5 uppercase text-white">
                               {invitation.workspace.name[0]}
                             </span>
                           )}
@@ -194,7 +194,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                 </Button>
                 <Link href={`/${redirectWorkspaceSlug}`}>
                   <span>
-                    <Button variant="neutral-primary" size="md">
+                    <Button variant="outline-neutral" size="md">
                       Go Home
                     </Button>
                   </span>

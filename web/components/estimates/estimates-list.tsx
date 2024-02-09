@@ -87,7 +87,7 @@ export const EstimatesList: React.FC = observer(() => {
               Add Estimate
             </Button>
             {currentProjectDetails?.estimate && (
-              <Button variant="neutral-primary" onClick={disableEstimates} size="sm">
+              <Button variant="outline-neutral" onClick={disableEstimates} size="sm">
                 Disable Estimates
               </Button>
             )}

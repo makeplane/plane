@@ -339,7 +339,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button
-                        variant="neutral-primary"
+                        variant="outline-neutral"
                         onClick={() => {
                           setIsOpen(false);
                           setImage(null);

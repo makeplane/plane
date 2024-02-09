@@ -407,7 +407,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
+                    <Button variant="outline-neutral" size="sm" onClick={handleClose} tabIndex={6}>
                       Cancel
                     </Button>
                     <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>

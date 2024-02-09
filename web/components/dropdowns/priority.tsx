@@ -56,7 +56,7 @@ const BorderButton = (props: ButtonProps) => {
   const priorityClasses = {
     urgent: "bg-danger-component-surface-dark text-red-950 border-red-500",
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
+    medium: "bg-warning-component-surface-light text-warning-text-subtle border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
     none: "bg-neutral-component-surface-dark border-neutral-border-medium",
   };
@@ -125,7 +125,7 @@ const BackgroundButton = (props: ButtonProps) => {
   const priorityClasses = {
     urgent: "bg-danger-component-surface-dark text-red-950",
     high: "bg-orange-500/20 text-orange-950",
-    medium: "bg-yellow-500/20 text-yellow-950",
+    medium: "bg-warning-component-surface-light text-warning-text-subtle",
     low: "bg-blue-500/20 text-blue-950",
     none: "bg-neutral-component-surface-dark",
   };
@@ -195,7 +195,7 @@ const TransparentButton = (props: ButtonProps) => {
   const priorityClasses = {
     urgent: "text-red-950",
     high: "text-orange-950",
-    medium: "text-yellow-950",
+    medium: "text-warning-text-subtle",
     low: "text-blue-950",
     none: "",
   };

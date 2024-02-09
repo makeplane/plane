@@ -103,7 +103,7 @@ export const PageForm: React.FC<Props> = (props) => {
           )}
         />
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
+          <Button variant="outline-neutral" size="sm" onClick={handleClose} tabIndex={4}>
             Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>

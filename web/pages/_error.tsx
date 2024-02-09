@@ -60,7 +60,7 @@ const CustomErrorComponent = () => {
             <Button variant="primary" size="md" onClick={() => router.reload()}>
               Refresh
             </Button>
-            <Button variant="neutral-primary" size="md" onClick={handleSignOut}>
+            <Button variant="outline-neutral" size="md" onClick={handleSignOut}>
               Sign out
             </Button>
           </div>

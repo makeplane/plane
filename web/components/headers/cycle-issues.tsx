@@ -168,7 +168,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                           ) : currentProjectDetails?.icon_prop ? (
                             renderEmoji(currentProjectDetails.icon_prop)
                           ) : (
-                            <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
+                            <span className="flex h-4 w-4 items-center justify-center rounded bg-primary-solid uppercase text-white">
                               {currentProjectDetails?.name.charAt(0)}
                             </span>
                           )
@@ -247,7 +247,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                <Button onClick={() => setAnalyticsModal(true)} variant="outline-neutral" size="sm">
                   Analytics
                 </Button>
                 <Button

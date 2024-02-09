@@ -82,7 +82,7 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                               : priority === "high"
                               ? "bg-orange-500/20 text-orange-500"
                               : priority === "medium"
-                              ? "bg-yellow-500/20 text-yellow-500"
+                              ? "bg-warning-component-surface-light text-warning-text-subtle"
                               : priority === "low"
                               ? "bg-success-component-surface-dark text-success-text-medium"
                               : "bg-neutral-component-surface-medium text-neutral-text-medium"

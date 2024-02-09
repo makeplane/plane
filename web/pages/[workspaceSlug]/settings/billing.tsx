@@ -40,7 +40,7 @@ const BillingSettingsPage: NextPageWithLayout = observer(() => {
           <h4 className="text-md mb-1 leading-6">Current plan</h4>
           <p className="mb-3 text-sm text-neutral-text-medium">You are currently using the free plan</p>
           <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
-            <Button variant="neutral-primary">View Plans</Button>
+            <Button variant="outline-neutral">View Plans</Button>
           </a>
         </div>
       </div>

@@ -52,7 +52,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
         <p className="text-xs text-neutral-text-subtle">
           {tokenDetails.expired_at ? `Expires ${renderFormattedDate(tokenDetails.expired_at)}` : "Never expires"}
         </p>
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="outline-neutral" size="sm" onClick={handleClose}>
           Close
         </Button>
       </div>

@@ -210,7 +210,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             {!project.is_member ? (
               <div className="flex items-center">
                 <Button
-                  variant="link-primary"
+                  variant="text-primary"
                   className="!p-0 font-semibold"
                   onClick={(e) => {
                     e.preventDefault();

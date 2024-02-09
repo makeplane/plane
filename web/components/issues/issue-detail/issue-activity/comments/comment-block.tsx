@@ -25,7 +25,7 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = (props) => {
   return (
     <div className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}>
       <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-neutral-component-surface-dark" aria-hidden={true} />
-      <div className="flex-shrink-0 relative w-7 h-7 rounded-full flex justify-center items-center z-10 bg-gray-500 text-white border border-white uppercase font-medium">
+      <div className="flex-shrink-0 relative w-7 h-7 rounded-full flex justify-center items-center z-10 bg-primary-solid text-white border border-white uppercase font-medium">
         {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
           <img
             src={comment.actor_detail.avatar}

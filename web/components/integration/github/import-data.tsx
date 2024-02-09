@@ -110,7 +110,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="neutral-primary" onClick={() => handleStepChange("import-configure")}>
+        <Button variant="outline-neutral" onClick={() => handleStepChange("import-configure")}>
           Back
         </Button>
         <Button

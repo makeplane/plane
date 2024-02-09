@@ -77,7 +77,7 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
               {item.avatar && item.avatar.trim() !== "" ? (
                 <img src={item.avatar} className="h-full w-full rounded-sm object-cover" alt={item.title} />
               ) : (
-                <div className="grid h-full w-full place-items-center rounded-sm bg-gray-700 text-xs capitalize text-white">
+                <div className="grid h-full w-full place-items-center rounded-sm bg-primary-solid text-xs capitalize text-white">
                   {item.title[0]}
                 </div>
               )}

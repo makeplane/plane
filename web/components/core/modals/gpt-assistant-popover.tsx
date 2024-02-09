@@ -253,7 +253,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
           <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
             {responseActionButton}
             <div className="flex items-center gap-2">
-              <Button variant="neutral-primary" size="sm" onClick={onClose}>
+              <Button variant="outline-neutral" size="sm" onClick={onClose}>
                 Close
               </Button>
               <Button variant="primary" size="sm" onClick={handleSubmit(handleAIResponse)} loading={isSubmitting}>

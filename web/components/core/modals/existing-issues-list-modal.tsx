@@ -271,7 +271,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                   </Combobox.Options>
                 </Combobox>
                 <div className="flex items-center justify-end gap-2 p-3">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                     Cancel
                   </Button>
                   {selectedIssues.length > 0 && (

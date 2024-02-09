@@ -94,7 +94,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             </Link>
           ) : (
             <Link href={`/${workspaceSlug}/profile/${userDetails.id}`}>
-              <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
+              <span className="relative flex h-10 w-10 items-center justify-center rounded bg-primary-solid p-4 capitalize text-white">
                 {(userDetails.member.display_name ?? userDetails.member.email ?? "?")[0]}
               </span>
             </Link>

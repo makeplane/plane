@@ -75,7 +75,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             className="grid h-7 w-7 place-items-center rounded-full border-2 border-neutral-border-medium"
           />
         ) : (
-          <div className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}>
+          <div
+            className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-primary-solid text-white`}
+          >
             {comment.actor_detail.is_bot
               ? comment?.actor_detail?.first_name?.charAt(0)
               : comment?.actor_detail?.display_name?.charAt(0)}

@@ -193,7 +193,7 @@ export const CreateUpdateLabelInline = observer(
             )}
           />
         </div>
-        <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
+        <Button variant="outline-neutral" onClick={() => handleClose()} size="sm">
           Cancel
         </Button>
         <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>

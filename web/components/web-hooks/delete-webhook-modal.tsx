@@ -96,7 +96,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
                 </p>
 
                 <div className="flex justify-end gap-2">
-                  <Button variant="neutral-primary" onClick={onClose}>
+                  <Button variant="outline-neutral" onClick={onClose}>
                     Cancel
                   </Button>
                   <Button variant="danger" onClick={handleDelete} loading={isDeleting}>

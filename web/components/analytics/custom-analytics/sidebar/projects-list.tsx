@@ -33,7 +33,7 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
                 ) : project.icon_prop ? (
                   <div className="grid h-6 w-6 flex-shrink-0 place-items-center">{renderEmoji(project.icon_prop)}</div>
                 ) : (
-                  <span className="mr-1 grid h-6 w-6 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                  <span className="mr-1 grid h-6 w-6 flex-shrink-0 place-items-center rounded bg-primary-solid uppercase text-white">
                     {project?.name.charAt(0)}
                   </span>
                 )}

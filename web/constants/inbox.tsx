@@ -19,8 +19,8 @@ export const INBOX_STATUS: {
     icon: AlertTriangle,
     title: "Pending",
     description: () => <p>This issue is still pending.</p>,
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-yellow-500"),
-    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-yellow-500/10"),
+    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-warning-text-subtle"),
+    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-warning-component-surface-light"),
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "border-yellow-500"),
   },
   {
@@ -47,7 +47,7 @@ export const INBOX_STATUS: {
     textColor: (snoozeDatePassed: boolean = false) =>
       snoozeDatePassed ? "text-danger-text-medium" : "text-neutral-text-medium",
     bgColor: (snoozeDatePassed: boolean = false) =>
-      snoozeDatePassed ? "bg-danger-component-surface-dark" : "bg-gray-500/10",
+      snoozeDatePassed ? "bg-danger-component-surface-dark" : "bg-primary-solid/10",
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "border-red-500" : "border-gray-500"),
   },
   {
@@ -80,7 +80,7 @@ export const INBOX_STATUS: {
       </p>
     ),
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-neutral-text-medium"),
-    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-gray-500/10"),
+    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-primary-solid/10"),
     borderColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "border-gray-500"),
   },
 ];

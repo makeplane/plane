@@ -46,6 +46,20 @@
     --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
+
+    --color-sidebar-neutral-0: var(--color-neutral-0);
+    --color-sidebar-neutral-10: var(--color-neutral-10);
+    --color-sidebar-neutral-20: var(--color-neutral-20);
+    --color-sidebar-neutral-30: var(--color-neutral-30);
+    --color-sidebar-neutral-40: var(--color-neutral-40);
+    --color-sidebar-neutral-50: var(--color-neutral-50);
+    --color-sidebar-neutral-60: var(--color-neutral-60);
+    --color-sidebar-neutral-70: var(--color-neutral-70);
+    --color-sidebar-neutral-80: var(--color-neutral-80);
+    --color-sidebar-neutral-90: var(--color-neutral-90);
+    --color-sidebar-neutral-100: var(--color-neutral-100);
+    --color-sidebar-neutral-110: var(--color-neutral-110);
+    --color-sidebar-neutral-120: var(--color-neutral-120);
   }
 
   [data-theme="light"],
@@ -428,7 +442,7 @@ body {
 /* progress bar */
 .progress-bar {
   fill: currentColor;
-  color: rgba(var(--color-sidebar-background-100));
+  color: var(--color-sidebar-neutral-30);
 }
 
 /* lineclamp */

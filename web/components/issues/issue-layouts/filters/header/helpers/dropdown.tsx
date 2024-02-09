@@ -42,7 +42,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                 <Button
                   disabled={disabled}
                   ref={setReferenceElement}
-                  variant="neutral-primary"
+                  variant="outline-neutral"
                   size="sm"
                   appendIcon={
                     <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />

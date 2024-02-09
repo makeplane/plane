@@ -87,7 +87,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
           }}
           secondaryButton={
             <Button
-              variant="neutral-primary"
+              variant="outline-neutral"
               prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
               onClick={() => setCycleIssuesListModal(true)}
               disabled={!isEditingAllowed}

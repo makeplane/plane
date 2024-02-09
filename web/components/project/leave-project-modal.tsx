@@ -196,7 +196,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="outline-neutral" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" type="submit" loading={isSubmitting}>

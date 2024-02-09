@@ -203,7 +203,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
+        <Button variant="outline-neutral" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
         <Button variant="primary" size="sm" type="submit" tabIndex={5} disabled={isSubmitting}>
