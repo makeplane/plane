@@ -16,11 +16,11 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
   const priorityClasses = {
-    urgent: "bg-danger-solid text-danger-text-medium border-danger-90",
-    high: "bg-orange-30 text-orange-80 border-orange-80",
-    medium: "bg-warning-20 text-warning-80 border-warning-80",
-    low: "bg-primary-30 text-primary-90 border-primary-90",
-    none: "bg-neutral-40 text-neutral-text-medium border-neutral-border-strong",
+    urgent: "bg-danger-solid text-danger-text-medium border-danger-solid",
+    high: "bg-orange-30 text-orange-110 border-orange-90",
+    medium: "bg-warning-component-surface-light text-warning-text-medium border-warning-solid",
+    low: "bg-primary-component-surface-light text-primary-text-medium border-primary-90",
+    none: "bg-neutral-component-surface-light text-neutral-text-medium border-neutral-border-strong",
   };
 
   // get priority icon
@@ -64,11 +64,11 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
           size={size}
           className={cn(
             {
-              "text-danger-text-medium": priority === "urgent",
-              "text-orange-500": priority === "high",
-              "text-warning-text-subtle": priority === "medium",
-              "text-primary-text-subtle": priority === "low",
-              "text-neutral-text-medium": priority === "none",
+              "text-danger-solid": priority === "urgent",
+              "text-orange-90": priority === "high",
+              "text-warning-text-solid": priority === "medium",
+              "text-primary-text-solid": priority === "low",
+              "text-neutral-text-solid": priority === "none",
             },
             className
           )}

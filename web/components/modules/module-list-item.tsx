@@ -221,7 +221,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             {isEditingAllowed &&
               (moduleDetails.is_favorite ? (
                 <button type="button" onClick={handleRemoveFromFavorites} className="z-[1]">
-                  <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                  <Star className="h-3.5 w-3.5 fill-current text-warning-solid" />
                 </button>
               ) : (
                 <button type="button" onClick={handleAddToFavorites} className="z-[1]">

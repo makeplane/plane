@@ -2,6 +2,8 @@ import { ReactElement } from "react";
 import useSWR from "swr";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
+// ui
+import { Loader } from "@plane/ui";
 // components
 import { EmailNotificationForm } from "components/profile/preferences";
 // services
@@ -14,9 +16,19 @@ const userService = new UserService();
 
 const ProfilePreferencesThemePage: NextPageWithLayout = () => {
   // fetching user email notification settings
-  const { data } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
+  const { data, isLoading } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
     userService.currentUserEmailNotificationSettings()
   );
+
+  if (isLoading) {
+    return (
+      <Loader className="space-y-4 mt-8 px-6 lg:px-20">
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+      </Loader>
+    );
+  }
 
   if (!data) {
     return null;

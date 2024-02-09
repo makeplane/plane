@@ -215,7 +215,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 }}
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
                                   watch("period") === "AM"
-                                    ? "bg-custom-primary-100/90 text-custom-primary-0"
+                                    ? "bg-primary-solid/90 text-custom-primary-0"
                                     : "bg-neutral-component-surface-dark"
                                 }`}
                               >
@@ -227,7 +227,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 }}
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
                                   watch("period") === "PM"
-                                    ? "bg-custom-primary-100/90 text-custom-primary-0"
+                                    ? "bg-primary-solid/90 text-custom-primary-0"
                                     : "bg-neutral-component-surface-dark"
                                 }`}
                               >

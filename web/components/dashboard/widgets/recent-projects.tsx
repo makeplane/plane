@@ -91,7 +91,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
+    <div className="bg-neutral-page-surface-default rounded-xl border-[0.5px] border-neutral-border-subtle w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
       <Link
         href={`/${workspaceSlug}/projects`}
         className="text-lg font-semibold text-neutral-text-medium mx-7 hover:underline"
@@ -110,7 +110,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
               toggleCreateProjectModal(true);
             }}
           >
-            <div className="h-[3.375rem] w-[3.375rem] bg-custom-primary-100/20 text-primary-text-subtle grid place-items-center rounded border border-dashed border-custom-primary-60 flex-shrink-0">
+            <div className="h-[3.375rem] w-[3.375rem] bg-primary-solid/20 text-primary-text-subtle grid place-items-center rounded border border-dashed border-custom-primary-60 flex-shrink-0">
               <Plus className="h-6 w-6" />
             </div>
             <p className="text-sm text-neutral-text-medium font-medium group-hover:underline group-hover:text-neutral-text-strong">

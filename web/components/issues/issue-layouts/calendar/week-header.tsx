@@ -18,7 +18,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
       }`}
     >
       {isLoading && (
-        <div className="absolute h-[1.5px] w-3/4 animate-[bar-loader_2s_linear_infinite] bg-custom-primary-100" />
+        <div className="absolute h-[1.5px] w-3/4 animate-[bar-loader_2s_linear_infinite] bg-primary-solid" />
       )}
       {Object.values(DAYS_LIST).map((day) => {
         if (!showWeekends && ["Sat", "Sun"].includes(day.shortTitle)) return null;

@@ -34,7 +34,7 @@ export const SummaryPopover: React.FC<Props> = (props) => {
         type="button"
         ref={setReferenceElement}
         className={`grid h-7 w-7 place-items-center rounded ${
-          sidePeekVisible ? "bg-custom-primary-100/20 text-primary-text-subtle" : "text-neutral-text-medium"
+          sidePeekVisible ? "bg-primary-solid/20 text-primary-text-subtle" : "text-neutral-text-medium"
         }`}
         onClick={() => setSidePeekVisible(!sidePeekVisible)}
       >

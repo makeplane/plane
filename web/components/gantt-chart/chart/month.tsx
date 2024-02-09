@@ -34,7 +34,7 @@ export const MonthChartView: FC<any> = () => {
                       >
                         <div className="space-x-1 text-xs">
                           <span className="text-neutral-text-medium">{monthDay.dayData.shortTitle[0]}</span>{" "}
-                          <span className={monthDay.today ? "rounded-full bg-custom-primary-100 px-1 text-white" : ""}>
+                          <span className={monthDay.today ? "rounded-full bg-primary-solid px-1 text-white" : ""}>
                             {monthDay.day}
                           </span>
                         </div>

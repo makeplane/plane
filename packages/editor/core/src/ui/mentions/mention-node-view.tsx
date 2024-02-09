@@ -19,7 +19,7 @@ export const MentionNodeView = (props) => {
   return (
     <NodeViewWrapper className="mention-component inline w-fit">
       <span
-        className={cn("mention rounded bg-custom-primary-100/20 px-1 py-0.5 font-medium text-primary-text-subtle", {
+        className={cn("mention rounded bg-primary-solid/20 px-1 py-0.5 font-medium text-primary-text-subtle", {
           "bg-warning-component-surface-light text-warning-text-subtle": highlights
             ? highlights.includes(props.node.attrs.id)
             : false,

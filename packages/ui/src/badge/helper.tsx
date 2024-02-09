@@ -41,7 +41,7 @@ enum badgeIconStyling {
 
 export const badgeStyling: IBadgeStyling = {
   primary: {
-    default: `text-white bg-custom-primary-100`,
+    default: `text-white bg-primary-solid`,
     hover: `hover:bg-custom-primary-200`,
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },

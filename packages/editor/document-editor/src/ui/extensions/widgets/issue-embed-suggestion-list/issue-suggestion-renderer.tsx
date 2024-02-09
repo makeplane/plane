@@ -164,9 +164,9 @@ const IssueSuggestionList = ({
                 {sectionItems.map((item: IssueSuggestionProps, index: number) => (
                   <button
                     className={cn(
-                      `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-neutral-text-medium hover:bg-custom-primary-100/5 hover:text-neutral-text-strong`,
+                      `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-neutral-text-medium hover:bg-primary-solid/5 hover:text-neutral-text-strong`,
                       {
-                        "bg-custom-primary-100/5  text-neutral-text-strong":
+                        "bg-primary-solid/5  text-neutral-text-strong":
                           section === currentSection && index === selectedIndex,
                       }
                     )}

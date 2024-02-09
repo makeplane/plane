@@ -38,7 +38,7 @@ const InstanceAdminAIPage: NextPageWithLayout = observer(() => {
           </div>
           <InstanceAIForm config={formattedConfig} />
           <div className="my-2 flex">
-            <div className="flex items-center gap-2 rounded border border-custom-primary-100/20 bg-custom-primary-100/10 px-4 py-2 text-xs text-custom-primary-200">
+            <div className="flex items-center gap-2 rounded border border-custom-primary-100/20 bg-primary-solid/10 px-4 py-2 text-xs text-custom-primary-200">
               <Lightbulb height="14" width="14" />
               <div>If you have a preferred AI models vendor, please get in touch with us.</div>
             </div>

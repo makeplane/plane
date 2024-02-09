@@ -248,11 +248,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         </div>
       )}
 
-      <div
-        className="flex horizontal-scroll-enable relative h-full w-full overflow-auto bg-neutral-component-surface-medium"
-        ref={scrollableContainerRef}
-      >
-        <div className="relative h-max w-max min-w-full bg-neutral-component-surface-medium px-2">
+      <div className="flex horizontal-scroll-enable relative h-full w-full overflow-auto" ref={scrollableContainerRef}>
+        <div className="relative h-max w-max min-w-full px-2">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {/* drag and delete component */}
             <div

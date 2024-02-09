@@ -92,7 +92,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
       {step === "welcome" ? (
         <div className="h-3/4 w-4/5 overflow-hidden rounded-[10px] bg-neutral-component-surface-light md:w-1/2 lg:w-2/5">
           <div className="h-full overflow-hidden">
-            <div className="grid h-3/5 place-items-center bg-custom-primary-100">
+            <div className="grid h-3/5 place-items-center bg-primary-solid">
               <Image src={PlaneWhiteLogo} alt="Plane White Logo" />
             </div>
             <div className="flex h-2/5 flex-col overflow-y-auto p-6">
@@ -141,7 +141,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">
             <div
-              className={`flex h-1/2 items-end overflow-hidden bg-custom-primary-100 sm:h-3/5 ${
+              className={`flex h-1/2 items-end overflow-hidden bg-primary-solid sm:h-3/5 ${
                 currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
               }`}
             >

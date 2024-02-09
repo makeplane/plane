@@ -64,7 +64,7 @@ export const WorkspaceDashboardView = observer(() => {
           {joinedProjectIds.length > 0 ? (
             <>
               <IssuePeekOverview />
-              <div className="space-y-7 p-7 bg-neutral-page-surface-default h-full w-full flex flex-col overflow-y-auto">
+              <div className="space-y-7 p-7 bg-neutral-page-surface-medium h-full w-full flex flex-col overflow-y-auto">
                 {currentUser && <UserGreetingsView user={currentUser} />}
                 {currentUser && !currentUser.is_tour_completed && (
                   <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">

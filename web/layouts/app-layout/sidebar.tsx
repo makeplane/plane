@@ -42,7 +42,7 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
 
   return (
     <div
-      className={`inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-sidebar-neutral-border-medium bg-sidebar-neutral-page-surface-default duration-300
+      className={`inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r-[0.5px] border-sidebar-neutral-border-medium bg-sidebar-neutral-page-surface-default duration-300
         fixed md:relative
         ${themStore.sidebarCollapsed ? "-ml-[280px]" : ""}
         sm:${themStore.sidebarCollapsed ? "-ml-[280px]" : ""}

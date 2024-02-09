@@ -7,9 +7,9 @@ import { useDashboard } from "hooks/store";
 import { WidgetLoader } from "components/dashboard/widgets";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { TOverviewStatsWidgetResponse } from "@plane/types";
-import { cn } from "helpers/common.helper";
 
 export type WidgetProps = {
   dashboardId: string;
@@ -64,7 +64,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
 
   return (
     <div
-      className="bg-neutral-component-surface-light rounded-xl border-[0.5px] border-neutral-border-medium w-full grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2  p-0.5 hover:shadow-custom-shadow-4xl duration-300
+      className="bg-neutral-page-surface-default rounded-xl border-[0.5px] border-neutral-border-subtle w-full grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2  p-0.5 hover:shadow-custom-shadow-4xl duration-300
         [&>div>a>div]:border-r
         [&>div:last-child>a>div]:border-0
         [&>div>a>div]:border-neutral-border-medium
@@ -75,7 +75,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
       {STATS_LIST.map((stat, index) => (
         <div
           className={cn(
-            `w-full flex flex-col gap-2 hover:bg-neutral-component-surface-dark`,
+            `w-full flex flex-col gap-2 hover:bg-neutral-component-surface-medium`,
             index === 0 ? "rounded-tl-xl lg:rounded-l-xl" : "",
             index === STATS_LIST.length - 1 ? "rounded-br-xl lg:rounded-r-xl" : "",
             index === 1 ? "rounded-tr-xl lg:rounded-[0px]" : "",

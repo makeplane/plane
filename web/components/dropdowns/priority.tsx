@@ -2,7 +2,6 @@ import { Fragment, ReactNode, useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
-import { useTheme } from "next-themes";
 // hooks
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -39,6 +38,34 @@ type ButtonProps = {
   showTooltip: boolean;
 };
 
+const PRIORITY_CLASSES = {
+  urgent: {
+    border: "border-danger-border-strong",
+    bg: "bg-danger-component-surface-medium",
+    text: "text-danger-text-strong",
+  },
+  high: {
+    border: "border-orange-70",
+    bg: "bg-orange-40",
+    text: "text-orange-120",
+  },
+  medium: {
+    border: "border-warning-border-strong",
+    bg: "bg-warning-page-surface-medium",
+    text: "text-warning-text-strong",
+  },
+  low: {
+    border: "border-primary-border-strong",
+    bg: "bg-primary-component-surface-light",
+    text: "text-primary-text-strong",
+  },
+  none: {
+    border: "border-neutral-border-medium",
+    bg: "bg-neutral-component-surface-medium",
+    text: "text-neutral-text-strong",
+  },
+};
+
 const BorderButton = (props: ButtonProps) => {
   const {
     className,
@@ -53,25 +80,19 @@ const BorderButton = (props: ButtonProps) => {
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
-  const priorityClasses = {
-    urgent: "bg-danger-component-surface-dark text-red-950 border-red-500",
-    high: "bg-orange-500/20 text-orange-950 border-orange-500",
-    medium: "bg-warning-component-surface-light text-warning-text-subtle border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "bg-neutral-component-surface-dark border-neutral-border-medium",
-  };
-
   return (
     <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
-          priorityClasses[priority],
+          PRIORITY_CLASSES[priority].border,
+          PRIORITY_CLASSES[priority].bg,
+          PRIORITY_CLASSES[priority].text,
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-danger-solid border-red-500": priority === "urgent" && hideText && highlightUrgent,
+            "bg-danger-solid border-danger-solid": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -122,25 +143,18 @@ const BackgroundButton = (props: ButtonProps) => {
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
-  const priorityClasses = {
-    urgent: "bg-danger-component-surface-dark text-red-950",
-    high: "bg-orange-500/20 text-orange-950",
-    medium: "bg-warning-component-surface-light text-warning-text-subtle",
-    low: "bg-blue-500/20 text-blue-950",
-    none: "bg-neutral-component-surface-dark",
-  };
-
   return (
     <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
-          priorityClasses[priority],
+          PRIORITY_CLASSES[priority].border,
+          PRIORITY_CLASSES[priority].text,
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-danger-solid border-red-500": priority === "urgent" && hideText && highlightUrgent,
+            "bg-danger-solid border-danger-solid": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -192,20 +206,12 @@ const TransparentButton = (props: ButtonProps) => {
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
-  const priorityClasses = {
-    urgent: "text-red-950",
-    high: "text-orange-950",
-    medium: "text-warning-text-subtle",
-    low: "text-blue-950",
-    none: "",
-  };
-
   return (
     <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-neutral-component-surface-dark",
-          priorityClasses[priority],
+          PRIORITY_CLASSES[priority].text,
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -287,9 +293,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       },
     ],
   });
-  // next-themes
-  // TODO: remove this after new theming implementation
-  const { resolvedTheme } = useTheme();
 
   const options = ISSUE_PRIORITIES.map((priority) => ({
     value: priority.key,
@@ -385,9 +388,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           >
             <ButtonToRender
               priority={value}
-              className={cn(buttonClassName, {
-                "text-white": resolvedTheme === "dark",
-              })}
+              className={buttonClassName}
               highlightUrgent={highlightUrgent}
               dropdownArrow={dropdownArrow && !disabled}
               dropdownArrowClassName={dropdownArrowClassName}

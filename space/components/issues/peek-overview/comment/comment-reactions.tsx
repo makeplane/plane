@@ -107,7 +107,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                   commentReactions?.some(
                     (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
                   )
-                    ? "bg-custom-primary-100/10"
+                    ? "bg-primary-solid/10"
                     : "bg-neutral-component-surface-dark"
                 }`}
               >

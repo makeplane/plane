@@ -38,7 +38,7 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
       onClick={() => onClick(issueDetails)}
-      className="py-2 px-3 hover:bg-neutral-component-surface-dark rounded grid grid-cols-6 gap-1"
+      className="py-2 px-3 hover:bg-neutral-component-surface-medium rounded grid grid-cols-6 gap-1"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issueDetails.priority} withContainer />
@@ -89,7 +89,7 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
       onClick={() => onClick(issueDetails)}
-      className="py-2 px-3 hover:bg-neutral-component-surface-dark rounded grid grid-cols-6 gap-1"
+      className="py-2 px-3 hover:bg-neutral-component-surface-medium rounded grid grid-cols-6 gap-1"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issueDetails.priority} withContainer />
@@ -130,7 +130,7 @@ export const AssignedCompletedIssueListItem: React.FC<IssueListItemProps> = obse
     <ControlLink
       href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
       onClick={() => onClick(issueDetails)}
-      className="py-2 px-3 hover:bg-neutral-component-surface-dark rounded grid grid-cols-6 gap-1"
+      className="py-2 px-3 hover:bg-neutral-component-surface-medium rounded grid grid-cols-6 gap-1"
     >
       <div className="col-span-6 flex items-center gap-3">
         <PriorityIcon priority={issueDetails.priority} withContainer />
@@ -162,7 +162,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
     <ControlLink
       href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
       onClick={() => onClick(issue)}
-      className="py-2 px-3 hover:bg-neutral-component-surface-dark rounded grid grid-cols-6 gap-1"
+      className="py-2 px-3 hover:bg-neutral-component-surface-medium rounded grid grid-cols-6 gap-1"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issue.priority} withContainer />
@@ -218,7 +218,7 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
     <ControlLink
       href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
       onClick={() => onClick(issue)}
-      className="py-2 px-3 hover:bg-neutral-component-surface-dark rounded grid grid-cols-6 gap-1"
+      className="py-2 px-3 hover:bg-neutral-component-surface-medium rounded grid grid-cols-6 gap-1"
     >
       <div className="col-span-4 flex items-center gap-3">
         <PriorityIcon priority={issue.priority} withContainer />
@@ -268,7 +268,7 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
     <ControlLink
       href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
       onClick={() => onClick(issue)}
-      className="py-2 px-3 hover:bg-neutral-component-surface-dark rounded grid grid-cols-6 gap-1"
+      className="py-2 px-3 hover:bg-neutral-component-surface-medium rounded grid grid-cols-6 gap-1"
     >
       <div className="col-span-5 flex items-center gap-3">
         <PriorityIcon priority={issue.priority} withContainer />

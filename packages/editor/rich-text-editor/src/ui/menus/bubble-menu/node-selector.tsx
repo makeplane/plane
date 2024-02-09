@@ -48,7 +48,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-neutral-text-medium hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5"
+        className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-neutral-text-medium hover:bg-primary-solid/5 active:bg-primary-solid/5"
       >
         <span>{activeItem?.name}</span>
         <ChevronDown className="h-4 w-4" />
@@ -65,9 +65,9 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
                 setIsOpen(false);
               }}
               className={cn(
-                "flex items-center justify-between rounded-sm px-2 py-1 text-sm text-neutral-text-medium hover:bg-custom-primary-100/5 hover:text-neutral-text-strong",
+                "flex items-center justify-between rounded-sm px-2 py-1 text-sm text-neutral-text-medium hover:bg-primary-solid/5 hover:text-neutral-text-strong",
                 {
-                  "bg-custom-primary-100/5 text-neutral-text-strong": activeItem.name === item.name,
+                  "bg-primary-solid/5 text-neutral-text-strong": activeItem.name === item.name,
                 }
               )}
             >

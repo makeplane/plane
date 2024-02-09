@@ -64,7 +64,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                       }}
                       className={`grid select-none place-items-center rounded-md p-1 text-sm ${
                         selected.includes(emoji)
-                          ? "bg-custom-primary-100/10"
+                          ? "bg-primary-solid/10"
                           : "hover:bg-sidebar-neutral-component-surface-dark"
                       }`}
                     >

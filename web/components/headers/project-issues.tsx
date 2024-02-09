@@ -163,7 +163,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             {currentProjectDetails?.is_deployed && deployUrl && (
               <a
                 href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
-                className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-primary-text-subtle"
+                className="group flex items-center gap-1.5 rounded bg-primary-solid/10 px-2.5 py-1 text-xs font-medium text-primary-text-subtle"
                 target="_blank"
                 rel="noopener noreferrer"
               >

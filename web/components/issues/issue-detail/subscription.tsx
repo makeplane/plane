@@ -54,7 +54,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
         size="sm"
         prependIcon={<Bell className="h-3 w-3" />}
         variant="outline-primary"
-        className="hover:!bg-custom-primary-100/20"
+        className="hover:!bg-primary-solid/20"
         onClick={handleSubscription}
       >
         {loading ? "Loading..." : subscription?.subscribed ? "Unsubscribe" : "Subscribe"}

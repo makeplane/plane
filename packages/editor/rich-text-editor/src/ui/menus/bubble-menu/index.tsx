@@ -123,9 +123,9 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
                 type="button"
                 onClick={item.command}
                 className={cn(
-                  "p-2 text-neutral-text-medium transition-colors hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5",
+                  "p-2 text-neutral-text-medium transition-colors hover:bg-primary-solid/5 active:bg-primary-solid/5",
                   {
-                    "bg-custom-primary-100/5 text-neutral-text-strong": item.isActive(),
+                    "bg-primary-solid/5 text-neutral-text-strong": item.isActive(),
                   }
                 )}
               >

@@ -136,7 +136,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       }`}
     >
       {notification.read_at === null && (
-        <span className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-custom-primary-100" />
+        <span className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-primary-solid" />
       )}
       <div className="relative h-12 w-12 rounded-full">
         {notification.triggered_by_details.avatar && notification.triggered_by_details.avatar !== "" ? (

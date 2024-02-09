@@ -87,7 +87,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
                   onClick={() => issueReactionOperations.react(reaction)}
                   key={reaction}
                   className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-neutral-text-strong ${
-                    userReactions.includes(reaction) ? "bg-custom-primary-100/10" : "bg-neutral-component-surface-dark"
+                    userReactions.includes(reaction) ? "bg-primary-solid/10" : "bg-neutral-component-surface-dark"
                   }`}
                 >
                   <span>{renderEmoji(reaction)}</span>
