@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:18.19-alpine AS builder
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN turbo prune --scope=app --scope=plane-deploy --docker
 CMD tree -I node_modules/
 
 # Add lockfile and package.json's of isolated subworkspace
-FROM node:18-alpine AS installer
+FROM node:18.19-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app

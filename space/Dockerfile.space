@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:18.19-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY . .
 
 RUN turbo prune --scope=space --docker
 
-FROM node:18-alpine AS installer
+FROM node:18.19-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -29,7 +29,7 @@ ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=$NEXT_PUBLIC_DEPLOY_WITH_NGINX
 
 RUN yarn turbo run build --filter=space
 
-FROM node:18-alpine AS runner
+FROM node:18.19-alpine AS runner
 WORKDIR /app
 
 RUN addgroup --system --gid 1001 plane
