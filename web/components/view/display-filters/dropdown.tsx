@@ -2,6 +2,7 @@ import { FC, Fragment, ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
+import { Placement } from "@popperjs/core";
 import { MonitorDot } from "lucide-react";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -21,10 +22,20 @@ type TViewDisplayFiltersDropdown = {
   viewOperations: TViewOperations;
   children?: ReactNode;
   displayDropdownText?: boolean;
+  dropdownPlacement?: Placement;
 };
 
 export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, children, displayDropdownText = true } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    viewOperations,
+    children,
+    displayDropdownText = true,
+    dropdownPlacement = "bottom-start",
+  } = props;
   // state
   const [dropdownToggle, setDropdownToggle] = useState(false);
   // refs
@@ -34,12 +45,18 @@ export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = obser
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: dropdownPlacement,
     modifiers: [
       {
         name: "preventOverflow",
         options: {
           padding: 12,
+        },
+      },
+      {
+        name: "offset",
+        options: {
+          offset: [0, 10],
         },
       },
     ],

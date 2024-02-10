@@ -3,6 +3,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import isEqual from "lodash/isEqual";
 // store
 import { RootStore } from "store/root.store";
 // types
@@ -18,7 +19,7 @@ import {
 // helpers
 import { FiltersHelper } from "./helpers/filters_helpers";
 
-type TLoader = "submitting" | "submit" | undefined;
+type TLoader = "filters_submit" | "filters_submitting" | "update" | "updating" | undefined;
 
 export type TViewStore = TView & {
   // observables
@@ -28,6 +29,7 @@ export type TViewStore = TView & {
   appliedFilters: TViewFilterProps | undefined;
   appliedFiltersQueryParams: string | undefined;
   isFiltersApplied: boolean;
+  isFiltersUpdateEnabled: boolean;
   // helper actions
   setName: (name: string) => void;
   setDescription: (description: string) => void;
@@ -37,11 +39,11 @@ export type TViewStore = TView & {
   resetChanges: () => void;
   saveChanges: () => Promise<void>;
   // actions
+  update: (viewData: Partial<TView>) => Promise<void>;
   lockView: () => Promise<void>;
   unlockView: () => Promise<void>;
   makeFavorite: () => Promise<void>;
   removeFavorite: () => Promise<void>;
-  update: (viewData: Partial<TView>) => Promise<void>;
 };
 
 export class ViewStore extends FiltersHelper implements TViewStore {
@@ -102,10 +104,14 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     this.updated_by = _view.updated_by;
     this.created_at = _view.created_at;
     this.updated_at = _view.updated_at;
-
     this.is_local_view = _view.is_local_view;
     this.is_create = _view.is_create;
     this.is_editable = _view.is_editable;
+    this.filtersToUpdate = {
+      filters: this.computedFilters(_view.filters),
+      display_filters: this.computedDisplayFilters(_view.display_filters),
+      display_properties: this.computedDisplayProperties(_view.display_properties),
+    };
 
     makeObservable(this, {
       // observables
@@ -137,6 +143,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       appliedFilters: computed,
       appliedFiltersQueryParams: computed,
       isFiltersApplied: computed,
+      isFiltersUpdateEnabled: computed,
       // helper actions
       setName: action,
       setFilters: action,
@@ -148,6 +155,8 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       update: action,
       lockView: action,
       unlockView: action,
+      makeFavorite: action,
+      removeFavorite: action,
     });
   }
 
@@ -179,6 +188,17 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     return isFiltersApplied;
   }
 
+  get isFiltersUpdateEnabled() {
+    const filters = this.filters;
+    const appliedFilters = this.appliedFilters?.filters;
+    let isFiltersUpdateEnabled = false;
+    Object.keys(appliedFilters).forEach((key) => {
+      const _key = key as keyof TViewFilters;
+      if (!isEqual(appliedFilters[_key].slice().sort(), filters[_key].slice().sort())) isFiltersUpdateEnabled = true;
+    });
+    return isFiltersUpdateEnabled;
+  }
+
   // helper actions
   setName = (name: string) => {
     runInAction(() => {
@@ -194,10 +214,8 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   setFilters = (filterKey: keyof TViewFilters | undefined = undefined, filterValue: "clear_all" | string) => {
     runInAction(() => {
-      this.loader = "submit";
       if (filterKey === undefined) {
         if (filterValue === "clear_all") set(this.filtersToUpdate, ["filters"], {});
-        this.loader = undefined;
       } else
         update(this.filtersToUpdate, ["filters", filterKey], (_values = []) => {
           if (filterValue === "clear_all") return [];
@@ -238,7 +256,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   resetChanges = () => {
     runInAction(() => {
-      this.loader = undefined;
       this.filtersToUpdate = {
         name: this.name,
         description: this.description,
@@ -251,11 +268,8 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   saveChanges = async () => {
     try {
-      this.loader = "submitting";
       if (this.filtersToUpdate) await this.update(this.filtersToUpdate);
-      this.loader = undefined;
     } catch {
-      this.loader = undefined;
       Object.keys(this.filtersToUpdate).forEach((key) => {
         const _key = key as keyof TView;
         set(this, _key, this.filtersToUpdate[_key]);
@@ -264,6 +278,25 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   };
 
   // actions
+  update = async (viewData: Partial<TView>) => {
+    try {
+      const { workspaceSlug, projectId } = this.store.app.router;
+      if (!workspaceSlug || !this.id) return;
+
+      const view = await this.service.update(workspaceSlug, this.id, viewData, projectId);
+      if (!view) return;
+
+      runInAction(() => {
+        Object.keys(viewData).forEach((key) => {
+          const _key = key as keyof TView;
+          set(this, _key, viewData[_key]);
+        });
+      });
+    } catch {
+      this.resetChanges();
+    }
+  };
+
   lockView = async () => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
@@ -325,25 +358,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       });
     } catch {
       this.is_favorite = this.is_favorite;
-    }
-  };
-
-  update = async (viewData: Partial<TView>) => {
-    try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !this.id) return;
-
-      const view = await this.service.update(workspaceSlug, this.id, viewData, projectId);
-      if (!view) return;
-
-      runInAction(() => {
-        Object.keys(viewData).forEach((key) => {
-          const _key = key as keyof TView;
-          set(this, _key, viewData[_key]);
-        });
-      });
-    } catch {
-      this.resetChanges();
     }
   };
 }

@@ -6,7 +6,7 @@ import { useViewDetail } from "hooks/store";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { TViewTypes } from "@plane/types";
+import { TViewLayouts, TViewTypes } from "@plane/types";
 import { TViewOperations } from "./types";
 
 type TViewLayoutRoot = {
@@ -17,7 +17,7 @@ type TViewLayoutRoot = {
   viewOperations: TViewOperations;
 };
 
-const LAYOUTS_DATA: { key: string; title: string; icon: LucideIcon }[] = [
+const LAYOUTS_DATA: { key: TViewLayouts; title: string; icon: LucideIcon }[] = [
   { key: "list", title: "List Layout", icon: List },
   { key: "kanban", title: "Kanban Layout", icon: Kanban },
   { key: "calendar", title: "Calendar Layout", icon: Calendar },

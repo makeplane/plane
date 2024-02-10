@@ -1,15 +1,16 @@
 import { FC, Fragment, ReactNode, useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
+import { Placement } from "@popperjs/core";
 import { Plus, Search } from "lucide-react";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { useView } from "hooks/store";
 // components
-import { ViewDropdownItem } from "../../";
+import { ViewDropdownItem } from "..";
 // types
 import { TViewTypes } from "@plane/types";
-import { TViewOperations } from "../../types";
+import { TViewOperations } from "../types";
 
 type TViewDropdown = {
   workspaceSlug: string;
@@ -19,10 +20,20 @@ type TViewDropdown = {
   viewOperations: TViewOperations;
   children?: ReactNode;
   baseRoute: string;
+  dropdownPlacement?: Placement;
 };
 
 export const ViewDropdown: FC<TViewDropdown> = (props) => {
-  const { workspaceSlug, projectId, viewId: currentViewId, viewType, viewOperations, children, baseRoute } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId: currentViewId,
+    viewType,
+    viewOperations,
+    children,
+    baseRoute,
+    dropdownPlacement = "bottom-start",
+  } = props;
   // hooks
   const viewStore = useView(workspaceSlug, projectId, viewType);
   // states
@@ -35,12 +46,18 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: dropdownPlacement,
     modifiers: [
       {
         name: "preventOverflow",
         options: {
           padding: 12,
+        },
+      },
+      {
+        name: "offset",
+        options: {
+          offset: [0, 10],
         },
       },
     ],
@@ -80,7 +97,7 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="my-1 w-64 p-2 space-y-2 rounded bg-custom-background-100 border-[0.5px] border-custom-border-300 shadow-custom-shadow-rg focus:outline-none"
+            className="w-64 p-2 space-y-2 rounded bg-custom-background-100 border-[0.5px] border-custom-border-300 shadow-custom-shadow-rg focus:outline-none"
           >
             <div className="relative p-0.5 px-2 text-sm flex items-center gap-2 rounded border border-custom-border-100 bg-custom-background-90">
               <Search className="h-3 w-3 text-custom-text-300" strokeWidth={1.5} />

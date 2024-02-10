@@ -1,7 +1,7 @@
 import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { CheckCircle, ChevronDown, ChevronUp, Pencil } from "lucide-react";
+import { CheckCircle, Pencil } from "lucide-react";
 // hooks
 import { useView, useViewDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -15,6 +15,7 @@ import {
   ViewAppliedFiltersRoot,
   ViewDuplicateConfirmationModal,
   ViewDeleteConfirmationModal,
+  ViewEditDropdown,
 } from ".";
 // ui
 import { Spinner } from "@plane/ui";
@@ -24,7 +25,7 @@ import { viewLocalPayload } from "constants/view";
 import { TViewOperations } from "./types";
 import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties, TViewTypes } from "@plane/types";
 
-type TAllIssuesViewRoot = {
+type TGlobalViewRoot = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
@@ -38,7 +39,7 @@ type TViewOperationsToggle = {
   viewId: string | undefined;
 };
 
-export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
+export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
   const { workspaceSlug, projectId, viewId, viewType, baseRoute, workspaceViewTabOptions } = props;
   // hooks
   const viewStore = useView(workspaceSlug, projectId, viewType);
@@ -112,7 +113,7 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
     [viewStore, viewDetailStore, setToastAlert, viewOperationsToggle, viewDetailCreateStore]
   );
 
-  // fetch all issues
+  // fetch all views
   useEffect(() => {
     const fetchViews = async () => {
       await viewStore?.fetch(viewStore?.viewIds.length > 0 ? "mutation-loader" : "init-loader");
@@ -130,28 +131,33 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
 
   return (
     <div className="relative w-full h-full">
-      <div className="relative flex justify-between items-center gap-2 px-5 py-4">
-        <div className="relative flex items-center gap-2">
+      <div className="relative flex items-center gap-2 px-5 py-4">
+        <div className="relative flex items-center gap-2 overflow-hidden">
           <div className="flex-shrink-0 w-6 h-6 rounded relative flex justify-center items-center bg-custom-background-80">
             <CheckCircle size={12} />
           </div>
-          <div className="font-medium">All Issues</div>
+          <div className="font-medium inline-block whitespace-nowrap overflow-hidden truncate line-clamp-1">
+            All Issues
+          </div>
         </div>
-        <div className="relative inline-flex items-center rounded border border-custom-border-200 bg-custom-background-80">
-          {workspaceViewTabOptions.map((tab) => (
-            <Link
-              key={tab.key}
-              href={tab.href}
-              className={`p-4 py-1.5 rounded text-sm transition-all cursor-pointer font-medium
+
+        <div className="ml-auto relative flex items-center gap-3">
+          <div className="relative flex items-center rounded border border-custom-border-200 bg-custom-background-80">
+            {workspaceViewTabOptions.map((tab) => (
+              <Link
+                key={tab.key}
+                href={tab.href}
+                className={`p-4 py-1.5 rounded text-sm transition-all cursor-pointer font-medium
                 ${
                   viewType === tab.key
                     ? "text-custom-text-100 bg-custom-background-100"
                     : "text-custom-text-200 bg-custom-background-80 hover:text-custom-text-100"
                 }`}
-            >
-              {tab.title}
-            </Link>
-          ))}
+              >
+                {tab.title}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -201,7 +207,7 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
-                displayDropdownText={true}
+                displayDropdownText={false}
               />
             </div>
 
@@ -212,7 +218,7 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
                 viewId={viewId}
                 viewType={viewType}
                 viewOperations={viewOperations}
-                displayDropdownText={true}
+                displayDropdownText={false}
               />
             </div>
 
@@ -222,14 +228,13 @@ export const AllIssuesViewRoot: FC<TAllIssuesViewRoot> = observer((props) => {
               </div>
             </div>
 
-            <div className=" relative flex items-center rounded h-7 transition-all cursor-pointer bg-custom-primary-100/20 text-custom-primary-100">
-              <div className="text-sm px-3 font-medium h-full border-r border-white/50 flex justify-center items-center rounded-l transition-all hover:bg-custom-primary-100/30">
-                Update
-              </div>
-              <div className="flex-shrink-0 px-1.5 hover:bg-custom-primary-100/30 h-full flex justify-center items-center rounded-r transition-all">
-                <ChevronDown size={16} />
-              </div>
-            </div>
+            <ViewEditDropdown
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              viewId={viewId}
+              viewType={viewType}
+              viewOperations={viewOperations}
+            />
           </div>
         </>
       )}
