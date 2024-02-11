@@ -103,7 +103,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             print(e) if settings.DEBUG else print("Server Error")
             capture_exception(e)
             return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": f"Unhandled exception: {type(e).__name__}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -193,7 +193,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 print(e)
             capture_exception(e)
             return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": f"Unhandled exception: {type(e).__name__}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
