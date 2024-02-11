@@ -120,6 +120,15 @@ urlpatterns = [
         name="user-workspace-views",
     ),
     path(
+        "users/me/workspaces/<str:slug>/views/<uuid:pk>/duplicate/",
+        UserWorkspaceViewViewSet.as_view(
+            {
+                "post": "duplicate",
+            }
+        ),
+        name="user-workspace-views",
+    ),
+    path(
         "users/me/workspaces/<str:slug>/views/<uuid:pk>/lock/",
         UserWorkspaceViewViewSet.as_view(
             {
@@ -148,6 +157,24 @@ urlpatterns = [
             }
         ),
         name="user-project-views",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/lock/",
+        UserProjectViewViewSet.as_view(
+            {
+                "post": "toggle_lock",
+            }
+        ),
+        name="user-project-lock-views",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/duplicate/",
+        UserWorkspaceViewViewSet.as_view(
+            {
+                "post": "duplicate",
+            }
+        ),
+        name="user-project-duplicate-views",
     ),
 
 ]

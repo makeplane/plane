@@ -11,6 +11,65 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
+        "workspaces/<str:slug>/issues/",
+        WorkspaceViewViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="workspace-view-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/views/",
+        WorkspaceViewViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="workspace-view",
+    ),
+    path(
+        "workspaces/<str:slug>/views/<uuid:pk>/",
+        WorkspaceViewViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-view",
+    ),
+    path(
+        "workspaces/<str:slug>/views/<uuid:view_id>/duplicate/",
+        WorkspaceViewFavoriteViewSet.as_view(
+            {
+                "post": "duplicate",
+            }
+        ),
+        name="workspace-duplicate-view",
+    ),
+    path(
+        "workspaces/<str:slug>/views/<uuid:view_id>/favorite/",
+        WorkspaceViewFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-favorite-view",
+    ),
+    path(
+        "workspaces/<str:slug>/views/<uuid:pk>/visibility/",
+        WorkspaceViewViewSet.as_view(
+            {
+                "post": "visibility",
+            }
+        ),
+        name="workspace-duplicate-view",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
         ProjectViewViewSet.as_view(
             {
@@ -33,45 +92,22 @@ urlpatterns = [
         name="project-view",
     ),
     path(
-        "workspaces/<str:slug>/views/",
-        WorkspaceViewViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/duplicate/",
+        ProjectViewViewSet.as_view(
             {
-                "get": "list",
-                "post": "create",
+                "post": "duplicate",
             }
         ),
-        name="global-view",
+        name="project-duplicate-view",
     ),
     path(
-        "workspaces/<str:slug>/views/<uuid:pk>/",
-        WorkspaceViewViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/visibility/",
+        ProjectViewViewSet.as_view(
             {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
+                "post": "visibility",
             }
         ),
-        name="global-view",
-    ),
-    path(
-        "workspaces/<str:slug>/issues/",
-        WorkspaceViewViewSet.as_view(
-            {
-                "get": "list",
-            }
-        ),
-        name="global-view-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/views/<uuid:view_id>/favorite/",
-        WorkspaceViewFavoriteViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-                "delete": "destroy",
-            }
-        ),
-        name="user-workspace-favorite-view",
+        name="project-duplicate-view",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/favorite/",
@@ -82,6 +118,6 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
-        name="user-project-favorite-view",
+        name="project-favorite-view",
     ),
 ]

@@ -114,6 +114,20 @@ class UserWorkspaceViewViewSet(BaseViewSet):
         return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
 
 
+    def duplicate(self, request, slug, pk):
+        view = View.objects.get(workspace__slug=slug, pk=pk)
+        # Create a shallow copy of the original view object
+        new_view = view
+        
+        # Set the primary key of the new view to None to ensure it gets a new primary key
+        new_view.pk = None
+        
+        # Modify the name of the new view to indicate that it's a copy
+        new_view.name = f"{view.name} (Copy)"
+        new_view.save(owned_by=request.user)
+        return Response(ViewSerializer(new_view).data, status=status.HTTP_201_CREATED)
+
+
     def destroy(self, request, slug, pk):
         view = View.objects.get(workspace__slug=slug, pk=pk)
         if view.owned_by != self.request.user:
@@ -159,6 +173,29 @@ class WorkspaceViewViewSet(BaseViewSet):
         lock = request.data.get("lock", view.is_locked)
         view.is_locked = lock
         view.save(update_fields=["is_locked"])
+        return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
+    
+    def duplicate(self, request, slug, pk):
+        view = View.objects.get(workspace__slug=slug, pk=pk)
+        # Create a shallow copy of the original view object
+        new_view = view
+        
+        # Set the primary key of the new view to None to ensure it gets a new primary key
+        new_view.pk = None
+        
+        # Modify the name of the new view to indicate that it's a copy
+        new_view.name = f"{view.name} (Copy)"
+        new_view.save(owned_by=request.user)
+        return Response(ViewSerializer(new_view).data, status=status.HTTP_201_CREATED)
+
+    def visibility(self, request, slug, pk):
+        view = (
+            self.get_queryset()
+            .filter(pk=pk, workspace__slug=slug)
+            .first()
+        )
+        view.access = request.data.get("access", view.access)
+        view.save(update_fields=["access"])
         return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
 
 
@@ -228,6 +265,19 @@ class UserProjectViewViewSet(BaseViewSet):
         view.is_locked = lock
         view.save(update_fields=["is_locked"])
         return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
+    
+    def duplicate(self, request, slug, project_id, pk):
+        view = View.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        # Create a shallow copy of the original view object
+        new_view = view
+        
+        # Set the primary key of the new view to None to ensure it gets a new primary key
+        new_view.pk = None
+        
+        # Modify the name of the new view to indicate that it's a copy
+        new_view.name = f"{view.name} (Copy)"
+        new_view.save(owned_by=request.user)
+        return Response(ViewSerializer(new_view).data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, slug, project_id, pk):
         view = View.objects.get(
@@ -286,6 +336,29 @@ class ProjectViewViewSet(BaseViewSet):
         lock = request.data.get("lock", view.is_locked)
         view.is_locked = lock
         view.save(update_fields=["is_locked"])
+        return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
+
+    def duplicate(self, request, slug, project_id, pk):
+        view = View.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        # Create a shallow copy of the original view object
+        new_view = view
+        
+        # Set the primary key of the new view to None to ensure it gets a new primary key
+        new_view.pk = None
+        
+        # Modify the name of the new view to indicate that it's a copy
+        new_view.name = f"{view.name} (Copy)"
+        new_view.save(owned_by=request.user)
+        return Response(ViewSerializer(new_view).data, status=status.HTTP_201_CREATED)
+    
+    def visibility(self, request, slug, project_id, pk):
+        view = (
+            self.get_queryset()
+            .filter(pk=pk, project_id=project_id, workspace__slug=slug)
+            .first()
+        )
+        view.access = request.data.get("access", view.access)
+        view.save(update_fields=["access"])
         return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
 
 
