@@ -30,7 +30,7 @@ export const ViewAppliedFiltersItem: FC<TViewAppliedFiltersItem> = (props) => {
   return (
     <div
       key={`filter_value_${filterKey}_${propertyId}`}
-      className="bg-custom-background-80 rounded relative flex items-center gap-1.5 p-1.5 py-1"
+      className="bg-custom-background-80 rounded relative flex items-center gap-1.5 p-1"
     >
       <div className="flex-shrink-0 w-4 h-4 relative flex justify-center items-center overflow-hidden">
         {propertyDetail?.icon || <ImagePlus size={14} />}

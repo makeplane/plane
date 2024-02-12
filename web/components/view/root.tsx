@@ -9,13 +9,14 @@ import useToast from "hooks/use-toast";
 import {
   ViewRoot,
   ViewCreateEditForm,
+  ViewEditDropdown,
   ViewLayoutRoot,
   ViewFiltersDropdown,
+  ViewFiltersEditDropdown,
   ViewDisplayFiltersDropdown,
   ViewAppliedFiltersRoot,
   ViewDuplicateConfirmationModal,
   ViewDeleteConfirmationModal,
-  ViewEditDropdown,
 } from ".";
 // ui
 import { Spinner } from "@plane/ui";
@@ -53,7 +54,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
   const handleViewOperationsToggle = (type: TViewOperationsToggle["type"], viewId: string | undefined) =>
     setViewOperationsToggle({ type, viewId });
 
-  const viewDetailCreateStore = useViewDetail(
+  const viewDetailCreateEditStore = useViewDetail(
     workspaceSlug,
     projectId,
     viewOperationsToggle?.viewId || viewId,
@@ -62,55 +63,112 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
 
   const viewOperations: TViewOperations = useMemo(
     () => ({
-      setName: (name: string) => viewDetailStore?.setName(name),
-      setDescription: (name: string) => viewDetailStore?.setDescription(name),
-      setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => {
-        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
-          viewDetailCreateStore?.setFilters(filterKey, filterValue);
-        else viewDetailStore?.setFilters(filterKey, filterValue);
-      },
-      setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) =>
-        viewDetailStore?.setDisplayFilters(display_filters),
-      setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) =>
-        viewDetailStore?.setDisplayProperties(displayPropertyKey),
       localViewCreateEdit: (viewId: string | undefined) => {
         if (viewId === undefined) {
           const viewPayload = viewLocalPayload;
           handleViewOperationsToggle("CREATE", viewPayload.id);
           viewStore?.localViewCreate(viewPayload as TView);
-        } else handleViewOperationsToggle("EDIT", viewId);
+        } else {
+          handleViewOperationsToggle("EDIT", viewId);
+          viewDetailCreateEditStore?.setIsEditable(true);
+        }
       },
       localViewCreateEditClear: async (viewId: string | undefined) => {
-        if (viewId) viewStore?.remove(viewId);
+        if (viewDetailCreateEditStore?.is_create && viewId) viewStore?.remove(viewId);
         handleViewOperationsToggle(undefined, undefined);
       },
-      fetch: async () => await viewStore?.fetch(),
+      resetChanges: () => viewDetailStore?.resetChanges(),
+
+      setName: (name: string) => {
+        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
+          viewDetailCreateEditStore?.setName(name);
+        else viewDetailStore?.setName(name);
+      },
+      setDescription: (name: string) => {
+        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
+          viewDetailCreateEditStore?.setDescription(name);
+        else viewDetailStore?.setDescription(name);
+      },
+      setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => {
+        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
+          viewDetailCreateEditStore?.setFilters(filterKey, filterValue);
+        else viewDetailStore?.setFilters(filterKey, filterValue);
+      },
+      setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => {
+        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
+          viewDetailCreateEditStore?.setDisplayFilters(display_filters);
+        else viewDetailStore?.setDisplayFilters(display_filters);
+      },
+      setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) => {
+        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
+          viewDetailCreateEditStore?.setDisplayProperties(displayPropertyKey);
+        else viewDetailStore?.setDisplayProperties(displayPropertyKey);
+      },
+
+      fetch: async () => {
+        try {
+          await viewStore?.fetch();
+        } catch {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
+        }
+      },
       create: async (data: Partial<TView>) => {
         try {
           await viewStore?.create(data);
           handleViewOperationsToggle(undefined, undefined);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "View created successfully.",
+          });
         } catch {
-          setToastAlert({ title: "Error", message: "Error creating view", type: "error" });
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
         }
       },
       remove: async (viewId: string) => {
         try {
           await viewStore?.remove(viewId);
           handleViewOperationsToggle(undefined, undefined);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "View removed successfully.",
+          });
         } catch {
-          setToastAlert({ title: "Error", message: "Error removing view", type: "error" });
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
         }
       },
       update: async () => {
         try {
           await viewDetailStore?.saveChanges();
           handleViewOperationsToggle(undefined, undefined);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "View updated successfully.",
+          });
         } catch {
-          setToastAlert({ title: "Error", message: "Error updating view", type: "error" });
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
         }
       },
     }),
-    [viewStore, viewDetailStore, setToastAlert, viewOperationsToggle, viewDetailCreateStore]
+    [viewStore, viewDetailStore, setToastAlert, viewOperationsToggle, viewDetailCreateEditStore]
   );
 
   // fetch all views
@@ -222,13 +280,9 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
               />
             </div>
 
-            <div className="relative flex items-center gap-1 rounded px-2 h-7 transition-all hover:bg-custom-background-80 cursor-pointer">
-              <div className="w-4 h-4 relative flex justify-center items-center overflow-hidden">
-                <Pencil size={12} />
-              </div>
-            </div>
+            <ViewEditDropdown viewId={viewId} viewOperations={viewOperations} />
 
-            <ViewEditDropdown
+            <ViewFiltersEditDropdown
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               viewId={viewId}

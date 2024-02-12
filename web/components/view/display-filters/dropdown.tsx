@@ -87,7 +87,7 @@ export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = obser
           ) : (
             <Tooltip tooltipContent={"Display"} position="bottom">
               <div
-                className={`relative flex items-center gap-1 h-7 rounded px-2 transition-all
+                className={`relative flex items-center gap-1 h-8 rounded px-2 transition-all
                 ${
                   displayDropdownText
                     ? `border border-custom-border-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80`

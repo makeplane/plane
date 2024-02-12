@@ -23,7 +23,7 @@ type TViewCreateEditForm = {
 export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
   const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
   // hooks
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const currentViewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const { getProjectById } = useProject();
   // states
   const [modalToggle, setModalToggle] = useState(false);
@@ -43,12 +43,12 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
 
   const onContinue = async () => {
     setLoader(true);
-    if (viewDetailStore?.is_create) {
-      const payload = viewDetailStore?.filtersToUpdate;
+    if (currentViewDetailStore?.is_create) {
+      const payload = currentViewDetailStore?.filtersToUpdate;
       await viewOperations.create(payload);
       modalClose();
     } else {
-      const payload = viewDetailStore?.filtersToUpdate;
+      const payload = currentViewDetailStore?.filtersToUpdate;
       if (!payload) return;
       await viewOperations.update();
       modalClose();
@@ -58,7 +58,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
 
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
 
-  if (!viewDetailStore?.id) return <></>;
+  if (!currentViewDetailStore?.id) return <></>;
   return (
     <Transition.Root show={modalToggle} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={modalClose}>
@@ -110,9 +110,9 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     id="name"
                     name="name"
                     type="text"
-                    value={viewDetailStore?.filtersToUpdate?.name || ""}
+                    value={currentViewDetailStore?.filtersToUpdate?.name || ""}
                     onChange={(e) => {
-                      viewDetailStore?.setName(e.target.value);
+                      viewOperations?.setName(e.target.value);
                     }}
                     placeholder="What do you want to call this view?"
                     className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
@@ -165,7 +165,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     Cancel
                   </Button>
                   <Button variant="primary" onClick={onContinue} disabled={loader}>
-                    {loader ? `Saving...` : `${viewDetailStore?.is_create ? `Create` : `Update`} View`}
+                    {loader ? `Saving...` : `${currentViewDetailStore?.is_create ? `Create` : `Update`} View`}
                   </Button>
                 </div>
               </Dialog.Panel>

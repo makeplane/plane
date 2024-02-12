@@ -46,3 +46,11 @@ export type TView = {
   is_create: boolean;
   is_editable: boolean;
 };
+
+export type TUpdateView = {
+  name: string | undefined;
+  description: string | undefined;
+  filters: TViewFilters;
+  display_filters: TViewDisplayFilters;
+  display_properties: TViewDisplayProperties;
+};

@@ -17,6 +17,7 @@ export * from "./filters/root";
 export * from "./filters/filter-item-root";
 export * from "./filters/filter-item";
 export * from "./filters/filter-selection";
+export * from "./filters/edit-dropdown";
 
 // view display filters
 export * from "./display-filters/dropdown";

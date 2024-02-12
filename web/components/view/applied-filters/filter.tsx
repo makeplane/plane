@@ -37,7 +37,7 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
 
   if (!propertyValues || propertyValues.length <= 0) return <></>;
   return (
-    <div className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1.5 px-2 min-h-[32px]">
+    <div className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1 px-2 min-h-[32px]">
       <div className="flex-shrink-0 text-xs text-custom-text-200 capitalize">{filterKey.replaceAll("_", " ")}</div>
       <div className="relative flex items-center gap-1.5 flex-wrap">
         {propertyVisibleCount && propertyValues.length >= propertyVisibleCount ? (

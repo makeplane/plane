@@ -31,22 +31,16 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
     const handleViewTabsVisibility = () => {
       const tabContainer = document.getElementById("tab-container");
       const tabItemViewMore = document.getElementById("tab-item-view-more");
-      const itemWidth = 128;
+      const itemWidth = 116;
       if (!tabContainer || !tabItemViewMore) return;
 
       const containerWidth = tabContainer.clientWidth;
       const itemViewMoreLeftOffset = tabItemViewMore.offsetLeft + (tabItemViewMore.clientWidth + 10);
       const itemViewMoreRightOffset = containerWidth - itemViewMoreLeftOffset;
 
-      if (itemViewMoreLeftOffset > containerWidth) {
-        const itemsToRender = Math.floor(containerWidth / itemWidth);
-        setItemsToRenderViewCount(itemsToRender);
-      }
-      if (itemViewMoreRightOffset > itemWidth + 10) {
-        const itemsToRenderLeft = Math.floor(itemViewMoreLeftOffset / itemWidth) || 0;
-        const itemsToRenderRight = Math.floor(itemViewMoreRightOffset / itemWidth) || 0;
-        setItemsToRenderViewCount(itemsToRenderLeft + itemsToRenderRight);
-      }
+      const itemsToRenderLeft = Math.floor(itemViewMoreLeftOffset / itemWidth) || 0;
+      const itemsToRenderRight = Math.floor(itemViewMoreRightOffset / itemWidth) || 0;
+      setItemsToRenderViewCount(itemsToRenderLeft + itemsToRenderRight);
     };
 
     window.addEventListener("resize", () => handleViewTabsVisibility());

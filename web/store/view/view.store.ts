@@ -4,12 +4,14 @@ import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
 import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
 // store
 import { RootStore } from "store/root.store";
 // types
 import { TUserViewService, TViewService } from "services/view/types";
 import {
   TView,
+  TUpdateView,
   TViewFilters,
   TViewDisplayFilters,
   TViewDisplayProperties,
@@ -19,12 +21,12 @@ import {
 // helpers
 import { FiltersHelper } from "./helpers/filters_helpers";
 
-type TLoader = "filters_submit" | "filters_submitting" | "update" | "updating" | undefined;
+type TLoader = "updating" | undefined;
 
 export type TViewStore = TView & {
   // observables
   loader: TLoader;
-  filtersToUpdate: Partial<TView>;
+  filtersToUpdate: TUpdateView;
   // computed
   appliedFilters: TViewFilterProps | undefined;
   appliedFiltersQueryParams: string | undefined;
@@ -36,10 +38,11 @@ export type TViewStore = TView & {
   setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => void;
   setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
   setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) => void;
+  setIsEditable: (id_editable: boolean) => void;
   resetChanges: () => void;
   saveChanges: () => Promise<void>;
   // actions
-  update: (viewData: Partial<TView>) => Promise<void>;
+  update: (viewData: TUpdateView) => Promise<void>;
   lockView: () => Promise<void>;
   unlockView: () => Promise<void>;
   makeFavorite: () => Promise<void>;
@@ -70,13 +73,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   is_create: boolean = false;
   is_editable: boolean = false;
   loader: TLoader = undefined;
-  filtersToUpdate: Partial<TView> = {
-    name: "",
-    description: "",
-    filters: undefined,
-    display_filters: undefined,
-    display_properties: undefined,
-  };
+  filtersToUpdate: TUpdateView;
 
   constructor(
     private store: RootStore,
@@ -108,6 +105,8 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     this.is_create = _view.is_create;
     this.is_editable = _view.is_editable;
     this.filtersToUpdate = {
+      name: this.name,
+      description: this.description,
       filters: this.computedFilters(_view.filters),
       display_filters: this.computedDisplayFilters(_view.display_filters),
       display_properties: this.computedDisplayProperties(_view.display_properties),
@@ -149,6 +148,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       setFilters: action,
       setDisplayFilters: action,
       setDisplayProperties: action,
+      setIsEditable: action,
       resetChanges: action,
       saveChanges: action,
       // actions
@@ -189,12 +189,13 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   }
 
   get isFiltersUpdateEnabled() {
-    const filters = this.filters;
-    const appliedFilters = this.appliedFilters?.filters;
+    const _filters = this.filters;
+    const _appliedFilters = this.appliedFilters?.filters;
+
     let isFiltersUpdateEnabled = false;
-    Object.keys(appliedFilters).forEach((key) => {
+    Object.keys(_appliedFilters).forEach((key) => {
       const _key = key as keyof TViewFilters;
-      if (!isEqual(appliedFilters[_key].slice().sort(), filters[_key].slice().sort())) isFiltersUpdateEnabled = true;
+      if (!isEqual(_appliedFilters[_key].slice().sort(), _filters[_key].slice().sort())) isFiltersUpdateEnabled = true;
     });
     return isFiltersUpdateEnabled;
   }
@@ -254,14 +255,21 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     });
   };
 
+  setIsEditable = (is_editable: boolean) => {
+    runInAction(() => {
+      this.is_editable = is_editable;
+    });
+  };
+
   resetChanges = () => {
     runInAction(() => {
+      const _view = cloneDeep(this);
       this.filtersToUpdate = {
-        name: this.name,
-        description: this.description,
-        filters: this.filters,
-        display_filters: this.display_filters,
-        display_properties: this.display_properties,
+        name: _view.name,
+        description: _view.description,
+        filters: _view.filters,
+        display_filters: _view.display_filters,
+        display_properties: _view.display_properties,
       };
     });
   };
@@ -271,15 +279,19 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       if (this.filtersToUpdate) await this.update(this.filtersToUpdate);
     } catch {
       Object.keys(this.filtersToUpdate).forEach((key) => {
-        const _key = key as keyof TView;
+        const _key = key as keyof TUpdateView;
         set(this, _key, this.filtersToUpdate[_key]);
       });
     }
   };
 
   // actions
-  update = async (viewData: Partial<TView>) => {
+  update = async (viewData: TUpdateView) => {
     try {
+      runInAction(() => {
+        this.loader = "updating";
+      });
+
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !this.id) return;
 
@@ -287,10 +299,11 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       if (!view) return;
 
       runInAction(() => {
-        Object.keys(viewData).forEach((key) => {
+        Object.keys(view).forEach((key) => {
           const _key = key as keyof TView;
-          set(this, _key, viewData[_key]);
+          set(this, _key, view[_key]);
         });
+        this.loader = undefined;
       });
     } catch {
       this.resetChanges();
