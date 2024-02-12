@@ -217,6 +217,21 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             )}
 
           </div>
+          {currentProjectDetails?.inbox_view && inboxDetails && (
+            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
+              <span className="hidden md:block" >
+                <Button variant="neutral-primary" size="sm" className="relative">
+                  Inbox
+                  {inboxDetails?.pending_issue_count > 0 && (
+                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
+                      {inboxDetails?.pending_issue_count}
+                    </span>
+                  )}
+                </Button>
+              </span>
+              <Inbox className="w-4 h-4 mr-2 text-custom-text-200 block md:hidden" />
+            </Link>
+          )}
           {canUserCreateIssue && (
             <>
               <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
