@@ -329,7 +329,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const isEndValid = new Date(`${cycleDetails?.end_date}`) >= new Date(`${cycleDetails?.start_date}`);
 
   const progressPercentage = cycleDetails
-    ? isCompleted
+    ? isCompleted && cycleDetails?.progress_snapshot
       ? Math.round(
           (cycleDetails.progress_snapshot.completed_issues / cycleDetails.progress_snapshot.total_issues) * 100
         )
