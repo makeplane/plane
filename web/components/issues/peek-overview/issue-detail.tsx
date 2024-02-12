@@ -4,6 +4,7 @@ import { useIssueDetail, useProject, useUser } from "hooks/store";
 // components
 import { IssueDescriptionForm, TIssueOperations } from "components/issues";
 import { IssueReaction } from "../issue-detail/reactions";
+import { observer } from "mobx-react";
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -15,7 +16,7 @@ interface IPeekOverviewIssueDetails {
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
-export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
+export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -23,6 +24,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -53,4 +55,4 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       )}
     </>
   );
-};
+});
