@@ -110,9 +110,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
             key={tab.key}
             className={({ selected }) =>
               `text-sm outline-none pb-3 ${
-                selected
-                  ? "border-custom-primary-100 text-custom-primary-100 border-b"
-                  : ""
+                selected ? "border-custom-primary-100 text-custom-primary-100 border-b" : ""
               }`
             }
           >
@@ -167,10 +165,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
                 }
               }}
             >
-              <div className="md:hidden">
-                {mobileTabList}
-                </div>
-              
+              <div className="md:hidden">{mobileTabList}</div>
               <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
                 <div className="flex flex-wrap items-center gap-4">
                   {PAGE_TABS_LIST.map((tab) => (
