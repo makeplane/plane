@@ -403,15 +403,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                        }`}
                       disabled={isCompleted || !isEditingAllowed}
                     >
                       <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("start_date") ? "" : "text-custom-text-400"
-                        }`}
+                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("start_date") ? "" : "text-custom-text-400"
+                          }`}
                       >
                         {renderFormattedDate(startDate) ?? "No date selected"}
                       </span>
@@ -460,15 +458,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                        }`}
                       disabled={isCompleted || !isEditingAllowed}
                     >
                       <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("end_date") ? "" : "text-custom-text-400"
-                        }`}
+                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("end_date") ? "" : "text-custom-text-400"
+                          }`}
                       >
                         {renderFormattedDate(endDate) ?? "No date selected"}
                       </span>
@@ -569,8 +565,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
                         {cycleDetails.distribution?.completion_chart &&
-                        cycleDetails.start_date &&
-                        cycleDetails.end_date ? (
+                          cycleDetails.start_date &&
+                          cycleDetails.end_date ? (
                           <div className="h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
                               <div className="flex items-center gap-3 text-custom-text-100">
@@ -584,7 +580,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative h-40 w-full max-w-80">
                               <ProgressChart
                                 distribution={cycleDetails.distribution?.completion_chart}
                                 startDate={cycleDetails.start_date}
