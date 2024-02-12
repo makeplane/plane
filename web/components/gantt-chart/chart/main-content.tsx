@@ -27,6 +27,7 @@ type Props = {
   enableBlockMove: boolean;
   enableBlockRightResize: boolean;
   enableReorder: boolean;
+  enableAddBlock: boolean;
   itemsContainerWidth: number;
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
@@ -45,6 +46,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
     enableBlockMove,
     enableBlockRightResize,
     enableReorder,
+    enableAddBlock,
     itemsContainerWidth,
     showAllBlocks,
     sidebarToRender,
@@ -111,6 +113,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
             enableBlockLeftResize={enableBlockLeftResize}
             enableBlockRightResize={enableBlockRightResize}
             enableBlockMove={enableBlockMove}
+            enableAddBlock={enableAddBlock}
             showAllBlocks={showAllBlocks}
           />
         )}

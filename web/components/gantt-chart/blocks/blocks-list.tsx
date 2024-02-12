@@ -20,6 +20,7 @@ export type GanttChartBlocksProps = {
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
+  enableAddBlock: boolean;
   showAllBlocks: boolean;
 };
 
@@ -32,6 +33,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
+    enableAddBlock,
     showAllBlocks,
   } = props;
   // store hooks
@@ -120,7 +122,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
                   enableBlockMove={enableBlockMove}
                 />
               ) : (
-                <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />
+                enableAddBlock && <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />
               )}
             </div>
           </div>

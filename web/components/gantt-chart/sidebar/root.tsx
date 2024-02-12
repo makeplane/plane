@@ -18,7 +18,7 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
     <div
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200"
+      className="sticky top-0 left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200 bg-custom-background-100"
       style={{
         width: `${SIDEBAR_WIDTH}px`,
       }}
