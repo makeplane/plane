@@ -3,7 +3,7 @@
 BRANCH=master
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/plane-app
-export APP_RELEASE=$BRANCH
+export APP_RELEASE=stable
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=always
 USE_GLOBAL_IMAGES=1
