@@ -3,16 +3,8 @@ import { FC, useEffect, useState } from "react";
 import { GanttChartHeader, useChart, GanttChartMainContent } from "components/gantt-chart";
 // views
 import {
-  // generateHourChart,
-  // generateDayChart,
-  // generateWeekChart,
-  // generateBiWeekChart,
   generateMonthChart,
-  // generateQuarterChart,
-  // generateYearChart,
   getNumberOfDaysBetweenTwoDatesInMonth,
-  // getNumberOfDaysBetweenTwoDatesInQuarter,
-  // getNumberOfDaysBetweenTwoDatesInYear,
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // helpers
@@ -87,15 +79,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     if (selectedCurrentViewData === undefined) return;
 
     let currentRender: any;
-
-    // if (view === "hours") currentRender = generateHourChart(selectedCurrentViewData, side);
-    // if (view === "day") currentRender = generateDayChart(selectedCurrentViewData, side);
-    // if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
-    // if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
     if (selectedCurrentView === "month") currentRender = generateMonthChart(selectedCurrentViewData, side);
-    // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
-    // if (selectedCurrentView === "year")
-    //   currentRender = generateYearChart(selectedCurrentViewData, side);
 
     // updating the prevData, currentData and nextData
     if (currentRender.payload.length > 0) {
