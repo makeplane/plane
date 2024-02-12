@@ -41,9 +41,9 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name="IssueAttachment",
         ),
-        migrations.AddField(
-            model_name='cycle',
-            name='progress_snapshot',
-            field=models.JSONField(default=dict),
-        ),
+        # migrations.AddField(
+        #     model_name='cycle',
+        #     name='progress_snapshot',
+        #     field=models.JSONField(default=dict),
+        # ),
     ]

@@ -5,6 +5,26 @@ from django.conf import settings
 import django.db.models
 import plane.db.models.asset
 
+def widgets_filter_change(apps, schema_editor):
+    Widget = apps.get_model("db", "Widget")
+    widgets_to_update = []
+
+    # Define the filter dictionaries for each widget key
+    filters_mapping = {
+        "assigned_issues": {"duration": "none", "tab": "pending"},
+        "created_issues": {"duration": "none", "tab": "pending"},
+        "issues_by_state_groups": {"duration": "none"},
+        "issues_by_priority": {"duration": "none"},
+    }
+
+    # Iterate over widgets and update filters if applicable
+    for widget in Widget.objects.all():
+        if widget.key in filters_mapping:
+            widget.filters = filters_mapping[widget.key]
+            widgets_to_update.append(widget)
+
+    # Bulk update the widgets
+    Widget.objects.bulk_update(widgets_to_update, ["filters"], batch_size=10)
 
 def update_user_urls(apps, schema_editor):
     # Check if the app is using minio or s3
@@ -245,4 +265,5 @@ class Migration(migrations.Migration):
         migrations.RunPython(update_user_urls),
         migrations.RunPython(update_workspace_urls),
         migrations.RunPython(update_project_urls),
+        migrations.RunPython(widgets_filter_change),
     ]
