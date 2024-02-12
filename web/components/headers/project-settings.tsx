@@ -36,7 +36,7 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
           <div className="z-50">
-            <Breadcrumbs>
+            <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={

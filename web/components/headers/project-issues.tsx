@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { Briefcase, Circle, ExternalLink, Plus, Inbox } from "lucide-react";
 // hooks
 import {
   useApplication,
@@ -120,35 +120,35 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
             <SidebarHamburgerToggle />
             <div>
-              <Breadcrumbs>
+              <Breadcrumbs onBack={() => router.back()}>
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
                   link={
-                      <BreadcrumbLink
-                        href={`/${workspaceSlug}/projects`}
-                        label={currentProjectDetails?.name ?? "Project"}
-                        icon={
-                          currentProjectDetails ? (
-                            currentProjectDetails?.emoji ? (
-                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                                {renderEmoji(currentProjectDetails.emoji)}
-                              </span>
-                            ) : currentProjectDetails?.icon_prop ? (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                                {renderEmoji(currentProjectDetails.icon_prop)}
-                              </div>
-                            ) : (
-                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                                {currentProjectDetails?.name.charAt(0)}
-                              </span>
-                            )
-                          ) : (
+                    <BreadcrumbLink
+                      href={`/${workspaceSlug}/projects`}
+                      label={currentProjectDetails?.name ?? "Project"}
+                      icon={
+                        currentProjectDetails ? (
+                          currentProjectDetails?.emoji ? (
                             <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                              <Briefcase className="h-4 w-4" />
+                              {renderEmoji(currentProjectDetails.emoji)}
+                            </span>
+                          ) : currentProjectDetails?.icon_prop ? (
+                            <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
+                              {renderEmoji(currentProjectDetails.icon_prop)}
+                            </div>
+                          ) : (
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                              {currentProjectDetails?.name.charAt(0)}
                             </span>
                           )
-                        }
-                      />
+                        ) : (
+                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                            <Briefcase className="h-4 w-4" />
+                          </span>
+                        )
+                      }
+                    />
                   }
                 />
 
@@ -202,18 +202,19 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             </FiltersDropdown>
           </div>
           {currentProjectDetails?.inbox_view && inboxDetails && (
-              <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
-                <span>
-                  <Button variant="neutral-primary" size="sm" className="relative">
-                    Inbox
-                    {inboxDetails?.pending_issue_count > 0 && (
-                      <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
-                        {inboxDetails?.pending_issue_count}
-                      </span>
-                    )}
-                  </Button>
-                </span>
-              </Link>
+            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
+              <span className="hidden md:block" >
+                <Button variant="neutral-primary" size="sm" className="relative">
+                  Inbox
+                  {inboxDetails?.pending_issue_count > 0 && (
+                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
+                      {inboxDetails?.pending_issue_count}
+                    </span>
+                  )}
+                </Button>
+              </span>
+              <Inbox className="w-4 h-4 mr-2 text-custom-text-200" />
+            </Link>
           )}
           {canUserCreateIssue && (
             <>
@@ -228,7 +229,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 size="sm"
                 prependIcon={<Plus />}
               >
-                Add Issue
+                <div className="hidden sm:block">Add</div> Issue
               </Button>
             </>
           )}
