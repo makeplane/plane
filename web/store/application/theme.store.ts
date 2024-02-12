@@ -9,11 +9,13 @@ export interface IThemeStore {
   sidebarCollapsed: boolean | undefined;
   profileSidebarCollapsed: boolean | undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined;
+  issueDetailSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
   setTheme: (theme: any) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
   toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
+  toggleIssueDetailSidebar: (collapsed?: boolean) => void;
 }
 
 export class ThemeStore implements IThemeStore {
@@ -22,6 +24,7 @@ export class ThemeStore implements IThemeStore {
   theme: string | null = null;
   profileSidebarCollapsed: boolean | undefined = undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
+  issueDetailSidebarCollapsed: boolean | undefined = undefined;
   // root store
   rootStore;
 
@@ -32,11 +35,13 @@ export class ThemeStore implements IThemeStore {
       theme: observable.ref,
       profileSidebarCollapsed: observable.ref,
       workspaceAnalyticsSidebarCollapsed: observable.ref,
+      issueDetailSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
       setTheme: action,
       toggleProfileSidebar: action,
-      toggleWorkspaceAnalyticsSidebar: action
+      toggleWorkspaceAnalyticsSidebar: action,
+      toggleIssueDetailSidebar: action,
       // computed
     });
     // root store
@@ -81,6 +86,15 @@ export class ThemeStore implements IThemeStore {
     }
     localStorage.setItem("workspace_analytics_sidebar_collapsed", this.workspaceAnalyticsSidebarCollapsed.toString());
   };
+
+  toggleIssueDetailSidebar = (collapsed?: boolean) => {
+    if(collapsed === undefined) {
+      this.issueDetailSidebarCollapsed = !this.issueDetailSidebarCollapsed;
+    } else {
+      this.issueDetailSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("issue_detail_sidebar_collapsed", this.issueDetailSidebarCollapsed.toString());
+  }
 
   /**
    * Sets the user theme and applies it to the platform
