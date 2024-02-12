@@ -24,21 +24,21 @@ export type TDurationFilterOptions =
 
 // widget filters
 export type TAssignedIssuesWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TCreatedIssuesWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TIssuesByStateGroupsWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
 };
 
 export type TIssuesByPriorityWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
 };
 
 export type TWidgetFiltersFormData =

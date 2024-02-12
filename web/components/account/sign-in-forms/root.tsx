@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import { LatestFeatureBlock } from "components/common";
@@ -13,6 +13,8 @@ import {
   OAuthOptions,
   SignInOptionalSetPasswordForm,
 } from "components/account";
+// constants
+import { NAVIGATE_TO_SIGNUP } from "constants/event-tracker";
 
 export enum ESignInSteps {
   EMAIL = "EMAIL",
@@ -32,6 +34,7 @@ export const SignInRoot = observer(() => {
   const {
     config: { envConfig },
   } = useApplication();
+  const { captureEvent } = useEventTracker();
   // derived values
   const isSmtpConfigured = envConfig?.is_smtp_configured;
 
@@ -110,7 +113,11 @@ export const SignInRoot = observer(() => {
             <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_in" />
             <p className="text-xs text-onboarding-text-300 text-center mt-6">
               Don{"'"}t have an account?{" "}
-              <Link href="/accounts/sign-up" className="text-custom-primary-100 font-medium underline">
+              <Link
+                href="/accounts/sign-up"
+                onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+                className="text-custom-primary-100 font-medium underline"
+              >
                 Sign up
               </Link>
             </p>

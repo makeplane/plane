@@ -250,6 +250,7 @@ export class UserRootStore implements IUserRootStore {
         this.isUserLoggedIn = false;
       });
       this.membership = new UserMembershipStore(this.rootStore);
+      this.rootStore.eventTracker.resetSession();
       this.rootStore.resetOnSignout();
     });
 
@@ -264,6 +265,7 @@ export class UserRootStore implements IUserRootStore {
         this.isUserLoggedIn = false;
       });
       this.membership = new UserMembershipStore(this.rootStore);
+      this.rootStore.eventTracker.resetSession();
       this.rootStore.resetOnSignout();
     });
 }

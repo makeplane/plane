@@ -20,6 +20,7 @@ import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle
 // types
 import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
+import { ISSUE_DELETED } from "constants/event-tracker";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -86,17 +87,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             throw new Error("Missing required parameters");
           await removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: {
               id: inboxIssueId,
               state: "SUCCESS",
               element: "Inbox page",
-            },
-            group: {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            },
+            }
           });
           router.push({
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
@@ -108,16 +104,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: {
               id: inboxIssueId,
               state: "FAILED",
               element: "Inbox page",
-            },
-            group: {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
             },
           });
         }

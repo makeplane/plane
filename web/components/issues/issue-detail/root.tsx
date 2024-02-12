@@ -16,6 +16,7 @@ import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -102,7 +103,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             });
           }
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -112,7 +113,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -138,7 +139,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             message: "Issue deleted successfully",
           });
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
             path: router.asPath,
           });
@@ -149,7 +150,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             message: "Issue delete failed",
           });
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             path: router.asPath,
           });
@@ -164,7 +165,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             message: "Issue added to issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -174,7 +175,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -198,7 +199,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             message: "Cycle removed from issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -208,7 +209,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -232,7 +233,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             message: "Module added to issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "module_id",
@@ -242,7 +243,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "module_id",
@@ -266,7 +267,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
             message: "Module removed from issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "module_id",
@@ -276,7 +277,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = (props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "module_id",

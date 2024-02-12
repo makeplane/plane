@@ -13,6 +13,7 @@ import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
 import type { IState } from "@plane/types";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+import { STATE_CREATED, STATE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   data: IState | null;
@@ -36,7 +37,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { captureEvent, setTrackElement } = useEventTracker();
+  const { captureProjectStateEvent, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();
@@ -86,9 +87,13 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "State created successfully.",
         });
-        captureEvent("State created", {
-          ...res,
-          state: "SUCCESS",
+        captureProjectStateEvent({
+          eventName: STATE_CREATED,
+          payload: {
+            ...res,
+            state: "SUCCESS",
+            element: "Project settings states page",
+          },
         });
       })
       .catch((error) => {
@@ -104,8 +109,14 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be created. Please try again.",
           });
-        captureEvent("State created", {
-          state: "FAILED",
+
+        captureProjectStateEvent({
+          eventName: STATE_CREATED,
+          payload: {
+            ...formData,
+            state: "FAILED",
+            element: "Project settings states page",
+          },
         });
       });
   };
@@ -116,9 +127,13 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
     await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
       .then((res) => {
         handleClose();
-        captureEvent("State updated", {
-          ...res,
-          state: "SUCCESS",
+        captureProjectStateEvent({
+          eventName: STATE_UPDATED,
+          payload: {
+            ...res,
+            state: "SUCCESS",
+            element: "Project settings states page",
+          },
         });
         setToastAlert({
           type: "success",
@@ -139,8 +154,13 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be updated. Please try again.",
           });
-        captureEvent("State updated", {
-          state: "FAILED",
+        captureProjectStateEvent({
+          eventName: STATE_UPDATED,
+          payload: {
+            ...formData,
+            state: "FAILED",
+            element: "Project settings states page",
+          },
         });
       });
   };

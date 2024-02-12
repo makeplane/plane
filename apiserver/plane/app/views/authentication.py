@@ -274,8 +274,8 @@ class SignInEndpoint(BaseAPIView):
             email=email,
             user_agent=request.META.get("HTTP_USER_AGENT"),
             ip=request.META.get("REMOTE_ADDR"),
-            event_name="SIGN_IN",
-            medium="EMAIL",
+            event_name="Sign in",
+            medium="Email",
             first_time=False,
         )
 
@@ -349,8 +349,8 @@ class MagicSignInEndpoint(BaseAPIView):
                     email=email,
                     user_agent=request.META.get("HTTP_USER_AGENT"),
                     ip=request.META.get("REMOTE_ADDR"),
-                    event_name="SIGN_IN",
-                    medium="MAGIC_LINK",
+                    event_name="Sign in",
+                    medium="Magic link",
                     first_time=False,
                 )
 
