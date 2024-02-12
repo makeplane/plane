@@ -36,23 +36,34 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails?.emoji ? (
-                      renderEmoji(currentProjectDetails.emoji)
-                    ) : currentProjectDetails?.icon_prop ? (
-                      renderEmoji(currentProjectDetails.icon_prop)
-                    ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                        {currentProjectDetails?.name.charAt(0)}
-                      </span>
-                    )
-                  }
-                />
+                <span>
+                  <span className="hidden md:block">
+                    <BreadcrumbLink
+                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                      label={currentProjectDetails?.name ?? "Project"}
+                      icon={
+                        currentProjectDetails?.emoji ? (
+                          renderEmoji(currentProjectDetails.emoji)
+                        ) : currentProjectDetails?.icon_prop ? (
+                          renderEmoji(currentProjectDetails.icon_prop)
+                        ) : (
+                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                            {currentProjectDetails?.name.charAt(0)}
+                          </span>
+                        )
+                      }
+                    />
+                  </span>
+                  <span className="md:hidden">
+                    <BreadcrumbLink
+                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                      label={"..."}
+                    />
+                  </span>
+                </span>
               }
             />
+
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
