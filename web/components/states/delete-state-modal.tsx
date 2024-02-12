@@ -10,6 +10,8 @@ import useToast from "hooks/use-toast";
 import { Button } from "@plane/ui";
 // types
 import type { IState } from "@plane/types";
+// constants
+import { STATE_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -25,7 +27,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { captureEvent } = useEventTracker();
+  const { captureProjectStateEvent } = useEventTracker();
   const { deleteState } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();
@@ -42,8 +44,12 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
-        captureEvent("State deleted", {
-          state: "SUCCESS",
+        captureProjectStateEvent({
+          eventName: STATE_DELETED,
+          payload: {
+            ...data,
+            state: "SUCCESS",
+          },
         });
         handleClose();
       })
@@ -61,8 +67,12 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
-        captureEvent("State deleted", {
-          state: "FAILED",
+        captureProjectStateEvent({
+          eventName: STATE_DELETED,
+          payload: {
+            ...data,
+            state: "FAILED",
+          },
         });
       })
       .finally(() => {

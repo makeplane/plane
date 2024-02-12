@@ -54,6 +54,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   };
   delete duplicateIssuePayload.id;
 
+  const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
+
   return (
     <>
       <DeleteIssueModal
@@ -62,6 +64,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
       />
+
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}
         onClose={() => {
@@ -73,7 +76,9 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
           if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
         }}
         storeType={EIssuesStoreType.PROJECT}
+        isDraft={isDraftIssue}
       />
+
       <CustomMenu
         placement="bottom-start"
         customButton={customActionButton}

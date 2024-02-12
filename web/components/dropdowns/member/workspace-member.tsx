@@ -32,6 +32,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
     hideIcon = false,
     multiple,
     onChange,
+    onClose,
     placeholder = "Members",
     placement,
     showTooltip = false,
@@ -95,8 +96,10 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
+    if (!isOpen) return;
+    setIsOpen(false);
     if (referenceElement) referenceElement.blur();
+    onClose && onClose();
   };
 
   const toggleDropdown = () => {
@@ -134,7 +137,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
             onClick={handleOnClick}
           >
             {button}
@@ -144,7 +147,7 @@ export const WorkspaceMemberDropdown: React.FC<MemberDropdownProps> = observer((
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,

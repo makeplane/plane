@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import {
@@ -12,6 +12,8 @@ import {
   SignUpUniqueCodeForm,
 } from "components/account";
 import Link from "next/link";
+// constants
+import { NAVIGATE_TO_SIGNIN } from "constants/event-tracker";
 
 export enum ESignUpSteps {
   EMAIL = "EMAIL",
@@ -32,6 +34,7 @@ export const SignUpRoot = observer(() => {
   const {
     config: { envConfig },
   } = useApplication();
+  const { captureEvent } = useEventTracker();
 
   // step 1 submit handler- email verification
   const handleEmailVerification = () => setSignInStep(ESignUpSteps.UNIQUE_CODE);
@@ -86,7 +89,11 @@ export const SignUpRoot = observer(() => {
           <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_up" />
           <p className="text-xs text-onboarding-text-300 text-center mt-6">
             Already using Plane?{" "}
-            <Link href="/" className="text-custom-primary-100 font-medium underline">
+            <Link
+              href="/"
+              onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
+              className="text-custom-primary-100 font-medium underline"
+            >
               Sign in
             </Link>
           </p>

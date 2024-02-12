@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import isEqual from "lodash/isEqual";
 // hooks
-import { useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
+import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
 //ui
 import { Button } from "@plane/ui";
 // components
@@ -11,6 +11,8 @@ import { AppliedFiltersList } from "components/issues";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
 
 type Props = {
   globalViewId: string;
@@ -27,6 +29,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { workspaceLabels } = useLabel();
   const { globalViewMap, updateGlobalView } = useGlobalView();
+  const { captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -91,6 +94,13 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
       filters: {
         ...(appliedFilters ?? {}),
       },
+    }).then((res) => {
+      captureEvent(GLOBAL_VIEW_UPDATED, {
+        view_id: res.id,
+        applied_filters: res.filters,
+        state: "SUCCESS",
+        element: "Spreadsheet view",
+      });
     });
   };
 

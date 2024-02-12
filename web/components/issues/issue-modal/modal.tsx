@@ -13,6 +13,8 @@ import { IssueFormRoot } from "./form";
 import type { TIssue } from "@plane/types";
 // constants
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
+import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
+
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
   isOpen: boolean;
@@ -20,10 +22,19 @@ export interface IssuesModalProps {
   onSubmit?: (res: TIssue) => Promise<void>;
   withDraftIssueWrapper?: boolean;
   storeType?: TCreateModalStoreTypes;
+  isDraft?: boolean;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, isOpen, onClose, onSubmit, withDraftIssueWrapper = true, storeType = EIssuesStoreType.PROJECT } = props;
+  const {
+    data,
+    isOpen,
+    onClose,
+    onSubmit,
+    withDraftIssueWrapper = true,
+    storeType = EIssuesStoreType.PROJECT,
+    isDraft = false,
+  } = props;
   // states
   const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
   const [createMore, setCreateMore] = useState(false);
@@ -42,6 +53,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
   const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
+  const { issues: draftIssueStore } = useIssues(EIssuesStoreType.DRAFT);
   // store mapping based on current store
   const issueStores = {
     [EIssuesStoreType.PROJECT]: {
@@ -122,11 +134,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     onClose();
   };
 
-  const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
+  const handleCreateIssue = async (
+    payload: Partial<TIssue>,
+    is_draft_issue: boolean = false
+  ): Promise<TIssue | undefined> => {
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      const response = await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
+      const response = is_draft_issue
+        ? await draftIssueStore.createIssue(workspaceSlug, payload.project_id, payload)
+        : await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
       if (!response) throw new Error();
 
       currentIssueStore.fetchIssues(workspaceSlug, payload.project_id, "mutation", viewId);
@@ -142,14 +159,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue created successfully.",
       });
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...response, state: "SUCCESS" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
       !createMore && handleClose();
       return response;
@@ -160,14 +172,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue could not be created. Please try again.",
       });
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
     }
   };
@@ -183,14 +190,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue updated successfully.",
       });
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...response, state: "SUCCESS" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
       handleClose();
       return response;
@@ -201,19 +203,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         message: "Issue could not be created. Please try again.",
       });
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
         path: router.asPath,
-        group: {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        },
       });
     }
   };
 
-  const handleFormSubmit = async (formData: Partial<TIssue>) => {
+  const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue: boolean = false) => {
     if (!workspaceSlug || !formData.project_id || !storeType) return;
 
     const payload: Partial<TIssue> = {
@@ -222,7 +219,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     };
 
     let response: TIssue | undefined = undefined;
-    if (!data?.id) response = await handleCreateIssue(payload);
+    if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
     else response = await handleUpdateIssue(payload);
 
     if (response != undefined && onSubmit) await onSubmit(response);
@@ -274,6 +271,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     projectId={activeProjectId}
                     isCreateMoreToggleEnabled={createMore}
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
+                    isDraft={isDraft}
                   />
                 ) : (
                   <IssueFormRoot
@@ -287,6 +285,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
                     onSubmit={handleFormSubmit}
                     projectId={activeProjectId}
+                    isDraft={isDraft}
                   />
                 )}
               </Dialog.Panel>

@@ -119,10 +119,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                   // hide the block if it doesn't have start and target dates and showAllBlocks is false
                   if (!showAllBlocks && !isBlockVisibleOnSidebar) return;
 
-                  const duration =
-                    !block.start_date || !block.target_date
-                      ? null
-                      : findTotalDaysInRange(block.start_date, block.target_date);
+                  const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
                   return (
                     <Draggable
@@ -166,13 +163,13 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                               <div className="flex-grow truncate">
                                 <IssueGanttSidebarBlock data={block.data} />
                               </div>
-                              <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                {duration && (
+                              {duration !== undefined && (
+                                <div className="flex-shrink-0 text-sm text-custom-text-200">
                                   <span>
                                     {duration} day{duration > 1 ? "s" : ""}
                                   </span>
-                                )}
-                              </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

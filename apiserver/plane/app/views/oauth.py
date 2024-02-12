@@ -296,7 +296,7 @@ class OauthEndpoint(BaseAPIView):
                 email=email,
                 user_agent=request.META.get("HTTP_USER_AGENT"),
                 ip=request.META.get("REMOTE_ADDR"),
-                event_name="SIGN_IN",
+                event_name="Sign in",
                 medium=medium.upper(),
                 first_time=False,
             )
@@ -427,7 +427,7 @@ class OauthEndpoint(BaseAPIView):
                 email=email,
                 user_agent=request.META.get("HTTP_USER_AGENT"),
                 ip=request.META.get("REMOTE_ADDR"),
-                event_name="SIGN_IN",
+                event_name="Sign up",
                 medium=medium.upper(),
                 first_time=True,
             )

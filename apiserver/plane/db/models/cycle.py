@@ -68,6 +68,7 @@ class Cycle(ProjectBaseModel):
     sort_order = models.FloatField(default=65535)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    progress_snapshot = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Cycle"

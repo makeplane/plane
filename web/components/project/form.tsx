@@ -18,6 +18,7 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { NETWORK_CHOICES } from "constants/project";
 // services
 import { ProjectService } from "services/project";
+import { PROJECT_UPDATED } from "constants/event-tracker";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -45,7 +46,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     setValue,
     setError,
     reset,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<IProject>({
     defaultValues: {
       ...project,
@@ -77,13 +78,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
+        const changed_properties = Object.keys(dirtyFields);
+        console.log(dirtyFields);
         captureProjectEvent({
-          eventName: "Project updated",
-          payload: { ...res, state: "SUCCESS", element: "Project general settings" },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: res.workspace,
+          eventName: PROJECT_UPDATED,
+          payload: {
+            ...res,
+            changed_properties: changed_properties,
+            state: "SUCCESS",
+            element: "Project general settings",
           },
         });
         setToastAlert({
@@ -94,13 +97,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       })
       .catch((error) => {
         captureProjectEvent({
-          eventName: "Project updated",
+          eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id,
-          },
         });
         setToastAlert({
           type: "error",
@@ -153,7 +151,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
-        <div className="absolute bottom-4 z-5 flex w-full items-end justify-between gap-3 px-4">
+        <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
               <div className="grid h-7 w-7 place-items-center">

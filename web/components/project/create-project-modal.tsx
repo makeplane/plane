@@ -18,6 +18,7 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PROJECT_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -134,13 +135,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           state: "SUCCESS",
         };
         captureProjectEvent({
-          eventName: "Project created",
+          eventName: PROJECT_CREATED,
           payload: newPayload,
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: res.workspace,
-          },
         });
         setToastAlert({
           type: "success",
@@ -160,16 +156,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             message: err.data[key],
           });
           captureProjectEvent({
-            eventName: "Project created",
+            eventName: PROJECT_CREATED,
             payload: {
               ...payload,
               state: "FAILED",
-            },
-            group: {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            },
+            }
           });
         });
       });
@@ -208,7 +199,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

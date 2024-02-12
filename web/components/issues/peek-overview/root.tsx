@@ -11,6 +11,7 @@ import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
@@ -103,7 +104,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               message: "Issue updated successfully",
             });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -113,7 +114,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             path: router.asPath,
           });
@@ -135,7 +136,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Issue deleted successfully",
           });
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             path: router.asPath,
           });
@@ -146,7 +147,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Issue delete failed",
           });
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             path: router.asPath,
           });
@@ -161,7 +162,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Issue added to issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -171,7 +172,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -195,7 +196,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Cycle removed from issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -210,7 +211,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Cycle remove from issue failed",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -229,7 +230,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Module added to issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -239,7 +240,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -263,7 +264,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Module removed from issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -273,7 +274,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
