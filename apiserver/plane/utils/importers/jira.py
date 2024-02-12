@@ -1,117 +1,279 @@
+import os
 import requests
-import re
-from requests.auth import HTTPBasicAuth
-from sentry_sdk import capture_exception
-from urllib.parse import urlparse, urljoin
+from datetime import timedelta
+
+# Django imports
+from django.utils import timezone
+
+# Module imports
+from plane.db.models import SocialLoginConnection
 
 
-def is_allowed_hostname(hostname):
-    allowed_domains = [
-        "atl-paas.net",
-        "atlassian.com",
-        "atlassian.net",
-        "jira.com",
-    ]
-    parsed_uri = urlparse(f"https://{hostname}")
-    domain = parsed_uri.netloc.split(":")[0]  # Ensures no port is included
-    base_domain = ".".join(domain.split(".")[-2:])
-    return base_domain in allowed_domains
+def get_jira_access_token(code, user_id):
+    url = "https://auth.atlassian.com/oauth/token"
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "grant_type": "authorization_code",
+        "client_id": os.environ.get("JIRA_CLIENT_ID"),
+        "client_secret": os.environ.get("JIRA_CLIENT_SECRET"),
+        "redirect_uri": os.environ.get(
+            "JIRA_REDIRECT_URI", "https://localhost:3000"
+        ),
+        "code": code,
+    }
+    response = requests.post(url=url, headers=headers, json=data)
 
-
-def is_valid_project_key(project_key):
-    if project_key:
-        project_key = project_key.strip().upper()
-        # Adjust the regular expression as needed based on your specific requirements.
-        if len(project_key) > 30:
-            return False
-        # Check the validity of the key as well
-        pattern = re.compile(r"^[A-Z0-9]{1,10}$")
-        return pattern.match(project_key) is not None
+    if response.status_code == 200:
+        _ = SocialLoginConnection.objects.create(
+            medium="jira",
+            token_data=response.json(),
+            last_login_at=timezone.now(),
+            user_id=user_id,
+        )
+        return True, {"message", "Successfully connected to Jira"}
     else:
-        False
+        return False, {"error": "Error connecting to Jira"}
 
 
-def generate_valid_project_key(project_key):
-    return project_key.strip().upper()
+def get_workspace_information(user_id):
+    access_token_data = SocialLoginConnection.objects.filter(
+        user_id=user_id,
+        last_login_at__gte=(timezone.now() - timedelta(seconds=3600)),
+    ).first()
+    if access_token_data:
+        access_token = access_token_data.token_data.get("access_token")
+        url = "https://api.atlassian.com/oauth/token/accessible-resources"
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/json",
+        }
+        response = requests.get(url=url, headers=headers)
+
+        if response.status_code == 200:
+            SocialLoginConnection.objects.update(extra_data=response.json())
+            return True, response.json()
+        else:
+            return False, {"error": "Error getting workspace information"}
+    else:
+        False, {"error": "Try reconnecting with Jira"}
 
 
-def generate_url(hostname, path):
-    if not is_allowed_hostname(hostname):
-        raise ValueError("Invalid or unauthorized hostname")
-    return urljoin(f"https://{hostname}", path)
+def get_jira_projects(workspace_name, user_id):
+    access_token_data = SocialLoginConnection.objects.filter(
+        user_id=user_id,
+        last_login_at__gte=(timezone.now() - timedelta(seconds=3600)),
+    ).first()
+    if access_token_data:
+        access_token = access_token_data.token_data.get("access_token")
+        workspace = [
+            w
+            for w in access_token_data.extra_data
+            if w.get("name") == str(workspace_name)
+        ]
+
+        if workspace:
+            cloudid = workspace[0].get("id")
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json",
+            }
+            response = requests.get(
+                f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/project/search",
+                headers=headers,
+            )
+            print(response.json())
+            if response.status_code == 200:
+                return True, response.json()
+            else:
+                return False, {"error": "Unable to fetch projects"}
+        else:
+            return False, {"error": "Unable to match any workspaces"}
+    else:
+        False, {"error": "Try reconnecting with Jira"}
 
 
-def jira_project_issue_summary(email, api_token, project_key, hostname):
-    try:
-        if not is_allowed_hostname(hostname):
-            return {"error": "Invalid or unauthorized hostname"}
+def get_issues(cloudid, project_key, headers):
+    response = requests.get(
+        f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/search?jql=project={project_key} AND issuetype!=Epic",
+        headers=headers,
+    )
+    print(response.json())
+    # Get issue response
+    if response.status_code == 200:
+        return response.json().get("total", 0)
+    return 0
 
-        if not is_valid_project_key(project_key):
-            return {"error": "Invalid project key"}
 
-        auth = HTTPBasicAuth(email, api_token)
-        headers = {"Accept": "application/json"}
+def get_modules(cloudid, project_key, headers):
+    response = requests.get(
+        f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/search?jql=project={project_key} AND issuetype=Epic",
+        headers=headers,
+    )
+    # Get issue response
+    if response.status_code == 200:
+        return response.json().get("total", 0)
+    return 0
 
-        # make the project key upper case
-        project_key = generate_valid_project_key(project_key)
 
-        # issues
-        issue_url = generate_url(
-            hostname,
-            f"/rest/api/3/search?jql=project={project_key} AND issuetype!=Epic",
-        )
-        issue_response = requests.request(
-            "GET", issue_url, headers=headers, auth=auth
-        ).json()["total"]
+def get_statuses(cloudid, project_key, headers):
+    response = requests.get(
+        f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/project/${project_key}/statuses",
+        headers=headers,
+    )
+    # Get issue response
+    if response.status_code == 200:
+        return response.json().get("total", 0)
+    return 0
 
-        # modules
-        module_url = generate_url(
-            hostname,
-            f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic",
-        )
-        module_response = requests.request(
-            "GET", module_url, headers=headers, auth=auth
-        ).json()["total"]
 
-        # status
-        status_url = generate_url(
-            hostname, f"/rest/api/3/project/${project_key}/statuses"
-        )
-        status_response = requests.request(
-            "GET", status_url, headers=headers, auth=auth
-        ).json()
+def get_labels(cloudid, project_key, headers):
+    response = requests.get(
+        f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/label/?jql=project={project_key}",
+        headers=headers,
+    )
+    # Get issue response
+    if response.status_code == 200:
+        return response.json().get("total", 0)
+    return 0
 
-        # labels
-        labels_url = generate_url(
-            hostname, f"/rest/api/3/label/?jql=project={project_key}"
-        )
-        labels_response = requests.request(
-            "GET", labels_url, headers=headers, auth=auth
-        ).json()["total"]
 
-        # users
-        users_url = generate_url(
-            hostname, f"/rest/api/3/users/search?jql=project={project_key}"
-        )
-        users_response = requests.request(
-            "GET", users_url, headers=headers, auth=auth
-        ).json()
+def get_users(cloudid, project_key, headers):
+    response = requests.get(
+        f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/users/search?jql=project={project_key}",
+        headers=headers,
+    )
+    # Get issue response
+    if response.status_code == 200:
+        return [
+            user
+            for user in response.json()
+            if user.get("accountType") == "atlassian"
+        ]
+    return []
 
-        return {
-            "issues": issue_response,
-            "modules": module_response,
-            "labels": labels_response,
-            "states": len(status_response),
-            "users": (
-                [
-                    user
-                    for user in users_response
-                    if user.get("accountType") == "atlassian"
+
+def jira_project_issue_summary(workspace_name, project_id, user_id):
+
+    access_token_data = SocialLoginConnection.objects.filter(
+        user_id=user_id,
+        last_login_at__gte=(timezone.now() - timedelta(seconds=3600)),
+    ).first()
+
+    if access_token_data:
+        access_token = access_token_data.token_data.get("access_token")
+
+        workspace = [
+            w
+            for w in access_token_data.extra_data
+            if w.get("name") == str(workspace_name)
+        ]
+
+        if workspace:
+            cloudid = workspace[0].get("id")
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json",
+            }
+            response = requests.get(
+                f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/project/search",
+                headers=headers,
+            )
+            if response.status_code == 200:
+                project = [
+                    p
+                    for p in response.json().get("values", [])
+                    if p["id"] == str(project_id)
                 ]
-            ),
-        }
-    except Exception as e:
-        capture_exception(e)
-        return {
-            "error": "Something went wrong could not fetch information from jira"
-        }
+                if project:
+                    project_key = project[0].get("key")
+                    headers = {
+                        "Accept": "application/json",
+                        "Authorization": f"Bearer: {access_token}",
+                    }
+                    issues = get_issues(
+                        cloudid=cloudid,
+                        project_key=project_key,
+                        headers=headers,
+                    )
+                    modules = get_modules(
+                        cloudid=cloudid,
+                        project_key=project_key,
+                        headers=headers,
+                    )
+                    statuses = get_statuses(
+                        cloudid=cloudid,
+                        project_key=project_key,
+                        headers=headers,
+                    )
+                    labels = get_labels(
+                        cloudid=cloudid,
+                        project_key=project_key,
+                        headers=headers,
+                    )
+                    users = get_users(
+                        cloudid=cloudid,
+                        project_key=project_key,
+                        headers=headers,
+                    )
+
+                    return True, {
+                        "issues": issues,
+                        "modules": modules,
+                        "labels": labels,
+                        "states": statuses,
+                        "users": users,
+                    }
+
+                else:
+                    return False, {"error": "Unable to get matching projects"}
+            else:
+                return False, {"error": "Unable to fetch projects"}
+        else:
+            return False, {"error": "Unable to match any workspaces"}
+    else:
+        return False, {"error": "Try reconnecting with Jira"}
+
+
+def jira_import_data(workspace_name, project_id, user_id):
+
+    access_token_data = SocialLoginConnection.objects.filter(
+        user_id=user_id,
+        last_login_at__gte=(timezone.now() - timedelta(seconds=3600)),
+    ).first()
+
+    if access_token_data:
+        access_token = access_token_data.token_data.get("access_token")
+        workspace = [
+            w
+            for w in access_token_data.extra_data
+            if w.get("name") == str(workspace_name)
+        ]
+
+        if workspace:
+            cloudid = workspace[0].get("id")
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json",
+            }
+            response = requests.get(
+                f"https://api.atlassian.com/ex/jira/{cloudid}/rest/api/3/project/search",
+                headers=headers,
+            )
+            if response.status_code == 200:
+                project = [
+                    p
+                    for p in response.json().get("values", [])
+                    if p["id"] == str(project_id)
+                ]
+                if project:
+                    project_key = project[0].get("key")
+                    return cloudid, project_key
+                else:
+                    return False, {"error": "Unable to get matching projects"}
+            else:
+                return False, {"error": "Unable to fetch projects"}
+        else:
+            return False, {"error": "Unable to match any workspaces"}
+    else:
+        return False, {"error": "Try reconnecting with Jira"}
+

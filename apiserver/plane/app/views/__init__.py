@@ -130,6 +130,9 @@ from .importer import (
     UpdateServiceImportStatusEndpoint,
     BulkImportIssuesEndpoint,
     BulkImportModulesEndpoint,
+    JiraOauthEndpoint,
+    JiraWorkspaceInformation,
+    JiraProjects,
 )
 
 from .page import (

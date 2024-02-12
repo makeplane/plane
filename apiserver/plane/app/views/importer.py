@@ -37,11 +37,64 @@ from plane.app.serializers import (
 from plane.utils.integrations.github import get_github_repo_details
 from plane.utils.importers.jira import (
     jira_project_issue_summary,
-    is_allowed_hostname,
+    get_jira_access_token,
+    get_workspace_information,
+    get_jira_projects,
+    jira_import_data,
 )
 from plane.bgtasks.importer_task import service_importer
 from plane.utils.html_processor import strip_tags
 from plane.app.permissions import WorkSpaceAdminPermission
+
+
+class JiraOauthEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+
+    def post(self, request, slug):
+        # Get code from the frontend
+        code = request.data.get("code")
+        # Check and save the access token if valid
+        state, message = get_jira_access_token(
+            code=code, user_id=request.user.id
+        )
+        if state:
+            return Response(message, status=status.HTTP_200_OK)
+        else:
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+class JiraWorkspaceInformation(BaseAPIView):
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+
+    def get(self, request, slug):
+        # get jira workspace information
+        state, response = get_workspace_information(request.user.id)
+        if state:
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class JiraProjects(BaseAPIView):
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+
+    def post(self, request, slug):
+        # get jira workspace information
+        workspace_name = request.data.get("workspace_name")
+        state, response = get_jira_projects(
+            workspace_name=workspace_name, user_id=request.user.id
+        )
+        if state:
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
@@ -86,35 +139,18 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
         if service == "jira":
             # Check for all the keys
-            params = {
-                "project_key": "Project key is required",
-                "api_token": "API token is required",
-                "email": "Email is required",
-                "cloud_hostname": "Cloud hostname is required",
-            }
+            project_id = request.GET.get("project_id", "")
+            workspace_name = request.GET.get("workspace_name", "")
 
-            for key, error_message in params.items():
-                if not request.GET.get(key, False):
-                    return Response(
-                        {"error": error_message},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-
-            project_key = request.GET.get("project_key", "")
-            api_token = request.GET.get("api_token", "")
-            email = request.GET.get("email", "")
-            cloud_hostname = request.GET.get("cloud_hostname", "")
-
-            response = jira_project_issue_summary(
-                email, api_token, project_key, cloud_hostname
+            state, response = jira_project_issue_summary(
+                workspace_name=workspace_name,
+                project_id=project_id,
+                user_id=request.user.id,
             )
-            if "error" in response:
-                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            if state:
+                return Response(response, status=status.HTTP_200_OK)
             else:
-                return Response(
-                    response,
-                    status=status.HTTP_200_OK,
-                )
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
         return Response(
             {"error": "Service not supported yet"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -175,29 +211,27 @@ class ImportServiceEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if service == "jira":
-            data = request.data.get("data", False)
+            # Check for all the keys
             metadata = request.data.get("metadata", False)
+            data = request.data.get("data", False)
             config = request.data.get("config", False)
-
-            cloud_hostname = metadata.get("cloud_hostname", False)
-
-            if not cloud_hostname:
-                return Response(
-                    {"error": "Cloud hostname is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if not is_allowed_hostname(cloud_hostname):
-                return Response(
-                    {"error": "Hostname is not a valid hostname."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
             if not data or not metadata:
                 return Response(
                     {"error": "Data, config and metadata are required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            workspace_name = metadata.get("workspace_name", False)
+            jira_project_id = metadata.get("jira_project_id", False)
+
+            # Get project information
+            metadata["cloudid"], metadata["project_key"] = jira_import_data(
+                workspace_name=workspace_name,
+                project_id=jira_project_id,
+                user_id=request.user.id,
+            )
+
             api_token = APIToken.objects.filter(
                 user=request.user, workspace=workspace
             ).first()
@@ -332,9 +366,11 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                 Issue(
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    state_id=issue_data.get("state")
-                    if issue_data.get("state", False)
-                    else default_state.id,
+                    state_id=(
+                        issue_data.get("state")
+                        if issue_data.get("state", False)
+                        else default_state.id
+                    ),
                     name=issue_data.get("name", "Issue Created through Bulk"),
                     description_html=issue_data.get(
                         "description_html", "<p></p>"

@@ -5,10 +5,28 @@ from plane.app.views import (
     ServiceIssueImportSummaryEndpoint,
     ImportServiceEndpoint,
     UpdateServiceImportStatusEndpoint,
+    JiraOauthEndpoint,
+    JiraWorkspaceInformation,
+    JiraProjects,
 )
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/jira-oauth/",
+        JiraOauthEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/jira-workspace-information/",
+        JiraWorkspaceInformation.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/jira-workspace-projects/",
+        JiraProjects.as_view(),
+        name="importer",
+    ),
     path(
         "workspaces/<str:slug>/importers/<str:service>/",
         ServiceIssueImportSummaryEndpoint.as_view(),
