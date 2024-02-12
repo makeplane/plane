@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { Spinner } from "@plane/ui";
@@ -48,8 +48,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     enableQuickCreateIssue,
     disableIssueCreation,
   } = props;
-  // states
-  const isScrolled = useRef(false);
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
   const portalRef = useRef<HTMLDivElement | null>(null);
@@ -57,39 +55,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const { currentProjectDetails } = useProject();
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
-
-  const handleScroll = () => {
-    if (!containerRef.current) return;
-    const scrollLeft = containerRef.current.scrollLeft;
-
-    const columnShadow = "8px 22px 22px 10px rgba(0, 0, 0, 0.05)"; // shadow for regular columns
-    const headerShadow = "8px -22px 22px 10px rgba(0, 0, 0, 0.05)"; // shadow for headers
-
-    //The shadow styles are added this way to avoid re-render of all the rows of table, which could be costly
-    if (scrollLeft > 0 !== isScrolled.current) {
-      const firtColumns = containerRef.current.querySelectorAll("table tr td:first-child, th:first-child");
-
-      for (let i = 0; i < firtColumns.length; i++) {
-        const shadow = i === 0 ? headerShadow : columnShadow;
-        if (scrollLeft > 0) {
-          (firtColumns[i] as HTMLElement).style.boxShadow = shadow;
-        } else {
-          (firtColumns[i] as HTMLElement).style.boxShadow = "none";
-        }
-      }
-      isScrolled.current = scrollLeft > 0;
-    }
-  };
-
-  useEffect(() => {
-    const currentContainerRef = containerRef.current;
-
-    if (currentContainerRef) currentContainerRef.addEventListener("scroll", handleScroll);
-
-    return () => {
-      if (currentContainerRef) currentContainerRef.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   if (!issueIds || issueIds.length === 0)
     return (
@@ -112,6 +77,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           quickActions={quickActions}
           handleIssues={handleIssues}
           canEditProperties={canEditProperties}
+          containerRef={containerRef}
         />
       </div>
       <div className="border-t border-custom-border-100">

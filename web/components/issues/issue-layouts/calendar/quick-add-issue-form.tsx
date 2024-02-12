@@ -13,6 +13,8 @@ import { createIssuePayload } from "helpers/issue.helper";
 import { PlusIcon } from "lucide-react";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   formKey: keyof TIssue;
@@ -129,7 +131,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           viewId
         ).then((res) => {
           captureIssueEvent({
-            eventName: "Issue created",
+            eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
             path: router.asPath,
           });
@@ -142,7 +144,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     } catch (err: any) {
       console.error(err);
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
         path: router.asPath,
       });

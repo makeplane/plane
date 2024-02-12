@@ -11,6 +11,7 @@ import { PageRenderer } from "src/ui/components/page-renderer";
 import { getMenuOptions } from "src/utils/menu-options";
 import { useRouter } from "next/router";
 import { IEmbedConfig } from "src/ui/extensions/widgets/issue-embed-widget/types";
+import { FixedMenu } from "src";
 
 interface IDocumentEditor {
   // document info
@@ -157,11 +158,14 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
         isSubmitting={isSubmitting}
       />
+      <div className="flex-shrink-0 md:hidden border-b border-custom-border-200 pl-3 py-2">
+        {uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
+      </div>
       <div className="flex h-full w-full overflow-y-auto frame-renderer">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72">
+        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72 hidden md:block">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
+        <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
             onActionCompleteHandler={onActionCompleteHandler}
             hideDragHandle={hideDragHandleOnMouseLeave}

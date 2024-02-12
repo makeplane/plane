@@ -16,8 +16,11 @@ import { Button } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { MEMBER_INVITED } from "constants/event-tracker";
 
 const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   // states
@@ -43,7 +46,17 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
       .then(() => {
         setInviteModal(false);
-        captureEvent("Member invited", { state: "SUCCESS" });
+        captureEvent(MEMBER_INVITED, {
+          emails: [
+            ...data.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
+          project_id: undefined,
+          state: "SUCCESS",
+          element: "Workspace settings member page",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -51,7 +64,17 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
         });
       })
       .catch((err) => {
-        captureEvent("Member invited", { state: "FAILED" });
+        captureEvent(MEMBER_INVITED, {
+          emails: [
+            ...data.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
+          project_id: undefined,
+          state: "FAILED",
+          element: "Workspace settings member page",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -84,14 +107,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
             />
           </div>
           {hasAddMemberPermission && (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setTrackElement("WORKSPACE_SETTINGS_MEMBERS_PAGE_HEADER");
-                setInviteModal(true);
-              }}
-            >
+            <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
             </Button>
           )}

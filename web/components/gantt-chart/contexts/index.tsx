@@ -24,6 +24,7 @@ const chartReducer = (state: ChartContextData, action: ChartContextActionPayload
 const initialView = "month";
 
 export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // states;
   const [state, dispatch] = useState<ChartContextData>({
     currentView: initialView,
     currentViewData: currentViewDataWithView(initialView),
@@ -31,23 +32,25 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     allViews: allViewsWithData,
     activeBlock: null,
   });
-
   const [scrollLeft, setScrollLeft] = useState(0);
 
   const handleDispatch = (action: ChartContextActionPayload): ChartContextData => {
     const newState = chartReducer(state, action);
-
     dispatch(() => newState);
-
     return newState;
   };
 
-  const updateScrollLeft = (scrollLeft: number) => {
-    setScrollLeft(scrollLeft);
-  };
+  const updateScrollLeft = (scrollLeft: number) => setScrollLeft(scrollLeft);
 
   return (
-    <ChartContext.Provider value={{ ...state, scrollLeft, updateScrollLeft, dispatch: handleDispatch }}>
+    <ChartContext.Provider
+      value={{
+        ...state,
+        scrollLeft,
+        updateScrollLeft,
+        dispatch: handleDispatch,
+      }}
+    >
       {children}
     </ChartContext.Provider>
   );

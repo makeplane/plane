@@ -12,6 +12,8 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { createIssuePayload } from "helpers/issue.helper";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   formKey: keyof TIssue;
@@ -162,7 +164,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
         (await quickAddCallback(currentWorkspace.slug, currentProjectDetails.id, { ...payload } as TIssue, viewId).then(
           (res) => {
             captureIssueEvent({
-              eventName: "Issue created",
+              eventName: ISSUE_CREATED,
               payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
               path: router.asPath,
             });
@@ -175,7 +177,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
       });
     } catch (err: any) {
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
         path: router.asPath,
       });

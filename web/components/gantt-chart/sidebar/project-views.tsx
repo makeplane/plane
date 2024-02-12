@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
@@ -11,6 +10,8 @@ import { IssueGanttSidebarBlock } from "components/issues";
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
+// constants
+import { BLOCK_HEIGHT } from "../constants";
 
 type Props = {
   title: string;
@@ -21,12 +22,8 @@ type Props = {
 };
 
 export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, enableReorder } = props;
-
-  const router = useRouter();
-  const { cycleId } = router.query;
-
+  const { blockUpdateHandler, blocks, enableReorder } = props;
+  // chart hook
   const { activeBlock, dispatch } = useChart();
 
   // update the active block on hover
@@ -86,7 +83,6 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
       <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
-            id={`gantt-sidebar-${cycleId}`}
             className="mt-3 max-h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
@@ -105,7 +101,10 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          className={`${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          style={{
+                            height: `${BLOCK_HEIGHT}px`,
+                          }}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -129,7 +128,7 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                               <div className="flex-grow truncate">
-                                <IssueGanttSidebarBlock data={block.data} />
+                                <IssueGanttSidebarBlock issueId={block.data.id} />
                               </div>
                               {duration !== undefined && (
                                 <div className="flex-shrink-0 text-sm text-custom-text-200">

@@ -10,7 +10,7 @@ import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { ICycle } from "@plane/types";
 
 type Props = {
-  handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
+  handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
   handleClose: () => void;
   status: boolean;
   projectId: string;
@@ -29,7 +29,7 @@ export const CycleForm: React.FC<Props> = (props) => {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data } = props;
   // form data
   const {
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     handleSubmit,
     control,
     watch,
@@ -61,7 +61,7 @@ export const CycleForm: React.FC<Props> = (props) => {
   maxDate?.setDate(maxDate.getDate() - 1);
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
+    <form onSubmit={handleSubmit((formData)=>handleFormSubmit(formData,dirtyFields))}>
       <div className="space-y-5">
         <div className="flex items-center gap-x-3">
           {!status && (

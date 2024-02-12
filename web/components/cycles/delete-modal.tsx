@@ -10,6 +10,8 @@ import useToast from "hooks/use-toast";
 import { Button } from "@plane/ui";
 // types
 import { ICycle } from "@plane/types";
+// constants
+import { CYCLE_DELETED } from "constants/event-tracker";
 
 interface ICycleDelete {
   cycle: ICycle;
@@ -45,13 +47,13 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             message: "Cycle deleted successfully.",
           });
           captureCycleEvent({
-            eventName: "Cycle deleted",
+            eventName: CYCLE_DELETED,
             payload: { ...cycle, state: "SUCCESS" },
           });
         })
         .catch(() => {
           captureCycleEvent({
-            eventName: "Cycle deleted",
+            eventName: CYCLE_DELETED,
             payload: { ...cycle, state: "FAILED" },
           });
         });
