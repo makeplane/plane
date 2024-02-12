@@ -52,6 +52,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
         enableReorder={isAllowed}
+        enableAddBlock={isAllowed}
         showAllBlocks
       />
     </div>
