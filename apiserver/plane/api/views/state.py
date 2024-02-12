@@ -57,7 +57,7 @@ class StateAPIEndpoint(BaseAPIView):
                 return Response(
                     {
                         "error": "State with the same external id and external source already exists",
-                        "state_id": str(state.id),
+                        "id": str(state.id),
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
@@ -128,7 +128,7 @@ class StateAPIEndpoint(BaseAPIView):
                 return Response(
                     {
                         "error": "State with the same external id and external source already exists",
-                        "state_id": str(state.id),
+                        "id": str(state.id),
                     },
                     status=status.HTTP_409_CONFLICT,
                 )

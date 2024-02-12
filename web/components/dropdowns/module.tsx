@@ -24,6 +24,7 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   projectId: string;
   showCount?: boolean;
+  onClose?: () => void;
 } & (
     | {
         multiple: false;
@@ -151,6 +152,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     hideIcon = false,
     multiple,
     onChange,
+    onClose,
     placeholder = "Module",
     placement,
     projectId,
@@ -226,8 +228,10 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
+    if (!isOpen) return;
+    setIsOpen(false);
     if (referenceElement) referenceElement.blur();
+    onClose && onClose();
   };
 
   const toggleDropdown = () => {
@@ -271,7 +275,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
             onClick={handleOnClick}
           >
             {button}
@@ -281,7 +285,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,
