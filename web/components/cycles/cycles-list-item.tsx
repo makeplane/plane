@@ -187,7 +187,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                 </Tooltip>
               </div>
 
-              <button onClick={openCycleOverview} className="flex-shrink-0 z-10 invisible group-hover:visible">
+              <button onClick={openCycleOverview} className="flex-shrink-0 z-[5] invisible group-hover:visible">
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>
