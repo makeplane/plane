@@ -9,6 +9,7 @@ import { useTheme } from "next-themes";
 import { useApplication, useEventTracker, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
+import useSize from "hooks/use-window-size";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -66,6 +67,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     useProjectPages();
   // hooks
   const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
+  const [windowWidth] = useSize();
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
   // fetching pages from API
@@ -103,7 +105,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
-  const mobileTabList = (
+  const MobileTabList = () => (
     <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
       <div className="flex flex-wrap items-center gap-4">
         {PAGE_TABS_LIST.map((tab) => (
@@ -166,25 +168,29 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
                 }
               }}
             >
-              <div className="md:hidden">{mobileTabList}</div>
-              <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
-                <div className="flex flex-wrap items-center gap-4">
-                  {PAGE_TABS_LIST.map((tab) => (
-                    <Tab
-                      key={tab.key}
-                      className={({ selected }) =>
-                        `rounded-full border px-5 py-1.5 text-sm outline-none ${
-                          selected
-                            ? "border-custom-primary bg-custom-primary text-white"
-                            : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
-                        }`
-                      }
-                    >
-                      {tab.title}
-                    </Tab>
-                  ))}
-                </div>
-              </Tab.List>
+              {windowWidth < 768 ? (
+                <MobileTabList />
+              ) : (
+                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
+                  <div className="flex flex-wrap items-center gap-4">
+                    {PAGE_TABS_LIST.map((tab) => (
+                      <Tab
+                        key={tab.key}
+                        className={({ selected }) =>
+                          `rounded-full border px-5 py-1.5 text-sm outline-none ${
+                            selected
+                              ? "border-custom-primary bg-custom-primary text-white"
+                              : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
+                          }`
+                        }
+                      >
+                        {tab.title}
+                      </Tab>
+                    ))}
+                  </div>
+                </Tab.List>
+              )}
+
               <Tab.Panels as={Fragment}>
                 <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto">
                   <RecentPagesList />

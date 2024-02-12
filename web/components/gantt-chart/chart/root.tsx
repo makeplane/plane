@@ -28,6 +28,7 @@ type ChartViewRootProps = {
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
   enableReorder: boolean;
+  enableAddBlock: boolean;
   bottomSpacing: boolean;
   showAllBlocks: boolean;
 };
@@ -45,6 +46,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     enableBlockRightResize,
     enableBlockMove,
     enableReorder,
+    enableAddBlock,
     bottomSpacing,
     showAllBlocks,
   } = props;
@@ -192,6 +194,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
         enableBlockMove={enableBlockMove}
         enableBlockRightResize={enableBlockRightResize}
         enableReorder={enableReorder}
+        enableAddBlock={enableAddBlock}
         itemsContainerWidth={itemsContainerWidth}
         showAllBlocks={showAllBlocks}
         sidebarToRender={sidebarToRender}
