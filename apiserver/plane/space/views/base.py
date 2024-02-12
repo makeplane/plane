@@ -1,4 +1,5 @@
 # Python imports
+import traceback
 import zoneinfo
 
 # Django imports
@@ -103,7 +104,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             print(e) if settings.DEBUG else print("Server Error")
             capture_exception(e)
             return Response(
-                {"error": f"Unhandled exception: {type(e).__name__}"},
+                {"error": f"Unhandled exception: {type(e).__name__}{('\n\n' + traceback.format_exc()) if settings.DEBUG else ''}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -193,7 +194,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 print(e)
             capture_exception(e)
             return Response(
-                {"error": f"Unhandled exception: {type(e).__name__}"},
+                {"error": f"Unhandled exception: {type(e).__name__}{('\n\n' + traceback.format_exc()) if settings.DEBUG else ''}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
