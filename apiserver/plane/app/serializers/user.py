@@ -9,6 +9,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     Profile,
     Account,
+    Session,
 )
 from plane.license.models import InstanceAdmin, Instance
 
@@ -209,4 +210,11 @@ class ProfileSerializer(BaseSerializer):
 class AccountSerializer(BaseSerializer):
     class Meta:
         model = Account
+        fields = "__all__"
+
+
+class SessionSerializer(BaseSerializer):
+
+    class Meta:
+        model = Session
         fields = "__all__"

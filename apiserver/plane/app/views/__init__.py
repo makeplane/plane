@@ -96,6 +96,10 @@ from .auth_extended import (
     EmailCheckEndpoint,
     MagicGenerateEndpoint,
     AccountEndpoint,
+    SessionEndpoint,
+    UserIdentifierEndpoint,
+    UserEmailEndpoint,
+    UserRegisterEndpoint,
 )
 
 

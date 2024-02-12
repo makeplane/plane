@@ -1,6 +1,6 @@
 from .base import BaseModel
 
-from .user import User, Account, Profile
+from .user import User, Account, Profile, Session
 
 from .workspace import (
     Workspace,

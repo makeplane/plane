@@ -18,10 +18,14 @@ from plane.app.views import (
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
     AccountEndpoint,
+    SessionEndpoint,
     ## End Auth Extender
     # API Tokens
     ApiTokenEndpoint,
     ## End API Tokens
+    UserIdentifierEndpoint,
+    UserEmailEndpoint,
+    UserRegisterEndpoint,
 )
 
 
@@ -64,6 +68,16 @@ urlpatterns = [
         AccountEndpoint.as_view(),
         name="accounts",
     ),
+    path(
+        "auth/sessions/",
+        SessionEndpoint.as_view(),
+        name="sessions",
+    ),
+    path(
+        "auth/sessions/<str:token>/",
+        SessionEndpoint.as_view(),
+        name="sessions",
+    ),
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
     path(
@@ -72,4 +86,22 @@ urlpatterns = [
     ## End API Tokens
     ## Google
     path("auth/google/", GoogleAuthEndpoint.as_view(), name="google-auth"),
+    ## End Google
+    # User Auth Endpoint
+    path(
+        "auth/email-check/",
+        UserEmailEndpoint.as_view(),
+        name="user-email-check",
+    ),
+    path(
+        "auth/users/<str:id>/",
+        UserIdentifierEndpoint.as_view(),
+        name="user-identifier",
+    ),
+    path(
+        "auth/register/",
+        UserRegisterEndpoint.as_view(),
+        name="user-register",
+    ),
+    ## End User Auth Endpoints
 ]

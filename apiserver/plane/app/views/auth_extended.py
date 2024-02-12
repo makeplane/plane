@@ -4,6 +4,8 @@ import os
 import json
 import random
 import string
+import pytz
+from datetime import datetime
 
 ## Django imports
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -17,6 +19,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.utils import timezone
 
 ## Third Party Imports
 from rest_framework import status
@@ -31,8 +34,9 @@ from plane.app.serializers import (
     ResetPasswordSerializer,
     UserSerializer,
     AccountSerializer,
+    SessionSerializer,
 )
-from plane.db.models import User, WorkspaceMemberInvite, Account
+from plane.db.models import User, WorkspaceMemberInvite, Account, Session
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.forgot_password_task import forgot_password
 from plane.license.models import Instance
@@ -496,12 +500,72 @@ class AccountEndpoint(BaseAPIView):
                 provider_account_id=provider_id, provider=provider
             )
             serializer = AccountSerializer(account)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            user = User.objects.get(pk=account.user_id)
+            user_serializer = UserSerializer(user)
+            return Response(
+                {"account": serializer.data, "user": user_serializer.data},
+                status=status.HTTP_200_OK,
+            )
         except Account.DoesNotExist:
             return Response(
                 {"error": "Account does not exists"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+    def post(self, request, provider, provider_id):
+        user_id = request.data.get("userId", False)
+        if not user_id:
+            return Response(
+                {"error": "UserId, Provider and provider id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        account, created = Account.objects.get_or_create(
+            user_id=user_id,
+            provider=provider,
+            provider_account_id=provider_id,
+            defaults={
+                "access_token": request.data.get("access_token"),
+                "refresh_token": request.data.get("refresh_token", None),
+                "access_token_expired_at": (
+                    datetime.fromtimestamp(
+                        request.data.get("access_token_expired_at"),
+                        tz=pytz.utc,
+                    )
+                    if request.data.get("access_token_expired_at")
+                    else None
+                ),
+                "refresh_token_expired_at": (
+                    datetime.fromtimestamp(
+                        request.data.get("refresh_token_expired_at"),
+                        tz=pytz.utc,
+                    )
+                    if request.data.get("refresh_token_expired_at")
+                    else None
+                ),
+            },
+        )
+
+        if not created:
+            # account access and refresh token
+            account.access_token = request.data.get("access_token")
+            account.access_token_expired_at = (
+                datetime.fromtimestamp(
+                    request.data.get("access_token_expired_at"),
+                    tz=pytz.utc,
+                )
+                if request.data.get("access_token_expired_at")
+                else None
+            )
+            account.metadata = request.data.get("metadata", {})
+
+        # last connected at
+        account.last_connected_at = timezone.now()
+        account.save()
+
+        serializer = AccountSerializer(account)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class SessionEndpoint(BaseAPIView):
 
@@ -509,16 +573,121 @@ class SessionEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    def get(self, request, provider, provider_id):
+    def get(self, request, token):
+        session = Session.objects.get(token=token)
+        serializer = SessionSerializer(session)
+        user = User.objects.get(pk=session.user_id)
+        user_serializer = UserSerializer(user)
+        return Response(
+            {"session": serializer.data, "user": user_serializer.data},
+            status=status.HTTP_200_OK,
+        )
+
+    def post(self, request):
         try:
-            account = Account.objects.get(
-                provider_account_id=provider_id, provider=provider
+            user_id = request.data.get("user", False)
+            token = request.data.get("token", False)
+            expires = request.data.get("expires", False)
+
+            print(user_id, token, expires)
+            print(not user_id, not token, not expires)
+
+            if not user_id or not token or not expires:
+                print("Wrong condition")
+                return Response(
+                    {"error": "User Id, token and expires are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            session = Session.objects.create(
+                user_id=user_id,
+                token=token,
+                expires=expires,
             )
-            serializer = AccountSerializer(account)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Account.DoesNotExist:
+            serializer = SessionSerializer(session)
+            user = User.objects.get(pk=user_id)
+            user_serializer = UserSerializer(user)
+
             return Response(
-                {"error": "Account does not exists"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"session": serializer.data, "user": user_serializer.data},
+                status=status.HTTP_200_OK,
             )
-    
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserIdentifierEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, id=None):
+        user = User.objects.get(pk=id)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserEmailEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request, email=None):
+        email = request.data.get("email", False)
+        if not email:
+            return Response(
+                {"error": "Email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.get(email=email)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserRegisterEndpoint(BaseAPIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        email = request.data.get("email", False)
+        if not email:
+            return Response(
+                {"error": "Email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get name
+        name = request.data.get("name", False)
+        # Get avatar
+        avatar = request.data.get("image", False)
+
+        user = User.objects.filter(email=email).first()
+
+        if user is None:
+            user = User.objects.create(
+                email=email,
+                username=uuid.uuid4().hex,
+                password=make_password(uuid.uuid4().hex),
+                is_password_autoset=True,
+            )
+
+            # Save name
+            if name:
+                user.first_name = name.split(" ")[0]
+                if len(name.split(" ")) == 2:
+                    user.last_name = name.split(" ")[1]
+            # avatar
+            if avatar:
+                user.avatar = avatar
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
