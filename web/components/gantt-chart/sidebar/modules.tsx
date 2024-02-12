@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
@@ -9,8 +8,11 @@ import { Loader } from "@plane/ui";
 import { ModuleGanttSidebarBlock } from "components/modules";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
+// constants
+import { BLOCK_HEIGHT } from "../constants";
 
 type Props = {
   title: string;
@@ -20,12 +22,8 @@ type Props = {
 };
 
 export const ModuleGanttSidebar: React.FC<Props> = (props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, enableReorder } = props;
-
-  const router = useRouter();
-  const { cycleId } = router.query;
-
+  const { blockUpdateHandler, blocks, enableReorder } = props;
+  // chart hook
   const { activeBlock, dispatch } = useChart();
 
   // update the active block on hover
@@ -84,12 +82,7 @@ export const ModuleGanttSidebar: React.FC<Props> = (props) => {
     <DragDropContext onDragEnd={handleOrderChange}>
       <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
-          <div
-            id={`gantt-sidebar-${cycleId}`}
-            className="mt-3 max-h-full overflow-y-auto pl-2.5"
-            ref={droppableProvided.innerRef}
-            {...droppableProvided.droppableProps}
-          >
+          <div className="h-full" ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
             <>
               {blocks ? (
                 blocks.map((block, index) => {
@@ -104,7 +97,9 @@ export const ModuleGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
+                          className={cn({
+                            "rounded bg-custom-background-80": snapshot.isDragging,
+                          })}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -112,9 +107,12 @@ export const ModuleGanttSidebar: React.FC<Props> = (props) => {
                         >
                           <div
                             id={`sidebar-block-${block.id}`}
-                            className={`group flex h-full w-full items-center gap-2 rounded-l px-2 pr-4 ${
-                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
-                            }`}
+                            className={cn("group w-full flex items-center gap-2 pl-2 pr-4", {
+                              "bg-custom-background-80": activeBlock?.id === block.id,
+                            })}
+                            style={{
+                              height: `${BLOCK_HEIGHT}px`,
+                            }}
                           >
                             {enableReorder && (
                               <button
@@ -128,7 +126,7 @@ export const ModuleGanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                               <div className="flex-grow truncate">
-                                <ModuleGanttSidebarBlock data={block.data} />
+                                <ModuleGanttSidebarBlock moduleId={block.data.id} />
                               </div>
                               {duration !== undefined && (
                                 <div className="flex-shrink-0 text-sm text-custom-text-200">
