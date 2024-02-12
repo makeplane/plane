@@ -412,6 +412,13 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
 };
 
+export enum EIssueListRow {
+  HEADER = "HEADER",
+  ISSUE = "ISSUE",
+  NO_ISSUES = "NO_ISSUES",
+  QUICK_ADD = "QUICK_ADD",
+}
+
 export const getValueFromObject = (object: Object, key: string): string | number | boolean | null => {
   const keys = key ? key.split(".") : [];
 

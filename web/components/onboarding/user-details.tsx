@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { Camera, User2 } from "lucide-react";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 // components
 import { Button, Input } from "@plane/ui";
 import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
@@ -15,6 +15,7 @@ import { IUser } from "@plane/types";
 import { FileService } from "services/file.service";
 // assets
 import IssuesSvg from "public/onboarding/onboarding-issues.webp";
+import { USER_DETAILS } from "constants/event-tracker";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -48,6 +49,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   // store hooks
   const { updateCurrentUser } = useUser();
   const { workspaces } = useWorkspace();
+  const { captureEvent } = useEventTracker();
   // derived values
   const workspaceName = workspaces ? Object.values(workspaces)?.[0]?.name : "New Workspace";
   // form info
@@ -76,7 +78,21 @@ export const UserDetails: React.FC<Props> = observer((props) => {
       },
     };
 
-    await updateCurrentUser(payload);
+    await updateCurrentUser(payload)
+      .then(() => {
+        captureEvent(USER_DETAILS, {
+          use_case: formData.use_case,
+          state: "SUCCESS",
+          element: "Onboarding",
+        });
+      })
+      .catch(() => {
+        captureEvent(USER_DETAILS, {
+          use_case: formData.use_case,
+          state: "FAILED",
+          element: "Onboarding",
+        });
+      });
   };
   const handleDelete = (url: string | null | undefined) => {
     if (!url) return;

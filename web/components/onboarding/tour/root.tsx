@@ -15,6 +15,8 @@ import CyclesTour from "public/onboarding/cycles.webp";
 import ModulesTour from "public/onboarding/modules.webp";
 import ViewsTour from "public/onboarding/views.webp";
 import PagesTour from "public/onboarding/pages.webp";
+// constants
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "constants/event-tracker";
 
 type Props = {
   onComplete: () => void;
@@ -79,7 +81,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   const [step, setStep] = useState<TTourSteps>("welcome");
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const { currentUser } = useUser();
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
@@ -103,13 +105,22 @@ export const TourRoot: React.FC<Props> = observer((props) => {
               </p>
               <div className="flex h-full items-end">
                 <div className="mt-8 flex items-center gap-6">
-                  <Button variant="primary" onClick={() => setStep("issues")}>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      captureEvent(PRODUCT_TOUR_STARTED);
+                      setStep("issues");
+                    }}
+                  >
                     Take a Product Tour
                   </Button>
                   <button
                     type="button"
                     className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
-                    onClick={onComplete}
+                    onClick={() => {
+                      captureEvent(PRODUCT_TOUR_SKIPPED);
+                      onComplete();
+                    }}
                   >
                     No thanks, I will explore it myself
                   </button>
@@ -156,8 +167,8 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                   <Button
                     variant="primary"
                     onClick={() => {
+                      setTrackElement("Product tour");
                       onComplete();
-                      setTrackElement("Onboarding tour");
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                   >

@@ -14,6 +14,7 @@ import { ProfileSettingsLayout } from "layouts/settings-layout";
 import { Button, Input, Spinner } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 interface FormValues {
   old_password: string;
@@ -86,6 +87,10 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     );
 
   return (
+    <div className="flex flex-col h-full">
+      <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
+        <SidebarHamburgerToggle />
+      </div>
     <form
       onSubmit={handleSubmit(handleChangePassword)}
       className="mx-auto mt-16 flex h-full w-full flex-col gap-8 px-8 pb-8 lg:w-3/5"
@@ -168,6 +173,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
         </Button>
       </div>
     </form>
+    </div>
   );
 });
 

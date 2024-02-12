@@ -7,12 +7,13 @@ import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;
+  onClose: () => void;
   onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
 export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props) => {
-  const { issue, onChange, disabled } = props;
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
@@ -37,6 +38,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
         }
         buttonClassName="text-left"
         buttonContainerClassName="w-full"
+        onClose={onClose}
       />
     </div>
   );

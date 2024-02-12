@@ -11,9 +11,11 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { createIssuePayload } from "helpers/issue.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IProject, TIssue } from "@plane/types";
-import { cn } from "helpers/common.helper";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 interface IInputProps {
   formKey: string;
@@ -112,7 +114,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
       quickAddCallback &&
         (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId).then((res) => {
           captureIssueEvent({
-            eventName: "Issue created",
+            eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
             path: router.asPath,
           });
@@ -124,7 +126,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
       });
     } catch (err: any) {
       captureIssueEvent({
-        eventName: "Issue created",
+        eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
         path: router.asPath,
       });

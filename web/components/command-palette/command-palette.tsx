@@ -163,6 +163,8 @@ export const CommandPalette: FC = observer(() => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
+
   if (!currentUser) return null;
 
   return (
@@ -217,6 +219,7 @@ export const CommandPalette: FC = observer(() => {
         onClose={() => toggleCreateIssueModal(false)}
         data={cycleId ? { cycle_id: cycleId.toString() } : moduleId ? { module_ids: [moduleId.toString()] } : undefined}
         storeType={createIssueStoreType}
+        isDraft={isDraftIssue}
       />
 
       {workspaceSlug && projectId && issueId && issueDetails && (

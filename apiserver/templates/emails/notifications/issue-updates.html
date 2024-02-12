@@ -66,7 +66,7 @@
                         style="margin-left: 30px; margin-bottom: 20px; margin-top: 20px"
                         >
                         <img
-                           src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/plane-logo.webp"
+                           src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/plane-logo.png"
                            width="130"
                            height="40"
                            border="0"
@@ -280,7 +280,7 @@
                         <tr>
                            <td>
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/due-date.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/due-date.png"
                                  width="12"
                                  height="12"
                                  border="0"
@@ -341,7 +341,7 @@
                         <tr>
                            <td>
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/duplicate.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/duplicate.png"
                                  width="12"
                                  height="12"
                                  border="0"
@@ -436,7 +436,7 @@
                         <tr>
                            <td valign="top" style="white-space: nowrap; padding: 0px;">
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/assignee.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/assignee.png"
                                  width="12"
                                  height="12"
                                  border="0"
@@ -532,7 +532,7 @@
                         <tr>
                            <td valign="top" style="white-space: nowrap; padding: 0px;">
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/labels.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/labels.png"
                                  width="12"
                                  height="12"
                                  border="0"
@@ -629,7 +629,7 @@
                         <tr>
                            <td>
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/state.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/state.png"
                                  width="12"
                                  height="12"
                                  border="0"
@@ -647,15 +647,17 @@
                                  State:
                               </p>
                            </td>
-                           <td >
+                           {% if update.changes.state.old_value.0 == 'Backlog' or  update.changes.state.old_value.0 == 'In Progress' or update.changes.state.old_value.0 == 'Done' or update.changes.state.old_value.0 == 'Cancelled' %}
+                           <td>
                               <img
-                                 src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
+                                 src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
                                  width="12"
                                  height="12"
                                  border="0"
                                  style="display: block; margin-left: 5px;"
                                  />
                            </td>
+                           {% endif %}
                            <td>
                               <p
                                  style="
@@ -669,22 +671,24 @@
                            </td>
                            <td style="padding-left: 10px; padding-right: 10px;">
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png"
                                  width="16"
                                  height="16"
                                  border="0"
                                  style="display: block;"
                                  />
                            </td>
-                           <td >
+                           {% if update.changes.state.new_value|last == 'Backlog' or  update.changes.state.new_value|last == 'In Progress' or update.changes.state.new_value|last == 'Done' or update.changes.state.new_value|last == 'Cancelled' %}
+                           <td>
                               <img
-                                 src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.webp{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.webp{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.webp{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.webp{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.webp{% endif %}"
+                                 src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.png{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
                                  width="12"
                                  height="12"
                                  border="0"
                                  style="display: block;"
                                  />
                            </td>
+                           {% endif %}
                            <td>
                               <p
                                  style="
@@ -707,7 +711,7 @@
                         <tr>
                            <td valign="top">
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.png"
                                  width="12"
                                  height="12"
                                  border="0"
@@ -768,7 +772,7 @@
                         <tr>
                            <td>
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/priority.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/priority.png"
                                  width="12"
                                  height="12"
                                  border="0"
@@ -808,7 +812,7 @@
                            </td>
                            <td style="padding-left: 10px; padding-right: 10px;">
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png"
                                  width="16"
                                  height="16"
                                  border="0"
@@ -846,7 +850,7 @@
                         <tr style="overflow-wrap: break-word;">
                            <td> 
                               <img
-                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.webp"
+                                 src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png"
                                  width="12"
                                  height="12"
                                  border="0"

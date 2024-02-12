@@ -1,5 +1,7 @@
+import { useRef } from "react";
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+import { HeaderGroupByCard } from "./headers/group-by-card";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
@@ -10,12 +12,12 @@ import {
   IIssueDisplayProperties,
   TIssueMap,
   TUnGroupedIssues,
+  IGroupByColumn,
 } from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
-import { HeaderGroupByCard } from "./headers/group-by-card";
-import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
+import { getGroupByColumns } from "../utils";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
@@ -64,9 +66,11 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const label = useLabel();
   const projectState = useProjectState();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member, true);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  if (!list) return null;
+  const groups = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member, true);
+
+  if (!groups) return null;
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
@@ -104,11 +108,11 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className="relative h-full w-full">
-      {list &&
-        list.length > 0 &&
-        list.map(
-          (_list: any) =>
+    <div ref={containerRef} className="relative overflow-auto h-full w-full">
+      {groups &&
+        groups.length > 0 &&
+        groups.map(
+          (_list: IGroupByColumn) =>
             validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
               <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
                 <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
@@ -131,6 +135,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                     quickActions={quickActions}
                     displayProperties={displayProperties}
                     canEditProperties={canEditProperties}
+                    containerRef={containerRef}
                   />
                 )}
 

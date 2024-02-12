@@ -21,6 +21,7 @@ import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 
 type Props = {
   projectId: string;
+  onClose?: () => void;
 } & MemberDropdownProps;
 
 export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
@@ -36,6 +37,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
     hideIcon = false,
     multiple,
     onChange,
+    onClose,
     placeholder = "Members",
     placement,
     projectId,
@@ -105,8 +107,10 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
+    if (!isOpen) return;
+    setIsOpen(false);
     if (referenceElement) referenceElement.blur();
+    onClose && onClose();
   };
 
   const toggleDropdown = () => {
@@ -144,7 +148,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
             onClick={handleOnClick}
           >
             {button}
@@ -154,7 +158,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,

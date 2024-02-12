@@ -18,6 +18,8 @@ import { GptAssistantPopover } from "components/core";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -65,7 +67,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     config: { envConfig },
   } = useApplication();
   const { captureIssueEvent } = useEventTracker();
-  const { currentWorkspace } = useWorkspace();
 
   const {
     control,
@@ -94,16 +95,11 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           handleClose();
         } else reset(defaultValues);
         captureIssueEvent({
-          eventName: "Issue created",
+          eventName: ISSUE_CREATED,
           payload: {
             ...formData,
             state: "SUCCESS",
             element: "Inbox page",
-          },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
           },
           path: router.pathname,
         });
@@ -111,16 +107,11 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
       .catch((error) => {
         console.error(error);
         captureIssueEvent({
-          eventName: "Issue created",
+          eventName: ISSUE_CREATED,
           payload: {
             ...formData,
             state: "FAILED",
             element: "Inbox page",
-          },
-          group: {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
           },
           path: router.pathname,
         });

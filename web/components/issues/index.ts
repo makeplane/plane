@@ -1,6 +1,5 @@
 export * from "./attachment";
 export * from "./issue-modal";
-export * from "./view-select";
 export * from "./delete-issue-modal";
 export * from "./description-form";
 export * from "./issue-layouts";
