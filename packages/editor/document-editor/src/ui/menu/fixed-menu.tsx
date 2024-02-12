@@ -77,7 +77,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
   }
 
   return (
-    <div className="flex items-center divide-x divide-custom-border-200">
+    <div className="flex flex-wrap items-center divide-x divide-custom-border-200">
       <div className="flex items-center gap-0.5 pr-2">
         {basicMarkItems.map((item) => (
           <button

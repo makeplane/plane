@@ -213,7 +213,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                   )}
                 </Button>
               </span>
-              <Inbox className="w-4 h-4 mr-2 text-custom-text-200" />
+              <Inbox className="w-4 h-4 mr-2 text-custom-text-200 block md:hidden" />
             </Link>
           )}
           {canUserCreateIssue && (

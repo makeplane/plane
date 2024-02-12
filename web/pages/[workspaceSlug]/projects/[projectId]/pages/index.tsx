@@ -103,6 +103,25 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
+  const mobileTabList = (
+    <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
+      <div className="flex flex-wrap items-center gap-4">
+        {PAGE_TABS_LIST.map((tab) => (
+          <Tab
+            key={tab.key}
+            className={({ selected }) =>
+              `text-sm outline-none pb-3 ${
+                selected ? "border-custom-primary-100 text-custom-primary-100 border-b" : ""
+              }`
+            }
+          >
+            {tab.title}
+          </Tab>
+        ))}
+      </div>
+    </Tab.List>
+  );
+
   if (loader || archivedPageLoader)
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -121,8 +140,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               projectId={projectId.toString()}
             />
           )}
-          <div className="flex h-full flex-col space-y-5 overflow-hidden p-6">
-            <div className="flex justify-between gap-4">
+          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:p-6">
+            <div className="justify-between gap-4 hidden md:flex">
               <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
             </div>
             <Tab.Group
@@ -147,7 +166,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
                 }
               }}
             >
-              <Tab.List as="div" className="mb-6 flex items-center justify-between">
+              <div className="md:hidden">{mobileTabList}</div>
+              <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
                 <div className="flex flex-wrap items-center gap-4">
                   {PAGE_TABS_LIST.map((tab) => (
                     <Tab
