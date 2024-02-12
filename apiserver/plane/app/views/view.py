@@ -194,6 +194,11 @@ class WorkspaceViewViewSet(BaseViewSet):
             .filter(pk=pk, workspace__slug=slug)
             .first()
         )
+        if view.owned_by != self.request.user:
+            return Response(
+                {"error": "You cannot update the view"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         view.access = request.data.get("access", view.access)
         view.save(update_fields=["access"])
         return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
@@ -357,6 +362,11 @@ class ProjectViewViewSet(BaseViewSet):
             .filter(pk=pk, project_id=project_id, workspace__slug=slug)
             .first()
         )
+        if view.owned_by != self.request.user:
+            return Response(
+                {"error": "You cannot update the view"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         view.access = request.data.get("access", view.access)
         view.save(update_fields=["access"])
         return Response(ViewSerializer(view).data, status=status.HTTP_200_OK)
