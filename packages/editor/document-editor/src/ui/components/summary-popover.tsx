@@ -33,9 +33,8 @@ export const SummaryPopover: React.FC<Props> = (props) => {
       <button
         type="button"
         ref={setReferenceElement}
-        className={`grid h-7 w-7 place-items-center rounded ${
-          sidePeekVisible ? "bg-custom-primary-100/20 text-custom-primary-100" : "text-custom-text-300"
-        }`}
+        className={`grid h-7 w-7 place-items-center rounded ${sidePeekVisible ? "bg-custom-primary-100/20 text-custom-primary-100" : "text-custom-text-300"
+          }`}
         onClick={() => setSidePeekVisible(!sidePeekVisible)}
       >
         <List className="h-4 w-4" />
@@ -48,7 +47,7 @@ export const SummaryPopover: React.FC<Props> = (props) => {
             style={summaryPopoverStyles.popper}
             {...summaryPopoverAttributes.popper}
           >
-            <ContentBrowser editor={editor} markings={markings} />
+            <ContentBrowser setSidePeekVisible={setSidePeekVisible} editor={editor} markings={markings} />
           </div>
         )}
       </div>
