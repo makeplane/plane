@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject } from "hooks/store";
+import { useApplication, useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helpers
@@ -15,6 +15,8 @@ import { ISSUE_DETAILS } from "constants/fetch-keys";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { PanelRight } from "lucide-react";
+import { cn } from "helpers/common.helper";
 
 // services
 const issueService = new IssueService();
@@ -25,6 +27,7 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
   const { workspaceSlug, projectId, issueId } = router.query;
   // store hooks
   const { currentProjectDetails, getProjectById } = useProject();
+  const { theme: themeStore } = useApplication();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -33,12 +36,14 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
       : null
   );
 
+  const isSidebarCollapsed = themeStore.issueDetailSidebarCollapsed;
+
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <SidebarHamburgerToggle />
         <div>
-          <Breadcrumbs>
+          <Breadcrumbs onBack={router.back}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
@@ -85,6 +90,9 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
+      <button className="block md:hidden" onClick={() => themeStore.toggleIssueDetailSidebar()}>
+        <PanelRight className={cn("w-4 h-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")} />
+      </button>
     </div>
   );
 });

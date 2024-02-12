@@ -67,6 +67,7 @@ from .issue import (
     IssueRelationSerializer,
     RelatedIssueSerializer,
     IssuePublicSerializer,
+    IssueDetailSerializer,
 )
 
 from .module import (

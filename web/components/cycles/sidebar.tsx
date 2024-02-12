@@ -100,7 +100,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
       })
 
-      .catch((_) => {
+      .catch(() => {
         captureCycleEvent({
           eventName: CYCLE_UPDATED,
           payload: {

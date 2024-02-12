@@ -1,53 +1,30 @@
-import { useRouter } from "next/router";
-import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
 import { useChart } from "components/gantt-chart/hooks";
-import { useIssueDetail } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { GanttQuickAddIssueForm, IssueGanttSidebarBlock } from "components/issues";
+import { CycleGanttSidebarBlock } from "components/cycles";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
-import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
-import { TIssue } from "@plane/types";
+import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
+// constants
+import { BLOCK_HEIGHT } from "../constants";
 
 type Props = {
+  title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
   enableReorder: boolean;
-  enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
-  disableIssueCreation?: boolean;
-  showAllBlocks?: boolean;
 };
 
-export const IssueGanttSidebar: React.FC<Props> = (props) => {
-  const {
-    blockUpdateHandler,
-    blocks,
-    enableReorder,
-    enableQuickIssueCreate,
-    quickAddCallback,
-    viewId,
-    disableIssueCreation,
-    showAllBlocks = false,
-  } = props;
-
-  const router = useRouter();
-  const { cycleId } = router.query;
-
+export const CycleGanttSidebar: React.FC<Props> = (props) => {
+  const { blockUpdateHandler, blocks, enableReorder } = props;
+  // chart hook
   const { activeBlock, dispatch } = useChart();
-  const { peekIssue } = useIssueDetail();
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -105,20 +82,10 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
     <DragDropContext onDragEnd={handleOrderChange}>
       <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
-          <div
-            id={`gantt-sidebar-${cycleId}`}
-            className="mt-[12px] max-h-full overflow-y-auto pl-2.5"
-            ref={droppableProvided.innerRef}
-            {...droppableProvided.droppableProps}
-          >
+          <div className="h-full" ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const isBlockVisibleOnSidebar = block.start_date && block.target_date;
-
-                  // hide the block if it doesn't have start and target dates and showAllBlocks is false
-                  if (!showAllBlocks && !isBlockVisibleOnSidebar) return;
-
                   const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
                   return (
@@ -130,14 +97,9 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={cn(
-                            "h-11",
-                            { "rounded bg-custom-background-80": snapshot.isDragging },
-                            {
-                              "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
-                                peekIssue?.issueId === block.data.id,
-                            }
-                          )}
+                          className={cn({
+                            "rounded bg-custom-background-80": snapshot.isDragging,
+                          })}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -145,9 +107,12 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                         >
                           <div
                             id={`sidebar-block-${block.id}`}
-                            className={`group flex h-full w-full items-center gap-2 rounded-l px-2 pr-4 ${
-                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
-                            }`}
+                            className={cn("group w-full flex items-center gap-2 pl-2 pr-4", {
+                              "bg-custom-background-80": activeBlock?.id === block.id,
+                            })}
+                            style={{
+                              height: `${BLOCK_HEIGHT}px`,
+                            }}
                           >
                             {enableReorder && (
                               <button
@@ -161,13 +126,11 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                               <div className="flex-grow truncate">
-                                <IssueGanttSidebarBlock data={block.data} />
+                                <CycleGanttSidebarBlock cycleId={block.data.id} />
                               </div>
-                              {duration !== undefined && (
+                              {duration && (
                                 <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                  <span>
-                                    {duration} day{duration > 1 ? "s" : ""}
-                                  </span>
+                                  {duration} day{duration > 1 ? "s" : ""}
                                 </div>
                               )}
                             </div>
@@ -187,9 +150,6 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-            {enableQuickIssueCreate && !disableIssueCreation && (
-              <GanttQuickAddIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
-            )}
           </div>
         )}
       </Droppable>

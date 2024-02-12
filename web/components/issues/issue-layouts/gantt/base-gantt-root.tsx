@@ -69,7 +69,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as TIssue[]) : null}
           blockUpdateHandler={updateIssueBlockStructure}
-          blockToRender={(data: TIssue) => <IssueGanttBlock data={data} />}
+          blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
           sidebarToRender={(props) => (
             <IssueGanttSidebar
               {...props}

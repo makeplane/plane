@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -12,7 +12,7 @@ import { Loader } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // fetch-keys
-import { useIssueDetail } from "hooks/store";
+import { useApplication, useIssueDetail } from "hooks/store";
 
 const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
@@ -23,6 +23,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
     fetchIssue,
     issue: { getIssueById },
   } = useIssueDetail();
+  const { theme: themeStore } = useApplication();
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_${workspaceSlug}_${projectId}_${issueId}` : null,
@@ -33,6 +34,21 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
 
   const issue = getIssueById(issueId?.toString() || "") || undefined;
   const issueLoader = !issue || isLoading ? true : false;
+
+  useEffect(() => {
+    const handleToggleIssueDetailSidebar = () => {
+      if (window && window.innerWidth < 768) {
+        themeStore.toggleIssueDetailSidebar(true);
+      }
+      if (window && themeStore.issueDetailSidebarCollapsed && window.innerWidth >= 768) {
+        themeStore.toggleIssueDetailSidebar(false);
+      }
+    };
+
+    window.addEventListener("resize", handleToggleIssueDetailSidebar);
+    handleToggleIssueDetailSidebar();
+    return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
+  }, [themeStore]);
 
   return (
     <>

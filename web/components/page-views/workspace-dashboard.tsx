@@ -59,6 +59,11 @@ export const WorkspaceDashboardView = observer(() => {
 
   return (
     <>
+      {currentUser && !currentUser.is_tour_completed && (
+        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
+          <TourRoot onComplete={handleTourCompleted} />
+        </div>
+      )}
       {homeDashboardId && joinedProjectIds ? (
         <>
           {joinedProjectIds.length > 0 ? (
@@ -66,11 +71,7 @@ export const WorkspaceDashboardView = observer(() => {
               <IssuePeekOverview />
               <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
                 {currentUser && <UserGreetingsView user={currentUser} />}
-                {currentUser && !currentUser.is_tour_completed && (
-                  <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
-                    <TourRoot onComplete={handleTourCompleted} />
-                  </div>
-                )}
+
                 <DashboardWidgets />
               </div>
             </>

@@ -1,16 +1,30 @@
 import { useRouter } from "next/router";
+import { observer } from "mobx-react";
+// hooks
+import { useApplication, useCycle } from "hooks/store";
 // ui
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
-// types
-import { ICycle } from "@plane/types";
 
-export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
+type Props = {
+  cycleId: string;
+};
+
+export const CycleGanttBlock: React.FC<Props> = observer((props) => {
+  const { cycleId } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { getCycleById } = useCycle();
+  // derived values
+  const cycleDetails = getCycleById(cycleId);
 
-  const cycleStatus = data.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
+
   return (
     <div
       className="relative flex h-full w-full items-center rounded"
@@ -26,36 +40,45 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
             ? "rgb(var(--color-text-200))"
             : "",
       }}
-      onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`)}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project}/cycles/${cycleDetails?.id}`)}
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
         tooltipContent={
           <div className="space-y-1">
-            <h5>{data?.name}</h5>
+            <h5>{cycleDetails?.name}</h5>
             <div>
-              {renderFormattedDate(data?.start_date ?? "")} to {renderFormattedDate(data?.end_date ?? "")}
+              {renderFormattedDate(cycleDetails?.start_date ?? "")} to{" "}
+              {renderFormattedDate(cycleDetails?.end_date ?? "")}
             </div>
           </div>
         }
         position="top-left"
       >
-        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{cycleDetails?.name}</div>
       </Tooltip>
     </div>
   );
-};
+});
 
-export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
+export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
+  const { cycleId } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { getCycleById } = useCycle();
+  // derived values
+  const cycleDetails = getCycleById(cycleId);
 
-  const cycleStatus = data.status.toLocaleLowerCase();
+  const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
 
   return (
     <div
       className="relative flex h-full w-full items-center gap-2"
-      onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`)}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project}/cycles/${cycleDetails?.id}`)}
     >
       <ContrastIcon
         className="h-5 w-5 flex-shrink-0"
@@ -71,7 +94,7 @@ export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
             : ""
         }`}
       />
-      <h6 className="flex-grow truncate text-sm font-medium">{data?.name}</h6>
+      <h6 className="flex-grow truncate text-sm font-medium">{cycleDetails?.name}</h6>
     </div>
   );
-};
+});

@@ -56,7 +56,7 @@ export const ProjectsHeader = observer(() => {
             }}
             className="items-center"
           >
-            Add Project
+            <div className="hidden sm:block">Add</div> Project
           </Button>
         )}
       </div>
