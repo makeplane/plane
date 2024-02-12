@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -19,6 +19,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { IWorkspace } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
+import { WORKSPACE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -37,9 +38,7 @@ export const WorkspaceDetails: FC = observer(() => {
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureWorkspaceEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -70,9 +69,13 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        postHogEventTracker("WORKSPACE_UPDATED", {
-          ...res,
-          state: "SUCCESS",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_UPDATED,
+          payload: {
+            ...res,
+            state: "SUCCESS",
+            element: "Workspace general settings page",
+          },
         });
         setToastAlert({
           title: "Success",
@@ -81,8 +84,12 @@ export const WorkspaceDetails: FC = observer(() => {
         });
       })
       .catch((err) => {
-        postHogEventTracker("WORKSPACE_UPDATED", {
-          state: "FAILED",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_UPDATED,
+          payload: {
+            state: "FAILED",
+            element: "Workspace general settings page",
+          },
         });
         console.error(err);
       });

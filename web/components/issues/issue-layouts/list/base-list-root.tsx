@@ -51,6 +51,7 @@ interface IBaseListRoot {
   storeType: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  isCompletedCycle?: boolean;
 }
 
 export const BaseListRoot = observer((props: IBaseListRoot) => {
@@ -63,6 +64,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     storeType,
     addIssuesToView,
     canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
   } = props;
   // mobx store
   const {
@@ -112,6 +114,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         handleRemoveFromView={
           issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
         }
+        readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,25 +122,24 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   return (
-    <>
-      <div className={`relative h-full w-full bg-custom-background-90`}>
-        <List
-          issuesMap={issueMap}
-          displayProperties={displayProperties}
-          group_by={group_by}
-          handleIssues={handleIssues}
-          quickActions={renderQuickActions}
-          issueIds={issueIds}
-          showEmptyGroup={showEmptyGroup}
-          viewId={viewId}
-          quickAddCallback={issues?.quickAddIssue}
-          enableIssueQuickAdd={!!enableQuickAdd}
-          canEditProperties={canEditProperties}
-          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-          storeType={storeType}
-          addIssuesToView={addIssuesToView}
-        />
-      </div>
-    </>
+    <div className={`relative h-full w-full bg-custom-background-90`}>
+      <List
+        issuesMap={issueMap}
+        displayProperties={displayProperties}
+        group_by={group_by}
+        handleIssues={handleIssues}
+        quickActions={renderQuickActions}
+        issueIds={issueIds}
+        showEmptyGroup={showEmptyGroup}
+        viewId={viewId}
+        quickAddCallback={issues?.quickAddIssue}
+        enableIssueQuickAdd={!!enableQuickAdd}
+        canEditProperties={canEditProperties}
+        disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+        storeType={storeType}
+        addIssuesToView={addIssuesToView}
+        isCompletedCycle={isCompletedCycle}
+      />
+    </div>
   );
 });

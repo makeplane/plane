@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { IProject } from "@plane/types";
@@ -51,14 +51,11 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const {
-    eventTracker: { setTrackElement, postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails, updateProject } = useProject();
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // toast alert
@@ -93,14 +90,9 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
           <ToggleSwitch
             value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
-              setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
-              postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
-                workspace_id: currentWorkspace?.id,
-                workspace_slug: currentWorkspace?.slug,
-                project_id: currentProjectDetails?.id,
-                project_name: currentProjectDetails?.name,
-                project_identifier: currentProjectDetails?.identifier,
+              captureEvent(`Toggle ${feature.title.toLowerCase()}`, {
                 enabled: !currentProjectDetails?.[feature.property as keyof IProject],
+                element: "Project settings feature page",
               });
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],

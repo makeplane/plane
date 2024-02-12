@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 // hooks
-import { useChart } from "../hooks";
-// types
-import { IGanttBlock } from "../types";
+import { IGanttBlock, useChart } from "components/gantt-chart";
+// helpers
+import { cn } from "helpers/common.helper";
+// constants
+import { SIDEBAR_WIDTH } from "../constants";
 
 type Props = {
   block: IGanttBlock;
@@ -20,7 +22,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
-  const [posFromLeft, setPosFromLeft] = useState<number | null>(null);
+  const [isHidden, setIsHidden] = useState(true);
   // refs
   const resizableRef = useRef<HTMLDivElement>(null);
   // chart hook
@@ -31,12 +33,10 @@ export const ChartDraggable: React.FC<Props> = (props) => {
 
     let delWidth = 0;
 
-    const ganttContainer = document.querySelector("#gantt-container") as HTMLElement;
-    const ganttSidebar = document.querySelector("#gantt-sidebar") as HTMLElement;
+    const ganttContainer = document.querySelector("#gantt-container") as HTMLDivElement;
+    const ganttSidebar = document.querySelector("#gantt-sidebar") as HTMLDivElement;
 
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
-
-    if (!ganttContainer || !ganttSidebar || !scrollContainer) return 0;
+    if (!ganttContainer || !ganttSidebar) return 0;
 
     const posFromLeft = e.clientX;
     // manually scroll to left if reached the left end while dragging
@@ -45,7 +45,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
 
       delWidth = -5;
 
-      scrollContainer.scrollBy(delWidth, 0);
+      ganttContainer.scrollBy(delWidth, 0);
     } else delWidth = e.movementX;
 
     // manually scroll to right if reached the right end while dragging
@@ -55,7 +55,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
 
       delWidth = 5;
 
-      scrollContainer.scrollBy(delWidth, 0);
+      ganttContainer.scrollBy(delWidth, 0);
     } else delWidth = e.movementX;
 
     return delWidth;
@@ -201,50 +201,61 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   };
   // scroll to a hidden block
   const handleScrollToBlock = () => {
-    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
-
+    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
     if (!scrollContainer || !block.position) return;
-
     // update container's scroll position to the block's position
     scrollContainer.scrollLeft = block.position.marginLeft - 4;
   };
-  // update block position from viewport's left end on scroll
-  useEffect(() => {
-    const block = resizableRef.current;
-
-    if (!block) return;
-
-    setPosFromLeft(block.getBoundingClientRect().left);
-  }, [scrollLeft]);
   // check if block is hidden on either side
   const isBlockHiddenOnLeft =
     block.position?.marginLeft &&
     block.position?.width &&
     scrollLeft > block.position.marginLeft + block.position.width;
-  const isBlockHiddenOnRight = posFromLeft && window && posFromLeft > window.innerWidth;
+
+  useEffect(() => {
+    const intersectionRoot = document.querySelector("#gantt-container") as HTMLDivElement;
+    const resizableBlock = resizableRef.current;
+    if (!resizableBlock || !intersectionRoot) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsHidden(!entry.isIntersecting);
+        });
+      },
+      {
+        root: intersectionRoot,
+        rootMargin: `0px 0px 0px -${SIDEBAR_WIDTH}px`,
+      }
+    );
+
+    observer.observe(resizableBlock);
+
+    return () => {
+      observer.unobserve(resizableBlock);
+    };
+  }, [block.data.name]);
 
   return (
     <>
-      {/* move to left side hidden block button */}
-      {isBlockHiddenOnLeft && (
-        <div
-          className="fixed z-[1] ml-1 mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+      {/* move to the hidden block */}
+      {isHidden && (
+        <button
+          type="button"
+          className="sticky z-[1] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          style={{
+            left: `${SIDEBAR_WIDTH + 4}px`,
+          }}
           onClick={handleScrollToBlock}
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
-        </div>
-      )}
-      {/* move to right side hidden block button */}
-      {isBlockHiddenOnRight && (
-        <div
-          className="fixed right-1 z-[1] mt-1.5 grid h-8 w-8 cursor-pointer place-items-center rounded border border-custom-border-300 bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
-          onClick={handleScrollToBlock}
-        >
-          <ArrowRight className="h-3.5 w-3.5" />
-        </div>
+          <ArrowRight
+            className={cn("h-3.5 w-3.5", {
+              "rotate-180": isBlockHiddenOnLeft,
+            })}
+          />
+        </button>
       )}
       <div
-        id={`block-${block.id}`}
         ref={resizableRef}
         className="group relative inline-flex h-full cursor-pointer items-center font-medium transition-all"
         style={{
@@ -259,17 +270,22 @@ export const ChartDraggable: React.FC<Props> = (props) => {
               onMouseDown={handleBlockLeftResize}
               onMouseEnter={() => setIsLeftResizing(true)}
               onMouseLeave={() => setIsLeftResizing(false)}
-              className="absolute -left-2.5 top-1/2 z-[3] h-full w-6 -translate-y-1/2 cursor-col-resize rounded-md"
+              className="absolute -left-2.5 top-1/2 -translate-y-1/2 z-[3] h-full w-6 cursor-col-resize rounded-md"
             />
             <div
-              className={`absolute top-1/2 h-7 w-1 -translate-y-1/2 rounded-sm bg-custom-background-100 transition-all duration-300 ${
-                isLeftResizing ? "-left-2.5" : "left-1"
-              }`}
+              className={cn(
+                "absolute left-1 top-1/2 -translate-y-1/2 h-7 w-1 rounded-sm bg-custom-background-100 transition-all duration-300",
+                {
+                  "-left-2.5": isLeftResizing,
+                }
+              )}
             />
           </>
         )}
         <div
-          className={`relative z-[2] flex h-8 w-full items-center rounded ${isMoving ? "pointer-events-none" : ""}`}
+          className={cn("relative z-[2] flex h-8 w-full items-center rounded", {
+            "pointer-events-none": isMoving,
+          })}
           onMouseDown={handleBlockMove}
         >
           {blockToRender(block.data)}
@@ -281,12 +297,15 @@ export const ChartDraggable: React.FC<Props> = (props) => {
               onMouseDown={handleBlockRightResize}
               onMouseEnter={() => setIsRightResizing(true)}
               onMouseLeave={() => setIsRightResizing(false)}
-              className="absolute -right-2.5 top-1/2 z-[2] h-full w-6 -translate-y-1/2 cursor-col-resize rounded-md"
+              className="absolute -right-2.5 top-1/2 -translate-y-1/2 z-[2] h-full w-6 cursor-col-resize rounded-md"
             />
             <div
-              className={`absolute top-1/2 h-7 w-1 -translate-y-1/2 rounded-sm bg-custom-background-100 transition-all duration-300 ${
-                isRightResizing ? "-right-2.5" : "right-1"
-              }`}
+              className={cn(
+                "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-1 rounded-sm bg-custom-background-100 transition-all duration-300",
+                {
+                  "-right-2.5": isRightResizing,
+                }
+              )}
             />
           </>
         )}

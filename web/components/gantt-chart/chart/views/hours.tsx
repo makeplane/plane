@@ -1,8 +1,8 @@
 import { FC } from "react";
 // context
-import { useChart } from "../hooks";
+import { useChart } from "components/gantt-chart";
 
-export const WeekChartView: FC<any> = () => {
+export const HourChartView: FC<any> = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
@@ -37,7 +37,7 @@ export const WeekChartView: FC<any> = () => {
                       </div>
                       <div
                         className={`relative flex h-full w-full flex-1 justify-center ${
-                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "") ? `bg-custom-background-80` : ``
+                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "") ? `bg-gray-100` : ``
                         }`}
                       >
                         {_item?.today && <div className="absolute bottom-0 top-0 border border-red-500"> </div>}

@@ -5,13 +5,16 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
 // hooks
-import { useApplication, useMember, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // constants
 import { ROLE } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";
+import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -45,13 +48,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   // toast alert
   const { setToastAlert } = useToast();
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { currentWorkspace } = useWorkspace();
   const {
     project: { projectMemberIds, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
@@ -81,7 +81,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const payload = { ...formData };
 
     await bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
-      .then((res) => {
+      .then(() => {
         if (onSuccess) onSuccess();
         onClose();
         setToastAlert({
@@ -89,32 +89,23 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: "success",
           message: "Members added successfully.",
         });
-        postHogEventTracker(
-          "MEMBER_ADDED",
-          {
-            ...res,
-            state: "SUCCESS",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+        captureEvent(PROJECT_MEMBER_ADDED, {
+          members: [
+            ...payload.members.map((member) => ({
+              member_id: member.member_id,
+              role: ROLE[member.role],
+            })),
+          ],
+          state: "SUCCESS",
+          element: "Project settings members page",
+        });
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker(
-          "MEMBER_ADDED",
-          {
-            state: "FAILED",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+        captureEvent(PROJECT_MEMBER_ADDED, {
+          state: "FAILED",
+          element: "Project settings members page",
+        });
       })
       .finally(() => {
         reset(defaultValues);

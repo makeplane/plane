@@ -20,10 +20,11 @@ interface Props {
   property: keyof IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  onClose: () => void;
 }
 
-export const SpreadsheetHeaderColumn = (props: Props) => {
-  const { displayFilters, handleDisplayFilterUpdate, property } = props;
+export const HeaderColumn = (props: Props) => {
+  const { displayFilters, handleDisplayFilterUpdate, property, onClose } = props;
 
   const { storedValue: selectedMenuItem, setValue: setSelectedMenuItem } = useLocalStorage(
     "spreadsheetViewSorting",
@@ -44,7 +45,8 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
 
   return (
     <CustomMenu
-      customButtonClassName="!w-full"
+      customButtonClassName="clickable !w-full"
+      customButtonTabIndex={-1}
       className="!w-full"
       customButton={
         <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-sm text-custom-text-200 hover:text-custom-text-100">
@@ -62,15 +64,16 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
           </div>
         </div>
       }
+      onMenuClose={onClose}
       placement="bottom-end"
+      closeOnSelect
     >
       <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
         <div
-          className={`flex items-center justify-between gap-1.5 px-1 ${
-            selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
-              ? "text-custom-text-100"
-              : "text-custom-text-200 hover:text-custom-text-100"
-          }`}
+          className={`flex items-center justify-between gap-1.5 px-1 ${selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
+            ? "text-custom-text-100"
+            : "text-custom-text-200 hover:text-custom-text-100"
+            }`}
         >
           <div className="flex items-center gap-2">
             <ArrowDownWideNarrow className="h-3 w-3 stroke-[1.5]" />
@@ -84,11 +87,10 @@ export const SpreadsheetHeaderColumn = (props: Props) => {
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}>
         <div
-          className={`flex items-center justify-between gap-1.5 px-1 ${
-            selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
-              ? "text-custom-text-100"
-              : "text-custom-text-200 hover:text-custom-text-100"
-          }`}
+          className={`flex items-center justify-between gap-1.5 px-1 ${selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
+            ? "text-custom-text-100"
+            : "text-custom-text-200 hover:text-custom-text-100"
+            }`}
         >
           <div className="flex items-center gap-2">
             <ArrowUpNarrowWide className="h-3 w-3 stroke-[1.5]" />

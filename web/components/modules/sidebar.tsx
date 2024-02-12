@@ -16,7 +16,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 // hooks
-import { useModule, useUser } from "hooks/store";
+import { useModule, useUser, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
@@ -34,6 +34,7 @@ import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -66,7 +67,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-
+  const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();
@@ -77,7 +78,19 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
+      .then((res) => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
+        });
+      })
+      .catch((_) => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...data, state: "FAILED" },
+        });
+      });
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -87,6 +100,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
       .then(() => {
+        captureEvent(MODULE_LINK_CREATED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link created",
@@ -109,6 +126,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
       .then(() => {
+        captureEvent(MODULE_LINK_UPDATED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link updated",
@@ -129,6 +150,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
+        captureEvent(MODULE_LINK_DELETED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link deleted",
@@ -168,18 +193,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     if (!watch("target_date") || watch("target_date") === "") endDateButtonRef.current?.click();
 
     if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create module in past date. Please enter a valid date.",
-        });
-        reset({
-          ...moduleDetails,
-        });
-        return;
-      }
-
       submitChanges({
         start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
         target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
@@ -198,21 +211,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     if (!watch("start_date") || watch("start_date") === "") endDateButtonRef.current?.click();
 
     if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create module in past date. Please enter a valid date.",
-        });
-        reset({
-          ...moduleDetails,
-        });
-        return;
-      }
-
       submitChanges({
-        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
         target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
+        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
       });
       setToastAlert({
         type: "success",
@@ -262,13 +263,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
   const issueCount =
-    moduleDetails.total_issues === 0
-      ? "0 Issue"
-      : moduleDetails.total_issues === moduleDetails.completed_issues
-      ? moduleDetails.total_issues > 1
-        ? `${moduleDetails.total_issues}`
-        : `${moduleDetails.total_issues}`
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+    moduleDetails.total_issues === 0 ? "0 Issue" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
@@ -303,7 +298,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
-                <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setTrackElement("Module peek-overview");
+                    setModuleDeleteModal(true);
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
                     <span>Delete module</span>
@@ -319,13 +319,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <Controller
               control={control}
               name="status"
-              render={({ field: { value } }) => (
+              render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
+                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                        }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
@@ -374,15 +373,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                        }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("start_date") ? "" : "text-custom-text-400"
-                        }`}
+                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("start_date") ? "" : "text-custom-text-400"
+                          }`}
                       >
                         {renderFormattedDate(startDate) ?? "No date selected"}
                       </span>
@@ -430,15 +427,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                        }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("target_date") ? "" : "text-custom-text-400"
-                        }`}
+                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("target_date") ? "" : "text-custom-text-400"
+                          }`}
                       >
                         {renderFormattedDate(endDate) ?? "No date selected"}
                       </span>
@@ -582,7 +577,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {isStartValid && isEndValid ? (
+                        {moduleDetails.start_date && moduleDetails.target_date ? (
                           <div className=" h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
                               <div className="flex items-center gap-3 text-custom-text-100">
@@ -596,11 +591,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative h-40 w-full max-w-80">
                               <ProgressChart
-                                distribution={moduleDetails.distribution?.completion_chart}
-                                startDate={moduleDetails.start_date ?? ""}
-                                endDate={moduleDetails.target_date ?? ""}
+                                distribution={moduleDetails.distribution?.completion_chart ?? {}}
+                                startDate={moduleDetails.start_date}
+                                endDate={moduleDetails.target_date}
                                 totalIssues={moduleDetails.total_issues}
                               />
                             </div>

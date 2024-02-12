@@ -1,8 +1,8 @@
 import { FC } from "react";
 // context
-import { useChart } from "../hooks";
+import { useChart } from "../../hooks";
 
-export const QuarterChartView: FC<any> = () => {
+export const DayChartView: FC<any> = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
@@ -35,7 +35,11 @@ export const QuarterChartView: FC<any> = () => {
                       >
                         <div>{_item.title}</div>
                       </div>
-                      <div className={`relative flex h-full w-full flex-1 justify-center`}>
+                      <div
+                        className={`relative flex h-full w-full flex-1 justify-center ${
+                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "") ? `bg-gray-100` : ``
+                        }`}
+                      >
                         {_item?.today && <div className="absolute bottom-0 top-0 border border-red-500"> </div>}
                       </div>
                     </div>

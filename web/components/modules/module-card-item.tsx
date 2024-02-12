@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // hooks
-import { useModule, useUser } from "hooks/store";
+import { useEventTracker, useModule, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
@@ -16,6 +16,7 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   moduleId: string;
@@ -36,6 +37,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { setTrackElement, captureEvent } = useEventTracker();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -45,13 +47,21 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the module to favorites. Please try again.",
+    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
+      .then(() => {
+        captureEvent(MODULE_FAVORITED, {
+          module_id: moduleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the module to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,13 +69,21 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't remove the module from favorites. Please try again.",
+    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
+      .then(() => {
+        captureEvent(MODULE_UNFAVORITED, {
+          module_id: moduleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the module from favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,12 +101,14 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Modules page grid layout");
     setEditModal(true);
   };
 
   const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Modules page grid layout");
     setDeleteModal(true);
   };
 
@@ -127,8 +147,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (
@@ -144,7 +164,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${moduleDetails.project}/modules/${moduleDetails.id}`}>
-        <div className="flex h-44 w-full min-w-[250px] flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
+        <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top">
@@ -220,7 +240,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
 
-              <div className="z-10 flex items-center gap-1.5">
+              <div className="z-[5] flex items-center gap-1.5">
                 {isEditingAllowed &&
                   (moduleDetails.is_favorite ? (
                     <button type="button" onClick={handleRemoveFromFavorites}>

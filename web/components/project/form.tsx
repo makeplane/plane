@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -18,6 +18,7 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { NETWORK_CHOICES } from "constants/project";
 // services
 import { ProjectService } from "services/project";
+import { PROJECT_UPDATED } from "constants/event-tracker";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -32,9 +33,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // states
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureProjectEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
   const { updateProject } = useProject();
   // toast alert
@@ -47,7 +46,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     setValue,
     setError,
     reset,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<IProject>({
     defaultValues: {
       ...project,
@@ -79,15 +78,17 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
-        postHogEventTracker(
-          "PROJECT_UPDATED",
-          { ...res, state: "SUCCESS" },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: res.workspace,
-          }
-        );
+        const changed_properties = Object.keys(dirtyFields);
+        console.log(dirtyFields);
+        captureProjectEvent({
+          eventName: PROJECT_UPDATED,
+          payload: {
+            ...res,
+            changed_properties: changed_properties,
+            state: "SUCCESS",
+            element: "Project general settings",
+          },
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -95,17 +96,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       })
       .catch((error) => {
-        postHogEventTracker(
-          "PROJECT_UPDATED",
-          {
-            state: "FAILED",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+        captureProjectEvent({
+          eventName: PROJECT_UPDATED,
+          payload: { ...payload, state: "FAILED", element: "Project general settings" },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -157,7 +151,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
-        <div className="absolute bottom-4 z-5 flex w-full items-end justify-between gap-3 px-4">
+        <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
               <div className="grid h-7 w-7 place-items-center">

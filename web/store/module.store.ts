@@ -100,7 +100,7 @@ export class ModulesStore implements IModuleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
-    projectModules = sortBy(projectModules, [(m) => !m.is_favorite, (m) => m.name.toLowerCase()]);
+    projectModules = sortBy(projectModules, [(m) => m.sort_order]);
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds || null;
   }
@@ -120,7 +120,7 @@ export class ModulesStore implements IModuleStore {
     if (!this.fetchedMap[projectId]) return null;
 
     let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
-    projectModules = sortBy(projectModules, [(m) => !m.is_favorite, (m) => m.name.toLowerCase()]);
+    projectModules = sortBy(projectModules, [(m) => m.sort_order]);
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
   });
@@ -196,6 +196,7 @@ export class ModulesStore implements IModuleStore {
         set(this.moduleMap, [moduleId], { ...originalModuleDetails, ...data });
       });
       const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
+      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
       return response;
     } catch (error) {
       console.error("Failed to update module in module store", error);

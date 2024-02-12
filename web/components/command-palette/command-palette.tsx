@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
@@ -32,8 +32,8 @@ export const CommandPalette: FC = observer(() => {
   const {
     commandPalette,
     theme: { toggleSidebar },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const { currentUser } = useUser();
   const {
     issues: { removeIssue },
@@ -118,11 +118,10 @@ export const CommandPalette: FC = observer(() => {
           toggleSidebar();
         }
       } else if (!isAnyModalOpen) {
+        setTrackElement("Shortcut key");
         if (keyPressed === "c") {
-          setTrackElement("SHORTCUT_KEY");
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
-          setTrackElement("SHORTCUT_KEY");
           toggleCreateProjectModal(true);
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);
@@ -163,6 +162,8 @@ export const CommandPalette: FC = observer(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
+
+  const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
 
   if (!currentUser) return null;
 
@@ -218,6 +219,7 @@ export const CommandPalette: FC = observer(() => {
         onClose={() => toggleCreateIssueModal(false)}
         data={cycleId ? { cycle_id: cycleId.toString() } : moduleId ? { module_ids: [moduleId.toString()] } : undefined}
         storeType={createIssueStoreType}
+        isDraft={isDraftIssue}
       />
 
       {workspaceSlug && projectId && issueId && issueDetails && (

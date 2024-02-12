@@ -13,9 +13,10 @@ export type TWidgetKeys =
   | "recent_projects"
   | "recent_collaborators";
 
-export type TIssuesListTypes = "upcoming" | "overdue" | "completed";
+export type TIssuesListTypes = "pending" | "upcoming" | "overdue" | "completed";
 
 export type TDurationFilterOptions =
+  | "none"
   | "today"
   | "this_week"
   | "this_month"
@@ -23,21 +24,21 @@ export type TDurationFilterOptions =
 
 // widget filters
 export type TAssignedIssuesWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TCreatedIssuesWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TIssuesByStateGroupsWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
 };
 
 export type TIssuesByPriorityWidgetFilters = {
-  target_date?: TDurationFilterOptions;
+  duration?: TDurationFilterOptions;
 };
 
 export type TWidgetFiltersFormData =

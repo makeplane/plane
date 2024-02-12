@@ -145,6 +145,23 @@ def dashboard_assigned_issues(self, request, slug):
         )
     ).order_by("priority_order")
 
+    if issue_type == "pending":
+        pending_issues_count = assigned_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        ).count()
+        pending_issues = assigned_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        )[:5]
+        return Response(
+            {
+                "issues": IssueSerializer(
+                    pending_issues, many=True, expand=self.expand
+                ).data,
+                "count": pending_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
+
     if issue_type == "completed":
         completed_issues_count = assigned_issues.filter(
             state__group__in=["completed"]
@@ -256,6 +273,23 @@ def dashboard_created_issues(self, request, slug):
             output_field=CharField(),
         )
     ).order_by("priority_order")
+
+    if issue_type == "pending":
+        pending_issues_count = created_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        ).count()
+        pending_issues = created_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        )[:5]
+        return Response(
+            {
+                "issues": IssueSerializer(
+                    pending_issues, many=True, expand=self.expand
+                ).data,
+                "count": pending_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     if issue_type == "completed":
         completed_issues_count = created_issues.filter(

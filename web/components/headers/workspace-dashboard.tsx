@@ -1,48 +1,61 @@
-import { useState } from "react";
 import { LayoutGrid, Zap } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
+// hooks
+import { useEventTracker } from "hooks/store";
 // components
-import { ProductUpdatesModal } from "components/common";
+import { BreadcrumbLink } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+// constants
+import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "constants/event-tracker";
 
 export const WorkspaceDashboardHeader = () => {
-  const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
   // hooks
+  const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
 
   return (
     <>
-      <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />}
-                label="Dashboard"
+                link={
+                  <BreadcrumbLink label="Dashboard" icon={<LayoutGrid className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
           </div>
         </div>
         <div className="flex items-center gap-3 px-3">
           <a
+            onClick={() =>
+              captureEvent(CHANGELOG_REDIRECTED, {
+                element: "navbar",
+              })
+            }
             href="https://plane.so/changelog"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 text-xs font-medium"
+            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5"
           >
             <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
-            {"What's new?"}
+            <span className="hidden text-xs font-medium sm:hidden md:block">{"What's new?"}</span>
           </a>
           <a
-            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 text-xs font-medium"
+            onClick={() =>
+              captureEvent(GITHUB_REDIRECTED, {
+                element: "navbar",
+              })
+            }
+            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5"
             href="https://github.com/makeplane/plane"
             target="_blank"
             rel="noopener noreferrer"
@@ -53,7 +66,7 @@ export const WorkspaceDashboardHeader = () => {
               width={16}
               alt="GitHub Logo"
             />
-            Star us on GitHub
+            <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>
           </a>
         </div>
       </div>

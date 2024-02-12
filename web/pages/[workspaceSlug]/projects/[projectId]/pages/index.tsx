@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -60,6 +60,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
 
   const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
     useProjectPages();
@@ -102,6 +103,25 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
+  const mobileTabList = (
+    <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
+      <div className="flex flex-wrap items-center gap-4">
+        {PAGE_TABS_LIST.map((tab) => (
+          <Tab
+            key={tab.key}
+            className={({ selected }) =>
+              `text-sm outline-none pb-3 ${
+                selected ? "border-custom-primary-100 text-custom-primary-100 border-b" : ""
+              }`
+            }
+          >
+            {tab.title}
+          </Tab>
+        ))}
+      </div>
+    </Tab.List>
+  );
+
   if (loader || archivedPageLoader)
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -120,8 +140,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               projectId={projectId.toString()}
             />
           )}
-          <div className="flex h-full flex-col space-y-5 overflow-hidden p-6">
-            <div className="flex justify-between gap-4">
+          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:p-6">
+            <div className="justify-between gap-4 hidden md:flex">
               <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
             </div>
             <Tab.Group
@@ -146,7 +166,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
                 }
               }}
             >
-              <Tab.List as="div" className="mb-6 flex items-center justify-between">
+              <div className="md:hidden">{mobileTabList}</div>
+              <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
                 <div className="flex flex-wrap items-center gap-4">
                   {PAGE_TABS_LIST.map((tab) => (
                     <Tab
@@ -194,7 +215,10 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
           description="Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
           primaryButton={{
             text: "Create your first page",
-            onClick: () => toggleCreatePageModal(true),
+            onClick: () => {
+              setTrackElement("Pages empty state");
+              toggleCreatePageModal(true);
+            },
           }}
           comicBox={{
             title: "A page can be a doc or a doc of docs.",

@@ -10,7 +10,7 @@ import { CheckCircle2 } from "lucide-react";
 import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useEventTracker, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
@@ -23,11 +23,13 @@ import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-l
 import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { getUserRole } from "helpers/user.helper";
 // types
 import { NextPageWithLayout } from "lib/types";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { ROLE } from "constants/workspace";
+import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // components
 import { EmptyState } from "components/common";
 
@@ -40,9 +42,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
   const { currentUser, currentUserSettings } = useUser();
   // router
   const router = useRouter();
@@ -83,11 +83,16 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
       .then((res) => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
+        const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        postHogEventTracker("MEMBER_ACCEPTED", {
-          ...res,
-          state: "SUCCESS",
+        joinWorkspaceMetricGroup(redirectWorkspace?.id);
+        captureEvent(MEMBER_ACCEPTED, {
+          member_id: invitation?.id,
+          role: getUserRole(invitation?.role!),
+          project_id: undefined,
           accepted_from: "App",
+          state: "SUCCESS",
+          element: "Workspace invitations page",
         });
         userService
           .updateUser({ last_workspace_id: redirectWorkspace?.id })
@@ -105,6 +110,12 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           });
       })
       .catch(() => {
+        captureEvent(MEMBER_ACCEPTED, {
+          project_id: undefined,
+          accepted_from: "App",
+          state: "FAILED",
+          element: "Workspace invitations page",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",

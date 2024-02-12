@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
 import { Popover } from "@headlessui/react";
 // hooks
-import { useApplication, useUser, useInboxIssues, useIssueDetail, useWorkspace } from "hooks/store";
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -20,6 +20,7 @@ import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle
 // types
 import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
+import { ISSUE_DELETED } from "constants/event-tracker";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -38,9 +39,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   // router
   const router = useRouter();
   // hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
   const {
     issues: { getInboxIssuesByInboxId, getInboxIssueByIssueId, updateInboxIssueStatus, removeInboxIssue },
@@ -87,17 +86,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !currentWorkspace)
             throw new Error("Missing required parameters");
           await removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
-          postHogEventTracker(
-            "ISSUE_DELETED",
-            {
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: {
+              id: inboxIssueId,
               state: "SUCCESS",
-            },
-            {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
+              element: "Inbox page",
             }
-          );
+          });
           router.push({
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
           });
@@ -107,17 +103,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             title: "Error!",
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
-          postHogEventTracker(
-            "ISSUE_DELETED",
-            {
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: {
+              id: inboxIssueId,
               state: "FAILED",
+              element: "Inbox page",
             },
-            {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            }
-          );
+          });
         }
       },
     }),
@@ -130,7 +123,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       updateInboxIssueStatus,
       removeInboxIssue,
       setToastAlert,
-      postHogEventTracker,
+      captureIssueEvent,
       router,
     ]
   );

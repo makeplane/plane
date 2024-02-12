@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { EmptyState } from "components/common";
@@ -32,8 +32,8 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const { updateIssue, fetchIssue } = useIssueDetail();
   const {
     commandPalette: { toggleCreateIssueModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole: userRole },
   } = useUser();
@@ -81,7 +81,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
-              setTrackElement("CYCLE_EMPTY_STATE");
+              setTrackElement("Cycle issue empty state");
               toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
             },
           }}

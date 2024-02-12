@@ -9,23 +9,36 @@ import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;
-  onChange: (issue: TIssue, data: Partial<TIssue>) => void;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
 export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Props) => {
-  const { issue, onChange, disabled } = props;
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <DateDropdown
         value={issue.start_date}
-        onChange={(data) => onChange(issue, { start_date: data ? renderFormattedPayloadDate(data) : null })}
+        maxDate={issue.target_date ? new Date(issue.target_date) : undefined}
+        onChange={(data) => {
+          const startDate = data ? renderFormattedPayloadDate(data) : null;
+          onChange(
+            issue,
+            { start_date: startDate },
+            {
+              changed_property: "start_date",
+              change_details: startDate,
+            }
+          );
+        }}
         disabled={disabled}
         placeholder="Start date"
         buttonVariant="transparent-with-text"
         buttonClassName="rounded-none text-left"
         buttonContainerClassName="w-full"
+        onClose={onClose}
       />
     </div>
   );

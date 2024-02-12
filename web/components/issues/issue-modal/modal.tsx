@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useCycle, useIssues, useModule, useProject, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useEventTracker, useCycle, useIssues, useModule, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -12,6 +13,7 @@ import { IssueFormRoot } from "./form";
 import type { TIssue } from "@plane/types";
 // constants
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
+import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
@@ -20,19 +22,25 @@ export interface IssuesModalProps {
   onSubmit?: (res: TIssue) => Promise<void>;
   withDraftIssueWrapper?: boolean;
   storeType?: TCreateModalStoreTypes;
+  isDraft?: boolean;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, isOpen, onClose, onSubmit, withDraftIssueWrapper = true, storeType = EIssuesStoreType.PROJECT } = props;
+  const {
+    data,
+    isOpen,
+    onClose,
+    onSubmit,
+    withDraftIssueWrapper = true,
+    storeType = EIssuesStoreType.PROJECT,
+    isDraft = false,
+  } = props;
   // states
   const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
   const [createMore, setCreateMore] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
-  const { currentUser } = useUser();
+  const { captureIssueEvent } = useEventTracker();
   const {
     router: { workspaceSlug, projectId, cycleId, moduleId, viewId: projectViewId },
   } = useApplication();
@@ -45,40 +53,38 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
   const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
+  const { issues: draftIssueStore } = useIssues(EIssuesStoreType.DRAFT);
   // store mapping based on current store
   const issueStores = {
     [EIssuesStoreType.PROJECT]: {
       store: projectIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: undefined,
     },
     [EIssuesStoreType.PROJECT_VIEW]: {
       store: viewIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: projectViewId,
     },
     [EIssuesStoreType.PROFILE]: {
       store: profileIssues,
-      dataIdToUpdate: currentUser?.id || undefined,
       viewId: undefined,
     },
     [EIssuesStoreType.CYCLE]: {
       store: cycleIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: cycleId,
     },
     [EIssuesStoreType.MODULE]: {
       store: moduleIssues,
-      dataIdToUpdate: activeProjectId,
       viewId: moduleId,
     },
   };
+  // router
+  const router = useRouter();
   // toast alert
   const { setToastAlert } = useToast();
   // local storage
   const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
   // current store details
-  const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[storeType];
+  const { store: currentIssueStore, viewId } = issueStores[storeType];
 
   useEffect(() => {
     // if modal is closed, reset active project to null
@@ -128,14 +134,19 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     onClose();
   };
 
-  const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
-    if (!workspaceSlug || !dataIdToUpdate) return;
+  const handleCreateIssue = async (
+    payload: Partial<TIssue>,
+    is_draft_issue: boolean = false
+  ): Promise<TIssue | undefined> => {
+    if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      const response = await currentIssueStore.createIssue(workspaceSlug, dataIdToUpdate, payload, viewId);
+      const response = is_draft_issue
+        ? await draftIssueStore.createIssue(workspaceSlug, payload.project_id, payload)
+        : await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
       if (!response) throw new Error();
 
-      currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
+      currentIssueStore.fetchIssues(workspaceSlug, payload.project_id, "mutation", viewId);
 
       if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
@@ -147,18 +158,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Success!",
         message: "Issue created successfully.",
       });
-      postHogEventTracker(
-        "ISSUE_CREATED",
-        {
-          ...response,
-          state: "SUCCESS",
-        },
-        {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        }
-      );
+      captureIssueEvent({
+        eventName: ISSUE_CREATED,
+        payload: { ...response, state: "SUCCESS" },
+        path: router.asPath,
+      });
       !createMore && handleClose();
       return response;
     } catch (error) {
@@ -167,42 +171,29 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
-      postHogEventTracker(
-        "ISSUE_CREATED",
-        {
-          state: "FAILED",
-        },
-        {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        }
-      );
+      captureIssueEvent({
+        eventName: ISSUE_CREATED,
+        payload: { ...payload, state: "FAILED" },
+        path: router.asPath,
+      });
     }
   };
 
   const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
-    if (!workspaceSlug || !dataIdToUpdate || !data?.id) return;
+    if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      const response = await currentIssueStore.updateIssue(workspaceSlug, dataIdToUpdate, data.id, payload, viewId);
+      const response = await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue updated successfully.",
       });
-      postHogEventTracker(
-        "ISSUE_UPDATED",
-        {
-          ...response,
-          state: "SUCCESS",
-        },
-        {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        }
-      );
+      captureIssueEvent({
+        eventName: ISSUE_UPDATED,
+        payload: { ...response, state: "SUCCESS" },
+        path: router.asPath,
+      });
       handleClose();
       return response;
     } catch (error) {
@@ -211,22 +202,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
-      postHogEventTracker(
-        "ISSUE_UPDATED",
-        {
-          state: "FAILED",
-        },
-        {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: currentWorkspace?.id!,
-        }
-      );
+      captureIssueEvent({
+        eventName: ISSUE_UPDATED,
+        payload: { ...payload, state: "FAILED" },
+        path: router.asPath,
+      });
     }
   };
 
-  const handleFormSubmit = async (formData: Partial<TIssue>) => {
-    if (!workspaceSlug || !dataIdToUpdate || !storeType) return;
+  const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue: boolean = false) => {
+    if (!workspaceSlug || !formData.project_id || !storeType) return;
 
     const payload: Partial<TIssue> = {
       ...formData,
@@ -234,7 +219,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     };
 
     let response: TIssue | undefined = undefined;
-    if (!data?.id) response = await handleCreateIssue(payload);
+    if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
     else response = await handleUpdateIssue(payload);
 
     if (response != undefined && onSubmit) await onSubmit(response);
@@ -286,6 +271,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     projectId={activeProjectId}
                     isCreateMoreToggleEnabled={createMore}
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
+                    isDraft={isDraft}
                   />
                 ) : (
                   <IssueFormRoot
@@ -299,6 +285,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
                     onSubmit={handleFormSubmit}
                     projectId={activeProjectId}
+                    isDraft={isDraft}
                   />
                 )}
               </Dialog.Panel>

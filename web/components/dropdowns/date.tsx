@@ -23,6 +23,7 @@ type Props = TDropdownProps & {
   minDate?: Date;
   maxDate?: Date;
   onChange: (val: Date | null) => void;
+  onClose?: () => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
 };
@@ -42,6 +43,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     minDate,
     maxDate,
     onChange,
+    onClose,
     placeholder = "Date",
     placement,
     showTooltip = false,
@@ -74,8 +76,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
+    if (!isOpen) return;
+    setIsOpen(false);
     if (referenceElement) referenceElement.blur();
+    onClose && onClose();
   };
 
   const toggleDropdown = () => {
@@ -105,13 +109,14 @@ export const DateDropdown: React.FC<Props> = (props) => {
       tabIndex={tabIndex}
       className={cn("h-full", className)}
       onKeyDown={handleKeyDown}
+      disabled={disabled}
     >
       <Combobox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
           className={cn(
-            "block h-full max-w-full outline-none",
+            "clickable block h-full max-w-full outline-none",
             {
               "cursor-not-allowed text-custom-text-200": disabled,
               "cursor-pointer": !disabled,

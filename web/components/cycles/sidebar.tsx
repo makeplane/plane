@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
+import isEmpty from "lodash/isEmpty";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
-import { useApplication, useCycle, useMember, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
@@ -38,6 +39,7 @@ import {
 import { ICycle } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_UPDATED } from "constants/event-tracker";
 // fetch-keys
 import { CYCLE_STATUS } from "constants/cycle";
 
@@ -66,9 +68,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement, captureCycleEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -84,10 +84,32 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     defaultValues,
   });
 
-  const submitChanges = (data: Partial<ICycle>) => {
+  const submitChanges = (data: Partial<ICycle>, changedProperty: string) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
+    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data)
+      .then((res) => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: {
+            ...res,
+            changed_properties: [changedProperty],
+            element: "Right side-peek",
+            state: "SUCCESS",
+          },
+        });
+      })
+
+      .catch(() => {
+        captureCycleEvent({
+          eventName: CYCLE_UPDATED,
+          payload: {
+            ...data,
+            element: "Right side-peek",
+            state: "FAILED",
+          },
+        });
+      });
   };
 
   const handleCopyText = () => {
@@ -147,10 +169,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          });
+          submitChanges(
+            {
+              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+            },
+            "start_date"
+          );
           setToastAlert({
             type: "success",
             title: "Success!",
@@ -175,10 +200,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
 
       if (isDateValid) {
-        submitChanges({
-          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-        });
+        submitChanges(
+          {
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+          },
+          "start_date"
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -220,10 +248,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          submitChanges({
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          });
+          submitChanges(
+            {
+              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+            },
+            "end_date"
+          );
           setToastAlert({
             type: "success",
             title: "Success!",
@@ -247,10 +278,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
 
       if (isDateValid) {
-        submitChanges({
-          start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-          end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-        });
+        submitChanges(
+          {
+            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
+            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
+          },
+          "end_date"
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -295,7 +329,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const isEndValid = new Date(`${cycleDetails?.end_date}`) >= new Date(`${cycleDetails?.start_date}`);
 
   const progressPercentage = cycleDetails
-    ? Math.round((cycleDetails.completed_issues / cycleDetails.total_issues) * 100)
+    ? isCompleted && cycleDetails?.progress_snapshot
+      ? Math.round(
+          (cycleDetails.progress_snapshot.completed_issues / cycleDetails.progress_snapshot.total_issues) * 100
+        )
+      : Math.round((cycleDetails.completed_issues / cycleDetails.total_issues) * 100)
     : null;
 
   if (!cycleDetails)
@@ -319,13 +357,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
   const issueCount =
-    cycleDetails.total_issues === 0
+    isCompleted && !isEmpty(cycleDetails.progress_snapshot)
+      ? cycleDetails.progress_snapshot.total_issues === 0
+        ? "0 Issue"
+        : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
+      : cycleDetails.total_issues === 0
       ? "0 Issue"
-      : cycleDetails.total_issues === cycleDetails.completed_issues
-      ? cycleDetails.total_issues > 1
-        ? `${cycleDetails.total_issues}`
-        : `${cycleDetails.total_issues}`
       : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -383,8 +423,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   backgroundColor: `${currentCycle.color}20`,
                 }}
               >
-                {currentCycle.value === "current"
-                  ? `${findHowManyDaysLeft(cycleDetails.end_date ?? new Date())} ${currentCycle.label}`
+                {currentCycle.value === "current" && daysLeft !== undefined
+                  ? `${daysLeft} ${currentCycle.label}`
                   : `${currentCycle.label}`}
               </span>
             )}
@@ -575,49 +615,105 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {isStartValid && isEndValid ? (
-                          <div className="h-full w-full pt-4">
-                            <div className="flex  items-start  gap-4 py-2 text-xs">
-                              <div className="flex items-center gap-3 text-custom-text-100">
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                                  <span>Ideal</span>
+                        {isCompleted && !isEmpty(cycleDetails.progress_snapshot) ? (
+                          <>
+                            {cycleDetails.progress_snapshot.distribution?.completion_chart &&
+                              cycleDetails.start_date &&
+                              cycleDetails.end_date && (
+                                <div className="h-full w-full pt-4">
+                                  <div className="flex  items-start  gap-4 py-2 text-xs">
+                                    <div className="flex items-center gap-3 text-custom-text-100">
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+                                        <span>Ideal</span>
+                                      </div>
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+                                        <span>Current</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="relative h-40 w-80">
+                                    <ProgressChart
+                                      distribution={cycleDetails.progress_snapshot.distribution?.completion_chart}
+                                      startDate={cycleDetails.start_date}
+                                      endDate={cycleDetails.end_date}
+                                      totalIssues={cycleDetails.progress_snapshot.total_issues}
+                                    />
+                                  </div>
                                 </div>
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                                  <span>Current</span>
+                              )}
+                          </>
+                        ) : (
+                          <>
+                            {cycleDetails.distribution?.completion_chart &&
+                              cycleDetails.start_date &&
+                              cycleDetails.end_date && (
+                                <div className="h-full w-full pt-4">
+                                  <div className="flex  items-start  gap-4 py-2 text-xs">
+                                    <div className="flex items-center gap-3 text-custom-text-100">
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+                                        <span>Ideal</span>
+                                      </div>
+                                      <div className="flex items-center justify-center gap-1">
+                                        <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+                                        <span>Current</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="relative h-40 w-80">
+                                    <ProgressChart
+                                      distribution={cycleDetails.distribution?.completion_chart}
+                                      startDate={cycleDetails.start_date}
+                                      endDate={cycleDetails.end_date}
+                                      totalIssues={cycleDetails.total_issues}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                            {cycleDetails && cycleDetails.distribution && (
-                              <div className="relative h-40 w-80">
-                                <ProgressChart
-                                  distribution={cycleDetails.distribution?.completion_chart ?? {}}
-                                  startDate={cycleDetails.start_date ?? ""}
-                                  endDate={cycleDetails.end_date ?? ""}
+                              )}
+                          </>
+                        )}
+                        {/* stats */}
+                        {isCompleted && !isEmpty(cycleDetails.progress_snapshot) ? (
+                          <>
+                            {cycleDetails.progress_snapshot.total_issues > 0 &&
+                              cycleDetails.progress_snapshot.distribution && (
+                                <div className="h-full w-full border-t border-custom-border-200 pt-5">
+                                  <SidebarProgressStats
+                                    distribution={cycleDetails.progress_snapshot.distribution}
+                                    groupedIssues={{
+                                      backlog: cycleDetails.progress_snapshot.backlog_issues,
+                                      unstarted: cycleDetails.progress_snapshot.unstarted_issues,
+                                      started: cycleDetails.progress_snapshot.started_issues,
+                                      completed: cycleDetails.progress_snapshot.completed_issues,
+                                      cancelled: cycleDetails.progress_snapshot.cancelled_issues,
+                                    }}
+                                    totalIssues={cycleDetails.progress_snapshot.total_issues}
+                                    isPeekView={Boolean(peekCycle)}
+                                  />
+                                </div>
+                              )}
+                          </>
+                        ) : (
+                          <>
+                            {cycleDetails.total_issues > 0 && cycleDetails.distribution && (
+                              <div className="h-full w-full border-t border-custom-border-200 pt-5">
+                                <SidebarProgressStats
+                                  distribution={cycleDetails.distribution}
+                                  groupedIssues={{
+                                    backlog: cycleDetails.backlog_issues,
+                                    unstarted: cycleDetails.unstarted_issues,
+                                    started: cycleDetails.started_issues,
+                                    completed: cycleDetails.completed_issues,
+                                    cancelled: cycleDetails.cancelled_issues,
+                                  }}
                                   totalIssues={cycleDetails.total_issues}
+                                  isPeekView={Boolean(peekCycle)}
                                 />
                               </div>
                             )}
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                        {cycleDetails.total_issues > 0 && cycleDetails.distribution && (
-                          <div className="h-full w-full border-t border-custom-border-200 pt-5">
-                            <SidebarProgressStats
-                              distribution={cycleDetails.distribution}
-                              groupedIssues={{
-                                backlog: cycleDetails.backlog_issues,
-                                unstarted: cycleDetails.unstarted_issues,
-                                started: cycleDetails.started_issues,
-                                completed: cycleDetails.completed_issues,
-                                cancelled: cycleDetails.cancelled_issues,
-                              }}
-                              totalIssues={cycleDetails.total_issues}
-                              isPeekView={Boolean(peekCycle)}
-                            />
-                          </div>
+                          </>
                         )}
                       </div>
                     </Disclosure.Panel>

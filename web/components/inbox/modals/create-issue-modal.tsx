@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
-import { useApplication, useWorkspace, useInboxIssues, useMention } from "hooks/store";
+import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { FileService } from "services/file.service";
@@ -18,6 +18,8 @@ import { GptAssistantPopover } from "components/core";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -63,9 +65,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   } = useInboxIssues();
   const {
     config: { envConfig },
-    eventTracker: { postHogEventTracker },
   } = useApplication();
-  const { currentWorkspace } = useWorkspace();
+  const { captureIssueEvent } = useEventTracker();
 
   const {
     control,
@@ -93,32 +94,27 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.id}`);
           handleClose();
         } else reset(defaultValues);
-        postHogEventTracker(
-          "ISSUE_CREATED",
-          {
-            ...res,
+        captureIssueEvent({
+          eventName: ISSUE_CREATED,
+          payload: {
+            ...formData,
             state: "SUCCESS",
+            element: "Inbox page",
           },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+          path: router.pathname,
+        });
       })
       .catch((error) => {
         console.error(error);
-        postHogEventTracker(
-          "ISSUE_CREATED",
-          {
+        captureIssueEvent({
+          eventName: ISSUE_CREATED,
+          payload: {
+            ...formData,
             state: "FAILED",
+            element: "Inbox page",
           },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            groupId: currentWorkspace?.id!,
-          }
-        );
+          path: router.pathname,
+        });
       });
   };
 

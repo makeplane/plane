@@ -32,11 +32,14 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
       if (window.innerWidth <= 768) {
         themStore.toggleSidebar(true);
       }
+      if (window.innerWidth > 768) {
+        themStore.toggleSidebar(false);
+      }
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [themStore]);
 
@@ -46,12 +49,11 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
         fixed md:relative
         ${themStore.sidebarCollapsed ? "-ml-[280px]" : ""}
         sm:${themStore.sidebarCollapsed ? "-ml-[280px]" : ""}
-        md:ml-0 ${themStore.sidebarCollapsed ? 'w-[80px]' : 'w-[280px]'}
-        lg:ml-0 ${themStore.sidebarCollapsed ? 'w-[80px]' : 'w-[280px]'}
-      `}    >
-      <div
-        ref={ref}
-        className="flex h-full w-full flex-1 flex-col">
+        md:ml-0 ${themStore.sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+        lg:ml-0 ${themStore.sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+      `}
+    >
+      <div ref={ref} className="flex h-full w-full flex-1 flex-col">
         <WorkspaceSidebarDropdown />
         <WorkspaceSidebarQuickAction />
         <WorkspaceSidebarMenu />
@@ -61,6 +63,3 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
     </div>
   );
 });
-
-
-

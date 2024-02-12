@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
@@ -18,6 +18,7 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PROJECT_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -61,9 +62,7 @@ export interface ICreateProjectForm {
 export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureProjectEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -135,10 +134,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           ...res,
           state: "SUCCESS",
         };
-        postHogEventTracker("PROJECT_CREATED", newPayload, {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: res.workspace,
+        captureProjectEvent({
+          eventName: PROJECT_CREATED,
+          payload: newPayload,
         });
         setToastAlert({
           type: "success",
@@ -157,17 +155,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             title: "Error!",
             message: err.data[key],
           });
-          postHogEventTracker(
-            "PROJECT_CREATED",
-            {
+          captureProjectEvent({
+            eventName: PROJECT_CREATED,
+            payload: {
+              ...payload,
               state: "FAILED",
-            },
-            {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
             }
-          );
+          });
         });
       });
   };
@@ -205,7 +199,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
