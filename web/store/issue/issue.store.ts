@@ -10,7 +10,7 @@ export type IIssueStore = {
   // observables
   issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
   // actions
-  addIssue(issues: TIssue[]): void;
+  addIssue(issues: TIssue[], shouldReplace?: boolean): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
@@ -39,11 +39,11 @@ export class IssueStore implements IIssueStore {
    * @param {TIssue[]} issues
    * @returns {void}
    */
-  addIssue = (issues: TIssue[]) => {
+  addIssue = (issues: TIssue[], shouldReplace = false) => {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
-        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
+        if (!this.issuesMap[issue.id] || shouldReplace) set(this.issuesMap, issue.id, issue);
       });
     });
   };

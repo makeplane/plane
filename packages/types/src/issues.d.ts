@@ -221,3 +221,12 @@ export interface IGroupByColumn {
 export interface IIssueMap {
   [key: string]: TIssue;
 }
+
+export interface IIssueListRow {
+  id: string;
+  groupId: string;
+  type: "HEADER" | "NO_ISSUES" | "QUICK_ADD" | "ISSUE";
+  name?: string;
+  icon?: ReactElement | undefined;
+  payload?: Partial<TIssue>;
+}

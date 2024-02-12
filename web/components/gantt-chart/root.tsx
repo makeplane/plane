@@ -1,10 +1,8 @@
 import { FC } from "react";
 // components
-import { ChartViewRoot } from "./chart";
+import { ChartViewRoot, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 // context
 import { ChartContextProvider } from "./contexts";
-// types
-import { IBlockUpdateData, IGanttBlock } from "./types";
 
 type GanttChartRootProps = {
   border?: boolean;
@@ -18,6 +16,7 @@ type GanttChartRootProps = {
   enableBlockRightResize?: boolean;
   enableBlockMove?: boolean;
   enableReorder?: boolean;
+  enableAddBlock?: boolean;
   bottomSpacing?: boolean;
   showAllBlocks?: boolean;
 };
@@ -31,10 +30,11 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
     blockUpdateHandler,
     sidebarToRender,
     blockToRender,
-    enableBlockLeftResize = true,
-    enableBlockRightResize = true,
-    enableBlockMove = true,
-    enableReorder = true,
+    enableBlockLeftResize = false,
+    enableBlockRightResize = false,
+    enableBlockMove = false,
+    enableReorder = false,
+    enableAddBlock = false,
     bottomSpacing = false,
     showAllBlocks = false,
   } = props;
@@ -53,6 +53,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
         enableBlockRightResize={enableBlockRightResize}
         enableBlockMove={enableBlockMove}
         enableReorder={enableReorder}
+        enableAddBlock={enableAddBlock}
         bottomSpacing={bottomSpacing}
         showAllBlocks={showAllBlocks}
       />

@@ -34,6 +34,7 @@ import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -66,7 +67,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();
@@ -77,7 +78,19 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
+      .then((res) => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
+        });
+      })
+      .catch((_) => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...data, state: "FAILED" },
+        });
+      });
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -87,6 +100,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
       .then(() => {
+        captureEvent(MODULE_LINK_CREATED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link created",
@@ -109,6 +126,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
       .then(() => {
+        captureEvent(MODULE_LINK_UPDATED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link updated",
@@ -129,6 +150,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
+        captureEvent(MODULE_LINK_DELETED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link deleted",
@@ -187,8 +212,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
       submitChanges({
-        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
         target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
+        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
       });
       setToastAlert({
         type: "success",
@@ -294,7 +319,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <Controller
               control={control}
               name="status"
-              render={({ field: { value } }) => (
+              render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   customButton={
                     <span

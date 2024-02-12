@@ -4,13 +4,18 @@ import { useTheme } from "next-themes";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
+// hooks
+import { useEventTracker } from "hooks/store";
 // components
 import { BreadcrumbLink } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+// constants
+import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "constants/event-tracker";
 
 export const WorkspaceDashboardHeader = () => {
   // hooks
+  const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
 
   return (
@@ -31,16 +36,26 @@ export const WorkspaceDashboardHeader = () => {
         </div>
         <div className="flex items-center gap-3 px-3">
           <a
+            onClick={() =>
+              captureEvent(CHANGELOG_REDIRECTED, {
+                element: "navbar",
+              })
+            }
             href="https://plane.so/changelog"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5"
           >
             <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
-            <span className="text-xs hidden sm:hidden md:block font-medium">{"What's new?"}</span>
+            <span className="hidden text-xs font-medium sm:hidden md:block">{"What's new?"}</span>
           </a>
           <a
-            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 "
+            onClick={() =>
+              captureEvent(GITHUB_REDIRECTED, {
+                element: "navbar",
+              })
+            }
+            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5"
             href="https://github.com/makeplane/plane"
             target="_blank"
             rel="noopener noreferrer"
@@ -51,7 +66,7 @@ export const WorkspaceDashboardHeader = () => {
               width={16}
               alt="GitHub Logo"
             />
-            <span className="text-xs font-medium hidden sm:hidden md:block">Star us on GitHub</span>
+            <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>
           </a>
         </div>
       </div>

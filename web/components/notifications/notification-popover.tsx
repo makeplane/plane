@@ -128,6 +128,7 @@ export const NotificationPopover = observer(() => {
                     <div className="divide-y divide-custom-border-100">
                       {notifications.map((notification) => (
                         <NotificationCard
+                          selectedTab={selectedTab}
                           key={notification.id}
                           isSnoozedTabOpen={snoozed}
                           closePopover={() => setIsActive(false)}
