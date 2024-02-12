@@ -155,7 +155,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
       <li>
         <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}>
-          <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
+          <div className="relative rounded p-3 md:p-4 text-custom-text-200 hover:bg-custom-background-80">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 overflow-hidden">
                 <FileText className="h-4 w-4 shrink-0" />
