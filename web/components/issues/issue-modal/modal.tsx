@@ -20,10 +20,19 @@ export interface IssuesModalProps {
   onSubmit?: (res: TIssue) => Promise<void>;
   withDraftIssueWrapper?: boolean;
   storeType?: TCreateModalStoreTypes;
+  isDraft?: boolean;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, isOpen, onClose, onSubmit, withDraftIssueWrapper = true, storeType = EIssuesStoreType.PROJECT } = props;
+  const {
+    data,
+    isOpen,
+    onClose,
+    onSubmit,
+    withDraftIssueWrapper = true,
+    storeType = EIssuesStoreType.PROJECT,
+    isDraft = false,
+  } = props;
   // states
   const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
   const [createMore, setCreateMore] = useState(false);
@@ -42,6 +51,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
   const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
+  const { issues: draftIssueStore } = useIssues(EIssuesStoreType.DRAFT);
   // store mapping based on current store
   const issueStores = {
     [EIssuesStoreType.PROJECT]: {
@@ -122,11 +132,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     onClose();
   };
 
-  const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
+  const handleCreateIssue = async (
+    payload: Partial<TIssue>,
+    is_draft_issue: boolean = false
+  ): Promise<TIssue | undefined> => {
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      const response = await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
+      const response = is_draft_issue
+        ? await draftIssueStore.createIssue(workspaceSlug, payload.project_id, payload)
+        : await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
       if (!response) throw new Error();
 
       currentIssueStore.fetchIssues(workspaceSlug, payload.project_id, "mutation", viewId);
@@ -213,7 +228,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     }
   };
 
-  const handleFormSubmit = async (formData: Partial<TIssue>) => {
+  const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue: boolean = false) => {
     if (!workspaceSlug || !formData.project_id || !storeType) return;
 
     const payload: Partial<TIssue> = {
@@ -222,7 +237,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     };
 
     let response: TIssue | undefined = undefined;
-    if (!data?.id) response = await handleCreateIssue(payload);
+    if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
     else response = await handleUpdateIssue(payload);
 
     if (response != undefined && onSubmit) await onSubmit(response);
@@ -274,6 +289,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     projectId={activeProjectId}
                     isCreateMoreToggleEnabled={createMore}
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
+                    isDraft={isDraft}
                   />
                 ) : (
                   <IssueFormRoot
@@ -287,6 +303,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     onCreateMoreToggleChange={handleCreateMoreToggleChange}
                     onSubmit={handleFormSubmit}
                     projectId={activeProjectId}
+                    isDraft={isDraft}
                   />
                 )}
               </Dialog.Panel>
