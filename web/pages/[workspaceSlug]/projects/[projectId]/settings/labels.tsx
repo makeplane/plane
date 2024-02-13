@@ -9,7 +9,7 @@ import { ProjectSettingHeader } from "components/headers";
 import { NextPageWithLayout } from "lib/types";
 
 const LabelsSettingsPage: NextPageWithLayout = () => (
-  <div className="w-full gap-10 overflow-y-auto py-8 pr-9">
+  <div className="h-full w-full gap-10 overflow-y-auto py-8 pr-9">
     <ProjectSettingsLabelList />
   </div>
 );

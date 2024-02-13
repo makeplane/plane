@@ -8,6 +8,7 @@ import { Loader } from "@plane/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const ProjectCardList = observer(() => {
   // theme
@@ -59,18 +60,18 @@ export const ProjectCardList = observer(() => {
       ) : (
         <EmptyState
           image={emptyStateImage}
-          title="Start a Project"
-          description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
+          title={WORKSPACE_EMPTY_STATE_DETAILS["projects"].title}
+          description={WORKSPACE_EMPTY_STATE_DETAILS["projects"].description}
           primaryButton={{
-            text: "Start your first project",
+            text: WORKSPACE_EMPTY_STATE_DETAILS["projects"].primaryButton.text,
             onClick: () => {
               setTrackElement("Project empty state");
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}
           comicBox={{
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+            title: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.title,
+            description: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.description,
           }}
           size="lg"
           disabled={!isEditingAllowed}

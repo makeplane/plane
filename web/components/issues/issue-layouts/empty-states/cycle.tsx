@@ -5,28 +5,29 @@ import { PlusIcon } from "lucide-react";
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { EmptyState } from "components/common";
 import { ExistingIssuesListModal } from "components/core";
-// ui
-import { Button } from "@plane/ui";
-// assets
-import emptyIssue from "public/empty-state/issue.svg";
 // types
-import { ISearchIssueResponse } from "@plane/types";
+import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { useTheme } from "next-themes";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
+  activeLayout: TIssueLayouts | undefined;
 };
 
 export const CycleEmptyState: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, cycleId } = props;
+  const { workspaceSlug, projectId, cycleId, activeLayout } = props;
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const { updateIssue, fetchIssue } = useIssueDetail();
@@ -36,6 +37,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole: userRole },
+    currentUser,
   } = useUser();
 
   const { setToastAlert } = useToast();
@@ -60,6 +62,11 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
       });
   };
 
+  const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["no-issues"];
+
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("cycle-issues", activeLayout ?? "list", isLightMode);
+
   const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;
 
   return (
@@ -74,27 +81,23 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
       />
       <div className="grid h-full w-full place-items-center">
         <EmptyState
-          title="Cycle issues will appear here"
-          description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-          image={emptyIssue}
+          title={emptyStateDetail.title}
+          description={emptyStateDetail.description}
+          image={emptyStateImage}
           primaryButton={{
-            text: "New issue",
+            text: emptyStateDetail.primaryButton.text,
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
               setTrackElement("Cycle issue empty state");
               toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
             },
           }}
-          secondaryButton={
-            <Button
-              variant="neutral-primary"
-              prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
-              onClick={() => setCycleIssuesListModal(true)}
-              disabled={!isEditingAllowed}
-            >
-              Add an existing issue
-            </Button>
-          }
+          secondaryButton={{
+            text: emptyStateDetail.secondaryButton.text,
+            icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
+            onClick: () => setCycleIssuesListModal(true),
+          }}
+          size="sm"
           disabled={!isEditingAllowed}
         />
       </div>

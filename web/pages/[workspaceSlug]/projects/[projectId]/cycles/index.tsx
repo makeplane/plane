@@ -20,6 +20,7 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -81,16 +82,15 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
       {totalCycles === 0 ? (
         <div className="h-full place-items-center">
           <EmptyState
-            title="Group and timebox your work in Cycles."
-            description="Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team."
+            title={CYCLE_EMPTY_STATE_DETAILS["cycles"].title}
+            description={CYCLE_EMPTY_STATE_DETAILS["cycles"].description}
             image={EmptyStateImagePath}
             comicBox={{
-              title: "Cycles are repetitive time-boxes.",
-              description:
-                "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
+              title: CYCLE_EMPTY_STATE_DETAILS["cycles"].comicBox.title,
+              description: CYCLE_EMPTY_STATE_DETAILS["cycles"].comicBox.description,
             }}
             primaryButton={{
-              text: "Set your first cycle",
+              text: CYCLE_EMPTY_STATE_DETAILS["cycles"].primaryButton.text,
               onClick: () => {
                 setTrackElement("Cycle empty state");
                 setCreateModal(true);
@@ -114,7 +114,8 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `border-b-2 p-4 text-sm font-medium outline-none ${selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
+                    `border-b-2 p-4 text-sm font-medium outline-none ${
+                      selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
                     }`
                   }
                 >
@@ -132,14 +133,16 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                       <Tooltip key={layout.key} tooltipContent={layout.title}>
                         <button
                           type="button"
-                          className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${cycleLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                            }`}
+                          className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
+                            cycleLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                          }`}
                           onClick={() => handleCurrentLayout(layout.key as TCycleLayout)}
                         >
                           <layout.icon
                             strokeWidth={2}
-                            className={`h-3.5 w-3.5 ${cycleLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
-                              }`}
+                            className={`h-3.5 w-3.5 ${
+                              cycleLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                            }`}
                           />
                         </button>
                       </Tooltip>

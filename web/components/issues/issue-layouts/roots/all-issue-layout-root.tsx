@@ -20,7 +20,8 @@ import { EIssueActions } from "../types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { ALL_ISSUES_EMPTY_STATE_DETAILS, EUserWorkspaceRoles } from "constants/workspace";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { ALL_ISSUES_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router

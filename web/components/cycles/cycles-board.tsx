@@ -7,7 +7,7 @@ import { useUser } from "hooks/store";
 import { CyclePeekOverview, CyclesBoardCard } from "components/cycles";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
-import { CYCLE_EMPTY_STATE_DETAILS } from "constants/cycle";
+import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export interface ICyclesBoard {
   cycleIds: string[];
