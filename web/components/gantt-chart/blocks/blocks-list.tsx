@@ -86,7 +86,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
       className="h-full"
       style={{
         width: `${itemsContainerWidth}px`,
-        marginTop: `${HEADER_HEIGHT}px`,
+        transform: `translateY(${HEADER_HEIGHT}px)`,
       }}
     >
       {blocks?.map((block) => {
