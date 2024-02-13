@@ -11,6 +11,7 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { Input, Loader, Spinner } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { VIEW_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const ProjectViewsList = observer(() => {
   // states
@@ -77,15 +78,15 @@ export const ProjectViewsList = observer(() => {
         </div>
       ) : (
         <EmptyState
-          title="Save filtered views for your project. Create as many as you need"
-          description="Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best."
+          title={VIEW_EMPTY_STATE_DETAILS["project-views"].title}
+          description={VIEW_EMPTY_STATE_DETAILS["project-views"].description}
           image={EmptyStateImagePath}
           comicBox={{
-            title: "Views work atop Issue properties.",
-            description: "You can create a view from here with as many properties as filters as you see fit.",
+            title: VIEW_EMPTY_STATE_DETAILS["project-views"].comicBox.title,
+            description: VIEW_EMPTY_STATE_DETAILS["project-views"].comicBox.description,
           }}
           primaryButton={{
-            text: "Create your first view",
+            text: VIEW_EMPTY_STATE_DETAILS["project-views"].primaryButton.text,
             onClick: () => toggleCreateViewModal(true),
           }}
           size="lg"
