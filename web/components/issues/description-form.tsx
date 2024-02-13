@@ -2,9 +2,8 @@ import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import debounce from "lodash/debounce";
 // components
-import { TextArea } from "@plane/ui";
+import { Loader, TextArea } from "@plane/ui";
 import { RichTextEditor } from "components/editor/rich-text-editor";
 import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
 // types
@@ -12,6 +11,9 @@ import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
 // store
 import { useWorkspace } from "hooks/store";
+// utils
+import { isNil } from "lodash";
+import debounce from "lodash/debounce";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -67,11 +69,19 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   // editor rerendering on every save
   useEffect(() => {
     if (issue.id) {
-      setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issue.id]); // TODO: verify the exhaustive-deps warning
+
+  useEffect(() => {
+    if (issue.description_html) {
+      setLocalIssueDescription((state) => {
+        if (!isNil(state.description_html)) return state;
+        return { id: issue.id, description_html: issue.description_html };
+      });
+    }
+  }, [issue.description_html]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<TIssue>) => {
@@ -163,36 +173,42 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <div className="relative">
-        <Controller
-          name="description_html"
-          control={control}
-          render={({ field: { onChange } }) =>
-            !disabled ? (
-              <RichTextEditor
-                workspaceId={workspaceId}
-                workspaceSlug={workspaceSlug}
-                value={localIssueDescription.description_html}
-                rerenderOnPropsChange={localIssueDescription}
-                setShouldShowAlert={setShowAlert}
-                setIsSubmitting={setIsSubmitting}
-                dragDropEnabled={true}
-                customClassName="min-h-[150px] shadow-sm"
-                onChange={(description: Object, description_html: string) => {
-                  setShowAlert(true);
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  debouncedFormSave();
-                }}
-              />
-            ) : (
-              <RichTextReadOnlyEditor
-                value={localIssueDescription.description_html}
-                customClassName="!p-0 !pt-2 text-custom-text-200"
-                noBorder={disabled}
-              />
-            )
-          }
-        />
+        {issue.description_html ? (
+          <Controller
+            name="description_html"
+            control={control}
+            render={({ field: { onChange } }) =>
+              !disabled ? (
+                <RichTextEditor
+                  workspaceSlug={workspaceSlug}
+                  workspaceId={workspaceId}
+                  value={localIssueDescription.description_html}
+                  rerenderOnPropsChange={localIssueDescription}
+                  setShouldShowAlert={setShowAlert}
+                  setIsSubmitting={setIsSubmitting}
+                  dragDropEnabled
+                  customClassName="min-h-[150px] shadow-sm"
+                  onChange={(description: Object, description_html: string) => {
+                    setShowAlert(true);
+                    setIsSubmitting("submitting");
+                    onChange(description_html);
+                    debouncedFormSave();
+                  }}
+                />
+              ) : (
+                <RichTextReadOnlyEditor
+                  value={localIssueDescription.description_html}
+                  customClassName="!p-0 !pt-2 text-custom-text-200"
+                  noBorder={disabled}
+                />
+              )
+            }
+          />
+        ) : (
+          <Loader>
+            <Loader.Item height="150px" />
+          </Loader>
+        )}
       </div>
     </div>
   );

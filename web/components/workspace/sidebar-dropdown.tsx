@@ -222,7 +222,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
                     <Link
                       href="/create-workspace"
-                      onClick={() => setTrackElement("APP_SIDEBAR_WORKSPACE_DROPDOWN")}
                       className="w-full"
                     >
                       <Menu.Item

@@ -1,6 +1,6 @@
 import { FC } from "react";
 // context
-import { useChart } from "../hooks";
+import { useChart } from "../../hooks";
 
 export const YearChartView: FC<any> = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

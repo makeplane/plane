@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // hooks
-import { useMember, useUser } from "hooks/store";
+import { useEventTracker, useMember, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
@@ -12,6 +12,7 @@ import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 import { CustomSelect, Tooltip } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
 
 type Props = {
   memberId: string;
@@ -33,6 +34,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
   // derived values
@@ -42,7 +44,13 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     if (!workspaceSlug || !currentUserSettings) return;
 
     await leaveWorkspace(workspaceSlug.toString())
-      .then(() => router.push("/profile"))
+      .then(() => {
+        captureEvent(WORKSPACE_MEMBER_lEAVE, {
+          state: "SUCCESS",
+          element: "Workspace settings members page",
+        });
+        router.push("/profile");
+      })
       .catch((err) =>
         setToastAlert({
           type: "error",

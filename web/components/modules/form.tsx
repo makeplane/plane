@@ -11,7 +11,7 @@ import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { IModule } from "@plane/types";
 
 type Props = {
-  handleFormSubmit: (values: Partial<IModule>) => Promise<void>;
+  handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
   handleClose: () => void;
   status: boolean;
   projectId: string;
@@ -36,7 +36,7 @@ export const ModuleForm: React.FC<Props> = ({
   data,
 }) => {
   const {
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     handleSubmit,
     watch,
     control,
@@ -53,7 +53,7 @@ export const ModuleForm: React.FC<Props> = ({
   });
 
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
-    await handleFormSubmit(formData);
+    await handleFormSubmit(formData, dirtyFields);
 
     reset({
       ...defaultValues,

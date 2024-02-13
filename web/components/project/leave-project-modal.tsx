@@ -11,6 +11,8 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // types
 import { IProject } from "@plane/types";
+// constants
+import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 
 type FormData = {
   projectName: string;
@@ -63,8 +65,9 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
             .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
-              captureEvent("Project member leave", {
+              captureEvent(PROJECT_MEMBER_LEAVE, {
                 state: "SUCCESS",
+                element: "Project settings members page",
               });
             })
             .catch(() => {
@@ -73,8 +76,9 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
-              captureEvent("Project member leave", {
+              captureEvent(PROJECT_MEMBER_LEAVE, {
                 state: "FAILED",
+                element: "Project settings members page",
               });
             });
         } else {

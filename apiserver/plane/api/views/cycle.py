@@ -262,7 +262,7 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                     return Response(
                         {
                             "error": "Cycle with the same external id and external source already exists",
-                            "cycle": str(cycle.id),
+                            "id": str(cycle.id),
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
@@ -325,7 +325,7 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 return Response(
                     {
                         "error": "Cycle with the same external id and external source already exists",
-                        "cycle_id": str(cycle.id),
+                        "id": str(cycle.id),
                     },
                     status=status.HTTP_409_CONFLICT,
                 )

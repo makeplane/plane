@@ -1,10 +1,11 @@
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
+
+import { FC, useState, useRef, useEffect, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { FC, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+import { useApplication, useEstimate, useIssueDetail, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
@@ -53,8 +54,9 @@ export interface IssueFormProps {
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
   onClose: () => void;
-  onSubmit: (values: Partial<TIssue>) => Promise<void>;
+  onSubmit: (values: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
+  isDraft: boolean;
 }
 
 // services
@@ -69,6 +71,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     projectId: defaultProjectId,
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
+    isDraft,
   } = props;
   // states
   const [labelModal, setLabelModal] = useState(false);
@@ -91,7 +94,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -134,8 +136,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   const issueName = watch("name");
 
-  const handleFormSubmit = async (formData: Partial<TIssue>) => {
-    await onSubmit(formData);
+  const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
+    await onSubmit(formData, is_draft_issue);
 
     setGptAssistantModal(false);
 
@@ -245,7 +247,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           }}
         />
       )}
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
             {/* Don't show project selection if editing an issue */}
@@ -663,7 +665,34 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={17}>
               Discard
             </Button>
-            <Button type="submit" variant="primary" size="sm" loading={isSubmitting} tabIndex={18}>
+
+            {isDraft && (
+              <Fragment>
+                {data?.id ? (
+                  <Button
+                    variant="neutral-primary"
+                    size="sm"
+                    loading={isSubmitting}
+                    onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
+                    tabIndex={18}
+                  >
+                    {isSubmitting ? "Moving" : "Move from draft"}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="neutral-primary"
+                    size="sm"
+                    loading={isSubmitting}
+                    onClick={handleSubmit((data) => handleFormSubmit(data, true))}
+                    tabIndex={18}
+                  >
+                    {isSubmitting ? "Saving" : "Save as draft"}
+                  </Button>
+                )}
+              </Fragment>
+            )}
+
+            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={isDraft ? 19 : 18}>
               {data?.id ? (isSubmitting ? "Updating" : "Update issue") : isSubmitting ? "Creating" : "Create issue"}
             </Button>
           </div>

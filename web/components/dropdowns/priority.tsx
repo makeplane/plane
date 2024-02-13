@@ -23,6 +23,7 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
+  onClose?: () => void;
   value: TIssuePriorities;
 };
 
@@ -260,6 +261,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     hideIcon = false,
     highlightUrgent = true,
     onChange,
+    onClose,
     placement,
     showTooltip = false,
     tabIndex,
@@ -308,8 +310,10 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   };
 
   const handleClose = () => {
-    if (isOpen) setIsOpen(false);
+    if (!isOpen) return;
+    setIsOpen(false);
     if (referenceElement) referenceElement.blur();
+    onClose && onClose();
   };
 
   const toggleDropdown = () => {
@@ -360,7 +364,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
             onClick={handleOnClick}
           >
             {button}
@@ -370,7 +374,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,

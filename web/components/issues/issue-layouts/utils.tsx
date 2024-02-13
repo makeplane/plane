@@ -1,10 +1,10 @@
 import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
-import { ISSUE_PRIORITIES } from "constants/issue";
+import { EIssueListRow, ISSUE_PRIORITIES } from "constants/issue";
 import { renderEmoji } from "helpers/emoji.helper";
 import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
-import { GroupByColumnTypes, IGroupByColumn } from "@plane/types";
+import { GroupByColumnTypes, IGroupByColumn, IIssueListRow, TGroupedIssues, TUnGroupedIssues } from "@plane/types";
 import { STATE_GROUPS } from "constants/state";
 import { ILabelStore } from "store/label.store";
 

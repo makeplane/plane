@@ -47,7 +47,7 @@ export const ShortcutsModal: FC<Props> = (props) => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <Dialog.Panel className="h-full w-full">
-              <div className="grid h-full w-full place-items-center p-5">
+              <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
                 <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-lg font-medium">Keyboard shortcuts</span>
