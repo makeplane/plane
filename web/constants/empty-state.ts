@@ -37,6 +37,21 @@ export const WORKSPACE_EMPTY_STATE_DETAILS = {
       description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
     },
   },
+  "assigned-notification": {
+    key: "assigned-notification",
+    title: "No issues assigned",
+    description: "Updates for issues assigned to you can be seen here",
+  },
+  "created-notification": {
+    key: "created-notification",
+    title: "No updates to issues",
+    description: "Updates to issues created by you can be seen here",
+  },
+  "subscribed-notification": {
+    key: "subscribed-notification",
+    title: "No updates to issues",
+    description: "Updates to any issue you are subscribed to can be seen here",
+  },
 };
 
 export const ALL_ISSUES_EMPTY_STATE_DETAILS = {
@@ -67,6 +82,52 @@ export const ALL_ISSUES_EMPTY_STATE_DETAILS = {
   },
 };
 
+export const SEARCH_EMPTY_STATE_DETAILS = {
+  views: {
+    key: "views",
+    title: "No matching views",
+    description: "No views match the search criteria. Create a new view instead.",
+  },
+  projects: {
+    key: "projects",
+    title: "No matching projects",
+    description: "No projects detected with the matching criteria. Create a new project instead.",
+  },
+  commandK: {
+    key: "commandK",
+    title: "No results found. ",
+  },
+  members: {
+    key: "members",
+    title: "No matching members",
+    description: "Add them to the project if they are already a part of the workspace",
+  },
+};
+
+export const WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS = {
+  "api-tokens": {
+    key: "api-tokens",
+    title: "No API tokens created",
+    description:
+      "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
+  },
+  webhooks: {
+    key: "webhooks",
+    title: "No webhooks added",
+    description: "Create webhooks to receive real-time updates and automate actions.",
+  },
+  export: {
+    key: "export",
+    title: "No previous exports yet",
+    description: "Anytime you export, you will also have a copy here for reference.",
+  },
+  import: {
+    key: "export",
+    title: "No previous imports yet",
+    description: "Find all your previous imports here and download them.",
+  },
+};
+
 //  profile empty state
 export const PROFILE_EMPTY_STATE_DETAILS = {
   assigned: {
@@ -87,6 +148,25 @@ export const PROFILE_EMPTY_STATE_DETAILS = {
 };
 
 // project empty state
+
+export const PROJECT_SETTINGS_EMPTY_STATE_DETAILS = {
+  labels: {
+    key: "labels",
+    title: "No labels yet",
+    description: "Create labels to help organize and filter issues in you project.",
+  },
+  integrations: {
+    key: "integrations",
+    title: "No integrations configured",
+    description: "Configure GitHub and other integrations to sync your project issues.",
+  },
+  estimate: {
+    key: "estimate",
+    title: "No estimates added",
+    description: "Create a set of estimates to communicate the amount of work per issue.",
+  },
+};
+
 export const CYCLE_EMPTY_STATE_DETAILS = {
   cycles: {
     title: "Group and timebox your work in Cycles.",
