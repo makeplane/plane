@@ -147,6 +147,8 @@ def send_email_notification(
     issue_id, notification_data, receiver_id, email_notification_ids
 ):
     try:
+        if not issue_id:
+            return
         ri = redis_instance()
         base_api = (ri.get(str(issue_id)).decode())
         data = create_payload(notification_data=notification_data)

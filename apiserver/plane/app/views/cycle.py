@@ -628,10 +628,13 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 )
             )
         )
-        serializer = IssueSerializer(
-            issues, many=True, fields=fields if fields else None
+        return self.paginate(
+            request=request,
+            queryset=issues,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=fields if fields else None, expand=self.expand
+            ).data,
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])

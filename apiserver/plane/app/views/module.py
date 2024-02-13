@@ -376,10 +376,13 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ]
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = self.get_queryset().filter(**filters)
-        serializer = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=fields if fields else None, expand=self.expand
+            ).data,
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):

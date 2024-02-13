@@ -207,10 +207,13 @@ class GlobalViewIssuesViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        serializer = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=fields if fields else None, expand=self.expand
+            ).data,
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueViewViewSet(BaseViewSet):

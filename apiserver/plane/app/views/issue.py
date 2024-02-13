@@ -224,10 +224,13 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueSerializer(
-            issue_queryset, many=True, fields=self.fields, expand=self.expand
-        ).data
-        return Response(issues, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -1202,11 +1205,13 @@ class IssueArchiveViewSet(BaseViewSet):
             if show_sub_issues == "true"
             else issue_queryset.filter(parent__isnull=True)
         )
-
-        issues = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        ).data
-        return Response(issues, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=fields if fields else None, expand=self.expand
+            ).data,
+        )
 
     def retrieve(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1793,10 +1798,13 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        ).data
-        return Response(issues, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=fields if fields else None, expand=self.expand
+            ).data,
+        )
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
