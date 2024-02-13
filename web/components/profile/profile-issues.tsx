@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -36,9 +36,13 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     currentUser,
   } = useUser();
   const {
-    issues: { loader, groupedIssueIds, fetchIssues },
+    issues: { loader, groupedIssueIds, fetchIssues, setViewId },
     issuesFilter: { issueFilters, fetchFilters },
   } = useIssues(EIssuesStoreType.PROFILE);
+
+  useEffect(() => {
+    setViewId(type);
+  }, [type]);
 
   useSWR(
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,

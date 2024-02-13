@@ -77,14 +77,17 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
   get groupedIssueIds() {
     const viewId = this.rootIssueStore.globalViewId;
-    if (!viewId) return { dataViewId: "", issueIds: undefined };
+    const workspaceSlug = this.rootIssueStore.workspaceSlug;
+    if (!workspaceSlug || !viewId) return { dataViewId: "", issueIds: undefined };
+
+    const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
     const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.filters?.[viewId]?.displayFilters;
     if (!displayFilters) return { dataViewId: viewId, issueIds: undefined };
 
     const orderBy = displayFilters?.order_by;
 
-    const viewIssueIds = this.issues[viewId];
+    const viewIssueIds = this.issues[uniqueViewId];
 
     if (!viewIssueIds) return { dataViewId: viewId, issueIds: undefined };
 
@@ -102,13 +105,15 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     try {
       this.loader = loadType;
 
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
+
       const params = this.rootIssueStore?.workspaceIssuesFilter?.getAppliedFilters(viewId);
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
       runInAction(() => {
         set(
           this.issues,
-          [viewId],
+          [uniqueViewId],
           response.map((issue) => issue.id)
         );
         this.loader = undefined;
@@ -133,10 +138,12 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     try {
       if (!viewId) throw new Error("View id is required");
 
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
+
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
-        this.issues[viewId].push(response.id);
+        this.issues[uniqueViewId].push(response.id);
       });
 
       this.rootStore.issues.addIssue([response]);
@@ -175,12 +182,14 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     try {
       if (!viewId) throw new Error("View id is required");
 
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
+
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
+      const issueIndex = this.issues[uniqueViewId].findIndex((_issueId) => _issueId === issueId);
       if (issueIndex >= 0)
         runInAction(() => {
-          this.issues[viewId].splice(issueIndex, 1);
+          this.issues[uniqueViewId].splice(issueIndex, 1);
         });
 
       this.rootStore.issues.removeIssue(issueId);
