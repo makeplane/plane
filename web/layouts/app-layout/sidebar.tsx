@@ -12,7 +12,7 @@ import { ProjectSidebarList } from "components/project";
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
-export interface IAppSidebar { }
+export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
@@ -36,7 +36,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
         themStore.toggleSidebar(false);
       }
     };
-    handleResize();
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
