@@ -44,7 +44,7 @@ const Inputs = (props: any) => {
 
   return (
     <>
-      <h4 className="text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-sm md:text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
@@ -52,7 +52,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full rounded-md bg-transparent py-1.5 pr-2 text-xs font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent py-1.5 pr-2 text-base md:text-xs font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -172,7 +172,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
         >
           <form
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="z-50 flex w-full items-center gap-x-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-2 shadow-custom-shadow-2xs transition-opacity"
+            className="z-50 flex w-full items-center gap-x-2 rounded md:border-[0.5px] border-custom-border-200 bg-custom-background-100 px-2 md:shadow-custom-shadow-2xs transition-opacity"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
           </form>
@@ -180,7 +180,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       )}
 
       {!isOpen && (
-        <div className="hidden rounded border-[0.5px] border-custom-border-200 group-hover:block">
+        <div className="md:hidden rounded md:border-[0.5px] border-custom-border-200 md:group-hover:block">
           <button
             type="button"
             className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"

@@ -2,7 +2,13 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useIssues, useUser } from "hooks/store";
 // components
-import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
+import {
+  CalendarHeader,
+  CalendarIssueBlocks,
+  CalendarQuickAddIssueForm,
+  CalendarWeekDays,
+  CalendarWeekHeader,
+} from "components/issues";
 // ui
 import { Spinner } from "@plane/ui";
 // types
@@ -16,6 +22,10 @@ import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { useState } from "react";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { CalendarIssueBlock } from "./issue-block";
+import { MONTHS_LIST } from "constants/calendar";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -46,6 +56,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     viewId,
     readOnly = false,
   } = props;
+  // states
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   // store hooks
   const {
     issues: { viewFlags },
@@ -62,6 +74,9 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
 
+  const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
+  const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload ?? ""] ?? [] : null;
+
   if (!calendarPayload)
     return (
       <div className="grid h-full w-full place-items-center">
@@ -71,15 +86,17 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="flex h-full w-full flex-col overflow-hidden">
-        <CalendarHeader issuesFilterStore={issuesFilterStore} viewId={viewId} />
+      <div className="flex h-full w-full flex-col overflow-auto md:overflow-hidden">
+        <CalendarHeader setSelectedDate={setSelectedDate} issuesFilterStore={issuesFilterStore} viewId={viewId} />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
-        <div className="h-full w-full overflow-y-auto">
+        <div className="md:h-full w-full md:overflow-y-auto">
           {layout === "month" && (
             <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                   <CalendarWeekDays
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
                     issuesFilterStore={issuesFilterStore}
                     key={weekIndex}
                     week={week}
@@ -97,6 +114,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           )}
           {layout === "week" && (
             <CalendarWeekDays
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
               issuesFilterStore={issuesFilterStore}
               week={issueCalendarView.allDaysOfActiveWeek}
               issues={issues}
@@ -110,6 +129,38 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             />
           )}
         </div>
+        <div className="md:hidden">
+          <p className="p-4 text-xl font-semibold">
+            {`${selectedDate.getDate()} ${
+              MONTHS_LIST[selectedDate.getMonth() + 1].title
+            }, ${selectedDate.getFullYear()}`}
+          </p>
+          {issueIdList &&
+            issueIdList?.length > 0 &&
+            issueIdList?.map((issueId) => {
+              if (!issues?.[issueId]) return null;
+              const issue = issues?.[issueId];
+              return (
+                <div className="border-b px-4">
+                  <CalendarIssueBlock issue={issue} quickActions={quickActions} />
+                </div>
+              );
+            })}
+        </div>
+
+        {enableIssueCreation && isEditingAllowed && !readOnly && (
+          <div className="px-2 border-b !h-10 mb-5 flex items-center md:hidden">
+            <CalendarQuickAddIssueForm
+              formKey="target_date"
+              groupId={formattedDatePayload}
+              prePopulatedData={{
+                target_date: renderFormattedPayloadDate(selectedDate) ?? undefined,
+              }}
+              quickAddCallback={quickAddCallback}
+              viewId={viewId}
+            />
+          </div>
+        )}
       </div>
     </>
   );
