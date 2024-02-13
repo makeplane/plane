@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
@@ -14,7 +15,6 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { useCallback, useMemo } from "react";
 
 export const CalendarLayout: React.FC = observer(() => {
   const router = useRouter();

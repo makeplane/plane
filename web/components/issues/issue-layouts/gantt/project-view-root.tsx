@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -8,9 +9,6 @@ import { BaseGanttRoot } from "./base-gantt-root";
 import { EIssuesStoreType } from "constants/issue";
 // types
 import { TIssue } from "@plane/types";
-import { useCallback } from "react";
-
-
 
 export const ProjectViewGanttLayout: React.FC = observer(() => {
   // store
