@@ -127,7 +127,7 @@ export const handleDragDrop = async (
     updateIssue = {
       ...updateIssue,
       ...handleSortOrder(
-        sourceDroppableId == destinationDroppableId ? sourceIssues : destinationIssues,
+        sourceDroppableId === destinationDroppableId ? sourceIssues : destinationIssues,
         destination.index,
         issueMap
       ),
