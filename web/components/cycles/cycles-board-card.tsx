@@ -216,7 +216,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
                       {cycleDetails.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                        <Avatar key={assignee.id} name={assignee?.display_name} src={assignee.avatar} />
                       ))}
                     </AvatarGroup>
                   </div>

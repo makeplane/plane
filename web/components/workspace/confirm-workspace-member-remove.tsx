@@ -73,7 +73,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         {currentUser?.id === userDetails.id
                           ? "Leave workspace?"
-                          : `Remove ${userDetails.display_name}?`}
+                          : `Remove ${userDetails?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
                         {currentUser?.id === userDetails.id ? (
@@ -84,7 +84,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ) : (
                           <p className="text-sm text-custom-text-200">
                             Are you sure you want to remove member-{" "}
-                            <span className="font-bold">{userDetails.display_name}</span>? They will no longer have
+                            <span className="font-bold">{userDetails?.display_name}</span>? They will no longer have
                             access to this workspace. This action cannot be undone.
                           </p>
                         )}

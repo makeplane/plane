@@ -93,21 +93,22 @@ export const ProfileSidebar = observer(() => {
             )}
             <img
               src={
-                userProjectsData.user_data.cover_image ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
+                userProjectsData.user_data?.cover_image ??
+                "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
               }
-              alt={userProjectsData.user_data.display_name}
+              alt={userProjectsData.user_data?.display_name}
               className="h-32 w-full object-cover"
             />
             <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
-              {userProjectsData.user_data.avatar && userProjectsData.user_data.avatar !== "" ? (
+              {userProjectsData.user_data?.avatar && userProjectsData.user_data?.avatar !== "" ? (
                 <img
-                  src={userProjectsData.user_data.avatar}
-                  alt={userProjectsData.user_data.display_name}
+                  src={userProjectsData.user_data?.avatar}
+                  alt={userProjectsData.user_data?.display_name}
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
                 <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100 capitalize">
-                  {userProjectsData.user_data.first_name?.[0]}
+                  {userProjectsData.user_data?.first_name?.[0]}
                 </div>
               )}
             </div>
@@ -115,9 +116,9 @@ export const ProfileSidebar = observer(() => {
           <div className="px-5">
             <div className="mt-[38px]">
               <h4 className="text-lg font-semibold">
-                {userProjectsData.user_data.first_name} {userProjectsData.user_data.last_name}
+                {userProjectsData.user_data?.first_name} {userProjectsData.user_data?.last_name}
               </h4>
-              <h6 className="text-sm text-custom-text-200">({userProjectsData.user_data.display_name})</h6>
+              <h6 className="text-sm text-custom-text-200">({userProjectsData.user_data?.display_name})</h6>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
@@ -162,12 +163,13 @@ export const ProfileSidebar = observer(() => {
                             {project.assigned_issues > 0 && (
                               <Tooltip tooltipContent="Completion percentage" position="left">
                                 <div
-                                  className={`rounded px-1 py-0.5 text-xs font-medium ${completedIssuePercentage <= 35
-                                    ? "bg-red-500/10 text-red-500"
-                                    : completedIssuePercentage <= 70
+                                  className={`rounded px-1 py-0.5 text-xs font-medium ${
+                                    completedIssuePercentage <= 35
+                                      ? "bg-red-500/10 text-red-500"
+                                      : completedIssuePercentage <= 70
                                       ? "bg-yellow-500/10 text-yellow-500"
                                       : "bg-green-500/10 text-green-500"
-                                    }`}
+                                  }`}
                                 >
                                   {completedIssuePercentage}%
                                 </div>

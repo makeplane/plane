@@ -234,7 +234,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   {cycleDetails.assignees.length > 0 ? (
                     <AvatarGroup showTooltip={false}>
                       {cycleDetails.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                        <Avatar key={assignee.id} name={assignee?.display_name} src={assignee.avatar} />
                       ))}
                     </AvatarGroup>
                   ) : (

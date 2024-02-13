@@ -207,7 +207,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                 {moduleDetails.members_detail.length > 0 ? (
                   <AvatarGroup showTooltip={false}>
                     {moduleDetails.members_detail.map((member) => (
-                      <Avatar key={member.id} name={member.display_name} src={member.avatar} />
+                      <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />
                     ))}
                   </AvatarGroup>
                 ) : (
