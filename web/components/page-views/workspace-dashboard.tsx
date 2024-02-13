@@ -14,6 +14,7 @@ import { Spinner } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const WorkspaceDashboardView = observer(() => {
   // theme
@@ -78,20 +79,18 @@ export const WorkspaceDashboardView = observer(() => {
           ) : (
             <EmptyState
               image={emptyStateImage}
-              title="Overview of your projects, activity, and metrics"
-              description=" Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this
-            page will transform into a space that helps you progress. Admins will also see items which help their team
-            progress."
+              title={WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].title}
+              description={WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].description}
               primaryButton={{
-                text: "Build your first project",
+                text: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].primaryButton.text,
                 onClick: () => {
                   setTrackElement("Dashboard empty state");
                   toggleCreateProjectModal(true);
                 },
               }}
               comicBox={{
-                title: "Everything starts with a project in Plane",
-                description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+                title: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].comicBox.title,
+                description: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].comicBox.description,
               }}
               size="lg"
               disabled={!isEditingAllowed}

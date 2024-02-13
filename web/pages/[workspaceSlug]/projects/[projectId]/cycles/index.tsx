@@ -21,6 +21,7 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -84,16 +85,15 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
       {totalCycles === 0 ? (
         <div className="h-full place-items-center">
           <EmptyState
-            title="Group and timebox your work in Cycles."
-            description="Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team."
+            title={CYCLE_EMPTY_STATE_DETAILS["cycles"].title}
+            description={CYCLE_EMPTY_STATE_DETAILS["cycles"].description}
             image={EmptyStateImagePath}
             comicBox={{
-              title: "Cycles are repetitive time-boxes.",
-              description:
-                "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
+              title: CYCLE_EMPTY_STATE_DETAILS["cycles"].comicBox.title,
+              description: CYCLE_EMPTY_STATE_DETAILS["cycles"].comicBox.description,
             }}
             primaryButton={{
-              text: "Set your first cycle",
+              text: CYCLE_EMPTY_STATE_DETAILS["cycles"].primaryButton.text,
               onClick: () => {
                 setTrackElement("Cycle empty state");
                 setCreateModal(true);

@@ -9,8 +9,9 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
+import { useTheme } from "next-themes";
 // hooks
-import { useLabel } from "hooks/store";
+import { useLabel, useUser } from "hooks/store";
 import useDraggableInPortal from "hooks/use-draggable-portal";
 // components
 import {
@@ -19,13 +20,13 @@ import {
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
 } from "components/labels";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { EmptyState } from "components/common";
-// images
-import emptyLabel from "public/empty-state/label.svg";
 // types
 import { IIssueLabel } from "@plane/types";
+// constants
+import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const LABELS_ROOT = "labels.root";
 
@@ -40,7 +41,10 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
   // store hooks
+  const { currentUser } = useUser();
   const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
   // portal
   const renderDraggable = useDraggableInPortal();
@@ -49,6 +53,10 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     setIsUpdating(false);
     setLabelForm(true);
   };
+
+  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["labels"];
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("project-settings", "labels", isLightMode);
 
   const onDragEnd = (result: DropResult) => {
     const { combine, draggableId, destination, source } = result;
@@ -94,7 +102,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           Add label
         </Button>
       </div>
-      <div className="w-full py-8">
+      <div className="h-full w-full py-8">
         {showLabelForm && (
           <div className="w-full rounded border border-custom-border-200 px-3.5 py-2 my-2">
             <CreateUpdateLabelInline
@@ -111,15 +119,14 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         )}
         {projectLabels ? (
           projectLabels.length === 0 && !showLabelForm ? (
-            <EmptyState
-              title="No labels yet"
-              description="Create labels to help organize and filter issues in you project"
-              image={emptyLabel}
-              primaryButton={{
-                text: "Add label",
-                onClick: () => newLabel(),
-              }}
-            />
+            <div className="flex items-center justify-center h-full w-full">
+              <EmptyState
+                title={emptyStateDetail.title}
+                description={emptyStateDetail.description}
+                image={emptyStateImage}
+                size="lg"
+              />
+            </div>
           ) : (
             projectLabelsTree && (
               <DragDropContext

@@ -76,6 +76,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
           cycleId={cycleId.toString()}
+          activeLayout={activeLayout}
         />
       </div>
     );
