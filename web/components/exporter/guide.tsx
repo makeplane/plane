@@ -13,7 +13,8 @@ import { IntegrationService } from "services/integrations";
 // components
 import { Exporter, SingleExport } from "components/exporter";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { ImportExportSettingsLoader } from "components/ui";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // fetch-keys
@@ -143,12 +144,7 @@ const IntegrationGuide = observer(() => {
                   <p className="px-4 py-6 text-sm text-custom-text-200">No previous export available.</p>
                 )
               ) : (
-                <Loader className="mt-6 grid grid-cols-1 gap-3">
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                </Loader>
+                <ImportExportSettingsLoader />
               )}
             </div>
           </div>

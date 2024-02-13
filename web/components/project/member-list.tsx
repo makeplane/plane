@@ -6,7 +6,8 @@ import { useEventTracker, useMember } from "hooks/store";
 // components
 import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { MembersSettingsLoader } from "components/ui";
 
 export const ProjectMemberList: React.FC = observer(() => {
   // states
@@ -56,12 +57,7 @@ export const ProjectMemberList: React.FC = observer(() => {
         </Button>
       </div>
       {!projectMemberIds ? (
-        <Loader className="space-y-5">
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-        </Loader>
+        <MembersSettingsLoader />
       ) : (
         <div className="divide-y divide-custom-border-100">
           {projectMemberIds.length > 0

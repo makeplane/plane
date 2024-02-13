@@ -12,7 +12,7 @@ import { IntegrationCard } from "components/project";
 import { ProjectSettingHeader } from "components/headers";
 // ui
 import { EmptyState } from "components/common";
-import { Loader } from "@plane/ui";
+import { IntegrationsSettingsLoader } from "components/ui";
 // images
 import emptyIntegration from "public/empty-state/integration.svg";
 // types
@@ -68,12 +68,7 @@ const ProjectIntegrationsPage: NextPageWithLayout = () => {
           </div>
         )
       ) : (
-        <Loader className="space-y-5">
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-        </Loader>
+        <IntegrationsSettingsLoader />
       )}
     </div>
   );

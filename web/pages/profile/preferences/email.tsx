@@ -3,7 +3,7 @@ import useSWR from "swr";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
 // ui
-import { Loader } from "@plane/ui";
+import { EmailSettingsLoader } from "components/ui";
 // components
 import { EmailNotificationForm } from "components/profile/preferences";
 // services
@@ -20,18 +20,8 @@ const ProfilePreferencesThemePage: NextPageWithLayout = () => {
     userService.currentUserEmailNotificationSettings()
   );
 
-  if (isLoading) {
-    return (
-      <Loader className="space-y-4 mt-8 px-6 lg:px-20">
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-      </Loader>
-    );
-  }
-
-  if (!data) {
-    return null;
+  if (!data || isLoading) {
+    return <EmailSettingsLoader />;
   }
 
   return (

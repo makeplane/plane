@@ -11,7 +11,8 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { WorkspaceSettingHeader } from "components/headers";
 import { ApiTokenEmptyState, ApiTokenListItem, CreateApiTokenModal } from "components/api-token";
 // ui
-import { Button, Spinner } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { APITokenSettingsLoader } from "components/ui";
 // services
 import { APITokenService } from "services/api_token.service";
 // types
@@ -46,36 +47,34 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
       </div>
     );
 
+  if (!tokens) {
+    return <APITokenSettingsLoader />;
+  }
+
   return (
     <>
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
-      {tokens ? (
-        <section className="w-full overflow-y-auto py-8 pr-9">
-          {tokens.length > 0 ? (
-            <>
-              <div className="mb-2 flex items-center justify-between border-b border-custom-border-200 py-3.5">
-                <h3 className="text-xl font-medium">API tokens</h3>
-                <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                  Add API token
-                </Button>
-              </div>
-              <div>
-                {tokens.map((token) => (
-                  <ApiTokenListItem key={token.id} token={token} />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="mx-auto">
-              <ApiTokenEmptyState onClick={() => setIsCreateTokenModalOpen(true)} />
+      <section className="w-full overflow-y-auto py-8 pr-9">
+        {tokens.length > 0 ? (
+          <>
+            <div className="mb-2 flex items-center justify-between border-b border-custom-border-200 py-3.5">
+              <h3 className="text-xl font-medium">API tokens</h3>
+              <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
+                Add API token
+              </Button>
             </div>
-          )}
-        </section>
-      ) : (
-        <div className="grid h-full w-full place-items-center p-4">
-          <Spinner />
-        </div>
-      )}
+            <div>
+              {tokens.map((token) => (
+                <ApiTokenListItem key={token.id} token={token} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="mx-auto">
+            <ApiTokenEmptyState onClick={() => setIsCreateTokenModalOpen(true)} />
+          </div>
+        )}
+      </section>
     </>
   );
 });
