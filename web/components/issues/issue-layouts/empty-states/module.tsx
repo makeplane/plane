@@ -70,7 +70,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
         projectId={projectId}
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
-        searchParams={{ module: moduleId != undefined ? [moduleId.toString()] : [] }}
+        searchParams={{ module: moduleId != undefined ? moduleId.toString() : "" }}
         handleOnSubmit={handleAddIssuesToModule}
       />
       <div className="grid h-full w-full place-items-center">
