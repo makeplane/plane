@@ -13,7 +13,8 @@ import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Spinner, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // types
 import { TCycleView, TCycleLayout } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
@@ -65,9 +66,11 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
   if (loader)
     return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
+      <>
+        {cycleLayout === "list" && <CycleModuleListLayout />}
+        {cycleLayout === "board" && <CycleModuleBoardLayout />}
+        {cycleLayout === "gantt" && <GanttLayoutLoader />}
+      </>
     );
 
   return (
@@ -114,7 +117,8 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `border-b-2 p-4 text-sm font-medium outline-none ${selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
+                    `border-b-2 p-4 text-sm font-medium outline-none ${
+                      selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
                     }`
                   }
                 >
@@ -132,14 +136,16 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                       <Tooltip key={layout.key} tooltipContent={layout.title}>
                         <button
                           type="button"
-                          className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${cycleLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                            }`}
+                          className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
+                            cycleLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                          }`}
                           onClick={() => handleCurrentLayout(layout.key as TCycleLayout)}
                         >
                           <layout.icon
                             strokeWidth={2}
-                            className={`h-3.5 w-3.5 ${cycleLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
-                              }`}
+                            className={`h-3.5 w-3.5 ${
+                              cycleLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                            }`}
                           />
                         </button>
                       </Tooltip>
