@@ -45,17 +45,7 @@ export const ProjectLayoutRoot: FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return (
-      <>
-        {activeLayout ? (
-          getActiveLayoutLoader(activeLayout)
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-      </>
-    );
+    return <>{activeLayout && getActiveLayoutLoader(activeLayout)}</>;
   }
 
   if (issues?.groupedIssueIds?.length === 0) {
