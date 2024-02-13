@@ -1,16 +1,22 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 // mobx store
 import { useIssues } from "hooks/store/use-issues";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 import { BaseKanBanRoot } from "../base-kanban-root";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 // constants
 import { EIssueActions } from "../../types";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export interface IKanBanLayout {}
 
@@ -36,6 +42,32 @@ export const KanBanLayout: React.FC = observer(() => {
     [issues, workspaceSlug]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+    },
+    [issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload);
+    },
+    [issues.updateIssue]
+  );
+
+  const removeIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string) => {
+      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    },
+    [issues.removeIssue]
+  );
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -44,6 +76,9 @@ export const KanBanLayout: React.FC = observer(() => {
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROJECT}
+      updateFilters={updateFilters}
+      removeIssue={removeIssue}
+      updateIssue={updateIssue}
     />
   );
 });

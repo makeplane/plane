@@ -25,26 +25,26 @@ export interface IModuleIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<TIssue[] | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
     data: Partial<TIssue>,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<TIssue | undefined>;
   quickAddIssue: (
     workspaceSlug: string,
@@ -147,11 +147,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader = "init-loader",
-    moduleId: string | undefined = undefined
+    moduleId: string
   ) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       this.loader = loadType;
 
       const params = this.rootIssueStore?.moduleIssuesFilter?.appliedFilters;
@@ -177,15 +175,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  createIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    moduleId: string | undefined = undefined
-  ) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id]);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
@@ -201,11 +192,9 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    moduleId: string | undefined = undefined
+    moduleId: string
   ) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
       return response;
@@ -215,15 +204,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  removeIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId: string | undefined = undefined
-  ) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 

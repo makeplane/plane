@@ -6,6 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useApplication, useEventTracker, useCycle, useIssues, useModule, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
+import { useIssuesActions } from "hooks/use-issues-actions";
 // components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
@@ -42,41 +43,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const {
-    router: { workspaceSlug, projectId, cycleId, moduleId, viewId: projectViewId },
+    router: { workspaceSlug, projectId, cycleId, moduleId },
   } = useApplication();
-  const { currentWorkspace } = useWorkspace();
   const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
-  const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: moduleIssues } = useIssues(EIssuesStoreType.MODULE);
   const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
-  const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-  const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
   const { issues: draftIssueStore } = useIssues(EIssuesStoreType.DRAFT);
   // store mapping based on current store
-  const issueStores = {
-    [EIssuesStoreType.PROJECT]: {
-      store: projectIssues,
-      viewId: undefined,
-    },
-    [EIssuesStoreType.PROJECT_VIEW]: {
-      store: viewIssues,
-      viewId: projectViewId,
-    },
-    [EIssuesStoreType.PROFILE]: {
-      store: profileIssues,
-      viewId: undefined,
-    },
-    [EIssuesStoreType.CYCLE]: {
-      store: cycleIssues,
-      viewId: cycleId,
-    },
-    [EIssuesStoreType.MODULE]: {
-      store: moduleIssues,
-      viewId: moduleId,
-    },
-  };
+  const issueStores = {};
   // router
   const router = useRouter();
   // toast alert
@@ -84,7 +60,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // local storage
   const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
   // current store details
-  const { store: currentIssueStore, viewId } = issueStores[storeType];
+  const { fetchIssues, createIssue, updateIssue } = useIssuesActions(storeType);
 
   useEffect(() => {
     // if modal is closed, reset active project to null
@@ -143,10 +119,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     try {
       const response = is_draft_issue
         ? await draftIssueStore.createIssue(workspaceSlug, payload.project_id, payload)
-        : await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
+        : await createIssue(workspaceSlug, payload.project_id, payload);
       if (!response) throw new Error();
 
-      currentIssueStore.fetchIssues(workspaceSlug, payload.project_id, "mutation", viewId);
+      fetchIssues(workspaceSlug, payload.project_id, "mutation");
 
       if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
@@ -183,7 +159,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      const response = await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
+      const response = await updateIssue(workspaceSlug, payload.project_id, data.id, payload);
       setToastAlert({
         type: "success",
         title: "Success!",

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
@@ -6,9 +6,15 @@ import { useIssues } from "hooks/store";
 
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 import { EIssueActions } from "../../types";
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const ProjectSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -32,12 +38,25 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
     [issues, workspaceSlug]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+    },
+    [issuesFilter.updateFilters]
+  );
+
   return (
     <BaseSpreadsheetRoot
       issueStore={issues}
       issueFiltersStore={issuesFilter}
       issueActions={issueActions}
       QuickActions={ProjectIssueQuickActions}
+      updateFilters={updateFilters}
     />
   );
 });

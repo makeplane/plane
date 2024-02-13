@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 //hooks
@@ -5,11 +6,16 @@ import { useCycle, useIssues } from "hooks/store";
 // components
 import { CycleIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
@@ -37,6 +43,27 @@ export const CycleCalendarLayout: React.FC = observer(() => {
     [issues, workspaceSlug, cycleId, projectId]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      if (!cycleId) return;
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, cycleId.toString());
+    },
+    [cycleId, issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      if (!cycleId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload, cycleId.toString());
+    },
+    [issues.updateIssue, cycleId]
+  );
+
   if (!cycleId) return null;
 
   const isCompletedCycle =
@@ -50,6 +77,8 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       issueActions={issueActions}
       viewId={cycleId.toString()}
       isCompletedCycle={isCompletedCycle}
+      updateFilters={updateFilters}
+      updateIssue={updateIssue}
     />
   );
 });

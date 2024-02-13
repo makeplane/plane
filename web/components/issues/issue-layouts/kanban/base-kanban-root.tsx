@@ -8,7 +8,13 @@ import useToast from "hooks/use-toast";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
@@ -48,6 +54,19 @@ export interface IBaseKanBanLayout {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
+  updateIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>
+  ) => Promise<TIssue | undefined>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue | undefined>;
+  updateFilters: (
+    workspaceSlug: string,
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
 }
 
 type KanbanDragState = {
@@ -68,6 +87,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     addIssuesToView,
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
+    updateIssue,
+    removeIssue,
+    updateFilters,
   } = props;
   // router
   const router = useRouter();
@@ -150,12 +172,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           result.destination,
           workspaceSlug?.toString(),
           projectId?.toString(),
-          issues,
           sub_group_by,
           group_by,
           issueMap,
           issueIds,
-          viewId
+          updateIssue,
+          removeIssue
         ).catch((err) => {
           setToastAlert({
             title: "Error",
@@ -202,12 +224,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       dragState.destination,
       workspaceSlug?.toString(),
       projectId?.toString(),
-      issues,
       sub_group_by,
       group_by,
       issueMap,
       issueIds,
-      viewId
+      updateIssue,
+      removeIssue
     ).finally(() => {
       handleIssues(issueMap[dragState.draggedIssueId!], EIssueActions.DELETE);
       setDeleteIssueModal(false);
@@ -225,7 +247,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
       if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
       else _kanbanFilters.push(value);
-      issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
+      updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
         [toggle]: _kanbanFilters,
       });
     }

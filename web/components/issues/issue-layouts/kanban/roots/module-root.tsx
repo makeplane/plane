@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hook
@@ -6,11 +6,17 @@ import { useIssues } from "hooks/store";
 // components
 import { ModuleIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export interface IModuleKanBanLayout {}
 
@@ -42,6 +48,35 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     [issues, workspaceSlug, moduleId]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      if (!moduleId) return;
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, moduleId.toString());
+    },
+    [moduleId, issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      if (!moduleId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload, moduleId.toString());
+    },
+    [issues.updateIssue, moduleId]
+  );
+
+  const removeIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string) => {
+      if (!moduleId) return;
+      return await issues.removeIssue(workspaceSlug, projectId, issueId, moduleId.toString());
+    },
+    [issues.removeIssue, moduleId]
+  );
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -51,6 +86,9 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId?.toString()}
       storeType={EIssuesStoreType.MODULE}
+      updateFilters={updateFilters}
+      removeIssue={removeIssue}
+      updateIssue={updateIssue}
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
         return issues.addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);

@@ -47,12 +47,12 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const issueActions = useMemo(
     () => ({
       [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !projectId) return;
+        if (!workspaceSlug || !projectId || !viewId) return;
 
         await issues.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue, viewId?.toString());
       },
       [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !projectId) return;
+        if (!workspaceSlug || !projectId || !viewId) return;
 
         await issues.removeIssue(workspaceSlug.toString(), projectId.toString(), issue.id, viewId?.toString());
       },
@@ -85,7 +85,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
                 ) : activeLayout === "calendar" ? (
                   <ProjectViewCalendarLayout issueActions={issueActions} />
                 ) : activeLayout === "gantt_chart" ? (
-                  <ProjectViewGanttLayout issueActions={issueActions} />
+                  <ProjectViewGanttLayout />
                 ) : activeLayout === "spreadsheet" ? (
                   <ProjectViewSpreadsheetLayout issueActions={issueActions} />
                 ) : null}

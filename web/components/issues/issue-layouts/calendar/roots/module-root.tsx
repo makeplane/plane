@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hoks
@@ -5,11 +6,16 @@ import { useIssues } from "hooks/store";
 // components
 import { ModuleIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const ModuleCalendarLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
@@ -38,6 +44,27 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
     [issues, workspaceSlug, moduleId]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      if (!moduleId) return;
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, moduleId.toString());
+    },
+    [moduleId, issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      if (!moduleId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload, moduleId.toString());
+    },
+    [issues.updateIssue, moduleId]
+  );
+
   return (
     <BaseCalendarRoot
       issueStore={issues}
@@ -45,6 +72,8 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
       viewId={moduleId}
+      updateFilters={updateFilters}
+      updateIssue={updateIssue}
     />
   );
 });

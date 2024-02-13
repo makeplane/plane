@@ -7,11 +7,19 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TGroupedIssues,
+  TIssue,
+  TIssueKanbanFilters,
+  TIssueMap,
+} from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useCalendarView } from "hooks/store/use-calendar-view";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
@@ -32,6 +40,12 @@ type Props = {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   readOnly?: boolean;
+  updateFilters: (
+    workspaceSlug: string,
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
@@ -44,6 +58,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     quickActions,
     quickAddCallback,
     viewId,
+    updateFilters,
     readOnly = false,
   } = props;
   // store hooks
@@ -72,7 +87,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="flex h-full w-full flex-col overflow-hidden">
-        <CalendarHeader issuesFilterStore={issuesFilterStore} viewId={viewId} />
+        <CalendarHeader issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
           {layout === "month" && (

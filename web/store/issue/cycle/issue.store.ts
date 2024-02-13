@@ -27,26 +27,26 @@ export interface ICycleIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
-    cycleId?: string | undefined
+    cycleId: string
   ) => Promise<TIssue[] | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
     data: Partial<TIssue>,
-    cycleId?: string | undefined
+    cycleId: string
   ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    cycleId?: string | undefined
+    cycleId: string
   ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    cycleId?: string | undefined
+    cycleId: string
   ) => Promise<TIssue | undefined>;
   quickAddIssue: (
     workspaceSlug: string,
@@ -143,11 +143,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader = "init-loader",
-    cycleId: string | undefined = undefined
+    cycleId: string
   ) => {
     try {
-      if (!cycleId) throw new Error("Cycle Id is required");
-
       this.loader = loadType;
 
       const params = this.rootIssueStore?.cycleIssuesFilter?.appliedFilters;
@@ -172,15 +170,8 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     }
   };
 
-  createIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    cycleId: string | undefined = undefined
-  ) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, cycleId: string) => {
     try {
-      if (!cycleId) throw new Error("Cycle Id is required");
-
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [response.id]);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
@@ -196,11 +187,9 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    cycleId: string | undefined = undefined
+    cycleId: string
   ) => {
     try {
-      if (!cycleId) throw new Error("Cycle Id is required");
-
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
       return response;
@@ -210,15 +199,8 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     }
   };
 
-  removeIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    cycleId: string | undefined = undefined
-  ) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => {
     try {
-      if (!cycleId) throw new Error("Cycle Id is required");
-
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
 
@@ -260,7 +242,7 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+      if (cycleId) this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };

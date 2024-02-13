@@ -6,7 +6,7 @@ import { IProfileIssues } from "store/issue/profile";
 import { IProjectIssues } from "store/issue/project";
 import { IProjectViewIssues } from "store/issue/project-views";
 import { IWorkspaceIssues } from "store/issue/workspace";
-import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues } from "@plane/types";
+import { TGroupedIssues, IIssueMap, TSubGroupedIssues, TUnGroupedIssues, TIssue } from "@plane/types";
 
 const handleSortOrder = (destinationIssues: string[], destinationIndex: number, issueMap: IIssueMap) => {
   const sortOrderDefaultValue = 65535;
@@ -48,24 +48,21 @@ export const handleDragDrop = async (
   destination: DraggableLocation | null | undefined,
   workspaceSlug: string | undefined,
   projectId: string | undefined, // projectId for all views or user id in profile issues
-  store:
-    | IProjectIssues
-    | ICycleIssues
-    | IDraftIssues
-    | IModuleIssues
-    | IDraftIssues
-    | IProjectViewIssues
-    | IProfileIssues
-    | IWorkspaceIssues,
   subGroupBy: string | null,
   groupBy: string | null,
   issueMap: IIssueMap,
   issueWithIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined,
-  viewId: string | null = null // it can be moduleId, cycleId
+  updateIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssue>
+  ) => Promise<TIssue | undefined>,
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue | undefined>
 ) => {
   if (!issueMap || !issueWithIds || !source || !destination || !workspaceSlug || !projectId) return;
 
-  let updateIssue: any = {};
+  let updatedIssue: any = {};
 
   const sourceColumnId = (source?.droppableId && source?.droppableId.split("__")) || null;
   const destinationColumnId = (destination?.droppableId && destination?.droppableId.split("__")) || null;
@@ -97,8 +94,7 @@ export const handleDragDrop = async (
     const [removed] = sourceIssues.splice(source.index, 1);
 
     if (removed) {
-      if (viewId) return await store?.removeIssue(workspaceSlug, projectId, removed); //, viewId);
-      else return await store?.removeIssue(workspaceSlug, projectId, removed);
+      return await removeIssue(workspaceSlug, projectId, removed);
     }
   } else {
     const sourceIssues = subGroupBy
@@ -111,33 +107,33 @@ export const handleDragDrop = async (
     const [removed] = sourceIssues.splice(source.index, 1);
     const removedIssueDetail = issueMap[removed];
 
-    updateIssue = {
+    updatedIssue = {
       id: removedIssueDetail?.id,
       project_id: removedIssueDetail?.project_id,
     };
 
     // for both horizontal and vertical dnd
-    updateIssue = {
-      ...updateIssue,
+    updatedIssue = {
+      ...updatedIssue,
       ...handleSortOrder(destinationIssues, destination.index, issueMap),
     };
 
     if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {
       if (sourceSubGroupByColumnId === destinationSubGroupByColumnId) {
         if (sourceGroupByColumnId != destinationGroupByColumnId) {
-          if (groupBy === "state") updateIssue = { ...updateIssue, state_id: destinationGroupByColumnId };
-          if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
+          if (groupBy === "state") updatedIssue = { ...updatedIssue, state_id: destinationGroupByColumnId };
+          if (groupBy === "priority") updatedIssue = { ...updatedIssue, priority: destinationGroupByColumnId };
         }
       } else {
         if (subGroupBy === "state")
-          updateIssue = {
-            ...updateIssue,
+          updatedIssue = {
+            ...updatedIssue,
             state_id: destinationSubGroupByColumnId,
             priority: destinationGroupByColumnId,
           };
         if (subGroupBy === "priority")
-          updateIssue = {
-            ...updateIssue,
+          updatedIssue = {
+            ...updatedIssue,
             state_id: destinationGroupByColumnId,
             priority: destinationSubGroupByColumnId,
           };
@@ -145,15 +141,13 @@ export const handleDragDrop = async (
     } else {
       // for horizontal dnd
       if (sourceColumnId != destinationColumnId) {
-        if (groupBy === "state") updateIssue = { ...updateIssue, state_id: destinationGroupByColumnId };
-        if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
+        if (groupBy === "state") updatedIssue = { ...updatedIssue, state_id: destinationGroupByColumnId };
+        if (groupBy === "priority") updatedIssue = { ...updatedIssue, priority: destinationGroupByColumnId };
       }
     }
 
-    if (updateIssue && updateIssue?.id) {
-      if (viewId)
-        return await store?.updateIssue(workspaceSlug, updateIssue.project_id, updateIssue.id, updateIssue, viewId);
-      else return await store?.updateIssue(workspaceSlug, updateIssue.project_id, updateIssue.id, updateIssue);
+    if (updatedIssue && updatedIssue?.id) {
+      return await updateIssue(workspaceSlug, updatedIssue.project_id, updatedIssue.id, updatedIssue);
     }
   }
 };

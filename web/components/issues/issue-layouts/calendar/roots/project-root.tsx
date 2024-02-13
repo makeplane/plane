@@ -6,9 +6,15 @@ import { useIssues } from "hooks/store";
 import { ProjectIssueQuickActions } from "components/issues";
 import { BaseCalendarRoot } from "../base-calendar-root";
 import { EIssueActions } from "../../types";
-import { TIssue } from "@plane/types";
-import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { useCallback, useMemo } from "react";
 
 export const CalendarLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -32,12 +38,33 @@ export const CalendarLayout: React.FC = observer(() => {
     [issues, workspaceSlug]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+    },
+    [issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload);
+    },
+    [issues.updateIssue]
+  );
+
   return (
     <BaseCalendarRoot
       issueStore={issues}
       issuesFilterStore={issuesFilter}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
+      updateFilters={updateFilters}
+      updateIssue={updateIssue}
     />
   );
 });

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -6,11 +6,17 @@ import { useCycle, useIssues } from "hooks/store";
 // ui
 import { CycleIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export interface ICycleKanBanLayout {}
 
@@ -43,6 +49,35 @@ export const CycleKanBanLayout: React.FC = observer(() => {
     [issues, workspaceSlug, cycleId]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      if (!cycleId) return;
+      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, cycleId.toString());
+    },
+    [cycleId, issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      if (!cycleId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload, cycleId.toString());
+    },
+    [issues.updateIssue, cycleId]
+  );
+
+  const removeIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string) => {
+      if (!cycleId) return;
+      return await issues.removeIssue(workspaceSlug, projectId, issueId, cycleId.toString());
+    },
+    [issues.removeIssue, cycleId]
+  );
+
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
 
@@ -63,6 +98,9 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       }}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}
+      updateFilters={updateFilters}
+      removeIssue={removeIssue}
+      updateIssue={updateIssue}
     />
   );
 });

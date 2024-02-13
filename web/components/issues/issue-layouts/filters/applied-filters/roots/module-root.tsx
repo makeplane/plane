@@ -11,11 +11,7 @@ import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -33,33 +29,51 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !moduleId) return;
     if (!value) {
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        moduleId.toString()
+      );
       return;
     }
 
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      moduleId.toString()
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !moduleId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { ...newFilters }, moduleId);
+    updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      { ...newFilters },
+      moduleId.toString()
+    );
   };
 
   // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0) return null;
+  if (!workspaceSlug || !projectId || Object.keys(appliedFilters).length === 0) return null;
 
   return (
     <div className="flex items-center justify-between p-4">
@@ -71,7 +85,11 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
         states={projectStates}
       />
 
-      <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />
+      <SaveFilterView
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+        filterParams={appliedFilters}
+      />
     </div>
   );
 });

@@ -10,22 +10,33 @@ import { ToggleSwitch } from "@plane/ui";
 // icons
 import { Check, ChevronUp } from "lucide-react";
 // types
-import { TCalendarLayouts } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TCalendarLayouts,
+  TIssueKanbanFilters,
+} from "@plane/types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
-import { EIssueFilterType } from "constants/issue";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { EIssueFilterType } from "constants/issue";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  viewId?: string;
+  updateFilters: (
+    workspaceSlug: string,
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
 }
 
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore, viewId } = props;
+  const { issuesFilterStore, updateFilters } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -53,7 +64,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const handleLayoutChange = (layout: TCalendarLayouts) => {
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
@@ -72,18 +83,12 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
 
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      EIssueFilterType.DISPLAY_FILTERS,
-      {
-        calendar: {
-          ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
-          show_weekends: !showWeekends,
-        },
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+      calendar: {
+        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+        show_weekends: !showWeekends,
       },
-      viewId
-    );
+    });
   };
 
   return (

@@ -24,16 +24,12 @@ import { EIssueActions } from "../types";
 interface IBaseGanttRoot {
   issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => Promise<void>;
   viewId?: string;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
-  };
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { issueFiltersStore, issueStore, viewId } = props;
+  const { issueFiltersStore, issueStore, viewId, updateIssue } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -55,7 +51,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await issueStore.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, payload, viewId);
+    await updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, payload);
   };
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;

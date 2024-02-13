@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { useIssues } from "hooks/store";
 // constant
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
@@ -28,6 +34,35 @@ export const ProjectViewKanBanLayout: React.FC<IViewKanBanLayout> = observer((pr
 
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      if (!viewId) return;
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, viewId.toString());
+    },
+    [viewId, issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      if (!viewId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload, viewId.toString());
+    },
+    [issues.updateIssue, viewId]
+  );
+
+  const removeIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string) => {
+      if (!viewId) return;
+      return await issues.removeIssue(workspaceSlug, projectId, issueId, viewId.toString());
+    },
+    [issues.removeIssue, viewId]
+  );
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -36,6 +71,9 @@ export const ProjectViewKanBanLayout: React.FC<IViewKanBanLayout> = observer((pr
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROJECT_VIEW}
+      updateFilters={updateFilters}
+      removeIssue={removeIssue}
+      updateIssue={updateIssue}
       viewId={viewId?.toString()}
     />
   );

@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -5,12 +6,17 @@ import { useIssues } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export interface IKanBanLayout {}
 
@@ -37,6 +43,32 @@ export const DraftKanBanLayout: React.FC = observer(() => {
     [issues, workspaceSlug]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+    },
+    [issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload);
+    },
+    [issues.updateIssue]
+  );
+
+  const removeIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string) => {
+      return await issues.removeIssue(workspaceSlug, projectId, issueId);
+    },
+    [issues.removeIssue]
+  );
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -44,6 +76,9 @@ export const DraftKanBanLayout: React.FC = observer(() => {
       issues={issues}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
+      updateFilters={updateFilters}
+      removeIssue={removeIssue}
+      updateIssue={updateIssue}
     />
   );
 });

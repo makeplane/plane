@@ -22,20 +22,20 @@ export interface IWorkspaceIssues {
     workspaceSlug: string,
     projectId: string,
     data: Partial<TIssue>,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue | undefined>;
 }
 
@@ -124,15 +124,8 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     }
   };
 
-  createIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    viewId: string | undefined = undefined
-  ) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, viewId: string) => {
     try {
-      if (!viewId) throw new Error("View id is required");
-
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
@@ -152,11 +145,9 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    viewId: string | undefined = undefined
+    viewId: string
   ) => {
     try {
-      if (!viewId) throw new Error("View id is required");
-
       this.rootStore.issues.updateIssue(issueId, data);
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
       return response;
@@ -166,15 +157,8 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
     }
   };
 
-  removeIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    viewId: string | undefined = undefined
-  ) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => {
     try {
-      if (!viewId) throw new Error("View id is required");
-
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);

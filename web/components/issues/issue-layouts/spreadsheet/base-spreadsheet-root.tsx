@@ -6,7 +6,14 @@ import { useUser } from "hooks/store";
 // views
 import { SpreadsheetView } from "./spreadsheet-view";
 // types
-import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
+import {
+  TIssue,
+  IIssueDisplayFilterOptions,
+  TUnGroupedIssues,
+  IIssueFilterOptions,
+  IIssueDisplayProperties,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
@@ -22,6 +29,12 @@ interface IBaseSpreadsheetRoot {
   issueStore: IProjectIssues | ICycleIssues | IModuleIssues | IProjectViewIssues;
   viewId?: string;
   QuickActions: FC<IQuickActionProps>;
+  updateFilters: (
+    workspaceSlug: string,
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
   issueActions: {
     [EIssueActions.DELETE]: (issue: TIssue) => void;
     [EIssueActions.UPDATE]?: (issue: TIssue) => void;
@@ -40,6 +53,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     issueActions,
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
+    updateFilters,
   } = props;
   // router
   const router = useRouter();
@@ -78,17 +92,11 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFiltersStore.updateFilters(
-        workspaceSlug,
-        projectId,
-        EIssueFilterType.DISPLAY_FILTERS,
-        {
-          ...updatedDisplayFilter,
-        },
-        viewId
-      );
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, {
+        ...updatedDisplayFilter,
+      });
     },
-    [issueFiltersStore, projectId, workspaceSlug, viewId]
+    [projectId, workspaceSlug, updateFilters]
   );
 
   const renderQuickActions = useCallback(

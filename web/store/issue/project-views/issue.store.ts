@@ -20,26 +20,26 @@ export interface IProjectViewIssues {
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue[] | undefined>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
     data: Partial<TIssue>,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<TIssue | undefined>;
   quickAddIssue: (
     workspaceSlug: string,
@@ -116,15 +116,8 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     return issues;
   }
 
-  fetchIssues = async (
-    workspaceSlug: string,
-    projectId: string,
-    loadType: TLoader = "init-loader",
-    viewId: string | undefined = undefined
-  ) => {
+  fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader", viewId: string) => {
     try {
-      if (!viewId) throw new Error("View Id is required");
-
       this.loader = loadType;
 
       const params = this.rootIssueStore?.projectViewIssuesFilter?.appliedFilters;
@@ -149,15 +142,8 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     }
   };
 
-  createIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    viewId: string | undefined = undefined
-  ) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, viewId: string) => {
     try {
-      if (!viewId) throw new Error("View Id is required");
-
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
@@ -166,7 +152,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
       throw error;
     }
   };
@@ -176,28 +162,19 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    viewId: string | undefined = undefined
+    viewId: string
   ) => {
     try {
-      if (!viewId) throw new Error("View Id is required");
-
       const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
       throw error;
     }
   };
 
-  removeIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    viewId: string | undefined = undefined
-  ) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => {
     try {
-      if (!viewId) throw new Error("View Id is required");
-
       const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
@@ -208,7 +185,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
       throw error;
     }
   };
@@ -238,7 +215,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
+      if (viewId) this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
       throw error;
     }
   };

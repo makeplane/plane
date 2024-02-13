@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -5,13 +6,18 @@ import { useIssues, useUser } from "hooks/store";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
 // types
-import { TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -39,6 +45,35 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
     [issues, workspaceSlug, userId]
   );
 
+  const updateFilters = useCallback(
+    async (
+      workspaceSlug: string,
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      if (!userId) return;
+      await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, userId.toString());
+    },
+    [userId, issuesFilter.updateFilters]
+  );
+
+  const updateIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
+      if (!userId) return;
+      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload, userId.toString());
+    },
+    [issues.updateIssue, userId]
+  );
+
+  const removeIssue = useCallback(
+    async (workspaceSlug: string, projectId: string, issueId: string) => {
+      if (!userId) return;
+      return await issues.removeIssue(workspaceSlug, projectId, issueId, userId.toString());
+    },
+    [issues.removeIssue, userId]
+  );
+
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
 
@@ -54,6 +89,9 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROFILE}
       canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
+      updateFilters={updateFilters}
+      removeIssue={removeIssue}
+      updateIssue={updateIssue}
     />
   );
 });

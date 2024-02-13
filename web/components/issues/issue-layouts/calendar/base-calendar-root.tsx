@@ -6,12 +6,20 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { CalendarChart } from "components/issues";
 // hooks
 import useToast from "hooks/use-toast";
+import { useIssues, useUser } from "hooks/store";
 // types
-import { TGroupedIssues, TIssue } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TGroupedIssues,
+  TIssue,
+  TIssueKanbanFilters,
+} from "@plane/types";
+import { EIssueFilterType } from "constants/issue";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";
-import { useIssues, useUser } from "hooks/store";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
@@ -27,12 +35,33 @@ interface IBaseCalendarRoot {
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
   };
+  updateFilters: (
+    workspaceSlug: string,
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
+  updateIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    payload: Partial<TIssue>
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   isCompletedCycle?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, isCompletedCycle = false } = props;
+  const {
+    issueStore,
+    issuesFilterStore,
+    QuickActions,
+    issueActions,
+    viewId,
+    updateFilters,
+    updateIssue,
+    isCompletedCycle = false,
+  } = props;
 
   // router
   const router = useRouter();
@@ -66,10 +95,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         result.destination,
         workspaceSlug?.toString(),
         projectId?.toString(),
-        issueStore,
         issueMap,
         groupedIssueIds,
-        viewId
+        updateIssue
       ).catch((err) => {
         setToastAlert({
           title: "Error",
@@ -120,6 +148,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             quickAddCallback={issueStore.quickAddIssue}
             viewId={viewId}
             readOnly={!isEditingAllowed || isCompletedCycle}
+            updateFilters={updateFilters}
           />
         </DragDropContext>
       </div>
