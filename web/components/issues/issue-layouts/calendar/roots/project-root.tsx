@@ -51,9 +51,8 @@ export const CalendarLayout: React.FC = observer(() => {
   );
 
   const updateIssue = useCallback(
-    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => {
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, payload);
-    },
+    async (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) =>
+      await issues.updateIssue(workspaceSlug, projectId, issueId, payload),
     [issues.updateIssue]
   );
 
