@@ -16,13 +16,14 @@ import { AppLayout } from "layouts/app-layout";
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { PagesHeader } from "components/headers";
-import { Spinner } from "@plane/ui";
+import { PagesLoader } from "components/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
 import { useProjectPages } from "hooks/store/use-project-page";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -124,12 +125,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     </Tab.List>
   );
 
-  if (loader || archivedPageLoader)
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
+  if (loader || archivedPageLoader) return <PagesLoader />;
 
   return (
     <>
@@ -217,19 +213,18 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
       ) : (
         <EmptyState
           image={EmptyStateImagePath}
-          title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started"
-          description="Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
+          title={PAGE_EMPTY_STATE_DETAILS["pages"].title}
+          description={PAGE_EMPTY_STATE_DETAILS["pages"].description}
           primaryButton={{
-            text: "Create your first page",
+            text: PAGE_EMPTY_STATE_DETAILS["pages"].primaryButton.text,
             onClick: () => {
               setTrackElement("Pages empty state");
               toggleCreatePageModal(true);
             },
           }}
           comicBox={{
-            title: "A page can be a doc or a doc of docs.",
-            description:
-              "We wrote Nikhil and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
+            title: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.title,
+            description: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.description,
           }}
           size="lg"
           disabled={!isEditingAllowed}

@@ -17,6 +17,8 @@ import {
 import { Spinner } from "@plane/ui";
 // hooks
 import { useIssues } from "hooks/store";
+// helpers
+import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 
@@ -41,49 +43,45 @@ export const ProjectLayoutRoot: FC = observer(() => {
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
+
+  if (issues?.groupedIssueIds?.length === 0) {
+    return (
+      <div className="relative h-full w-full overflow-y-auto">
+        <ProjectEmptyState />
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          {issues?.groupedIssueIds?.length === 0 ? (
-            <div className="relative h-full w-full overflow-y-auto">
-              <ProjectEmptyState />
-            </div>
-          ) : (
-            <>
-              <div className="relative h-full w-full overflow-auto bg-custom-background-90">
-                {/* mutation loader */}
-                {issues?.loader === "mutation" && (
-                  <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
-                    <Spinner className="w-4 h-4" />
-                  </div>
-                )}
+      <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+        {/* mutation loader */}
+        {issues?.loader === "mutation" && (
+          <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+            <Spinner className="w-4 h-4" />
+          </div>
+        )}
+        {activeLayout === "list" ? (
+          <ListLayout />
+        ) : activeLayout === "kanban" ? (
+          <KanBanLayout />
+        ) : activeLayout === "calendar" ? (
+          <CalendarLayout />
+        ) : activeLayout === "gantt_chart" ? (
+          <GanttLayout />
+        ) : activeLayout === "spreadsheet" ? (
+          <ProjectSpreadsheetLayout />
+        ) : null}
+      </div>
 
-                {activeLayout === "list" ? (
-                  <ListLayout />
-                ) : activeLayout === "kanban" ? (
-                  <KanBanLayout />
-                ) : activeLayout === "calendar" ? (
-                  <CalendarLayout />
-                ) : activeLayout === "gantt_chart" ? (
-                  <GanttLayout />
-                ) : activeLayout === "spreadsheet" ? (
-                  <ProjectSpreadsheetLayout />
-                ) : null}
-              </div>
-
-              {/* peek overview */}
-              <IssuePeekOverview />
-            </>
-          )}
-        </>
-      )}
+      {/* peek overview */}
+      <IssuePeekOverview />
     </div>
   );
 });

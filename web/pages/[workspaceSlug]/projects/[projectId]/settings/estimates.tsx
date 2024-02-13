@@ -21,7 +21,7 @@ const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
   return (
-    <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
+    <div className={`h-full w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
       <EstimatesList />
     </div>
   );

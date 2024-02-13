@@ -14,7 +14,7 @@ import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
-import { Loader } from "@plane/ui";
+import { ActivitySettingsLoader } from "components/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
@@ -31,7 +31,6 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const { currentUser } = useUser();
 
   return (
-
     <section className="mx-auto mt-5  md:mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
       <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
         <SidebarHamburgerToggle />
@@ -97,12 +96,12 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
 
               const message =
                 activityItem.verb === "created" &&
-                  activityItem.field !== "cycles" &&
-                  activityItem.field !== "modules" &&
-                  activityItem.field !== "attachment" &&
-                  activityItem.field !== "link" &&
-                  activityItem.field !== "estimate" &&
-                  !activityItem.field ? (
+                activityItem.field !== "cycles" &&
+                activityItem.field !== "modules" &&
+                activityItem.field !== "attachment" &&
+                activityItem.field !== "link" &&
+                activityItem.field !== "estimate" &&
+                !activityItem.field ? (
                   <span>
                     created <IssueLink activity={activityItem} />
                   </span>
@@ -182,15 +181,9 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
           </ul>
         </div>
       ) : (
-        <Loader className="space-y-5">
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-        </Loader>
+        <ActivitySettingsLoader />
       )}
     </section>
-
   );
 });
 
