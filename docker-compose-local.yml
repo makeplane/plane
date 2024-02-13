@@ -137,7 +137,7 @@ services:
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
-    restart: no
+    restart: "no"
     networks:
       - dev_env
     volumes:
