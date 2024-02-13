@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -63,38 +63,38 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     );
   }
 
-  if (issues?.groupedIssueIds?.length === 0) {
-    return (
-      <div className="relative h-full w-full overflow-y-auto">
-        <ModuleEmptyState
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          moduleId={moduleId.toString()}
-          activeLayout={activeLayout}
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
 
-      <div className="h-full w-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ModuleListLayout />
-        ) : activeLayout === "kanban" ? (
-          <ModuleKanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <ModuleCalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <ModuleGanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ModuleSpreadsheetLayout />
-        ) : null}
-      </div>
-      {/* peek overview */}
-      <IssuePeekOverview />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ModuleEmptyState
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            moduleId={moduleId.toString()}
+            activeLayout={activeLayout}
+          />
+        </div>
+      ) : (
+        <Fragment>
+          <div className="h-full w-full overflow-auto">
+            {activeLayout === "list" ? (
+              <ModuleListLayout />
+            ) : activeLayout === "kanban" ? (
+              <ModuleKanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <ModuleCalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <ModuleGanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ModuleSpreadsheetLayout />
+            ) : null}
+          </div>
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
+      )}
     </div>
   );
 });

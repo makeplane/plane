@@ -78,10 +78,11 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const draftIssueIds = this.issues[projectId] ?? [];
+    const draftIssueIds = this.issues[projectId];
+    if (!draftIssueIds) return undefined;
 
     const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds);
-    if (!_issues) return undefined;
+    if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
