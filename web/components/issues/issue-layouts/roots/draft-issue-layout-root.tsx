@@ -55,22 +55,25 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
     );
   }
 
-  if (issues?.groupedIssueIds?.length === 0) {
-    return (
-      <div className="relative h-full w-full overflow-y-auto">
-        <ProjectDraftEmptyState />
-      </div>
-    );
-  }
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <DraftIssueAppliedFiltersRoot />
 
-      <div className="relative h-full w-full overflow-auto">
-        {activeLayout === "list" ? <DraftIssueListLayout /> : activeLayout === "kanban" ? <DraftKanBanLayout /> : null}
-        {/* issue peek overview */}
-        <IssuePeekOverview />
-      </div>
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectDraftEmptyState />
+        </div>
+      ) : (
+        <div className="relative h-full w-full overflow-auto">
+          {activeLayout === "list" ? (
+            <DraftIssueListLayout />
+          ) : activeLayout === "kanban" ? (
+            <DraftKanBanLayout />
+          ) : null}
+          {/* issue peek overview */}
+          <IssuePeekOverview />
+        </div>
+      )}
     </div>
   );
 });
