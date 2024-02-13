@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -79,34 +79,34 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     );
   }
 
-  if (issues?.groupedIssueIds?.length === 0) {
-    return (
-      <div className="relative h-full w-full overflow-y-auto">
-        <ProjectViewEmptyState />
-      </div>
-    );
-  }
-
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
 
-      <div className="relative h-full w-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ProjectViewListLayout issueActions={issueActions} />
-        ) : activeLayout === "kanban" ? (
-          <ProjectViewKanBanLayout issueActions={issueActions} />
-        ) : activeLayout === "calendar" ? (
-          <ProjectViewCalendarLayout issueActions={issueActions} />
-        ) : activeLayout === "gantt_chart" ? (
-          <ProjectViewGanttLayout issueActions={issueActions} />
-        ) : activeLayout === "spreadsheet" ? (
-          <ProjectViewSpreadsheetLayout issueActions={issueActions} />
-        ) : null}
-      </div>
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectViewEmptyState />
+        </div>
+      ) : (
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto">
+            {activeLayout === "list" ? (
+              <ProjectViewListLayout issueActions={issueActions} />
+            ) : activeLayout === "kanban" ? (
+              <ProjectViewKanBanLayout issueActions={issueActions} />
+            ) : activeLayout === "calendar" ? (
+              <ProjectViewCalendarLayout issueActions={issueActions} />
+            ) : activeLayout === "gantt_chart" ? (
+              <ProjectViewGanttLayout issueActions={issueActions} />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectViewSpreadsheetLayout issueActions={issueActions} />
+            ) : null}
+          </div>
 
-      {/* peek overview */}
-      <IssuePeekOverview />
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
+      )}
     </div>
   );
 });

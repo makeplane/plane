@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -48,40 +48,38 @@ export const ProjectLayoutRoot: FC = observer(() => {
     return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
   }
 
-  if (issues?.groupedIssueIds?.length === 0) {
-    return (
-      <div className="relative h-full w-full overflow-y-auto">
-        <ProjectEmptyState />
-      </div>
-    );
-  }
-
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      <div className="relative h-full w-full overflow-auto bg-custom-background-90">
-        {/* mutation loader */}
-        {issues?.loader === "mutation" && (
-          <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
-            <Spinner className="w-4 h-4" />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <ProjectEmptyState />
+      ) : (
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+            {/* mutation loader */}
+            {issues?.loader === "mutation" && (
+              <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+                <Spinner className="w-4 h-4" />
+              </div>
+            )}
+            {activeLayout === "list" ? (
+              <ListLayout />
+            ) : activeLayout === "kanban" ? (
+              <KanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <CalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <GanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectSpreadsheetLayout />
+            ) : null}
           </div>
-        )}
-        {activeLayout === "list" ? (
-          <ListLayout />
-        ) : activeLayout === "kanban" ? (
-          <KanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <CalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <GanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ProjectSpreadsheetLayout />
-        ) : null}
-      </div>
 
-      {/* peek overview */}
-      <IssuePeekOverview />
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
+      )}
     </div>
   );
 });

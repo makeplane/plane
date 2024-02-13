@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -69,42 +69,41 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     );
   }
 
-  if (issues?.groupedIssueIds?.length === 0) {
-    return (
-      <div className="relative h-full w-full overflow-y-auto">
-        <CycleEmptyState
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          cycleId={cycleId.toString()}
-          activeLayout={activeLayout}
-        />
-      </div>
-    );
-  }
-
   return (
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
-
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
 
-        <div className="h-full w-full overflow-auto">
-          {activeLayout === "list" ? (
-            <CycleListLayout />
-          ) : activeLayout === "kanban" ? (
-            <CycleKanBanLayout />
-          ) : activeLayout === "calendar" ? (
-            <CycleCalendarLayout />
-          ) : activeLayout === "gantt_chart" ? (
-            <CycleGanttLayout />
-          ) : activeLayout === "spreadsheet" ? (
-            <CycleSpreadsheetLayout />
-          ) : null}
-        </div>
-        {/* peek overview */}
-        <IssuePeekOverview />
+        {issues?.groupedIssueIds?.length === 0 ? (
+          <div className="relative h-full w-full overflow-y-auto">
+            <CycleEmptyState
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              cycleId={cycleId.toString()}
+              activeLayout={activeLayout}
+            />
+          </div>
+        ) : (
+          <Fragment>
+            <div className="h-full w-full overflow-auto">
+              {activeLayout === "list" ? (
+                <CycleListLayout />
+              ) : activeLayout === "kanban" ? (
+                <CycleKanBanLayout />
+              ) : activeLayout === "calendar" ? (
+                <CycleCalendarLayout />
+              ) : activeLayout === "gantt_chart" ? (
+                <CycleGanttLayout />
+              ) : activeLayout === "spreadsheet" ? (
+                <CycleSpreadsheetLayout />
+              ) : null}
+            </div>
+            {/* peek overview */}
+            <IssuePeekOverview />
+          </Fragment>
+        )}
       </div>
     </>
   );
