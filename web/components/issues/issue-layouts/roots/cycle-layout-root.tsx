@@ -16,6 +16,7 @@ import {
   IssuePeekOverview,
 } from "components/issues";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
+import { ActiveLoader } from "components/ui";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
@@ -53,6 +54,34 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
 
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return (
+      <>
+        {activeLayout ? (
+          <ActiveLoader layout={activeLayout} />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
+          </div>
+        )}
+      </>
+    );
+  }
+
+  if (issues?.groupedIssueIds?.length === 0) {
+    return (
+      <div className="relative h-full w-full overflow-y-auto">
+        <CycleEmptyState
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          cycleId={cycleId.toString()}
+          activeLayout={activeLayout}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
@@ -61,40 +90,21 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
 
-        {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        ) : (
-          <>
-            {issues?.groupedIssueIds?.length === 0 ? (
-              <CycleEmptyState
-                workspaceSlug={workspaceSlug.toString()}
-                projectId={projectId.toString()}
-                cycleId={cycleId.toString()}
-                activeLayout={activeLayout}
-              />
-            ) : (
-              <>
-                <div className="h-full w-full overflow-auto">
-                  {activeLayout === "list" ? (
-                    <CycleListLayout />
-                  ) : activeLayout === "kanban" ? (
-                    <CycleKanBanLayout />
-                  ) : activeLayout === "calendar" ? (
-                    <CycleCalendarLayout />
-                  ) : activeLayout === "gantt_chart" ? (
-                    <CycleGanttLayout />
-                  ) : activeLayout === "spreadsheet" ? (
-                    <CycleSpreadsheetLayout />
-                  ) : null}
-                </div>
-                {/* peek overview */}
-                <IssuePeekOverview />
-              </>
-            )}
-          </>
-        )}
+        <div className="h-full w-full overflow-auto">
+          {activeLayout === "list" ? (
+            <CycleListLayout />
+          ) : activeLayout === "kanban" ? (
+            <CycleKanBanLayout />
+          ) : activeLayout === "calendar" ? (
+            <CycleCalendarLayout />
+          ) : activeLayout === "gantt_chart" ? (
+            <CycleGanttLayout />
+          ) : activeLayout === "spreadsheet" ? (
+            <CycleSpreadsheetLayout />
+          ) : null}
+        </div>
+        {/* peek overview */}
+        <IssuePeekOverview />
       </div>
     </>
   );

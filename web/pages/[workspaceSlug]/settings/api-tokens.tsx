@@ -13,7 +13,8 @@ import { WorkspaceSettingHeader } from "components/headers";
 import { ApiTokenListItem, CreateApiTokenModal } from "components/api-token";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Button, Spinner } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { APITokenSettingsLoader } from "components/ui";
 // services
 import { APITokenService } from "services/api_token.service";
 // types
@@ -56,49 +57,47 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
       </div>
     );
 
+  if (!tokens) {
+    return <APITokenSettingsLoader />;
+  }
+
   return (
     <>
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
-      {tokens ? (
-        <section className="h-full w-full overflow-y-auto py-8 pr-9">
-          {tokens.length > 0 ? (
-            <>
-              <div className="flex items-center justify-between border-b border-custom-border-200 py-3.5">
-                <h3 className="text-xl font-medium">API tokens</h3>
-                <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                  Add API token
-                </Button>
-              </div>
-              <div>
-                {tokens.map((token) => (
-                  <ApiTokenListItem key={token.id} token={token} />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="flex h-full w-full flex-col">
-              <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
-                <h3 className="text-xl font-medium">API tokens</h3>
-                <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                  Add API token
-                </Button>
-              </div>
-              <div className="h-full w-full flex items-center justify-center">
-                <EmptyState
-                  title={emptyStateDetail.title}
-                  description={emptyStateDetail.description}
-                  image={emptyStateImage}
-                  size="lg"
-                />
-              </div>
+      <section className="h-full w-full overflow-y-auto py-8 pr-9">
+        {tokens.length > 0 ? (
+          <>
+            <div className="flex items-center justify-between border-b border-custom-border-200 py-3.5">
+              <h3 className="text-xl font-medium">API tokens</h3>
+              <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
+                Add API token
+              </Button>
             </div>
-          )}
-        </section>
-      ) : (
-        <div className="grid h-full w-full place-items-center p-4">
-          <Spinner />
-        </div>
-      )}
+            <div>
+              {tokens.map((token) => (
+                <ApiTokenListItem key={token.id} token={token} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="flex h-full w-full flex-col">
+            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
+              <h3 className="text-xl font-medium">API tokens</h3>
+              <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
+                Add API token
+              </Button>
+            </div>
+            <div className="h-full w-full flex items-center justify-center">
+              <EmptyState
+                title={emptyStateDetail.title}
+                description={emptyStateDetail.description}
+                image={emptyStateImage}
+                size="lg"
+              />
+            </div>
+          </div>
+        )}
+      </section>
     </>
   );
 });

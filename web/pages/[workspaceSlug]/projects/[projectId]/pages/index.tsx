@@ -16,7 +16,7 @@ import { AppLayout } from "layouts/app-layout";
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { PagesHeader } from "components/headers";
-import { Spinner } from "@plane/ui";
+import { PagesLoader } from "components/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
@@ -125,12 +125,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     </Tab.List>
   );
 
-  if (loader || archivedPageLoader)
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
+  if (loader || archivedPageLoader) return <PagesLoader />;
 
   return (
     <>

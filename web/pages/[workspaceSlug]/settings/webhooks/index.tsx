@@ -13,7 +13,8 @@ import { WorkspaceSettingHeader } from "components/headers";
 import { WebhooksList, CreateWebhookModal } from "components/web-hooks";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Button, Spinner } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { WebhookSettingsLoader } from "components/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
@@ -59,12 +60,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
       </div>
     );
 
-  if (!webhooks)
-    return (
-      <div className="grid h-full w-full place-items-center p-4">
-        <Spinner />
-      </div>
-    );
+  if (!webhooks) return <WebhookSettingsLoader />;
 
   return (
     <div className="h-full w-full overflow-hidden py-8 pr-9">

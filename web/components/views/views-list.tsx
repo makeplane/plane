@@ -8,7 +8,8 @@ import { useApplication, useProjectView, useUser } from "hooks/store";
 import { ProjectViewListItem } from "components/views";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Input, Loader, Spinner } from "@plane/ui";
+import { Input } from "@plane/ui";
+import { ViewListLoader } from "components/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { VIEW_EMPTY_STATE_DETAILS } from "constants/empty-state";
@@ -28,22 +29,7 @@ export const ProjectViewsList = observer(() => {
   } = useUser();
   const { projectViewIds, getViewById, loader } = useProjectView();
 
-  if (loader)
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
-
-  if (!projectViewIds)
-    return (
-      <Loader className="space-y-4 p-4">
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-      </Loader>
-    );
+  if (loader || !projectViewIds) return <ViewListLoader />;
 
   const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
