@@ -4,8 +4,8 @@ import { useTheme } from "next-themes";
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
-import { Loader } from "@plane/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { ProjectsLoader } from "components/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
@@ -27,17 +27,7 @@ export const ProjectCardList = observer(() => {
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  if (!workspaceProjectIds)
-    return (
-      <Loader className="grid grid-cols-3 gap-4">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-      </Loader>
-    );
+  if (!workspaceProjectIds) return <ProjectsLoader />;
 
   return (
     <>

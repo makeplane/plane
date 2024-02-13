@@ -15,7 +15,8 @@ import { IntegrationService } from "services/integrations";
 import { Exporter, SingleExport } from "components/exporter";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { ImportExportSettingsLoader } from "components/ui";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // fetch-keys
@@ -158,12 +159,7 @@ const IntegrationGuide = observer(() => {
                   </div>
                 )
               ) : (
-                <Loader className="mt-6 grid grid-cols-1 gap-3">
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                </Loader>
+                <ImportExportSettingsLoader />
               )}
             </div>
           </div>

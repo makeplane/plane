@@ -8,7 +8,7 @@ import useLocalStorage from "hooks/use-local-storage";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Loader, Spinner } from "@plane/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
@@ -35,23 +35,13 @@ export const ModulesListView: React.FC = observer(() => {
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (loader)
+  if (loader || !projectModuleIds)
     return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
-
-  if (!projectModuleIds)
-    return (
-      <Loader className="grid grid-cols-3 gap-4 p-8">
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-      </Loader>
+      <>
+        {modulesView === "list" && <CycleModuleListLayout />}
+        {modulesView === "grid" && <CycleModuleBoardLayout />}
+        {modulesView === "gantt_chart" && <GanttLayoutLoader />}
+      </>
     );
 
   return (

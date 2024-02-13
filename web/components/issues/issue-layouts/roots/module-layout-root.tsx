@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -15,6 +15,7 @@ import {
   ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
+import { ActiveLoader } from "components/ui";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
@@ -44,46 +45,55 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     }
   );
 
+  if (!workspaceSlug || !projectId || !moduleId) return <></>;
+
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
 
-  if (!workspaceSlug || !projectId || !moduleId) return <></>;
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return (
+      <>
+        {activeLayout ? (
+          <ActiveLoader layout={activeLayout} />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
+          </div>
+        )}
+      </>
+    );
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ModuleEmptyState
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            moduleId={moduleId.toString()}
+            activeLayout={activeLayout}
+          />
         </div>
       ) : (
-        <>
-          {issues?.groupedIssueIds?.length === 0 ? (
-            <ModuleEmptyState
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              moduleId={moduleId.toString()}
-              activeLayout={activeLayout}
-            />
-          ) : (
-            <>
-              <div className="h-full w-full overflow-auto">
-                {activeLayout === "list" ? (
-                  <ModuleListLayout />
-                ) : activeLayout === "kanban" ? (
-                  <ModuleKanBanLayout />
-                ) : activeLayout === "calendar" ? (
-                  <ModuleCalendarLayout />
-                ) : activeLayout === "gantt_chart" ? (
-                  <ModuleGanttLayout />
-                ) : activeLayout === "spreadsheet" ? (
-                  <ModuleSpreadsheetLayout />
-                ) : null}
-              </div>
-              {/* peek overview */}
-              <IssuePeekOverview />
-            </>
-          )}
-        </>
+        <Fragment>
+          <div className="h-full w-full overflow-auto">
+            {activeLayout === "list" ? (
+              <ModuleListLayout />
+            ) : activeLayout === "kanban" ? (
+              <ModuleKanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <ModuleCalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <ModuleGanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ModuleSpreadsheetLayout />
+            ) : null}
+          </div>
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
       )}
     </div>
   );
