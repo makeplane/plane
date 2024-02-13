@@ -101,6 +101,17 @@ export const CYCLE_EMPTY_STATE_DETAILS = {
       text: "Set your first cycle",
     },
   },
+  "no-issues": {
+    key: "no-issues",
+    title: "No issues added to the cycle",
+    description: "Add or create issues you wish to timebox and deliver within this cycle",
+    primaryButton: {
+      text: "Create new issue ",
+    },
+    secondaryButton: {
+      text: "Add an existing issue",
+    },
+  },
   active: {
     key: "active",
     title: "No active cycles",
@@ -181,6 +192,17 @@ export const EMPTY_ISSUE_STATE_DETAILS = {
 };
 
 export const MODULE_EMPTY_STATE_DETAILS = {
+  "no-issues": {
+    key: "no-issues",
+    title: "No issues in the module",
+    description: "Create or add issues which you want to accomplish as part of this module",
+    primaryButton: {
+      text: "Create new issue ",
+    },
+    secondaryButton: {
+      text: "Add an existing issue",
+    },
+  },
   modules: {
     title: "Map your project milestones to Modules and track aggregated work easily.",
     description:
