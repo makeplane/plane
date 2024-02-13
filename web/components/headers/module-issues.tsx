@@ -18,10 +18,9 @@ import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
 // icons
 import { ArrowRight, PanelRight, Plus } from "lucide-react";
 // helpers
@@ -33,7 +32,6 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -153,9 +151,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         moduleDetails={moduleDetails ?? undefined}
       />
       <div className="relative z-10 items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -275,7 +272,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             </button>
           </div>
         </div>
-        <ModuleMobileHeader />
       </div>
     </>
   );

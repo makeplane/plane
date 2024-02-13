@@ -6,6 +6,7 @@ import { ProjectIssuesHeader } from "components/headers";
 import { NextPageWithLayout } from "lib/types";
 // layouts
 import { AppLayout } from "layouts/app-layout";
+import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
 
 const ProjectIssuesPage: NextPageWithLayout = () => (
   <div className="h-full w-full">
@@ -15,7 +16,7 @@ const ProjectIssuesPage: NextPageWithLayout = () => (
 
 ProjectIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectIssuesHeader />} withProjectWrapper>
+    <AppLayout header={<ProjectIssuesHeader />} mobileHeader={<IssuesMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

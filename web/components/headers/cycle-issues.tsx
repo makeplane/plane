@@ -18,7 +18,6 @@ import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
@@ -33,7 +32,6 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
-import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -149,135 +147,129 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="relative z-10 w-full items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-          <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
-            <Breadcrumbs onBack={router.back}>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <span>
-                    <span className="hidden md:block">
-                      <BreadcrumbLink
-                        label={currentProjectDetails?.name ?? "Project"}
-                        href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                        icon={
-                          currentProjectDetails?.emoji ? (
-                            renderEmoji(currentProjectDetails.emoji)
-                          ) : currentProjectDetails?.icon_prop ? (
-                            renderEmoji(currentProjectDetails.icon_prop)
-                          ) : (
-                            <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                              {currentProjectDetails?.name.charAt(0)}
-                            </span>
-                          )
-                        }
-                      />
-                    </span>
-                    <Link href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`} className="block md:hidden pl-2 text-custom-text-300">...</Link>
+      <div className="flex relative z-10 w-full justify-between bg-custom-sidebar-background-100 p-4">
+        <div className="flex items-center gap-2">
+          <Breadcrumbs onBack={router.back}>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={
+                <span>
+                  <span className="hidden md:block">
+                    <BreadcrumbLink
+                      label={currentProjectDetails?.name ?? "Project"}
+                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                      icon={
+                        currentProjectDetails?.emoji ? (
+                          renderEmoji(currentProjectDetails.emoji)
+                        ) : currentProjectDetails?.icon_prop ? (
+                          renderEmoji(currentProjectDetails.icon_prop)
+                        ) : (
+                          <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
+                            {currentProjectDetails?.name.charAt(0)}
+                          </span>
+                        )
+                      }
+                    />
                   </span>
-                }
-              />
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    label="Cycles"
-                    href={`/${workspaceSlug}/projects/${projectId}/cycles`}
-                    icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
-                  />
-                }
-              />
-              <Breadcrumbs.BreadcrumbItem
-                type="component"
-                component={
-                  <CustomMenu
-                    label={
-                      <>
-                        <ContrastIcon className="h-3 w-3" />
-                        <div className=" w-auto max-w-[70px] sm:max-w-[200px] inline-block truncate line-clamp-1 overflow-hidden whitespace-nowrap">
-                          {cycleDetails?.name && cycleDetails.name}
-                        </div>
-                      </>
-                    }
-                    className="ml-1.5 flex-shrink-0"
-                    placement="bottom-start"
-                  >
-                    {currentProjectCycleIds?.map((cycleId) => (
-                      <CycleDropdownOption key={cycleId} cycleId={cycleId} />
-                    ))}
-                  </CustomMenu>
-                }
-              />
-            </Breadcrumbs>
-          </div>
-          <div className="hidden md:flex items-center gap-2 ">
-            <LayoutSelection
-              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
-              onChange={(layout) => handleLayoutChange(layout)}
-              selectedLayout={activeLayout}
+                  <Link href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`} className="block md:hidden pl-2 text-custom-text-300">...</Link>
+                </span>
+              }
             />
-            <FiltersDropdown title="Filters" placement="bottom-end">
-              <FilterSelection
-                filters={issueFilters?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-                }
-                labels={projectLabels}
-                memberIds={projectMemberIds ?? undefined}
-                states={projectStates}
-              />
-            </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-                }
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-              />
-            </FiltersDropdown>
-
-            {canUserCreateIssue && (
-              <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                  Analytics
-                </Button>
-                <Button
-                  onClick={() => {
-                    setTrackElement("Cycle issues page");
-                    toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
-                  }}
-                  size="sm"
-                  prependIcon={<Plus />}
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={
+                <BreadcrumbLink
+                  label="Cycles"
+                  href={`/${workspaceSlug}/projects/${projectId}/cycles`}
+                  icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
+            />
+            <Breadcrumbs.BreadcrumbItem
+              type="component"
+              component={
+                <CustomMenu
+                  label={
+                    <>
+                      <ContrastIcon className="h-3 w-3" />
+                      <div className=" w-auto max-w-[70px] sm:max-w-[200px] inline-block truncate line-clamp-1 overflow-hidden whitespace-nowrap">
+                        {cycleDetails?.name && cycleDetails.name}
+                      </div>
+                    </>
+                  }
+                  className="ml-1.5 flex-shrink-0"
+                  placement="bottom-start"
                 >
-                  Add Issue
-                </Button>
-              </>
-            )}
-            <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
-              onClick={toggleSidebar}
-            >
-              <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
-            </button>
-          </div>
+                  {currentProjectCycleIds?.map((cycleId) => (
+                    <CycleDropdownOption key={cycleId} cycleId={cycleId} />
+                  ))}
+                </CustomMenu>
+              }
+            />
+          </Breadcrumbs>
+        </div>
+        <div className="hidden md:flex items-center gap-2 ">
+          <LayoutSelection
+            layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+            onChange={(layout) => handleLayoutChange(layout)}
+            selectedLayout={activeLayout}
+          />
+          <FiltersDropdown title="Filters" placement="bottom-end">
+            <FilterSelection
+              filters={issueFilters?.filters ?? {}}
+              handleFiltersUpdate={handleFiltersUpdate}
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+              }
+              labels={projectLabels}
+              memberIds={projectMemberIds ?? undefined}
+              states={projectStates}
+            />
+          </FiltersDropdown>
+          <FiltersDropdown title="Display" placement="bottom-end">
+            <DisplayFiltersSelection
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+              }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
+            />
+          </FiltersDropdown>
+
+          {canUserCreateIssue && (
+            <>
+              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                Analytics
+              </Button>
+              <Button
+                onClick={() => {
+                  setTrackElement("Cycle issues page");
+                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                }}
+                size="sm"
+                prependIcon={<Plus />}
+              >
+                Add Issue
+              </Button>
+            </>
+          )}
           <button
             type="button"
-            className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
             onClick={toggleSidebar}
           >
-            <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+            <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
           </button>
         </div>
-        <div className="block sm:block md:hidden">
-          <CycleMobileHeader />
-        </div>
+        <button
+          type="button"
+          className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+          onClick={toggleSidebar}
+        >
+          <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+        </button>
       </div>
     </>
   );

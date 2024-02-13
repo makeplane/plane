@@ -17,7 +17,6 @@ import {
 } from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
@@ -108,9 +107,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
-        <SidebarHamburgerToggle />
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"

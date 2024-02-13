@@ -1,18 +1,18 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { GanttChartSquare, LayoutGrid, List, Plus } from "lucide-react";
+// icons
+import { Plus } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // ui
-import { Breadcrumbs, Button, Tooltip, DiceIcon, CustomMenu } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 
 export const ModulesListHeader: React.FC = observer(() => {
@@ -33,9 +33,8 @@ export const ModulesListHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
   return (
     <div>
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="flex relative z-10 h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-          <SidebarHamburgerToggle />
           <div>
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
@@ -99,33 +98,7 @@ export const ModulesListHeader: React.FC = observer(() => {
           )}
         </div>
       </div>
-      <div className="flex justify-center md:hidden">
-        <CustomMenu
-          maxHeight={"md"}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm py-2 border-b border-custom-border-200 bg-custom-sidebar-background-100"
-          // placement="bottom-start"
-          customButton={
-            <span className="flex items-center gap-2">
-              {modulesView === 'gantt_chart' ? <GanttChartSquare className="w-3 h-3" /> : modulesView === 'grid' ? <LayoutGrid className="w-3 h-3" /> : <List className="w-3 h-3" />}
-              <span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>
-            </span>
-          }
-          customButtonClassName="flex flex-grow justify-center items-center text-custom-text-200 text-sm"
-          closeOnSelect
-        >
-          {MODULE_VIEW_LAYOUTS.map((layout) => (
-            <CustomMenu.MenuItem
-              onClick={() => setModulesView(layout.key)}
-              className="flex items-center gap-2"
-            >
-              <layout.icon className="w-3 h-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
-            </CustomMenu.MenuItem>
-          ))}
-        </CustomMenu>
-      </div>
     </div>
   );
 });
-
 

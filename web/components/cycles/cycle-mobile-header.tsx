@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import router from "next/router";
+import { observer } from "mobx-react-lite";
 //components
 import { CustomMenu } from "@plane/ui";
 // icons
@@ -12,7 +13,7 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, IS
 import { ProjectAnalyticsModal } from "components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
 
-export const CycleMobileHeader = () => {
+export const CycleMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { getCycleById } = useCycle();
   const layouts = [
@@ -89,7 +90,7 @@ export const CycleMobileHeader = () => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-custom-border-200">
+      <div className="flex justify-evenly py-2 border-b border-custom-border-200 md:hidden">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"
@@ -165,4 +166,4 @@ export const CycleMobileHeader = () => {
       </div>
     </>
   );
-};
+});

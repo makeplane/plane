@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { observer } from "mobx-react-lite";
 import router from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
@@ -13,7 +14,7 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "./iss
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 import { ProjectAnalyticsModal } from "components/analytics";
 
-export const IssuesMobileHeader = () => {
+export const IssuesMobileHeader = observer(() => {
     const layouts = [
         { key: "list", title: "List", icon: List },
         { key: "kanban", title: "Kanban", icon: Kanban },
@@ -87,7 +88,7 @@ export const IssuesMobileHeader = () => {
                 onClose={() => setAnalyticsModal(false)}
                 projectDetails={currentProjectDetails ?? undefined}
             />
-            <div className="flex justify-evenly py-2 border-b border-custom-border-200">
+            <div className="flex justify-evenly py-2 border-b border-custom-border-200 md:hidden">
                 <CustomMenu
                     maxHeight={"md"}
                     className="flex flex-grow justify-center text-custom-text-200 text-sm"
@@ -163,4 +164,4 @@ export const IssuesMobileHeader = () => {
             </div>
         </>
     );
-};
+});

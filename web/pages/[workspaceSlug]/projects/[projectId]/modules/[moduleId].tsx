@@ -16,6 +16,7 @@ import { EmptyState } from "components/common";
 import emptyModule from "public/empty-state/module.svg";
 // types
 import { NextPageWithLayout } from "lib/types";
+import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 
 const ModuleIssuesPage: NextPageWithLayout = () => {
   // router
@@ -75,7 +76,7 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
 
 ModuleIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ModuleIssuesHeader />} withProjectWrapper>
+    <AppLayout header={<ModuleIssuesHeader />} mobileHeader={<ModuleMobileHeader/>} withProjectWrapper>
       {page}
     </AppLayout>
   );

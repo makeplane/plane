@@ -17,7 +17,6 @@ import {
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
@@ -29,7 +28,6 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { renderEmoji } from "helpers/emoji.helper";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
-import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states
@@ -115,10 +113,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className=" relative z-10 items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
+      <div className="relative z-10 items-center gap-x-2 gap-y-4 w-full">
+        <div className="flex items-center gap-2 p-4 bg-custom-sidebar-background-100">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-            <SidebarHamburgerToggle />
             <div>
               <Breadcrumbs onBack={() => router.back()}>
                 <Breadcrumbs.BreadcrumbItem
@@ -233,9 +230,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Button>
             </>
           )}
-        </div>
-        <div className="block md:hidden">
-          <IssuesMobileHeader />
         </div>
       </div>
     </>

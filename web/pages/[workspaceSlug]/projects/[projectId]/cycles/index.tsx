@@ -20,6 +20,8 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CyclesListMobileHeader } from "components/cycles/cycles-list-mobile-header";
+
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -211,7 +213,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
 ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+    <AppLayout header={<CyclesHeader />} mobileHeader={<CyclesListMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

@@ -34,9 +34,12 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
   if (!projectDetails) return null;
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/issues`} className="group flex items-center gap-8">
+    <Link
+      href={`/${workspaceSlug}/projects/${projectId}/issues`}
+      className="group relative flex items-center overflow-hidden gap-8"
+    >
       <div
-        className={`h-[3.375rem] w-[3.375rem] grid place-items-center rounded border border-transparent flex-shrink-0 ${randomBgColor}`}
+        className={`flex-shrink-0 relative h-[3.375rem] w-[3.375rem] grid place-items-center rounded border border-transparent  ${randomBgColor}`}
       >
         {projectDetails.emoji ? (
           <span className="grid h-7 w-7 flex-shrink-0 text-2xl place-items-center rounded uppercase">
@@ -50,10 +53,10 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
           </span>
         )}
       </div>
-      <div className="flex-grow truncate">
-        <h6 className="text-sm text-custom-text-300 font-medium group-hover:underline group-hover:text-custom-text-100 truncate">
+      <div className="w-full overflow-hidden">
+        <div className="text-sm text-custom-text-300 group-hover:underline group-hover:text-custom-text-100 overflow-hidden">
           {projectDetails.name}
-        </h6>
+        </div>
         <div className="mt-2">
           <AvatarGroup>
             {projectDetails.members?.map((member) => (
@@ -98,11 +101,11 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
       >
         Your projects
       </Link>
-      <div className="space-y-8 mt-4 mx-7">
+      <div className="space-y-8 pt-4 px-7 relative overflow-hidden">
         {canCreateProject && (
           <button
             type="button"
-            className="group flex items-center gap-8"
+            className="relative group flex items-center gap-8 text-left"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -118,6 +121,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
             </p>
           </button>
         )}
+
         {widgetStats.map((projectId) => (
           <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
         ))}
