@@ -36,7 +36,7 @@ export interface IProfileIssuesFilter {
     projectId: string | undefined,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    userId?: string | undefined
+    userId: string
   ) => Promise<void>;
 }
 
@@ -127,11 +127,9 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     projectId: string | undefined,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    userId: string | undefined = undefined
+    userId: string
   ) => {
     try {
-      if (!userId) throw new Error("user id is required");
-
       if (isEmpty(this.filters) || isEmpty(this.filters[userId]) || isEmpty(filters)) return;
 
       const _filters = {

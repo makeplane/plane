@@ -27,27 +27,27 @@ export interface IProfileIssues {
     workspaceSlug: string,
     projectId: string | undefined,
     loadType: TLoader,
-    userId?: string | undefined,
+    userId: string,
     view?: "assigned" | "created" | "subscribed"
   ) => Promise<TIssue[]>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
     data: Partial<TIssue>,
-    userId?: string | undefined
+    userId: string
   ) => Promise<TIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    userId?: string | undefined
+    userId: string
   ) => Promise<TIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    userId?: string | undefined
+    userId: string
   ) => Promise<TIssue | undefined>;
   quickAddIssue: undefined;
 }
@@ -135,15 +135,14 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     workspaceSlug: string,
     projectId: string | undefined,
     loadType: TLoader = "init-loader",
-    userId?: string | undefined,
+    userId: string,
     view?: "assigned" | "created" | "subscribed"
   ) => {
     try {
-      if (!userId) throw new Error("user id is required");
-      if (!view) throw new Error("current tab view is required");
-
       this.loader = loadType;
-      this.currentView = view;
+      if (view) this.currentView = view;
+
+      if (!this.currentView) throw new Error("current tab view is required");
 
       let params: any = this.rootIssueStore?.profileIssuesFilter?.appliedFilters;
       params = {
@@ -161,7 +160,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       runInAction(() => {
         set(
           this.issues,
-          [userId, view],
+          [userId, this.currentView],
           response.map((issue) => issue.id)
         );
         this.loader = undefined;
@@ -176,15 +175,8 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     }
   };
 
-  createIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<TIssue>,
-    userId: string | undefined = undefined
-  ) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, userId: string) => {
     try {
-      if (!userId) throw new Error("user id is required");
-
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
@@ -204,11 +196,9 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     projectId: string,
     issueId: string,
     data: Partial<TIssue>,
-    userId: string | undefined = undefined
+    userId: string
   ) => {
     try {
-      if (!userId) throw new Error("user id is required");
-
       this.rootStore.issues.updateIssue(issueId, data);
       const response = await this.rootIssueStore.projectIssues.updateIssue(
         workspaceSlug,
