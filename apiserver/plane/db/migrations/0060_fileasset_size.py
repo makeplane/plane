@@ -35,7 +35,7 @@ def convert_issue_description_image_sources(apps, schema_editor):
             src = img.get("src", "")
             if src and (src.startswith(prefix1)):
                 img["src"] = (
-                    f"/api/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{src[len(prefix1): ]}"
+                    f"{src[len(prefix1): ]}"
                 )
                 file_assets[src[len(prefix1) :]] = {
                     "project_id": str(issue.project_id),
@@ -47,7 +47,7 @@ def convert_issue_description_image_sources(apps, schema_editor):
             # prefix 2
             if not settings.USE_MINIO and src and src.startswith(prefix2):
                 img["src"] = (
-                    f"/api/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{src[len(prefix2): ]}"
+                    f"{src[len(prefix2): ]}"
                 )
                 file_assets[src[len(prefix2) :]] = {
                     "project_id": str(issue.project_id),
@@ -110,7 +110,7 @@ def convert_page_image_sources(apps, schema_editor):
             src = img.get("src", "")
             if src and (src.startswith(prefix1)):
                 img["src"] = (
-                    f"/api/workspaces/{page.workspace.slug}/projects/{page.project_id}/issues/{page.id}/attachments/{src[len(prefix1): ]}/"
+                    f"{src[len(prefix1): ]}/"
                 )
                 file_assets[src[len(prefix1) :]] = {
                     "project_id": str(page.project_id),
@@ -122,7 +122,7 @@ def convert_page_image_sources(apps, schema_editor):
             # prefix 2
             if not settings.USE_MINIO and src and src.startswith(prefix2):
                 img["src"] = (
-                    f"/api/workspaces/{page.workspace.slug}/projects/{page.project_id}/issues/{page.id}/attachments/{src[len(prefix2): ]}/"
+                    f"{src[len(prefix2): ]}/"
                 )
                 file_assets[src[len(prefix2) :]] = {
                     "project_id": str(page.project_id),
@@ -181,7 +181,7 @@ def convert_comment_image_sources(apps, schema_editor):
             src = img.get("src", "")
             if src and (src.startswith(prefix1)):
                 img["src"] = (
-                    f"/api/workspaces/{comment.workspace.slug}/projects/{comment.project_id}/issues/{comment.id}/attachments/{src[len(prefix1): ]}/"
+                    f"{src[len(prefix1): ]}/"
                 )
                 file_assets[src[len(prefix1) :]] = {
                     "project_id": str(comment.project_id),
@@ -193,7 +193,7 @@ def convert_comment_image_sources(apps, schema_editor):
             # prefix 2
             if not settings.USE_MINIO and src and src.startswith(prefix2):
                 img["src"] = (
-                    f"/api/workspaces/{comment.workspace.slug}/projects/{comment.project_id}/issues/{comment.id}/attachments/{src[len(prefix2): ]}/"
+                    f"{src[len(prefix2): ]}/"
                 )
                 file_assets[src[len(prefix2) :]] = {
                     "project_id": str(comment.project_id),

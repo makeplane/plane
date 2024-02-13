@@ -6,6 +6,8 @@ from plane.space.views import (
     IssueCommentPublicViewSet,
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
+    CommentAssetPublicEndpoint,
+    IssueAttachmentPublicEndpoint
 )
 
 urlpatterns = [
@@ -34,6 +36,26 @@ urlpatterns = [
             }
         ),
         name="issue-comments-project-board",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
+        IssueAttachmentPublicEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
+        IssueAttachmentPublicEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/",
+        CommentAssetPublicEndpoint.as_view(),
+        name="issue-comments-project-board-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/attachments/<uuid:workspace_id>/<str:asset_key>/",
+        CommentAssetPublicEndpoint.as_view(),
+        name="issue-comments-project-board-attachments",
     ),
     path(
         "workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/reactions/",
