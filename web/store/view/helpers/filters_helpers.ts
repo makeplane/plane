@@ -8,6 +8,8 @@ import {
   TViewFilterProps,
   TViewFilterQueryParams,
 } from "@plane/types";
+// constants
+import { EViewPageType, viewPageDefaultLayoutsByPageType } from "constants/view";
 
 export class FiltersHelper {
   // computed filters
@@ -29,21 +31,26 @@ export class FiltersHelper {
 
   // computed display filters
   computedDisplayFilters = (
+    viewPageType: EViewPageType,
     displayFilters: TViewDisplayFilters,
     defaultValues?: Partial<TViewDisplayFilters>
-  ): TViewDisplayFilters => ({
-    layout: defaultValues?.layout || displayFilters?.layout || "list",
-    group_by: defaultValues?.group_by || displayFilters?.group_by || undefined,
-    sub_group_by: defaultValues?.sub_group_by || displayFilters?.sub_group_by || undefined,
-    order_by: defaultValues?.order_by || displayFilters?.order_by || "sort_order",
-    type: defaultValues?.type || displayFilters?.type || undefined,
-    sub_issue: defaultValues?.sub_issue || displayFilters?.sub_issue || false,
-    show_empty_groups: defaultValues?.show_empty_groups || displayFilters?.show_empty_groups || false,
-    calendar: {
-      show_weekends: defaultValues?.calendar?.show_weekends || displayFilters?.calendar?.show_weekends || false,
-      layout: defaultValues?.calendar?.layout || displayFilters?.calendar?.layout || "month",
-    },
-  });
+  ): TViewDisplayFilters => {
+    const viewPageDefaultLayout = viewPageDefaultLayoutsByPageType(viewPageType)?.[0] || "list";
+
+    return {
+      layout: defaultValues?.layout || displayFilters?.layout || viewPageDefaultLayout,
+      group_by: defaultValues?.group_by || displayFilters?.group_by || undefined,
+      sub_group_by: defaultValues?.sub_group_by || displayFilters?.sub_group_by || undefined,
+      order_by: defaultValues?.order_by || displayFilters?.order_by || "sort_order",
+      type: defaultValues?.type || displayFilters?.type || undefined,
+      sub_issue: defaultValues?.sub_issue || displayFilters?.sub_issue || false,
+      show_empty_groups: defaultValues?.show_empty_groups || displayFilters?.show_empty_groups || false,
+      calendar: {
+        show_weekends: defaultValues?.calendar?.show_weekends || displayFilters?.calendar?.show_weekends || false,
+        layout: defaultValues?.calendar?.layout || displayFilters?.calendar?.layout || "month",
+      },
+    };
+  };
 
   // computed display properties
   computedDisplayProperties = (

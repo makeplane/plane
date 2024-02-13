@@ -50,14 +50,14 @@ export const ViewFiltersEditDropdown: FC<TViewFiltersEditDropdown> = observer((p
   // dropdown options
   const dropdownOptions: TViewFilterEditDropdownOptions[] = useMemo(
     () => [
-      // {
-      //   icon: PhotoFilterIcon,
-      //   key: "save_as_new",
-      //   label: "Save as new view",
-      //   onClick: () => {
-      //     viewOperations.localViewCreateEdit(undefined, viewDetailStore?.filtersToUpdate);
-      //   },
-      // },
+      {
+        icon: PhotoFilterIcon,
+        key: "save_as_new",
+        label: "Save as new view",
+        onClick: () => {
+          viewOperations.localViewCreateEdit(undefined, viewDetailStore?.filtersToUpdate);
+        },
+      },
       {
         icon: RotateCcw,
         key: "reset_changes",

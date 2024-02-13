@@ -12,12 +12,14 @@ import { ViewFiltersRoot } from "../";
 import { Tooltip } from "@plane/ui";
 // types
 import { TViewTypes } from "@plane/types";
+import { EViewPageType } from "constants/view";
 
 type TViewFiltersDropdown = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
+  viewPageType: EViewPageType;
   children?: ReactNode;
   displayDropdownText?: boolean;
   dropdownPlacement?: Placement;
@@ -29,6 +31,7 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
     projectId,
     viewId,
     viewType,
+    viewPageType,
     children,
     displayDropdownText = true,
     dropdownPlacement = "bottom-start",
@@ -130,6 +133,7 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
                 projectId={projectId}
                 viewId={viewId}
                 viewType={viewType}
+                viewPageType={viewPageType}
                 dateCustomFilterToggle={dateCustomFilterToggle}
                 setDateCustomFilterToggle={setDateCustomFilterToggle}
               />

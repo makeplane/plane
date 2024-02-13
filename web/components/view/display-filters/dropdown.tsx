@@ -7,21 +7,26 @@ import { MonitorDot } from "lucide-react";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { ViewDisplayPropertiesRoot } from "../";
+import { ViewDisplayFiltersRoot } from "../";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
 import { TViewTypes } from "@plane/types";
+// constants
+import { EViewPageType } from "constants/view";
 
-type TViewDisplayFiltersDropdown = {
+type NewType = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
+  viewPageType: EViewPageType;
   children?: ReactNode;
   displayDropdownText?: boolean;
   dropdownPlacement?: Placement;
 };
+
+type TViewDisplayFiltersDropdown = NewType;
 
 export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = observer((props) => {
   const {
@@ -29,6 +34,7 @@ export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = obser
     projectId,
     viewId,
     viewType,
+    viewPageType,
     children,
     displayDropdownText = true,
     dropdownPlacement = "bottom-start",
@@ -110,18 +116,14 @@ export const ViewDisplayFiltersDropdown: FC<TViewDisplayFiltersDropdown> = obser
             {...attributes.popper}
             className="my-1 w-72 p-2 space-y-2 rounded bg-custom-background-100 border-[0.5px] border-custom-border-300 shadow-custom-shadow-rg focus:outline-none"
           >
-            <div className="max-h-96 space-y-1 overflow-y-scroll">
-              <div className="space-y-2">
-                <div className="text-sm font-medium text-custom-text-200">Properties</div>
-                <ViewDisplayPropertiesRoot
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  viewId={viewId}
-                  viewType={viewType}
-                />
-              </div>
-
-              <div className="border border-red-500">Content</div>
+            <div className="max-h-[500px] space-y-0.5 overflow-y-scroll mb-2">
+              <ViewDisplayFiltersRoot
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                viewType={viewType}
+                viewPageType={viewPageType}
+              />
             </div>
           </div>
         </Combobox.Options>

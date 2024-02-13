@@ -13,9 +13,24 @@ import {
   StateGroupIcon,
 } from "@plane/ui";
 // types
-import { TIssuePriorities, TStateGroups, TViewFilters } from "@plane/types";
+import {
+  TIssuePriorities,
+  TStateGroups,
+  TViewFilters,
+  TViewDisplayFilters,
+  TViewDisplayFiltersGrouped,
+  TViewDisplayFiltersOrderBy,
+  TViewDisplayFiltersType,
+} from "@plane/types";
 // constants
-import { STATE_GROUP_PROPERTY, PRIORITIES_PROPERTY, DATE_PROPERTY } from "constants/view/filters";
+import {
+  STATE_GROUP_PROPERTY,
+  PRIORITIES_PROPERTY,
+  DATE_PROPERTY,
+  GROUP_BY_PROPERTY,
+  ORDER_BY_PROPERTY,
+  TYPE_PROPERTY,
+} from "constants/view/filters";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -26,6 +41,11 @@ type TFilterPropertyDetails = {
 };
 
 type TFilterPropertyDefaultDetails = {
+  icon: ReactNode;
+  label: string;
+};
+
+type TDisplayFilterPropertyDetails = {
   icon: ReactNode;
   label: string;
 };
@@ -326,9 +346,68 @@ export const useViewFilter = (workspaceSlug: string, projectId: string | undefin
     }
   };
 
+  const displayFilterIdsWithKey = (displayFilterKey: keyof TViewDisplayFilters): string[] | undefined => {
+    if (!displayFilterKey) return undefined;
+
+    switch (displayFilterKey) {
+      case "group_by":
+        return Object.keys(GROUP_BY_PROPERTY) || undefined;
+      case "sub_group_by":
+        return Object.keys(GROUP_BY_PROPERTY) || undefined;
+      case "order_by":
+        return Object.keys(ORDER_BY_PROPERTY) || undefined;
+      case "type":
+        return Object.keys(TYPE_PROPERTY) || undefined;
+      default:
+        return undefined;
+    }
+  };
+
+  const displayPropertyDetails = (
+    displayFilterKey: keyof TViewDisplayFilters,
+    propertyId: string
+  ): TDisplayFilterPropertyDetails | undefined => {
+    if (!displayFilterKey) return undefined;
+
+    switch (displayFilterKey) {
+      case "group_by":
+        const groupBy = GROUP_BY_PROPERTY?.[propertyId as TViewDisplayFiltersGrouped | "null"];
+        if (!groupBy) return undefined;
+        return {
+          icon: undefined,
+          label: groupBy.label,
+        };
+      case "sub_group_by":
+        const subGroupBy = GROUP_BY_PROPERTY?.[propertyId as TViewDisplayFiltersGrouped | "null"];
+        if (!subGroupBy) return undefined;
+        return {
+          icon: undefined,
+          label: subGroupBy.label,
+        };
+      case "order_by":
+        const orderBy = ORDER_BY_PROPERTY?.[propertyId as TViewDisplayFiltersOrderBy];
+        if (!orderBy) return undefined;
+        return {
+          icon: undefined,
+          label: orderBy.label,
+        };
+      case "type":
+        const type = TYPE_PROPERTY?.[propertyId as TViewDisplayFiltersType | "null"];
+        if (!type) return undefined;
+        return {
+          icon: undefined,
+          label: type.label,
+        };
+      default:
+        return undefined;
+    }
+  };
+
   return {
     filterIdsWithKey,
     propertyDefaultDetails,
     propertyDetails,
+    displayFilterIdsWithKey,
+    displayPropertyDetails,
   };
 };

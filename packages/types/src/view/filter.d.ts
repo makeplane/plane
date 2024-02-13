@@ -1,9 +1,17 @@
+declare enum EViewLayouts {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  SPREADSHEET = "spreadsheet",
+  GANTT = "gantt",
+}
+
 export type TViewLayouts =
-  | "list"
-  | "kanban"
-  | "calendar"
-  | "spreadsheet"
-  | "gantt";
+  | EViewLayouts.LIST
+  | EViewLayouts.KANBAN
+  | EViewLayouts.CALENDAR
+  | EViewLayouts.SPREADSHEET
+  | EViewLayouts.GANTT;
 
 export type TViewDisplayFiltersGrouped =
   | "project"

@@ -7,7 +7,7 @@ import { GlobalViewRoot } from "components/view";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
-import { VIEW_TYPES } from "constants/view";
+import { EViewPageType, VIEW_TYPES } from "constants/view";
 
 const ProjectPrivateViewPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -38,6 +38,7 @@ const ProjectPrivateViewPage: NextPageWithLayout = () => {
           projectId={projectId.toString()}
           viewId={viewId.toString()}
           viewType={VIEW_TYPES.PROJECT_PRIVATE_VIEWS}
+          viewPageType={EViewPageType.PROJECT}
           baseRoute={`/${workspaceSlug?.toString()}/projects/${projectId}/views/private`}
           workspaceViewTabOptions={workspaceViewTabOptions}
         />

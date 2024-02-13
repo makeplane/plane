@@ -11,17 +11,20 @@ import { Input, Button } from "@plane/ui";
 // types
 import { TViewTypes } from "@plane/types";
 import { TViewOperations } from "../types";
+// constants
+import { EViewPageType } from "constants/view";
 
 type TViewCreateEditForm = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
+  viewPageType: EViewPageType;
   viewOperations: TViewOperations;
 };
 
 export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewPageType, viewOperations } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const { getProjectById } = useProject();
@@ -126,6 +129,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     projectId={projectId}
                     viewId={viewId}
                     viewType={viewType}
+                    viewPageType={viewPageType}
                     dropdownPlacement="right"
                   >
                     <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">

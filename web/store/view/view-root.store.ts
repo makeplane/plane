@@ -9,6 +9,8 @@ import { ViewStore } from "./view.store";
 // types
 import { TUserViewService, TViewService } from "services/view/types";
 import { TView } from "@plane/types";
+// constants
+import { EViewPageType } from "constants/view";
 
 export type TLoader = "init-loader" | "mutation-loader" | "submitting" | undefined;
 
@@ -37,7 +39,8 @@ export class ViewRootStore implements TViewRootStore {
     private store: RootStore,
     private defaultViews: TView[] = [],
     private service: TViewService,
-    private userService: TUserViewService
+    private userService: TUserViewService,
+    private viewPageType: EViewPageType
   ) {
     makeObservable(this, {
       // observables
@@ -70,7 +73,12 @@ export class ViewRootStore implements TViewRootStore {
   // actions
   localViewCreate = async (view: TView) => {
     runInAction(() => {
-      if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
+      if (view.id)
+        set(
+          this.viewMap,
+          [view.id],
+          new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+        );
     });
   };
 
@@ -84,7 +92,12 @@ export class ViewRootStore implements TViewRootStore {
       if (this.defaultViews && this.defaultViews.length > 0)
         runInAction(() => {
           this.defaultViews?.forEach((view) => {
-            if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
+            if (view.id)
+              set(
+                this.viewMap,
+                [view.id],
+                new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+              );
           });
         });
 
@@ -93,7 +106,12 @@ export class ViewRootStore implements TViewRootStore {
 
       runInAction(() => {
         views.forEach((view) => {
-          if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
+          if (view.id)
+            set(
+              this.viewMap,
+              [view.id],
+              new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+            );
         });
         this.loader = undefined;
       });
@@ -105,9 +123,13 @@ export class ViewRootStore implements TViewRootStore {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !viewId) return;
 
+      // fetching display properties and display_filters
       const userView = await this.userService.fetch(workspaceSlug, projectId);
       if (!userView) return;
 
+      // fetching kanban display filters from local
+
+      // fetching display filters from local and from the view
       if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
         const view = { ...this.viewById(viewId) };
         if (!view) return;
@@ -124,7 +146,12 @@ export class ViewRootStore implements TViewRootStore {
         view?.display_properties && (view.display_properties = userView.display_properties);
 
         runInAction(() => {
-          if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
+          if (view.id)
+            set(
+              this.viewMap,
+              [view.id],
+              new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+            );
         });
       }
     } catch {}
@@ -139,7 +166,12 @@ export class ViewRootStore implements TViewRootStore {
       if (!view) return;
 
       runInAction(() => {
-        if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
+        if (view.id)
+          set(
+            this.viewMap,
+            [view.id],
+            new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+          );
       });
 
       if (data.id) this.remove(data.id);
@@ -169,7 +201,12 @@ export class ViewRootStore implements TViewRootStore {
       if (!view) return;
 
       runInAction(() => {
-        if (view.id) set(this.viewMap, [view.id], new ViewStore(this.store, view, this.service, this.userService));
+        if (view.id)
+          set(
+            this.viewMap,
+            [view.id],
+            new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+          );
       });
     } catch {}
   };

@@ -22,6 +22,9 @@ export * from "./filters/edit-dropdown";
 // view display filters
 export * from "./display-filters/dropdown";
 export * from "./display-filters/root";
+export * from "./display-filters/display-filter-item-root";
+export * from "./display-filters/display-filter-item";
+export * from "./display-filters/display-filter-selection";
 
 // view display properties
 export * from "./display-properties/root";

@@ -10,19 +10,28 @@ import { useViewDetail } from "hooks/store";
 import { ViewFiltersItemRoot } from "../";
 // types
 import { TViewFilters, TViewTypes } from "@plane/types";
-import { VIEW_DEFAULT_FILTER_PARAMETERS } from "constants/view";
+import { EViewPageType, viewDefaultFilterParametersByViewTypeAndLayout } from "constants/view";
 
 type TViewFiltersRoot = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
+  viewPageType: EViewPageType;
   dateCustomFilterToggle: string | undefined;
   setDateCustomFilterToggle: (value: string | undefined) => void;
 };
 
 export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, dateCustomFilterToggle, setDateCustomFilterToggle } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    viewPageType,
+    dateCustomFilterToggle,
+    setDateCustomFilterToggle,
+  } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   // state
@@ -34,9 +43,11 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
     });
   };
 
-  const layout = viewDetailStore?.appliedFilters?.display_filters?.layout || "spreadsheet";
+  const layout = viewDetailStore?.appliedFilters?.display_filters?.layout;
 
-  const filtersProperties = VIEW_DEFAULT_FILTER_PARAMETERS?.["all"]?.["spreadsheet"]?.filters || [];
+  const filtersProperties = layout
+    ? viewDefaultFilterParametersByViewTypeAndLayout(viewPageType, layout, "filters")
+    : [];
 
   if (!layout || filtersProperties.length <= 0) return <></>;
   return (
@@ -45,7 +56,7 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
         <div key={filterKey} className="relative py-1 first:pt-0 last:pb-0">
           <div className="sticky top-0 z-20 flex justify-between items-center gap-2 bg-custom-background-100 select-none">
             <div className="font-medium text-xs text-custom-text-300 capitalize py-1">
-              {filterKey.replace("_", " ")}
+              {filterKey.replaceAll("_", " ")}
             </div>
             <div
               className="flex-shrink-0 relative overflow-hidden w-5 h-5 rounded flex justify-center items-center cursor-pointer hover:bg-custom-background-80"

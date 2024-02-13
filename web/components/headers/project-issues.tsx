@@ -154,7 +154,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
 
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
-                  link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+                  link={
+                    <BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+                  }
                 />
               </Breadcrumbs>
             </div>
@@ -203,7 +205,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </div>
           {currentProjectDetails?.inbox_view && inboxDetails && (
             <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
-              <span className="hidden md:block" >
+              <span className="hidden md:block">
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
                   {inboxDetails?.pending_issue_count > 0 && (
@@ -218,7 +220,12 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           )}
           {canUserCreateIssue && (
             <>
-              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+              <Button
+                className="hidden md:block"
+                onClick={() => setAnalyticsModal(true)}
+                variant="neutral-primary"
+                size="sm"
+              >
                 Analytics
               </Button>
               <Button

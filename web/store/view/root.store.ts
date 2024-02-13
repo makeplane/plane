@@ -11,6 +11,8 @@ import {
 } from "services/view";
 // types
 import { RootStore } from "store/root.store";
+// constants
+import { EViewPageType } from "constants/view";
 
 export class GlobalViewRootStore {
   workspacePrivateViewStore: ViewRootStore;
@@ -59,25 +61,29 @@ export class GlobalViewRootStore {
       this.store,
       workspacePrivateDefaultViews,
       new WorkspacePrivateViewService(),
-      new WorkspaceFiltersService()
+      new WorkspaceFiltersService(),
+      EViewPageType.ALL
     );
     this.workspacePublicViewStore = new ViewRootStore(
       this.store,
       workspacePublicDefaultViews,
       new WorkspacePublicViewService(),
-      new WorkspaceFiltersService()
+      new WorkspaceFiltersService(),
+      EViewPageType.ALL
     );
     this.projectPrivateViewStore = new ViewRootStore(
       this.store,
       undefined,
       new ProjectPrivateViewService(),
-      new ProjectFiltersService()
+      new ProjectFiltersService(),
+      EViewPageType.PROJECT
     );
     this.projectPublicViewStore = new ViewRootStore(
       this.store,
       undefined,
       new ProjectPublicViewService(),
-      new ProjectFiltersService()
+      new ProjectFiltersService(),
+      EViewPageType.PROJECT
     );
   }
 }

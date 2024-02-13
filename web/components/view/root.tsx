@@ -23,7 +23,7 @@ import {
 // ui
 import { Spinner } from "@plane/ui";
 // constants
-import { viewLocalPayload } from "constants/view";
+import { EViewPageType, viewLocalPayload } from "constants/view";
 // types
 import { TViewOperations } from "./types";
 import { TView, TViewTypes } from "@plane/types";
@@ -33,6 +33,7 @@ type TGlobalViewRoot = {
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
+  viewPageType: EViewPageType;
   baseRoute: string;
   workspaceViewTabOptions: { key: TViewTypes; title: string; href: string }[];
 };
@@ -43,7 +44,7 @@ type TViewOperationsToggle = {
 };
 
 export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, baseRoute, workspaceViewTabOptions } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewPageType, baseRoute, workspaceViewTabOptions } = props;
   // hooks
   const viewStore = useView(workspaceSlug, projectId, viewType);
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
@@ -232,7 +233,13 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
             </div>
 
             <div className="flex-shrink-0">
-              <ViewLayoutRoot workspaceSlug={workspaceSlug} projectId={projectId} viewId={viewId} viewType={viewType} />
+              <ViewLayoutRoot
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                viewType={viewType}
+                viewPageType={viewPageType}
+              />
             </div>
 
             <div className="flex-shrink-0">
@@ -241,6 +248,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
                 projectId={projectId}
                 viewId={viewId}
                 viewType={viewType}
+                viewPageType={viewPageType}
                 displayDropdownText={false}
               />
             </div>
@@ -251,24 +259,29 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
                 projectId={projectId}
                 viewId={viewId}
                 viewType={viewType}
+                viewPageType={viewPageType}
                 displayDropdownText={false}
               />
             </div>
 
-            <ViewEditDropdown
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              viewId={viewId}
-              viewOperations={viewOperations}
-            />
+            <div className="flex-shrink-0">
+              <ViewEditDropdown
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                viewOperations={viewOperations}
+              />
+            </div>
 
-            <ViewFiltersEditDropdown
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              viewId={viewId}
-              viewType={viewType}
-              viewOperations={viewOperations}
-            />
+            <div className="flex-shrink-0">
+              <ViewFiltersEditDropdown
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                viewType={viewType}
+                viewOperations={viewOperations}
+              />
+            </div>
           </div>
         </>
       )}
@@ -282,6 +295,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
               projectId={projectId}
               viewId={viewOperationsToggle.viewId}
               viewType={viewType}
+              viewPageType={viewPageType}
               viewOperations={viewOperations}
             />
           )}

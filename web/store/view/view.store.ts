@@ -20,6 +20,8 @@ import {
 } from "@plane/types";
 // helpers
 import { FiltersHelper } from "./helpers/filters_helpers";
+// constants
+import { EViewPageType, viewDefaultFilterParametersByViewTypeAndLayout } from "constants/view";
 
 type TLoader = "updating" | undefined;
 
@@ -79,7 +81,8 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     private store: RootStore,
     _view: TView,
     private service: TViewService,
-    private userService: TUserViewService
+    private userService: TUserViewService,
+    private viewPageType: EViewPageType
   ) {
     super();
     this.id = _view.id;
@@ -89,7 +92,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     this.description = _view.description;
     this.query = _view.query;
     this.filters = this.computedFilters(_view.filters);
-    this.display_filters = this.computedDisplayFilters(_view.display_filters);
+    this.display_filters = this.computedDisplayFilters(this.viewPageType, _view.display_filters);
     this.display_properties = this.computedDisplayProperties(_view.display_properties);
     this.access = _view.access;
     this.owned_by = _view.owned_by;
@@ -108,7 +111,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       name: this.name,
       description: this.description,
       filters: this.computedFilters(_view.filters),
-      display_filters: this.computedDisplayFilters(_view.display_filters),
+      display_filters: this.computedDisplayFilters(this.viewPageType, _view.display_filters),
       display_properties: this.computedDisplayProperties(_view.display_properties),
     };
 
@@ -164,7 +167,11 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   get appliedFilters() {
     return {
       filters: this.computedFilters(this.filters, this.filtersToUpdate.filters),
-      display_filters: this.computedDisplayFilters(this.display_filters, this.filtersToUpdate.display_filters),
+      display_filters: this.computedDisplayFilters(
+        this.viewPageType,
+        this.display_filters,
+        this.filtersToUpdate.display_filters
+      ),
       display_properties: this.computedDisplayProperties(
         this.display_properties,
         this.filtersToUpdate.display_properties
@@ -173,9 +180,17 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   }
 
   get appliedFiltersQueryParams() {
-    const filters = this.appliedFilters;
-    if (!filters) return undefined;
-    return this.computeAppliedFiltersQueryParameters(filters, [])?.query || undefined;
+    const appliedFilters = this.appliedFilters;
+    if (!appliedFilters) return undefined;
+
+    const layout = appliedFilters?.display_filters?.layout;
+    const requiredFilterProperties = viewDefaultFilterParametersByViewTypeAndLayout(
+      this.viewPageType,
+      layout,
+      "filters"
+    );
+
+    return this.computeAppliedFiltersQueryParameters(appliedFilters, requiredFilterProperties)?.query || undefined;
   }
 
   get isFiltersApplied() {
@@ -247,12 +262,18 @@ export class ViewStore extends FiltersHelper implements TViewStore {
         set(this.filtersToUpdate, ["display_filters", _key], display_filters[_key]);
       });
     });
+
+    // update display properties globally
+
+    // updating display properties locally for kanban filters
   };
 
   setDisplayProperties = async (displayPropertyKey: keyof TViewDisplayProperties) => {
     runInAction(() => {
       update(this.filtersToUpdate, ["display_properties", displayPropertyKey], (_value: boolean = true) => !_value);
     });
+
+    // update display properties globally
   };
 
   setIsEditable = (is_editable: boolean) => {
