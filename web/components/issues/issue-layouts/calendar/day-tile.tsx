@@ -135,7 +135,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         </div>
         <div
           onClick={() => setSelectedDate(date.date)}
-          className="text-sm my-2 font-medium mx-auto flex flex-col justify-center items-center md:hidden"
+          className="text-sm my-2 font-medium mx-auto flex flex-col justify-center items-center md:hidden cursor-pointer"
         >
           <div
             className={`h-6 w-6 rounded-full flex items-center justify-center ${

@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { MoreHorizontal } from "lucide-react";
+import { observer } from "mobx-react";
 // components
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
@@ -16,7 +17,7 @@ type Props = {
   isDragging?: boolean;
 };
 
-export const CalendarIssueBlock: React.FC<Props> = (props) => {
+export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
   const { issue, quickActions, isDragging = false } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -69,7 +70,7 @@ export const CalendarIssueBlock: React.FC<Props> = (props) => {
             {
               "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
             },
-            { "bg-custom-background-100 hover:bg-custom-background-90": !isDragging },
+            { "bg-custom-background-100 md:hover:bg-custom-background-90": !isDragging },
             {
               "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue?.issueId === issue.id,
             }
@@ -102,4 +103,4 @@ export const CalendarIssueBlock: React.FC<Props> = (props) => {
       </>
     </ControlLink>
   );
-};
+});
