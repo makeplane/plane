@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import Head from "next/head";
 import { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
 // styles
 import "styles/globals.css";
 import "styles/command-pallette.css";
@@ -28,9 +29,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppPropsWith
       <Head>
         <title>{SITE_TITLE}</title>
       </Head>
-      <StoreProvider {...pageProps}>
-        <AppProvider session={session}>{getLayout(<Component {...pageProps} />)}</AppProvider>
-      </StoreProvider>
+      <SessionProvider session={session}>
+        <StoreProvider {...pageProps}>
+          <AppProvider session={session}>{getLayout(<Component {...pageProps} />)}</AppProvider>
+        </StoreProvider>
+      </SessionProvider>
     </>
   );
 }

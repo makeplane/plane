@@ -500,10 +500,8 @@ class AccountEndpoint(BaseAPIView):
                 provider_account_id=provider_id, provider=provider
             )
             serializer = AccountSerializer(account)
-            user = User.objects.get(pk=account.user_id)
-            user_serializer = UserSerializer(user)
             return Response(
-                {"account": serializer.data, "user": user_serializer.data},
+                serializer.data,
                 status=status.HTTP_200_OK,
             )
         except Account.DoesNotExist:
@@ -588,9 +586,6 @@ class SessionEndpoint(BaseAPIView):
             user_id = request.data.get("user", False)
             token = request.data.get("token", False)
             expires = request.data.get("expires", False)
-
-            print(user_id, token, expires)
-            print(not user_id, not token, not expires)
 
             if not user_id or not token or not expires:
                 print("Wrong condition")

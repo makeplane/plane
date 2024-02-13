@@ -542,7 +542,9 @@ class GoogleAuthEndpoint(BaseAPIView):
                 "refresh_token": refresh_token,
             }
 
-            return Response(data, status=status.HTTP_200_OK)
+            response = Response(data, status=status.HTTP_200_OK)
+            response.set_cookie('access-token', access_token, max_age=3600)
+            return response
         # Sign Up
         else:
             user = User.objects.create(email=email, username=uuid.uuid4().hex)
@@ -580,5 +582,6 @@ class GoogleAuthEndpoint(BaseAPIView):
                 "access_token": access_token,
                 "refresh_token": refresh_token,
             }
-
-            return Response(data, status=status.HTTP_200_OK)
+            response = Response(data, status=status.HTTP_200_OK)
+            response.set_cookie('access-token', access_token, max_age=3600)
+            return response

@@ -22,8 +22,8 @@ export const SignInView = observer(() => {
     config: { envConfig },
   } = useApplication();
   const { currentUser } = useUser();
-  const { data: session }: any = useSession();
-  console.log("session", session);
+  const { data: session, status }: any = useSession();
+  console.log("session", session, status);
   // sign in redirection hook
   const { isRedirecting, handleRedirection } = useSignInRedirection();
 
@@ -37,6 +37,7 @@ export const SignInView = observer(() => {
         <Spinner />
       </div>
     );
+
 
   return (
     <div className="h-full w-full bg-onboarding-gradient-100">

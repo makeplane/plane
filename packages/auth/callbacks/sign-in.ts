@@ -4,7 +4,7 @@ const googleSignIn = async ({ account, user }: any) => {
   console.log("SIGN IN CALLBACKS");
   try {
     const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-    const { access_token, refresh_token } = await axios
+    const token = await axios
       .post(BASE_URL + "/api/auth/google/", {
         provider_account_id: account?.providerAccountId,
         access_token: account?.access_token,
@@ -17,8 +17,8 @@ const googleSignIn = async ({ account, user }: any) => {
         avatar: user.image,
       })
       .then((res) => res.data);
-    user.access_token = access_token;
-    user.refresh_token = refresh_token;
+    user.access_token = token.access_token;
+    user.refresh_token = token.refresh_token;
     return true;
   } catch (err) {
     return false;

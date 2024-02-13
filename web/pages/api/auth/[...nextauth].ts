@@ -8,7 +8,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUB
 
 const authHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const configs: TAuthConfig = await axios.get(API_BASE_URL + "/api/auth-configs/").then((res) => res.data);
-  const authOptions = await getAuthOptions(res, configs);
+  const authOptions = await getAuthOptions(configs);
   return NextAuth(req, res, authOptions as any);
 };
 

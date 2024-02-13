@@ -1,10 +1,8 @@
 import { Provider } from "next-auth/providers";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import { signIn } from "../callbacks/sign-in";
-import { jwt } from "../callbacks/jwt";
-import { session } from "../callbacks/session";
-import PlaneAuthAdapter from "./adapter";
+import { signIn } from "../callbacks/sign-in"
+import { JWT } from "next-auth/jwt"
 
 export type TAuthConfig = {
   google: {
@@ -42,21 +40,30 @@ const getNextAuthProviders = (configs: TAuthConfig) => {
   return providers;
 };
 
-export const getAuthOptions = (res: any, config: TAuthConfig) => ({
+export const getAuthOptions = (config: TAuthConfig) => ({
   providers: getNextAuthProviders(config),
-  adapter: PlaneAuthAdapter(),
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
+    // signIn,
     signIn,
-    jwt,
-    async session({ session, token }: any) {
-      console.log("SESSION CALLBACKS");
-      session.access_token = token?.access_token;
-      session.user.id = token?.id;
-      // res.setHeader(
-      //   "Set-Cookie",
-      //   `api_access_token=${token?.access_token}; path=/;`
-      // );
+    // jwt
+    async jwt({ token, user }: any) {
+      if (user?.access_token) {
+        token.access_token = user?.access_token;
+      }
+      if (user?.refresh_token) {
+        token.refresh_token = user?.refresh_token;
+      }
       return token;
+    },
+    // session,
+    async session({ session, token }: any) {
+      if (token?.access_token) {
+        session.user.access_token = token?.access_token;
+      }
+      return Promise.resolve(session);
     },
   },
 });
