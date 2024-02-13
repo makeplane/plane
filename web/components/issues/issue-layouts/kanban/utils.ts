@@ -101,9 +101,13 @@ export const handleDragDrop = async (
       else return await store?.removeIssue(workspaceSlug, projectId, removed);
     }
   } else {
-    const sourceIssues = subGroupBy
-      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
-      : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId];
+    //spreading the array to stop changing the original reference
+    //since we are removing an id from array further down
+    const sourceIssues = [
+      ...(subGroupBy
+        ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+        : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId]),
+    ];
     const destinationIssues = subGroupBy
       ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][destinationGroupByColumnId]
       : (issueWithIds as TGroupedIssues)[destinationGroupByColumnId];
