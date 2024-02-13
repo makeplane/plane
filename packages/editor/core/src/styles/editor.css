@@ -123,7 +123,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   outline: none;
   cursor: text;
   line-height: 1.2;
-  font-family: inherit;
+  font-family: "system-ui";
   font-size: 14px;
   color: inherit;
   -moz-box-sizing: border-box;
