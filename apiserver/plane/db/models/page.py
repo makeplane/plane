@@ -81,7 +81,7 @@ class PageLog(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.page.name} {self.type}"
+        return f"{self.page.name} {self.entity_name}"
 
 
 class PageBlock(ProjectBaseModel):

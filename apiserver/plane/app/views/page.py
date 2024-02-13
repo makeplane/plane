@@ -1,25 +1,35 @@
 # Python imports
-from datetime import date, datetime, timedelta
+import json
+from datetime import datetime
 
 # Django imports
 from django.db import connection
 from django.db.models import Exists, OuterRef, Q
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import ProjectEntityPermission
-from plane.app.serializers import (IssueLiteSerializer, PageFavoriteSerializer,
-                                   PageLogSerializer, PageSerializer,
-                                   SubPageSerializer)
-from plane.db.models import (Issue, IssueActivity, IssueAssignee, Page,
-                             PageFavorite, PageLog, ProjectMember)
+from plane.app.serializers import (
+    PageFavoriteSerializer,
+    PageLogSerializer,
+    PageSerializer,
+    SubPageSerializer,
+)
+from plane.db.models import (
+    Page,
+    PageFavorite,
+    PageLog,
+    ProjectMember,
+)
 
 # Module imports
 from .base import BaseAPIView, BaseViewSet
+
+from plane.bgtasks.page_transaction_task import page_transaction
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -81,6 +91,8 @@ class PageViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            # capture the page transaction
+            page_transaction.delay(request.data, None, serializer.data["id"])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -117,6 +129,17 @@ class PageViewSet(BaseViewSet):
             serializer = PageSerializer(page, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                # capture the page transaction
+                if request.data.get("description_html"):
+                    page_transaction.delay(
+                        new_value=request.data,
+                        old_value=json.dumps(
+                            {
+                                "description_html": page.description_html,
+                            }
+                        ),
+                        page_id=pk,
+                    )
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
