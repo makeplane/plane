@@ -1,17 +1,10 @@
 import { LucideIcon } from "lucide-react";
 // types
-import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties } from "@plane/types";
+import { TView, TUpdateView } from "@plane/types";
 
 export type TViewOperations = {
-  localViewCreateEdit: (viewId: string | undefined) => void;
+  localViewCreateEdit: (viewId: string | undefined, currentView?: TUpdateView | undefined) => void;
   localViewCreateEditClear: (viewId: string | undefined) => Promise<void>;
-  resetChanges: () => void;
-
-  setName: (name: string) => void;
-  setDescription: (description: string) => void;
-  setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => void;
-  setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
-  setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) => void;
 
   fetch: () => Promise<void>;
   create: (data: Partial<TView>) => Promise<void>;

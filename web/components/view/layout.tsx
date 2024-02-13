@@ -7,14 +7,12 @@ import { useViewDetail } from "hooks/store";
 import { Tooltip } from "@plane/ui";
 // types
 import { TViewLayouts, TViewTypes } from "@plane/types";
-import { TViewOperations } from "./types";
 
 type TViewLayoutRoot = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  viewOperations: TViewOperations;
 };
 
 const LAYOUTS_DATA: { key: TViewLayouts; title: string; icon: LucideIcon }[] = [
@@ -26,10 +24,11 @@ const LAYOUTS_DATA: { key: TViewLayouts; title: string; icon: LucideIcon }[] = [
 ];
 
 export const ViewLayoutRoot: FC<TViewLayoutRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
+  const { workspaceSlug, projectId, viewId, viewType } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
+  if (!viewDetailStore) return <></>;
   return (
     <div className="relative flex gap-0.5 items-center bg-custom-background-80 rounded p-1 shadow-custom-shadow-2xs">
       {LAYOUTS_DATA.map((layout) => (
@@ -43,7 +42,7 @@ export const ViewLayoutRoot: FC<TViewLayoutRoot> = observer((props) => {
                 : `hover:bg-custom-background-100`
             }
           `}
-              onClick={() => viewOperations.setDisplayFilters({ layout: layout.key })}
+              onClick={() => viewDetailStore.setDisplayFilters({ layout: layout.key })}
             >
               <layout.icon size={12} />
             </div>

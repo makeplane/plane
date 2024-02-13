@@ -4,25 +4,23 @@ import { observer } from "mobx-react-lite";
 import { useViewDetail } from "hooks/store";
 // types
 import { TViewDisplayProperties, TViewTypes } from "@plane/types";
-import { TViewOperations } from "../types";
 
 type TViewDisplayPropertySelection = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  viewOperations: TViewOperations;
   property: keyof TViewDisplayProperties;
 };
 
 export const ViewDisplayPropertySelection: FC<TViewDisplayPropertySelection> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations, property } = props;
+  const { workspaceSlug, projectId, viewId, viewType, property } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
   const propertyIsSelected = viewDetailStore?.appliedFilters?.display_properties?.[property];
 
-  const handlePropertySelection = () => viewOperations?.setDisplayProperties(property);
+  const handlePropertySelection = () => viewDetailStore?.setDisplayProperties(property);
 
   return (
     <div

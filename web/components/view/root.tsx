@@ -1,7 +1,9 @@
 import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { CheckCircle, Pencil } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+import { v4 as uuidV4 } from "uuid";
+import cloneDeep from "lodash/cloneDeep";
 // hooks
 import { useView, useViewDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -24,7 +26,7 @@ import { Spinner } from "@plane/ui";
 import { viewLocalPayload } from "constants/view";
 // types
 import { TViewOperations } from "./types";
-import { TView, TViewFilters, TViewDisplayFilters, TViewDisplayProperties, TViewTypes } from "@plane/types";
+import { TView, TViewTypes } from "@plane/types";
 
 type TGlobalViewRoot = {
   workspaceSlug: string;
@@ -63,11 +65,19 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
 
   const viewOperations: TViewOperations = useMemo(
     () => ({
-      localViewCreateEdit: (viewId: string | undefined) => {
+      localViewCreateEdit: (viewId: string | undefined, currentView = undefined) => {
         if (viewId === undefined) {
-          const viewPayload = viewLocalPayload;
-          handleViewOperationsToggle("CREATE", viewPayload.id);
-          viewStore?.localViewCreate(viewPayload as TView);
+          if (currentView !== undefined) {
+            // creating new view
+            const currentViewPayload = cloneDeep({ ...currentView, id: uuidV4() });
+            handleViewOperationsToggle("CREATE", currentViewPayload.id);
+            viewStore?.localViewCreate(currentViewPayload as TView);
+          } else {
+            // if current view is available, create a new view with the same data
+            const viewPayload = viewLocalPayload;
+            handleViewOperationsToggle("CREATE", viewPayload.id);
+            viewStore?.localViewCreate(viewPayload as TView);
+          }
         } else {
           handleViewOperationsToggle("EDIT", viewId);
           viewDetailCreateEditStore?.setIsEditable(true);
@@ -75,34 +85,8 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
       },
       localViewCreateEditClear: async (viewId: string | undefined) => {
         if (viewDetailCreateEditStore?.is_create && viewId) viewStore?.remove(viewId);
+        if (viewDetailCreateEditStore?.is_editable && viewId) viewDetailCreateEditStore.resetChanges();
         handleViewOperationsToggle(undefined, undefined);
-      },
-      resetChanges: () => viewDetailStore?.resetChanges(),
-
-      setName: (name: string) => {
-        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
-          viewDetailCreateEditStore?.setName(name);
-        else viewDetailStore?.setName(name);
-      },
-      setDescription: (name: string) => {
-        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
-          viewDetailCreateEditStore?.setDescription(name);
-        else viewDetailStore?.setDescription(name);
-      },
-      setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => {
-        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
-          viewDetailCreateEditStore?.setFilters(filterKey, filterValue);
-        else viewDetailStore?.setFilters(filterKey, filterValue);
-      },
-      setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => {
-        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
-          viewDetailCreateEditStore?.setDisplayFilters(display_filters);
-        else viewDetailStore?.setDisplayFilters(display_filters);
-      },
-      setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) => {
-        if (viewOperationsToggle.type && ["CREATE", "EDIT"].includes(viewOperationsToggle.type))
-          viewDetailCreateEditStore?.setDisplayProperties(displayPropertyKey);
-        else viewDetailStore?.setDisplayProperties(displayPropertyKey);
       },
 
       fetch: async () => {
@@ -168,7 +152,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
         }
       },
     }),
-    [viewStore, viewDetailStore, setToastAlert, viewOperationsToggle, viewDetailCreateEditStore]
+    [viewStore, viewDetailStore, setToastAlert, viewDetailCreateEditStore]
   );
 
   // fetch all views
@@ -243,19 +227,12 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
                 projectId={projectId}
                 viewId={viewId}
                 viewType={viewType}
-                viewOperations={viewOperations}
                 propertyVisibleCount={5}
               />
             </div>
 
             <div className="flex-shrink-0">
-              <ViewLayoutRoot
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                viewId={viewId}
-                viewType={viewType}
-                viewOperations={viewOperations}
-              />
+              <ViewLayoutRoot workspaceSlug={workspaceSlug} projectId={projectId} viewId={viewId} viewType={viewType} />
             </div>
 
             <div className="flex-shrink-0">
@@ -264,7 +241,6 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
                 projectId={projectId}
                 viewId={viewId}
                 viewType={viewType}
-                viewOperations={viewOperations}
                 displayDropdownText={false}
               />
             </div>
@@ -275,12 +251,16 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
                 projectId={projectId}
                 viewId={viewId}
                 viewType={viewType}
-                viewOperations={viewOperations}
                 displayDropdownText={false}
               />
             </div>
 
-            <ViewEditDropdown viewId={viewId} viewOperations={viewOperations} />
+            <ViewEditDropdown
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              viewId={viewId}
+              viewOperations={viewOperations}
+            />
 
             <ViewFiltersEditDropdown
               workspaceSlug={workspaceSlug}

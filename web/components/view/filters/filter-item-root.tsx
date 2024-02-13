@@ -6,7 +6,6 @@ import { useViewDetail, useViewFilter } from "hooks/store";
 import { ViewFiltersItem, ViewFilterSelection } from "../";
 import { DateFilterModal } from "components/core";
 // types
-import { TViewOperations } from "../types";
 import { TViewFilters, TViewTypes } from "@plane/types";
 
 type TViewFiltersItemRoot = {
@@ -14,23 +13,14 @@ type TViewFiltersItemRoot = {
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  viewOperations: TViewOperations;
   filterKey: keyof TViewFilters;
   dateCustomFilterToggle: string | undefined;
   setDateCustomFilterToggle: (value: string | undefined) => void;
 };
 
 export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    viewId,
-    viewType,
-    viewOperations,
-    filterKey,
-    dateCustomFilterToggle,
-    setDateCustomFilterToggle,
-  } = props;
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, dateCustomFilterToggle, setDateCustomFilterToggle } =
+    props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const viewFilterHelper = useViewFilter(workspaceSlug, projectId);
@@ -47,15 +37,15 @@ export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) =>
         const _propertyIds = viewDetailStore?.appliedFilters?.filters?.[filterKey] || [];
         const selectedDates = _propertyIds.filter((id) => id.includes("-"));
         if (selectedDates.length > 0)
-          selectedDates.forEach((date: string) => viewOperations?.setFilters(filterKey, date));
+          selectedDates.forEach((date: string) => viewDetailStore?.setFilters(filterKey, date));
         else setDateCustomFilterToggle(filterKey);
-      } else viewOperations?.setFilters(filterKey, _propertyId);
-    } else viewOperations?.setFilters(filterKey, _propertyId);
+      } else viewDetailStore?.setFilters(filterKey, _propertyId);
+    } else viewDetailStore?.setFilters(filterKey, _propertyId);
   };
 
   const handleCustomDateSelection = (selectedDates: string[]) => {
     selectedDates.forEach((date: string) => {
-      viewOperations?.setFilters(filterKey, date);
+      viewDetailStore?.setFilters(filterKey, date);
       setDateCustomFilterToggle(undefined);
     });
   };

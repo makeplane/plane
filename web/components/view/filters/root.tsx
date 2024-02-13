@@ -9,7 +9,6 @@ import { useViewDetail } from "hooks/store";
 // components
 import { ViewFiltersItemRoot } from "../";
 // types
-import { TViewOperations } from "../types";
 import { TViewFilters, TViewTypes } from "@plane/types";
 import { VIEW_DEFAULT_FILTER_PARAMETERS } from "constants/view";
 
@@ -18,21 +17,12 @@ type TViewFiltersRoot = {
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  viewOperations: TViewOperations;
   dateCustomFilterToggle: string | undefined;
   setDateCustomFilterToggle: (value: string | undefined) => void;
 };
 
 export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    viewId,
-    viewType,
-    viewOperations,
-    dateCustomFilterToggle,
-    setDateCustomFilterToggle,
-  } = props;
+  const { workspaceSlug, projectId, viewId, viewType, dateCustomFilterToggle, setDateCustomFilterToggle } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   // state
@@ -70,7 +60,6 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
               projectId={projectId}
               viewId={viewId}
               viewType={viewType}
-              viewOperations={viewOperations}
               filterKey={filterKey}
               dateCustomFilterToggle={dateCustomFilterToggle}
               setDateCustomFilterToggle={setDateCustomFilterToggle}

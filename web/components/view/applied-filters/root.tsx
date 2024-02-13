@@ -8,37 +8,27 @@ import { useViewDetail } from "hooks/store";
 import { ViewAppliedFilters } from "./filter";
 // types
 import { TViewTypes, TViewFilters } from "@plane/types";
-import { TViewOperations } from "../types";
 
 type TViewAppliedFiltersRoot = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  viewOperations: TViewOperations;
   propertyVisibleCount?: number | undefined;
   showClearAll?: boolean;
 };
 
 export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    viewId,
-    viewType,
-    viewOperations,
-    propertyVisibleCount = undefined,
-    showClearAll = false,
-  } = props;
+  const { workspaceSlug, projectId, viewId, viewType, propertyVisibleCount = undefined, showClearAll = false } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
   const filterKeys =
-    viewDetailStore?.appliedFilters && !isEmpty(viewDetailStore?.appliedFilters?.filters)
-      ? Object.keys(viewDetailStore?.appliedFilters?.filters)
+    viewDetailStore?.filtersToUpdate && !isEmpty(viewDetailStore?.filtersToUpdate?.filters)
+      ? Object.keys(viewDetailStore?.filtersToUpdate?.filters)
       : undefined;
 
-  const clearAllFilters = () => viewOperations?.setFilters(undefined, "clear_all");
+  const clearAllFilters = () => viewDetailStore?.setFilters(undefined, "clear_all");
 
   if (!filterKeys || !viewDetailStore?.isFiltersApplied)
     return (
@@ -58,7 +48,6 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
               viewId={viewId}
               viewType={viewType}
               filterKey={filterKey}
-              viewOperations={viewOperations}
               propertyVisibleCount={propertyVisibleCount}
             />
           </Fragment>

@@ -4,18 +4,16 @@ import { observer } from "mobx-react-lite";
 import { ViewDisplayPropertySelection } from "../";
 // types
 import { TViewDisplayProperties, TViewTypes } from "@plane/types";
-import { TViewOperations } from "../types";
 
 type TViewDisplayPropertiesRoot = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
   viewType: TViewTypes;
-  viewOperations: TViewOperations;
 };
 
 export const ViewDisplayPropertiesRoot: FC<TViewDisplayPropertiesRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
+  const { workspaceSlug, projectId, viewId, viewType } = props;
 
   const displayProperties: Partial<keyof TViewDisplayProperties>[] = [
     "key",
@@ -40,7 +38,6 @@ export const ViewDisplayPropertiesRoot: FC<TViewDisplayPropertiesRoot> = observe
             projectId={projectId}
             viewId={viewId}
             viewType={viewType}
-            viewOperations={viewOperations}
             property={property}
           />
         </Fragment>

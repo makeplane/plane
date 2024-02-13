@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { AllIssuesViewRoot } from "components/view";
+import { GlobalViewRoot } from "components/view";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
@@ -33,7 +33,7 @@ const ProjectPublicViewPage: NextPageWithLayout = () => {
   return (
     <div className="w-full h-full overflow-hidden bg-custom-background-100 relative flex flex-col">
       <div className="flex-shrink-0 w-full">
-        <AllIssuesViewRoot
+        <GlobalViewRoot
           workspaceSlug={workspaceSlug.toString()}
           projectId={undefined}
           viewId={viewId.toString()}

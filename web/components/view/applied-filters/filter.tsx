@@ -8,7 +8,6 @@ import { useViewDetail, useViewFilter } from "hooks/store";
 import { ViewAppliedFiltersItem } from "./filter-item";
 // types
 import { TViewFilters, TViewTypes } from "@plane/types";
-import { TViewOperations } from "../types";
 
 type TViewAppliedFilters = {
   workspaceSlug: string;
@@ -16,12 +15,11 @@ type TViewAppliedFilters = {
   viewId: string;
   viewType: TViewTypes;
   filterKey: keyof TViewFilters;
-  viewOperations: TViewOperations;
   propertyVisibleCount?: number | undefined;
 };
 
 export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, filterKey, viewOperations, propertyVisibleCount } = props;
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyVisibleCount } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const viewFilterStore = useViewFilter(workspaceSlug, projectId);
@@ -58,7 +56,6 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
                   viewType={viewType}
                   filterKey={filterKey}
                   propertyId={propertyId}
-                  viewOperations={viewOperations}
                 />
               </Fragment>
             ))}

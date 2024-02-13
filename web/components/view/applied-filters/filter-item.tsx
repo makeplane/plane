@@ -1,10 +1,9 @@
 import { FC } from "react";
 import { ImagePlus, X } from "lucide-react";
 // hooks
-import { useViewFilter } from "hooks/store";
+import { useViewDetail, useViewFilter } from "hooks/store";
 // types
 import { TViewFilters, TViewTypes } from "@plane/types";
-import { TViewOperations } from "../types";
 
 type TViewAppliedFiltersItem = {
   workspaceSlug: string;
@@ -13,18 +12,18 @@ type TViewAppliedFiltersItem = {
   viewType: TViewTypes;
   filterKey: keyof TViewFilters;
   propertyId: string;
-  viewOperations: TViewOperations;
 };
 
 export const ViewAppliedFiltersItem: FC<TViewAppliedFiltersItem> = (props) => {
-  const { workspaceSlug, projectId, filterKey, propertyId, viewOperations } = props;
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyId } = props;
   // hooks
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const viewFilterHelper = useViewFilter(workspaceSlug, projectId);
 
   const propertyDetail = viewFilterHelper?.propertyDetails(filterKey, propertyId) || undefined;
 
   const removeFilterOption = () => {
-    viewOperations?.setFilters(filterKey, propertyId);
+    viewDetailStore?.setFilters(filterKey, propertyId);
   };
 
   return (

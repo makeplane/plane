@@ -23,7 +23,7 @@ type TViewCreateEditForm = {
 export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
   const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
   // hooks
-  const currentViewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const { getProjectById } = useProject();
   // states
   const [modalToggle, setModalToggle] = useState(false);
@@ -43,12 +43,12 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
 
   const onContinue = async () => {
     setLoader(true);
-    if (currentViewDetailStore?.is_create) {
-      const payload = currentViewDetailStore?.filtersToUpdate;
+    if (viewDetailStore?.is_create) {
+      const payload = viewDetailStore?.filtersToUpdate;
       await viewOperations.create(payload);
       modalClose();
     } else {
-      const payload = currentViewDetailStore?.filtersToUpdate;
+      const payload = viewDetailStore?.filtersToUpdate;
       if (!payload) return;
       await viewOperations.update();
       modalClose();
@@ -58,7 +58,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
 
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
 
-  if (!currentViewDetailStore?.id) return <></>;
+  if (!viewDetailStore) return <></>;
   return (
     <Transition.Root show={modalToggle} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={modalClose}>
@@ -110,9 +110,9 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     id="name"
                     name="name"
                     type="text"
-                    value={currentViewDetailStore?.filtersToUpdate?.name || ""}
+                    value={viewDetailStore?.filtersToUpdate?.name || ""}
                     onChange={(e) => {
-                      viewOperations?.setName(e.target.value);
+                      viewDetailStore?.setName(e.target.value);
                     }}
                     placeholder="What do you want to call this view?"
                     className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
@@ -126,7 +126,6 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     projectId={projectId}
                     viewId={viewId}
                     viewType={viewType}
-                    viewOperations={viewOperations}
                     dropdownPlacement="right"
                   >
                     <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
@@ -136,17 +135,19 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                       <div className="text-xs">Filters</div>
                     </div>
                   </ViewFiltersDropdown>
-                  <div
-                    className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-dashed border-custom-border-100 bg-custom-background-80"
-                    onClick={() => {
-                      viewOperations.setFilters(undefined, "clear_all");
-                    }}
-                  >
-                    <div className="text-xs">Clear all filters</div>
-                    <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
-                      <X className="w-3 h-3" />
+                  {viewDetailStore?.isFiltersApplied && (
+                    <div
+                      className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-dashed border-custom-border-100 bg-custom-background-80"
+                      onClick={() => {
+                        viewDetailStore.setFilters(undefined, "clear_all");
+                      }}
+                    >
+                      <div className="text-xs">Clear all filters</div>
+                      <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
+                        <X className="w-3 h-3" />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="p-3 px-5 relative bg-custom-background-90 max-h-36 overflow-hidden overflow-y-auto">
@@ -155,7 +156,6 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     projectId={projectId}
                     viewId={viewId}
                     viewType={viewType}
-                    viewOperations={viewOperations}
                     propertyVisibleCount={undefined}
                   />
                 </div>
@@ -165,7 +165,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     Cancel
                   </Button>
                   <Button variant="primary" onClick={onContinue} disabled={loader}>
-                    {loader ? `Saving...` : `${currentViewDetailStore?.is_create ? `Create` : `Update`} View`}
+                    {loader ? `Saving...` : `${viewDetailStore?.is_create ? `Create` : `Update`} View`}
                   </Button>
                 </div>
               </Dialog.Panel>
