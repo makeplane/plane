@@ -6,4 +6,4 @@ export * from "./cycle-module-board-loader";
 export * from "./cycle-module-list-loader";
 export * from "./view-list-loader";
 export * from "./projects-loader";
-export * from "./helper";
+export * from "./utils";

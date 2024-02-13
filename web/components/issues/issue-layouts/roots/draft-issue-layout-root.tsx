@@ -9,7 +9,7 @@ import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/d
 import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
 import { ProjectDraftEmptyState } from "../empty-states";
 import { IssuePeekOverview } from "components/issues/peek-overview";
-import { getActiveLayoutLoader } from "components/ui";
+import { ActiveLoader } from "components/ui";
 // ui
 import { Spinner } from "@plane/ui";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
@@ -45,7 +45,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
     return (
       <>
         {activeLayout ? (
-          getActiveLayoutLoader(activeLayout)
+          <ActiveLoader layout={activeLayout} />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />

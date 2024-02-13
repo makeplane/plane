@@ -1,4 +1,4 @@
-import { getRandomInt, getRandomLength } from "../helper";
+import { getRandomInt, getRandomLength } from "../utils";
 
 const ListItemRow = () => (
   <div className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">

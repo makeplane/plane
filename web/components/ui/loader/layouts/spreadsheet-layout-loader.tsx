@@ -1,4 +1,4 @@
-import { getRandomLength } from "../helper";
+import { getRandomLength } from "../utils";
 
 export const SpreadsheetLayoutLoader = () => (
   <div className="horizontal-scroll-enable h-full w-full animate-pulse">

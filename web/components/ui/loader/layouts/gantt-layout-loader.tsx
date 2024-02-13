@@ -1,4 +1,4 @@
-import { getRandomLength } from "../helper";
+import { getRandomLength } from "../utils";
 
 export const GanttLayoutLoader = () => (
   <div className="flex flex-col h-full overflow-x-auto animate-pulse">

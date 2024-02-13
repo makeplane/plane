@@ -16,7 +16,7 @@ import {
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
-import { getActiveLayoutLoader } from "components/ui";
+import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 // types
@@ -69,7 +69,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     return (
       <>
         {activeLayout ? (
-          getActiveLayoutLoader(activeLayout)
+          <ActiveLoader layout={activeLayout} />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />

@@ -1,4 +1,4 @@
-import { getRandomInt } from "../helper";
+import { getRandomInt } from "../utils";
 
 const CalendarDay = () => {
   const dataCount = getRandomInt(0, 1);

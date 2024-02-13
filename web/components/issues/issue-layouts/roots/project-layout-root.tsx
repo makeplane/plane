@@ -18,7 +18,7 @@ import { Spinner } from "@plane/ui";
 // hooks
 import { useIssues } from "hooks/store";
 // helpers
-import { getActiveLayoutLoader } from "components/ui";
+import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 
@@ -45,7 +45,7 @@ export const ProjectLayoutRoot: FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return <>{activeLayout && getActiveLayoutLoader(activeLayout)}</>;
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
   }
 
   if (issues?.groupedIssueIds?.length === 0) {

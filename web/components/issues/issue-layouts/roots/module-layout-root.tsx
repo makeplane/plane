@@ -15,7 +15,7 @@ import {
   ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
-import { getActiveLayoutLoader } from "components/ui";
+import { ActiveLoader } from "components/ui";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
@@ -53,7 +53,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     return (
       <>
         {activeLayout ? (
-          getActiveLayoutLoader(activeLayout)
+          <ActiveLoader layout={activeLayout} />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />

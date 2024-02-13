@@ -13,7 +13,11 @@ export const getRandomLength = (lengthArray: string[]) => {
   return `${lengthArray[randomIndex]}`;
 };
 
-export const getActiveLayoutLoader = (layout: string) => {
+interface Props {
+  layout: string;
+}
+export const ActiveLoader: React.FC<Props> = (props) => {
+  const { layout } = props;
   switch (layout) {
     case "list":
       return <ListLayoutLoader />;
