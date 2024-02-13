@@ -11,6 +11,7 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { Loader, Spinner } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
@@ -97,16 +98,15 @@ export const ModulesListView: React.FC = observer(() => {
         </>
       ) : (
         <EmptyState
-          title="Map your project milestones to Modules and track aggregated work easily."
-          description="A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone."
+          title={MODULE_EMPTY_STATE_DETAILS["modules"].title}
+          description={MODULE_EMPTY_STATE_DETAILS["modules"].description}
           image={EmptyStateImagePath}
           comicBox={{
-            title: "Modules help group work by hierarchy.",
-            description:
-              "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
+            title: MODULE_EMPTY_STATE_DETAILS["modules"].comicBox.title,
+            description: MODULE_EMPTY_STATE_DETAILS["modules"].comicBox.description,
           }}
           primaryButton={{
-            text: "Build your first module",
+            text: MODULE_EMPTY_STATE_DETAILS["modules"].primaryButton.text,
             onClick: () => {
               setTrackElement("Module empty state");
               commandPaletteStore.toggleCreateModuleModal(true);

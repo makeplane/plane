@@ -9,6 +9,7 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EMPTY_FILTER_STATE_DETAILS, EMPTY_ISSUE_STATE_DETAILS } from "constants/empty-state";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -65,17 +66,16 @@ export const ProjectDraftEmptyState: React.FC = observer(() => {
   const emptyStateProps: EmptyStateProps =
     issueFilterCount > 0
       ? {
-          title: "No issues found matching the filters applied",
+          title: EMPTY_FILTER_STATE_DETAILS["draft"].title,
           image: currentLayoutEmptyStateImagePath,
           secondaryButton: {
-            text: "Clear all filters",
+            text: EMPTY_FILTER_STATE_DETAILS["draft"].secondaryButton.text,
             onClick: handleClearAllFilters,
           },
         }
       : {
-          title: "No draft issues yet",
-          description:
-            "Quickly stepping away but want to keep your place? No worries – save a draft now. Your issues will be right here waiting for you.",
+          title: EMPTY_ISSUE_STATE_DETAILS["draft"].title,
+          description: EMPTY_ISSUE_STATE_DETAILS["draft"].description,
           image: EmptyStateImagePath,
           size: "sm",
           disabled: !isEditingAllowed,

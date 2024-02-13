@@ -65,7 +65,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as TIssue[]) : null}
           blockUpdateHandler={updateIssueBlockStructure}
-          blockToRender={(data: TIssue) => <IssueGanttBlock data={data} />}
+          blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
           sidebarToRender={(props) => (
             <IssueGanttSidebar
               {...props}
@@ -80,6 +80,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
+          enableAddBlock={isAllowed}
           showAllBlocks
         />
       </div>

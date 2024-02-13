@@ -33,23 +33,36 @@ export const SummaryPopover: React.FC<Props> = (props) => {
       <button
         type="button"
         ref={setReferenceElement}
-        className={`grid h-7 w-7 place-items-center rounded ${
-          sidePeekVisible ? "bg-custom-primary-100/20 text-custom-primary-100" : "text-custom-text-300"
-        }`}
+        className={`grid h-7 w-7 place-items-center rounded ${sidePeekVisible ? "bg-custom-primary-100/20 text-custom-primary-100" : "text-custom-text-300"
+          }`}
         onClick={() => setSidePeekVisible(!sidePeekVisible)}
       >
         <List className="h-4 w-4" />
       </button>
-      {!sidePeekVisible && (
-        <div
-          className="z-10 hidden max-h-80 w-64 overflow-y-auto rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg group-hover/summary-popover:block"
-          ref={setPopperElement}
-          style={summaryPopoverStyles.popper}
-          {...summaryPopoverAttributes.popper}
-        >
-          <ContentBrowser editor={editor} markings={markings} />
-        </div>
-      )}
+      <div className="md:hidden block">
+        {sidePeekVisible && (
+          <div
+            className="z-10 max-h-80 w-64 overflow-y-auto rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg"
+            ref={setPopperElement}
+            style={summaryPopoverStyles.popper}
+            {...summaryPopoverAttributes.popper}
+          >
+            <ContentBrowser setSidePeekVisible={setSidePeekVisible} editor={editor} markings={markings} />
+          </div>
+        )}
+      </div>
+      <div className="hidden md:block">
+        {!sidePeekVisible && (
+          <div
+            className="z-10 hidden max-h-80 w-64 overflow-y-auto rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg group-hover/summary-popover:block"
+            ref={setPopperElement}
+            style={summaryPopoverStyles.popper}
+            {...summaryPopoverAttributes.popper}
+          >
+            <ContentBrowser editor={editor} markings={markings} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

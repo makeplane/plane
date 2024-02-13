@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { useTheme } from "next-themes";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -10,16 +13,15 @@ import { ProjectService } from "services/project";
 // components
 import { IntegrationCard } from "components/project";
 import { ProjectSettingHeader } from "components/headers";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { EmptyState } from "components/common";
 import { Loader } from "@plane/ui";
-// images
-import emptyIntegration from "public/empty-state/integration.svg";
 // types
 import { IProject } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();
@@ -28,6 +30,10 @@ const projectService = new ProjectService();
 const ProjectIntegrationsPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const { currentUser } = useUser();
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -39,10 +45,14 @@ const ProjectIntegrationsPage: NextPageWithLayout = () => {
     () => (workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
   );
 
+  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["integrations"];
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("project-settings", "integrations", isLightMode);
+
   const isAdmin = projectDetails?.member_role === 20;
 
   return (
-    <div className={`w-full gap-10 overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+    <div className={`h-full w-full gap-10 overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
       <div className="flex items-center border-b border-custom-border-100 py-3.5">
         <h3 className="text-xl font-medium">Integrations</h3>
       </div>
@@ -54,15 +64,16 @@ const ProjectIntegrationsPage: NextPageWithLayout = () => {
             ))}
           </div>
         ) : (
-          <div className="w-full py-8">
+          <div className="h-full w-full py-8">
             <EmptyState
-              title="You haven't configured integrations"
-              description="Configure GitHub and other integrations to sync your project issues."
-              image={emptyIntegration}
+              title={emptyStateDetail.title}
+              description={emptyStateDetail.description}
+              image={emptyStateImage}
               primaryButton={{
                 text: "Configure now",
                 onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
               }}
+              size="lg"
               disabled={!isAdmin}
             />
           </div>

@@ -62,6 +62,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
               workspaceSlug={workspaceSlug.toString()}
               projectId={projectId.toString()}
               moduleId={moduleId.toString()}
+              activeLayout={activeLayout}
             />
           ) : (
             <>

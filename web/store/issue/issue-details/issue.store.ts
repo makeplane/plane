@@ -4,6 +4,7 @@ import { IssueArchiveService, IssueService } from "services/issue";
 // types
 import { IIssueDetail } from "./root.store";
 import { TIssue } from "@plane/types";
+import { computedFn } from "mobx-utils";
 
 export interface IIssueStoreActions {
   // actions
@@ -44,10 +45,10 @@ export class IssueStore implements IIssueStore {
   }
 
   // helper methods
-  getIssueById = (issueId: string) => {
+  getIssueById = computedFn((issueId: string) => {
     if (!issueId) return undefined;
     return this.rootIssueDetailStore.rootIssueStore.issues.getIssueById(issueId) ?? undefined;
-  };
+  });
 
   // actions
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, isArchived = false) => {
@@ -63,12 +64,12 @@ export class IssueStore implements IIssueStore {
 
       if (!issue) throw new Error("Issue not found");
 
-      this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
+      this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue], true);
 
       // store handlers from issue detail
       // parent
       if (issue && issue?.parent && issue?.parent?.id)
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue?.parent]);
+        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue.parent]);
       // assignees
       // labels
       // state

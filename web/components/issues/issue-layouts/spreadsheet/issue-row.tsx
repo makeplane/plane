@@ -65,7 +65,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         as="tr"
         defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
-        placeholderChildren={<td colSpan={100} className="border-b-[0.5px]" />}
+        placeholderChildren={<td colSpan={100} className="border-b-[0.5px] border-custom-border-200" />}
         changingReference={issueIds}
       >
         <IssueRowDetails

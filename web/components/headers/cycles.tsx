@@ -50,7 +50,7 @@ export const CyclesHeader: FC = observer(() => {
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <SidebarHamburgerToggle />
           <div>
-            <Breadcrumbs>
+            <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
@@ -89,7 +89,7 @@ export const CyclesHeader: FC = observer(() => {
                 toggleCreateCycleModal(true);
               }}
             >
-              Add Cycle
+              <div className="hidden sm:block">Add</div> Cycle
             </Button>
           </div>
         )}
