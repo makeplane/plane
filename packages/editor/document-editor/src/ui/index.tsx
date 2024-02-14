@@ -80,7 +80,7 @@ const DocumentEditor = ({
   rerenderOnPropsChange,
 }: IDocumentEditor) => {
   const { markings, updateMarkings } = useEditorMarkings();
-  const [sidePeekVisible, setSidePeekVisible] = useState(true);
+  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth > 768 ? true : false);
   const router = useRouter();
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
