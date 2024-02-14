@@ -7,3 +7,4 @@ export * from "./markdown-to-component";
 export * from "./integration-and-import-export-banner";
 export * from "./range-datepicker";
 export * from "./profile-empty-state";
+export * from "./loader";

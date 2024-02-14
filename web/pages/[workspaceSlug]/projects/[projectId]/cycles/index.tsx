@@ -13,7 +13,8 @@ import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Spinner, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // types
 import { TCycleView, TCycleLayout } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
@@ -66,9 +67,11 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
   if (loader)
     return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
+      <>
+        {cycleLayout === "list" && <CycleModuleListLayout />}
+        {cycleLayout === "board" && <CycleModuleBoardLayout />}
+        {cycleLayout === "gantt" && <GanttLayoutLoader />}
+      </>
     );
 
   return (
