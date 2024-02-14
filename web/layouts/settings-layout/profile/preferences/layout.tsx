@@ -7,6 +7,7 @@ import { CustomMenu } from "@plane/ui";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useApplication } from "hooks/store";
 
 interface IProfilePreferenceSettingsLayout {
   children: ReactNode;
@@ -16,6 +17,7 @@ interface IProfilePreferenceSettingsLayout {
 export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayout> = (props) => {
   const { children, header } = props;
   const router = useRouter();
+  const { theme: themeStore } = useApplication();
 
   const showMenuItem = () => {
     const item = router.asPath.split('/');
@@ -42,7 +44,7 @@ export const ProfilePreferenceSettingsLayout: FC<IProfilePreferenceSettingsLayou
   return (
     <ProfileSettingsLayout header={
       <div className="md:hidden flex flex-shrink-0 gap-4 items-center justify-start border-b border-custom-border-200 p-4">
-        <SidebarHamburgerToggle />
+        <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"

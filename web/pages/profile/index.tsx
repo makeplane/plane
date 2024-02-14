@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import { useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
@@ -58,6 +58,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
   // custom hooks
   const { } = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
+  const { theme: themeStore } = useApplication();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -139,7 +140,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     <>
       <div className="flex flex-col h-full">
         <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
-          <SidebarHamburgerToggle />
+          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         </div>
         <div className="overflow-hidden">
           <Controller
