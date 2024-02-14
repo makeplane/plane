@@ -15,7 +15,6 @@ import {
   ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
-import { Spinner } from "@plane/ui";
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
@@ -66,17 +65,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId || !viewId) return <></>;
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return (
-      <>
-        {activeLayout ? (
-          <ActiveLoader layout={activeLayout} />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-      </>
-    );
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
   }
 
   return (

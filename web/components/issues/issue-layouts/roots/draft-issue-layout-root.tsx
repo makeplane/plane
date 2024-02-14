@@ -11,7 +11,6 @@ import { ProjectDraftEmptyState } from "../empty-states";
 import { IssuePeekOverview } from "components/issues/peek-overview";
 import { ActiveLoader } from "components/ui";
 // ui
-import { Spinner } from "@plane/ui";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
 // constants
 import { EIssuesStoreType } from "constants/issue";
@@ -42,17 +41,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return (
-      <>
-        {activeLayout ? (
-          <ActiveLoader layout={activeLayout} />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-      </>
-    );
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
   }
 
   return (
