@@ -13,10 +13,11 @@ import { IProjectViewIssuesFilter } from "store/issue/project-views";
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   viewId?: string;
+  setSelectedDate: (date: Date) => void;
 }
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore, viewId } = props;
+  const { issuesFilterStore, viewId, setSelectedDate } = props;
 
   const issueCalendarView = useCalendarView();
 
@@ -80,6 +81,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
       activeMonthDate: firstDayOfCurrentMonth,
       activeWeekDate: today,
     });
+    setSelectedDate(today);
   };
 
   return (

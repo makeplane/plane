@@ -29,6 +29,8 @@ type Props = {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   readOnly?: boolean;
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
@@ -43,6 +45,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     quickAddCallback,
     viewId,
     readOnly = false,
+    selectedDate,
+    setSelectedDate,
   } = props;
   const [showAllIssues, setShowAllIssues] = useState(false);
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
@@ -52,12 +56,15 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
 
   const totalIssues = issueIdList?.length ?? 0;
+  const isToday = date.date.toDateString() == new Date().toDateString();
+  const isSelectedDate = date.date.toDateString() == selectedDate.toDateString();
+
   return (
     <>
-      <div className="group relative flex h-full w-full flex-col bg-custom-background-90">
+      <div className="group relative flex h-full w-full flex-col md:bg-custom-background-90">
         {/* header */}
         <div
-          className={`flex-shrink-0 px-2 py-1 text-right text-xs ${
+          className={`hidden md:block flex-shrink-0 px-2 py-1 text-right text-xs ${
             calendarLayout === "month" // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
@@ -74,7 +81,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         </div>
 
         {/* content */}
-        <div className="h-full w-full">
+        <div className="h-full w-full hidden md:block">
           <Droppable droppableId={formattedDatePayload} isDropDisabled={readOnly}>
             {(provided, snapshot) => (
               <div
@@ -125,6 +132,24 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               </div>
             )}
           </Droppable>
+        </div>
+        <div
+          onClick={() => setSelectedDate(date.date)}
+          className="text-sm my-2 font-medium mx-auto flex flex-col justify-center items-center md:hidden cursor-pointer"
+        >
+          <div
+            className={`h-6 w-6 rounded-full flex items-center justify-center ${
+              isSelectedDate
+                ? "bg-custom-primary-100 text-white"
+                : isToday
+                ? "bg-custom-primary-10 text-custom-primary-100 "
+                : ""
+            }`}
+          >
+            {date.date.getDate()}
+          </div>
+
+          {totalIssues > 0 && <div className="flex flex-shrink-0 h-1.5 w-1.5 bg-custom-primary-100 rounded mt-1" />}
         </div>
       </div>
     </>

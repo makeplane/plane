@@ -8,7 +8,7 @@ import { useCalendarView } from "hooks/store";
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // icons
-import { Check, ChevronUp } from "lucide-react";
+import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
 // types
 import { TCalendarLayouts } from "@plane/types";
 // constants
@@ -91,18 +91,21 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
       {({ open }) => (
         <>
           <Popover.Button as={React.Fragment}>
-            <button
-              type="button"
-              ref={setReferenceElement}
-              className={`flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
-                open ? "text-custom-text-100" : "text-custom-text-200"
-              }`}
-            >
-              <div className="font-medium">Options</div>
+            <button type="button" ref={setReferenceElement}>
               <div
-                className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
+                className={`hidden md:flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
+                  open ? "text-custom-text-100" : "text-custom-text-200"
+                }`}
               >
-                <ChevronUp width={12} strokeWidth={2} />
+                <div className="font-medium">Options</div>
+                <div
+                  className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
+                >
+                  <ChevronUp width={12} strokeWidth={2} />
+                </div>
+              </div>
+              <div className="md:hidden">
+                <MoreVerticalIcon className="h-4 text-custom-text-200" strokeWidth={2} />
               </div>
             </button>
           </Popover.Button>
