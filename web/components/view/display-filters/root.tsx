@@ -47,8 +47,8 @@ export const ViewDisplayFiltersRoot: FC<TViewDisplayFiltersRoot> = observer((pro
   }, [viewDetailStore, viewPageType]);
 
   return (
-    <div className="space-y-1 divide-y divide-custom-border-300">
-      <div className="relative py-1 first:pt-0">
+    <div className="space-y-1 divide-y divide-custom-border-300 [&>div]:first:pt-0 [&>div]:last:pb-0">
+      <div className="relative py-1">
         <div className="sticky top-0 z-20 flex justify-between items-center gap-2 bg-custom-background-100 select-none">
           <div className="font-medium text-xs text-custom-text-300 capitalize py-1">Properties</div>
           <div
@@ -95,8 +95,8 @@ export const ViewDisplayFiltersRoot: FC<TViewDisplayFiltersRoot> = observer((pro
         </div>
       ))}
 
-      <div className="pt-1 pb-0">
-        {filtersExtraProperties.map((option) => (
+      {filtersExtraProperties.map((option) => (
+        <div className="py-1">
           <DisplayFilterExtraOptions
             workspaceSlug={workspaceSlug}
             projectId={projectId}
@@ -104,8 +104,8 @@ export const ViewDisplayFiltersRoot: FC<TViewDisplayFiltersRoot> = observer((pro
             viewType={viewType}
             filterKey={option as TViewDisplayFiltersExtraOptions}
           />
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 });

@@ -40,7 +40,6 @@ const ProjectPublicViewPage: NextPageWithLayout = () => {
           viewType={VIEW_TYPES.PROJECT_PUBLIC_VIEWS}
           viewPageType={EViewPageType.PROJECT}
           baseRoute={`/${workspaceSlug?.toString()}/views/public`}
-          workspaceViewTabOptions={workspaceViewTabOptions}
         />
       </div>
       <div className="w-full h-full overflow-hidden">Issues render</div>

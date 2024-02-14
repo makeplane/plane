@@ -77,7 +77,7 @@ const ProjectPublicViewPage: NextPageWithLayout = observer(() => {
               <div className="flex-shrink-0 px-5 pt-4 pb-4 border-b border-custom-border-200">
                 <ViewHeader
                   projectId={projectId.toString()}
-                  viewType={VIEW_TYPES.PROJECT_PRIVATE_VIEWS}
+                  viewType={VIEW_TYPES.PROJECT_PUBLIC_VIEWS}
                   titleIcon={<CheckCircle size={12} />}
                   title="Views"
                   workspaceViewTabOptions={workspaceViewTabOptions}

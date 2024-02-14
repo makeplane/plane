@@ -40,7 +40,6 @@ const ProjectPrivateViewPage: NextPageWithLayout = () => {
           viewType={VIEW_TYPES.PROJECT_PRIVATE_VIEWS}
           viewPageType={EViewPageType.PROJECT}
           baseRoute={`/${workspaceSlug?.toString()}/projects/${projectId}/views/private`}
-          workspaceViewTabOptions={workspaceViewTabOptions}
         />
       </div>
     </div>

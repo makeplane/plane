@@ -123,37 +123,37 @@ export class ViewRootStore implements TViewRootStore {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !viewId) return;
 
-      // fetching display properties and display_filters
       const userView = await this.userService.fetch(workspaceSlug, projectId);
       if (!userView) return;
 
-      // fetching kanban display filters from local
+      let view: TView | undefined = undefined;
 
-      // fetching display filters from local and from the view
       if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
-        const view = { ...this.viewById(viewId) };
-        if (!view) return;
+        const currentView = { ...this.viewById(viewId) };
+        if (!currentView) return;
 
-        runInAction(() => {
-          view.display_filters = userView.display_filters;
-          view.display_properties = userView.display_properties;
-        });
+        view = currentView;
+        view.filters = userView.filters;
+        view.display_filters = userView.display_filters;
+        view.display_properties = userView.display_properties;
       } else {
-        const view = await this.service.fetchById(workspaceSlug, viewId, projectId);
-        if (!view) return;
+        const currentView = await this.service.fetchById(workspaceSlug, viewId, projectId);
+        if (!currentView) return;
 
+        view = currentView;
         view?.display_filters && (view.display_filters = userView.display_filters);
         view?.display_properties && (view.display_properties = userView.display_properties);
-
-        runInAction(() => {
-          if (view.id)
-            set(
-              this.viewMap,
-              [view.id],
-              new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
-            );
-        });
       }
+
+      if (!view) return;
+      runInAction(() => {
+        if (view?.id)
+          set(
+            this.viewMap,
+            [view.id],
+            new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+          );
+      });
     } catch {}
   };
 

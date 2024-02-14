@@ -3,12 +3,7 @@ import { TView, TUserView } from "@plane/types";
 export type TUserViewService = {
   // featureId represents moduleId/cycleId
   fetch: (workspaceSlug: string, projectId?: string, featureId?: string) => Promise<TUserView | undefined>;
-  update: (
-    workspaceSlug: string,
-    data: Partial<TView>,
-    projectId?: string,
-    featureId?: string
-  ) => Promise<TUserView | undefined>;
+  update: (workspaceSlug: string, data: any, projectId?: string, featureId?: string) => Promise<TUserView | undefined>;
 };
 
 export type TViewService = {

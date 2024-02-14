@@ -5,6 +5,7 @@ import { Briefcase, CheckCircle, ChevronRight } from "lucide-react";
 import { useProject } from "hooks/store";
 // types
 import { TViewTypes } from "@plane/types";
+import { renderEmoji } from "helpers/emoji.helper";
 
 type TViewHeader = {
   projectId: string | undefined;
@@ -29,8 +30,14 @@ export const ViewHeader: FC<TViewHeader> = (props) => {
       {projectDetails && (
         <Fragment>
           <div className="relative flex items-center gap-2 overflow-hidden">
-            <div className="flex-shrink-0 w-6 h-6 rounded relative flex justify-center items-center bg-custom-background-80">
-              {projectDetails?.icon_prop ? projectDetails?.icon_prop.toString() : <Briefcase size={12} />}
+            <div className="flex-shrink-0 w-6 h-6 rounded relative flex justify-center items-center bg-custom-background-80 text-sm">
+              {projectDetails?.emoji ? (
+                renderEmoji(projectDetails?.emoji)
+              ) : projectDetails?.icon_prop ? (
+                renderEmoji(projectDetails?.icon_prop)
+              ) : (
+                <Briefcase size={12} />
+              )}
             </div>
             <div className="font-medium inline-block whitespace-nowrap overflow-hidden truncate line-clamp-1 text-sm">
               {projectDetails?.name ? projectDetails?.name : "Project Issues"}

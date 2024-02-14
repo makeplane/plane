@@ -21,7 +21,12 @@ import {
 // helpers
 import { FiltersHelper } from "./helpers/filters_helpers";
 // constants
-import { EViewLayouts, EViewPageType, viewDefaultFilterParametersByViewTypeAndLayout } from "constants/view";
+import {
+  EViewLayouts,
+  EViewPageType,
+  EFilterTypes,
+  viewDefaultFilterParametersByViewTypeAndLayout,
+} from "constants/view";
 
 type TLoader = "updating" | undefined;
 
@@ -160,6 +165,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       unlockView: action,
       makeFavorite: action,
       removeFavorite: action,
+      updateUserFilters: action,
+      updateUserDisplayFilters: action,
+      updateUserDisplayProperties: action,
     });
   }
 
@@ -187,7 +195,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     const requiredFilterProperties = viewDefaultFilterParametersByViewTypeAndLayout(
       this.viewPageType,
       layout,
-      "filters"
+      EFilterTypes.FILTERS
     );
 
     return this.computeAppliedFiltersQueryParameters(appliedFilters, requiredFilterProperties)?.query || undefined;
@@ -231,9 +239,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   setFilters = (filterKey: keyof TViewFilters | undefined = undefined, filterValue: "clear_all" | string) => {
     runInAction(() => {
       if (filterKey === undefined) {
-        if (filterValue === "clear_all") set(this.filtersToUpdate, ["filters"], {});
+        if (filterValue === "clear_all") set(this.filtersToUpdate, [EFilterTypes.FILTERS], {});
       } else
-        update(this.filtersToUpdate, ["filters", filterKey], (_values = []) => {
+        update(this.filtersToUpdate, [EFilterTypes.FILTERS, filterKey], (_values = []) => {
           if (filterValue === "clear_all") return [];
           if (_values.includes(filterValue)) return pull(_values, filterValue);
           return concat(_values, filterValue);
@@ -259,21 +267,25 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     runInAction(() => {
       Object.keys(display_filters).forEach((key) => {
         const _key = key as keyof TViewDisplayFilters;
-        set(this.filtersToUpdate, ["display_filters", _key], display_filters[_key]);
+        set(this.filtersToUpdate, [EFilterTypes.DISPLAY_FILTERS, _key], display_filters[_key]);
       });
     });
 
-    // update display properties globally
-
-    // updating display properties locally for kanban filters
+    // update display filters globally
+    this.updateUserDisplayFilters({ [EFilterTypes.DISPLAY_FILTERS]: this.filtersToUpdate.display_filters });
   };
 
   setDisplayProperties = async (displayPropertyKey: keyof TViewDisplayProperties) => {
     runInAction(() => {
-      update(this.filtersToUpdate, ["display_properties", displayPropertyKey], (_value: boolean = true) => !_value);
+      update(
+        this.filtersToUpdate,
+        [EFilterTypes.DISPLAY_PROPERTIES, displayPropertyKey],
+        (_value: boolean = true) => !_value
+      );
     });
 
     // update display properties globally
+    this.updateUserDisplayProperties({ [EFilterTypes.DISPLAY_PROPERTIES]: this.filtersToUpdate.display_properties });
   };
 
   setIsEditable = (is_editable: boolean) => {
@@ -297,7 +309,12 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   saveChanges = async () => {
     try {
-      if (this.filtersToUpdate) await this.update(this.filtersToUpdate);
+      if (!this.id) return;
+
+      if (["all-issues", "assigned", "created", "subscribed"].includes(this.id)) {
+        const payload = this.filtersToUpdate.filters;
+        await this.updateUserFilters({ [EFilterTypes.FILTERS]: payload });
+      } else await this.update(this.filtersToUpdate);
     } catch {
       Object.keys(this.filtersToUpdate).forEach((key) => {
         const _key = key as keyof TUpdateView;
@@ -392,6 +409,63 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       });
     } catch {
       this.is_favorite = this.is_favorite;
+    }
+  };
+
+  // updating the user specific filters, display filters, and display properties
+  updateUserFilters = async (filters: { [EFilterTypes.FILTERS]: TViewFilters }) => {
+    try {
+      const { workspaceSlug, projectId } = this.store.app.router;
+      if (!workspaceSlug) return;
+
+      const userView = await this.userService.update(workspaceSlug, filters, projectId);
+      if (!userView) return;
+
+      runInAction(() => {
+        this.filters = userView.filters;
+      });
+    } catch {
+      runInAction(() => {
+        this.filters = this.filters;
+      });
+    }
+  };
+
+  updateUserDisplayFilters = async (display_filters: { [EFilterTypes.DISPLAY_FILTERS]: TViewDisplayFilters }) => {
+    try {
+      const { workspaceSlug, projectId } = this.store.app.router;
+      if (!workspaceSlug) return;
+
+      const userView = await this.userService.update(workspaceSlug, display_filters, projectId);
+      if (!userView) return;
+
+      runInAction(() => {
+        this.display_filters = userView.display_filters;
+      });
+    } catch {
+      runInAction(() => {
+        this.display_filters = this.display_filters;
+      });
+    }
+  };
+
+  updateUserDisplayProperties = async (display_properties: {
+    [EFilterTypes.DISPLAY_PROPERTIES]: TViewDisplayProperties;
+  }) => {
+    try {
+      const { workspaceSlug, projectId } = this.store.app.router;
+      if (!workspaceSlug) return;
+
+      const userView = await this.userService.update(workspaceSlug, display_properties, projectId);
+      if (!userView) return;
+
+      runInAction(() => {
+        this.display_properties = userView.display_properties;
+      });
+    } catch {
+      runInAction(() => {
+        this.display_properties = this.display_properties;
+      });
     }
   };
 }

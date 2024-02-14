@@ -8,7 +8,7 @@ import { GlobalViewRoot, ViewHeader } from "components/view";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
-import { EViewPageType, VIEW_TYPES } from "constants/view";
+import { ELocalViews, EViewPageType, VIEW_TYPES } from "constants/view";
 
 const WorkspacePublicViewPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -19,12 +19,12 @@ const WorkspacePublicViewPage: NextPageWithLayout = () => {
       {
         key: VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS,
         title: "Private",
-        href: `/${workspaceSlug}/views/private/assigned`,
+        href: `/${workspaceSlug}/views/private/${ELocalViews.ASSIGNED}`,
       },
       {
         key: VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS,
         title: "Public",
-        href: `/${workspaceSlug}/views/public/all-issues`,
+        href: `/${workspaceSlug}/views/public/${ELocalViews.ALL_ISSUES}`,
       },
     ],
     [workspaceSlug]

@@ -10,6 +10,37 @@ import {
   TViewDisplayFiltersExtraOptions,
 } from "@plane/types";
 
+// global variables
+export enum EViewPageType {
+  ALL = "all",
+  PROFILE = "profile",
+  PROJECT = "project",
+  ARCHIVED = "archived",
+  DRAFT = "draft",
+}
+
+export enum ELocalViews {
+  ALL_ISSUES = "all-issues",
+  ASSIGNED = "assigned",
+  CREATED = "created",
+  SUBSCRIBED = "subscribed",
+}
+
+export enum EFilterTypes {
+  FILTERS = "filters",
+  DISPLAY_FILTERS = "display_filters",
+  DISPLAY_PROPERTIES = "display_properties",
+  KANBAN_FILTERS = "kanban_filters",
+}
+
+export enum EViewLayouts {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  SPREADSHEET = "spreadsheet",
+  GANTT = "gantt",
+}
+
 // filters constants
 export const STATE_GROUP_PROPERTY: Record<TStateGroups, { label: string; color: string }> = {
   backlog: { label: "Backlog", color: "#d9d9d9" },
@@ -67,26 +98,10 @@ export const EXTRA_OPTIONS_PROPERTY: Record<TViewDisplayFiltersExtraOptions, { l
   show_empty_groups: { label: "Show Empty Groups" },
 };
 
-export enum EViewPageType {
-  ALL = "all",
-  PROFILE = "profile",
-  PROJECT = "project",
-  ARCHIVED = "archived",
-  DRAFT = "draft",
-}
-
-export enum EViewLayouts {
-  LIST = "list",
-  KANBAN = "kanban",
-  CALENDAR = "calendar",
-  SPREADSHEET = "spreadsheet",
-  GANTT = "gantt",
-}
-
 export type TViewLayoutFilterProperties = {
   filters: Partial<keyof TViewFilters>[];
   display_filters: Partial<keyof TViewDisplayFilters>[];
-  extra_options: ("sub_issue" | "show_empty_groups")[];
+  extra_options: TViewDisplayFiltersExtraOptions[];
   display_properties: boolean;
   readonlyFilters?: Partial<keyof TViewFilters>[];
 };
@@ -112,10 +127,8 @@ const ALL_FILTER_PERMISSIONS: TFilterPermissions["all"] = {
   layouts: [EViewLayouts.SPREADSHEET],
   [EViewLayouts.SPREADSHEET]: {
     filters: ["project", "priority", "state_group", "assignees", "created_by", "labels", "start_date", "target_date"],
-    // display_filters: ["type"],
-    // extra_options: [],
-    display_filters: ["group_by", "sub_group_by", "order_by", "type"],
-    extra_options: ["sub_issue", "show_empty_groups"],
+    display_filters: ["type"],
+    extra_options: [],
     display_properties: true,
   },
 };
