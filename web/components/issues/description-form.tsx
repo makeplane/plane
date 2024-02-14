@@ -105,7 +105,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
     });
     setLocalIssueDescription({
       id: issue.id,
-      description_html: issue.description_html,
+      description_html: issue.description_html === "" ? "<p></p>" : issue.description_html,
     });
     setLocalTitleValue(issue.name);
   }, [issue, reset]);
