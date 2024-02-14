@@ -70,7 +70,7 @@ MIDDLEWARE = [
 # Rest Framework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
@@ -110,6 +110,12 @@ TEMPLATES = [
 
 # Cookie Settings
 SESSION_COOKIE_SECURE = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1800
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_DOMAIN = None
+
+# CSRF cookies
 CSRF_COOKIE_SECURE = True
 
 # CORS Settings

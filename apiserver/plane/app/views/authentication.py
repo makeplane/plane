@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-
+from django.contrib.auth import login, authenticate
 # Third party imports
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -21,6 +21,7 @@ from sentry_sdk import capture_message
 
 # Module imports
 from . import BaseAPIView
+from plane.app.serializers import UserAdminLiteSerializer
 from plane.db.models import (
     User,
     WorkspaceMemberInvite,
@@ -535,16 +536,9 @@ class GoogleAuthEndpoint(BaseAPIView):
             user.last_login_ip = request.META.get("REMOTE_ADDR")
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.token_updated_at = timezone.now()
-
-            access_token, refresh_token = get_tokens_for_user(user)
-            data = {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }
-
-            response = Response(data, status=status.HTTP_200_OK)
-            response.set_cookie('access-token', access_token, max_age=3600)
-            return response
+            user.save()
+            serializer = UserAdminLiteSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         # Sign Up
         else:
             user = User.objects.create(email=email, username=uuid.uuid4().hex)
@@ -576,12 +570,6 @@ class GoogleAuthEndpoint(BaseAPIView):
             )
 
             _ = Profile.objects.create(user=user)
-
-            access_token, refresh_token = get_tokens_for_user(user)
-            data = {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }
-            response = Response(data, status=status.HTTP_200_OK)
-            response.set_cookie('access-token', access_token, max_age=3600)
-            return response
+            user.save()
+            serializer = UserAdminLiteSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)

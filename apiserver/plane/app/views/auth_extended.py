@@ -5,8 +5,8 @@ import json
 import random
 import string
 import pytz
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from django.contrib.auth import login, authenticate
 ## Django imports
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import (
@@ -20,6 +20,8 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.sessions.models import Session
+from django.contrib.sessions.backends.db import SessionStore
 
 ## Third Party Imports
 from rest_framework import status
@@ -34,9 +36,9 @@ from plane.app.serializers import (
     ResetPasswordSerializer,
     UserSerializer,
     AccountSerializer,
-    SessionSerializer,
+    UserAdminLiteSerializer,
 )
-from plane.db.models import User, WorkspaceMemberInvite, Account, Session
+from plane.db.models import User, WorkspaceMemberInvite, Account
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.forgot_password_task import forgot_password
 from plane.license.models import Instance
@@ -572,44 +574,29 @@ class SessionEndpoint(BaseAPIView):
     ]
 
     def get(self, request, token):
-        session = Session.objects.get(token=token)
-        serializer = SessionSerializer(session)
-        user = User.objects.get(pk=session.user_id)
-        user_serializer = UserSerializer(user)
-        return Response(
-            {"session": serializer.data, "user": user_serializer.data},
-            status=status.HTTP_200_OK,
-        )
+        session = Session.objects.filter(session_key=token).first()
+        if session:
+            session_data = SessionStore().decode(session.session_data)
+            user = User.objects.get(pk=session_data.get("user_id"))
+            serializer = UserAdminLiteSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
 
     def post(self, request):
-        try:
-            user_id = request.data.get("user", False)
-            token = request.data.get("token", False)
-            expires = request.data.get("expires", False)
-
-            if not user_id or not token or not expires:
-                print("Wrong condition")
-                return Response(
-                    {"error": "User Id, token and expires are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            session = Session.objects.create(
-                user_id=user_id,
-                token=token,
-                expires=expires,
-            )
-            serializer = SessionSerializer(session)
-            user = User.objects.get(pk=user_id)
-            user_serializer = UserSerializer(user)
-
+        user_id = request.data.get("user_id", False)
+        if not user_id:
             return Response(
-                {"session": serializer.data, "user": user_serializer.data},
-                status=status.HTTP_200_OK,
+                {"error": "UserID is required for creating the sesison"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        request.session['user_id'] = user_id
+        request.session.save()
+        return Response(
+            {"session": str(request.session.session_key)},
+            status=status.HTTP_200_OK,
+        )
 
 
 class UserIdentifierEndpoint(BaseAPIView):
