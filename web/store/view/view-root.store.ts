@@ -8,7 +8,7 @@ import { RootStore } from "store/root.store";
 import { ViewStore } from "./view.store";
 // types
 import { TUserViewService, TViewService } from "services/view/types";
-import { TView } from "@plane/types";
+import { TView, TViewTypes } from "@plane/types";
 // constants
 import { EViewPageType } from "constants/view";
 
@@ -17,30 +17,31 @@ export type TLoader = "init-loader" | "mutation-loader" | "submitting" | undefin
 type TViewRootStore = {
   // observables
   loader: TLoader;
-  viewMap: Record<string, ViewStore>;
+  viewMap: Record<string, Record<string, Record<string, ViewStore>>>; // workspaceSlug/projectId, public/private, viewId -> ViewStore
   // computed
   viewIds: string[];
   viewById: (viewId: string) => ViewStore | undefined;
   // actions
-  localViewCreate: (view: TView) => Promise<void>;
-  fetch: (_loader?: TLoader) => Promise<void>;
-  fetchById: (viewId: string) => Promise<void>;
-  create: (view: Partial<TView>) => Promise<void>;
-  remove: (viewId: string) => Promise<void>;
-  duplicate: (viewId: string) => Promise<void>;
+  localViewCreate: (workspaceSlug: string, projectId: string | undefined, view: TView) => Promise<void>;
+  fetch: (workspaceSlug: string, projectId: string | undefined, _loader?: TLoader) => Promise<void>;
+  fetchById: (workspaceSlug: string, projectId: string | undefined, viewId: string) => Promise<void>;
+  create: (workspaceSlug: string, projectId: string | undefined, view: Partial<TView>) => Promise<void>;
+  remove: (workspaceSlug: string, projectId: string | undefined, viewId: string) => Promise<void>;
+  duplicate: (workspaceSlug: string, projectId: string | undefined, viewId: string) => Promise<void>;
 };
 
 export class ViewRootStore implements TViewRootStore {
   // observables
   loader: TLoader = "init-loader";
-  viewMap: Record<string, ViewStore> = {};
+  viewMap: Record<string, Record<string, Record<string, ViewStore>>> = {};
 
   constructor(
     private store: RootStore,
     private defaultViews: TView[] = [],
     private service: TViewService,
     private userService: TUserViewService,
-    private viewPageType: EViewPageType
+    private viewPageType: EViewPageType,
+    private viewType: TViewTypes
   ) {
     makeObservable(this, {
       // observables
@@ -60,7 +61,14 @@ export class ViewRootStore implements TViewRootStore {
 
   // computed
   get viewIds() {
-    const views = Object.values(this.viewMap);
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return [];
+
+    const viewRootSlug = projectId ? projectId : workspaceSlug;
+    const views = this.viewMap?.[viewRootSlug]?.[this.viewType]
+      ? Object.values(this.viewMap?.[viewRootSlug]?.[this.viewType])
+      : [];
+
     const localViews = views.filter((view) => view.is_local_view);
     let apiViews = views.filter((view) => !view.is_local_view && !view.is_create);
     apiViews = reverse(sortBy(apiViews, "sort_order"));
@@ -68,24 +76,31 @@ export class ViewRootStore implements TViewRootStore {
     return _viewIds as string[];
   }
 
-  viewById = computedFn((viewId: string) => this.viewMap?.[viewId] || undefined);
+  viewById = computedFn((viewId: string) => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug) return undefined;
+
+    const viewRootSlug = projectId ? projectId : workspaceSlug;
+    return this.viewMap?.[viewRootSlug]?.[this.viewType]?.[viewId] || undefined;
+  });
 
   // actions
-  localViewCreate = async (view: TView) => {
+  localViewCreate = async (workspaceSlug: string, projectId: string | undefined, view: TView) => {
+    const viewRootSlug = projectId ? projectId : workspaceSlug;
+
     runInAction(() => {
       if (view.id)
         set(
           this.viewMap,
-          [view.id],
+          [viewRootSlug, this.viewType, view.id],
           new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
         );
     });
   };
 
-  fetch = async (_loader: TLoader = "init-loader") => {
+  fetch = async (workspaceSlug: string, projectId: string | undefined, _loader: TLoader = "init-loader") => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+      const viewRootSlug = projectId ? projectId : workspaceSlug;
 
       this.loader = _loader;
 
@@ -95,7 +110,7 @@ export class ViewRootStore implements TViewRootStore {
             if (view.id)
               set(
                 this.viewMap,
-                [view.id],
+                [viewRootSlug, this.viewType, view.id],
                 new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
               );
           });
@@ -109,7 +124,7 @@ export class ViewRootStore implements TViewRootStore {
           if (view.id)
             set(
               this.viewMap,
-              [view.id],
+              [viewRootSlug, this.viewType, view.id],
               new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
             );
         });
@@ -118,10 +133,9 @@ export class ViewRootStore implements TViewRootStore {
     } catch {}
   };
 
-  fetchById = async (viewId: string) => {
+  fetchById = async (workspaceSlug: string, projectId: string | undefined, viewId: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !viewId) return;
+      const viewRootSlug = projectId ? projectId : workspaceSlug;
 
       const userView = await this.userService.fetch(workspaceSlug, projectId);
       if (!userView) return;
@@ -129,7 +143,7 @@ export class ViewRootStore implements TViewRootStore {
       let view: TView | undefined = undefined;
 
       if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
-        const currentView = { ...this.viewById(viewId) };
+        const currentView = { ...this.viewById(viewId) } as TView;
         if (!currentView) return;
 
         view = currentView;
@@ -150,17 +164,16 @@ export class ViewRootStore implements TViewRootStore {
         if (view?.id)
           set(
             this.viewMap,
-            [view.id],
+            [viewRootSlug, this.viewType, view.id],
             new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
           );
       });
     } catch {}
   };
 
-  create = async (data: Partial<TView>) => {
+  create = async (workspaceSlug: string, projectId: string | undefined, data: Partial<TView>) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug) return;
+      const viewRootSlug = projectId ? projectId : workspaceSlug;
 
       const view = await this.service.create(workspaceSlug, data, projectId);
       if (!view) return;
@@ -169,33 +182,36 @@ export class ViewRootStore implements TViewRootStore {
         if (view.id)
           set(
             this.viewMap,
-            [view.id],
+            [viewRootSlug, this.viewType, view.id],
             new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
           );
       });
 
-      if (data.id) this.remove(data.id);
+      if (data.id) this.remove(workspaceSlug, projectId, data.id);
     } catch {}
   };
 
-  remove = async (viewId: string) => {
+  remove = async (workspaceSlug: string, projectId: string | undefined, viewId: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !viewId) return;
+      const viewRootSlug = projectId ? projectId : workspaceSlug;
 
-      if (this.viewMap?.[viewId] != undefined && !this.viewMap?.[viewId]?.is_create)
+      if (
+        this.viewMap?.[viewRootSlug]?.[this.viewType]?.[viewId] != undefined &&
+        !this.viewMap?.[viewRootSlug]?.[this.viewType]?.[viewId]?.is_create
+      )
         await this.service.remove?.(workspaceSlug, viewId, projectId);
 
       runInAction(() => {
-        delete this.viewMap[viewId];
+        delete this.viewMap?.[viewRootSlug]?.[this.viewType]?.[viewId];
       });
     } catch {}
   };
 
-  duplicate = async (viewId: string) => {
+  duplicate = async (workspaceSlug: string, projectId: string | undefined, viewId: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !this.service.duplicate) return;
+      if (!this.service.duplicate) return;
+
+      const viewRootSlug = projectId ? projectId : workspaceSlug;
 
       const view = await this.service.duplicate(workspaceSlug, viewId, projectId);
       if (!view) return;
@@ -204,7 +220,7 @@ export class ViewRootStore implements TViewRootStore {
         if (view.id)
           set(
             this.viewMap,
-            [view.id],
+            [viewRootSlug, this.viewType, view.id],
             new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
           );
       });

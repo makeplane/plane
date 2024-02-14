@@ -326,14 +326,13 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   // actions
   update = async (viewData: TUpdateView) => {
     try {
+      if (!this.workspace || !this.id) return;
+
       runInAction(() => {
         this.loader = "updating";
       });
 
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !this.id) return;
-
-      const view = await this.service.update(workspaceSlug, this.id, viewData, projectId);
+      const view = await this.service.update(this.workspace, this.id, viewData, this.project);
       if (!view) return;
 
       runInAction(() => {
@@ -350,10 +349,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   lockView = async () => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !this.id || !this.service.lock) return;
+      if (!this.workspace || !this.id || !this.service.lock) return;
 
-      const view = await this.service.lock(workspaceSlug, this.id, projectId);
+      const view = await this.service.lock(this.workspace, this.id, this.project);
       if (!view) return;
 
       runInAction(() => {
@@ -366,10 +364,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   unlockView = async () => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !this.id || !this.service.unlock) return;
+      if (!this.workspace || !this.id || !this.service.unlock) return;
 
-      const view = await this.service.unlock(workspaceSlug, this.id, projectId);
+      const view = await this.service.unlock(this.workspace, this.id, this.project);
       if (!view) return;
 
       runInAction(() => {
@@ -382,10 +379,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   makeFavorite = async () => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !this.id || !this.service.makeFavorite) return;
+      if (!this.workspace || !this.id || !this.service.makeFavorite) return;
 
-      const view = await this.service.makeFavorite(workspaceSlug, this.id, projectId);
+      const view = await this.service.makeFavorite(this.workspace, this.id, this.project);
       if (!view) return;
 
       runInAction(() => {
@@ -398,10 +394,9 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   removeFavorite = async () => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
-      if (!workspaceSlug || !this.id || !this.service.removeFavorite) return;
+      if (!this.workspace || !this.id || !this.service.removeFavorite) return;
 
-      const view = await this.service.removeFavorite(workspaceSlug, this.id, projectId);
+      const view = await this.service.removeFavorite(this.workspace, this.id, this.project);
       if (!view) return;
 
       runInAction(() => {

@@ -71,12 +71,12 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
             // creating new view
             const currentViewPayload = cloneDeep({ ...currentView, id: uuidV4() });
             handleViewOperationsToggle("CREATE", currentViewPayload.id);
-            viewStore?.localViewCreate(currentViewPayload as TView);
+            viewStore?.localViewCreate(workspaceSlug, projectId, currentViewPayload as TView);
           } else {
             // if current view is available, create a new view with the same data
             const viewPayload = viewLocalPayload;
             handleViewOperationsToggle("CREATE", viewPayload.id);
-            viewStore?.localViewCreate(viewPayload as TView);
+            viewStore?.localViewCreate(workspaceSlug, projectId, viewPayload as TView);
           }
         } else {
           handleViewOperationsToggle("EDIT", viewId);
@@ -84,14 +84,14 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
         }
       },
       localViewCreateEditClear: async (viewId: string | undefined) => {
-        if (viewDetailCreateEditStore?.is_create && viewId) viewStore?.remove(viewId);
+        if (viewDetailCreateEditStore?.is_create && viewId) viewStore?.remove(workspaceSlug, projectId, viewId);
         if (viewDetailCreateEditStore?.is_editable && viewId) viewDetailCreateEditStore.resetChanges();
         handleViewOperationsToggle(undefined, undefined);
       },
 
       fetch: async () => {
         try {
-          await viewStore?.fetch();
+          await viewStore?.fetch(workspaceSlug, projectId);
         } catch {
           setToastAlert({
             type: "error",
@@ -102,7 +102,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
       },
       create: async (data: Partial<TView>) => {
         try {
-          await viewStore?.create(data);
+          await viewStore?.create(workspaceSlug, projectId, data);
           handleViewOperationsToggle(undefined, undefined);
           setToastAlert({
             type: "success",
@@ -119,7 +119,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
       },
       remove: async (viewId: string) => {
         try {
-          await viewStore?.remove(viewId);
+          await viewStore?.remove(workspaceSlug, projectId, viewId);
           handleViewOperationsToggle(undefined, undefined);
           setToastAlert({
             type: "success",
@@ -152,13 +152,25 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
         }
       },
     }),
-    [viewStore, viewDetailStore, setToastAlert, viewDetailCreateEditStore, handleViewOperationsToggle]
+    [
+      workspaceSlug,
+      projectId,
+      viewStore,
+      viewDetailStore,
+      setToastAlert,
+      viewDetailCreateEditStore,
+      handleViewOperationsToggle,
+    ]
   );
 
   // fetch all views
   useEffect(() => {
     const fetchViews = async () => {
-      await viewStore?.fetch(viewStore?.viewIds.length > 0 ? "mutation-loader" : "init-loader");
+      await viewStore?.fetch(
+        workspaceSlug,
+        projectId,
+        viewStore?.viewIds.length > 0 ? "mutation-loader" : "init-loader"
+      );
     };
     if (workspaceSlug && viewType && viewStore) fetchViews();
   }, [workspaceSlug, projectId, viewType, viewStore]);
@@ -166,7 +178,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
   // fetch view by id
   useEffect(() => {
     const fetchViews = async () => {
-      viewId && (await viewStore?.fetchById(viewId));
+      viewId && (await viewStore?.fetchById(workspaceSlug, projectId, viewId));
     };
     if (workspaceSlug && viewId && viewType && viewStore) fetchViews();
   }, [workspaceSlug, projectId, viewId, viewType, viewStore]);

@@ -12,7 +12,7 @@ import {
 // types
 import { RootStore } from "store/root.store";
 // constants
-import { EViewPageType } from "constants/view";
+import { EViewPageType, VIEW_TYPES } from "constants/view";
 
 export class GlobalViewRootStore {
   workspacePrivateViewStore: ViewRootStore;
@@ -25,25 +25,16 @@ export class GlobalViewRootStore {
       {
         id: "assigned",
         name: "Assigned",
-        filters: {
-          assignees: store?.user?.currentUser?.id ? [store?.user?.currentUser?.id] : [],
-        },
         is_local_view: true,
       },
       {
         id: "created",
         name: "Created",
-        filters: {
-          created_by: store?.user?.currentUser?.id ? [store?.user?.currentUser?.id] : [],
-        },
         is_local_view: true,
       },
       {
         id: "subscribed",
         name: "Subscribed",
-        filters: {
-          subscriber: store?.user?.currentUser?.id ? [store?.user?.currentUser?.id] : [],
-        },
         is_local_view: true,
       },
     ];
@@ -52,7 +43,6 @@ export class GlobalViewRootStore {
       {
         id: "all-issues",
         name: "All Issues",
-        filters: {},
         is_local_view: true,
       },
     ];
@@ -62,28 +52,32 @@ export class GlobalViewRootStore {
       workspacePrivateDefaultViews,
       new WorkspacePrivateViewService(),
       new WorkspaceFiltersService(),
-      EViewPageType.ALL
+      EViewPageType.ALL,
+      VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS
     );
     this.workspacePublicViewStore = new ViewRootStore(
       this.store,
       workspacePublicDefaultViews,
       new WorkspacePublicViewService(),
       new WorkspaceFiltersService(),
-      EViewPageType.ALL
+      EViewPageType.ALL,
+      VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS
     );
     this.projectPrivateViewStore = new ViewRootStore(
       this.store,
       undefined,
       new ProjectPrivateViewService(),
       new ProjectFiltersService(),
-      EViewPageType.PROJECT
+      EViewPageType.PROJECT,
+      VIEW_TYPES.PROJECT_PRIVATE_VIEWS
     );
     this.projectPublicViewStore = new ViewRootStore(
       this.store,
       undefined,
       new ProjectPublicViewService(),
       new ProjectFiltersService(),
-      EViewPageType.PROJECT
+      EViewPageType.PROJECT,
+      VIEW_TYPES.PROJECT_PUBLIC_VIEWS
     );
   }
 }
