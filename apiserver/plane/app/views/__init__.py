@@ -59,6 +59,7 @@ from .view import (
     UserWorkspaceViewViewSet,
     UserProjectViewViewSet,
     ProjectViewViewSet,
+    WorkspaceViewIssuesViewSet,
 )
 from .cycle import (
     CycleViewSet,
