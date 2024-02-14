@@ -1,6 +1,7 @@
 import { FC, MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { observer } from "mobx-react";
 // hooks
 import { useEventTracker, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -26,7 +27,7 @@ export interface ICyclesBoardCard {
   cycleId: string;
 }
 
-export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
+export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -69,8 +70,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
@@ -295,4 +296,4 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       </Link>
     </div>
   );
-};
+});
