@@ -78,9 +78,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
   }, [issue.id]); // TODO: verify the exhaustive-deps warning
 
   useEffect(() => {
-    if (["", undefined, null].includes(localIssueDescription.description_html)) {
+    if (["", "<p></p>", undefined, null].includes(localIssueDescription.description_html)) {
       setLocalIssueDescription((state) => {
-        if (!["", undefined, null].includes(state.description_html)) return state;
+        if (!["", "<p></p>", undefined, null].includes(state.description_html)) return state;
         return { id: issue.id, description_html: issue.description_html || "<p></p>" };
       });
     }
