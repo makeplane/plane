@@ -1,6 +1,7 @@
 import { FC, MouseEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react";
 // hooks
 import { useEventTracker, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -30,7 +31,7 @@ type TCyclesListItem = {
   projectId: string;
 };
 
-export const CyclesListItem: FC<TCyclesListItem> = (props) => {
+export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -289,4 +290,4 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
       </Link>
     </>
   );
-};
+});

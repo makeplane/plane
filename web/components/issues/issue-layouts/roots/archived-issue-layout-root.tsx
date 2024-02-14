@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -13,7 +13,7 @@ import {
 } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 // ui
-import { Spinner } from "@plane/ui";
+import { ListLayoutLoader } from "components/ui";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -36,30 +36,26 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
     }
   );
 
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <ListLayoutLoader />;
+  }
+
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ArchivedIssueAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectArchivedEmptyState />
         </div>
       ) : (
-        <>
-          {!issues?.groupedIssueIds ? (
-            <ProjectArchivedEmptyState />
-          ) : (
-            <>
-              <div className="relative h-full w-full overflow-auto">
-                <ArchivedIssueListLayout />
-              </div>
-
-              {/* peek overview */}
-              <IssuePeekOverview is_archived />
-            </>
-          )}
-        </>
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto">
+            <ArchivedIssueListLayout />
+          </div>
+          <IssuePeekOverview is_archived />
+        </Fragment>
       )}
     </div>
   );

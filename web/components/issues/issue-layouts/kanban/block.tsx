@@ -138,14 +138,14 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
         >
           <div
             className={cn(
-              "rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm transition-all hover:border-custom-border-400",
+              "rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
               { "hover:cursor-grab": !isDragDisabled },
               { "border-custom-primary-100": snapshot.isDragging },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
             )}
           >
             <RenderIfVisible
-              classNames="space-y-2"
+              classNames="space-y-2 px-3 py-2"
               root={scrollableContainerRef}
               defaultHeight="100px"
               horizonatlOffset={50}

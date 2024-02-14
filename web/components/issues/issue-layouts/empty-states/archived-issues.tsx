@@ -9,6 +9,7 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EMPTY_FILTER_STATE_DETAILS, EMPTY_ISSUE_STATE_DETAILS } from "constants/empty-state";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -65,20 +66,19 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
   const emptyStateProps: EmptyStateProps =
     issueFilterCount > 0
       ? {
-          title: "No issues found matching the filters applied",
+          title: EMPTY_FILTER_STATE_DETAILS["archived"].title,
           image: currentLayoutEmptyStateImagePath,
           secondaryButton: {
-            text: "Clear all filters",
+            text: EMPTY_FILTER_STATE_DETAILS["archived"].secondaryButton?.text,
             onClick: handleClearAllFilters,
           },
         }
       : {
-          title: "No archived issues yet",
-          description:
-            "Archived issues help you remove issues you completed or cancelled from focus. You can set automation to auto archive issues and find them here.",
+          title: EMPTY_ISSUE_STATE_DETAILS["archived"].title,
+          description: EMPTY_ISSUE_STATE_DETAILS["archived"].description,
           image: EmptyStateImagePath,
           primaryButton: {
-            text: "Set Automation",
+            text: EMPTY_ISSUE_STATE_DETAILS["archived"].primaryButton.text,
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`),
           },
           size: "sm",

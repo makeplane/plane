@@ -13,6 +13,7 @@ import { Loader } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const RecentPagesList: FC = observer(() => {
   // theme
@@ -63,11 +64,11 @@ export const RecentPagesList: FC = observer(() => {
       ) : (
         <>
           <EmptyState
-            title="Write a note, a doc, or a full knowledge base"
-            description="Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely! Pages will be sorted and grouped by last updated."
+            title={PAGE_EMPTY_STATE_DETAILS["Recent"].title}
+            description={PAGE_EMPTY_STATE_DETAILS["Recent"].description}
             image={EmptyStateImagePath}
             primaryButton={{
-              text: "Create new page",
+              text: PAGE_EMPTY_STATE_DETAILS["Recent"].primaryButton.text,
               onClick: () => commandPaletteStore.toggleCreatePageModal(true),
             }}
             size="sm"
