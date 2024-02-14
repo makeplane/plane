@@ -6,7 +6,7 @@ import { IssueParentSiblings } from "./siblings";
 // ui
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { useIssueDetail, useIssues, useProject, useProjectState } from "hooks/store";
+import { useIssues, useProject, useProjectState } from "hooks/store";
 // types
 import { TIssueOperations } from "../root";
 import { TIssue } from "@plane/types";
@@ -23,7 +23,6 @@ export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // hooks
   const { issueMap } = useIssues();
-  const { peekIssue } = useIssueDetail();
   const { getProjectById } = useProject();
   const { getProjectStates } = useProjectState();
 
@@ -39,7 +38,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = (props) => {
   return (
     <>
       <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
-        <Link href={`/${peekIssue?.workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`}>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5">
               <span className="block h-2 w-2 rounded-full" style={{ backgroundColor: stateColor }} />
