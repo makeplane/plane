@@ -2,6 +2,7 @@ import React, { Fragment, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import size from "lodash/size";
 // hooks
 import { useCycle, useIssues } from "hooks/store";
 // components
@@ -20,7 +21,9 @@ import { ActiveLoader } from "components/ui";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+// types
+import { IIssueFilterOptions } from "@plane/types";
 
 export const CycleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -53,6 +56,31 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
 
+  const userFilters = issuesFilter?.issueFilters?.filters;
+
+  const issueFilterCount = size(
+    Object.fromEntries(
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
+    )
+  );
+
+  const handleClearAllFilters = () => {
+    if (!workspaceSlug || !projectId || !cycleId) return;
+    const newFilters: IIssueFilterOptions = {};
+    Object.keys(userFilters ?? {}).forEach((key) => {
+      newFilters[key as keyof IIssueFilterOptions] = null;
+    });
+    issuesFilter.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      {
+        ...newFilters,
+      },
+      cycleId.toString()
+    );
+  };
+
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
@@ -83,6 +111,8 @@ export const CycleLayoutRoot: React.FC = observer(() => {
               projectId={projectId.toString()}
               cycleId={cycleId.toString()}
               activeLayout={activeLayout}
+              handleClearAllFilters={handleClearAllFilters}
+              isEmptyFilters={issueFilterCount > 0}
             />
           </div>
         ) : (

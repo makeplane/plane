@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import size from "lodash/size";
 // mobx store
 import { useIssues } from "hooks/store";
 // components
@@ -19,7 +20,9 @@ import { ActiveLoader } from "components/ui";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+// types
+import { IIssueFilterOptions } from "@plane/types";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   // router
@@ -44,6 +47,31 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
       }
     }
   );
+
+  const userFilters = issuesFilter?.issueFilters?.filters;
+
+  const issueFilterCount = size(
+    Object.fromEntries(
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
+    )
+  );
+
+  const handleClearAllFilters = () => {
+    if (!workspaceSlug || !projectId || !moduleId) return;
+    const newFilters: IIssueFilterOptions = {};
+    Object.keys(userFilters ?? {}).forEach((key) => {
+      newFilters[key as keyof IIssueFilterOptions] = null;
+    });
+    issuesFilter.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      {
+        ...newFilters,
+      },
+      moduleId.toString()
+    );
+  };
 
   if (!workspaceSlug || !projectId || !moduleId) return <></>;
 
@@ -74,6 +102,8 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
             projectId={projectId.toString()}
             moduleId={moduleId.toString()}
             activeLayout={activeLayout}
+            handleClearAllFilters={handleClearAllFilters}
+            isEmptyFilters={issueFilterCount > 0}
           />
         </div>
       ) : (
