@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
 // hooks
@@ -14,10 +14,12 @@ type TInboxContentRoot = {
   projectId: string;
   inboxId: string;
   inboxIssueId: string | undefined;
+  isIssueDetailSidebarOpen: boolean;
+  setIsIssueDetailSidebarOpen: (isOpen: boolean) => void;
 };
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = props;
+  const { workspaceSlug, projectId, inboxId, inboxIssueId, isIssueDetailSidebarOpen, setIsIssueDetailSidebarOpen } = props;
   // hooks
   const {
     issues: { loader, getInboxIssuesByInboxId },
@@ -50,7 +52,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
                 <div className="my-5 flex flex-col items-center gap-4">
                   <Inbox size={60} strokeWidth={1.5} />
                   {inboxIssuesList && inboxIssuesList.length > 0 ? (
-                    <span className="text-custom-text-200">
+                    <span className="text-custom-text-200 text-center">
                       {inboxIssuesList?.length} issues found. Select an issue from the sidebar to view its details.
                     </span>
                   ) : (
@@ -61,7 +63,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             </div>
           ) : (
             <div className="w-full h-full overflow-hidden relative flex flex-col">
-              <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-300">
+              <div className="hidden md:flex flex-shrink-0 md:min-h-[50px] border-b border-custom-border-300">
                 <InboxIssueActionsHeader
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
@@ -71,6 +73,8 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
               </div>
               <div className="w-full h-full">
                 <InboxIssueDetailRoot
+                  isIssueDetailSidebarOpen={isIssueDetailSidebarOpen}
+                  setIsIssueDetailSidebarOpen={setIsIssueDetailSidebarOpen}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   inboxId={inboxId}

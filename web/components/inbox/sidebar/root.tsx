@@ -12,17 +12,18 @@ type TInboxSidebarRoot = {
   workspaceSlug: string;
   projectId: string;
   inboxId: string;
+  setIsInboxSidebarOpen: (isOpen: boolean) => void;
 };
 
 export const InboxSidebarRoot: FC<TInboxSidebarRoot> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId } = props;
+  const { workspaceSlug, projectId, inboxId, setIsInboxSidebarOpen } = props;
   // store hooks
   const {
     issues: { loader },
   } = useInboxIssues();
 
   return (
-    <div className="relative flex flex-col w-full h-full">
+    <div className="relative flex flex-col w-full h-full bg-custom-background-100">
       <div className="flex-shrink-0 w-full h-[50px] relative flex justify-between items-center gap-2 p-2 px-3 border-b border-custom-border-300">
         <div className="relative flex items-center gap-1">
           <div className="relative w-6 h-6 flex justify-center items-center rounded bg-custom-background-80">
@@ -30,7 +31,7 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = observer((props) => {
           </div>
           <div className="font-medium">Inbox</div>
         </div>
-        <div className="z-20">
+        <div className="relative z-20">
           <InboxIssueFilterSelection workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} />
         </div>
       </div>
@@ -48,7 +49,12 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = observer((props) => {
         </Loader>
       ) : (
         <div className="w-full h-full overflow-hidden">
-          <InboxIssueList workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} />
+          <InboxIssueList
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            inboxId={inboxId}
+            setIsInboxSidebarOpen={setIsInboxSidebarOpen}
+          />
         </div>
       )}
     </div>

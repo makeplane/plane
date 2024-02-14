@@ -64,13 +64,13 @@ export const INBOX_STATUS: {
     icon: Copy,
     title: "Duplicate",
     description: (workspaceSlug: string, projectId: string, issueId: string) => (
-      <p className="flex items-center gap-1">
-        This issue has been marked as a duplicate of
+      <p>
+        This issue has been marked as a duplicate of{" "}
         <a
           href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-2 underline"
+          className="inline-flex flex-shrink-0 items-center gap-2 underline"
         >
           this issue <ExternalLink size={12} strokeWidth={2} />
         </a>

@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react";
 // hooks
 import { useInboxIssues } from "hooks/store";
 // constants
@@ -13,7 +14,7 @@ type Props = {
   showDescription?: boolean;
 };
 
-export const InboxIssueStatus: React.FC<Props> = (props) => {
+export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, inboxId, issueId, iconSize = 18, showDescription = false } = props;
   // hooks
   const {
@@ -36,10 +37,10 @@ export const InboxIssueStatus: React.FC<Props> = (props) => {
           ? `p-3 gap-2 text-sm rounded-md border ${inboxIssueStatusDetail.bgColor(
               isSnoozedDatePassed
             )} ${inboxIssueStatusDetail.borderColor(isSnoozedDatePassed)} `
-          : "w-full justify-end gap-1 text-xs"
+          : "w-full justify-end gap-1 text-xs overflow-hidden"
       }`}
     >
-      <inboxIssueStatusDetail.icon size={iconSize} strokeWidth={2} />
+      <inboxIssueStatusDetail.icon size={iconSize} strokeWidth={2} className="flex-shrink-0" />
       {showDescription ? (
         inboxIssueStatusDetail.description(
           workspaceSlug,
@@ -52,4 +53,4 @@ export const InboxIssueStatus: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

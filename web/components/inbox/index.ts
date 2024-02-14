@@ -1,6 +1,7 @@
 export * from "./modals";
 
 export * from "./inbox-issue-actions";
+export * from "./mobile-inbox-issues-actions";
 export * from "./inbox-issue-status";
 
 export * from "./content/root";

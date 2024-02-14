@@ -18,10 +18,11 @@ type TInboxIssueListItem = {
   projectId: string;
   inboxId: string;
   issueId: string;
+  setIsInboxSidebarOpen: (isOpen: boolean) => void;
 };
 
 export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId, issueId } = props;
+  const { workspaceSlug, projectId, inboxId, issueId, setIsInboxSidebarOpen } = props;
   // router
   const router = useRouter();
   const { inboxIssueId } = router.query;
@@ -55,6 +56,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
   return (
     <>
       <Link
+        onClick={() => setIsInboxSidebarOpen(false)}
         id={`inbox-issue-list-item-${issue.id}`}
         key={`${inboxId}_${issueId}`}
         href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issueId}`}

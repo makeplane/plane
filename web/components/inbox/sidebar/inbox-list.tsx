@@ -5,10 +5,15 @@ import { useInboxIssues } from "hooks/store";
 // components
 import { InboxIssueListItem } from "../";
 
-type TInboxIssueList = { workspaceSlug: string; projectId: string; inboxId: string };
+type TInboxIssueList = {
+  workspaceSlug: string;
+  projectId: string;
+  inboxId: string;
+  setIsInboxSidebarOpen: (isOpen: boolean) => void;
+};
 
 export const InboxIssueList: FC<TInboxIssueList> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId } = props;
+  const { workspaceSlug, projectId, inboxId, setIsInboxSidebarOpen } = props;
   // hooks
   const {
     issues: { getInboxIssuesByInboxId },
@@ -20,7 +25,13 @@ export const InboxIssueList: FC<TInboxIssueList> = observer((props) => {
   return (
     <div className="overflow-y-auto w-full h-full">
       {inboxIssueIds.map((issueId) => (
-        <InboxIssueListItem workspaceSlug={workspaceSlug} projectId={projectId} inboxId={inboxId} issueId={issueId} />
+        <InboxIssueListItem
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          inboxId={inboxId}
+          issueId={issueId}
+          setIsInboxSidebarOpen={setIsInboxSidebarOpen}
+        />
       ))}
     </div>
   );

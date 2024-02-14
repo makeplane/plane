@@ -1,8 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// mobx store
+// hooks
 import { useInboxIssues } from "hooks/store";
+import useSize from "hooks/use-window-size";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
@@ -24,6 +25,7 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
   const {
     filters: { inboxFilters, updateInboxFilters },
   } = useInboxIssues();
+  const [windowWidth] = useSize();
 
   const filters = inboxFilters?.filters;
 
@@ -60,7 +62,7 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
             });
           }
         }}
-        direction="right"
+        direction={windowWidth <= 768 ? "left" : "right"}
         height="rg"
         options={[
           {

@@ -37,7 +37,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="rounded-lg space-y-4 overflow-hidden">
         <InboxIssueStatus
           workspaceSlug={workspaceSlug}
           projectId={projectId}
