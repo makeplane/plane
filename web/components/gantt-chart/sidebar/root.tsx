@@ -9,16 +9,17 @@ type Props = {
   enableReorder: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
+  quickAdd?: React.JSX.Element | undefined;
 };
 
 export const GanttChartSidebar: React.FC<Props> = (props) => {
-  const { blocks, blockUpdateHandler, enableReorder, sidebarToRender, title } = props;
+  const { blocks, blockUpdateHandler, enableReorder, sidebarToRender, title, quickAdd } = props;
 
   return (
     <div
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="sticky top-0 left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200 bg-custom-background-100"
+      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200 bg-custom-background-100"
       style={{
         width: `${SIDEBAR_WIDTH}px`,
       }}
@@ -33,9 +34,10 @@ export const GanttChartSidebar: React.FC<Props> = (props) => {
         <h6>Duration</h6>
       </div>
 
-      <div className="min-h-full h-max bg-custom-background-100">
+      <div className="min-h-full h-max bg-custom-background-100 overflow-x-hidden overflow-y-auto">
         {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
       </div>
+      {quickAdd ? quickAdd : null}
     </div>
   );
 };

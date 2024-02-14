@@ -1,5 +1,11 @@
 import { EUserProjectRoles } from "constants/project";
-import type { IUser, IUserLite, IWorkspace, IWorkspaceLite, TStateGroups } from ".";
+import type {
+  IUser,
+  IUserLite,
+  IWorkspace,
+  IWorkspaceLite,
+  TStateGroups,
+} from ".";
 
 export interface IProject {
   archive_in: number;
@@ -117,7 +123,7 @@ export type TProjectIssuesSearchParams = {
   parent?: boolean;
   issue_relation?: boolean;
   cycle?: boolean;
-  module?: string[];
+  module?: string;
   sub_issue?: boolean;
   issue_id?: string;
   workspace_search: boolean;

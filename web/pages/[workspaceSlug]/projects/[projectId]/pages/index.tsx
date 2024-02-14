@@ -9,19 +9,21 @@ import { useTheme } from "next-themes";
 import { useApplication, useEventTracker, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
+import useSize from "hooks/use-window-size";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { PagesHeader } from "components/headers";
-import { Spinner } from "@plane/ui";
+import { PagesLoader } from "components/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
 import { useProjectPages } from "hooks/store/use-project-page";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -66,6 +68,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     useProjectPages();
   // hooks
   const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
+  const [windowWidth] = useSize();
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
   // fetching pages from API
@@ -103,7 +106,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
-  const mobileTabList = (
+  const MobileTabList = () => (
     <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
       <div className="flex flex-wrap items-center gap-4">
         {PAGE_TABS_LIST.map((tab) => (
@@ -122,12 +125,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     </Tab.List>
   );
 
-  if (loader || archivedPageLoader)
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
+  if (loader || archivedPageLoader) return <PagesLoader />;
 
   return (
     <>
@@ -166,25 +164,29 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
                 }
               }}
             >
-              <div className="md:hidden">{mobileTabList}</div>
-              <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
-                <div className="flex flex-wrap items-center gap-4">
-                  {PAGE_TABS_LIST.map((tab) => (
-                    <Tab
-                      key={tab.key}
-                      className={({ selected }) =>
-                        `rounded-full border px-5 py-1.5 text-sm outline-none ${
-                          selected
-                            ? "border-custom-primary bg-custom-primary text-white"
-                            : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
-                        }`
-                      }
-                    >
-                      {tab.title}
-                    </Tab>
-                  ))}
-                </div>
-              </Tab.List>
+              {windowWidth < 768 ? (
+                <MobileTabList />
+              ) : (
+                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
+                  <div className="flex flex-wrap items-center gap-4">
+                    {PAGE_TABS_LIST.map((tab) => (
+                      <Tab
+                        key={tab.key}
+                        className={({ selected }) =>
+                          `rounded-full border px-5 py-1.5 text-sm outline-none ${
+                            selected
+                              ? "border-custom-primary bg-custom-primary text-white"
+                              : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
+                          }`
+                        }
+                      >
+                        {tab.title}
+                      </Tab>
+                    ))}
+                  </div>
+                </Tab.List>
+              )}
+
               <Tab.Panels as={Fragment}>
                 <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto">
                   <RecentPagesList />
@@ -211,19 +213,18 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
       ) : (
         <EmptyState
           image={EmptyStateImagePath}
-          title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started"
-          description="Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
+          title={PAGE_EMPTY_STATE_DETAILS["pages"].title}
+          description={PAGE_EMPTY_STATE_DETAILS["pages"].description}
           primaryButton={{
-            text: "Create your first page",
+            text: PAGE_EMPTY_STATE_DETAILS["pages"].primaryButton.text,
             onClick: () => {
               setTrackElement("Pages empty state");
               toggleCreatePageModal(true);
             },
           }}
           comicBox={{
-            title: "A page can be a doc or a doc of docs.",
-            description:
-              "We wrote Nikhil and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
+            title: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.title,
+            description: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.description,
           }}
           size="lg"
           disabled={!isEditingAllowed}

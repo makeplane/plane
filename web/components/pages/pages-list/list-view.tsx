@@ -11,7 +11,7 @@ import { PagesListItem } from "./list-item";
 import { Loader } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { PAGE_EMPTY_STATE_DETAILS } from "constants/page";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 type IPagesListView = {
   pageIds: string[];

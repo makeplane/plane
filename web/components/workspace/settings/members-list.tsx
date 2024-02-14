@@ -7,7 +7,7 @@ import { useMember } from "hooks/store";
 // components
 import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "components/workspace";
 // ui
-import { Loader } from "@plane/ui";
+import { MembersSettingsLoader } from "components/ui";
 
 export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props) => {
   const { searchQuery } = props;
@@ -30,15 +30,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props
     workspaceSlug ? () => fetchWorkspaceMemberInvitations(workspaceSlug.toString()) : null
   );
 
-  if (!workspaceMemberIds && !workspaceMemberInvitationIds)
-    return (
-      <Loader className="space-y-5">
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-      </Loader>
-    );
+  if (!workspaceMemberIds && !workspaceMemberInvitationIds) return <MembersSettingsLoader />;
 
   // derived values
   const searchedMemberIds = getSearchedWorkspaceMemberIds(searchQuery);
