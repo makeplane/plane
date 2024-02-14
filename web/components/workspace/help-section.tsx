@@ -12,6 +12,7 @@ import { DiscordIcon, GithubIcon, Tooltip, Button } from "@plane/ui";
 import packageJson from "package.json";
 // components
 import { ProPlanModal } from "components/license";
+import useSize from "hooks/use-window-size";
 
 const helpOptions = [
   {
@@ -46,10 +47,12 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   const [isProPlanModalOpen, setIsProPlanModalOpen] = useState(false);
   // store hooks
   const {
-    theme: { sidebarCollapsed, toggleSidebar },
+    theme: { sidebarCollapsed, toggleSidebar, toggleMobileSidebar },
     commandPalette: { toggleShortcutModal },
   } = useApplication();
   const { captureEvent } = useEventTracker();
+
+  const [windowWidth] = useSize();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
@@ -108,7 +111,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
-            onClick={() => toggleSidebar()}
+            onClick={() => (windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar())}
           >
             <MoveLeft className="h-3.5 w-3.5" />
           </button>
@@ -119,7 +122,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
               className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
                 isCollapsed ? "w-full" : ""
               }`}
-              onClick={() => toggleSidebar()}
+              onClick={() => (windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar())}
             >
               <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
             </button>
