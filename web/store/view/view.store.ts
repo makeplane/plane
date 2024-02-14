@@ -21,7 +21,7 @@ import {
 // helpers
 import { FiltersHelper } from "./helpers/filters_helpers";
 // constants
-import { EViewPageType, viewDefaultFilterParametersByViewTypeAndLayout } from "constants/view";
+import { EViewLayouts, EViewPageType, viewDefaultFilterParametersByViewTypeAndLayout } from "constants/view";
 
 type TLoader = "updating" | undefined;
 
@@ -250,11 +250,11 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     const sub_issue = appliedFilters?.display_filters?.sub_issue;
 
     if (group_by === undefined && display_filters.sub_group_by) display_filters.sub_group_by = undefined;
-    if (layout === "kanban") {
+    if (layout === EViewLayouts.KANBAN) {
       if (sub_group_by === group_by) display_filters.group_by = undefined;
       if (group_by === null) display_filters.group_by = "state";
     }
-    if (layout === "spreadsheet" && sub_issue === true) display_filters.sub_issue = false;
+    if (layout === EViewLayouts.SPREADSHEET && sub_issue === true) display_filters.sub_issue = false;
 
     runInAction(() => {
       Object.keys(display_filters).forEach((key) => {

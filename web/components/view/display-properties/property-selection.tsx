@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useViewDetail } from "hooks/store";
@@ -18,9 +18,12 @@ export const ViewDisplayPropertySelection: FC<TViewDisplayPropertySelection> = o
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
-  const propertyIsSelected = viewDetailStore?.appliedFilters?.display_properties?.[property];
+  const handlePropertySelection = useCallback(
+    () => viewDetailStore?.setDisplayProperties(property),
+    [viewDetailStore, property]
+  );
 
-  const handlePropertySelection = () => viewDetailStore?.setDisplayProperties(property);
+  const propertyIsSelected = viewDetailStore?.appliedFilters?.display_properties?.[property];
 
   return (
     <div

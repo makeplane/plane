@@ -1,4 +1,4 @@
-import { FC, Fragment, ReactNode, useRef, useState } from "react";
+import { FC, Fragment, ReactNode, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
@@ -64,14 +64,17 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
     ],
   });
 
-  const handleDropdownOpen = () => setDropdownToggle(true);
-  const handleDropdownClose = () => setDropdownToggle(false);
-  const handleDropdownToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!dropdownToggle) handleDropdownOpen();
-    else handleDropdownClose();
-  };
+  const handleDropdownOpen = useCallback(() => setDropdownToggle(true), []);
+  const handleDropdownClose = useCallback(() => setDropdownToggle(false), []);
+  const handleDropdownToggle = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!dropdownToggle) handleDropdownOpen();
+      else handleDropdownClose();
+    },
+    [dropdownToggle, handleDropdownOpen, handleDropdownClose]
+  );
 
   useOutsideClickDetector(dropdownRef, () => dateCustomFilterToggle === undefined && handleDropdownClose());
 

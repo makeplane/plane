@@ -52,6 +52,8 @@ export type TViewDisplayFiltersOrderBy =
   | "sub_issues_count"
   | "-sub_issues_count";
 
+export type TViewDisplayFiltersExtraOptions = "sub_issue" | "show_empty_groups";
+
 export type TViewDisplayFiltersType = "active" | "backlog";
 
 export type TViewCalendarLayouts = "month" | "week";

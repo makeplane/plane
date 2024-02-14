@@ -7,6 +7,7 @@ import {
   TViewDisplayFiltersGrouped,
   TViewDisplayFiltersOrderBy,
   TViewDisplayFiltersType,
+  TViewDisplayFiltersExtraOptions,
 } from "@plane/types";
 
 // filters constants
@@ -61,7 +62,7 @@ export const TYPE_PROPERTY: Record<TViewDisplayFiltersType | "null", { label: st
   backlog: { label: "Backlog issues" },
 };
 
-export const EXTRA_OPTIONS_PROPERTY: Record<string, { label: string }> = {
+export const EXTRA_OPTIONS_PROPERTY: Record<TViewDisplayFiltersExtraOptions, { label: string }> = {
   sub_issue: { label: "Sub Issues" },
   show_empty_groups: { label: "Show Empty Groups" },
 };
@@ -111,8 +112,9 @@ const ALL_FILTER_PERMISSIONS: TFilterPermissions["all"] = {
   layouts: [EViewLayouts.SPREADSHEET],
   [EViewLayouts.SPREADSHEET]: {
     filters: ["project", "priority", "state_group", "assignees", "created_by", "labels", "start_date", "target_date"],
-    display_filters: ["type"],
+    // display_filters: ["type"],
     // extra_options: [],
+    display_filters: ["group_by", "sub_group_by", "order_by", "type"],
     extra_options: ["sub_issue", "show_empty_groups"],
     display_properties: true,
   },

@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { LucideIcon, List, Kanban, Calendar, Sheet, GanttChartSquare } from "lucide-react";
 // hooks
@@ -18,20 +18,23 @@ type TViewLayoutRoot = {
   viewPageType: EViewPageType;
 };
 
-const LAYOUTS_DATA: { key: EViewLayouts; title: string; icon: LucideIcon }[] = [
-  { key: EViewLayouts.LIST, title: "List Layout", icon: List },
-  { key: EViewLayouts.KANBAN, title: "Kanban Layout", icon: Kanban },
-  { key: EViewLayouts.CALENDAR, title: "Calendar Layout", icon: Calendar },
-  { key: EViewLayouts.SPREADSHEET, title: "Spreadsheet Layout", icon: Sheet },
-  { key: EViewLayouts.GANTT, title: "Gantt Chart layout", icon: GanttChartSquare },
-];
-
 export const ViewLayoutRoot: FC<TViewLayoutRoot> = observer((props) => {
   const { workspaceSlug, projectId, viewId, viewType, viewPageType } = props;
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
-  const validLayouts = viewPageDefaultLayoutsByPageType(viewPageType);
+  const LAYOUTS_DATA: { key: EViewLayouts; title: string; icon: LucideIcon }[] = useMemo(
+    () => [
+      { key: EViewLayouts.LIST, title: "List Layout", icon: List },
+      { key: EViewLayouts.KANBAN, title: "Kanban Layout", icon: Kanban },
+      { key: EViewLayouts.CALENDAR, title: "Calendar Layout", icon: Calendar },
+      { key: EViewLayouts.SPREADSHEET, title: "Spreadsheet Layout", icon: Sheet },
+      { key: EViewLayouts.GANTT, title: "Gantt Chart layout", icon: GanttChartSquare },
+    ],
+    []
+  );
+
+  const validLayouts = useMemo(() => viewPageDefaultLayoutsByPageType(viewPageType), [viewPageType]);
 
   if (!viewDetailStore || validLayouts.length <= 1) return <></>;
   return (

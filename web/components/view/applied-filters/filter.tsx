@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import isEmpty from "lodash/isEmpty";
 import { X } from "lucide-react";
@@ -24,14 +24,23 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   const viewFilterStore = useViewFilter(workspaceSlug, projectId);
 
-  const currentDefaultFilterDetails = viewFilterStore?.propertyDefaultDetails(filterKey);
+  const currentDefaultFilterDetails = useMemo(
+    () => viewFilterStore?.propertyDefaultDetails(filterKey),
+    [viewFilterStore, filterKey]
+  );
 
-  const propertyValues =
-    viewDetailStore?.appliedFilters?.filters && !isEmpty(viewDetailStore?.appliedFilters?.filters)
-      ? viewDetailStore?.appliedFilters?.filters?.[filterKey] || undefined
-      : undefined;
+  const propertyValues = useMemo(
+    () =>
+      viewDetailStore?.appliedFilters?.filters && !isEmpty(viewDetailStore?.appliedFilters?.filters)
+        ? viewDetailStore?.appliedFilters?.filters?.[filterKey] || undefined
+        : undefined,
+    [filterKey, viewDetailStore?.appliedFilters?.filters]
+  );
 
-  const clearPropertyFilter = () => viewDetailStore?.setFilters(filterKey, "clear_all");
+  const clearPropertyFilter = useCallback(
+    () => viewDetailStore?.setFilters(filterKey, "clear_all"),
+    [viewDetailStore, filterKey]
+  );
 
   if (!propertyValues || propertyValues.length <= 0) return <></>;
   return (

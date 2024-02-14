@@ -1,7 +1,5 @@
-import { FC, Fragment, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { FC, Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { CheckCircle } from "lucide-react";
 import { v4 as uuidV4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
 // hooks
@@ -35,7 +33,6 @@ type TGlobalViewRoot = {
   viewType: TViewTypes;
   viewPageType: EViewPageType;
   baseRoute: string;
-  workspaceViewTabOptions: { key: TViewTypes; title: string; href: string }[];
 };
 
 type TViewOperationsToggle = {
@@ -44,7 +41,7 @@ type TViewOperationsToggle = {
 };
 
 export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewPageType, baseRoute, workspaceViewTabOptions } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewPageType, baseRoute } = props;
   // hooks
   const viewStore = useView(workspaceSlug, projectId, viewType);
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
@@ -54,9 +51,11 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
     type: undefined,
     viewId: undefined,
   });
-  const handleViewOperationsToggle = (type: TViewOperationsToggle["type"], viewId: string | undefined) =>
-    setViewOperationsToggle({ type, viewId });
-
+  const handleViewOperationsToggle = useCallback(
+    (type: TViewOperationsToggle["type"], viewId: string | undefined) => setViewOperationsToggle({ type, viewId }),
+    []
+  );
+  // hooks
   const viewDetailCreateEditStore = useViewDetail(
     workspaceSlug,
     projectId,
@@ -153,7 +152,7 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
         }
       },
     }),
-    [viewStore, viewDetailStore, setToastAlert, viewDetailCreateEditStore]
+    [viewStore, viewDetailStore, setToastAlert, viewDetailCreateEditStore, handleViewOperationsToggle]
   );
 
   // fetch all views
@@ -174,43 +173,13 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
 
   return (
     <div className="relative w-full h-full">
-      <div className="relative flex items-center gap-2 px-5 py-4">
-        <div className="relative flex items-center gap-2 overflow-hidden">
-          <div className="flex-shrink-0 w-6 h-6 rounded relative flex justify-center items-center bg-custom-background-80">
-            <CheckCircle size={12} />
-          </div>
-          <div className="font-medium inline-block whitespace-nowrap overflow-hidden truncate line-clamp-1">
-            All Issues
-          </div>
-        </div>
-
-        <div className="ml-auto relative flex items-center gap-3">
-          <div className="relative flex items-center rounded border border-custom-border-200 bg-custom-background-80">
-            {workspaceViewTabOptions.map((tab) => (
-              <Link
-                key={tab.key}
-                href={tab.href}
-                className={`p-4 py-1.5 rounded text-sm transition-all cursor-pointer font-medium
-                ${
-                  viewType === tab.key
-                    ? "text-custom-text-100 bg-custom-background-100"
-                    : "text-custom-text-200 bg-custom-background-80 hover:text-custom-text-100"
-                }`}
-              >
-                {tab.title}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {viewStore?.loader && viewStore?.loader === "init-loader" ? (
         <div className="relative w-full h-full flex justify-center items-center">
           <Spinner />
         </div>
       ) : (
         <>
-          <div className="border-b border-custom-border-200">
+          <div className="border-b border-custom-border-200 pt-2">
             <ViewRoot
               workspaceSlug={workspaceSlug}
               projectId={projectId}

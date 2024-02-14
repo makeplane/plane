@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import concat from "lodash/concat";
@@ -36,20 +36,19 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   // state
   const [filterVisibility, setFilterVisibility] = useState<Partial<keyof TViewFilters>[]>([]);
-  const handleFilterVisibility = (key: keyof TViewFilters) => {
+  const handleFilterVisibility = useCallback((key: keyof TViewFilters) => {
     setFilterVisibility((prevData = []) => {
       if (prevData.includes(key)) return filter(prevData, (item) => item !== key);
       return uniq(concat(prevData, [key]));
     });
-  };
+  }, []);
 
-  const layout = viewDetailStore?.appliedFilters?.display_filters?.layout;
+  const filtersProperties = useMemo(() => {
+    const layout = viewDetailStore?.appliedFilters?.display_filters?.layout;
+    return layout ? viewDefaultFilterParametersByViewTypeAndLayout(viewPageType, layout, "filters") : [];
+  }, [viewDetailStore?.appliedFilters?.display_filters?.layout, viewPageType]);
 
-  const filtersProperties = layout
-    ? viewDefaultFilterParametersByViewTypeAndLayout(viewPageType, layout, "filters")
-    : [];
-
-  if (!layout || filtersProperties.length <= 0) return <></>;
+  if (filtersProperties.length <= 0) return <></>;
   return (
     <div className="space-y-1 divide-y divide-custom-border-300">
       {filtersProperties.map((filterKey) => (

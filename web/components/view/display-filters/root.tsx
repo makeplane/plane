@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import filter from "lodash/filter";
@@ -7,9 +7,9 @@ import uniq from "lodash/uniq";
 // hooks
 import { useViewDetail } from "hooks/store";
 // components
-import { ViewDisplayPropertiesRoot, ViewDisplayFiltersItemRoot } from "../";
+import { ViewDisplayPropertiesRoot, ViewDisplayFiltersItemRoot, DisplayFilterExtraOptions } from "../";
 // types
-import { TViewDisplayFilters, TViewTypes } from "@plane/types";
+import { TViewDisplayFilters, TViewDisplayFiltersExtraOptions, TViewTypes } from "@plane/types";
 // constants
 import { EViewPageType, viewDefaultFilterParametersByViewTypeAndLayout } from "constants/view";
 
@@ -29,18 +29,22 @@ export const ViewDisplayFiltersRoot: FC<TViewDisplayFiltersRoot> = observer((pro
   const [filterVisibility, setFilterVisibility] = useState<(Partial<keyof TViewDisplayFilters> | "display_property")[]>(
     []
   );
-  const handleFilterVisibility = (key: keyof TViewDisplayFilters | "display_property") => {
+  const handleFilterVisibility = useCallback((key: keyof TViewDisplayFilters | "display_property") => {
     setFilterVisibility((prevData = []) => {
       if (prevData.includes(key)) return filter(prevData, (item) => item !== key);
       return uniq(concat(prevData, [key]));
     });
-  };
+  }, []);
 
-  const layout = viewDetailStore?.appliedFilters?.display_filters?.layout;
+  const filtersProperties = useMemo(() => {
+    const layout = viewDetailStore?.appliedFilters?.display_filters?.layout;
+    return layout ? viewDefaultFilterParametersByViewTypeAndLayout(viewPageType, layout, "display_filters") : [];
+  }, [viewDetailStore, viewPageType]);
 
-  const filtersProperties = layout
-    ? viewDefaultFilterParametersByViewTypeAndLayout(viewPageType, layout, "display_filters")
-    : [];
+  const filtersExtraProperties = useMemo(() => {
+    const layout = viewDetailStore?.appliedFilters?.display_filters?.layout;
+    return layout ? viewDefaultFilterParametersByViewTypeAndLayout(viewPageType, layout, "extra_options") : [];
+  }, [viewDetailStore, viewPageType]);
 
   return (
     <div className="space-y-1 divide-y divide-custom-border-300">
@@ -67,7 +71,7 @@ export const ViewDisplayFiltersRoot: FC<TViewDisplayFiltersRoot> = observer((pro
       </div>
 
       {filtersProperties.map((filterKey) => (
-        <div key={filterKey} className="relative py-1 last:pb-0">
+        <div key={filterKey} className="relative py-1">
           <div className="sticky top-0 z-20 flex justify-between items-center gap-2 bg-custom-background-100 select-none">
             <div className="font-medium text-xs text-custom-text-300 capitalize py-1">
               {filterKey.replaceAll("_", " ")}
@@ -91,10 +95,16 @@ export const ViewDisplayFiltersRoot: FC<TViewDisplayFiltersRoot> = observer((pro
         </div>
       ))}
 
-      {/* extra options */}
-      <div>
-        <div>Show sub issues</div>
-        <div>Show Empty groups</div>
+      <div className="pt-1 pb-0">
+        {filtersExtraProperties.map((option) => (
+          <DisplayFilterExtraOptions
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            viewId={viewId}
+            viewType={viewType}
+            filterKey={option as TViewDisplayFiltersExtraOptions}
+          />
+        ))}
       </div>
     </div>
   );

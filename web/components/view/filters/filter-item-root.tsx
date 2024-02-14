@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useViewDetail, useViewFilter } from "hooks/store";
@@ -27,28 +27,37 @@ export const ViewFiltersItemRoot: FC<TViewFiltersItemRoot> = observer((props) =>
   // state
   const [viewAll, setViewAll] = useState(false);
 
-  const propertyIds = viewFilterHelper?.filterIdsWithKey(filterKey) || [];
+  const propertyIds = useMemo(() => viewFilterHelper?.filterIdsWithKey(filterKey) || [], [viewFilterHelper, filterKey]);
 
-  const filterPropertyIds = propertyIds.length > 5 ? (viewAll ? propertyIds : propertyIds.slice(0, 5)) : propertyIds;
+  const filterPropertyIds = useMemo(
+    () => (propertyIds.length > 5 ? (viewAll ? propertyIds : propertyIds.slice(0, 5)) : propertyIds),
+    [propertyIds, viewAll]
+  );
 
-  const handlePropertySelection = (_propertyId: string) => {
-    if (["start_date", "target_date"].includes(filterKey)) {
-      if (_propertyId === "custom") {
-        const _propertyIds = viewDetailStore?.appliedFilters?.filters?.[filterKey] || [];
-        const selectedDates = _propertyIds.filter((id) => id.includes("-"));
-        if (selectedDates.length > 0)
-          selectedDates.forEach((date: string) => viewDetailStore?.setFilters(filterKey, date));
-        else setDateCustomFilterToggle(filterKey);
+  const handlePropertySelection = useCallback(
+    (_propertyId: string) => {
+      if (["start_date", "target_date"].includes(filterKey)) {
+        if (_propertyId === "custom") {
+          const _propertyIds = viewDetailStore?.appliedFilters?.filters?.[filterKey] || [];
+          const selectedDates = _propertyIds.filter((id) => id.includes("-"));
+          if (selectedDates.length > 0)
+            selectedDates.forEach((date: string) => viewDetailStore?.setFilters(filterKey, date));
+          else setDateCustomFilterToggle(filterKey);
+        } else viewDetailStore?.setFilters(filterKey, _propertyId);
       } else viewDetailStore?.setFilters(filterKey, _propertyId);
-    } else viewDetailStore?.setFilters(filterKey, _propertyId);
-  };
+    },
+    [filterKey, viewDetailStore, setDateCustomFilterToggle]
+  );
 
-  const handleCustomDateSelection = (selectedDates: string[]) => {
-    selectedDates.forEach((date: string) => {
-      viewDetailStore?.setFilters(filterKey, date);
-      setDateCustomFilterToggle(undefined);
-    });
-  };
+  const handleCustomDateSelection = useCallback(
+    (selectedDates: string[]) => {
+      selectedDates.forEach((date: string) => {
+        viewDetailStore?.setFilters(filterKey, date);
+        setDateCustomFilterToggle(undefined);
+      });
+    },
+    [filterKey, viewDetailStore, setDateCustomFilterToggle]
+  );
 
   if (propertyIds.length <= 0)
     return <div className="text-xs italic py-1 text-custom-text-300">No items are available.</div>;

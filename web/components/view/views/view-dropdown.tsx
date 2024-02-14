@@ -1,4 +1,4 @@
-import { FC, Fragment, ReactNode, useRef, useState } from "react";
+import { FC, Fragment, ReactNode, useCallback, useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
@@ -7,7 +7,7 @@ import { Plus, Search } from "lucide-react";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { useView } from "hooks/store";
 // components
-import { ViewDropdownItem } from "..";
+import { ViewDropdownItem } from "../";
 // types
 import { TViewTypes } from "@plane/types";
 import { TViewOperations } from "../types";
@@ -63,14 +63,17 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
     ],
   });
 
-  const handleDropdownOpen = () => setDropdownToggle(true);
-  const handleDropdownClose = () => setDropdownToggle(false);
-  const handleDropdownToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!dropdownToggle) handleDropdownOpen();
-    else handleDropdownClose();
-  };
+  const handleDropdownOpen = useCallback(() => setDropdownToggle(true), []);
+  const handleDropdownClose = useCallback(() => setDropdownToggle(false), []);
+  const handleDropdownToggle = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!dropdownToggle) handleDropdownOpen();
+      else handleDropdownClose();
+    },
+    [dropdownToggle, handleDropdownOpen, handleDropdownClose]
+  );
 
   useOutsideClickDetector(dropdownRef, handleDropdownClose);
 

@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
@@ -31,7 +31,7 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
     const handleViewTabsVisibility = () => {
       const tabContainer = document.getElementById("tab-container");
       const tabItemViewMore = document.getElementById("tab-item-view-more");
-      const itemWidth = 116;
+      const itemWidth = 124;
       if (!tabContainer || !tabItemViewMore) return;
 
       const containerWidth = tabContainer.clientWidth;
@@ -49,12 +49,14 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
     return () => window.removeEventListener("resize", () => handleViewTabsVisibility());
   }, [viewStore?.viewIds]);
 
-  const viewIds = viewStore?.viewIds?.slice(0, itemsToRenderViewsCount || viewStore?.viewIds.length) || [];
-
-  if (!viewIds.includes(viewId)) {
-    viewIds.pop();
-    viewIds.push(viewId);
-  }
+  const viewIds = useMemo(() => {
+    const ids = viewStore?.viewIds?.slice(0, itemsToRenderViewsCount || viewStore?.viewIds.length) || [];
+    if (!ids.includes(viewId)) {
+      ids.pop();
+      ids.push(viewId);
+    }
+    return ids;
+  }, [viewId, viewStore, itemsToRenderViewsCount]);
 
   return (
     <div className="relative flex justify-between px-5 gap-2">

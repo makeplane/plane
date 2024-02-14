@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { Check } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -20,7 +20,10 @@ export const ViewFilterSelection: FC<TViewFilterSelection> = observer((props) =>
 
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
-  const propertyIds = viewDetailStore?.appliedFilters?.filters?.[filterKey] || [];
+  const propertyIds = useMemo(
+    () => viewDetailStore?.appliedFilters?.filters?.[filterKey] || [],
+    [viewDetailStore?.appliedFilters?.filters, filterKey]
+  );
 
   const isSelected = ["start_date", "target_date"].includes(filterKey)
     ? propertyId === "custom"
@@ -29,6 +32,18 @@ export const ViewFilterSelection: FC<TViewFilterSelection> = observer((props) =>
         : false
       : propertyIds?.includes(propertyId)
     : propertyIds?.includes(propertyId) || false;
+
+  // const isSelected = useMemo(
+  //   () =>
+  //     ["start_date", "target_date"].includes(filterKey)
+  //       ? propertyId === "custom"
+  //         ? propertyIds.filter((id) => id.includes("-")).length > 0
+  //           ? true
+  //           : false
+  //         : propertyIds?.includes(propertyId)
+  //       : propertyIds?.includes(propertyId) || false,
+  //   [filterKey, propertyId, propertyIds]
+  // );
 
   return (
     <div

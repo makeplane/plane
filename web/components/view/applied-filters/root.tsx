@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 import isEmpty from "lodash/isEmpty";
@@ -23,12 +23,15 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
   // hooks
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
 
-  const filterKeys =
-    viewDetailStore?.filtersToUpdate && !isEmpty(viewDetailStore?.filtersToUpdate?.filters)
-      ? Object.keys(viewDetailStore?.filtersToUpdate?.filters)
-      : undefined;
+  const filterKeys = useMemo(
+    () =>
+      viewDetailStore?.filtersToUpdate && !isEmpty(viewDetailStore?.filtersToUpdate?.filters)
+        ? Object.keys(viewDetailStore?.filtersToUpdate?.filters)
+        : undefined,
+    [viewDetailStore?.filtersToUpdate]
+  );
 
-  const clearAllFilters = () => viewDetailStore?.setFilters(undefined, "clear_all");
+  const clearAllFilters = useCallback(() => viewDetailStore?.setFilters(undefined, "clear_all"), [viewDetailStore]);
 
   if (!filterKeys || !viewDetailStore?.isFiltersApplied)
     return (

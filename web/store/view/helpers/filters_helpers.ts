@@ -14,19 +14,19 @@ import { EViewPageType, viewPageDefaultLayoutsByPageType } from "constants/view"
 export class FiltersHelper {
   // computed filters
   computedFilters = (filters: TViewFilters, defaultValues?: Partial<TViewFilters>): TViewFilters => ({
-    project: get(defaultValues, "project", get(filters, "project", [])),
-    module: get(defaultValues, "module", get(filters, "module", [])),
-    cycle: get(defaultValues, "cycle", get(filters, "cycle", [])),
-    priority: get(defaultValues, "priority", get(filters, "priority", [])),
-    state: get(defaultValues, "state", get(filters, "state", [])),
-    state_group: get(defaultValues, "state_group", get(filters, "state_group", [])),
-    assignees: get(defaultValues, "assignees", get(filters, "assignees", [])),
-    mentions: get(defaultValues, "mentions", get(filters, "mentions", [])),
-    subscriber: get(defaultValues, "subscriber", get(filters, "subscriber", [])),
-    created_by: get(defaultValues, "created_by", get(filters, "created_by", [])),
-    labels: get(defaultValues, "labels", get(filters, "labels", [])),
-    start_date: get(defaultValues, "start_date", get(filters, "start_date", [])),
-    target_date: get(defaultValues, "target_date", get(filters, "target_date", [])),
+    project: defaultValues?.project || filters?.project || [],
+    module: defaultValues?.module || filters?.module || [],
+    cycle: defaultValues?.cycle || filters?.cycle || [],
+    priority: defaultValues?.priority || filters?.priority || [],
+    state: defaultValues?.state || filters?.state || [],
+    state_group: defaultValues?.state_group || filters?.state_group || [],
+    assignees: defaultValues?.assignees || filters?.assignees || [],
+    mentions: defaultValues?.mentions || filters?.mentions || [],
+    subscriber: defaultValues?.subscriber || filters?.subscriber || [],
+    created_by: defaultValues?.created_by || filters?.created_by || [],
+    labels: defaultValues?.labels || filters?.labels || [],
+    start_date: defaultValues?.start_date || filters?.start_date || [],
+    target_date: defaultValues?.target_date || filters?.target_date || [],
   });
 
   // computed display filters

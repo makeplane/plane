@@ -1,5 +1,7 @@
 export * from "./root";
 
+export * from "./header-tabs";
+
 // views
 export * from "./views/root";
 export * from "./views/view-item";
@@ -25,6 +27,7 @@ export * from "./display-filters/root";
 export * from "./display-filters/display-filter-item-root";
 export * from "./display-filters/display-filter-item";
 export * from "./display-filters/display-filter-selection";
+export * from "./display-filters/extra-options";
 
 // view display properties
 export * from "./display-properties/root";

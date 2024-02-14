@@ -30,6 +30,7 @@ import {
   GROUP_BY_PROPERTY,
   ORDER_BY_PROPERTY,
   TYPE_PROPERTY,
+  EViewLayouts,
 } from "constants/view/filters";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
@@ -346,12 +347,19 @@ export const useViewFilter = (workspaceSlug: string, projectId: string | undefin
     }
   };
 
-  const displayFilterIdsWithKey = (displayFilterKey: keyof TViewDisplayFilters): string[] | undefined => {
+  const displayFilterIdsWithKey = (
+    displayFilterKey: keyof TViewDisplayFilters,
+    layout?: EViewLayouts
+  ): string[] | undefined => {
     if (!displayFilterKey) return undefined;
 
     switch (displayFilterKey) {
       case "group_by":
-        return Object.keys(GROUP_BY_PROPERTY) || undefined;
+        return (
+          Object.keys(GROUP_BY_PROPERTY).filter((property) =>
+            layout === EViewLayouts.KANBAN ? (property !== "null" ? false : true) : true
+          ) || undefined
+        );
       case "sub_group_by":
         return Object.keys(GROUP_BY_PROPERTY) || undefined;
       case "order_by":

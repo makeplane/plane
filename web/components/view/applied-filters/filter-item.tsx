@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { ImagePlus, X } from "lucide-react";
 // hooks
 import { useViewDetail, useViewFilter } from "hooks/store";
@@ -22,9 +22,10 @@ export const ViewAppliedFiltersItem: FC<TViewAppliedFiltersItem> = (props) => {
 
   const propertyDetail = viewFilterHelper?.propertyDetails(filterKey, propertyId) || undefined;
 
-  const removeFilterOption = () => {
-    viewDetailStore?.setFilters(filterKey, propertyId);
-  };
+  const removeFilterOption = useCallback(
+    () => viewDetailStore?.setFilters(filterKey, propertyId),
+    [viewDetailStore, filterKey, propertyId]
+  );
 
   return (
     <div
