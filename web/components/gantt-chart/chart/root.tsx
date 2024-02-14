@@ -31,6 +31,7 @@ type ChartViewRootProps = {
   enableAddBlock: boolean;
   bottomSpacing: boolean;
   showAllBlocks: boolean;
+  quickAdd?: React.JSX.Element | undefined;
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
@@ -49,6 +50,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
     enableAddBlock,
     bottomSpacing,
     showAllBlocks,
+    quickAdd,
   } = props;
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
@@ -200,6 +202,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
         sidebarToRender={sidebarToRender}
         title={title}
         updateCurrentViewRenderPayload={updateCurrentViewRenderPayload}
+        quickAdd={quickAdd}
       />
     </div>
   );
