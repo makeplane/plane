@@ -47,7 +47,7 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
   );
 
   return (
-    <section className="w-full overflow-y-auto py-8 pr-9">
+    <section className="w-full overflow-y-auto md:py-8 py-3">
       <IntegrationAndImportExportBanner bannerName="Integrations" />
       <div>
         {appIntegrations ? (

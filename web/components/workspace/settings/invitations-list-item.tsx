@@ -79,7 +79,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
         }}
         onSubmit={handleRemoveInvitation}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
+      <div className="group flex items-center justify-between md:px-3 py-4 hover:bg-custom-background-90">
         <div className="flex items-center gap-x-4 gap-y-2">
           <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
             {(invitationDetails.email ?? "?")[0]}

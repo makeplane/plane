@@ -50,7 +50,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     <>
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       {tokens ? (
-        <section className="w-full overflow-y-auto py-8 pr-9">
+        <section className="h-full w-full overflow-y-auto md:py-8 py-3">
           {tokens.length > 0 ? (
             <>
               <div className="mb-2 flex items-center justify-between border-b border-custom-border-200 py-3.5">

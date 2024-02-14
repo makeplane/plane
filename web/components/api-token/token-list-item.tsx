@@ -21,7 +21,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
-      <div className="group relative flex flex-col justify-center border-b border-custom-border-200 px-4 py-3">
+      <div className="group relative flex flex-col justify-center border-b border-custom-border-200 md:px-4 py-3">
         <Tooltip tooltipContent="Delete token">
           <button
             onClick={() => setDeleteModalOpen(true)}

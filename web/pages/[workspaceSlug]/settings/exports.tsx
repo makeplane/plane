@@ -29,7 +29,7 @@ const ExportsPage: NextPageWithLayout = observer(() => {
     );
 
   return (
-    <div className="w-full overflow-y-auto py-8 pr-9">
+    <div className="w-full overflow-y-auto md:py-8 py-3">
       <div className="flex items-center border-b border-custom-border-100 py-3.5">
         <h3 className="text-xl font-medium">Exports</h3>
       </div>

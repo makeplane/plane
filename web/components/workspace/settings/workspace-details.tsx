@@ -177,7 +177,7 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full overflow-y-auto py-8 ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex items-center gap-5 border-b border-custom-border-100 pb-7">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>

@@ -107,7 +107,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const isInstalled = workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
 
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
+    <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 md:px-4 py-6">
       <div className="flex items-start gap-4">
         <div className="h-10 w-10 flex-shrink-0">
           <Image src={integrationDetails[integration.provider].logo} alt={`${integration.title} Logo`} />

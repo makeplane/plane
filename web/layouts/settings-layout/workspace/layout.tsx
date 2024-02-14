@@ -14,7 +14,7 @@ export const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
       <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8 sm:hidden hidden md:block lg:block">
         <WorkspaceSettingsSidebar />
       </div>
-      <div className="w-full pl-10 sm:pl-10 md:pl-0 lg:pl-0">
+      <div className="w-full px-4 md:pl-0 md:pr-9">
         {children}
       </div>
     </div>
