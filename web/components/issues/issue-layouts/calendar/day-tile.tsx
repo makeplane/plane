@@ -142,7 +142,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               isSelectedDate
                 ? "bg-custom-primary-100 text-white"
                 : isToday
-                ? "bg-custom-primary-10 text-custom-primary-100 "
+                ? "bg-custom-primary-100/10 text-custom-primary-100 "
                 : ""
             }`}
           >

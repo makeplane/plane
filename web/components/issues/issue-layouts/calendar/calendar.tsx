@@ -141,7 +141,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               if (!issues?.[issueId]) return null;
               const issue = issues?.[issueId];
               return (
-                <div className="border-b px-4">
+                <div className="border-b border-custom-border-200 px-4">
                   <CalendarIssueBlock issue={issue} quickActions={quickActions} />
                 </div>
               );
@@ -149,7 +149,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
         </div>
 
         {enableIssueCreation && isEditingAllowed && !readOnly && (
-          <div className="px-2 border-b !h-10 mb-5 flex items-center md:hidden">
+          <div className="px-2 border-b border-custom-border-200 !h-10 mb-5 flex items-center md:hidden">
             <CalendarQuickAddIssueForm
               formKey="target_date"
               groupId={formattedDatePayload}
