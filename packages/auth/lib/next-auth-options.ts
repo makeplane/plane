@@ -1,8 +1,10 @@
 import { Provider } from "next-auth/providers";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import { signIn } from "../callbacks/sign-in"
-import { JWT } from "next-auth/jwt"
+import { signIn } from "../callbacks/sign-in";
+import { jwt } from "../callbacks/jwt";
+import { session } from "../callbacks/session";
+import axios from "axios";
 
 export type TAuthConfig = {
   google: {
@@ -42,28 +44,28 @@ const getNextAuthProviders = (configs: TAuthConfig) => {
 
 export const getAuthOptions = (config: TAuthConfig) => ({
   providers: getNextAuthProviders(config),
-  session: {
-    strategy: "jwt",
+  jwt: {
+    encode: async ({ token }) => {
+      console.log(token);
+      console.log("JWT ENCODE", token);
+      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+      const { session } = await axios
+        .post(BASE_URL + "/api/auth/sessions/", {
+          user_id: token?.user?.id || token?.id,
+        })
+        .then((res) => res.data);
+      return session;
+    },
+    decode: async ({ token }) => {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+      return await axios
+        .get(BASE_URL + "/api/auth/sessions/" + token + "/")
+        .then((res) => res.data);
+    },
   },
   callbacks: {
-    // signIn,
     signIn,
-    // jwt
-    async jwt({ token, user }: any) {
-      if (user?.access_token) {
-        token.access_token = user?.access_token;
-      }
-      if (user?.refresh_token) {
-        token.refresh_token = user?.refresh_token;
-      }
-      return token;
-    },
-    // session,
-    async session({ session, token }: any) {
-      if (token?.access_token) {
-        session.user.access_token = token?.access_token;
-      }
-      return Promise.resolve(session);
-    },
+    jwt,
+    session,
   },
 });
