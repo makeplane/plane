@@ -13,7 +13,6 @@ import { TIssueOperations } from "./issue-detail";
 import { FileService } from "services/file.service";
 import { useMention, useWorkspace } from "hooks/store";
 import { observer } from "mobx-react";
-import { isNil } from "lodash";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -79,13 +78,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
   }, [issue.id]); // TODO: verify the exhaustive-deps warning
 
   useEffect(() => {
-    if (issue.description_html) {
+    if (["", undefined, null].includes(localIssueDescription.description_html)) {
       setLocalIssueDescription((state) => {
-        if (!isNil(state.description_html)) return state;
-        return { id: issue.id, description_html: issue.description_html };
+        if (!["", undefined, null].includes(state.description_html)) return state;
+        return { id: issue.id, description_html: issue.description_html || "<p></p>" };
       });
     }
-  }, [issue.description_html]);
+  }, [issue.description_html, localIssueDescription.description_html, issue.id]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<TIssue>) => {
@@ -177,7 +176,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <div className="relative">
-        {issue.description_html ? (
+        {localIssueDescription.description_html ? (
           <Controller
             name="description_html"
             control={control}

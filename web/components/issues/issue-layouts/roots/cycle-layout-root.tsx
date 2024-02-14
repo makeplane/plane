@@ -17,8 +17,6 @@ import {
 } from "components/issues";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 import { ActiveLoader } from "components/ui";
-// ui
-import { Spinner } from "@plane/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 
@@ -56,17 +54,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return (
-      <>
-        {activeLayout ? (
-          <ActiveLoader layout={activeLayout} />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-      </>
-    );
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
   }
 
   return (
