@@ -6,13 +6,14 @@ from plane.app.views import (
     WorkspaceViewViewSet,
     WorkspaceViewFavoriteViewSet,
     ProjectViewFavoriteViewSet,
+    WorkspaceViewIssuesViewSet,
 )
 
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/issues/",
-        WorkspaceViewViewSet.as_view(
+        WorkspaceViewIssuesViewSet.as_view(
             {
                 "get": "list",
             }
