@@ -8,7 +8,7 @@ import { useUser } from "hooks/store";
 import { ProjectSettingsSidebar } from "./sidebar";
 import { NotAuthorizedView } from "components/auth-screens";
 // ui
-import { Button, LayersIcon } from "@plane/ui";
+import { Button, LayersIcon, Loader } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -28,6 +28,36 @@ export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) 
 
   const restrictViewSettings = currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER;
 
+  if (!currentProjectRole) {
+    return (
+      <div className="inset-y-0 z-20 flex flex-grow-0 h-full w-full gap-2 overflow-x-hidden overflow-y-scroll">
+        <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8 sm:hidden hidden md:block lg:block">
+          <div className="flex w-80 flex-col gap-6 px-5">
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-semibold text-custom-sidebar-text-400">SETTINGS</span>
+              <Loader className="flex w-full flex-col gap-2">
+                {[...Array(4)].map(() => (
+                  <Loader.Item height="34px" />
+                ))}
+              </Loader>
+            </div>
+          </div>
+        </div>
+        <div className="w-full pt-14 px-9 sm:pl-10 md:pl-0 lg:pl-0">
+          <Loader className="flex w-full flex-col gap-2 px-5">
+            <div className="pb-4">
+              <Loader.Item height="34px" width="150px" />
+            </div>
+
+            {[...Array(8)].map(() => (
+              <Loader.Item height="34px" />
+            ))}
+          </Loader>
+        </div>
+      </div>
+    );
+  }
+
   return restrictViewSettings ? (
     <NotAuthorizedView
       type="project"
@@ -45,9 +75,7 @@ export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) 
       <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8 sm:hidden hidden md:block lg:block">
         <ProjectSettingsSidebar />
       </div>
-      <div className="w-full pl-10 sm:pl-10 md:pl-0 lg:pl-0">
-        {children}
-      </div>
+      <div className="w-full pl-10 sm:pl-10 md:pl-0 lg:pl-0">{children}</div>
     </div>
   );
 });
