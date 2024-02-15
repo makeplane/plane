@@ -14,6 +14,7 @@ from plane.app.serializers import AnalyticViewSerializer
 from plane.utils.analytics_plot import build_graph_plot
 from plane.bgtasks.analytic_plot_export import analytic_export_task
 from plane.utils.issue_filters import issue_filters
+from django.utils import timezone
 
 
 class AnalyticsEndpoint(BaseAPIView):
@@ -331,8 +332,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             .order_by("state_group")
         )
 
+        current_year = timezone.now().year
         issue_completed_month_wise = (
-            base_issues.filter(completed_at__isnull=False)
+            base_issues.filter(completed_at__year=current_year)
             .annotate(month=ExtractMonth("completed_at"))
             .values("month")
             .annotate(count=Count("*"))
