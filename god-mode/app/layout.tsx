@@ -1,6 +1,6 @@
 // lib
-import { ThemeProvider } from "lib/theme-provider";
-import { ToastContextProvider } from "lib/toast-provider";
+import AppWrapper from "lib/wrappers/app-wrapper";
+import { UserAuthWrapper } from "lib/wrappers/user-auth-wrapper";
 // components
 import { InstanceSidebar } from "./sidebar";
 import { InstanceHeader } from "./header";
@@ -16,38 +16,26 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export const RootLayout = async ({ children }: RootLayoutProps) => {
-  const isUserInstanceAdmin = true;
-  return (
-    <html lang="en">
-      <body className={`antialiased`}>
-        {/* <AuthWrapper> */}
-        {/* {isUserInstanceAdmin || true ? ( */}
-        <ThemeProvider
-          themes={["light", "dark"]}
-          defaultTheme="system"
-          enableSystem
-        >
-          <ToastContextProvider>
-            <div className="relative flex h-screen w-full overflow-hidden">
-              <InstanceSidebar />
-              <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-                <InstanceHeader />
-                <div className="h-full w-full overflow-hidden px-10 py-12">
-                  <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
-                    {children}
-                  </div>
+export const RootLayout = async ({ children }: RootLayoutProps) => (
+  <html lang="en">
+    <body className={`antialiased`}>
+      <AppWrapper>
+        <UserAuthWrapper>
+          <div className="relative flex h-screen w-full overflow-hidden">
+            <InstanceSidebar />
+            <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+              <InstanceHeader />
+              <div className="h-full w-full overflow-hidden px-10 py-12">
+                <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
+                  {children}
                 </div>
-              </main>
-            </div>
-          </ToastContextProvider>
-        </ThemeProvider>
-        {/* ) : (
-          <div>Login</div>
-        )} */}
-      </body>
-    </html>
-  );
-};
+              </div>
+            </main>
+          </div>
+        </UserAuthWrapper>
+      </AppWrapper>
+    </body>
+  </html>
+);
 
 export default RootLayout;

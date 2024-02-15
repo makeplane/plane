@@ -2,10 +2,8 @@
 import { APIService } from "services/api.service";
 // types
 import type { IUser, IInstanceAdminStatus } from "@plane/types";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-  ? process.env.NEXT_PUBLIC_API_BASE_URL
-  : "";
+// helpers
+import { API_BASE_URL } from "helpers/common.helper";
 
 export class UserService extends APIService {
   constructor() {

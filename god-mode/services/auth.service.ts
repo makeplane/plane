@@ -8,8 +8,8 @@ import {
   IMagicSignInData,
   IPasswordSignInData,
 } from "@plane/types";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUBLIC_API_BASE_URL : "";
+// helpers
+import { API_BASE_URL } from "helpers/common.helper";
 
 export class AuthService extends APIService {
   constructor() {

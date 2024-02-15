@@ -1,41 +1,51 @@
 "use client";
 
 import useSWR from "swr";
-import useSWRImmutable from "swr/immutable";
+import { observer } from "mobx-react-lite";
 // hooks
-import useUser from "hooks/use-user";
 import useInstance from "hooks/use-instance";
+// ui
+import { Loader } from "@plane/ui";
 // components
-import { GeneralView } from "components/views";
+import { InstanceGeneralForm } from "components/forms";
 
-export default function Home() {
-  const {
-    // isUserInstanceAdmin,
-    fetchCurrentUser,
-    fetchCurrentUserInstanceAdminStatus,
-  } = useUser();
-  const { fetchInstanceInfo, fetchInstanceAdmins } = useInstance();
+const GeneralSettingsPage = observer(() => {
+  // store
+  const { instance, instanceAdmins, fetchInstanceInfo, fetchInstanceAdmins } =
+    useInstance();
 
-  // fetching user information
-  useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
-    shouldRetryOnError: false,
-  });
-  // fetching current user instance admin status
-  useSWRImmutable(
-    "CURRENT_USER_INSTANCE_ADMIN_STATUS",
-    () => fetchCurrentUserInstanceAdminStatus(),
-    {
-      shouldRetryOnError: false,
-    }
-  );
   // fetching instance information
   useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
   // fetching instance admins
   useSWR("INSTANCE_ADMINS", () => fetchInstanceAdmins());
 
   return (
-    <div className="flex">
-      <GeneralView />
+    <div className="flex h-full w-full flex-col gap-8">
+      <div className="mb-2 border-b border-custom-border-100 pb-3">
+        <div className="pb-1 text-xl font-medium text-custom-text-100">
+          ID your instance easily
+        </div>
+        <div className="text-sm font-normal text-custom-text-300">
+          Change the name of your instance and instance admin e-mail addresses.
+          If you have a paid subscription, you will find your license key here.
+        </div>
+      </div>
+      {instance && instanceAdmins ? (
+        <InstanceGeneralForm
+          instance={instance}
+          instanceAdmins={instanceAdmins}
+        />
+      ) : (
+        <Loader className="space-y-4">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
+          <Loader.Item height="50px" />
+        </Loader>
+      )}
     </div>
   );
-}
+});
+
+export default GeneralSettingsPage;
