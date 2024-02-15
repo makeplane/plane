@@ -1,5 +1,13 @@
-export const GeneralView = () => {
-  //   const { instance, instanceAdmins } = useInstance();
+import { observer } from "mobx-react-lite";
+// hooks
+import useInstance from "hooks/use-instance";
+// ui
+import { Loader } from "@plane/ui";
+// components
+import { InstanceGeneralForm } from "components/forms";
+
+export const GeneralView = observer(() => {
+  const { instance, instanceAdmins } = useInstance();
   return (
     <div className="flex h-full w-full flex-col gap-8">
       <div className="mb-2 border-b border-custom-border-100 pb-3">
@@ -11,7 +19,7 @@ export const GeneralView = () => {
           If you have a paid subscription, you will find your license key here.
         </div>
       </div>
-      {/* {instance && instanceAdmins ? (
+      {instance && instanceAdmins ? (
         <InstanceGeneralForm
           instance={instance}
           instanceAdmins={instanceAdmins}
@@ -24,7 +32,7 @@ export const GeneralView = () => {
           </div>
           <Loader.Item height="50px" />
         </Loader>
-      )} */}
+      )}
     </div>
   );
-};
+});

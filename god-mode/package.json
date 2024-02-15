@@ -15,8 +15,10 @@
     "@plane/ui": "*",
     "@tailwindcss/typography": "^0.5.9",
     "autoprefixer": "10.4.14",
+    "axios": "^1.6.7",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
+    "js-cookie": "^3.0.5",
     "mobx": "^6.12.0",
     "mobx-react-lite": "^4.0.5",
     "next": "^14.1.0",
@@ -25,6 +27,7 @@
     "postcss": "8.4.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "swr": "^2.2.4",
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4"
   },

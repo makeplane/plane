@@ -10,3 +10,5 @@ export const useAppTheme = (): IThemeStore => {
     throw new Error("useTheme must be used within ThemeProvider");
   return context;
 };
+
+export default useAppTheme;

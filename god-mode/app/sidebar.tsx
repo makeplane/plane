@@ -1,14 +1,15 @@
 "use client";
 
 import { FC } from "react";
+import { observer } from "mobx-react-lite";
 // hooks
-import { useAppTheme } from "hooks/useTheme";
+import useAppTheme from "hooks/use-theme";
 // components
 import { HelpSection, SidebarMenu, SidebarDropdown } from "components/sidebar";
 
 export interface IInstanceSidebar {}
 
-export const InstanceSidebar: FC<IInstanceSidebar> = () => {
+export const InstanceSidebar: FC<IInstanceSidebar> = observer(() => {
   // store
   const { sidebarCollapsed } = useAppTheme();
 
@@ -25,4 +26,4 @@ export const InstanceSidebar: FC<IInstanceSidebar> = () => {
       </div>
     </div>
   );
-};
+});

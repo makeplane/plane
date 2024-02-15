@@ -1,25 +1,19 @@
 "use client";
 
-import { ReactElement } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// layouts
-// import { InstanceAdminLayout } from "layouts/admin-layout";
-
 // hooks
-// import { useApplication } from "hooks/store";
+import useInstance from "hooks/use-instance";
 // ui
 import { Loader } from "@plane/ui";
 // components
-// import { InstanceEmailForm } from "components/instance";
+import { InstanceEmailForm } from "components/forms";
 
 const InstanceEmailPage = observer(() => {
   // store
-  //   const {
-  //     instance: { fetchInstanceConfigurations, formattedConfig },
-  //   } = useApplication();
+  const { fetchInstanceConfigurations, formattedConfig } = useInstance();
 
-  //   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   return (
     <div className="flex flex-col gap-8">
@@ -38,7 +32,7 @@ const InstanceEmailPage = observer(() => {
           </span>
         </div>
       </div>
-      {/* {formattedConfig ? (
+      {formattedConfig ? (
         <InstanceEmailForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-4">
@@ -48,7 +42,7 @@ const InstanceEmailPage = observer(() => {
           </div>
           <Loader.Item height="50px" />
         </Loader>
-      )} */}
+      )}
     </div>
   );
 });

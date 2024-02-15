@@ -1,60 +1,48 @@
 import { Fragment } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
-import Link from "next/link";
+import { mutate } from "swr";
 // components
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
+import { LogOut, UserCog2, Palette } from "lucide-react";
 // hooks
-import { useAppTheme } from "hooks/useTheme";
-// hooks
-// import useToast from "hooks/use-toast";
+import { useAppTheme } from "hooks/use-theme";
+import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
 // ui
-import { Avatar, Tooltip } from "@plane/ui";
-
-// Static Data
-const PROFILE_LINKS = [
-  {
-    key: "settings",
-    name: "Settings",
-    icon: Settings,
-    link: `/profile`,
-  },
-];
+import { Avatar } from "@plane/ui";
 
 export const SidebarDropdown = observer(() => {
   // router
-  //   const router = useRouter();
+  const router = useRouter();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  //   const { signOut, currentUser, currentUserSettings } = useUser();
+  const { signOut, currentUser } = useUser();
   // hooks
-  //   const { setToastAlert } = useToast();
-  const { setTheme } = useTheme();
-
-  // redirect url for normal mode
-  //   const redirectWorkspaceSlug =
-  //     workspaceSlug ||
-  //     currentUserSettings?.workspace?.last_workspace_slug ||
-  //     currentUserSettings?.workspace?.fallback_workspace_slug ||
-  //     "";
+  const { setToastAlert } = useToast();
+  const { resolvedTheme, setTheme } = useTheme();
 
   const handleSignOut = async () => {
-    // await signOut()
-    //   .then(() => {
-    //     mutate("CURRENT_USER_DETAILS", null);
-    //     setTheme("system");
-    //     router.push("/");
-    //   })
-    //   .catch(() =>
-    //     setToastAlert({
-    //       type: "error",
-    //       title: "Error!",
-    //       message: "Failed to sign out. Please try again.",
-    //     })
-    //   );
+    await signOut()
+      .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
+        router.push("/");
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        })
+      );
+  };
+
+  const handleThemeSwitch = () => {
+    const newTheme = resolvedTheme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
   };
 
   return (
@@ -74,30 +62,21 @@ export const SidebarDropdown = observer(() => {
               <h4 className="grow truncate text-base font-medium text-custom-text-200">
                 Instance admin
               </h4>
-              <Tooltip position="bottom-left" tooltipContent="Exit God Mode">
-                <div className="flex-shrink-0">
-                  {/* <Link href={`/${redirectWorkspaceSlug}`}>
-                    <span>
-                      <LogIn className="h-5 w-5 rotate-180 text-custom-text-200" />
-                    </span>
-                  </Link> */}
-                </div>
-              </Tooltip>
             </div>
           )}
         </div>
       </div>
 
-      {!sidebarCollapsed && (
+      {!sidebarCollapsed && currentUser && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            {/* <Avatar
-              name={currentUser?.display_name}
-              src={currentUser?.avatar}
+            <Avatar
+              name={currentUser.display_name}
+              src={currentUser.avatar}
               size={24}
               shape="square"
               className="!text-base"
-            /> */}
+            />
           </Menu.Button>
 
           <Transition
@@ -114,19 +93,20 @@ export const SidebarDropdown = observer(() => {
           divide-custom-sidebar-border-100 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
             >
               <div className="flex flex-col gap-2.5 pb-2">
-                {/* <span className="px-2 text-custom-sidebar-text-200">
+                <span className="px-2 text-custom-sidebar-text-200">
                   {currentUser?.email}
-                </span> */}
-                {PROFILE_LINKS.map((link) => (
-                  <Menu.Item key={link.key} as="button" type="button">
-                    <Link href={link.link}>
-                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                        <link.icon className="h-4 w-4 stroke-[1.5]" />
-                        {link.name}
-                      </span>
-                    </Link>
-                  </Menu.Item>
-                ))}
+                </span>
+              </div>
+              <div className="py-2">
+                <Menu.Item
+                  as="button"
+                  type="button"
+                  className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
+                  onClick={handleThemeSwitch}
+                >
+                  <Palette className="h-4 w-4 stroke-[1.5]" />
+                  Switch to {resolvedTheme === "dark" ? "light" : "dark"} mode
+                </Menu.Item>
               </div>
               <div className="py-2">
                 <Menu.Item
@@ -137,16 +117,6 @@ export const SidebarDropdown = observer(() => {
                 >
                   <LogOut className="h-4 w-4 stroke-[1.5]" />
                   Sign out
-                </Menu.Item>
-              </div>
-
-              <div className="p-2 pb-0">
-                <Menu.Item as="button" type="button" className="w-full">
-                  {/* <Link href={`/${redirectWorkspaceSlug}`}>
-                    <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
-                      Exit God Mode
-                    </span>
-                  </Link> */}
                 </Menu.Item>
               </div>
             </Menu.Items>

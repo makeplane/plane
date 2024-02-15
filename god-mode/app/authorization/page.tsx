@@ -1,75 +1,67 @@
 "use client";
-import { ReactElement, useState } from "react";
+
+import { useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// layouts
-// import { InstanceAdminLayout } from "layouts/admin-layout";
-// types
-// import { NextPageWithLayout } from "lib/types";
 // hooks
-// import { useApplication } from "hooks/store";
+import useInstance from "hooks/use-instance";
 // hooks
-// import useToast from "hooks/use-toast";
+import useToast from "hooks/use-toast";
 // ui
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
-// import {
-//   InstanceGithubConfigForm,
-//   InstanceGoogleConfigForm,
-// } from "components/instance";
+import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/forms";
 
 const InstanceAuthorizationPage = observer(() => {
   // store
-  //   const {
-  //     instance: {
-  //       fetchInstanceConfigurations,
-  //       formattedConfig,
-  //       updateInstanceConfigurations,
-  //     },
-  //   } = useApplication();
+  const {
+    fetchInstanceConfigurations,
+    formattedConfig,
+    updateInstanceConfigurations,
+  } = useInstance();
 
-  //   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   // toast
-  //   const { setToastAlert } = useToast();
+  const { setToastAlert } = useToast();
 
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  //   const enableSignup = formattedConfig?.ENABLE_SIGNUP ?? "0";
-  //   const enableMagicLogin = formattedConfig?.ENABLE_MAGIC_LINK_LOGIN ?? "0";
+  const enableSignup = formattedConfig?.ENABLE_SIGNUP ?? "0";
+  const enableMagicLogin = formattedConfig?.ENABLE_MAGIC_LINK_LOGIN ?? "0";
   // const enableEmailPassword = formattedConfig?.ENABLE_EMAIL_PASSWORD ?? "0";
 
-  //   const updateConfig = async (
-  //     key: "ENABLE_SIGNUP" | "ENABLE_MAGIC_LINK_LOGIN" | "ENABLE_EMAIL_PASSWORD",
-  //     value: string
-  //   ) => {
-  //     setIsSubmitting(true);
+  const updateConfig = async (
+    key: "ENABLE_SIGNUP" | "ENABLE_MAGIC_LINK_LOGIN" | "ENABLE_EMAIL_PASSWORD",
+    value: string
+  ) => {
+    setIsSubmitting(true);
 
-  //     const payload = {
-  //       [key]: value,
-  //     };
+    const payload = {
+      [key]: value,
+    };
 
-  //     await updateInstanceConfigurations(payload)
-  //       .then(() => {
-  //         setToastAlert({
-  //           title: "Success",
-  //           type: "success",
-  //           message: "SSO and OAuth Settings updated successfully",
-  //         });
-  //         setIsSubmitting(false);
-  //       })
-  //       .catch((err) => {
-  //         console.error(err);
-  //         setToastAlert({
-  //           title: "Error",
-  //           type: "error",
-  //           message: "Failed to update SSO and OAuth Settings",
-  //         });
-  //         setIsSubmitting(false);
-  //       });
-  //   };
+    await updateInstanceConfigurations(payload)
+      .then(() => {
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "SSO and OAuth Settings updated successfully",
+        });
+        setIsSubmitting(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setToastAlert({
+          title: "Error",
+          type: "error",
+          message: "Failed to update SSO and OAuth Settings",
+        });
+        setIsSubmitting(false);
+      });
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -82,7 +74,7 @@ const InstanceAuthorizationPage = observer(() => {
           and GitHub accounts, and below are the settings.
         </div>
       </div>
-      {/* {formattedConfig ? (
+      {formattedConfig ? (
         <>
           <div className="flex w-full flex-col gap-12 border-b border-custom-border-100 pb-8 lg:w-2/5">
             <div className="pointer-events-none mr-4 flex items-center gap-14 opacity-50">
@@ -166,7 +158,7 @@ const InstanceAuthorizationPage = observer(() => {
           </div>
           <Loader.Item height="50px" />
         </Loader>
-      )} */}
+      )}
     </div>
   );
 });

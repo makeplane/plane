@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import Link from "next/link";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft } from "lucide-react";
 // hooks
-import { useAppTheme } from "hooks/useTheme";
+import { useAppTheme } from "hooks/use-theme";
 // icons
 import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
@@ -43,7 +43,7 @@ export const HelpSection: FC = () => {
 
   return (
     <div
-      className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
+      className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
         sidebarCollapsed ? "flex-col" : ""
       }`}
     >

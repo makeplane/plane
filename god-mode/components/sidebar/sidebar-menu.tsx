@@ -2,7 +2,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // hooks
-import { useAppTheme } from "hooks/useTheme";
+import { useAppTheme } from "hooks/use-theme";
 // ui
 import { Tooltip } from "@plane/ui";
 import { observer } from "mobx-react-lite";

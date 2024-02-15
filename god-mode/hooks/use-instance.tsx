@@ -4,9 +4,11 @@ import { InstanceContext } from "lib/instance-provider";
 // types
 import { IInstanceStore } from "store/instance.store";
 
-export const useInstance = (): IInstanceStore => {
+const useInstance = (): IInstanceStore => {
   const context = useContext(InstanceContext);
   if (context === undefined)
-    throw new Error("useTheme must be used within ThemeProvider");
+    throw new Error("useInstance must be used within InstanceProvider");
   return context;
 };
+
+export default useInstance;

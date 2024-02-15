@@ -1,26 +1,19 @@
 "use client";
 
-import { ReactElement } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// layouts
-// import { InstanceAdminLayout } from "layouts/admin-layout";
-// types
-// import { NextPageWithLayout } from "lib/types";
 // hooks
-// import { useApplication } from "hooks/store";
+import useInstance from "hooks/use-instance";
 // ui
 import { Loader } from "@plane/ui";
 // components
-// import { InstanceImageConfigForm } from "components/instance";
+import { InstanceImageConfigForm } from "components/forms";
 
 const InstanceImagePage = observer(() => {
   // store
-  //   const {
-  //     instance: { fetchInstanceConfigurations, formattedConfig },
-  //   } = useApplication();
+  const { fetchInstanceConfigurations, formattedConfig } = useInstance();
 
-  //   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   return (
     <div className="flex flex-col gap-8">
@@ -32,7 +25,7 @@ const InstanceImagePage = observer(() => {
           Let your users search and choose images from third-party libraries
         </div>
       </div>
-      {/* {formattedConfig ? (
+      {formattedConfig ? (
         <InstanceImageConfigForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-4">
@@ -42,7 +35,7 @@ const InstanceImagePage = observer(() => {
           </div>
           <Loader.Item height="50px" />
         </Loader>
-      )} */}
+      )}
     </div>
   );
 });

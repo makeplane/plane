@@ -1,28 +1,21 @@
 "use client";
 
-import { ReactElement } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// layouts
-// import { InstanceAdminLayout } from "layouts/admin-layout";
-// types
-// import { NextPageWithLayout } from "lib/types";
 // hooks
-// import { useApplication } from "hooks/store";
+import useInstance from "hooks/use-instance";
 // ui
 import { Loader } from "@plane/ui";
 // icons
 import { Lightbulb } from "lucide-react";
 // components
-// import { InstanceAIForm } from "components/instance";
+import { InstanceAIForm } from "components/forms";
 
 const InstanceAIPage = observer(() => {
   // store
-  //   const {
-  //     instance: { fetchInstanceConfigurations, formattedConfig },
-  //   } = useApplication();
+  const { fetchInstanceConfigurations, formattedConfig } = useInstance();
 
-  //   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   return (
     <div className="flex flex-col gap-8">
@@ -35,7 +28,7 @@ const InstanceAIPage = observer(() => {
           for all your workspaces.
         </div>
       </div>
-      {/* {formattedConfig ? (
+      {formattedConfig ? (
         <>
           <div>
             <div className="pb-1 text-xl font-medium text-custom-text-100">
@@ -64,7 +57,7 @@ const InstanceAIPage = observer(() => {
           </div>
           <Loader.Item height="50px" />
         </Loader>
-      )} */}
+      )}
     </div>
   );
 });
