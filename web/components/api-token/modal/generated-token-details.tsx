@@ -33,7 +33,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
     <div>
       <div className="space-y-3">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">Key created</h3>
-        <p className="text-sm text-custom-text-400">
+        <p className="w-full text-wrap text-sm text-custom-text-400">
           Copy and save this secret key in Plane Pages. You can{"'"}t see this key after you hit Close. A CSV file
           containing the key has been downloaded.
         </p>
@@ -43,7 +43,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
         onClick={() => copyApiToken(tokenDetails.token ?? "")}
         className="mt-4 flex w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none"
       >
-        <span className="flex break-all pr-2 text-left">{tokenDetails.token}</span>
+        <span className="truncate pr-2 text-left">{tokenDetails.token}</span>
         <Tooltip tooltipContent="Copy secret key">
           <Copy className="h-4 w-4 text-custom-text-400 flex-shrink-0" />
         </Tooltip>

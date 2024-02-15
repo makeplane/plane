@@ -93,15 +93,15 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
         <div className="space-y-2">
           {webhookId && <div className="text-sm font-medium">Secret key</div>}
           <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
-          <div className="flex items-center gap-4">
-            <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
+          <div className="flex md:flex-row flex-col md:items-center gap-4">
+            <div className="flex h-8 flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
               <div className="select-none overflow-hidden font-medium">
                 {shouldShowKey ? (
-                  <p className="text-xs">{webhookSecretKey}</p>
+                  <p className="text-xs truncate">{webhookSecretKey}</p>
                 ) : (
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 overflow-hidden mr-2">
                     {[...Array(30)].map((_, index) => (
-                      <div key={index} className="h-1 w-1 rounded-full bg-custom-text-400" />
+                      <div key={index} className="h-1 w-1 rounded-full bg-custom-text-400 flex-shrink-0" />
                     ))}
                   </div>
                 )}

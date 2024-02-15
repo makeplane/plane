@@ -76,7 +76,7 @@ export const CalendarIssueBlock: React.FC<Props> = observer((props) => {
             }
           )}
         >
-          <div className="flex h-full items-center gap-1.5">
+          <div className="flex h-full items-center gap-1.5 truncate">
             <span
               className="h-full w-0.5 flex-shrink-0 rounded"
               style={{
