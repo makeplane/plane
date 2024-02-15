@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Set Frontend Docker Tag
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:stable
@@ -105,7 +105,7 @@ jobs:
     steps:
       - name: Set Space Docker Tag
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:stable
@@ -156,7 +156,7 @@ jobs:
     steps:
       - name: Set Backend Docker Tag
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:stable
@@ -208,7 +208,7 @@ jobs:
     steps:
       - name: Set Proxy Docker Tag
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ github.event_name }}" == "release" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:stable
