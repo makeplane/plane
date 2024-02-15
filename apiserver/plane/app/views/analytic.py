@@ -1,6 +1,7 @@
 # Django imports
 from django.db.models import Count, Sum, F, Q
 from django.db.models.functions import ExtractMonth
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -14,7 +15,6 @@ from plane.app.serializers import AnalyticViewSerializer
 from plane.utils.analytics_plot import build_graph_plot
 from plane.bgtasks.analytic_plot_export import analytic_export_task
 from plane.utils.issue_filters import issue_filters
-from django.utils import timezone
 
 
 class AnalyticsEndpoint(BaseAPIView):
