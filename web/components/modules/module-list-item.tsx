@@ -153,7 +153,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         />
       )}
       <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
-      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project}/modules/${moduleDetails.id}`}>
+      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <div className="group flex w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 flex-col sm:flex-row px-5 py-6 text-sm hover:bg-custom-background-90">
           <div className="relative flex w-full items-center gap-3 justify-between overflow-hidden">
             <div className="relative w-full flex items-center gap-3 overflow-hidden">

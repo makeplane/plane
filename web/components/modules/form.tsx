@@ -43,7 +43,7 @@ export const ModuleForm: React.FC<Props> = ({
     reset,
   } = useForm<IModule>({
     defaultValues: {
-      project: projectId,
+      project_id: projectId,
       name: data?.name || "",
       description: data?.description || "",
       status: data?.status || "backlog",
@@ -83,7 +83,7 @@ export const ModuleForm: React.FC<Props> = ({
           {!status && (
             <Controller
               control={control}
-              name="project"
+              name="project_id"
               render={({ field: { value, onChange } }) => (
                 <div className="h-7">
                   <ProjectDropdown

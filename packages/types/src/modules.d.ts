@@ -35,8 +35,7 @@ export interface IModule {
   members_detail: IUserLite[];
   is_favorite: boolean;
   name: string;
-  project: string;
-  project_detail: IProjectLite;
+  project_id: string;
   sort_order: number;
   start_date: string | null;
   started_issues: number;
@@ -49,8 +48,7 @@ export interface IModule {
   view_props: {
     filters: IIssueFilterOptions;
   };
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
+  workspace_id: string;
 }
 
 export interface ModuleIssueResponse {

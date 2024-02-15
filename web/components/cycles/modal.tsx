@@ -40,7 +40,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const handleCreateCycle = async (payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
 
-    const selectedProjectId = payload.project ?? projectId.toString();
+    const selectedProjectId = payload.project_id ?? projectId.toString();
     await createCycle(workspaceSlug, selectedProjectId, payload)
       .then((res) => {
         setToastAlert({
@@ -69,7 +69,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId) return;
 
-    const selectedProjectId = payload.project ?? projectId.toString();
+    const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then((res) => {
         const changed_properties = Object.keys(dirtyFields);
@@ -155,8 +155,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
 
     // if data is present, set active project to the project of the
     // issue. This has more priority than the project in the url.
-    if (data && data.project) {
-      setActiveProject(data.project);
+    if (data && data.project_id) {
+      setActiveProject(data.project_id);
       return;
     }
 
