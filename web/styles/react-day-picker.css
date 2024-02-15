@@ -10,10 +10,7 @@
   --rdp-outline: 2px solid var(--rdp-accent-color); /* Outline border for focused elements */
   --rdp-selected-color: #ffffff; /* Color of selected day text */
 
-  background-color: rgba(var(--color-background-100));
-  box-shadow: var(--color-shadow-rg);
-  border-radius: 6px;
-  padding: 0.5rem;
+  background: transparent;
 }
 
 /* Hide elements for devices that are not screen readers */

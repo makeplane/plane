@@ -159,7 +159,12 @@ export const DateDropdown: React.FC<Props> = (props) => {
       </Combobox.Button>
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
-          <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
+          <div
+            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3"
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
             <DayPicker
               selected={value ? new Date(value) : undefined}
               defaultMonth={value ? new Date(value) : undefined}
