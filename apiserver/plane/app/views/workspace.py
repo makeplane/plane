@@ -69,7 +69,6 @@ from plane.db.models import (
     Label,
     WorkspaceMember,
     CycleIssue,
-    IssueReaction,
     WorkspaceUserProperties,
     Estimate,
     EstimatePoint,
@@ -80,7 +79,6 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
     WorkspaceViewerPermission,
     WorkspaceUserPermission,
-    ProjectLitePermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
@@ -114,13 +112,6 @@ class WorkSpaceViewSet(BaseViewSet):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-
-        issue_count = (
-            Issue.issue_objects.filter(workspace=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        )
         return (
             self.filter_queryset(
                 super().get_queryset().select_related("owner")
@@ -131,8 +122,6 @@ class WorkSpaceViewSet(BaseViewSet):
                 workspace_member__is_active=True,
             )
             .annotate(total_members=member_count)
-            .annotate(total_issues=issue_count)
-            .select_related("owner")
         )
 
     def create(self, request):
