@@ -6,6 +6,7 @@ import "styles/globals.css";
 import "styles/command-pallette.css";
 import "styles/nprogress.css";
 import "styles/react-datepicker.css";
+import "styles/react-day-picker.css";
 // constants
 import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
