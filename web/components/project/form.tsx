@@ -1,7 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useEventTracker, useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -34,7 +34,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
   const { captureProjectEvent } = useEventTracker();
-  const { currentWorkspace } = useWorkspace();
   const { updateProject } = useProject();
   // toast alert
   const { setToastAlert } = useToast();
@@ -45,7 +44,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     control,
     setValue,
     setError,
-    reset,
     formState: { errors, dirtyFields },
   } = useForm<IProject>({
     defaultValues: {
@@ -54,15 +52,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
-
-  useEffect(() => {
-    if (!project) return;
-    reset({
-      ...project,
-      emoji_and_icon: project.emoji ?? project.icon_prop,
-      workspace: (project.workspace as IWorkspace).id,
-    });
-  }, [project, reset]);
 
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
