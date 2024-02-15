@@ -577,9 +577,6 @@ class IssueSerializer(DynamicBaseSerializer):
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
 
-    # is_subscribed
-    is_subscribed = serializers.BooleanField(read_only=True)
-
     class Meta:
         model = Issue
         fields = [
@@ -606,7 +603,6 @@ class IssueSerializer(DynamicBaseSerializer):
             "updated_by",
             "attachment_count",
             "link_count",
-            "is_subscribed",
             "is_draft",
             "archived_at",
         ]
@@ -614,7 +610,7 @@ class IssueSerializer(DynamicBaseSerializer):
 
     def get_module_ids(self, obj):
         # Access the prefetched modules and extract module IDs
-        return [module for module in obj.issue_module.values_list("module_id", flat=True)]
+        return obj.issue_module.values_list("module_id", flat=True)
 
 
 class IssueDetailSerializer(IssueSerializer):
