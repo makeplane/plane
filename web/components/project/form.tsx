@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
@@ -19,15 +19,12 @@ import { NETWORK_CHOICES } from "constants/project";
 // services
 import { ProjectService } from "services/project";
 import { PROJECT_UPDATED } from "constants/event-tracker";
-
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
   isAdmin: boolean;
 }
-
 const projectService = new ProjectService();
-
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // states
@@ -44,6 +41,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     control,
     setValue,
     setError,
+    reset,
     formState: { errors, dirtyFields },
   } = useForm<IProject>({
     defaultValues: {
@@ -52,19 +50,22 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
-
+  useEffect(() => {
+    if (!project || !reset) return;
+    reset({
+      ...project,
+      emoji_and_icon: project.emoji ?? project.icon_prop,
+      workspace: (project.workspace as IWorkspace).id,
+    });
+  }, [project, reset]);
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
     const formattedValue = alphanumericValue.toUpperCase();
-
     setValue("identifier", formattedValue);
   };
-
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
-
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         const changed_properties = Object.keys(dirtyFields);
@@ -96,11 +97,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       });
   };
-
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
     setIsLoading(true);
-
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,
@@ -108,7 +107,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       description: formData.description,
       cover_image: formData.cover_image,
     };
-
     if (typeof formData.emoji_and_icon === "object") {
       payload.emoji = null;
       payload.icon_prop = formData.emoji_and_icon;
@@ -116,7 +114,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       payload.emoji = formData.emoji_and_icon;
       payload.icon_prop = null;
     }
-
     if (project.identifier !== formData.identifier)
       await projectService
         .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
@@ -125,20 +122,16 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           else await handleUpdateChange(payload);
         });
     else await handleUpdateChange(payload);
-
     setTimeout(() => {
       setIsLoading(false);
     }, 300);
   };
-
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
   const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative mt-6 h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
@@ -169,7 +162,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               </span>
             </div>
           </div>
-
           <div className="flex flex-shrink-0 justify-center">
             <div>
               <Controller
@@ -214,7 +206,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Description</h4>
           <Controller
@@ -234,7 +225,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-
         <div className="flex w-full items-center justify-between gap-10">
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Identifier</h4>
@@ -269,7 +259,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               )}
             />
           </div>
-
           <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Network</h4>
             <Controller
@@ -295,7 +284,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             />
           </div>
         </div>
-
         <div className="flex items-center justify-between py-2">
           <>
             <Button variant="primary" type="submit" loading={isLoading} disabled={!isAdmin}>
