@@ -165,7 +165,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         >
           <div
             ref={imagePickerRef}
-            className="flex h-96 w-80 flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
+            className="flex h-96 w-60 sm:w-80 flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
           >
             <Tab.Group>
               <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
@@ -177,7 +177,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                     <Tab
                       key={tab.key}
                       className={({ selected }) =>
-                        `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
+                        `rounded px-2 sm:px-4 py-1 text-center text-sm outline-none transition-colors ${
                           selected ? "bg-custom-primary text-white" : "text-custom-text-100"
                         }`
                       }

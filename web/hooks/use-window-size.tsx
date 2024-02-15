@@ -13,7 +13,7 @@ const useSize = () => {
     };
   }, []);
 
-  return windowSize;
+  return { windowWidth: windowSize[0], windowHeight: windowSize[1] };
 };
 
 export default useSize;

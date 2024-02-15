@@ -110,13 +110,13 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
           selectedIndex={CYCLE_TAB_LIST.findIndex((i) => i.key == cycleTab)}
           onChange={(i) => handleCurrentView(CYCLE_TAB_LIST[i]?.key ?? "active")}
         >
-          <div className="flex flex-col items-start justify-between gap-4 border-b border-custom-border-200 px-4 sm:flex-row sm:items-center sm:px-5 sm:pb-0">
+          <div className="flex flex-col items-start justify-between gap-4 border-b border-custom-border-200 px-2 sm:px-5 sm:flex-row sm:items-center sm:pb-0">
             <Tab.List as="div" className="flex items-center overflow-x-scroll">
               {CYCLE_TAB_LIST.map((tab) => (
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `border-b-2 p-4 text-sm font-medium outline-none ${selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
+                    `border-b-2 p-2 sm:p-4 text-xs sm:text-sm font-medium outline-none ${selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
                     }`
                   }
                 >

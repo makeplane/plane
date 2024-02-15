@@ -67,7 +67,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     useProjectPages();
   // hooks
   const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
-  const [windowWidth] = useSize();
+  const {windowWidth} = useSize();
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
   // fetching pages from API

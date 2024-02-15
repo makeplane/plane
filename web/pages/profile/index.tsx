@@ -161,7 +161,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             )}
           />
           <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-10 md:pt-16 px-8 pb-8 lg:w-3/5">
+          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-5 md:pt-16 px-4 md:px-8 pb-8 lg:w-3/5">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex w-full flex-col gap-8">
                 <div className="relative h-44 w-full">
@@ -170,7 +170,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                     className="h-44 w-full rounded-lg object-cover"
                     alt={myProfile?.first_name ?? "Cover image"}
                   />
-                  <div className="absolute -bottom-6 left-8 flex items-end justify-between">
+                  <div className="absolute -bottom-6 left-4 md:left-8 flex items-end justify-between">
                     <div className="flex gap-3">
                       <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
                         <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
@@ -210,7 +210,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                   </div>
                 </div>
 
-                <div className="item-center mt-4 flex justify-between px-8">
+                <div className="item-center mt-4 flex justify-between px-4 md:px-8">
                   <div className="flex flex-col">
                     <div className="item-center flex text-lg font-semibold text-custom-text-100">
                       <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
@@ -226,7 +226,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             </Link> */}
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 px-8 lg:grid-cols-2 2xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 md:px-8 lg:grid-cols-2 2xl:grid-cols-3">
                   <div className="flex flex-col gap-1">
                     <h4 className="text-sm">
                       First name<span className="text-red-500">*</span>
@@ -405,7 +405,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                 </div>
               </div>
             </form>
-            <Disclosure as="div" className="border-t border-custom-border-100 px-8">
+            <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
               {({ open }) => (
                 <>
                   <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

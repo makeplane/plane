@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 //components
 import { CustomMenu } from "@plane/ui";
 // icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+import { Calendar, ChevronDown, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember } from "hooks/store";
@@ -17,9 +17,11 @@ export const CycleMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { getCycleById } = useCycle();
   const layouts = [
-    { key: "list", title: "List", icon: List },
-    { key: "kanban", title: "Kanban", icon: Kanban },
-    { key: "calendar", title: "Calendar", icon: Calendar },
+    { key: "list", title: "List view", icon: List },
+    { key: "kanban", title: "Kanban view", icon: Kanban },
+    { key: "calendar", title: "Calendar view", icon: Calendar },
+    { key: "spreadsheet", title: "Spreadsheet view", icon: Sheet },
+    { key: "gantt_chart", title: "Gantt view", icon: GanttChartSquare },
   ];
 
   const { workspaceSlug, projectId, cycleId } = router.query as {
@@ -33,6 +35,8 @@ export const CycleMobileHeader = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
   const activeLayout = issueFilters?.displayFilters?.layout;
+
+  const showCurrentIcon = layouts.find(layout => layout.key === activeLayout);
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
@@ -95,7 +99,10 @@ export const CycleMobileHeader = observer(() => {
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>}
+          customButton={<span className="flex flex-grow justify-center items-center text-custom-text-200 text-sm">
+            {showCurrentIcon != undefined && <showCurrentIcon.icon className="w-3.5 h-3.5 mr-2" />}
+            Layout
+          </span>}
           customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
           closeOnSelect
         >

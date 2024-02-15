@@ -14,12 +14,14 @@ import { Loader, Tooltip } from "@plane/ui";
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
+import useSize from "hooks/use-window-size";
 
 export const NotificationPopover = observer(() => {
   // states
   const [isActive, setIsActive] = React.useState(false);
   // store hooks
   const { theme: themeStore } = useApplication();
+  const { windowWidth } = useSize();
   // refs
   const notificationPopoverRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -74,7 +76,7 @@ export const NotificationPopover = observer(() => {
                   : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
               } ${isSidebarCollapsed ? "justify-center" : ""}`}
               onClick={() => {
-                if (window.innerWidth < 768) themeStore.toggleSidebar();
+                if (windowWidth < 768) themeStore.toggleMobileSidebar();
                 if (!isActive) setFetchNotifications(true);
                 setIsActive(!isActive);
               }}
