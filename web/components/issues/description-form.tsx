@@ -108,7 +108,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
       description_html: issue.description_html === "" ? "<p></p>" : issue.description_html,
     });
     setLocalTitleValue(issue.name);
-  }, [issue, reset]);
+  }, [issue, issue.description_html, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
   // TODO: Verify the exhaustive-deps warning
