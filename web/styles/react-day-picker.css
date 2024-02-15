@@ -74,6 +74,13 @@
 }
 
 .rdp-button:focus-visible:not([disabled]).rdp-day_selected {
+  outline: var(--rdp-outline);
+  outline-offset: 2px;
+  background-color: var(--rdp-dark-background-color);
+  outline-width: thin;
+}
+
+.rdp-button:hover:not([disabled]).rdp-day_selected {
   background-color: var(--rdp-dark-background-color);
 }
 
