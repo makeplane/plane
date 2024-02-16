@@ -40,7 +40,7 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
           }`}`}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
-          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          className="font-medium text-custom-text-100 hover:underline"
         >
           <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
           <span className="font-normal">{activity.issue_detail?.name}</span>
@@ -457,7 +457,7 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        <span className="truncate">set the name to {activity.new_value}</span>
+        <span>set the name to {activity.new_value}</span>
         {showIssue && (
           <>
             {" "}

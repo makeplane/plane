@@ -145,7 +145,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                             </div>
                           </div>
                           <div className="min-w-0 flex-1 border-b border-custom-border-100 py-4">
-                            <div className="flex gap-1 break-words text-sm text-custom-text-200">
+                            <div className="break-words text-sm text-custom-text-200">
                               {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                 <span className="text-gray font-medium">Plane</span>
                               ) : activityItem.actor_detail.is_bot ? (
@@ -163,7 +163,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                                   </span>
                                 </Link>
                               )}{" "}
-                              <div className="flex gap-1 truncate">
+                              <div className="inline break-words break-all">
                                 {message}{" "}
                                 <span className="flex-shrink-0 whitespace-nowrap">
                                   {calculateTimeAgo(activityItem.created_at)}

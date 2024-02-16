@@ -141,7 +141,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
             <button
               type="button"
               onClick={() => setRemoveMemberModal(true)}
-              className={`pointer-events-none opacity-0 ${
+              className={`pointer-events-none hidden md:block md:opacity-0 ${
                 isAdmin ? "group-hover:pointer-events-auto group-hover:opacity-100" : ""
               }`}
             >
