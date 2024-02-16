@@ -1215,7 +1215,7 @@ class IssueArchiveViewSet(BaseViewSet):
             archived_at__isnull=False,
             pk=pk,
         )
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(IssueDetailSerializer(issue).data, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
