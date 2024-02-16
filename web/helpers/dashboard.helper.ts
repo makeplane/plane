@@ -1,14 +1,16 @@
 import { endOfMonth, endOfWeek, endOfYear, startOfMonth, startOfWeek, startOfYear } from "date-fns";
 // helpers
-import { renderFormattedPayloadDate } from "./date-time.helper";
+import { renderFormattedDate, renderFormattedPayloadDate } from "./date-time.helper";
 // types
 import { TDurationFilterOptions, TIssuesListTypes } from "@plane/types";
+// constants
+import { DURATION_FILTER_OPTIONS } from "constants/dashboard";
 
 /**
  * @description returns date range based on the duration filter
  * @param duration
  */
-export const getCustomDates = (duration: TDurationFilterOptions): string => {
+export const getCustomDates = (duration: TDurationFilterOptions, customDates: string[]): string => {
   const today = new Date();
   let firstDay, lastDay;
 
@@ -31,6 +33,8 @@ export const getCustomDates = (duration: TDurationFilterOptions): string => {
       firstDay = renderFormattedPayloadDate(startOfYear(today));
       lastDay = renderFormattedPayloadDate(endOfYear(today));
       return `${firstDay};after,${lastDay};before`;
+    case "custom":
+      return customDates.join(",");
   }
 };
 
@@ -67,5 +71,23 @@ export const getTabKey = (duration: TDurationFilterOptions, tab: TIssuesListType
   else {
     if (["upcoming", "overdue"].includes(tab)) return tab;
     else return "upcoming";
+  }
+};
+
+/**
+ * @description returns the label for the duration filter dropdown
+ * @param duration
+ * @param customDates
+ */
+export const getDurationFilterDropdownLabel = (duration: TDurationFilterOptions, customDates: string[]): string => {
+  if (duration !== "custom") return DURATION_FILTER_OPTIONS.find((option) => option.key === duration)?.label ?? "";
+  else {
+    const afterDate = customDates.find((date) => date.includes("after"))?.split(";")[0];
+    const beforeDate = customDates.find((date) => date.includes("before"))?.split(";")[0];
+
+    if (afterDate && beforeDate) return `${renderFormattedDate(afterDate)} - ${renderFormattedDate(beforeDate)}`;
+    else if (afterDate) return `After ${renderFormattedDate(afterDate)}`;
+    else if (beforeDate) return `Before ${renderFormattedDate(beforeDate)}`;
+    else return "";
   }
 };

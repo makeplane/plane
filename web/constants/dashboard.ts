@@ -141,6 +141,10 @@ export const DURATION_FILTER_OPTIONS: {
     key: "this_year",
     label: "Due this year",
   },
+  {
+    key: "custom",
+    label: "Custom",
+  },
 ];
 
 // random background colors for project cards

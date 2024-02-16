@@ -32,6 +32,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   const widgetStats = getWidgetStats<TAssignedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
   const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? "none";
   const selectedTab = getTabKey(selectedDurationFilter, widgetDetails?.widget_filters.tab);
+  const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TAssignedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -43,7 +44,10 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       filters,
     });
 
-    const filterDates = getCustomDates(filters.duration ?? selectedDurationFilter);
+    const filterDates = getCustomDates(
+      filters.duration ?? selectedDurationFilter,
+      filters.custom_dates ?? selectedCustomDates
+    );
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       issue_type: filters.tab ?? selectedTab,
@@ -53,7 +57,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(selectedDurationFilter);
+    const filterDates = getCustomDates(selectedDurationFilter, selectedCustomDates);
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
@@ -80,8 +84,17 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           Assigned to you
         </Link>
         <DurationFilterDropdown
+          customDates={selectedCustomDates}
           value={selectedDurationFilter}
-          onChange={(val) => {
+          onChange={(val, customDates) => {
+            if (val === "custom" && customDates) {
+              handleUpdateFilters({
+                duration: val,
+                custom_dates: customDates,
+              });
+              return;
+            }
+
             if (val === selectedDurationFilter) return;
 
             // switch to pending tab if target date is changed to none
@@ -98,7 +111,9 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
               return;
             }
 
-            handleUpdateFilters({ duration: val });
+            handleUpdateFilters({
+              duration: val,
+            });
           }}
         />
       </div>

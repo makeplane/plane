@@ -20,24 +20,29 @@ export type TDurationFilterOptions =
   | "today"
   | "this_week"
   | "this_month"
-  | "this_year";
+  | "this_year"
+  | "custom";
 
 // widget filters
 export type TAssignedIssuesWidgetFilters = {
+  custom_dates?: string[];
   duration?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TCreatedIssuesWidgetFilters = {
+  custom_dates?: string[];
   duration?: TDurationFilterOptions;
   tab?: TIssuesListTypes;
 };
 
 export type TIssuesByStateGroupsWidgetFilters = {
   duration?: TDurationFilterOptions;
+  custom_dates?: string[];
 };
 
 export type TIssuesByPriorityWidgetFilters = {
+  custom_dates?: string[];
   duration?: TDurationFilterOptions;
 };
 

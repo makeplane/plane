@@ -30,6 +30,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByPriorityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
   const selectedDuration = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -39,7 +40,10 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
       filters,
     });
 
-    const filterDates = getCustomDates(filters.duration ?? selectedDuration);
+    const filterDates = getCustomDates(
+      filters.duration ?? selectedDuration,
+      filters.custom_dates ?? selectedCustomDates
+    );
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -47,7 +51,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(selectedDuration);
+    const filterDates = getCustomDates(selectedDuration, selectedCustomDates);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -73,10 +77,12 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
           Assigned by priority
         </Link>
         <DurationFilterDropdown
+          customDates={selectedCustomDates}
           value={selectedDuration}
-          onChange={(val) =>
+          onChange={(val, customDates) =>
             handleUpdateFilters({
               duration: val,
+              ...(val === "custom" ? { custom_dates: customDates } : {}),
             })
           }
         />
