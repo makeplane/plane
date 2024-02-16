@@ -9,7 +9,6 @@ import { TIssueOperations } from "components/issues";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
 import { IssueDescriptionInput } from "../description-input";
-import { debounce } from "lodash";
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -22,7 +21,7 @@ interface IPeekOverviewIssueDetails {
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
-  const { workspaceSlug, issueId, issueOperations, disabled, setIsSubmitting } = props;
+  const { workspaceSlug, issueId, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
@@ -45,6 +44,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
         issueId={issue.id}
+        isSubmitting={isSubmitting}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
         disabled={disabled}
@@ -54,6 +54,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
         issueId={issue.id}
+        isSubmitting={isSubmitting}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
         disabled={disabled}

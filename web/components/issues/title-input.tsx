@@ -12,6 +12,7 @@ export type IssueTitleInputProps = {
   disabled?: boolean;
   value: string | undefined | null;
   workspaceSlug: string;
+  isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
   issueOperations: TIssueOperations;
   projectId: string;
@@ -19,7 +20,7 @@ export type IssueTitleInputProps = {
 };
 
 export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
-  const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId } = props;
+  const { disabled, value, workspaceSlug, isSubmitting, setIsSubmitting, issueId, issueOperations, projectId } = props;
   // states
   const [title, setTitle] = useState("");
   // hooks
@@ -39,6 +40,17 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
