@@ -8,6 +8,7 @@ volumes:
   redisdata:
   uploads:
   pgdata:
+  mongodbdata:
   
 
 services:
@@ -45,6 +46,16 @@ services:
       - .env
     environment:
       PGDATA: /var/lib/postgresql/data
+    
+  plane-mongodb:
+    image: mongo:7.0.5
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - mongodbdata:/data/db
+    env_file:
+      - .env
 
   web:
     build:

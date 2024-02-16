@@ -1,9 +1,14 @@
-from plane.db.models import APIToken, APIActivityLog
+# Python imports
+import os
+
+# Django imports
+from plane.db.mongodb import Database
 
 
 class APITokenLogMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
+        self.database = Database(os.environ.get("MONGO_DB_URL"), "plane")
 
     def __call__(self, request):
         request_body = request.body
@@ -17,23 +22,31 @@ class APITokenLogMiddleware:
         # If the API key is present, log the request
         if api_key:
             try:
-                APIActivityLog.objects.create(
-                    token_identifier=api_key,
-                    path=request.path,
-                    method=request.method,
-                    query_params=request.META.get("QUERY_STRING", ""),
-                    headers=str(request.headers),
-                    body=(
-                        request_body.decode("utf-8") if request_body else None
-                    ),
-                    response_body=(
-                        response.content.decode("utf-8")
-                        if response.content
-                        else None
-                    ),
-                    response_code=response.status_code,
-                    ip_address=request.META.get("REMOTE_ADDR", None),
-                    user_agent=request.META.get("HTTP_USER_AGENT", None),
+                db = self.database.get_db()
+                collection = db["api_activity_logs"]
+                _ = collection.insert_one(
+                    {
+                        "token_identifier": api_key,
+                        "path": request.path,
+                        "method": request.method,
+                        "query_params": request.META.get("QUERY_STRING", ""),
+                        "headers": str(request.headers),
+                        "body": (
+                            request_body.decode("utf-8")
+                            if request_body
+                            else None
+                        ),
+                        "response_body": (
+                            response.content.decode("utf-8")
+                            if response.content
+                            else None
+                        ),
+                        "response_code": response.status_code,
+                        "ip_address": request.META.get("REMOTE_ADDR", None),
+                        "user_agent": request.META.get(
+                            "HTTP_USER_AGENT", None
+                        ),
+                    }
                 )
 
             except Exception as e:
