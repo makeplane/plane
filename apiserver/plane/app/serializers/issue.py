@@ -614,10 +614,11 @@ class IssueSerializer(DynamicBaseSerializer):
 
 
 class IssueDetailSerializer(IssueSerializer):
-    description_html = serializers.CharField() 
+    description_html = serializers.CharField()
+    is_subscribed = serializers.BooleanField()
 
     class Meta(IssueSerializer.Meta):
-        fields = IssueSerializer.Meta.fields + ['description_html']
+        fields = IssueSerializer.Meta.fields + ['description_html', 'is_subscribed']
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):
