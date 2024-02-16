@@ -13,7 +13,6 @@ import { TIssueOperations } from "./issue-detail";
 // hooks
 import useDebounce from "hooks/use-debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import { de } from "date-fns/locale";
 
 export type IssueDescriptionInputProps = {
   disabled?: boolean;
@@ -44,7 +43,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
 
   useEffect(() => {
     if (debouncedValue) {
-      console.log("debouncedValue -->", debouncedValue);
       issueOperations
         .update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }, false)
         .finally(() => {
@@ -85,10 +83,9 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
       onChange={(description: Object, description_html: string) => {
-        console.log("description_html", typeof description_html);
         setShowAlert(true);
         setIsSubmitting("submitting");
-        setDescriptionHTML(description_html);
+        setDescriptionHTML(description_html && descriptionHTML !== "" ? description_html : "<p></p>");
       }}
       mentionSuggestions={mentionSuggestions}
       mentionHighlights={mentionHighlights}

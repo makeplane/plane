@@ -230,11 +230,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disabled={disabled}
                         />
 
-                        <IssueActivity
-                          workspaceSlug={workspaceSlug}
-                          projectId={projectId}
-                          issueId={issueId}
-                        />
+                        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                       </div>
                     ) : (
                       <div className={`flex h-full w-full overflow-auto`}>
@@ -250,11 +246,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
 
-                            <IssueActivity
-                              workspaceSlug={workspaceSlug}
-                              projectId={projectId}
-                              issueId={issueId}
-                            />
+                            <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                           </div>
                         </div>
                         <div

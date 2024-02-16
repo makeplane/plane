@@ -22,18 +22,13 @@ interface IPeekOverviewIssueDetails {
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled, setIsSubmitting } = props;
-  // states
-  const [title, setTitle] = useState("");
-  const [description_html, setDescriptionHTML] = useState("");
+  const { workspaceSlug, issueId, issueOperations, disabled, setIsSubmitting } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  // hooks
-  const { setShowAlert } = useReloadConfirmations();
   // derived values
   const issue = getIssueById(issueId);
   console.log("issue", issue);
@@ -49,7 +44,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       </span>
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
-        projectId={projectId}
+        projectId={issue.project_id}
         issueId={issue.id}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
@@ -58,7 +53,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       />
       <IssueDescriptionInput
         workspaceSlug={workspaceSlug}
-        projectId={projectId}
+        projectId={issue.project_id}
         issueId={issue.id}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
@@ -68,7 +63,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       {currentUser && (
         <IssueReaction
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
+          projectId={issue.project_id}
           issueId={issueId}
           currentUser={currentUser}
         />

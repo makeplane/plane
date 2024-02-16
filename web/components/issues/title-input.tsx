@@ -2,13 +2,11 @@ import { FC, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 // components
 import { TextArea } from "@plane/ui";
-
 // types
 import { TIssueOperations } from "./issue-detail";
 // hooks
 import useDebounce from "hooks/use-debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import { cn } from "helpers/common.helper";
 
 export type IssueTitleInputProps = {
   disabled?: boolean;
@@ -55,7 +53,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     <div className="relative">
       <TextArea
         className={`min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary ${
-          title?.length === 0 ? "!ring-red-500" : ""
+          title?.length === 0 ? "!ring-red-400" : ""
         }`}
         disabled={disabled}
         value={title}
