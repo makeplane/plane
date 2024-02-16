@@ -8,7 +8,7 @@ import { TViewTypes } from "@plane/types";
 import { VIEW_TYPES } from "constants/view";
 
 export const useView = (
-  workspaceSlug: string,
+  workspaceSlug: string | undefined,
   projectId: string | undefined,
   viewType: TViewTypes | undefined
 ): ViewRootStore | undefined => {

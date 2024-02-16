@@ -21,12 +21,13 @@ type TViewCreateEditForm = {
   viewType: TViewTypes;
   viewPageType: EViewPageType;
   viewOperations: TViewOperations;
+  isLocalView: boolean;
 };
 
 export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, viewPageType, viewOperations } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewPageType, viewOperations, isLocalView } = props;
   // hooks
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType, isLocalView);
   const { getProjectById } = useProject();
   // states
   const [modalToggle, setModalToggle] = useState(false);
@@ -36,9 +37,9 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
   const modalClose = useCallback(() => {
     setModalToggle(false);
     setTimeout(() => {
-      viewOperations.localViewCreateEditClear(viewId);
+      viewOperations.localViewCreateEdit(undefined, "CLEAR");
     }, 200);
-  }, [viewId, setModalToggle, viewOperations]);
+  }, [setModalToggle, viewOperations]);
 
   useEffect(() => {
     if (viewId) modalOpen();
@@ -46,16 +47,16 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
 
   const onContinue = async () => {
     setLoader(true);
-    if (viewDetailStore?.is_create) {
-      const payload = viewDetailStore?.filtersToUpdate;
-      await viewOperations.create(payload);
-      modalClose();
-    } else {
-      const payload = viewDetailStore?.filtersToUpdate;
-      if (!payload) return;
-      await viewOperations.update();
-      modalClose();
-    }
+    // if (viewDetailStore?.id != "create") {
+    //   const payload = viewDetailStore?.filtersToUpdate;
+    //   await viewOperations.create(payload);
+    //   modalClose();
+    // } else {
+    //   const payload = viewDetailStore?.filtersToUpdate;
+    //   if (!payload) return;
+    //   await viewOperations.update();
+    //   modalClose();
+    // }
     setLoader(false);
   };
 
@@ -131,6 +132,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     viewType={viewType}
                     viewPageType={viewPageType}
                     dropdownPlacement="right"
+                    isLocalView={isLocalView}
                   >
                     <div className="cursor-pointer relative rounded p-1.5 px-2 flex items-center gap-1 border border-custom-border-100 bg-custom-background-80">
                       <div className="flex-shrink-0 relative flex justify-center items-center w-4 h-4 overflow-hidden">
@@ -161,6 +163,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     viewId={viewId}
                     viewType={viewType}
                     propertyVisibleCount={undefined}
+                    isLocalView={isLocalView}
                   />
                 </div>
 
@@ -169,7 +172,7 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                     Cancel
                   </Button>
                   <Button variant="primary" onClick={onContinue} disabled={loader}>
-                    {loader ? `Saving...` : `${viewDetailStore?.is_create ? `Create` : `Update`} View`}
+                    {loader ? `Saving...` : `${viewDetailStore?.id === "create" ? `Create` : `Update`} View`}
                   </Button>
                 </div>
               </Dialog.Panel>

@@ -1,4 +1,3 @@
-import { v4 as uuidV4 } from "uuid";
 // types
 import { TViewTypes, TView } from "@plane/types";
 
@@ -9,13 +8,20 @@ export const VIEW_TYPES: Record<TViewTypes, TViewTypes> = {
   PROJECT_PUBLIC_VIEWS: "PROJECT_PUBLIC_VIEWS",
 };
 
+export type TViewCRUD = "CREATE" | "EDIT" | "SAVE_AS_NEW" | "CLEAR";
+
 export const viewLocalPayload: Partial<TView> = {
-  id: uuidV4(),
+  id: "create",
   name: "",
   description: "",
   filters: undefined,
   display_filters: undefined,
   display_properties: undefined,
   is_local_view: false,
-  is_create: true,
 };
+
+export const generateViewStoreKey = (
+  workspaceSlug: string,
+  projectId: string | undefined,
+  viewType: TViewTypes
+): string => `${workspaceSlug}_${projectId}_${viewType}`;

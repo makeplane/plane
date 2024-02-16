@@ -11,8 +11,9 @@ import { VIEW_TYPES } from "constants/view";
 export const useViewDetail = (
   workspaceSlug: string,
   projectId: string | undefined,
-  viewId: string,
-  viewType: TViewTypes | undefined
+  viewId: string | undefined,
+  viewType: TViewTypes | undefined,
+  isEditable: boolean = false
 ): TViewStore | undefined => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useViewDetail must be used within StoreProvider");
@@ -21,14 +22,18 @@ export const useViewDetail = (
 
   switch (viewType) {
     case VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS:
+      if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
       return context.view.workspacePrivateViewStore.viewById(viewId);
     case VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS:
+      if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
       return context.view.workspacePublicViewStore.viewById(viewId);
     case VIEW_TYPES.PROJECT_PRIVATE_VIEWS:
       if (!projectId) return undefined;
+      if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
       return context.view.projectPrivateViewStore.viewById(viewId);
     case VIEW_TYPES.PROJECT_PUBLIC_VIEWS:
       if (!projectId) return undefined;
+      if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
       return context.view.projectPublicViewStore.viewById(viewId);
     default:
       return undefined;

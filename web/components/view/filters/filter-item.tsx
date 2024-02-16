@@ -8,7 +8,6 @@ import { TViewFilters } from "@plane/types";
 type TViewFiltersItem = {
   workspaceSlug: string;
   projectId: string | undefined;
-
   filterKey: keyof TViewFilters;
   propertyId: string;
 };

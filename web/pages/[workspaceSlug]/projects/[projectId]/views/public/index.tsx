@@ -36,8 +36,10 @@ const ProjectPublicViewPage: NextPageWithLayout = observer(() => {
       ? `PROJECT_VIEWS_${VIEW_TYPES.PROJECT_PUBLIC_VIEWS}_${workspaceSlug.toString()}_${projectId.toString()}`
       : null,
     async () => {
-      await viewStore?.fetch();
-      console.log("viewStore", viewStore?.viewIds);
+      if (workspaceSlug && projectId) {
+        await viewStore?.fetch(workspaceSlug.toString(), projectId.toString());
+        console.log("viewStore", viewStore?.viewIds);
+      }
     }
   );
 
@@ -66,7 +68,7 @@ const ProjectPublicViewPage: NextPageWithLayout = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
-      {viewStore?.loader === "init-loader" ? (
+      {viewStore?.loader === "view-loader" ? (
         <div className="relative w-full h-full flex justify-center items-center">
           <Spinner />
         </div>

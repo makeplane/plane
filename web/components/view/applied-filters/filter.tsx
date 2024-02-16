@@ -16,12 +16,13 @@ type TViewAppliedFilters = {
   viewType: TViewTypes;
   filterKey: keyof TViewFilters;
   propertyVisibleCount?: number | undefined;
+  isLocalView: boolean;
 };
 
 export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyVisibleCount } = props;
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyVisibleCount, isLocalView } = props;
   // hooks
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType, isLocalView);
   const viewFilterStore = useViewFilter(workspaceSlug, projectId);
 
   const currentDefaultFilterDetails = useMemo(
@@ -44,7 +45,7 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
 
   if (!propertyValues || propertyValues.length <= 0) return <></>;
   return (
-    <div className="relative flex items-center gap-2 border border-custom-border-300 rounded p-1 px-2 min-h-[32px]">
+    <div className="relative flex items-center gap-2 border border-custom-border-200 rounded p-1 px-2 min-h-[32px]">
       <div className="flex-shrink-0 text-xs text-custom-text-200 capitalize">{filterKey.replaceAll("_", " ")}</div>
       <div className="relative flex items-center gap-1.5 flex-wrap">
         {propertyVisibleCount && propertyValues.length >= propertyVisibleCount ? (
@@ -65,6 +66,7 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
                   viewType={viewType}
                   filterKey={filterKey}
                   propertyId={propertyId}
+                  isLocalView={isLocalView}
                 />
               </Fragment>
             ))}

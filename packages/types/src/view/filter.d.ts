@@ -78,7 +78,7 @@ export type TViewDisplayFilters = {
   layout: TViewLayouts;
   group_by: TViewDisplayFiltersGrouped | undefined;
   sub_group_by: TViewDisplayFiltersGrouped | undefined;
-  order_by: TViewDisplayFiltersOrderBy | string;
+  order_by: TViewDisplayFiltersOrderBy;
   type: TViewDisplayFiltersType | undefined;
   sub_issue: boolean;
   show_empty_groups: boolean;

@@ -3,18 +3,24 @@ import { observer } from "mobx-react-lite";
 import { Menu, Transition } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { Copy, Eye, Globe2, Link2, Pencil, Trash } from "lucide-react";
+// hooks
+import { useViewDetail } from "hooks/store";
 // types
 import { TViewEditDropdownOptions, TViewOperations } from "../types";
+import { TViewTypes } from "@plane/types";
 
 type TViewEditDropdown = {
   workspaceSlug: string;
   projectId: string | undefined;
   viewId: string;
+  viewType: TViewTypes;
   viewOperations: TViewOperations;
 };
 
 export const ViewEditDropdown: FC<TViewEditDropdown> = observer((props) => {
-  const { viewId, viewOperations } = props;
+  const { workspaceSlug, projectId, viewId, viewType, viewOperations } = props;
+  // hooks
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -46,7 +52,7 @@ export const ViewEditDropdown: FC<TViewEditDropdown> = observer((props) => {
         icon: Pencil,
         key: "rename",
         label: "Rename",
-        onClick: () => viewOperations.localViewCreateEdit(viewId),
+        onClick: () => viewOperations.localViewCreateEdit(viewId, "EDIT"),
         children: undefined,
       },
       {
@@ -96,6 +102,7 @@ export const ViewEditDropdown: FC<TViewEditDropdown> = observer((props) => {
     [viewOperations, viewId]
   );
 
+  if (viewDetailStore?.is_local_view) return <></>;
   return (
     <Menu as="div" className="relative flex-shrink-0" ref={dropdownRef}>
       <Menu.Button

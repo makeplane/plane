@@ -43,7 +43,7 @@ export const DisplayFilterExtraOptions: FC<TDisplayFilterExtraOptions> = observe
               : "border-custom-border-400 bg-custom-background-100"
           }`}
         >
-          {isSelected && <Check size={14} />}
+          {isSelected && <Check size={14} className="text-white" />}
         </div>
         <div className="text-xs block truncate line-clamp-1 text-custom-text-200 group-hover:text-custom-text-100">
           {optionTitle || "Extra Option"}

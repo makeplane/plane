@@ -32,7 +32,7 @@ export const ViewDisplayFilterSelection: FC<TViewDisplayFilterSelection> = obser
           : "border-custom-border-400 bg-custom-background-100"
       }`}
     >
-      {isSelected && <Check size={14} />}
+      {isSelected && <Check size={14} className="text-white" />}
     </div>
   );
 });

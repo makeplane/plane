@@ -134,7 +134,7 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
 
             <div
               className="relative flex justify-center items-center gap-1 rounded p-1 py-1.5 transition-all border border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 cursor-pointer"
-              onClick={() => viewOperations?.localViewCreateEdit(undefined)}
+              onClick={() => viewOperations?.localViewCreateEdit(undefined, "CREATE")}
             >
               <Plus className="w-3 h-3" />
               <div className="text-sm">New view</div>

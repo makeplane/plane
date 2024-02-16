@@ -12,12 +12,13 @@ type TViewAppliedFiltersItem = {
   viewType: TViewTypes;
   filterKey: keyof TViewFilters;
   propertyId: string;
+  isLocalView: boolean;
 };
 
 export const ViewAppliedFiltersItem: FC<TViewAppliedFiltersItem> = (props) => {
-  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyId } = props;
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyId, isLocalView } = props;
   // hooks
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType, isLocalView);
   const viewFilterHelper = useViewFilter(workspaceSlug, projectId);
 
   const propertyDetail = viewFilterHelper?.propertyDetails(filterKey, propertyId) || undefined;

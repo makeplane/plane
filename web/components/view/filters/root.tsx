@@ -20,6 +20,7 @@ type TViewFiltersRoot = {
   viewPageType: EViewPageType;
   dateCustomFilterToggle: string | undefined;
   setDateCustomFilterToggle: (value: string | undefined) => void;
+  isLocalView: boolean;
 };
 
 export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
@@ -31,9 +32,10 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
     viewPageType,
     dateCustomFilterToggle,
     setDateCustomFilterToggle,
+    isLocalView,
   } = props;
   // hooks
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType, isLocalView);
   // state
   const [filterVisibility, setFilterVisibility] = useState<Partial<keyof TViewFilters>[]>([]);
   const handleFilterVisibility = useCallback((key: keyof TViewFilters) => {
@@ -73,6 +75,7 @@ export const ViewFiltersRoot: FC<TViewFiltersRoot> = observer((props) => {
               filterKey={filterKey}
               dateCustomFilterToggle={dateCustomFilterToggle}
               setDateCustomFilterToggle={setDateCustomFilterToggle}
+              isLocalView={isLocalView}
             />
           )}
         </div>

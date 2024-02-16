@@ -13,12 +13,13 @@ type TViewFilterSelection = {
   viewType: TViewTypes;
   filterKey: keyof TViewFilters;
   propertyId: string;
+  isLocalView: boolean;
 };
 
 export const ViewFilterSelection: FC<TViewFilterSelection> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyId } = props;
+  const { workspaceSlug, projectId, viewId, viewType, filterKey, propertyId, isLocalView } = props;
 
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType, isLocalView);
 
   const propertyIds = useMemo(
     () => viewDetailStore?.appliedFilters?.filters?.[filterKey] || [],
@@ -33,18 +34,6 @@ export const ViewFilterSelection: FC<TViewFilterSelection> = observer((props) =>
       : propertyIds?.includes(propertyId)
     : propertyIds?.includes(propertyId) || false;
 
-  // const isSelected = useMemo(
-  //   () =>
-  //     ["start_date", "target_date"].includes(filterKey)
-  //       ? propertyId === "custom"
-  //         ? propertyIds.filter((id) => id.includes("-")).length > 0
-  //           ? true
-  //           : false
-  //         : propertyIds?.includes(propertyId)
-  //       : propertyIds?.includes(propertyId) || false,
-  //   [filterKey, propertyId, propertyIds]
-  // );
-
   return (
     <div
       className={`flex-shrink-0 w-3 h-3 flex justify-center items-center border rounded text-bold ${
@@ -53,7 +42,7 @@ export const ViewFilterSelection: FC<TViewFilterSelection> = observer((props) =>
           : "border-custom-border-400 bg-custom-background-100"
       }`}
     >
-      {isSelected && <Check size={14} />}
+      {isSelected && <Check size={14} className="text-white" />}
     </div>
   );
 });

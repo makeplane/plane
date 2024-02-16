@@ -2,6 +2,9 @@ export * from "./root";
 
 export * from "./header-tabs";
 
+// empty states
+export * from "./empty-states/empty-state";
+
 // views
 export * from "./views/root";
 export * from "./views/view-item";

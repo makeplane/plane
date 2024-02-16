@@ -36,7 +36,7 @@ export type TViewStore = TView & {
   filtersToUpdate: TUpdateView;
   // computed
   appliedFilters: TViewFilterProps | undefined;
-  appliedFiltersQueryParams: string | undefined;
+  appliedFiltersQueryParams: { params: Object; query: string } | undefined;
   isFiltersApplied: boolean;
   isFiltersUpdateEnabled: boolean;
   // helper actions
@@ -45,7 +45,6 @@ export type TViewStore = TView & {
   setFilters: (filterKey: keyof TViewFilters | undefined, filterValue: "clear_all" | string) => void;
   setDisplayFilters: (display_filters: Partial<TViewDisplayFilters>) => void;
   setDisplayProperties: (displayPropertyKey: keyof TViewDisplayProperties) => void;
-  setIsEditable: (id_editable: boolean) => void;
   resetChanges: () => void;
   saveChanges: () => Promise<void>;
   // actions
@@ -77,8 +76,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   created_at: Date | undefined;
   updated_at: Date | undefined;
   is_local_view: boolean = false;
-  is_create: boolean = false;
-  is_editable: boolean = false;
   loader: TLoader = undefined;
   filtersToUpdate: TUpdateView;
 
@@ -110,8 +107,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     this.created_at = _view.created_at;
     this.updated_at = _view.updated_at;
     this.is_local_view = _view.is_local_view;
-    this.is_create = _view.is_create;
-    this.is_editable = _view.is_editable;
     this.filtersToUpdate = {
       name: this.name,
       description: this.description,
@@ -142,8 +137,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       created_at: observable.ref,
       updated_at: observable.ref,
       is_local_view: observable.ref,
-      is_create: observable.ref,
-      is_editable: observable.ref,
+
       loader: observable.ref,
       filtersToUpdate: observable,
       // computed
@@ -156,7 +150,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       setFilters: action,
       setDisplayFilters: action,
       setDisplayProperties: action,
-      setIsEditable: action,
       resetChanges: action,
       saveChanges: action,
       // actions
@@ -197,8 +190,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
       layout,
       EFilterTypes.FILTERS
     );
-
-    return this.computeAppliedFiltersQueryParameters(appliedFilters, requiredFilterProperties)?.query || undefined;
+    return this.computeAppliedFiltersQueryParameters(appliedFilters, requiredFilterProperties) || undefined;
   }
 
   get isFiltersApplied() {
@@ -247,6 +239,12 @@ export class ViewStore extends FiltersHelper implements TViewStore {
           return concat(_values, filterValue);
         });
     });
+
+    const { workspaceSlug } = this.store.view;
+    if (workspaceSlug && this.id) {
+      const filterParams = this.appliedFiltersQueryParams?.params;
+      this.store.issue.workspaceIssues.fetchIssues(workspaceSlug, this.id, "mutation", filterParams);
+    }
   };
 
   setDisplayFilters = async (display_filters: Partial<TViewDisplayFilters>) => {
@@ -288,12 +286,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     this.updateUserDisplayProperties({ [EFilterTypes.DISPLAY_PROPERTIES]: this.filtersToUpdate.display_properties });
   };
 
-  setIsEditable = (is_editable: boolean) => {
-    runInAction(() => {
-      this.is_editable = is_editable;
-    });
-  };
-
   resetChanges = () => {
     runInAction(() => {
       const _view = cloneDeep(this);
@@ -310,11 +302,8 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   saveChanges = async () => {
     try {
       if (!this.id) return;
-
-      if (["all-issues", "assigned", "created", "subscribed"].includes(this.id)) {
-        const payload = this.filtersToUpdate.filters;
-        await this.updateUserFilters({ [EFilterTypes.FILTERS]: payload });
-      } else await this.update(this.filtersToUpdate);
+      console.log("coming here");
+      await this.update(this.filtersToUpdate);
     } catch {
       Object.keys(this.filtersToUpdate).forEach((key) => {
         const _key = key as keyof TUpdateView;
@@ -326,13 +315,14 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   // actions
   update = async (viewData: TUpdateView) => {
     try {
-      if (!this.workspace || !this.id) return;
+      const { workspaceSlug, projectId } = this.store.view;
+      if (!workspaceSlug || !this.id) return;
 
       runInAction(() => {
         this.loader = "updating";
       });
 
-      const view = await this.service.update(this.workspace, this.id, viewData, this.project);
+      const view = await this.service.update(workspaceSlug, this.id, viewData, projectId);
       if (!view) return;
 
       runInAction(() => {
@@ -349,9 +339,10 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   lockView = async () => {
     try {
-      if (!this.workspace || !this.id || !this.service.lock) return;
+      const { workspaceSlug, projectId } = this.store.view;
+      if (!workspaceSlug || !this.id || !this.service.lock) return;
 
-      const view = await this.service.lock(this.workspace, this.id, this.project);
+      const view = await this.service.lock(workspaceSlug, this.id, projectId);
       if (!view) return;
 
       runInAction(() => {
@@ -364,9 +355,10 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   unlockView = async () => {
     try {
-      if (!this.workspace || !this.id || !this.service.unlock) return;
+      const { workspaceSlug, projectId } = this.store.view;
+      if (!workspaceSlug || !this.id || !this.service.unlock) return;
 
-      const view = await this.service.unlock(this.workspace, this.id, this.project);
+      const view = await this.service.unlock(workspaceSlug, this.id, projectId);
       if (!view) return;
 
       runInAction(() => {
@@ -379,9 +371,10 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   makeFavorite = async () => {
     try {
-      if (!this.workspace || !this.id || !this.service.makeFavorite) return;
+      const { workspaceSlug, projectId } = this.store.view;
+      if (!workspaceSlug || !this.id || !this.service.makeFavorite) return;
 
-      const view = await this.service.makeFavorite(this.workspace, this.id, this.project);
+      const view = await this.service.makeFavorite(workspaceSlug, this.id, projectId);
       if (!view) return;
 
       runInAction(() => {
@@ -394,9 +387,10 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   removeFavorite = async () => {
     try {
-      if (!this.workspace || !this.id || !this.service.removeFavorite) return;
+      const { workspaceSlug, projectId } = this.store.view;
+      if (!workspaceSlug || !this.id || !this.service.removeFavorite) return;
 
-      const view = await this.service.removeFavorite(this.workspace, this.id, this.project);
+      const view = await this.service.removeFavorite(workspaceSlug, this.id, projectId);
       if (!view) return;
 
       runInAction(() => {
@@ -410,7 +404,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   // updating the user specific filters, display filters, and display properties
   updateUserFilters = async (filters: { [EFilterTypes.FILTERS]: TViewFilters }) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
+      const { workspaceSlug, projectId } = this.store.view;
       if (!workspaceSlug) return;
 
       const userView = await this.userService.update(workspaceSlug, filters, projectId);
@@ -428,7 +422,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
 
   updateUserDisplayFilters = async (display_filters: { [EFilterTypes.DISPLAY_FILTERS]: TViewDisplayFilters }) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
+      const { workspaceSlug, projectId } = this.store.view;
       if (!workspaceSlug) return;
 
       const userView = await this.userService.update(workspaceSlug, display_filters, projectId);
@@ -448,7 +442,7 @@ export class ViewStore extends FiltersHelper implements TViewStore {
     [EFilterTypes.DISPLAY_PROPERTIES]: TViewDisplayProperties;
   }) => {
     try {
-      const { workspaceSlug, projectId } = this.store.app.router;
+      const { workspaceSlug, projectId } = this.store.view;
       if (!workspaceSlug) return;
 
       const userView = await this.userService.update(workspaceSlug, display_properties, projectId);

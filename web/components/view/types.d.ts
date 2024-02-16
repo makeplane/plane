@@ -1,15 +1,17 @@
 import { LucideIcon } from "lucide-react";
 // types
 import { TView, TUpdateView } from "@plane/types";
+// constants
+import { TViewCRUD } from "constants/view";
 
 export type TViewOperations = {
-  localViewCreateEdit: (viewId: string | undefined, currentView?: TUpdateView | undefined) => void;
-  localViewCreateEditClear: (viewId: string | undefined) => Promise<void>;
+  localViewCreateEdit: (viewId: string | undefined, status: TViewCRUD) => void;
 
   fetch: () => Promise<void>;
   create: (data: Partial<TView>) => Promise<void>;
   update: () => Promise<void>;
   remove: (viewId: string) => Promise<void>;
+  duplicate: (viewId: string) => Promise<void>;
 };
 
 // view and view filter edit dropdowns

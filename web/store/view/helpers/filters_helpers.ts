@@ -101,8 +101,10 @@ export class FiltersHelper {
     Object.keys(filteredParams).forEach((key) => {
       const _key = key as TViewFilterQueryParams;
       const _value: string | boolean | string[] | undefined = filteredParams[_key];
-      if (_value != undefined && acceptableParamsByLayout.includes(_key))
-        paramsObject[_key] = Array.isArray(_value) ? _value.join(",") : _value;
+      if (_value != undefined && acceptableParamsByLayout.includes(_key)) {
+        if (Array.isArray(_value)) _value.length > 0 && (paramsObject[_key] = _value.join(","));
+        else paramsObject[_key] = _value;
+      }
     });
 
     if (paramsObject && !isEmpty(paramsObject)) {
@@ -110,7 +112,7 @@ export class FiltersHelper {
         .map((key) => {
           const _key = key as TViewFilterQueryParams;
           const _value: string | boolean | undefined = paramsObject[_key];
-          if (!undefined) return `${_key}=${_value}`;
+          if (_value) return `${_key}=${_value}`;
         })
         .join("&");
     }

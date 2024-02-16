@@ -43,8 +43,6 @@ export type TView = {
   updated_at: Date | undefined;
   // local view variables
   is_local_view: boolean;
-  is_create: boolean;
-  is_editable: boolean;
 };
 
 export type TUpdateView = {

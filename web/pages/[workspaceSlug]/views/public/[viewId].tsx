@@ -5,6 +5,7 @@ import { CheckCircle } from "lucide-react";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { GlobalViewRoot, ViewHeader } from "components/view";
+import { GlobalViewIssueLayoutRoot } from "components/issues";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
@@ -44,7 +45,9 @@ const WorkspacePublicViewPage: NextPageWithLayout = () => {
             workspaceViewTabOptions={workspaceViewTabOptions}
           />
         </div>
+      </div>
 
+      <div className="flex-shrink-0 w-full">
         {/* content */}
         <GlobalViewRoot
           workspaceSlug={workspaceSlug.toString()}
@@ -56,8 +59,15 @@ const WorkspacePublicViewPage: NextPageWithLayout = () => {
         />
       </div>
 
-      <div className="w-full h-full overflow-hidden relative flex justify-center items-center text-sm text-custom-text-300">
-        Issues render placeholder
+      {/* issues */}
+      <div className="relative w-full h-full overflow-hidden">
+        <GlobalViewIssueLayoutRoot
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={undefined}
+          viewId={viewId.toString()}
+          viewType={VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS}
+          viewPageType={EViewPageType.ALL}
+        />
       </div>
     </div>
   );

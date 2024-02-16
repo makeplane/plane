@@ -23,6 +23,7 @@ type TViewFiltersDropdown = {
   children?: ReactNode;
   displayDropdownText?: boolean;
   dropdownPlacement?: Placement;
+  isLocalView?: boolean;
 };
 
 export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) => {
@@ -35,6 +36,7 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
     children,
     displayDropdownText = true,
     dropdownPlacement = "bottom-start",
+    isLocalView = false,
   } = props;
   // state
   const [dropdownToggle, setDropdownToggle] = useState(false);
@@ -139,6 +141,7 @@ export const ViewFiltersDropdown: FC<TViewFiltersDropdown> = observer((props) =>
                 viewPageType={viewPageType}
                 dateCustomFilterToggle={dateCustomFilterToggle}
                 setDateCustomFilterToggle={setDateCustomFilterToggle}
+                isLocalView={isLocalView}
               />
             </div>
           </div>

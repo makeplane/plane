@@ -16,12 +16,21 @@ type TViewAppliedFiltersRoot = {
   viewType: TViewTypes;
   propertyVisibleCount?: number | undefined;
   showClearAll?: boolean;
+  isLocalView?: boolean;
 };
 
 export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((props) => {
-  const { workspaceSlug, projectId, viewId, viewType, propertyVisibleCount = undefined, showClearAll = false } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    viewId,
+    viewType,
+    propertyVisibleCount = undefined,
+    showClearAll = false,
+    isLocalView = false,
+  } = props;
   // hooks
-  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType);
+  const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType, isLocalView);
 
   const filterKeys = useMemo(
     () =>
@@ -52,6 +61,7 @@ export const ViewAppliedFiltersRoot: FC<TViewAppliedFiltersRoot> = observer((pro
               viewType={viewType}
               filterKey={filterKey}
               propertyVisibleCount={propertyVisibleCount}
+              isLocalView={isLocalView}
             />
           </Fragment>
         );

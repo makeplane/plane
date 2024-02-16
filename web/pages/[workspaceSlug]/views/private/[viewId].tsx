@@ -5,10 +5,11 @@ import { CheckCircle } from "lucide-react";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { GlobalViewRoot, ViewHeader } from "components/view";
+import { GlobalViewIssueLayoutRoot } from "components/issues";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
-import { EViewPageType, VIEW_TYPES } from "constants/view";
+import { ELocalViews, EViewPageType, VIEW_TYPES } from "constants/view";
 
 const WorkspacePrivateViewPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -19,12 +20,12 @@ const WorkspacePrivateViewPage: NextPageWithLayout = () => {
       {
         key: VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS,
         title: "Private",
-        href: `/${workspaceSlug}/views/private/assigned`,
+        href: `/${workspaceSlug}/views/private/${ELocalViews.ASSIGNED}`,
       },
       {
         key: VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS,
         title: "Public",
-        href: `/${workspaceSlug}/views/public/all-issues`,
+        href: `/${workspaceSlug}/views/public/${ELocalViews.ALL_ISSUES}`,
       },
     ],
     [workspaceSlug]
@@ -44,7 +45,9 @@ const WorkspacePrivateViewPage: NextPageWithLayout = () => {
             workspaceViewTabOptions={workspaceViewTabOptions}
           />
         </div>
+      </div>
 
+      <div className="flex-shrink-0 w-full">
         {/* content */}
         <GlobalViewRoot
           workspaceSlug={workspaceSlug.toString()}
@@ -56,9 +59,24 @@ const WorkspacePrivateViewPage: NextPageWithLayout = () => {
         />
       </div>
 
-      <div className="w-full h-full overflow-hidden relative flex justify-center items-center text-sm text-custom-text-300">
-        Issues render placeholder
+      {/* issues */}
+      <div className="relative w-full h-full overflow-hidden">
+        <GlobalViewIssueLayoutRoot
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={undefined}
+          viewId={viewId.toString()}
+          viewType={VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS}
+          viewPageType={EViewPageType.ALL}
+        />
       </div>
+
+      {/* TODO: once the functionality is done implement the empty states */}
+      {/* <ViewEmptyStateRoot
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={undefined}
+        viewId={viewId.toString()}
+        viewType={VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS}
+      ></ViewEmptyStateRoot> */}
     </div>
   );
 };

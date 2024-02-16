@@ -55,19 +55,20 @@ export const ViewFiltersEditDropdown: FC<TViewFiltersEditDropdown> = observer((p
         key: "save_as_new",
         label: "Save as new view",
         onClick: () => {
-          viewOperations.localViewCreateEdit(undefined, viewDetailStore?.filtersToUpdate);
+          viewOperations.localViewCreateEdit(undefined, "SAVE_AS_NEW");
         },
       },
       {
         icon: RotateCcw,
         key: "reset_changes",
-        label: "Reset changes",
+        label: "Reset filter changes",
         onClick: () => viewDetailStore?.resetChanges(),
       },
     ],
     [viewOperations, viewDetailStore]
   );
 
+  if (viewDetailStore?.is_local_view) return <></>;
   if (!viewDetailStore?.isFiltersUpdateEnabled) return <></>;
   return (
     <Menu as="div" className="relative flex-shrink-0" ref={dropdownRef}>

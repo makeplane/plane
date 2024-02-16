@@ -7,7 +7,8 @@ import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import { TIssue, TLoader, TUnGroupedIssues, TViewDisplayFilters, ViewFlags } from "@plane/types";
+import { VIEW_TYPES, generateViewStoreKey } from "constants/view";
 
 export interface IWorkspaceIssues {
   // observable
@@ -17,7 +18,7 @@ export interface IWorkspaceIssues {
   // computed
   groupedIssueIds: { dataViewId: string; issueIds: TUnGroupedIssues | undefined };
   // actions
-  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<TIssue[]>;
+  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader, query?: any) => Promise<TIssue[]>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -76,39 +77,52 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   }
 
   get groupedIssueIds() {
-    const viewId = this.rootIssueStore.globalViewId;
-    const workspaceSlug = this.rootIssueStore.workspaceSlug;
-    if (!workspaceSlug || !viewId) return { dataViewId: "", issueIds: undefined };
+    const { workspaceSlug, projectId, currentViewType, currentViewId } = this.rootIssueStore.rootStore.view;
+    if (!workspaceSlug || !currentViewId || !currentViewType) return { dataViewId: "", issueIds: undefined };
 
-    const uniqueViewId = `${workspaceSlug}_${viewId}`;
+    const viewRootKey = generateViewStoreKey(workspaceSlug, projectId, currentViewType);
+    let displayFilters: TViewDisplayFilters | undefined = undefined;
 
-    const displayFilters = this.rootIssueStore?.workspaceIssuesFilter?.filters?.[viewId]?.displayFilters;
-    if (!displayFilters) return { dataViewId: viewId, issueIds: undefined };
+    if (currentViewType === VIEW_TYPES.WORKSPACE_PRIVATE_VIEWS)
+      displayFilters =
+        this.rootIssueStore?.rootStore?.view?.workspacePrivateViewStore?.viewMap?.[viewRootKey]?.[currentViewId]
+          ?.appliedFilters?.display_filters;
+    else if (currentViewType === VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS)
+      displayFilters =
+        this.rootIssueStore?.rootStore?.view?.workspacePublicViewStore?.viewMap?.[viewRootKey]?.[currentViewId]
+          ?.appliedFilters?.display_filters;
+
+    if (!displayFilters) return { dataViewId: currentViewId, issueIds: undefined };
 
     const orderBy = displayFilters?.order_by;
 
+    const uniqueViewId = `${workspaceSlug}_${currentViewId}`;
     const viewIssueIds = this.issues[uniqueViewId];
 
-    if (!viewIssueIds) return { dataViewId: viewId, issueIds: undefined };
+    if (!viewIssueIds) return { dataViewId: currentViewId, issueIds: undefined };
 
     const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
-    if (!_issues) return { dataViewId: viewId, issueIds: [] };
+    if (!_issues) return { dataViewId: currentViewId, issueIds: [] };
 
     let issueIds: TIssue | TUnGroupedIssues | undefined = undefined;
 
     issueIds = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
 
-    return { dataViewId: viewId, issueIds };
+    return { dataViewId: currentViewId, issueIds };
   }
 
-  fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader = "init-loader") => {
+  fetchIssues = async (
+    workspaceSlug: string,
+    viewId: string,
+    loadType: TLoader = "init-loader",
+    query: any = undefined
+  ) => {
     try {
       this.loader = loadType;
 
       const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
-      const params = this.rootIssueStore?.workspaceIssuesFilter?.getAppliedFilters(viewId);
-      const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
+      const response = await this.workspaceService.getViewIssues(workspaceSlug, query || {});
 
       runInAction(() => {
         set(

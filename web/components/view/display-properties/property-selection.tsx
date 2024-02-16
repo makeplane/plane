@@ -27,10 +27,10 @@ export const ViewDisplayPropertySelection: FC<TViewDisplayPropertySelection> = o
 
   return (
     <div
-      className={`relative flex items-center gap-1 text-xs rounded p-0.5 px-2 border transition-all capitalize cursor-pointer
+      className={`relative flex items-center gap-1 text-xs rounded p-0.5 px-2 border transition-all capitalize cursor-pointer 
         ${
           propertyIsSelected
-            ? `border-custom-primary-100 bg-custom-primary-100`
+            ? `border-custom-primary-100 bg-custom-primary-100 text-white`
             : `border-custom-border-300 hover:bg-custom-background-80`
         }`}
       onClick={handlePropertySelection}
