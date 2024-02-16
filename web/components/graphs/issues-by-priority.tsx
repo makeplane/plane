@@ -5,6 +5,7 @@ import { BarGraph } from "components/ui";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { TIssuePriorities } from "@plane/types";
+import { ComputedDatum } from "@nivo/bar";
 
 type Props = {
   data: {
@@ -12,11 +13,16 @@ type Props = {
     priority_count: number;
   }[];
   height?: number;
+  onBarClick?: (
+    datum: ComputedDatum<any> & {
+      color: string;
+    }
+  ) => void;
   theme?: Theme;
 };
 
 export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
-  const { data, height = 300, theme } = props;
+  const { data, height = 300, onBarClick, theme } = props;
 
   return (
     <BarGraph
@@ -48,6 +54,9 @@ export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
         else if (datum.data.priority === "Medium") return "#f59e0b";
         else if (datum.data.priority === "Low") return "#16a34a";
         else return "#e5e5e5";
+      }}
+      onClick={(datum) => {
+        if (onBarClick) onBarClick(datum);
       }}
       theme={{
         axis: {

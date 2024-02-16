@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -21,6 +22,8 @@ const WIDGET_KEY = "issues_by_priority";
 
 export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  // router
+  const router = useRouter();
   // store hooks
   const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
   // derived values
@@ -81,7 +84,14 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
       {totalCount > 0 ? (
         <div className="flex items-center h-full">
           <div className="w-full -mt-[11px]">
-            <IssuesByPriorityGraph data={chartData} />
+            <IssuesByPriorityGraph
+              data={chartData}
+              onBarClick={(datum) => {
+                router.push(
+                  `/${workspaceSlug}/workspace-views/assigned?priority=${`${datum.data.priority}`.toLowerCase()}`
+                );
+              }}
+            />
           </div>
         </div>
       ) : (
