@@ -60,7 +60,7 @@ class InstanceEndpoint(BaseAPIView):
         data["is_activated"] = True
         return Response(data, status=status.HTTP_200_OK)
 
-    @invalidate_path_cache
+    @invalidate_path_cache()
     def patch(self, request):
         # Get the instance
         instance = Instance.objects.first()
