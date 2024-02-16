@@ -1,5 +1,10 @@
-import { EUserProjectRoles } from "constants/project";
-import { IIssueActivity, IIssueLite, TStateGroups } from ".";
+import {
+  IIssueActivity,
+  IIssueLite,
+  TIssuePriorities,
+  TStateGroups,
+  EUserProjectRoles,
+} from ".";
 
 export interface IUser {
   id: string;
@@ -17,7 +22,6 @@ export interface IUser {
   is_onboarded: boolean;
   is_password_autoset: boolean;
   is_tour_completed: boolean;
-  is_password_autoset: boolean;
   mobile_number: string | null;
   role: string | null;
   onboarding_step: {
@@ -80,7 +84,7 @@ export interface IUserActivity {
 }
 
 export interface IUserPriorityDistribution {
-  priority: string;
+  priority: TIssuePriorities;
   priority_count: number;
 }
 

@@ -46,7 +46,7 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
       <ProfileStats userProfile={userProfile} />
       <ProfileWorkload stateDistribution={stateDistribution} />
       <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
-        <ProfilePriorityDistribution userProfile={userProfile} />
+        <ProfilePriorityDistribution priorityDistribution={userProfile?.priority_distribution} />
         <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
       </div>
       <ProfileActivity />
@@ -56,7 +56,7 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
 
 ProfileOverviewPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader type='Summary' />}>
+    <AppLayout header={<UserProfileHeader type="Summary" />}>
       <ProfileAuthWrapper>{page}</ProfileAuthWrapper>
     </AppLayout>
   );
