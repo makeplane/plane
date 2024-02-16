@@ -26,7 +26,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     issues: { fetchInboxIssues },
   } = useInboxIssues();
 
-  const [windowWidth] = useSize();
+  const {windowWidth} = useSize();
 
   useSWR(
     workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view

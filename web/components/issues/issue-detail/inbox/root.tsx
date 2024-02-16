@@ -40,7 +40,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
     membership: { currentProjectRole },
   } = useUser();
 
-  const [windowWidth] = useSize();
+  const { windowWidth } = useSize();
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({

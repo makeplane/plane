@@ -25,7 +25,7 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
   const {
     filters: { inboxFilters, updateInboxFilters },
   } = useInboxIssues();
-  const [windowWidth] = useSize();
+  const {windowWidth} = useSize();
 
   const filters = inboxFilters?.filters;
 
