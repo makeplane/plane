@@ -42,7 +42,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   }, [value]);
 
   useEffect(() => {
-    if (debouncedValue) {
+    if (debouncedValue || debouncedValue === "") {
       issueOperations
         .update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }, false)
         .finally(() => {
@@ -71,6 +71,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       />
     );
   }
+
   return (
     <RichTextEditor
       cancelUploadImage={fileService.cancelUpload}
@@ -85,7 +86,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       onChange={(description: Object, description_html: string) => {
         setShowAlert(true);
         setIsSubmitting("submitting");
-        setDescriptionHTML(description_html && descriptionHTML !== "" ? description_html : "<p></p>");
+        setDescriptionHTML(description_html);
       }}
       mentionSuggestions={mentionSuggestions}
       mentionHighlights={mentionHighlights}

@@ -31,7 +31,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   } = useIssueDetail();
   // derived values
   const issue = getIssueById(issueId);
-  console.log("issue", issue);
 
   if (!issue) return <></>;
 
