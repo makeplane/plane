@@ -9,7 +9,7 @@ import { ProjectMemberList, ProjectSettingsMemberDefaults } from "components/pro
 import { NextPageWithLayout } from "lib/types";
 
 const MembersSettingsPage: NextPageWithLayout = () => (
-  <section className={`w-full overflow-y-auto py-8 pr-9`}>
+  <section className={`w-full overflow-y-auto md:py-8 pr-9`}>
     <ProjectSettingsMemberDefaults />
     <ProjectMemberList />
   </section>

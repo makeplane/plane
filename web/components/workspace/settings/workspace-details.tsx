@@ -198,7 +198,7 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
-            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight">{`${
+            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (

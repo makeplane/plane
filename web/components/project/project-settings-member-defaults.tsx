@@ -90,8 +90,8 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
       </div>
 
       <div className="flex w-full flex-col gap-2 pb-4">
-        <div className="flex w-full items-center gap-4 py-8">
-          <div className="flex w-1/2 flex-col gap-2">
+        <div className="flex md:flex-row flex-col w-full md:items-center gap-4 py-8">
+          <div className="flex md:w-1/2 flex-col gap-2">
             <h4 className="text-sm">Project Lead</h4>
             <div className="">
               {currentProjectDetails ? (
@@ -116,7 +116,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
             </div>
           </div>
 
-          <div className="flex w-1/2 flex-col gap-2">
+          <div className="flex md:w-1/2 flex-col gap-2">
             <h4 className="text-sm">Default Assignee</h4>
             <div className="">
               {currentProjectDetails ? (

@@ -85,7 +85,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         data={userDetails.member}
         onSubmit={handleRemove}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
+      <div className="group flex items-center justify-between md:px-3 py-4 hover:bg-custom-background-90">
         <div className="flex items-center gap-x-4 gap-y-2">
           {userDetails.member.avatar && userDetails.member.avatar !== "" ? (
             <Link href={`/${workspaceSlug}/profile/${userDetails.member.id}`}>
@@ -114,10 +114,10 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center">
               <p className="text-xs text-custom-text-300">{userDetails.member.display_name}</p>
               {isAdmin && (
-                <>
+                <div className="hidden md:flex">
                   <Dot height={16} width={16} className="text-custom-text-300" />
                   <p className="text-xs text-custom-text-300">{userDetails.member.email}</p>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -178,7 +178,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}
-                className="pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
+                className="pointer-events-none md:opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
               >
                 <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
               </button>
