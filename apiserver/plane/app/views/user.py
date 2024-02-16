@@ -1,7 +1,8 @@
+# Django imports
+from django.db.models import Q, F, Count, Case, When, IntegerField
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-
 
 # Module imports
 from plane.app.serializers import (
@@ -15,10 +16,7 @@ from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
-
-
-from django.db.models import Q, F, Count, Case, When, IntegerField
-
+from ...utils.cache import cache_user_response, invalidate_user_cache
 
 class UserEndpoint(BaseViewSet):
     serializer_class = UserSerializer
@@ -27,6 +25,7 @@ class UserEndpoint(BaseViewSet):
     def get_object(self):
         return self.request.user
 
+    @cache_user_response(60*15)
     def retrieve(self, request):
         serialized_data = UserMeSerializer(request.user).data
         return Response(
@@ -34,10 +33,12 @@ class UserEndpoint(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @cache_user_response(60*15)
     def retrieve_user_settings(self, request):
         serialized_data = UserMeSettingsSerializer(request.user).data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
+    @cache_user_response(60*15)
     def retrieve_instance_admin(self, request):
         instance = Instance.objects.first()
         is_admin = InstanceAdmin.objects.filter(
@@ -47,6 +48,11 @@ class UserEndpoint(BaseViewSet):
             {"is_instance_admin": is_admin}, status=status.HTTP_200_OK
         )
 
+    @invalidate_user_cache("/api/users/me/")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @invalidate_user_cache("/api/users/me/")
     def deactivate(self, request):
         # Check all workspace user is active
         user = self.get_object()
@@ -145,6 +151,8 @@ class UserEndpoint(BaseViewSet):
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
+
+    @invalidate_user_cache("/api/users/me")
     def patch(self, request):
         user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_onboarded = request.data.get("is_onboarded", False)
@@ -155,6 +163,8 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
+
+    @invalidate_user_cache("/api/users/me")
     def patch(self, request):
         user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_tour_completed = request.data.get("is_tour_completed", False)

@@ -32,6 +32,7 @@ from plane.license.api.permissions import (
 )
 from plane.db.models import User, WorkspaceMember, ProjectMember
 from plane.license.utils.encryption import encrypt_data
+from plane.utils.cache import cache_path_response, invalidate_path_cache
 
 
 class InstanceEndpoint(BaseAPIView):
@@ -44,6 +45,7 @@ class InstanceEndpoint(BaseAPIView):
             AllowAny(),
         ]
 
+    @cache_path_response(60 * 60 * 2)
     def get(self, request):
         instance = Instance.objects.first()
         # get the instance
@@ -58,6 +60,7 @@ class InstanceEndpoint(BaseAPIView):
         data["is_activated"] = True
         return Response(data, status=status.HTTP_200_OK)
 
+    @invalidate_path_cache
     def patch(self, request):
         # Get the instance
         instance = Instance.objects.first()
@@ -104,6 +107,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         serializer = InstanceAdminSerializer(instance_admin)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @invalidate_path_cache("/api/instances/")
     def get(self, request):
         instance = Instance.objects.first()
         if instance is None:
@@ -115,6 +119,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         serializer = InstanceAdminSerializer(instance_admins, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_path_cache("/api/instances/")
     def delete(self, request, pk):
         instance = Instance.objects.first()
         instance_admin = InstanceAdmin.objects.filter(
@@ -135,6 +140,8 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_path_cache("/api/configs/")
+    @invalidate_path_cache("/api/mobile-configs/")
     def patch(self, request):
         configurations = InstanceConfiguration.objects.filter(
             key__in=request.data.keys()
@@ -170,6 +177,7 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    @invalidate_path_cache("/api/instances/")
     def post(self, request):
         # Check instance first
         instance = Instance.objects.first()
@@ -260,6 +268,7 @@ class SignUpScreenVisitedEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    @invalidate_path_cache("/api/instances/")
     def post(self, request):
         instance = Instance.objects.first()
         if instance is None:
