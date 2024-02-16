@@ -78,6 +78,7 @@ class CycleSerializer(BaseSerializer):
             "workspace_id",
             "project_id",
             # model fields
+            "name",
             "description",
             "start_date",
             "end_date",

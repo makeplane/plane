@@ -18,7 +18,7 @@ from plane.db.models import (
 
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
-    owner_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
 
@@ -48,7 +48,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
-            "owner_id",
+            "owner",
         ]
 
 

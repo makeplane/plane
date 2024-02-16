@@ -30,9 +30,6 @@ def cache_user_response(timeout, path=None):
 
             if response.status_code == 200:
                 cache.set(key, {'data': response.data, 'status': response.status_code}, timeout)
-                response['Cache-Control'] = f'max-age={timeout}'
-                expires_time = datetime.utcnow() + timedelta(seconds=timeout)
-                response['Expires'] = http_date(expires_time.timestamp())
 
             return response
         return _wrapped_view
@@ -59,6 +56,7 @@ def cache_path_response(timeout, path=None):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
             # Function to generate cache key
+            print(request.get_full_path())
             custom_path = path if path is not None else request.get_full_path()
             key = generate_cache_key(custom_path, None)
             cached_result = cache.get(key)
@@ -69,20 +67,25 @@ def cache_path_response(timeout, path=None):
 
             if response.status_code == 200:
                 cache.set(key, {'data': response.data, 'status': response.status_code}, timeout)
-                response['Cache-Control'] = f'max-age={timeout}'
-                expires_time = datetime.utcnow() + timedelta(seconds=timeout)
-                response['Expires'] = http_date(expires_time.timestamp())
 
             return response
         return _wrapped_view
     return decorator
 
-def invalidate_path_cache(path=None):
+def invalidate_path_cache(path=None, include_url_params=False):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
             # Invalidate cache before executing the view function
-            custom_path = path if path is not None else request.get_full_path()
+            if include_url_params:
+                path_with_values = path
+                for key, value in kwargs.items():
+                    path_with_values = path_with_values.replace(f":{key}", str(value))
+
+                custom_path = path_with_values   
+            else:
+                custom_path = path if path is not None else request.get_full_path()
+
             key = generate_cache_key(custom_path, None)
             cache.delete(key)
 

@@ -81,7 +81,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
-
+from plane.utils.cache import cache_path_response, invalidate_path_cache
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
@@ -1111,6 +1111,7 @@ class IssueArchiveViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
+    @cache_path_response(60 * 60 * 3)
     def list(self, request, slug, project_id):
         fields = [
             field
@@ -1217,6 +1218,7 @@ class IssueArchiveViewSet(BaseViewSet):
         )
         return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/archived-issues/", True)
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,

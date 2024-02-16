@@ -11,13 +11,14 @@ from plane.app.serializers import (
     EstimatePointSerializer,
     EstimateReadSerializer,
 )
-
+from plane.utils.cache import cache_path_response, invalidate_path_cache
 
 class ProjectEstimatePointEndpoint(BaseAPIView):
     permission_classes = [
         ProjectEntityPermission,
     ]
 
+    @cache_path_response(60 * 60 * 2)
     def get(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if project.estimate_id is not None:
@@ -38,6 +39,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
     model = Estimate
     serializer_class = EstimateSerializer
 
+    @cache_path_response(60 * 60 * 2)
     def list(self, request, slug, project_id):
         estimates = (
             Estimate.objects.filter(
@@ -49,6 +51,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         serializer = EstimateReadSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_path_cache("/api/workspaces/:slug/estimates/", True)
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/estimates/", True)
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/project-estimates/", True)
     def create(self, request, slug, project_id):
         if not request.data.get("estimate", False):
             return Response(
@@ -114,6 +119,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @invalidate_path_cache("/api/workspaces/:slug/estimates/", True)
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/estimates/", True)
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/project-estimates/", True)
     def partial_update(self, request, slug, project_id, estimate_id):
         if not request.data.get("estimate", False):
             return Response(

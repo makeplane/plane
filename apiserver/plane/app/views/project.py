@@ -65,7 +65,7 @@ from plane.db.models import (
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
-
+from plane.utils.cache import cache_path_response, invalidate_path_cache
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ProjectListSerializer
@@ -662,6 +662,7 @@ class ProjectMemberViewSet(BaseViewSet):
             .select_related("workspace", "workspace__owner")
         )
 
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/members/", True)
     def create(self, request, slug, project_id):
         members = request.data.get("members", [])
 
@@ -738,6 +739,7 @@ class ProjectMemberViewSet(BaseViewSet):
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @cache_path_response(60 * 60 * 2)
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
         project_members = ProjectMember.objects.filter(
@@ -752,6 +754,7 @@ class ProjectMemberViewSet(BaseViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/members/", True)
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
             pk=pk,
@@ -792,6 +795,7 @@ class ProjectMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/members/", True)
     def destroy(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
             workspace__slug=slug,
