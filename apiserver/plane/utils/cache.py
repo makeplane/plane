@@ -59,7 +59,6 @@ def cache_path_response(timeout, path=None):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
             # Function to generate cache key
-            print(request.get_full_path())
             custom_path = path if path is not None else request.get_full_path()
             key = generate_cache_key(custom_path, None)
             cached_result = cache.get(key)
