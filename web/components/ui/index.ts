@@ -1,5 +1,4 @@
 export * from "./graphs";
-export * from "./datepicker";
 export * from "./empty-space";
 export * from "./labels-list";
 export * from "./multi-level-dropdown";
