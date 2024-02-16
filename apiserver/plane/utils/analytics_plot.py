@@ -160,6 +160,7 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             .order_by("date")
         )
 
+    # Burndown plot
     for date in date_range:
         cumulative_pending_issues = total_issues
         total_completed = 0

@@ -42,10 +42,10 @@ class CycleSerializer(BaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
-    # estimates
-    total_estimates = serializers.IntegerField(read_only=True)
-    completed_estimates = serializers.IntegerField(read_only=True)
-    started_estimates = serializers.IntegerField(read_only=True)
+    #TODO: Remove once confirmed  # estimates
+    # total_estimates = serializers.IntegerField(read_only=True)
+    # completed_estimates = serializers.IntegerField(read_only=True)
+    # started_estimates = serializers.IntegerField(read_only=True)
     # method fields
     assignees = serializers.SerializerMethodField(read_only=True)
 
@@ -55,11 +55,11 @@ class CycleSerializer(BaseSerializer):
     def get_assignees(self, obj):
         # Get all the members
         members = [
-            {
-                "id": assignee.id,
-                "display_name": assignee.display_name,
-                "avatar": assignee.avatar,
-            }
+                {
+                    "id": assignee.id,
+                    "display_name": assignee.display_name,
+                    "avatar": assignee.avatar,
+                }
             for issue_cycle in obj.issue_cycle.prefetch_related(
                 "issue__assignees"
             ).all()
@@ -95,9 +95,9 @@ class CycleSerializer(BaseSerializer):
             "started_issues",
             "unstarted_issues",
             "backlog_issues",
-            "total_estimates",
-            "completed_estimates",
-            "started_estimates",
+            # "total_estimates",
+            # "completed_estimates",
+            # "started_estimates",
             "assignees",
             "status",
         ]

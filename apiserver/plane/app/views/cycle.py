@@ -160,29 +160,29 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     ),
                 )
             )
-            .annotate(
-                total_estimates=Sum("issue_cycle__issue__estimate_point")
-            )
-            .annotate(
-                completed_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                started_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
+            # .annotate(
+            #     total_estimates=Sum("issue_cycle__issue__estimate_point")
+            # )
+            # .annotate(
+            #     completed_estimates=Sum(
+            #         "issue_cycle__issue__estimate_point",
+            #         filter=Q(
+            #             issue_cycle__issue__state__group="completed",
+            #             issue_cycle__issue__archived_at__isnull=True,
+            #             issue_cycle__issue__is_draft=False,
+            #         ),
+            #     )
+            # )
+            # .annotate(
+            #     started_estimates=Sum(
+            #         "issue_cycle__issue__estimate_point",
+            #         filter=Q(
+            #             issue_cycle__issue__state__group="started",
+            #             issue_cycle__issue__archived_at__isnull=True,
+            #             issue_cycle__issue__is_draft=False,
+            #         ),
+            #     )
+            # )
             .annotate(
                 status=Case(
                     When(
@@ -367,7 +367,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             and cycle.end_date < timezone.now().date()
         ):
             if "sort_order" in request_data:
-                # Can only change sort order
+                # Can only change sort order for a completed cycle``
                 request_data = {
                     "sort_order": request_data.get(
                         "sort_order", cycle.sort_order
@@ -586,7 +586,12 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
+            .prefetch_related(
+                "assignees",
+                "labels",
+                "issue_module__module",
+                "issue_cycle__cycle",
+            )
             .order_by(order_by)
             .filter(**filters)
             .annotate(module_ids=F("issue_module__module_id"))
@@ -644,7 +649,11 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
 
         # Get all CycleIssues already created
-        cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
+        cycle_issues = list(
+            CycleIssue.objects.filter(
+                ~Q(cycle_id=cycle_id), issue_id__in=issues
+            )
+        )
         existing_issues = [
             str(cycle_issue.issue_id) for cycle_issue in cycle_issues
         ]
@@ -670,9 +679,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
         updated_records = []
         update_cycle_issue_activity = []
         # Iterate over each cycle_issue in cycle_issues
-        for cycle_issue in [
-            ci for ci in cycle_issues if str(ci.cycle_id) != str(cycle_id)
-        ]:
+        for cycle_issue in cycle_issues:
             # Update the cycle_issue's cycle_id
             cycle_issue.cycle_id = cycle_id
             # Add the modified cycle_issue to the records_to_update list
@@ -685,7 +692,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                     "issue_id": str(cycle_issue.issue_id),
                 }
             )
-        
+
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
@@ -705,41 +712,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        
-        # Get all the issues for cycle
-        issue_queryset = (
-            Issue.issue_objects.filter(pk__in=self.get_queryset().values_list("issue_id", flat=True))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-        )
-        return Response(
-            IssueSerializer(issue_queryset, many=True).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.get(
@@ -783,6 +756,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Check if any cycle intersects in the given interval
         cycles = Cycle.objects.filter(
             Q(workspace__slug=slug)
             & Q(project_id=project_id)
@@ -792,7 +766,6 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 | Q(start_date__gte=start_date, end_date__lte=end_date)
             )
         ).exclude(pk=cycle_id)
-
         if cycles.exists():
             return Response(
                 {
@@ -916,29 +889,29 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .annotate(
-                total_estimates=Sum("issue_cycle__issue__estimate_point")
-            )
-            .annotate(
-                completed_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                started_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
+            # .annotate(
+            #     total_estimates=Sum("issue_cycle__issue__estimate_point")
+            # )
+            # .annotate(
+            #     completed_estimates=Sum(
+            #         "issue_cycle__issue__estimate_point",
+            #         filter=Q(
+            #             issue_cycle__issue__state__group="completed",
+            #             issue_cycle__issue__archived_at__isnull=True,
+            #             issue_cycle__issue__is_draft=False,
+            #         ),
+            #     )
+            # )
+            # .annotate(
+            #     started_estimates=Sum(
+            #         "issue_cycle__issue__estimate_point",
+            #         filter=Q(
+            #             issue_cycle__issue__state__group="started",
+            #             issue_cycle__issue__archived_at__isnull=True,
+            #             issue_cycle__issue__is_draft=False,
+            #         ),
+            #     )
+            # )
         )
 
         # Pass the new_cycle queryset to burndown_plot
@@ -949,6 +922,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             cycle_id=cycle_id,
         )
 
+        # Get the assignee distribution
         assignee_distribution = (
             Issue.objects.filter(
                 issue_cycle__cycle_id=cycle_id,
@@ -987,7 +961,22 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
             .order_by("display_name")
         )
+        # assignee distribution serialized 
+        assignee_distribution_data = [
+            {
+                "display_name": item["display_name"],
+                "assignee_id": (
+                    str(item["assignee_id"]) if item["assignee_id"] else None
+                ),
+                "avatar": item["avatar"],
+                "total_issues": item["total_issues"],
+                "completed_issues": item["completed_issues"],
+                "pending_issues": item["pending_issues"],
+            }
+            for item in assignee_distribution
+        ]
 
+        # Get the label distribution
         label_distribution = (
             Issue.objects.filter(
                 issue_cycle__cycle_id=cycle_id,
@@ -1026,21 +1015,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
             .order_by("label_name")
         )
-
-        assignee_distribution_data = [
-            {
-                "display_name": item["display_name"],
-                "assignee_id": (
-                    str(item["assignee_id"]) if item["assignee_id"] else None
-                ),
-                "avatar": item["avatar"],
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
-            }
-            for item in assignee_distribution
-        ]
-
+        # Label distribution serilization
         label_distribution_data = [
             {
                 "label_name": item["label_name"],
