@@ -159,7 +159,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         globalViewId.toString()
       );
     },
-    [updateFilters, workspaceSlug]
+    [updateFilters, workspaceSlug, globalViewId]
   );
 
   const renderQuickActions = useCallback(
