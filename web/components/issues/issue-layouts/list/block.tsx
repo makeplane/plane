@@ -55,8 +55,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         "last:border-b-transparent": peekIssue?.issueId !== issue.id
       })}
     >
-      <div className="flex justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex justify-between w-full">
+        <div className="flex items-center gap-3 w-full">
           {displayProperties && displayProperties?.key && (
             <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
               {projectDetails?.identifier}-{issue.sequence_id}
@@ -85,7 +85,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         {!issue?.tempId && <div className="block md:hidden border border-custom-border-300 rounded ">{quickActions(issue)}</div>}
       </div>
 
-      <div className="ml-0 md:ml-auto flex flex-wrap  md:flex-shrink-0 items-center gap-2">
+      <div className="flex flex-wrap  md:flex-shrink-0 items-center gap-2">
         {!issue?.tempId ? (
           <>
             <IssueProperties

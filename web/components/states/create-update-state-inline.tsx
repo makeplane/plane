@@ -173,49 +173,82 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 py-5"
+      className="flex flex-col sm:flex-row items-center gap-y-2 sm:gap-x-2 rounded-[10px] bg-custom-background-100 py-5"
     >
-      <div className="flex-shrink-0">
-        <Popover className="relative flex h-full w-full items-center justify-center">
-          {({ open }) => (
-            <>
-              <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
-              >
-                {watch("color") && watch("color") !== "" && (
-                  <span
-                    className="h-5 w-5 rounded"
-                    style={{
-                      backgroundColor: watch("color") ?? "black",
-                    }}
-                  />
-                )}
-              </Popover.Button>
+      <div className="flex items-center gap-2 self-start sm:self-center">
+        <div className="flex-shrink-0">
+          <Popover className="relative flex h-full w-full items-center justify-center">
+            {({ open }) => (
+              <>
+                <Popover.Button
+                  className={`group inline-flex items-center text-base font-medium focus:outline-none ${
+                    open ? "text-custom-text-100" : "text-custom-text-200"
+                  }`}
+                >
+                  {watch("color") && watch("color") !== "" && (
+                    <span
+                      className="h-5 w-5 rounded"
+                      style={{
+                        backgroundColor: watch("color") ?? "black",
+                      }}
+                    />
+                  )}
+                </Popover.Button>
 
-              <Transition
-                as={React.Fragment}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 translate-y-1"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-1"
-              >
-                <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
-                  <Controller
-                    name="color"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
-                    )}
-                  />
-                </Popover.Panel>
-              </Transition>
-            </>
+                <Transition
+                  as={React.Fragment}
+                  enter="transition ease-out duration-200"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in duration-150"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
+                >
+                  <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
+                    <Controller
+                      name="color"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
+                      )}
+                    />
+                  </Popover.Panel>
+                </Transition>
+              </>
+            )}
+          </Popover>
+        </div>
+        <div>
+          {data && (
+            <Controller
+              name="group"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}>
+                  <div>
+                    <CustomSelect
+                      disabled={groupLength === 1}
+                      value={value}
+                      onChange={onChange}
+                      label={
+                        Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
+                          ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
+                          : "Select group"
+                      }
+                      input
+                    >
+                      {Object.keys(GROUP_CHOICES).map((key) => (
+                        <CustomSelect.Option key={key} value={key}>
+                          {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  </div>
+                </Tooltip>
+              )}
+            />
           )}
-        </Popover>
+        </div>
       </div>
       <Controller
         control={control}
@@ -237,35 +270,6 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           />
         )}
       />
-      {data && (
-        <Controller
-          name="group"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}>
-              <div>
-                <CustomSelect
-                  disabled={groupLength === 1}
-                  value={value}
-                  onChange={onChange}
-                  label={
-                    Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
-                      ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
-                      : "Select group"
-                  }
-                  input
-                >
-                  {Object.keys(GROUP_CHOICES).map((key) => (
-                    <CustomSelect.Option key={key} value={key}>
-                      {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
-              </div>
-            </Tooltip>
-          )}
-        />
-      )}
       <Controller
         control={control}
         name="description"
@@ -283,20 +287,22 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           />
         )}
       />
-      <Button variant="neutral-primary" onClick={handleClose} size="sm">
-        Cancel
-      </Button>
-      <Button
-        variant="primary"
-        type="submit"
-        loading={isSubmitting}
-        onClick={() => {
-          setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
-        }}
-        size="sm"
-      >
-        {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
-      </Button>
+      <div className="flex gap-2 sm:self-center self-end">
+        <Button variant="neutral-primary" onClick={handleClose} size="sm">
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          type="submit"
+          loading={isSubmitting}
+          onClick={() => {
+            setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+          }}
+          size="sm"
+        >
+          {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
+        </Button>
+      </div>
     </form>
   );
 });
