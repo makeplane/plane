@@ -24,7 +24,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   // states
   const [title, setTitle] = useState("");
   // hooks
-  const { setShowAlert } = useReloadConfirmations();
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const debouncedValue = useDebounce(title, 1500);
 
   useEffect(() => {

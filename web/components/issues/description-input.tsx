@@ -29,18 +29,26 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const { disabled, value, workspaceSlug, isSubmitting, setIsSubmitting, issueId, issueOperations, projectId } = props;
   // states
   const [descriptionHTML, setDescriptionHTML] = useState(value);
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issueId,
+    description_html: value == "" || value == null || value == undefined ? "<p></p>" : value,
+  });
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
   const workspaceStore = useWorkspace();
   // hooks
-  const { setShowAlert } = useReloadConfirmations();
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const debouncedValue = useDebounce(descriptionHTML, 1500);
   // computed values
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
 
   useEffect(() => {
-    setDescriptionHTML(value);
-  }, [value]);
+    if (value) setDescriptionHTML(value);
+    setLocalIssueDescription({
+      id: issueId,
+      description_html: value == "" || value == null || value == undefined ? "<p></p>" : value,
+    });
+  }, [issueId, value]);
 
   useEffect(() => {
     if (debouncedValue || debouncedValue === "") {
@@ -91,6 +99,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
       value={descriptionHTML}
+      rerenderOnPropsChange={localIssueDescription}
       setShouldShowAlert={setShowAlert}
       setIsSubmitting={setIsSubmitting}
       dragDropEnabled
