@@ -49,10 +49,11 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
       )}
 
       <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-        {currentProjectDetails && workspaceSlug && !isLoading ? (
+        {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
             workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
             isAdmin={isAdmin}
           />
         ) : (

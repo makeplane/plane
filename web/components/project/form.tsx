@@ -22,11 +22,12 @@ import { PROJECT_UPDATED } from "constants/event-tracker";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
+  projectId: string;
   isAdmin: boolean;
 }
 const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
-  const { project, workspaceSlug, isAdmin } = props;
+  const { project, workspaceSlug, projectId, isAdmin } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
@@ -43,6 +44,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     setError,
     reset,
     formState: { errors, dirtyFields },
+    getValues,
   } = useForm<IProject>({
     defaultValues: {
       ...project,
@@ -50,14 +52,17 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
+
   useEffect(() => {
-    if (!project || !reset) return;
-    reset({
-      ...project,
-      emoji_and_icon: project.emoji ?? project.icon_prop,
-      workspace: (project.workspace as IWorkspace).id,
-    });
-  }, [project, reset]);
+    if (project && projectId !== getValues("id")) {
+      reset({
+        ...project,
+        emoji_and_icon: project.emoji ?? project.icon_prop,
+        workspace: (project.workspace as IWorkspace).id,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project, projectId]);
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
