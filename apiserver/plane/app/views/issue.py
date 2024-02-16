@@ -700,6 +700,22 @@ class LabelViewSet(BaseViewSet):
         ProjectMemberPermission,
     ]
 
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("parent")
+            .distinct()
+            .order_by("sort_order")
+        )
+
+    @invalidate_path_cache("/api/workspaces/:slug/labels/")
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/issue-labels/")
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -718,20 +734,20 @@ class LabelViewSet(BaseViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+    @invalidate_path_cache("/api/workspaces/:slug/labels/")
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/issue-labels/")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("parent")
-            .distinct()
-            .order_by("sort_order")
-        )
+    @invalidate_path_cache("/api/workspaces/:slug/labels/")
+    @invalidate_path_cache("/api/workspaces/:slug/projects/:project_id/issue-labels/")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+    
+    @cache_path_response(60 * 60 * 2)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
