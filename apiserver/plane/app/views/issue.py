@@ -1209,13 +1209,13 @@ class IssueArchiveViewSet(BaseViewSet):
         return Response(issues, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            archived_at__isnull=False,
-            pk=pk,
+        issue = self.get_queryset().filter(pk=pk).first()
+        return Response(
+            IssueDetailSerializer(
+                issue, fields=self.fields, expand=self.expand
+            ).data,
+            status=status.HTTP_200_OK,
         )
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(

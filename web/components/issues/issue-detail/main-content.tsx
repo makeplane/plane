@@ -3,7 +3,9 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // components
-import { IssueDescriptionForm, IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
+import { IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
+import { IssueTitleInput } from "../title-input";
+import { IssueDescriptionInput } from "../description-input";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
 import { SubIssuesRoot } from "../sub-issues";
@@ -61,15 +63,24 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issue} />
         </div>
 
-        <IssueDescriptionForm
+        <IssueTitleInput
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
+          projectId={issue.project_id}
+          issueId={issue.id}
           setIsSubmitting={(value) => setIsSubmitting(value)}
-          isSubmitting={isSubmitting}
-          issue={issue}
           issueOperations={issueOperations}
           disabled={!is_editable}
+          value={issue.name}
+        />
+
+        <IssueDescriptionInput
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          issueOperations={issueOperations}
+          disabled={!is_editable}
+          value={issue.description_html}
         />
 
         {currentUser && (

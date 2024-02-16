@@ -202,7 +202,7 @@ export class IssueHelperStore implements TIssueHelperStore {
         if (!memberMap) break;
         for (const dataId of dataIdsArray) {
           const member = memberMap[dataId];
-          if (memberMap && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
+          if (member && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
         }
         break;
     }
