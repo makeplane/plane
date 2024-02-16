@@ -21,10 +21,16 @@ from plane.app.views import (
     IssueArchiveViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
+    IssueListEndpoint,
 )
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/list/",
+        IssueListEndpoint.as_view(),
+        name="project-issue",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueViewSet.as_view(

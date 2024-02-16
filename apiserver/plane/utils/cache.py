@@ -15,6 +15,7 @@ def generate_cache_key(custom_path, auth_header=None):
     return hashlib.md5(force_bytes(key_data)).hexdigest()
 
 def cache_user_response(timeout, path=None):
+    """decorator to create cache per user"""
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
@@ -36,6 +37,7 @@ def cache_user_response(timeout, path=None):
     return decorator
 
 def invalidate_user_cache(path):
+    """invalidate cache per user"""
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
@@ -52,6 +54,7 @@ def invalidate_user_cache(path):
 
 
 def cache_path_response(timeout, path=None):
+    """Cache path responses"""
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
@@ -72,7 +75,9 @@ def cache_path_response(timeout, path=None):
         return _wrapped_view
     return decorator
 
+
 def invalidate_path_cache(path=None, include_url_params=False):
+    """invalidate path cache responses"""
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
