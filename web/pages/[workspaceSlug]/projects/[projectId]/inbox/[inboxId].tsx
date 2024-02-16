@@ -57,7 +57,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
       </div>
       <div className="relative flex overflow-hidden h-full">
         {(windowWidth >= 768 || (windowWidth < 768 && isInboxSidebarOpen)) && (
-          <div className="absolute md:relative z-10 flex-shrink-0 md:w-[340px] w-full h-full border-r border-custom-border-300">
+          <div className="absolute md:relative z-10 flex-shrink-0 w-4/5 sm:w-1/2 md:w-[340px] h-full border-r border-custom-border-300">
             <InboxSidebarRoot
               setIsInboxSidebarOpen={setIsInboxSidebarOpen}
               workspaceSlug={workspaceSlug.toString()}

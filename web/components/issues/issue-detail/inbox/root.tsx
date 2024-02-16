@@ -154,7 +154,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
         />
       </div>
       {(windowWidth >= 768 || (windowWidth < 768 && isIssueDetailSidebarOpen)) && (
-        <div className="md:relative z-10 float-right bg-custom-background-100 absolute h-full w-full md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
+        <div className="md:relative z-10 right-0 bg-custom-background-100 absolute h-full w-4/5 sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
           <InboxIssueDetailsSidebar
             workspaceSlug={workspaceSlug}
             projectId={projectId}

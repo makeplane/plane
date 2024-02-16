@@ -25,7 +25,7 @@ export const ProjectInboxHeader: FC = observer(() => {
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs>
+          <Breadcrumbs onBack={router.back}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
@@ -61,7 +61,8 @@ export const ProjectInboxHeader: FC = observer(() => {
         <div className="flex items-center gap-2">
           <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
           <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
-            Add Issue
+            <span className="hidden md:block">Add Issue</span>
+            <span className="md:hidden">Issue</span>
           </Button>
         </div>
       )}
