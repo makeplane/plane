@@ -7,9 +7,25 @@ const nextConfig = {
     return [
       {
         source: "/(.*)?",
-        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
+          },
+        ],
       },
     ];
+  },
+  async rewrites() {
+    return {
+      fallback: [
+        {
+          source: "/api/:slug*",
+          destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/:slug*/`,
+        },
+      ],
+    };
   },
   reactStrictMode: false,
   swcMinify: true,
