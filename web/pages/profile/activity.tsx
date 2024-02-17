@@ -3,7 +3,7 @@ import useSWR from "swr";
 import Link from "next/link";
 import { observer } from "mobx-react";
 //hooks
-import { useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // layouts
@@ -14,13 +14,14 @@ import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
-import { Loader } from "@plane/ui";
+import { ActivitySettingsLoader } from "components/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // type
 import { NextPageWithLayout } from "lib/types";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 const userService = new UserService();
 
@@ -28,10 +29,12 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
   // store hooks
   const { currentUser } = useUser();
+  const { theme: themeStore } = useApplication();
 
   return (
-    <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-      <div className="flex items-center border-b border-custom-border-100 pb-3.5">
+    <section className="mx-auto mt-5  md:mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+      <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
+        <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
       {userActivity ? (
@@ -94,12 +97,12 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
 
               const message =
                 activityItem.verb === "created" &&
-                activityItem.field !== "cycles" &&
-                activityItem.field !== "modules" &&
-                activityItem.field !== "attachment" &&
-                activityItem.field !== "link" &&
-                activityItem.field !== "estimate" &&
-                !activityItem.field ? (
+                  activityItem.field !== "cycles" &&
+                  activityItem.field !== "modules" &&
+                  activityItem.field !== "attachment" &&
+                  activityItem.field !== "link" &&
+                  activityItem.field !== "estimate" &&
+                  !activityItem.field ? (
                   <span>
                     created <IssueLink activity={activityItem} />
                   </span>
@@ -179,12 +182,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
           </ul>
         </div>
       ) : (
-        <Loader className="space-y-5">
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-        </Loader>
+        <ActivitySettingsLoader />
       )}
     </section>
   );

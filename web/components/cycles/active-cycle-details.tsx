@@ -34,7 +34,8 @@ import { ICycle, TCycleGroups } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { CYCLE_EMPTY_STATE_DETAILS, CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
+import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
+import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -150,7 +151,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     color: group.color,
   }));
 
-  const daysLeft = findHowManyDaysLeft(activeCycle.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(activeCycle.end_date) ?? 0;
 
   return (
     <div className="grid-row-2 grid divide-y rounded-[10px] border border-custom-border-200 bg-custom-background-100 shadow">

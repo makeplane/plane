@@ -11,6 +11,7 @@ import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
@@ -68,20 +69,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // state
   const [loader, setLoader] = useState(false);
 
-  useEffect(() => {
-    if (peekIssue) {
-      setLoader(true);
-      fetchIssue(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
-        setLoader(false);
-      });
-    }
-  }, [peekIssue, fetchIssue]);
-
   const issueOperations: TIssuePeekOperations = useMemo(
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await fetchIssue(workspaceSlug, projectId, issueId);
+          await fetchIssue(workspaceSlug, projectId, issueId, is_archived);
         } catch (error) {
           console.error("Error fetching the parent issue");
         }
@@ -103,7 +95,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               message: "Issue updated successfully",
             });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -113,7 +105,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             path: router.asPath,
           });
@@ -135,7 +127,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Issue deleted successfully",
           });
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             path: router.asPath,
           });
@@ -146,7 +138,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Issue delete failed",
           });
           captureIssueEvent({
-            eventName: "Issue deleted",
+            eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             path: router.asPath,
           });
@@ -161,7 +153,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Issue added to issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -171,7 +163,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -195,7 +187,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Cycle removed from issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -210,7 +202,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Cycle remove from issue failed",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -229,7 +221,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Module added to issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -239,7 +231,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -263,7 +255,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             message: "Module removed from issue successfully",
           });
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -273,7 +265,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch (error) {
           captureIssueEvent({
-            eventName: "Issue updated",
+            eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -323,8 +315,19 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeModulesFromIssue,
       setToastAlert,
       onIssueUpdate,
+      captureIssueEvent,
+      router.asPath,
     ]
   );
+
+  useEffect(() => {
+    if (peekIssue) {
+      setLoader(true);
+      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
+        setLoader(false);
+      });
+    }
+  }, [peekIssue, issueOperations]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 

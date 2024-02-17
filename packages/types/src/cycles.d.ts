@@ -31,6 +31,7 @@ export interface ICycle {
   issue: string;
   name: string;
   owned_by: string;
+  progress_snapshot: TProgressSnapshot;
   project: string;
   project_detail: IProjectLite;
   status: TCycleGroups;
@@ -48,6 +49,23 @@ export interface ICycle {
   workspace: string;
   workspace_detail: IWorkspaceLite;
 }
+
+export type TProgressSnapshot = {
+  backlog_issues: number;
+  cancelled_issues: number;
+  completed_estimates: number | null;
+  completed_issues: number;
+  distribution?: {
+    assignees: TAssigneesDistribution[];
+    completion_chart: TCompletionChartDistribution;
+    labels: TLabelsDistribution[];
+  };
+  started_estimates: number | null;
+  started_issues: number;
+  total_estimates: number | null;
+  total_issues: number;
+  unstarted_issues: number;
+};
 
 export type TAssigneesDistribution = {
   assignee_id: string | null;

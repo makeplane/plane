@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell, BellOff } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // UI
 import { Button } from "@plane/ui";
@@ -52,12 +52,20 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     <div>
       <Button
         size="sm"
-        prependIcon={<Bell className="h-3 w-3" />}
+        prependIcon={subscription?.subscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
       >
-        {loading ? "Loading..." : subscription?.subscribed ? "Unsubscribe" : "Subscribe"}
+        {loading ? (
+          <span>
+            <span className="hidden sm:block">Loading</span>...
+          </span>
+        ) : subscription?.subscribed ? (
+          <div className="hidden sm:block">Unsubscribe</div>
+        ) : (
+          <div className="hidden sm:block">Subscribe</div>
+        )}
       </Button>
     </div>
   );

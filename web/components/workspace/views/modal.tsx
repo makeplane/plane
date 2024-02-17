@@ -3,12 +3,14 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // store hooks
-import { useGlobalView } from "hooks/store";
+import { useEventTracker, useGlobalView } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { WorkspaceViewForm } from "components/workspace";
 // types
 import { IWorkspaceView } from "@plane/types";
+// constants
+import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
 
 type Props = {
   data?: IWorkspaceView;
@@ -24,6 +26,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   const { workspaceSlug } = router.query;
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -43,6 +46,11 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
 
     await createGlobalView(workspaceSlug.toString(), payloadData)
       .then((res) => {
+        captureEvent(GLOBAL_VIEW_CREATED, {
+          view_id: res.id,
+          applied_filters: res.filters,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -52,13 +60,17 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
         handleClose();
       })
-      .catch(() =>
+      .catch(() => {
+        captureEvent(GLOBAL_VIEW_CREATED, {
+          applied_filters: payload?.filters,
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "View could not be created. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   const handleUpdateView = async (payload: Partial<IWorkspaceView>) => {
@@ -72,7 +84,12 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
     };
 
     await updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
-      .then(() => {
+      .then((res) => {
+        captureEvent(GLOBAL_VIEW_UPDATED, {
+          view_id: res.id,
+          applied_filters: res.filters,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -80,13 +97,18 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         });
         handleClose();
       })
-      .catch(() =>
+      .catch(() => {
+        captureEvent(GLOBAL_VIEW_UPDATED, {
+          view_id: data.id,
+          applied_filters: data.filters,
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "View could not be updated. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   const handleFormSubmit = async (formData: Partial<IWorkspaceView>) => {

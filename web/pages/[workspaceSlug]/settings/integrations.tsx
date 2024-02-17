@@ -13,8 +13,7 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { SingleIntegrationCard } from "components/integration";
 import { WorkspaceSettingHeader } from "components/headers";
 // ui
-import { IntegrationAndImportExportBanner } from "components/ui";
-import { Loader } from "@plane/ui";
+import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "components/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // fetch-keys
@@ -53,10 +52,7 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
         {appIntegrations ? (
           appIntegrations.map((integration) => <SingleIntegrationCard key={integration.id} integration={integration} />)
         ) : (
-          <Loader className="mt-4 space-y-2.5">
-            <Loader.Item height="89px" />
-            <Loader.Item height="89px" />
-          </Loader>
+          <IntegrationsSettingsLoader />
         )}
       </div>
     </section>

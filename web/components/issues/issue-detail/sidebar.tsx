@@ -15,7 +15,7 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 // hooks
-import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssueDetail, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -56,11 +56,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, is_archived, is_editable } = props;
   // router
   const router = useRouter();
-  const { inboxIssueId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
-  const { projectStates } = useProjectState();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const { setToastAlert } = useToast();
   const {
@@ -91,8 +89,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
-
   return (
     <>
       {workspaceSlug && projectId && issue && (
@@ -108,22 +104,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
       )}
 
       <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-        <div className="flex items-center justify-between px-5 pb-3">
-          <div className="flex items-center gap-x-2">
-            {currentIssueState ? (
-              <StateGroupIcon
-                className="h-4 w-4"
-                stateGroup={currentIssueState.group}
-                color={currentIssueState.color}
-              />
-            ) : inboxIssueId ? (
-              <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
-            ) : null}
-            <h4 className="text-lg font-medium text-custom-text-300">
-              {projectDetails?.identifier}-{issue?.sequence_id}
-            </h4>
-          </div>
-
+        <div className="flex items-center justify-end px-5 pb-3">
           <div className="flex flex-wrap items-center gap-2">
             {currentUser && !is_archived && (
               <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />

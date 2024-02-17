@@ -250,7 +250,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           }}
         />
       )}
-      <form>
+      <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
             {/* Don't show project selection if editing an issue */}
@@ -699,13 +699,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               </Fragment>
             )}
 
-            <Button
-              variant="primary"
-              size="sm"
-              loading={isSubmitting}
-              tabIndex={isDraft ? 19 : 18}
-              onClick={handleSubmit((data) => handleFormSubmit(data))}
-            >
+            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={isDraft ? 19 : 18}>
               {data?.id ? (isSubmitting ? "Updating" : "Update issue") : isSubmitting ? "Creating" : "Create issue"}
             </Button>
           </div>

@@ -1,9 +1,15 @@
-import { FC } from "react";
-// hooks
+import { FC, useCallback, useEffect, useState } from "react";
+import { observer } from "mobx-react";
+// store hooks
 import { useIssueDetail, useProject, useUser } from "hooks/store";
+// hooks
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
-import { IssueDescriptionForm, TIssueOperations } from "components/issues";
+import { TIssueOperations } from "components/issues";
 import { IssueReaction } from "../issue-detail/reactions";
+import { IssueTitleInput } from "../title-input";
+import { IssueDescriptionInput } from "../description-input";
+import { debounce } from "lodash";
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -15,8 +21,8 @@ interface IPeekOverviewIssueDetails {
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
-export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
+export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
+  const { workspaceSlug, issueId, issueOperations, disabled, setIsSubmitting } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
@@ -25,7 +31,9 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   } = useIssueDetail();
   // derived values
   const issue = getIssueById(issueId);
+
   if (!issue) return <></>;
+
   const projectDetails = getProjectById(issue?.project_id);
 
   return (
@@ -33,24 +41,32 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       <span className="text-base font-medium text-custom-text-400">
         {projectDetails?.identifier}-{issue?.sequence_id}
       </span>
-      <IssueDescriptionForm
+      <IssueTitleInput
         workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
+        projectId={issue.project_id}
+        issueId={issue.id}
         setIsSubmitting={(value) => setIsSubmitting(value)}
-        isSubmitting={isSubmitting}
-        issue={issue}
         issueOperations={issueOperations}
         disabled={disabled}
+        value={issue.name}
+      />
+      <IssueDescriptionInput
+        workspaceSlug={workspaceSlug}
+        projectId={issue.project_id}
+        issueId={issue.id}
+        setIsSubmitting={(value) => setIsSubmitting(value)}
+        issueOperations={issueOperations}
+        disabled={disabled}
+        value={issue.description_html}
       />
       {currentUser && (
         <IssueReaction
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
+          projectId={issue.project_id}
           issueId={issueId}
           currentUser={currentUser}
         />
       )}
     </>
   );
-};
+});

@@ -2,6 +2,8 @@ import { ReactElement } from "react";
 import useSWR from "swr";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
+// ui
+import { EmailSettingsLoader } from "components/ui";
 // components
 import { EmailNotificationForm } from "components/profile/preferences";
 // services
@@ -14,12 +16,12 @@ const userService = new UserService();
 
 const ProfilePreferencesThemePage: NextPageWithLayout = () => {
   // fetching user email notification settings
-  const { data } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
+  const { data, isLoading } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
     userService.currentUserEmailNotificationSettings()
   );
 
-  if (!data) {
-    return null;
+  if (!data || isLoading) {
+    return <EmailSettingsLoader />;
   }
 
   return (

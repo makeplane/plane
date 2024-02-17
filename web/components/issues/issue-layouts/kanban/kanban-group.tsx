@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 // hooks
 import { useProjectState } from "hooks/store";
@@ -37,6 +38,8 @@ interface IKanbanGroup {
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle: boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 export const KanbanGroup = (props: IKanbanGroup) => {
@@ -57,6 +60,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     disableIssueCreation,
     quickAddCallback,
     viewId,
+    scrollableContainerRef,
+    isDragStarted,
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -127,6 +132,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               handleIssues={handleIssues}
               quickActions={quickActions}
               canEditProperties={canEditProperties}
+              scrollableContainerRef={scrollableContainerRef}
+              isDragStarted={isDragStarted}
             />
 
             {provided.placeholder}

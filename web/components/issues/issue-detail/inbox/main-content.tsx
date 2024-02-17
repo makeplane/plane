@@ -3,7 +3,9 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // components
-import { IssueDescriptionForm, IssueUpdateStatus, TIssueOperations } from "components/issues";
+import { IssueUpdateStatus, TIssueOperations } from "components/issues";
+import { IssueTitleInput } from "../../title-input";
+import { IssueDescriptionInput } from "../../description-input";
 import { IssueReaction } from "../reactions";
 import { IssueActivity } from "../issue-activity";
 import { InboxIssueStatus } from "../../../inbox/inbox-issue-status";
@@ -57,15 +59,24 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issue} />
         </div>
 
-        <IssueDescriptionForm
+        <IssueTitleInput
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
+          projectId={issue.project_id}
+          issueId={issue.id}
           setIsSubmitting={(value) => setIsSubmitting(value)}
-          isSubmitting={isSubmitting}
-          issue={issue}
           issueOperations={issueOperations}
           disabled={!is_editable}
+          value={issue.name}
+        />
+
+        <IssueDescriptionInput
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          issueOperations={issueOperations}
+          disabled={!is_editable}
+          value={issue.description_html}
         />
 
         {currentUser && (

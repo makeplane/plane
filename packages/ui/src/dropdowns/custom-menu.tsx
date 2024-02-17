@@ -54,10 +54,6 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     setIsOpen(false);
   };
 
-  const handleOnChange = () => {
-    if (closeOnSelect) closeDropdown();
-  };
-
   const selectActiveItem = () => {
     const activeItem: HTMLElement | undefined | null = dropdownRef.current?.querySelector(
       `[data-headlessui-state="active"] button`
@@ -66,6 +62,11 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
   };
 
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen, selectActiveItem);
+
+  const handleOnClick = () => {
+    if (closeOnSelect) closeDropdown();
+  };
+
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
   let menuItems = (
@@ -101,7 +102,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
       onKeyDownCapture={handleKeyDown}
-      onChange={handleOnChange}
+      onClick={handleOnClick}
     >
       {({ open }) => (
         <>
@@ -110,7 +111,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               <button
                 ref={setReferenceElement}
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   openDropdown();
                   if (menuButtonOnClick) menuButtonOnClick();
                 }}
@@ -127,7 +129,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
@@ -152,7 +155,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         ? "cursor-not-allowed text-custom-text-200"
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
