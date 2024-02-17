@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // store hooks
 import { useIssueDetail, useProject, useUser } from "hooks/store";
@@ -28,12 +28,25 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  // hooks
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   // derived values
   const issue = getIssueById(issueId);
 
   if (!issue) return <></>;
 
   const projectDetails = getProjectById(issue?.project_id);
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   return (
     <>

@@ -6,7 +6,6 @@ import { TextArea } from "@plane/ui";
 import { TIssueOperations } from "./issue-detail";
 // hooks
 import useDebounce from "hooks/use-debounce";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 export type IssueTitleInputProps = {
   disabled?: boolean;
@@ -20,11 +19,11 @@ export type IssueTitleInputProps = {
 };
 
 export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
-  const { disabled, value, workspaceSlug, isSubmitting, setIsSubmitting, issueId, issueOperations, projectId } = props;
+  const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId } = props;
   // states
   const [title, setTitle] = useState("");
   // hooks
-  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+
   const debouncedValue = useDebounce(title, 1500);
 
   useEffect(() => {
@@ -41,24 +40,12 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
-  useEffect(() => {
-    if (isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
-    } else if (isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [isSubmitting, setShowAlert, setIsSubmitting]);
-
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setShowAlert(true);
       setIsSubmitting("submitting");
       setTitle(e.target.value);
     },
-    [setIsSubmitting, setShowAlert]
+    [setIsSubmitting]
   );
 
   return (
