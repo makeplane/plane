@@ -8,6 +8,7 @@ import { useProject } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
+import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
 import {
   DeleteProjectModal,
@@ -32,14 +33,15 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
-
+  // derived values
+  const isAdmin = currentProjectDetails?.member_role === 20;
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
   // const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
   // const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  const isAdmin = currentProjectDetails?.member_role === 20;
-
   return (
     <>
+      <PageHead title={pageTitle} />
       {currentProjectDetails && (
         <DeleteProjectModal
           project={currentProjectDetails}

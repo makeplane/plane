@@ -4,3 +4,4 @@ export * from "./sidebar";
 export * from "./theme";
 export * from "./activity";
 export * from "./image-picker-popover";
+export * from "./page-title";
