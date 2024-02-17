@@ -48,7 +48,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
           className={cn(
             "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
             {
-              "text-custom-text-100 bg-custom-background-100": selectedTab === tab.key,
+              "text-custom-text-100": selectedTab === tab.key,
               "hover:text-custom-text-300": selectedTab !== tab.key,
             }
           )}

@@ -41,7 +41,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
         <div className="flex h-full w-full flex-col gap-2 overflow-y-auto">
           <ul role="list" className="-mb-4">
             {userActivity.results.map((activityItem: any) => {
-              if (activityItem.field === "comment") {
+              if (activityItem.field === "comment")
                 return (
                   <div key={activityItem.id} className="mt-2">
                     <div className="relative flex items-start space-x-3">
@@ -93,16 +93,11 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                     </div>
                   </div>
                 );
-              }
 
               const message =
                 activityItem.verb === "created" &&
-                  activityItem.field !== "cycles" &&
-                  activityItem.field !== "modules" &&
-                  activityItem.field !== "attachment" &&
-                  activityItem.field !== "link" &&
-                  activityItem.field !== "estimate" &&
-                  !activityItem.field ? (
+                !["cycles", "modules", "attachment", "link", "estimate"].includes(activityItem.field) &&
+                !activityItem.field ? (
                   <span>
                     created <IssueLink activity={activityItem} />
                   </span>
@@ -110,7 +105,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                   <ActivityMessage activity={activityItem} showIssue />
                 );
 
-              if ("field" in activityItem && activityItem.field !== "updated_by") {
+              if ("field" in activityItem && activityItem.field !== "updated_by")
                 return (
                   <li key={activityItem.id}>
                     <div className="relative pb-1">
@@ -177,7 +172,6 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
                     </div>
                   </li>
                 );
-              }
             })}
           </ul>
         </div>

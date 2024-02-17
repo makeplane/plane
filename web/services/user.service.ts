@@ -9,7 +9,6 @@ import type {
   IUserProfileData,
   IUserProfileProjectSegregation,
   IUserSettings,
-  IUserWorkspaceDashboard,
   IUserEmailNotificationSettings,
 } from "@plane/types";
 // helpers
@@ -121,18 +120,6 @@ export class UserService extends APIService {
       });
   }
 
-  async userWorkspaceDashboard(workspaceSlug: string, month: number): Promise<IUserWorkspaceDashboard> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`, {
-      params: {
-        month: month,
-      },
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async changePassword(data: { old_password: string; new_password: string; confirm_password: string }): Promise<any> {
     return this.post(`/api/users/me/change-password/`, data)
       .then((response) => response?.data)
@@ -160,8 +147,17 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileActivity(workspaceSlug: string, userId: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/?per_page=15`)
+  async getUserProfileActivity(
+    workspaceSlug: string,
+    userId: string,
+    params: {
+      per_page: number;
+      cursor?: string;
+    }
+  ): Promise<IUserActivityResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
