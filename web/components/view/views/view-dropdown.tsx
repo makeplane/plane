@@ -105,7 +105,7 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
             <div className="relative p-0.5 px-2 text-sm flex items-center gap-2 rounded border border-custom-border-100 bg-custom-background-90">
               <Search className="h-3 w-3 text-custom-text-300" strokeWidth={1.5} />
               <Combobox.Input
-                className="w-full bg-transparent py-1 text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-0.5 text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for a view..."
@@ -133,7 +133,7 @@ export const ViewDropdown: FC<TViewDropdown> = (props) => {
             </div>
 
             <div
-              className="relative flex justify-center items-center gap-1 rounded p-1 py-1.5 transition-all border border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 cursor-pointer"
+              className="relative flex justify-center items-center gap-1 rounded p-1 py-1 transition-all border border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 cursor-pointer"
               onClick={() => viewOperations?.localViewCreateEdit(undefined, "CREATE")}
             >
               <Plus className="w-3 h-3" />

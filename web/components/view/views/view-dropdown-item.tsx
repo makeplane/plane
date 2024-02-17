@@ -32,7 +32,7 @@ export const ViewDropdownItem: FC<TViewDropdownItem> = (props) => {
     return (
       <Combobox.Option
         value={undefined}
-        className={`w-full px-1 pl-2 py-1.5 truncate flex items-center justify-between gap-1 rounded cursor-pointer select-none group
+        className={`w-full px-1 pl-2 truncate flex items-center justify-between gap-1 rounded cursor-pointer select-none group
             ${currentViewId === viewDetailStore?.id ? `bg-custom-primary-100/10` : `hover:bg-custom-background-80`}
           `}
       >
@@ -45,7 +45,7 @@ export const ViewDropdownItem: FC<TViewDropdownItem> = (props) => {
             )}
             <Link
               href={`${baseRoute}/${viewDetailStore?.id}`}
-              className={`w-full h-full overflow-hidden relative flex items-center gap-1
+              className={`w-full overflow-hidden relative flex items-center gap-1 py-1.5
                 ${
                   currentViewId === viewDetailStore?.id
                     ? `text-custom-text-100`
@@ -53,11 +53,11 @@ export const ViewDropdownItem: FC<TViewDropdownItem> = (props) => {
                 }
               `}
             >
-              <div className="flex-shrink-0 w-5 h-5 relative flex justify-center items-center">
+              <div className="flex-shrink-0 w-4 h-4 relative flex justify-center items-center">
                 <PhotoFilterIcon className="w-3 h-3 " />
               </div>
 
-              <div className="w-full line-clamp-1 truncate overflow-hidden inline-block whitespace-nowrap text-sm font-medium">
+              <div className="w-full line-clamp-1 truncate overflow-hidden inline-block whitespace-nowrap text-sm">
                 {viewDetailStore?.name}
               </div>
             </Link>
@@ -65,7 +65,7 @@ export const ViewDropdownItem: FC<TViewDropdownItem> = (props) => {
         </Tooltip>
 
         {isEditable && (
-          <div className="flex-shrink-0 w-5 h-5 relative rounded flex justify-center items-center hover:bg-custom-background-100">
+          <div className="flex-shrink-0 w-5 h-5 relative rounded flex justify-center items-center hover:bg-custom-background-100 invisible group-hover:visible">
             <MoreVertical className="h-3.5 w-3.5 flex-shrink-0" />
           </div>
         )}

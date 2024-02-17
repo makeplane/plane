@@ -55,7 +55,7 @@ export const ViewFiltersEditDropdown: FC<TViewFiltersEditDropdown> = observer((p
         key: "save_as_new",
         label: "Save as new view",
         onClick: () => {
-          viewOperations.localViewCreateEdit(undefined, "SAVE_AS_NEW");
+          viewOperations.localViewCreateEdit(viewId, "SAVE_AS_NEW");
         },
       },
       {
@@ -65,7 +65,7 @@ export const ViewFiltersEditDropdown: FC<TViewFiltersEditDropdown> = observer((p
         onClick: () => viewDetailStore?.resetChanges(),
       },
     ],
-    [viewOperations, viewDetailStore]
+    [viewId, viewOperations, viewDetailStore]
   );
 
   if (viewDetailStore?.is_local_view) return <></>;

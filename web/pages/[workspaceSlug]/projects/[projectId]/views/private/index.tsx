@@ -38,7 +38,6 @@ const ProjectPublicViewPage: NextPageWithLayout = observer(() => {
     async () => {
       if (workspaceSlug && projectId) {
         await viewStore?.fetch(workspaceSlug?.toString(), projectId?.toString());
-        console.log("viewStore", viewStore?.viewIds);
       }
     }
   );

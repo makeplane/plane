@@ -1,6 +1,7 @@
 import { FC, Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import isEmpty from "lodash/isEmpty";
 // hooks
 import { useView, useViewDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -29,7 +30,7 @@ import {
 } from "constants/view";
 // types
 import { TViewOperations } from "./types";
-import { TViewTypes } from "@plane/types";
+import { TViewFilters, TViewTypes } from "@plane/types";
 
 type TGlobalViewRoot = {
   workspaceSlug: string;
@@ -99,6 +100,23 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
       },
       update: async () => {
         try {
+          await viewStore?.update();
+          handleViewOperationsToggle(undefined, undefined);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "View created successfully.",
+          });
+        } catch {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
+        }
+      },
+      saveChanges: async () => {
+        try {
           await viewDetailStore?.saveChanges();
           handleViewOperationsToggle(undefined, undefined);
           setToastAlert({
@@ -152,10 +170,12 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
     [viewStore, viewDetailStore, handleViewOperationsToggle, setToastAlert, workspaceSlug, projectId]
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const applyFIltersFromRouter = () => {
+    const routerParams: Partial<Record<keyof TViewFilters, string[]>> = {};
+
     if (workspaceSlug && viewId && Object.values(ELocalViews).includes(viewId as ELocalViews)) {
       const routerQueryParams = { ...router.query };
-
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { ["workspaceSlug"]: _workspaceSlug, ["viewId"]: _viewId, ...filters } = routerQueryParams;
 
@@ -165,20 +185,19 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
         "filters"
       );
 
-      Object.keys(filters).forEach((key) => {
-        const filterKey: any = key;
-        const filterValue = filters[key]?.toString() || undefined;
-        if (filterKey && filterValue && acceptedFilters.includes(filterKey)) {
-          const _filterValues = filterValue.split(",");
-          _filterValues.forEach((element) => {
-            console.log("filterKey", filterKey);
-            console.log("element", element);
-            viewDetailStore?.setFilters(filterKey, element);
-          });
+      Object.keys(filters).forEach((key: string) => {
+        const filterKey: keyof TViewFilters | undefined = key as keyof TViewFilters;
+        if (filterKey) {
+          const filterValue = filters[key]?.toString() || undefined;
+          if (filterKey && filterValue && acceptedFilters.includes(filterKey)) {
+            const _filterValues = filterValue.split(",");
+            routerParams[filterKey] = _filterValues;
+          }
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return isEmpty(routerParams) ? undefined : routerParams;
   };
 
   // fetch all views
@@ -196,16 +215,13 @@ export const GlobalViewRoot: FC<TGlobalViewRoot> = observer((props) => {
   // fetch view by id
   useEffect(() => {
     const fetchViewByViewId = async () => {
-      await viewStore?.fetchById(workspaceSlug, projectId, viewId);
-      // applyFIltersFromRouter();
+      await viewStore?.fetchById(workspaceSlug, projectId, viewId, applyFIltersFromRouter());
     };
     if (workspaceSlug && viewId && viewType && viewStore) {
       fetchViewByViewId();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug, projectId, viewId, viewType, viewStore]);
-
-  console.log("viewStore? -->", viewStore?.viewMapCEN?.id);
 
   return (
     <div className="relative w-full h-full">

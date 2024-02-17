@@ -9,7 +9,7 @@ import { RootStore } from "store/root.store";
 import { ViewStore } from "./view.store";
 // types
 import { TUserViewService, TViewService } from "services/view/types";
-import { TView, TViewTypes } from "@plane/types";
+import { TView, TViewFilters, TViewTypes } from "@plane/types";
 // constants
 import { EViewPageType, TViewCRUD, generateViewStoreKey, viewLocalPayload } from "constants/view";
 
@@ -18,6 +18,7 @@ export type TLoader =
   | "view-mutation-loader"
   | "view-detail-loader"
   | "create-submitting"
+  | "edit-submitting"
   | "delete-submitting"
   | "duplicate-submitting"
   | undefined;
@@ -33,10 +34,16 @@ type TViewRootStore = {
   localView: () => ViewStore | undefined;
   // actions
   fetch: (workspaceSlug: string, projectId: string | undefined, _loader?: TLoader) => Promise<void>;
-  fetchById: (workspaceSlug: string, projectId: string | undefined, viewId: string) => Promise<void>;
+  fetchById: (
+    workspaceSlug: string,
+    projectId: string | undefined,
+    viewId: string,
+    defaultFilters?: Partial<Record<keyof TViewFilters, string[]>> | undefined
+  ) => Promise<void>;
   remove: (viewId: string) => Promise<void>;
   localViewHandler: (viewId: string | undefined, status: TViewCRUD) => void;
   create: () => Promise<void>;
+  update: () => Promise<void>;
   duplicate: (viewId: string) => Promise<void>;
 };
 
@@ -66,6 +73,7 @@ export class ViewRootStore implements TViewRootStore {
       fetch: action,
       fetchById: action,
       create: action,
+      update: action,
       remove: action,
       duplicate: action,
     });
@@ -83,7 +91,7 @@ export class ViewRootStore implements TViewRootStore {
     let apiViews = views.filter((view) => !view.is_local_view);
     apiViews = reverse(sortBy(apiViews, "sort_order"));
     const _viewIds = [...localViews.map((view) => view.id), ...apiViews.map((view) => view.id)];
-    return _viewIds as string[];
+    return _viewIds.filter((view) => view !== undefined) as string[];
   }
 
   viewById = computedFn((viewId: string) => {
@@ -136,7 +144,12 @@ export class ViewRootStore implements TViewRootStore {
     }
   };
 
-  fetchById = async (workspaceSlug: string, projectId: string | undefined, viewId: string) => {
+  fetchById = async (
+    workspaceSlug: string,
+    projectId: string | undefined,
+    viewId: string,
+    defaultFilters: Partial<Record<keyof TViewFilters, string[]>> | undefined = undefined
+  ) => {
     try {
       runInAction(() => (this.loader = "view-detail-loader"));
 
@@ -154,6 +167,7 @@ export class ViewRootStore implements TViewRootStore {
         const currentView = { ...this.viewById(viewId) } as TView;
         if (!currentView) return;
         view = currentView;
+        defaultFilters && (view.filters = defaultFilters as TViewFilters);
       } else {
         const currentView = await this.service.fetchById(workspaceSlug, viewId, projectId);
         if (!currentView) return;
@@ -221,7 +235,14 @@ export class ViewRootStore implements TViewRootStore {
       _view = cloneDeep(this.viewMap?.[viewRootSlug]?.[viewId]);
     } else if (status === "SAVE_AS_NEW") {
       if (!viewId) return;
-      _view = cloneDeep(this.viewMap?.[viewRootSlug]?.[viewId]);
+      const clonedView = cloneDeep(this.viewMap?.[viewRootSlug]?.[viewId]);
+      _view = {
+        id: "create",
+        name: clonedView?.name,
+        filters: clonedView?.filtersToUpdate?.filters,
+        display_filters: clonedView?.filtersToUpdate?.display_filters,
+        display_properties: clonedView?.filtersToUpdate?.display_properties,
+      };
     } else return;
 
     runInAction(() => {
@@ -243,7 +264,39 @@ export class ViewRootStore implements TViewRootStore {
 
       const viewRootSlug = generateViewStoreKey(workspaceSlug, projectId, this.viewType);
 
-      const view = await this.service.create(workspaceSlug, this.viewMapCEN, projectId);
+      const view = await this.service.create(workspaceSlug, this.viewMapCEN.filtersToUpdate, projectId);
+      if (!view) return;
+
+      runInAction(() => {
+        if (view.id)
+          set(
+            this.viewMap,
+            [viewRootSlug, view.id],
+            new ViewStore(this.store, view, this.service, this.userService, this.viewPageType)
+          );
+        this.viewMapCEN = undefined;
+        this.loader = undefined;
+      });
+    } catch {
+      runInAction(() => (this.loader = undefined));
+    }
+  };
+
+  update = async () => {
+    try {
+      const { workspaceSlug, projectId } = this.store.view;
+      if (!workspaceSlug || !this.viewMapCEN || !this.viewMapCEN.id) return;
+
+      runInAction(() => (this.loader = "edit-submitting"));
+
+      const viewRootSlug = generateViewStoreKey(workspaceSlug, projectId, this.viewType);
+
+      const view = await this.service.update(
+        workspaceSlug,
+        this.viewMapCEN.id,
+        this.viewMapCEN.filtersToUpdate,
+        projectId
+      );
       if (!view) return;
 
       runInAction(() => {

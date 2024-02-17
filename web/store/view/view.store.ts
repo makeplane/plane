@@ -302,7 +302,6 @@ export class ViewStore extends FiltersHelper implements TViewStore {
   saveChanges = async () => {
     try {
       if (!this.id) return;
-      console.log("coming here");
       await this.update(this.filtersToUpdate);
     } catch {
       Object.keys(this.filtersToUpdate).forEach((key) => {

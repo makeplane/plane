@@ -45,11 +45,11 @@ export const ViewAppliedFilters: FC<TViewAppliedFilters> = observer((props) => {
 
   if (!propertyValues || propertyValues.length <= 0) return <></>;
   return (
-    <div className="relative flex items-center gap-2 border border-custom-border-200 rounded p-1 px-2 min-h-[32px]">
+    <div className="relative flex items-center gap-2 border border-custom-border-200 rounded p-1 px-1.5">
       <div className="flex-shrink-0 text-xs text-custom-text-200 capitalize">{filterKey.replaceAll("_", " ")}</div>
       <div className="relative flex items-center gap-1.5 flex-wrap">
         {propertyVisibleCount && propertyValues.length >= propertyVisibleCount ? (
-          <div className="text-xs font-medium bg-custom-primary-100/20 rounded relative flex items-center gap-1 p-1 px-2">
+          <div className="text-xs bg-custom-primary-100/20 rounded relative flex items-center gap-1 p-1 px-2">
             <div className="flex-shrink-0 w-4-h-4">{currentDefaultFilterDetails?.icon}</div>
             <div className="whitespace-nowrap">
               {propertyValues.length} {currentDefaultFilterDetails?.label}

@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { Briefcase, Globe2, Plus, X } from "lucide-react";
 // hooks
-import { useViewDetail, useProject } from "hooks/store";
+import { useViewDetail, useProject, useView } from "hooks/store";
 // components
 import { ViewAppliedFiltersRoot, ViewFiltersDropdown } from "../";
 // ui
@@ -27,11 +27,11 @@ type TViewCreateEditForm = {
 export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
   const { workspaceSlug, projectId, viewId, viewType, viewPageType, viewOperations, isLocalView } = props;
   // hooks
+  const viewStore = useView(workspaceSlug, projectId, viewType);
   const viewDetailStore = useViewDetail(workspaceSlug, projectId, viewId, viewType, isLocalView);
   const { getProjectById } = useProject();
   // states
   const [modalToggle, setModalToggle] = useState(false);
-  const [loader, setLoader] = useState(false);
 
   const modalOpen = useCallback(() => setModalToggle(true), [setModalToggle]);
   const modalClose = useCallback(() => {
@@ -46,7 +46,15 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
   }, [viewId, modalOpen, modalClose]);
 
   const onContinue = async () => {
-    setLoader(true);
+    if (!viewDetailStore) return;
+    if (viewDetailStore?.id === "create") {
+      await viewOperations.create();
+      modalClose();
+    } else {
+      console.log("coming here...");
+      await viewOperations.update();
+      // modalClose();
+    }
     // if (viewDetailStore?.id != "create") {
     //   const payload = viewDetailStore?.filtersToUpdate;
     //   await viewOperations.create(payload);
@@ -57,7 +65,6 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
     //   await viewOperations.update();
     //   modalClose();
     // }
-    setLoader(false);
   };
 
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
@@ -168,11 +175,17 @@ export const ViewCreateEditForm: FC<TViewCreateEditForm> = observer((props) => {
                 </div>
 
                 <div className="p-3 px-5 relative flex justify-end items-center gap-2">
-                  <Button variant="neutral-primary" onClick={modalClose} disabled={loader}>
+                  <Button
+                    variant="neutral-primary"
+                    onClick={modalClose}
+                    disabled={viewStore?.loader == "create-submitting"}
+                  >
                     Cancel
                   </Button>
-                  <Button variant="primary" onClick={onContinue} disabled={loader}>
-                    {loader ? `Saving...` : `${viewDetailStore?.id === "create" ? `Create` : `Update`} View`}
+                  <Button variant="primary" onClick={onContinue} disabled={viewStore?.loader == "create-submitting"}>
+                    {viewStore?.loader == "create-submitting"
+                      ? `Saving...`
+                      : `${viewDetailStore?.id === "create" ? `Save` : `Update`} View`}
                   </Button>
                 </div>
               </Dialog.Panel>

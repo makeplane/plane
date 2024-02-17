@@ -25,15 +25,15 @@ export const useViewDetail = (
       if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
       return context.view.workspacePrivateViewStore.viewById(viewId);
     case VIEW_TYPES.WORKSPACE_PUBLIC_VIEWS:
-      if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
+      if (isEditable) return context.view.workspacePublicViewStore.viewMapCEN;
       return context.view.workspacePublicViewStore.viewById(viewId);
     case VIEW_TYPES.PROJECT_PRIVATE_VIEWS:
       if (!projectId) return undefined;
-      if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
+      if (isEditable) return context.view.projectPrivateViewStore.viewMapCEN;
       return context.view.projectPrivateViewStore.viewById(viewId);
     case VIEW_TYPES.PROJECT_PUBLIC_VIEWS:
       if (!projectId) return undefined;
-      if (isEditable) return context.view.workspacePrivateViewStore.viewMapCEN;
+      if (isEditable) return context.view.projectPublicViewStore.viewMapCEN;
       return context.view.projectPublicViewStore.viewById(viewId);
     default:
       return undefined;

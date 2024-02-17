@@ -24,11 +24,11 @@ export const ViewItem: FC<TViewItem> = observer((props) => {
 
   if (!viewDetailStore) return <></>;
   return (
-    <div className="space-y-0.5 relative h-full flex flex-col justify-between">
+    <div className="space-y-0.5 relative h-full flex flex-col justify-between ">
       <Tooltip tooltipContent={viewDetailStore?.name} position="top">
         <Link
           href={`${baseRoute}/${viewItemId}`}
-          className={`cursor-pointer relative p-2 px-2.5 flex justify-center items-center gap-1.5 rounded transition-all hover:bg-custom-background-80
+          className={`cursor-pointer relative p-2 px-2.5 flex justify-center items-center gap-1 rounded transition-all hover:bg-custom-background-80
         ${viewItemId === viewId ? `text-custom-primary-100 bg-custom-primary-100/10` : `border-transparent`}
       `}
           onClick={(e) => viewItemId === viewId && e.preventDefault()}
@@ -36,7 +36,7 @@ export const ViewItem: FC<TViewItem> = observer((props) => {
           <div className={`flex-shrink-0 rounded-sm relative w-3 h-3 flex justify-center items-center overflow-hidden`}>
             <PhotoFilterIcon className="w-3 h-3" />
           </div>
-          <div className="w-full max-w-[80px] inline-block text-sm line-clamp-1 truncate overflow-hidden font-medium">
+          <div className="w-full max-w-[80px] inline-block text-sm line-clamp-1 truncate overflow-hidden">
             {viewDetailStore?.name}
           </div>
         </Link>

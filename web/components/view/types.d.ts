@@ -8,7 +8,7 @@ export type TViewOperations = {
   localViewCreateEdit: (viewId: string | undefined, status: TViewCRUD) => void;
 
   fetch: () => Promise<void>;
-  create: (data: Partial<TView>) => Promise<void>;
+  create: () => Promise<void>;
   update: () => Promise<void>;
   remove: (viewId: string) => Promise<void>;
   duplicate: (viewId: string) => Promise<void>;

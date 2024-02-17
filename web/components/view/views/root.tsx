@@ -31,7 +31,7 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
     const handleViewTabsVisibility = () => {
       const tabContainer = document.getElementById("tab-container");
       const tabItemViewMore = document.getElementById("tab-item-view-more");
-      const itemWidth = 122;
+      const itemWidth = 120;
       if (!tabContainer || !tabItemViewMore) return;
 
       const containerWidth = tabContainer.clientWidth;
@@ -83,7 +83,7 @@ export const ViewRoot: FC<TViewRoot> = observer((props) => {
                   viewOperations={viewOperations}
                   baseRoute={baseRoute}
                 >
-                  <div className="text-sm font-semibold mb-1 p-2 px-2.5 text-custom-text-200 cursor-pointer hover:bg-custom-background-80 whitespace-nowrap rounded relative flex items-center gap-1">
+                  <div className="text-sm mb-1 p-2 px-2.5 text-custom-text-200 cursor-pointer hover:bg-custom-background-80 whitespace-nowrap rounded relative flex items-center gap-1">
                     <span>
                       <Plus size={12} />
                     </span>
