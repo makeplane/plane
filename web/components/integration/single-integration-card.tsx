@@ -168,7 +168,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
         )
       ) : (
         <Loader>
-          <Loader.Item height="35px" width="150px" />
+          <Loader.Item height="32px" width="64px" />
         </Loader>
       )}
     </div>

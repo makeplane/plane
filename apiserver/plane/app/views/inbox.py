@@ -27,7 +27,7 @@ from plane.app.serializers import (
     InboxSerializer,
     InboxIssueSerializer,
     IssueCreateSerializer,
-    IssueStateInboxSerializer,
+    IssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -333,7 +333,7 @@ class InboxIssueViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, inbox_id, issue_id):
         issue = self.get_queryset().filter(pk=issue_id).first()
-        serializer = IssueSerializer(issue, expand=self.expand,)
+        serializer = IssueDetailSerializer(issue, expand=self.expand,)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, inbox_id, issue_id):

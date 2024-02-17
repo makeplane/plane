@@ -6,10 +6,16 @@ import { scrollSummary } from "src/utils/editor-summary-utils";
 interface ContentBrowserProps {
   editor: Editor;
   markings: IMarking[];
+  setSidePeekVisible?: (sidePeekState: boolean) => void;
 }
 
 export const ContentBrowser = (props: ContentBrowserProps) => {
-  const { editor, markings } = props;
+  const { editor, markings, setSidePeekVisible } = props;
+
+  const handleOnClick = (marking: IMarking) => {
+    scrollSummary(editor, marking);
+    if (setSidePeekVisible) setSidePeekVisible(false);
+  }
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -18,11 +24,11 @@ export const ContentBrowser = (props: ContentBrowserProps) => {
         {markings.length !== 0 ? (
           markings.map((marking) =>
             marking.level === 1 ? (
-              <HeadingComp onClick={() => scrollSummary(editor, marking)} heading={marking.text} />
+              <HeadingComp onClick={() => handleOnClick(marking)} heading={marking.text} />
             ) : marking.level === 2 ? (
-              <SubheadingComp onClick={() => scrollSummary(editor, marking)} subHeading={marking.text} />
+              <SubheadingComp onClick={() => handleOnClick(marking)} subHeading={marking.text} />
             ) : (
-              <HeadingThreeComp heading={marking.text} onClick={() => scrollSummary(editor, marking)} />
+              <HeadingThreeComp heading={marking.text} onClick={() => handleOnClick(marking)} />
             )
           )
         ) : (

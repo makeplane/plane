@@ -66,13 +66,14 @@ export const HeaderColumn = (props: Props) => {
       }
       onMenuClose={onClose}
       placement="bottom-end"
+      closeOnSelect
     >
       <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
         <div
           className={`flex items-center justify-between gap-1.5 px-1 ${
             selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
-              ? "text-neutral-text-strong"
-              : "text-neutral-text-medium hover:text-neutral-text-strong"
+              ? "text-custom-text-100"
+              : "text-custom-text-200 hover:text-custom-text-100"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -89,8 +90,8 @@ export const HeaderColumn = (props: Props) => {
         <div
           className={`flex items-center justify-between gap-1.5 px-1 ${
             selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
-              ? "text-neutral-text-strong"
-              : "text-neutral-text-medium hover:text-neutral-text-strong"
+              ? "text-custom-text-100"
+              : "text-custom-text-200 hover:text-custom-text-100"
           }`}
         >
           <div className="flex items-center gap-2">

@@ -79,7 +79,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         const changed_properties = Object.keys(dirtyFields);
-        console.log(dirtyFields);
+
         captureProjectEvent({
           eventName: PROJECT_UPDATED,
           payload: {

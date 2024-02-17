@@ -54,7 +54,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    theme: { sidebarCollapsed, toggleSidebar },
+    theme: { sidebarCollapsed, toggleMobileSidebar },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
@@ -98,7 +98,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
-      toggleSidebar();
+      toggleMobileSidebar();
     }
   };
   const workspacesList = Object.values(workspaces ?? {});
@@ -117,7 +117,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 <div className="flex items-center gap-2 truncate">
                   <div
                     className={`relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-                      !activeWorkspace?.logo && "rounded bg-primary-solid text-white"
+                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
                     }`}
                   >
                     {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
@@ -140,7 +140,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   <ChevronDown
                     className={`mx-1 hidden h-4 w-4 flex-shrink-0 group-hover/menu-button:block ${
                       open ? "rotate-180" : ""
-                    } text-sidebar-neutral-text-subtle duration-300`}
+                    } text-custom-sidebar-text-400 duration-300`}
                   />
                 )}
               </div>
@@ -180,7 +180,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                                 <div className="flex items-center justify-start gap-2.5 truncate">
                                   <span
                                     className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                                      !workspace?.logo && "rounded bg-primary-solid text-white"
+                                      !workspace?.logo && "rounded bg-custom-primary-500 text-white"
                                     }`}
                                   >
                                     {workspace?.logo && workspace.logo !== "" ? (
@@ -195,7 +195,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                                   </span>
                                   <h5
                                     className={`truncate text-sm font-medium ${
-                                      workspaceSlug === workspace.slug ? "" : "text-neutral-text-medium"
+                                      workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
                                     }`}
                                   >
                                     {workspace.name}
@@ -220,10 +220,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     )}
                   </div>
                   <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
-                    <Link
-                      href="/create-workspace"
-                      className="w-full"
-                    >
+                    <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
                         className="flex items-center gap-2 rounded px-2 py-1 text-sm text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark font-medium"

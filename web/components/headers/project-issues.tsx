@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { Briefcase, Circle, ExternalLink, Plus, Inbox } from "lucide-react";
 // hooks
 import {
   useApplication,
@@ -120,7 +120,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
             <SidebarHamburgerToggle />
             <div>
-              <Breadcrumbs>
+              <Breadcrumbs onBack={() => router.back()}>
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
                   link={
@@ -138,7 +138,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                               {renderEmoji(currentProjectDetails.icon_prop)}
                             </div>
                           ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-primary-solid uppercase text-white">
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                               {currentProjectDetails?.name.charAt(0)}
                             </span>
                           )
@@ -205,16 +205,17 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </div>
           {currentProjectDetails?.inbox_view && inboxDetails && (
             <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
-              <span>
+              <span className="hidden md:block">
                 <Button variant="outline-neutral" size="sm" className="relative">
                   Inbox
                   {inboxDetails?.pending_issue_count > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-sidebar-neutral-border-medium bg-sidebar-neutral-component-surface-dark text-neutral-text-strong">
+                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
                       {inboxDetails?.pending_issue_count}
                     </span>
                   )}
                 </Button>
               </span>
+              <Inbox className="w-4 h-4 mr-2 text-custom-text-200 block md:hidden" />
             </Link>
           )}
           {canUserCreateIssue && (
@@ -236,7 +237,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 prependIcon={<Plus />}
                 variant="primary"
               >
-                Add Issue
+                <div className="hidden sm:block">Add</div> Issue
               </Button>
             </>
           )}

@@ -374,14 +374,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-neutral-component-surface-dark ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
                         className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("start_date") ? "" : "text-neutral-text-subtle"
+                          watch("start_date") ? "" : "text-custom-text-400"
                         }`}
                       >
                         {renderFormattedDate(startDate) ?? "No date selected"}
@@ -430,14 +430,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-neutral-text-medium hover:bg-neutral-component-surface-dark ${
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
                         isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
                         className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("target_date") ? "" : "text-neutral-text-subtle"
+                          watch("target_date") ? "" : "text-custom-text-400"
                         }`}
                       >
                         {renderFormattedDate(endDate) ?? "No date selected"}
@@ -596,7 +596,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative h-40 w-full max-w-80">
                               <ProgressChart
                                 distribution={moduleDetails.distribution?.completion_chart ?? {}}
                                 startDate={moduleDetails.start_date}

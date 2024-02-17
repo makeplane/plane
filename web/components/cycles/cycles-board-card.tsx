@@ -1,6 +1,7 @@
 import { FC, MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { observer } from "mobx-react";
 // hooks
 import { useEventTracker, useCycle, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -26,7 +27,7 @@ export interface ICyclesBoardCard {
   cycleId: string;
 }
 
-export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
+export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -175,7 +176,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       />
 
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
-        <div className="flex h-44 w-full min-w-[250px] flex-col justify-between rounded  border border-neutral-border-subtle bg-neutral-component-surface-light p-4 text-sm hover:shadow-md">
+        <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 truncate">
               <span className="flex-shrink-0">
@@ -253,7 +254,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
               ) : (
                 <span className="text-xs text-neutral-text-subtle">No due date</span>
               )}
-              <div className="z-10 flex items-center gap-1.5">
+              <div className="z-[5] flex items-center gap-1.5">
                 {isEditingAllowed &&
                   (cycleDetails.is_favorite ? (
                     <button type="button" onClick={handleRemoveFromFavorites}>
@@ -295,4 +296,4 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       </Link>
     </div>
   );
-};
+});

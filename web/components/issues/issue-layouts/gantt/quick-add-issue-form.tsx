@@ -11,6 +11,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { createIssuePayload } from "helpers/issue.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IProject, TIssue } from "@plane/types";
 // constants
@@ -138,14 +139,12 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
   };
   return (
     <>
-      <div
-        className={`${
-          errors && errors?.name && errors?.name?.message
-            ? `border border-red-500/20 bg-danger-component-surface-dark`
-            : ``
-        }`}
-      >
-        {isOpen ? (
+      {isOpen ? (
+        <div
+          className={cn("sticky bottom-0 z-[1] bg-custom-background-100", {
+            "border border-red-500/20 bg-red-500/10": errors && errors?.name && errors?.name?.message,
+          })}
+        >
           <div className="shadow-custom-shadow-sm">
             <form
               ref={ref}
@@ -156,16 +155,17 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
             </form>
             <div className="px-3 py-2 text-xs italic text-neutral-text-medium">{`Press 'Enter' to add another issue`}</div>
           </div>
-        ) : (
-          <div
-            className="flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-primary-text-subtle"
-            onClick={() => setIsOpen(true)}
-          >
-            <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-primary-text-subtle">New Issue</span>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100 bg-custom-background-100 border-custom-border-200 border-t-[1px]"
+          onClick={() => setIsOpen(true)}
+        >
+          <PlusIcon className="h-3.5 w-3.5 stroke-2" />
+          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+        </button>
+      )}
     </>
   );
 });

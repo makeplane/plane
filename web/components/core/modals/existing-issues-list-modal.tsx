@@ -78,7 +78,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
-    if (issues.length <= 0) setIsSearching(true);
 
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
@@ -88,16 +87,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       })
       .then((res) => setIssues(res))
       .finally(() => setIsSearching(false));
-  }, [issues, debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
-
-  useEffect(() => {
-    setSearchTerm("");
-    setIssues([]);
-    setSelectedIssues([]);
-    setIsSearching(false);
-    setIsSubmitting(false);
-    setIsWorkspaceLevel(false);
-  }, [isOpen]);
+  }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
 
   return (
     <>

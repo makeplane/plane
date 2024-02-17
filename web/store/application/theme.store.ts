@@ -6,37 +6,47 @@ import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 export interface IThemeStore {
   // observables
   theme: string | null;
+  mobileSidebarCollapsed: boolean | undefined;
   sidebarCollapsed: boolean | undefined;
   profileSidebarCollapsed: boolean | undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined;
+  issueDetailSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
+  toggleMobileSidebar: (collapsed?: boolean) => void;
   setTheme: (theme: any) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
   toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
+  toggleIssueDetailSidebar: (collapsed?: boolean) => void;
 }
 
 export class ThemeStore implements IThemeStore {
   // observables
+  mobileSidebarCollapsed: boolean | undefined = true;
   sidebarCollapsed: boolean | undefined = undefined;
   theme: string | null = null;
   profileSidebarCollapsed: boolean | undefined = undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
+  issueDetailSidebarCollapsed: boolean | undefined = undefined;
   // root store
   rootStore;
 
   constructor(_rootStore: any | null = null) {
     makeObservable(this, {
       // observable
+      mobileSidebarCollapsed: observable.ref,
       sidebarCollapsed: observable.ref,
       theme: observable.ref,
       profileSidebarCollapsed: observable.ref,
       workspaceAnalyticsSidebarCollapsed: observable.ref,
+      issueDetailSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
+      toggleMobileSidebar: action,
       setTheme: action,
       toggleProfileSidebar: action,
-      toggleWorkspaceAnalyticsSidebar: action
+      toggleWorkspaceAnalyticsSidebar: action,
+      toggleIssueDetailSidebar: action,
       // computed
     });
     // root store
@@ -54,6 +64,19 @@ export class ThemeStore implements IThemeStore {
       this.sidebarCollapsed = collapsed;
     }
     localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
+  };
+
+  /**
+   * Toggle mobile sidebar collapsed state
+   * @param collapsed
+   */
+  toggleMobileSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.mobileSidebarCollapsed = !this.mobileSidebarCollapsed;
+    } else {
+      this.mobileSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("mobile_sidebar_collapsed", this.mobileSidebarCollapsed.toString());
   };
 
   /**
@@ -80,6 +103,15 @@ export class ThemeStore implements IThemeStore {
       this.workspaceAnalyticsSidebarCollapsed = collapsed;
     }
     localStorage.setItem("workspace_analytics_sidebar_collapsed", this.workspaceAnalyticsSidebarCollapsed.toString());
+  };
+
+  toggleIssueDetailSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.issueDetailSidebarCollapsed = !this.issueDetailSidebarCollapsed;
+    } else {
+      this.issueDetailSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("issue_detail_sidebar_collapsed", this.issueDetailSidebarCollapsed.toString());
   };
 
   /**

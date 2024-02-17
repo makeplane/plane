@@ -69,7 +69,7 @@ export const PageForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-between gap-2">
+      <div className="mt-5 md:flex items-center justify-between gap-2">
         <Controller
           control={control}
           name="access"
@@ -102,7 +102,7 @@ export const PageForm: React.FC<Props> = (props) => {
             </div>
           )}
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-end mt-5 md:mt-0">
           <Button variant="outline-neutral" size="sm" onClick={handleClose} tabIndex={4}>
             Cancel
           </Button>

@@ -21,7 +21,7 @@ import { ProjectAnalyticsModal } from "components/analytics";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon, LayersIcon } from "@plane/ui";
 // icons
 import { ArrowRight, PanelRight, Plus } from "lucide-react";
 // helpers
@@ -156,7 +156,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         <div className="flex justify-between border-b border-neutral-border-medium bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
             <SidebarHamburgerToggle />
-            <Breadcrumbs>
+            <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
@@ -204,7 +204,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     label={
                       <>
                         <DiceIcon className="h-3 w-3" />
-                        {moduleDetails?.name && truncateText(moduleDetails.name, 40)}
+                        <div className="w-auto max-w-[70px] sm:max-w-[200px] inline-block truncate line-clamp-1 overflow-hidden whitespace-nowrap">
+                          {moduleDetails?.name && moduleDetails.name}
+                        </div>
                       </>
                     }
                     className="ml-1.5 flex-shrink-0"
@@ -261,6 +263,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   Analytics
                 </Button>
                 <Button
+                  className="hidden sm:flex"
                   onClick={() => {
                     setTrackElement("Module issues page");
                     toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
@@ -268,7 +271,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   size="sm"
                   prependIcon={<Plus />}
                 >
-                  <span className="hidden md:block">Add</span> Issue
+                  Add Issue
                 </Button>
               </>
             )}

@@ -153,7 +153,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         <div className="flex justify-between border-b border-neutral-border-medium bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
             <SidebarHamburgerToggle />
-            <Breadcrumbs>
+            <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
@@ -201,7 +201,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     label={
                       <>
                         <ContrastIcon className="h-3 w-3" />
-                        {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
+                        <div className=" w-auto max-w-[70px] sm:max-w-[200px] inline-block truncate line-clamp-1 overflow-hidden whitespace-nowrap">
+                          {cycleDetails?.name && cycleDetails.name}
+                        </div>
                       </>
                     }
                     className="ml-1.5 flex-shrink-0"

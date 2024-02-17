@@ -586,7 +586,6 @@ class IssueSerializer(DynamicBaseSerializer):
             "id",
             "name",
             "state_id",
-            "description_html",
             "sort_order",
             "completed_at",
             "estimate_point",
@@ -616,6 +615,13 @@ class IssueSerializer(DynamicBaseSerializer):
     def get_module_ids(self, obj):
         # Access the prefetched modules and extract module IDs
         return [module for module in obj.issue_module.values_list("module_id", flat=True)]
+
+
+class IssueDetailSerializer(IssueSerializer):
+    description_html = serializers.CharField() 
+
+    class Meta(IssueSerializer.Meta):
+        fields = IssueSerializer.Meta.fields + ['description_html']
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):

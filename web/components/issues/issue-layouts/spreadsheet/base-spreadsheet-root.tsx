@@ -88,7 +88,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         viewId
       );
     },
-    [issueFiltersStore, projectId, workspaceSlug, viewId]
+    [issueFiltersStore?.updateFilters, projectId, workspaceSlug, viewId]
   );
 
   const renderQuickActions = useCallback(

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
+import omit from "lodash/omit";
 // hooks
 import useToast from "hooks/use-toast";
 import { useEventTracker } from "hooks/store";
@@ -30,7 +31,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
-    copyUrlToClipboard(`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() =>
+    copyUrlToClipboard(`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`).then(() =>
       setToastAlert({
         type: "success",
         title: "Link copied",
@@ -39,11 +40,13 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
     );
   };
 
-  const duplicateIssuePayload = {
-    ...issue,
-    name: `${issue.name} (copy)`,
-  };
-  delete duplicateIssuePayload.id;
+  const duplicateIssuePayload = omit(
+    {
+      ...issue,
+      name: `${issue.name} (copy)`,
+    },
+    ["id"]
+  );
 
   return (
     <>
@@ -87,7 +90,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
             <CustomMenu.MenuItem
               onClick={() => {
                 setTrackElement("Global issues");
-            setIssueToEdit(issue);
+                setIssueToEdit(issue);
                 setCreateUpdateIssueModal(true);
               }}
             >
@@ -99,7 +102,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
             <CustomMenu.MenuItem
               onClick={() => {
                 setTrackElement("Global issues");
-            setCreateUpdateIssueModal(true);
+                setCreateUpdateIssueModal(true);
               }}
             >
               <div className="flex items-center gap-2">
@@ -110,7 +113,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
             <CustomMenu.MenuItem
               onClick={() => {
                 setTrackElement("Global issues");
-            setDeleteIssueModal(true);
+                setDeleteIssueModal(true);
               }}
             >
               <div className="flex items-center gap-2">

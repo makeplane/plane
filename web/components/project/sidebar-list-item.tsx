@@ -131,7 +131,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
-      themeStore.toggleSidebar();
+      themeStore.toggleMobileSidebar();
     }
   };
 
@@ -147,9 +147,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         {({ open }) => (
           <>
             <div
-              className={`group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-10 hover:bg-sidebar-neutral-component-surface-dark ${
+              className={`group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-10 hover:bg-custom-sidebar-background-80 ${
                 snapshot?.isDragging ? "opacity-60" : ""
-              } ${isMenuActive ? "!bg-sidebar-neutral-component-surface-dark" : ""}`}
+              } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
             >
               {provided && (
                 <Tooltip
@@ -158,7 +158,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 >
                   <button
                     type="button"
-                    className={`absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-sidebar-neutral-text-subtle ${
+                    className={`absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-custom-sidebar-text-400 ${
                       isCollapsed ? "" : "group-hover:!flex"
                     } ${project.sort_order === null ? "cursor-not-allowed opacity-60" : ""} ${
                       isMenuActive ? "!flex" : ""
@@ -202,7 +202,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     <ChevronDown
                       className={`hidden h-4 w-4 flex-shrink-0 ${open ? "rotate-180" : ""} ${
                         isMenuActive ? "!block" : ""
-                      }  mb-0.5 text-sidebar-neutral-text-subtle duration-300 group-hover:!block`}
+                      }  mb-0.5 text-custom-sidebar-text-400 duration-300 group-hover:!block`}
                     />
                   )}
                 </Disclosure.Button>
@@ -328,8 +328,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                           <div
                             className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
                               router.asPath.includes(item.href)
-                                ? "bg-primary-component-surface-light text-primary-text-subtle"
-                                : "text-sidebar-neutral-text-medium hover:bg-sidebar-neutral-component-surface-dark focus:bg-sidebar-neutral-component-surface-dark"
+                                ? "bg-custom-primary-100/10 text-custom-primary-100"
+                                : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${isCollapsed ? "justify-center" : ""}`}
                           >
                             <item.Icon className="h-4 w-4 stroke-[1.5]" />

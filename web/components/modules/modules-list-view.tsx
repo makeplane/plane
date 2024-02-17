@@ -8,9 +8,10 @@ import useLocalStorage from "hooks/use-local-storage";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Loader, Spinner } from "@plane/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
@@ -34,23 +35,13 @@ export const ModulesListView: React.FC = observer(() => {
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  if (loader)
+  if (loader || !projectModuleIds)
     return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
-
-  if (!projectModuleIds)
-    return (
-      <Loader className="grid grid-cols-3 gap-4 p-8">
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-        <Loader.Item height="176px" />
-      </Loader>
+      <>
+        {modulesView === "list" && <CycleModuleListLayout />}
+        {modulesView === "grid" && <CycleModuleBoardLayout />}
+        {modulesView === "gantt_chart" && <GanttLayoutLoader />}
+      </>
     );
 
   return (
@@ -97,16 +88,15 @@ export const ModulesListView: React.FC = observer(() => {
         </>
       ) : (
         <EmptyState
-          title="Map your project milestones to Modules and track aggregated work easily."
-          description="A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone."
+          title={MODULE_EMPTY_STATE_DETAILS["modules"].title}
+          description={MODULE_EMPTY_STATE_DETAILS["modules"].description}
           image={EmptyStateImagePath}
           comicBox={{
-            title: "Modules help group work by hierarchy.",
-            description:
-              "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
+            title: MODULE_EMPTY_STATE_DETAILS["modules"].comicBox.title,
+            description: MODULE_EMPTY_STATE_DETAILS["modules"].comicBox.description,
           }}
           primaryButton={{
-            text: "Build your first module",
+            text: MODULE_EMPTY_STATE_DETAILS["modules"].primaryButton.text,
             onClick: () => {
               setTrackElement("Module empty state");
               commandPaletteStore.toggleCreateModuleModal(true);
