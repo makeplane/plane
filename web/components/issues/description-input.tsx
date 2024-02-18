@@ -12,12 +12,12 @@ const fileService = new FileService();
 import { TIssueOperations } from "./issue-detail";
 // hooks
 import useDebounce from "hooks/use-debounce";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 export type IssueDescriptionInputProps = {
   disabled?: boolean;
   value: string | undefined | null;
   workspaceSlug: string;
+  isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
   issueOperations: TIssueOperations;
   projectId: string;
@@ -28,21 +28,34 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId } = props;
   // states
   const [descriptionHTML, setDescriptionHTML] = useState(value);
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issueId,
+    description_html: typeof value === "string" && value != "" ? value : "<p></p>",
+  });
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
-  const workspaceStore = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   // hooks
-  const { setShowAlert } = useReloadConfirmations();
   const debouncedValue = useDebounce(descriptionHTML, 1500);
   // computed values
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
   useEffect(() => {
-    setDescriptionHTML(value);
+    if (value) setDescriptionHTML(value);
   }, [value]);
 
   useEffect(() => {
+    if (issueId && value)
+      setLocalIssueDescription({
+        id: issueId,
+        description_html: typeof value === "string" && value != "" ? value : "<p></p>",
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issueId, value]);
+
+  useEffect(() => {
     if (debouncedValue || debouncedValue === "") {
+      setIsSubmitting("submitted");
       issueOperations
         .update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }, false)
         .finally(() => {
@@ -79,12 +92,13 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
       value={descriptionHTML}
-      setShouldShowAlert={setShowAlert}
-      setIsSubmitting={setIsSubmitting}
+      rerenderOnPropsChange={localIssueDescription}
+      // setShouldShowAlert={setShowAlert}
+      // setIsSubmitting={setIsSubmitting}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
       onChange={(description: Object, description_html: string) => {
-        setShowAlert(true);
+        // setShowAlert(true);
         setIsSubmitting("submitting");
         setDescriptionHTML(description_html);
       }}
