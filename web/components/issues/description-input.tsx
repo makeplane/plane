@@ -22,16 +22,13 @@ export type IssueDescriptionInputProps = {
   issueOperations: TIssueOperations;
   projectId: string;
   issueId: string;
+  initialValue?: string;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
-  const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId } = props;
+  const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId, initialValue } = props;
   // states
   const [descriptionHTML, setDescriptionHTML] = useState(value);
-  const [localIssueDescription, setLocalIssueDescription] = useState({
-    id: issueId,
-    description_html: typeof value === "string" && value != "" ? value : "<p></p>",
-  });
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -45,16 +42,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   }, [value]);
 
   useEffect(() => {
-    if (issueId && value)
-      setLocalIssueDescription({
-        id: issueId,
-        description_html: typeof value === "string" && value != "" ? value : "<p></p>",
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [issueId, value]);
-
-  useEffect(() => {
-    if (debouncedValue || debouncedValue === "") {
+    if (debouncedValue && debouncedValue !== value) {
       setIsSubmitting("submitted");
       issueOperations
         .update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }, false)
@@ -92,9 +80,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
       value={descriptionHTML}
-      rerenderOnPropsChange={localIssueDescription}
-      // setShouldShowAlert={setShowAlert}
-      // setIsSubmitting={setIsSubmitting}
+      initialValue={initialValue}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
       onChange={(description: Object, description_html: string) => {
