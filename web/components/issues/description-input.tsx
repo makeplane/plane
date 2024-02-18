@@ -28,6 +28,10 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId } = props;
   // states
   const [descriptionHTML, setDescriptionHTML] = useState(value);
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issueId,
+    description_html: typeof value === "string" && value != "" ? value : "<p></p>",
+  });
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -38,6 +42,15 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
 
   useEffect(() => {
     if (value) setDescriptionHTML(value);
+  }, [value]);
+
+  useEffect(() => {
+    if (issueId && value)
+      setLocalIssueDescription({
+        id: issueId,
+        description_html: typeof value === "string" && value != "" ? value : "<p></p>",
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueId, value]);
 
   useEffect(() => {
@@ -79,7 +92,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
       value={descriptionHTML}
-      // rerenderOnPropsChange={localIssueDescription}
+      rerenderOnPropsChange={localIssueDescription}
       // setShouldShowAlert={setShowAlert}
       // setIsSubmitting={setIsSubmitting}
       dragDropEnabled
