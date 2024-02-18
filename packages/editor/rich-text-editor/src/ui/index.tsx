@@ -15,6 +15,7 @@ import { EditorBubbleMenu } from "src/ui/menus/bubble-menu";
 
 export type IRichTextEditor = {
   value: string;
+  initialValue?: string;
   dragDropEnabled?: boolean;
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
@@ -54,6 +55,7 @@ const RichTextEditor = ({
   setShouldShowAlert,
   editorContentCustomClassNames,
   value,
+  initialValue,
   uploadFile,
   deleteFile,
   noBorder,
@@ -96,6 +98,10 @@ const RichTextEditor = ({
     borderOnFocus,
     customClassName,
   });
+
+  React.useEffect(() => {
+    if (editor && initialValue) editor.commands.setContent(initialValue);
+  }, [editor, initialValue]);
 
   if (!editor) return null;
 
