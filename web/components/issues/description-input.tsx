@@ -81,8 +81,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
       value={descriptionHTML}
       initialValue={initialValue}
-      // setShouldShowAlert={setShowAlert}
-      // setIsSubmitting={setIsSubmitting}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
       onChange={(description: Object, description_html: string) => {
