@@ -6,12 +6,12 @@ import { TextArea } from "@plane/ui";
 import { TIssueOperations } from "./issue-detail";
 // hooks
 import useDebounce from "hooks/use-debounce";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 export type IssueTitleInputProps = {
   disabled?: boolean;
   value: string | undefined | null;
   workspaceSlug: string;
+  isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
   issueOperations: TIssueOperations;
   projectId: string;
@@ -23,7 +23,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   // states
   const [title, setTitle] = useState("");
   // hooks
-  const { setShowAlert } = useReloadConfirmations();
+
   const debouncedValue = useDebounce(title, 1500);
 
   useEffect(() => {
@@ -42,11 +42,10 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
 
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setShowAlert(true);
       setIsSubmitting("submitting");
       setTitle(e.target.value);
     },
-    [setIsSubmitting, setShowAlert]
+    [setIsSubmitting]
   );
 
   return (
