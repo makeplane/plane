@@ -67,6 +67,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
+          isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
           disabled={!is_editable}
@@ -77,6 +78,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
+          isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
           disabled={!is_editable}
