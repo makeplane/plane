@@ -84,7 +84,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
       onChange={(description: Object, description_html: string) => {
-        // setShowAlert(true);
         setIsSubmitting("submitting");
         setDescriptionHTML(description_html);
       }}
