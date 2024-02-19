@@ -25,10 +25,6 @@ class ModuleWriteSerializer(BaseSerializer):
         required=False,
     )
 
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(
-        source="workspace", read_only=True
-    )
 
     class Meta:
         model = Module
@@ -170,12 +166,9 @@ class ModuleLinkSerializer(BaseSerializer):
 
 
 class ModuleSerializer(DynamicBaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    lead_detail = UserLiteSerializer(read_only=True, source="lead")
-    members_detail = UserLiteSerializer(
+    member_ids = serializers.PrimaryKeyRelatedField(
         read_only=True, many=True, source="members"
     )
-    link_module = ModuleLinkSerializer(read_only=True, many=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
@@ -186,15 +179,37 @@ class ModuleSerializer(DynamicBaseSerializer):
 
     class Meta:
         model = Module
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
+        fields = [
+            # Required fields
+            "id",
+            "workspace_id",
+            "project_id",
+            # Model fields
+            "name",
+            "description",
+            "description_text",
+            "description_html",
+            "start_date",
+            "target_date",
+            "status",
+            "lead_id",
+            "member_ids",
+            "view_props",
+            "sort_order",
+            "external_source",
+            "external_id",
+            # computer fields
+            "is_favorite",
+            "total_issues",
+            "cancelled_issues",
+            "completed_issues",
+            "started_issues",
+            "unstarted_issues",
+            "backlog_issues",
             "created_at",
             "updated_at",
         ]
+        read_only_fields = fields
 
 
 class ModuleFavoriteSerializer(BaseSerializer):
