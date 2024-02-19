@@ -18,7 +18,13 @@ from plane.db.models import (
 
 
 class ModuleWriteSerializer(BaseSerializer):
-    members = serializers.ListField(
+    lead_id = serializers.PrimaryKeyRelatedField(
+        source="lead",
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    member_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
@@ -38,7 +44,9 @@ class ModuleWriteSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["members"] = [str(member.id) for member in instance.members.all()]
+        data["member_ids"] = [
+            str(member.id) for member in instance.members.all()
+        ]
         return data
 
     def validate(self, data):
@@ -53,12 +61,10 @@ class ModuleWriteSerializer(BaseSerializer):
         return data
 
     def create(self, validated_data):
-        members = validated_data.pop("members", None)
-
+        members = validated_data.pop("member_ids", None)
         project = self.context["project"]
 
         module = Module.objects.create(**validated_data, project=project)
-
         if members is not None:
             ModuleMember.objects.bulk_create(
                 [
@@ -79,7 +85,7 @@ class ModuleWriteSerializer(BaseSerializer):
         return module
 
     def update(self, instance, validated_data):
-        members = validated_data.pop("members", None)
+        members = validated_data.pop("member_ids", None)
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -164,8 +170,8 @@ class ModuleLinkSerializer(BaseSerializer):
 
 
 class ModuleSerializer(DynamicBaseSerializer):
-    member_ids = serializers.PrimaryKeyRelatedField(
-        read_only=True, many=True, source="members"
+    member_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, allow_null=True
     )
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)

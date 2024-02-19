@@ -6,7 +6,10 @@ from django.utils import timezone
 from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework.response import Response
@@ -141,6 +144,16 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                     ),
                 )
             )
+            .annotate(
+                member_ids=Coalesce(
+                    ArrayAgg(
+                        "members__id",
+                        distinct=True,
+                        filter=~Q(members__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
             .order_by("-is_favorite", "-created_at")
         )
 
@@ -153,25 +166,84 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         if serializer.is_valid():
             serializer.save()
 
-            module = Module.objects.get(pk=serializer.data["id"])
-            serializer = ModuleSerializer(module)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            module = (
+                self.get_queryset()
+                .filter(pk=serializer.data["id"])
+                .values(  # Required fields
+                    "id",
+                    "workspace_id",
+                    "project_id",
+                    # Model fields
+                    "name",
+                    "description",
+                    "description_text",
+                    "description_html",
+                    "start_date",
+                    "target_date",
+                    "status",
+                    "lead_id",
+                    "member_ids",
+                    "view_props",
+                    "sort_order",
+                    "external_source",
+                    "external_id",
+                    # computed fields
+                    "is_favorite",
+                    "total_issues",
+                    "cancelled_issues",
+                    "completed_issues",
+                    "started_issues",
+                    "unstarted_issues",
+                    "backlog_issues",
+                    "created_at",
+                    "updated_at",
+                )
+            ).first()
+            return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-        modules = ModuleSerializer(
-            queryset, many=True, fields=fields if fields else None
-        ).data
+        if self.fields:
+            modules = ModuleSerializer(
+                queryset,
+                many=True,
+                fields=self.fields,
+            ).data
+        else:
+            modules = queryset.values(  # Required fields
+                "id",
+                "workspace_id",
+                "project_id",
+                # Model fields
+                "name",
+                "description",
+                "description_text",
+                "description_html",
+                "start_date",
+                "target_date",
+                "status",
+                "lead_id",
+                "member_ids",
+                "view_props",
+                "sort_order",
+                "external_source",
+                "external_id",
+                # computed fields
+                "is_favorite",
+                "total_issues",
+                "cancelled_issues",
+                "completed_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                "created_at",
+                "updated_at",
+            )
         return Response(modules, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk):
-        queryset = self.get_queryset().get(pk=pk)
+        queryset = self.get_queryset().filter(pk=pk)
 
         assignee_distribution = (
             Issue.objects.filter(
@@ -265,16 +337,44 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             .order_by("label_name")
         )
 
-        data = ModuleSerializer(queryset).data
+        data = queryset.values(  # Required fields
+            "id",
+            "workspace_id",
+            "project_id",
+            # Model fields
+            "name",
+            "description",
+            "description_text",
+            "description_html",
+            "start_date",
+            "target_date",
+            "status",
+            "lead_id",
+            "member_ids",
+            "view_props",
+            "sort_order",
+            "external_source",
+            "external_id",
+            # computed fields
+            "is_favorite",
+            "total_issues",
+            "cancelled_issues",
+            "completed_issues",
+            "started_issues",
+            "unstarted_issues",
+            "backlog_issues",
+            "created_at",
+            "updated_at",
+        ).first()
         data["distribution"] = {
             "assignees": assignee_distribution,
             "labels": label_distribution,
             "completion_chart": {},
         }
 
-        if queryset.start_date and queryset.target_date:
+        if queryset.first().start_date and queryset.first().target_date:
             data["distribution"]["completion_chart"] = burndown_plot(
-                queryset=queryset,
+                queryset=queryset.first(),
                 slug=slug,
                 project_id=project_id,
                 module_id=pk,
@@ -284,6 +384,47 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             data,
             status=status.HTTP_200_OK,
         )
+
+    def partial_update(self, request, slug, project_id, pk):
+        queryset = self.get_queryset().filter(pk=pk)
+        serializer = ModuleWriteSerializer(
+            queryset.first(), data=request.data, partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            module = queryset.values(  
+                # Required fields
+                "id",
+                "workspace_id",
+                "project_id",
+                # Model fields
+                "name",
+                "description",
+                "description_text",
+                "description_html",
+                "start_date",
+                "target_date",
+                "status",
+                "lead_id",
+                "member_ids",
+                "view_props",
+                "sort_order",
+                "external_source",
+                "external_id",
+                # computed fields
+                "is_favorite",
+                "total_issues",
+                "cancelled_issues",
+                "completed_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                "created_at",
+                "updated_at",
+            ).first()
+            return Response(module, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, pk):
         module = Module.objects.get(
@@ -346,7 +487,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 attachment_count=IssueAttachment.objects.filter(
-                issue=OuterRef("id")
+                    issue=OuterRef("id")
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
