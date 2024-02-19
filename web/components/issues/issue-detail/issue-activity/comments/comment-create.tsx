@@ -81,7 +81,6 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             render={({ field: { value, onChange } }) => (
               <LiteTextEditorWithRef
                 onEnterKeyPress={(e) => {
-                  console.log("yo");
                   handleSubmit(onSubmit)(e);
                 }}
                 cancelUploadImage={fileService.cancelUpload}

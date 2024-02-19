@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
+import omit from "lodash/omit";
 // hooks
 import { useEventTracker, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -39,7 +40,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() =>
+    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`).then(() =>
       setToastAlert({
         type: "success",
         title: "Link copied",
@@ -48,11 +49,13 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
     );
   };
 
-  const duplicateIssuePayload = {
-    ...issue,
-    name: `${issue.name} (copy)`,
-  };
-  delete duplicateIssuePayload.id;
+  const duplicateIssuePayload = omit(
+    {
+      ...issue,
+      name: `${issue.name} (copy)`,
+    },
+    ["id"]
+  );
 
   const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
 
