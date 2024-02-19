@@ -49,6 +49,7 @@ from .workspace import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
 )
 from .state import StateViewSet
 from .view import (
