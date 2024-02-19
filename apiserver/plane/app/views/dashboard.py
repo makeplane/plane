@@ -182,11 +182,11 @@ def dashboard_assigned_issues(self, request, slug):
     if issue_type == "overdue":
         overdue_issues_count = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         ).count()
         overdue_issues = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         )[:5]
         return Response(
             {
@@ -201,11 +201,11 @@ def dashboard_assigned_issues(self, request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         ).count()
         upcoming_issues = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         )[:5]
         return Response(
             {
@@ -309,11 +309,11 @@ def dashboard_created_issues(self, request, slug):
     if issue_type == "overdue":
         overdue_issues_count = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         ).count()
         overdue_issues = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         )[:5]
         return Response(
             {
@@ -326,11 +326,11 @@ def dashboard_created_issues(self, request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         ).count()
         upcoming_issues = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         )[:5]
         return Response(
             {
@@ -447,7 +447,9 @@ def dashboard_recent_projects(self, request, slug):
         ).exclude(id__in=unique_project_ids)
 
         # Append additional project IDs to the existing list
-        unique_project_ids.update(additional_projects.values_list("id", flat=True))
+        unique_project_ids.update(
+            additional_projects.values_list("id", flat=True)
+        )
 
     return Response(
         list(unique_project_ids)[:4],
@@ -456,90 +458,33 @@ def dashboard_recent_projects(self, request, slug):
 
 
 def dashboard_recent_collaborators(self, request, slug):
-    # Fetch all project IDs where the user belongs to
-    user_projects = Project.objects.filter(
-        project_projectmember__member=request.user,
-        project_projectmember__is_active=True,
-        workspace__slug=slug,
-    ).values_list("id", flat=True)
-
     # Fetch all users who have performed an activity in the projects where the user exists
     users_with_activities = (
         IssueActivity.objects.filter(
             workspace__slug=slug,
-            project_id__in=user_projects,
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
         )
         .values("actor")
-        .exclude(actor=request.user)
         .annotate(num_activities=Count("actor"))
-        .order_by("-num_activities")
-    )[:7]
-
-    # Get the count of active issues for each user in users_with_activities
-    users_with_active_issues = []
-    for user_activity in users_with_activities:
-        user_id = user_activity["actor"]
-        active_issue_count = Issue.objects.filter(
-            assignees__in=[user_id],
-            state__group__in=["unstarted", "started"],
-        ).count()
-        users_with_active_issues.append(
-            {"user_id": user_id, "active_issue_count": active_issue_count}
+        .order_by(
+            Case(
+                When(actor=request.user, then=Value(0)),
+                default=Value(1),
+            ),
+            "-num_activities",
         )
-
-    # Insert the logged-in user's ID and their active issue count at the beginning
-    active_issue_count = Issue.objects.filter(
-        assignees__in=[request.user],
-        state__group__in=["unstarted", "started"],
-    ).count()
-
-    if users_with_activities.count() < 7:
-        # Calculate the additional collaborators needed
-        additional_collaborators_needed = 7 - users_with_activities.count()
-
-        # Fetch additional collaborators from the project_member table
-        additional_collaborators = list(
-            set(
-                ProjectMember.objects.filter(
-                    ~Q(member=request.user),
-                    project_id__in=user_projects,
-                    workspace__slug=slug,
-                )
-                .exclude(
-                    member__in=[
-                        user["actor"] for user in users_with_activities
-                    ]
-                )
-                .values_list("member", flat=True)
-            )
-        )
-
-        additional_collaborators = additional_collaborators[
-            :additional_collaborators_needed
-        ]
-
-        # Append additional collaborators to the list
-        for collaborator_id in additional_collaborators:
-            active_issue_count = Issue.objects.filter(
-                assignees__in=[collaborator_id],
-                state__group__in=["unstarted", "started"],
-            ).count()
-            users_with_active_issues.append(
-                {
-                    "user_id": str(collaborator_id),
-                    "active_issue_count": active_issue_count,
-                }
-            )
-
-    users_with_active_issues.insert(
-        0,
-        {"user_id": request.user.id, "active_issue_count": active_issue_count},
+        .values_list("actor", flat=True)
     )
 
-    return Response(users_with_active_issues, status=status.HTTP_200_OK)
+    return self.paginate(
+        request=request,
+        queryset=users_with_activities,
+    )
 
 
 class DashboardEndpoint(BaseAPIView):
+
     def create(self, request, slug):
         serializer = DashboardSerializer(data=request.data)
         if serializer.is_valid():
@@ -566,7 +511,9 @@ class DashboardEndpoint(BaseAPIView):
             dashboard_type = request.GET.get("dashboard_type", None)
             if dashboard_type == "home":
                 dashboard, created = Dashboard.objects.get_or_create(
-                    type_identifier=dashboard_type, owned_by=request.user, is_default=True
+                    type_identifier=dashboard_type,
+                    owned_by=request.user,
+                    is_default=True,
                 )
 
                 if created:
@@ -583,7 +530,9 @@ class DashboardEndpoint(BaseAPIView):
 
                     updated_dashboard_widgets = []
                     for widget_key in widgets_to_fetch:
-                        widget = Widget.objects.filter(key=widget_key).values_list("id", flat=True)
+                        widget = Widget.objects.filter(
+                            key=widget_key
+                        ).values_list("id", flat=True)
                         if widget:
                             updated_dashboard_widgets.append(
                                 DashboardWidget(

@@ -1237,6 +1237,12 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
 
     def get(self, request, slug, user_id):
 
+        if not request.GET.get("date"):
+            return Response(
+                {"error": "Date is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
         user_activities = IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
@@ -1259,7 +1265,7 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         rows = [
             (
                 activity.actor.display_name,
-                f"{activity.project.identifier} - {activity.issue.sequence_id}",
+                f"{activity.project.identifier} - {activity.issue.sequence_id if activity.issue else ''}",
                 activity.project.name,
                 activity.created_at,
                 activity.updated_at,
