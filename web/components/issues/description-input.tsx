@@ -38,23 +38,22 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
   useEffect(() => {
-    if (value) setDescriptionHTML(value);
+    setDescriptionHTML(value);
   }, [value]);
 
   useEffect(() => {
     if (debouncedValue && debouncedValue !== value) {
-      setIsSubmitting("submitted");
       issueOperations
         .update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }, false)
         .finally(() => {
-          setIsSubmitting("saved");
+          setIsSubmitting("submitted");
         });
     }
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
-  if (!descriptionHTML && descriptionHTML !== "") {
+  if (!descriptionHTML) {
     return (
       <Loader>
         <Loader.Item height="150px" />
@@ -79,13 +78,13 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-      value={descriptionHTML}
+      value={descriptionHTML === "" ? "<p></p>" : descriptionHTML}
       initialValue={initialValue}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
       onChange={(description: Object, description_html: string) => {
         setIsSubmitting("submitting");
-        setDescriptionHTML(description_html);
+        setDescriptionHTML(description_html === "" ? "<p></p>" : description_html);
       }}
       mentionSuggestions={mentionSuggestions}
       mentionHighlights={mentionHighlights}
