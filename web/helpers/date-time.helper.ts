@@ -1,4 +1,5 @@
-import { differenceInDays, format, formatDistanceToNow, isAfter, isValid, parseISO } from "date-fns";
+import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
+import { isNil } from "lodash";
 
 // Format Date Helpers
 /**
@@ -171,4 +172,24 @@ export const getWeekNumberOfDate = (date: Date): number => {
   // Adjust the calculation for weekNumber
   const weekNumber = Math.ceil((days + 1) / 7);
   return weekNumber;
+};
+
+/**
+ * @returns {boolean} boolean value depending on whether the dates are equal
+ * @description Returns boolean value depending on whether the dates are equal
+ * @param date1
+ * @param date2
+ * @example checkIfDatesAreEqual("2024-01-01", "2024-01-01") // true
+ * @example checkIfDatesAreEqual("2024-01-01", "2024-01-02") // false
+ */
+export const checkIfDatesAreEqual = (
+  date1: Date | string | null | undefined,
+  date2: Date | string | null | undefined
+): boolean => {
+  if (isNil(date1) && isNil(date2)) return true;
+  if (isNil(date1) || isNil(date2)) return false;
+
+  const parsedDate1 = new Date(date1);
+  const parsedDate2 = new Date(date2);
+  return isEqual(parsedDate1, parsedDate2);
 };

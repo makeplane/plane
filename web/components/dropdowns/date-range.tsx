@@ -178,7 +178,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               {!hideIcon.from && icon}
               {dateRange.from ? renderFormattedDate(dateRange.from) : placeholder.from}
             </span>
-            <ArrowRight className="h-3 w-3 text-custom-text-300 flex-shrink-0" />
+            <ArrowRight className="h-3 w-3 flex-shrink-0" />
             <span className="h-full flex items-center justify-center gap-1 rounded-sm flex-grow">
               {!hideIcon.to && icon}
               {dateRange.to ? renderFormattedDate(dateRange.to) : placeholder.to}

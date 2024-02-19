@@ -9,13 +9,14 @@ import { Tooltip } from "@plane/ui";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import {
   DateDropdown,
+  DateRangeDropdown,
   EstimateDropdown,
   PriorityDropdown,
   ProjectMemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { checkIfDatesAreEqual, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // constants
@@ -191,7 +192,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* start date */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        shouldRenderProperty={(properties) => !properties.due_date}
+        displayPropertyKey="start_date"
+      >
         <div className="h-5">
           <DateDropdown
             value={issue.start_date ?? null}
@@ -207,7 +212,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* target/due date */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        shouldRenderProperty={(properties) => !properties.start_date}
+        displayPropertyKey="due_date"
+      >
         <div className="h-5">
           <DateDropdown
             value={issue?.target_date ?? null}
@@ -218,6 +227,33 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}
             showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* start & target date range */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey={["start_date", "due_date"]}>
+        <div className="h-5">
+          <DateRangeDropdown
+            value={{
+              from: issue.start_date ? new Date(issue.start_date) : undefined,
+              to: issue.target_date ? new Date(issue.target_date) : undefined,
+            }}
+            onSelect={(val) => {
+              if (!checkIfDatesAreEqual(issue.start_date, val?.from)) handleStartDate(val?.from ?? null);
+              if (!checkIfDatesAreEqual(issue.target_date, val?.to)) handleTargetDate(val?.to ?? null);
+            }}
+            placeholder={{
+              from: "Start date",
+              to: "Due date",
+            }}
+            hideIcon={{
+              to: true,
+            }}
+            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
+            disabled={isReadOnly}
+            showTooltip
+            bothRequired={false}
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -258,7 +294,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="sub_issue_count"
-        shouldRenderProperty={!!issue?.sub_issues_count}
+        shouldRenderProperty={(properties) => !!properties.sub_issue_count}
       >
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
@@ -272,7 +308,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="attachment_count"
-        shouldRenderProperty={!!issue?.attachment_count}
+        shouldRenderProperty={(properties) => !!properties.attachment_count}
       >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
@@ -286,7 +322,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="link"
-        shouldRenderProperty={!!issue?.link_count}
+        shouldRenderProperty={(properties) => !!properties.link}
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
