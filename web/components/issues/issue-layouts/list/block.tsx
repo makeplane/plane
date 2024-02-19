@@ -50,9 +50,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   return (
     <div
       className={cn("min-h-12 relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm", {
-        "border border-custom-primary-70 hover:border-custom-primary-70":
-              peekIssue && peekIssue.issueId === issue.id,
-            "last:border-b-transparent": peekIssue?.issueId !== issue.id
+        "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue && peekIssue.issueId === issue.id,
+        "last:border-b-transparent": peekIssue?.issueId !== issue.id,
       })}
     >
       {displayProperties && displayProperties?.key && (
