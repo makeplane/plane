@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react";
 // hooks
 import { useInboxIssues } from "hooks/store";
 // constants
@@ -13,7 +14,7 @@ type Props = {
   showDescription?: boolean;
 };
 
-export const InboxIssueStatus: React.FC<Props> = (props) => {
+export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, inboxId, issueId, iconSize = 18, showDescription = false } = props;
   // hooks
   const {
@@ -52,4 +53,4 @@ export const InboxIssueStatus: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

@@ -1,3 +1,5 @@
+import { TIssue } from "@plane/types";
+
 export interface IQuickActionProps {
   issue: TIssue;
   handleDelete: () => Promise<void>;
