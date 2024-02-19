@@ -17,6 +17,7 @@ import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // components
 import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "components/onboarding";
+import { PageHead } from "components/core";
 // ui
 import { Avatar, Spinner } from "@plane/ui";
 // images
@@ -142,6 +143,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title="Onboarding" />
       <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
       {user && step !== null ? (
         <div className={`fixed flex h-full w-full flex-col bg-onboarding-gradient-100`}>

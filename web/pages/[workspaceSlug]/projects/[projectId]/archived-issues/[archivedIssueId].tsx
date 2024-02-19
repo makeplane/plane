@@ -8,7 +8,7 @@ import { useIssueDetail, useIssues, useProject } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { IssueDetailRoot } from "components/issues";
-import { ProjectArchivedIssueDetailsHeader } from "components/headers";
+import { ProjectArchivedIssueDetailsHeader } from "components/headers";import { PageHead } from "components/core";
 // ui
 import { ArchiveIcon, Loader } from "@plane/ui";
 // icons
@@ -45,6 +45,9 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
   );
 
   const issue = getIssueById(archivedIssueId?.toString() || "") || undefined;
+  const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
+  const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+
   if (!issue) return <></>;
 
   const handleUnArchive = async () => {
@@ -79,6 +82,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
 
   return (
     <>
+    <PageHead title={pageTitle} />
       {issueLoader ? (
         <Loader className="flex h-full gap-5 p-5">
           <div className="basis-2/3 space-y-2">

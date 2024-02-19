@@ -13,7 +13,6 @@ import { PageHead } from "components/core";
 
 const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {
   const { currentWorkspace } = useWorkspace();
-  console.log("currentWorkspace", currentWorkspace);
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Views` : undefined;
   return (
