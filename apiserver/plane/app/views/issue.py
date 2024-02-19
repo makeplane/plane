@@ -87,14 +87,16 @@ class IssueListEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
-    def post(self, request, slug, project_id):
-        issues = request.data.get("issues", [])
+    def get(self, request, slug, project_id):
+        issues = request.GET.get("issues", False)
 
         if not issues:
             return Response(
                 {"error": "Issues are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        issues = [issue for issue in issues.split(",") if issue != ""]
 
         queryset = (
             Issue.issue_objects.filter(
@@ -147,7 +149,7 @@ class IssueListEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = queryset.filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
