@@ -8,7 +8,7 @@ import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
-import { WorkspaceActivityListPage } from "components/profile";
+import { DownloadActivityButton, WorkspaceActivityListPage } from "components/profile";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -45,13 +45,11 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
       />
     );
 
-  const handleDownload = () => {};
-
   return (
     <div className="h-full w-full px-5 py-5 md:px-9 flex flex-col overflow-hidden">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-lg font-medium">Recent activity</h3>
-        {currentUser?.id === userId && <Button onClick={handleDownload}>Download as CSV</Button>}
+        {currentUser?.id === userId && <DownloadActivityButton />}
       </div>
       <div className="h-full flex flex-col overflow-y-auto">
         {activityPages}
