@@ -17,7 +17,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = (props) => {
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">Issues by Priority</h3>
+      <h3 className="text-lg font-medium">Issues by priority</h3>
       {priorityDistribution ? (
         <div className="flex-grow rounded border border-custom-border-100">
           {priorityDistribution.length > 0 ? (

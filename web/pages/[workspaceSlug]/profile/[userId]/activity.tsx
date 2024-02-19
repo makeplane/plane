@@ -1,15 +1,17 @@
 import { ReactElement, useState } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react";
-//hooks
-import { useApplication } from "hooks/store";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { AppLayout } from "layouts/app-layout";
+import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { ProfileActivityListPage } from "components/profile";
+import { UserProfileHeader } from "components/headers";
+import { WorkspaceActivityListPage } from "components/profile";
 // ui
 import { Button } from "@plane/ui";
-// type
+// types
 import { NextPageWithLayout } from "lib/types";
 
 const PER_PAGE = 100;
@@ -19,8 +21,11 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
+  // router
+  const router = useRouter();
+  const { userId } = router.query;
   // store hooks
-  const { theme: themeStore } = useApplication();
+  const { currentUser } = useUser();
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
@@ -31,7 +36,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const activityPages: JSX.Element[] = [];
   for (let i = 0; i < pageCount; i++)
     activityPages.push(
-      <ProfileActivityListPage
+      <WorkspaceActivityListPage
         key={i}
         cursor={`${PER_PAGE}:${i}:0`}
         perPage={PER_PAGE}
@@ -40,11 +45,13 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
       />
     );
 
+  const handleDownload = () => {};
+
   return (
-    <section className="mx-auto mt-5 md:mt-16 h-full w-full flex flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-      <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
-        <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
-        <h3 className="text-xl font-medium">Activity</h3>
+    <div className="h-full w-full px-5 py-5 md:px-9 flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-lg font-medium">Recent activity</h3>
+        {currentUser?.id === userId && <Button onClick={handleDownload}>Download as CSV</Button>}
       </div>
       <div className="h-full flex flex-col overflow-y-auto">
         {activityPages}
@@ -56,12 +63,16 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 });
 
 ProfileActivityPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
+  return (
+    <AppLayout header={<UserProfileHeader type="Activity" />}>
+      <ProfileAuthWrapper>{page}</ProfileAuthWrapper>
+    </AppLayout>
+  );
 };
 
 export default ProfileActivityPage;
