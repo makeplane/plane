@@ -21,7 +21,7 @@ export const InboxSidebarRoot: FC<TInboxSidebarRoot> = observer((props) => {
     issues: { loader },
   } = useInboxIssues();
 
-  if (loader && ["init-loader", "mutation"].includes(loader)) {
+  if (loader === "init-loader") {
     return <InboxSidebarLoader />;
   }
 
