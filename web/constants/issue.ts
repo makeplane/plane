@@ -116,6 +116,8 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "attachment_count", title: "Attachment Count" },
   { key: "link", title: "Link" },
   { key: "estimate", title: "Estimate" },
+  { key: "modules", title: "Modules" },
+  { key: "cycle", title: "Cycle" },
 ];
 
 export const ISSUE_EXTRA_OPTIONS: {
