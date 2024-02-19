@@ -28,7 +28,7 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
   const { currentProjectDetails, fetchProjectDetails } = useProject();
   // api call to fetch project details
   // TODO: removed this API if not necessary
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
@@ -49,10 +49,11 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
       )}
 
       <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-        {currentProjectDetails && workspaceSlug ? (
+        {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
             workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
             isAdmin={isAdmin}
           />
         ) : (
