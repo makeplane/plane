@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
 import { IssueTitleInput } from "../title-input";
@@ -33,11 +34,30 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
-  const issue = getIssueById(issueId);
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
+
+  const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue) return <></>;
 
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
+
+  const issueDescription =
+    issue.description_html !== undefined || issue.description_html !== null
+      ? issue.description_html != ""
+        ? issue.description_html
+        : "<p></p>"
+      : undefined;
 
   return (
     <>
@@ -78,11 +98,11 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
-          isSubmitting={isSubmitting}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-          issueOperations={issueOperations}
+          value={issueDescription}
+          initialValue={issueDescription}
           disabled={!is_editable}
-          value={issue.description_html}
+          issueOperations={issueOperations}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
         />
 
         {currentUser && (
