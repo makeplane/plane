@@ -90,7 +90,7 @@ class IssueListEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         issues = request.data.get("issues", [])
 
-        if issues:
+        if not issues:
             return Response(
                 {"error": "Issues are required"},
                 status=status.HTTP_400_BAD_REQUEST,
