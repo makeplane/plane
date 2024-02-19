@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useUser } from "hooks/store";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
+import { ProfileMobileHeader } from "components/profile/profile-mobile-header";
 
 type Props = {
   children: React.ReactNode;
@@ -31,6 +32,7 @@ export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
     <div className="h-full w-full realtive flex flex-row">
       <div className="w-full realtive flex flex-col">
         <ProfileNavbar isAuthorized={isAuthorized} showProfileIssuesFilter={showProfileIssuesFilter} />
+        <ProfileMobileHeader />
         {isAuthorized || !isAuthorizedPath ? (
           <div className={`w-full overflow-hidden md:h-full ${className}`}>{children}</div>
         ) : (

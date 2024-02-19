@@ -13,7 +13,7 @@ export const DragHandle = (props: IDragHandle) => {
     <button
       type="button"
       className={`mr-1 flex flex-shrink-0 rounded text-custom-sidebar-text-200 group-hover:opacity-100 ${
-        isDragging ? "opacity-100" : "opacity-0"
+        isDragging ? "opacity-100" : "md:opacity-0"
       }`}
       {...dragHandleProps}
     >

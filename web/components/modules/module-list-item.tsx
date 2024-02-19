@@ -173,11 +173,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                     )}
                   </CircularProgressIndicator>
                 </span>
-                <Tooltip tooltipContent={moduleDetails.name} position="top">
+                <Tooltip className="hidden md:block" tooltipContent={moduleDetails.name} position="top">
                   <span className="truncate text-base font-medium">{moduleDetails.name}</span>
                 </Tooltip>
               </div>
-              <button onClick={openModuleOverview} className="z-[5] hidden flex-shrink-0 group-hover:flex">
+              <button onClick={openModuleOverview} className="z-[5] md:hidden flex-shrink-0 md:group-hover:flex">
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>

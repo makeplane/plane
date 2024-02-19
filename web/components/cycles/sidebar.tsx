@@ -633,7 +633,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="relative h-40 w-80">
+                                <div className="relative h-40 w-full max-w-80">
                                     <ProgressChart
                                       distribution={cycleDetails.progress_snapshot.distribution?.completion_chart}
                                       startDate={cycleDetails.start_date}
@@ -662,7 +662,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="relative h-40 w-80">
+                                  <div className="relative h-40 w-full max-w-80">
                                     <ProgressChart
                                       distribution={cycleDetails.distribution?.completion_chart}
                                       startDate={cycleDetails.start_date}

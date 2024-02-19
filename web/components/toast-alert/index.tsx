@@ -10,7 +10,7 @@ const ToastAlerts = () => {
   if (!alerts) return null;
 
   return (
-    <div className="pointer-events-none fixed right-5 top-5 z-50 h-full w-80 space-y-5 overflow-hidden">
+    <div className="flex flex-col-reverse sm:flex-col gap-2 sm:gap-0 px-4 md:px-0 pointer-events-none fixed sm:right-5 bottom-5 sm:top-5 z-50 h-full w-full sm:w-80 space-y-5 overflow-hidden">
       {alerts.map((alert) => (
         <div className="relative overflow-hidden rounded-md text-white" key={alert.id}>
           <div className="absolute right-1 top-1">
@@ -24,15 +24,14 @@ const ToastAlerts = () => {
             </button>
           </div>
           <div
-            className={`px-2 py-4 ${
-              alert.type === "success"
-                ? "bg-[#06d6a0]"
-                : alert.type === "error"
-                  ? "bg-[#ef476f]"
-                  : alert.type === "warning"
-                    ? "bg-[#e98601]"
-                    : "bg-[#1B9aaa]"
-            }`}
+            className={`px-2 py-4 ${alert.type === "success"
+              ? "bg-[#06d6a0]"
+              : alert.type === "error"
+                ? "bg-[#ef476f]"
+                : alert.type === "warning"
+                  ? "bg-[#e98601]"
+                  : "bg-[#1B9aaa]"
+              }`}
           >
             <div className="flex items-center gap-x-3">
               <div className="flex-shrink-0">

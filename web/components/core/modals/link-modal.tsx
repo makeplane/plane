@@ -90,7 +90,7 @@ export const LinkModal: FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 w-full sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
                   <div>
                     <div className="space-y-5">
@@ -159,8 +159,8 @@ export const LinkModal: FC<Props> = (props) => {
                           ? "Updating Link..."
                           : "Update Link"
                         : isSubmitting
-                        ? "Adding Link..."
-                        : "Add Link"}
+                          ? "Adding Link..."
+                          : "Add Link"}
                     </Button>
                   </div>
                 </form>

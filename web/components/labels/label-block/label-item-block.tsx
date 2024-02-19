@@ -50,7 +50,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
         className={`absolute right-3 flex items-start gap-3.5 px-4 ${
           isMenuActive || isLabelGroup
             ? "opacity-100"
-            : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
+            : "md:opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
         } ${isLabelGroup && "-top-0.5"}`}
       >
         <CustomMenu ellipsis buttonClassName="h-4 w-4 leading-4 text-custom-sidebar-text-400">

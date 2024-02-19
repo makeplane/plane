@@ -197,14 +197,14 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
               <div className="relative flex items-center gap-2.5 overflow-hidden">
                 <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
-                <Tooltip tooltipContent={cycleDetails.name} position="top">
+                <Tooltip className="hidden md:block" tooltipContent={cycleDetails.name} position="top">
                   <span className="line-clamp-1 inline-block overflow-hidden truncate text-base font-medium">
                     {cycleDetails.name}
                   </span>
                 </Tooltip>
               </div>
 
-              <button onClick={openCycleOverview} className="flex-shrink-0 z-[5] invisible group-hover:visible">
+              <button onClick={openCycleOverview} className="flex-shrink-0 z-[5] md:invisible md:group-hover:visible">
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>

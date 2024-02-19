@@ -19,18 +19,20 @@ export const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
 
   return (
     <div>
-      <div className="h-10 w-full sticky flex md:hidden overflow-x-scroll z-10 bg-custom-background-100 border-b border-custom-border-200 top-0">
+      <div className="w-full sticky flex md:hidden overflow-x-scroll z-10 bg-custom-background-100 border-b border-custom-border-200 top-0">
         {WORKSPACE_SETTINGS_LINKS.map((link) => (
           <div
             onClick={() => router.push(`/${workspaceSlug}${link.href}`)}
             className={cn(
               "h-full flex items-center px-4",
               link.highlight(router.asPath, `/${workspaceSlug}`)
-                ? "border-b border-custom-primary-100"
+                ? "border-b-2 border-custom-primary-100"
                 : ""
             )}
           >
-            <p className="whitespace-nowrap py-1 text-sm text-custom-text-300">{link.label}</p>
+            <p className={cn("whitespace-nowrap py-4 text-sm font-medium", link.highlight(router.asPath, `/${workspaceSlug}`)
+              ? "text-custom-primary-100"
+              : "text-custom-text-300")}>{link.label}</p>
           </div>
         ))}
       </div>

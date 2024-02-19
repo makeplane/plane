@@ -4,9 +4,9 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useProjectState } from "hooks/store";
 // ui
-import { Tooltip, StateGroupIcon } from "@plane/ui";
+import { Tooltip, StateGroupIcon, CustomMenu } from "@plane/ui";
 // icons
-import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
+import { Pencil, X, ArrowDown, ArrowUp, MoreHorizontal, PenIcon, Trash2, Circle } from "lucide-react";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
@@ -34,6 +34,43 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
   const groupStates = statesList.filter((s) => s.group === state.group);
   const groupLength = groupStates.length;
 
+  const MenuItems = [
+    {
+      icon: (
+        <svg width="13" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_555_4644)">
+            <path
+              d="M12.8334 6.99992C12.8334 3.77826 10.2217 1.16659 7.00002 1.16659C3.77836 1.16659 1.16669 3.77826 1.16669 6.99992C1.16669 10.2216 3.77836 12.8333 7.00002 12.8333C10.2217 12.8333 12.8334 10.2216 12.8334 6.99992Z"
+              stroke="#60646C"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M10.5 7C10.5 5.067 8.933 3.5 7 3.5C5.067 3.5 3.5 5.067 3.5 7C3.5 8.933 5.067 10.5 7 10.5C8.933 10.5 10.5 8.933 10.5 7Z"
+              stroke="#60646C"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+          <defs>
+            <clipPath id="clip0_555_4644">
+              <rect width="14" height="14" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      ),
+      title: "Mark as default",
+    },
+    {
+      icon: <PenIcon className="w-3 h-3 text-custom-text-300" />,
+      title: "Edit state",
+    },
+    {
+      icon: <Trash2 className="w-3 h-3 text-custom-text-300" />,
+      title: "Delete state",
+    },
+  ];
+
   const handleMakeDefault = () => {
     if (!workspaceSlug || !projectId) return;
     setIsSubmitting(true);
@@ -56,7 +93,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
           <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
       </div>
-      <div className="group flex items-center gap-2.5">
+      <div className="group hidden md:flex items-center gap-2.5">
         {index !== 0 && (
           <button
             type="button"
@@ -121,6 +158,41 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
             )}
           </button>
         </div>
+      </div>
+      <div className="md:hidden flex items-center self-end gap-3">
+        {state.default && <span className="text-xs text-custom-text-300">Default</span>}
+        <CustomMenu
+          maxHeight={"md"}
+          placement="bottom-start"
+          customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+          closeOnSelect
+          customButton={
+            <span>
+              <MoreHorizontal className="w-4 h-4 text-custom-text-300" />
+            </span>
+          }
+        >
+          {MenuItems.map((item, index) =>
+            index === 0 && state.default ? (
+              <></>
+            ) : (
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  if (index === 0) handleMakeDefault();
+                  if (index === 1) handleEditState();
+                  if (index === 2) {
+                    setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+                    handleDeleteState();
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
+                {item.icon}
+                <div className="text-custom-text-300">{item.title}</div>
+              </CustomMenu.MenuItem>
+            )
+          )}
+        </CustomMenu>
       </div>
     </div>
   );
