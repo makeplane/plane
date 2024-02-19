@@ -30,12 +30,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   } = useIssueDetail();
   // hooks
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
-  // derived values
-  const issue = getIssueById(issueId);
-
-  if (!issue) return <></>;
-
-  const projectDetails = getProjectById(issue?.project_id);
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -47,6 +41,18 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       setShowAlert(true);
     }
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
+
+  const issue = issueId ? getIssueById(issueId) : undefined;
+  if (!issue) return <></>;
+
+  const projectDetails = getProjectById(issue?.project_id);
+
+  const issueDescription =
+    issue.description_html !== undefined || issue.description_html !== null
+      ? issue.description_html != ""
+        ? issue.description_html
+        : "<p></p>"
+      : undefined;
 
   return (
     <>
@@ -63,16 +69,18 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         disabled={disabled}
         value={issue.name}
       />
+
       <IssueDescriptionInput
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
         issueId={issue.id}
-        isSubmitting={isSubmitting}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        issueOperations={issueOperations}
+        value={issueDescription}
+        initialValue={issueDescription}
         disabled={disabled}
-        value={issue.description_html}
+        issueOperations={issueOperations}
+        setIsSubmitting={(value) => setIsSubmitting(value)}
       />
+
       {currentUser && (
         <IssueReaction
           workspaceSlug={workspaceSlug}

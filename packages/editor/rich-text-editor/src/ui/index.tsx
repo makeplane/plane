@@ -100,7 +100,7 @@ const RichTextEditor = ({
   });
 
   React.useEffect(() => {
-    if (editor && initialValue) editor.commands.setContent(initialValue);
+    if (editor && initialValue && editor.getHTML() != initialValue) editor.commands.setContent(initialValue);
   }, [editor, initialValue]);
 
   if (!editor) return null;
