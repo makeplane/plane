@@ -18,7 +18,7 @@ import { IssueLabelSelect } from "components/issues/select";
 import { CreateLabelModal } from "components/labels";
 import {
   CycleDropdown,
-  DateDropdown,
+  DateRangeDropdown,
   EstimateDropdown,
   ModuleDropdown,
   PriorityDropdown,
@@ -490,39 +490,31 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 <Controller
                   control={control}
                   name="start_date"
-                  render={({ field: { value, onChange } }) => (
-                    <div className="h-7">
-                      <DateDropdown
-                        value={value}
-                        onChange={(date) => {
-                          onChange(date ? renderFormattedPayloadDate(date) : null);
-                          handleFormChange();
-                        }}
-                        buttonVariant="border-with-text"
-                        placeholder="Start date"
-                        maxDate={maxDate ?? undefined}
-                        tabIndex={10}
-                      />
-                    </div>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="target_date"
-                  render={({ field: { value, onChange } }) => (
-                    <div className="h-7">
-                      <DateDropdown
-                        value={value}
-                        onChange={(date) => {
-                          onChange(date ? renderFormattedPayloadDate(date) : null);
-                          handleFormChange();
-                        }}
-                        buttonVariant="border-with-text"
-                        placeholder="Due date"
-                        minDate={minDate ?? undefined}
-                        tabIndex={11}
-                      />
-                    </div>
+                  render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                    <Controller
+                      control={control}
+                      name="target_date"
+                      render={({ field: { value: targetDateValue, onChange: onChangeTargetDate } }) => (
+                        <DateRangeDropdown
+                          buttonVariant="border-with-text"
+                          className="h-7"
+                          value={{
+                            from: startDateValue ? new Date(startDateValue) : undefined,
+                            to: targetDateValue ? new Date(targetDateValue) : undefined,
+                          }}
+                          onSelect={(val) => {
+                            onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                            onChangeTargetDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                            handleFormChange();
+                          }}
+                          placeholder={{
+                            from: "Start date",
+                            to: "Due date",
+                          }}
+                          bothRequired={false}
+                        />
+                      )}
+                    />
                   )}
                 />
                 {projectDetails?.cycle_view && (

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Popover, Transition } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 import {
   AlertCircle,
-  CalendarCheck2,
   CalendarClock,
   ChevronDown,
   ChevronRight,
@@ -22,12 +21,11 @@ import useToast from "hooks/use-toast";
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { ProjectMemberDropdown } from "components/dropdowns";
+import { DateRangeDropdown, ProjectMemberDropdown } from "components/dropdowns";
 // ui
-import { CustomRangeDatePicker } from "components/ui";
 import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
 // helpers
-import { isDateGreaterThanToday, renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -56,9 +54,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
-  // refs
-  const startDateButtonRef = useRef<HTMLButtonElement | null>(null);
-  const endDateButtonRef = useRef<HTMLButtonElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
@@ -72,7 +67,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const { setValue, watch, reset, control } = useForm({
+  const { reset, control } = useForm({
     defaultValues,
   });
 
@@ -85,7 +80,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
         });
       })
-      .catch((_) => {
+      .catch(() => {
         captureModuleEvent({
           eventName: MODULE_UPDATED,
           payload: { ...data, state: "FAILED" },
@@ -187,40 +182,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleStartDateChange = async (date: string) => {
-    setValue("start_date", date);
-
-    if (!watch("target_date") || watch("target_date") === "") endDateButtonRef.current?.click();
-
-    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      submitChanges({
-        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
-      });
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Module updated successfully.",
-      });
-    }
-  };
-
-  const handleEndDateChange = async (date: string) => {
-    setValue("target_date", date);
-
-    if (!watch("start_date") || watch("start_date") === "") endDateButtonRef.current?.click();
-
-    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      submitChanges({
-        target_date: renderFormattedPayloadDate(`${watch("target_date")}`),
-        start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-      });
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Module updated successfully.",
-      });
-    }
+  const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
+    submitChanges({
+      start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
+      target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
+    });
+    setToastAlert({
+      type: "success",
+      title: "Success!",
+      message: "Module updated successfully.",
+    });
   };
 
   useEffect(() => {
@@ -256,9 +227,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
       </Loader>
     );
-
-  const startDate = new Date(watch("start_date") ?? moduleDetails.start_date ?? "");
-  const endDate = new Date(watch("target_date") ?? moduleDetails.target_date ?? "");
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
@@ -319,12 +287,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <Controller
               control={control}
               name="status"
-              render={({ field: { value, onChange } }) => (
+              render={({ field: { value } }) => (
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                        }`}
+                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
+                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                      }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
@@ -368,105 +337,36 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <span className="text-base">Start date</span>
             </div>
             <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
-                {({ close }) => (
-                  <>
-                    <Popover.Button
-                      ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                        }`}
-                      disabled={!isEditingAllowed}
-                    >
-                      <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("start_date") ? "" : "text-custom-text-400"
-                          }`}
-                      >
-                        {renderFormattedDate(startDate) ?? "No date selected"}
-                      </span>
-                    </Popover.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute right-0 top-10 z-20  transform overflow-hidden">
-                        <CustomRangeDatePicker
-                          value={watch("start_date") ? watch("start_date") : moduleDetails?.start_date}
-                          onChange={(val) => {
-                            if (val) {
-                              handleStartDateChange(val);
-                              close();
-                            }
-                          }}
-                          startDate={watch("start_date") ?? watch("target_date") ?? null}
-                          endDate={watch("target_date") ?? watch("start_date") ?? null}
-                          maxDate={new Date(`${watch("target_date")}`)}
-                          selectsStart={watch("target_date") ? true : false}
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
+              <Controller
+                control={control}
+                name="start_date"
+                render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                  <Controller
+                    control={control}
+                    name="target_date"
+                    render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                      <DateRangeDropdown
+                        buttonVariant="background-with-text"
+                        className="h-7"
+                        minDate={new Date()}
+                        value={{
+                          from: startDateValue ? new Date(startDateValue) : undefined,
+                          to: endDateValue ? new Date(endDateValue) : undefined,
+                        }}
+                        onSelect={(val) => {
+                          onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                          onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                          handleDateChange(val?.from, val?.to);
+                        }}
+                        placeholder={{
+                          from: "Start date",
+                          to: "Target date",
+                        }}
+                      />
+                    )}
+                  />
                 )}
-              </Popover>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarCheck2 className="h-4 w-4" />
-              <span className="text-base">Target date</span>
-            </div>
-            <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
-                {({ close }) => (
-                  <>
-                    <Popover.Button
-                      ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                        }`}
-                      disabled={!isEditingAllowed}
-                    >
-                      <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("target_date") ? "" : "text-custom-text-400"
-                          }`}
-                      >
-                        {renderFormattedDate(endDate) ?? "No date selected"}
-                      </span>
-                    </Popover.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute right-0 top-10 z-20 transform overflow-hidden">
-                        <CustomRangeDatePicker
-                          value={watch("target_date") ? watch("target_date") : moduleDetails?.target_date}
-                          onChange={(val) => {
-                            if (val) {
-                              handleEndDateChange(val);
-                              close();
-                            }
-                          }}
-                          startDate={watch("start_date") ?? watch("target_date") ?? null}
-                          endDate={watch("target_date") ?? watch("start_date") ?? null}
-                          minDate={new Date(`${watch("start_date")}`)}
-                          selectsEnd={watch("start_date") ? true : false}
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
+              />
             </div>
           </div>
         </div>

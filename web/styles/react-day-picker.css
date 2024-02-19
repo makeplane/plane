@@ -289,7 +289,19 @@
 }
 
 .rdp-day_today:not(.rdp-day_outside) {
-  font-weight: bold;
+  position: relative;
+}
+
+.rdp-day_today:not(.rdp-day_outside)::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 0.5em;
+  height: 0.5em;
+  background-color: var(--rdp-background-color);
+  border-radius: 100%;
+  transform: translate(-50%,0);
 }
 
 .rdp-day_selected,
@@ -300,17 +312,12 @@
   background-color: var(--rdp-accent-color);
 }
 
-.rdp-day_outside {
+.rdp-day_outside:not(.rdp-day_selected) {
   opacity: 0.5;
 }
 
 .rdp-day_selected:focus-visible {
-  /* Since the background is the same use again the outline */
   z-index: 1;
-}
-
-.rdp-day_range_end.rdp-day_range_start {
-  border-radius: 100%;
 }
 
 td:has(.rdp-day_range_start),

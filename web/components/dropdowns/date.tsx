@@ -50,6 +50,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     tabIndex,
     value,
   } = props;
+  // states
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -121,7 +122,6 @@ export const DateDropdown: React.FC<Props> = (props) => {
     >
       <Combobox.Button as={React.Fragment}>
         <button
-          ref={setReferenceElement}
           type="button"
           className={cn(
             "clickable block h-full max-w-full outline-none",
@@ -131,6 +131,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
             },
             buttonContainerClassName
           )}
+          ref={setReferenceElement}
           onClick={handleOnClick}
         >
           <DropdownButton
