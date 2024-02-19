@@ -26,13 +26,14 @@ class CycleWriteSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "owned_by",
+        ]
 
 
 class CycleSerializer(BaseSerializer):
-    #  workspace and project ids
-    workspace_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    owned_by_id = serializers.PrimaryKeyRelatedField(read_only=True)
     # favorite
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
@@ -42,33 +43,10 @@ class CycleSerializer(BaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
-    #TODO: Remove once confirmed  # estimates
-    # total_estimates = serializers.IntegerField(read_only=True)
-    # completed_estimates = serializers.IntegerField(read_only=True)
-    # started_estimates = serializers.IntegerField(read_only=True)
-    # method fields
-    assignees = serializers.SerializerMethodField(read_only=True)
 
     # active | draft | upcoming | completed
     status = serializers.CharField(read_only=True)
 
-    def get_assignees(self, obj):
-        # Get all the members
-        members = [
-                {
-                    "id": assignee.id,
-                    "display_name": assignee.display_name,
-                    "avatar": assignee.avatar,
-                }
-            for issue_cycle in obj.issue_cycle.prefetch_related(
-                "issue__assignees"
-            ).all()
-            for assignee in issue_cycle.issue.assignees.all()
-        ]
-        # Convert the set back to a list of dictionaries
-        unique_list = [dict(item) for item in {frozenset(item.items()) for item in members}]
-
-        return unique_list
 
     class Meta:
         model = Cycle
@@ -96,10 +74,6 @@ class CycleSerializer(BaseSerializer):
             "started_issues",
             "unstarted_issues",
             "backlog_issues",
-            # "total_estimates",
-            # "completed_estimates",
-            # "started_estimates",
-            "assignees",
             "status",
         ]
         read_only_fields = fields

@@ -20,7 +20,10 @@ from django.core import serializers
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework.response import Response
@@ -160,29 +163,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     ),
                 )
             )
-            # .annotate(
-            #     total_estimates=Sum("issue_cycle__issue__estimate_point")
-            # )
-            # .annotate(
-            #     completed_estimates=Sum(
-            #         "issue_cycle__issue__estimate_point",
-            #         filter=Q(
-            #             issue_cycle__issue__state__group="completed",
-            #             issue_cycle__issue__archived_at__isnull=True,
-            #             issue_cycle__issue__is_draft=False,
-            #         ),
-            #     )
-            # )
-            # .annotate(
-            #     started_estimates=Sum(
-            #         "issue_cycle__issue__estimate_point",
-            #         filter=Q(
-            #             issue_cycle__issue__state__group="started",
-            #             issue_cycle__issue__archived_at__isnull=True,
-            #             issue_cycle__issue__is_draft=False,
-            #         ),
-            #     )
-            # )
             .annotate(
                 status=Case(
                     When(
@@ -200,6 +180,18 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     ),
                     default=Value("DRAFT"),
                     output_field=CharField(),
+                )
+            )
+            .annotate(
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_cycle__issue__assignees__id",
+                        distinct=True,
+                        filter=~Q(
+                            issue_cycle__issue__assignees__id__isnull=True
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
             .order_by("-is_favorite", "name")
@@ -220,7 +212,33 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 end_date__gte=timezone.now(),
             )
 
-            data = CycleSerializer(queryset, many=True).data
+            data = queryset.values(
+                # necessary fields
+                "id",
+                "workspace_id",
+                "project_id",
+                # model fields
+                "name",
+                "description",
+                "start_date",
+                "end_date",
+                "owned_by_id",
+                "view_props",
+                "sort_order",
+                "external_source",
+                "external_id",
+                "progress_snapshot",
+                # meta fields
+                "is_favorite",
+                "total_issues",
+                "cancelled_issues",
+                "completed_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                "assignee_ids",
+                "status",
+            )
 
             if data:
                 assignee_distribution = (
@@ -318,8 +336,34 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
 
             return Response(data, status=status.HTTP_200_OK)
 
-        cycles = CycleSerializer(queryset, many=True).data
-        return Response(cycles, status=status.HTTP_200_OK)
+        data = queryset.values(
+            # necessary fields
+            "id",
+            "workspace_id",
+            "project_id",
+            # model fields
+            "name",
+            "description",
+            "start_date",
+            "end_date",
+            "owned_by_id",
+            "view_props",
+            "sort_order",
+            "external_source",
+            "external_id",
+            "progress_snapshot",
+            # meta fields
+            "is_favorite",
+            "total_issues",
+            "cancelled_issues",
+            "completed_issues",
+            "started_issues",
+            "unstarted_issues",
+            "backlog_issues",
+            "assignee_ids",
+            "status",
+        )
+        return Response(data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         if (
@@ -329,7 +373,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleSerializer(data=request.data)
+            serializer = CycleWriteSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
                     project_id=project_id,
@@ -338,12 +382,36 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 cycle = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
+                    .values(
+                        # necessary fields
+                        "id",
+                        "workspace_id",
+                        "project_id",
+                        # model fields
+                        "name",
+                        "description",
+                        "start_date",
+                        "end_date",
+                        "owned_by_id",
+                        "view_props",
+                        "sort_order",
+                        "external_source",
+                        "external_id",
+                        "progress_snapshot",
+                        # meta fields
+                        "is_favorite",
+                        "total_issues",
+                        "cancelled_issues",
+                        "completed_issues",
+                        "started_issues",
+                        "unstarted_issues",
+                        "backlog_issues",
+                        "assignee_ids",
+                        "status",
+                    )
                     .first()
                 )
-                serializer = CycleSerializer(cycle)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
+                return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
@@ -356,10 +424,11 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
 
     def partial_update(self, request, slug, project_id, pk):
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
+        queryset = (
+            self.get_queryset()
+            .filter(workspace__slug=slug, project_id=project_id, pk=pk)
         )
-
+        cycle = queryset.first()
         request_data = request.data
 
         if (
@@ -386,12 +455,71 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         )
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            cycle = queryset.values(
+                # necessary fields
+                "id",
+                "workspace_id",
+                "project_id",
+                # model fields
+                "name",
+                "description",
+                "start_date",
+                "end_date",
+                "owned_by_id",
+                "view_props",
+                "sort_order",
+                "external_source",
+                "external_id",
+                "progress_snapshot",
+                # meta fields
+                "is_favorite",
+                "total_issues",
+                "cancelled_issues",
+                "completed_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                "assignee_ids",
+                "status",
+            ).first()
+            return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk):
-        queryset = self.get_queryset().get(pk=pk)
-
+        queryset = self.get_queryset().filter(pk=pk)
+        data = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .values(
+                # necessary fields
+                "id",
+                "workspace_id",
+                "project_id",
+                # model fields
+                "name",
+                "description",
+                "start_date",
+                "end_date",
+                "owned_by_id",
+                "view_props",
+                "sort_order",
+                "external_source",
+                "external_id",
+                "progress_snapshot",
+                # meta fields
+                "is_favorite",
+                "total_issues",
+                "cancelled_issues",
+                "completed_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                "assignee_ids",
+                "status",
+            )
+            .first()
+        )
+        queryset = queryset.first()
         # Assignee Distribution
         assignee_distribution = (
             Issue.objects.filter(
@@ -480,7 +608,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             .order_by("label_name")
         )
 
-        data = CycleSerializer(queryset).data
         data["distribution"] = {
             "assignees": assignee_distribution,
             "labels": label_distribution,
@@ -889,29 +1016,6 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     ),
                 )
             )
-            # .annotate(
-            #     total_estimates=Sum("issue_cycle__issue__estimate_point")
-            # )
-            # .annotate(
-            #     completed_estimates=Sum(
-            #         "issue_cycle__issue__estimate_point",
-            #         filter=Q(
-            #             issue_cycle__issue__state__group="completed",
-            #             issue_cycle__issue__archived_at__isnull=True,
-            #             issue_cycle__issue__is_draft=False,
-            #         ),
-            #     )
-            # )
-            # .annotate(
-            #     started_estimates=Sum(
-            #         "issue_cycle__issue__estimate_point",
-            #         filter=Q(
-            #             issue_cycle__issue__state__group="started",
-            #             issue_cycle__issue__archived_at__isnull=True,
-            #             issue_cycle__issue__is_draft=False,
-            #         ),
-            #     )
-            # )
         )
 
         # Pass the new_cycle queryset to burndown_plot
@@ -961,7 +1065,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
             .order_by("display_name")
         )
-        # assignee distribution serialized 
+        # assignee distribution serialized
         assignee_distribution_data = [
             {
                 "display_name": item["display_name"],
