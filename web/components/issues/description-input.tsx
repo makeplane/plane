@@ -20,7 +20,6 @@ export type IssueDescriptionInputProps = {
   initialValue: string | undefined;
   disabled?: boolean;
   issueOperations: TIssueOperations;
-  isSubmitting: "submitting" | "submitted" | "saved";
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 };
 

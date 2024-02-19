@@ -98,7 +98,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           initialValue={issueDescription}
           disabled={!is_editable}
           issueOperations={issueOperations}
-          isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
         />
 
