@@ -1,14 +1,22 @@
 .rdp {
   font-size: 12px;
-  
-  --rdp-cell-size: 40px; /* Size of the day cells. */
-  --rdp-caption-font-size: 1.15rem; /* Font size for the caption labels. */
-  --rdp-caption-navigation-size: 1.25rem; /* Font size for the caption labels. */
-  --rdp-accent-color: rgba(var(--color-primary-100)); /* Accent color for the background of selected days. */
-  --rdp-background-color: rgba(var(--color-primary-100), 0.2); /* Background color for the hovered/focused elements. */
-  --rdp-dark-background-color: rgba(var(--color-primary-300)); /* Background color for the hovered/focused, already selected elements. */
-  --rdp-outline: 2px solid var(--rdp-accent-color); /* Outline border for focused elements */
-  --rdp-selected-color: #ffffff; /* Color of selected day text */
+
+  --rdp-cell-size: 40px;
+  /* Size of the day cells. */
+  --rdp-caption-font-size: 1.15rem;
+  /* Font size for the caption labels. */
+  --rdp-caption-navigation-size: 1.25rem;
+  /* Font size for the caption labels. */
+  --rdp-accent-color: rgba(var(--color-primary-100));
+  /* Accent color for the background of selected days. */
+  --rdp-background-color: rgba(var(--color-primary-100), 0.2);
+  /* Background color for the hovered/focused elements. */
+  --rdp-dark-background-color: rgba(var(--color-primary-300));
+  /* Background color for the hovered/focused, already selected elements. */
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  /* Outline border for focused elements */
+  --rdp-selected-color: #ffffff;
+  /* Color of selected day text */
 
   background: transparent;
 }
@@ -70,7 +78,7 @@
   background-color: var(--rdp-background-color);
 }
 
-.rdp-button:focus-visible:not([disabled]).rdp-day_selected {
+.rdp-button:focus-visible:not([disabled]).rdp-day_selected:not(.rdp-day_range_middle) {
   outline: var(--rdp-outline);
   outline-offset: 2px;
   background-color: var(--rdp-dark-background-color);
@@ -175,7 +183,8 @@
   border-radius: 2px;
 }
 
-.rdp-nav_button:hover, .rdp-nav_button:focus-visible {
+.rdp-nav_button:hover,
+.rdp-nav_button:focus-visible {
   background-color: rgba(var(--color-background-80)) !important;
 }
 
@@ -214,7 +223,7 @@
   color: unset;
 }
 
-.rdp-dropdown:focus-visible:not([disabled]) + .rdp-caption_label {
+.rdp-dropdown:focus-visible:not([disabled])+.rdp-caption_label {
   background-color: var(--rdp-background-color);
   border: var(--rdp-outline);
   border-radius: 6px;
@@ -300,32 +309,55 @@
   z-index: 1;
 }
 
-.rdp:not([dir='rtl']) .rdp-day_range_start:not(.rdp-day_range_end) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.rdp:not([dir='rtl']) .rdp-day_range_end:not(.rdp-day_range_start) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.rdp[dir='rtl'] .rdp-day_range_start:not(.rdp-day_range_end) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.rdp[dir='rtl'] .rdp-day_range_end:not(.rdp-day_range_start) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
 .rdp-day_range_end.rdp-day_range_start {
   border-radius: 100%;
 }
 
+td:has(.rdp-day_range_start),
+td:has(.rdp-day_range_middle),
+td:has(.rdp-day_range_end) {
+  position: relative;
+}
+
+td:has(.rdp-day_range_start)::before,
+td:has(.rdp-day_range_middle)::before,
+td:has(.rdp-day_range_end)::before {
+  content: '';
+  position: absolute;
+  background-color: var(--rdp-background-color);
+  top: 50%;
+  height: 100%;
+  width: 50%;
+  transform: translate(0, -50%);
+}
+
+td:has(.rdp-day_range_start)::before {
+  left: 50%;
+}
+
+td:has(.rdp-day_range_middle)::before {
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+}
+
+td:has(.rdp-day_range_end)::before {
+  right: 50%;
+}
+
+td:has(.rdp-day_range_start.rdp-day_range_end)::before {
+  display: none;
+}
+
 .rdp-day_range_middle {
-  border-radius: 0;
+  background-color: transparent;
+  color: inherit;
+}
+
+.rdp-day_range_middle:hover,
+.rdp-day_range_middle:focus-visible {
+  background-color: var(--rdp-background-color) !important;
+  color: inherit !important;
 }
 
 /*# sourceMappingURL=style.css.map */
