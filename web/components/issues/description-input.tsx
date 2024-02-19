@@ -1,5 +1,4 @@
 import { FC, useState, useEffect } from "react";
-import { observer } from "mobx-react";
 // components
 import { Loader } from "@plane/ui";
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
@@ -14,19 +13,18 @@ import { TIssueOperations } from "./issue-detail";
 import useDebounce from "hooks/use-debounce";
 
 export type IssueDescriptionInputProps = {
-  disabled?: boolean;
-  value: string | undefined | null;
   workspaceSlug: string;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
-  issueOperations: TIssueOperations;
   projectId: string;
   issueId: string;
-  initialValue?: string;
+  value: string | undefined;
+  initialValue: string | undefined;
+  disabled?: boolean;
+  issueOperations: TIssueOperations;
+  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 };
 
-export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
-  const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId, initialValue } = props;
+export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
+  const { workspaceSlug, projectId, issueId, value, initialValue, disabled, issueOperations, setIsSubmitting } = props;
   // states
   const [descriptionHTML, setDescriptionHTML] = useState(value);
   // store hooks
@@ -78,7 +76,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-      value={descriptionHTML === "" ? "<p></p>" : descriptionHTML}
+      value={descriptionHTML}
       initialValue={initialValue}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
@@ -90,4 +88,4 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       mentionHighlights={mentionHighlights}
     />
   );
-});
+};
