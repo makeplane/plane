@@ -556,6 +556,10 @@ div.web-view-spinner div.bar12 {
 .horizontal-scrollbar::-webkit-scrollbar-thumb:active {
   background-color: rgba(96, 100, 108, 0.7);
 }
+.vertical-scrollbar::-webkit-scrollbar-corner,
+.horizontal-scrollbar::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
 
 /* scrollbar sm size */
 .scrollbar-sm::-webkit-scrollbar {
