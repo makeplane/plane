@@ -351,7 +351,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                                   {inboxDetails?.pending_issue_count > 0 && (
                                     <span
                                       className={cn(
-                                        "absolute -right-1.5 -top-1 px-0.5 h-3.5 w-3.5 flex items-center tracking-tight justify-center rounded-full text-[0.5rem] border-[0.5px] border-custom-sidebar-border-200 bg-custom-background-80",
+                                        "absolute -right-1.5 -top-1 px-0.5 h-3.5 w-3.5 flex items-center tracking-tight justify-center rounded-full text-[0.5rem] border-[0.5px] border-custom-sidebar-border-200 bg-custom-background-80 text-custom-text-100",
                                         {
                                           "text-[0.375rem] leading-5": inboxDetails?.pending_issue_count >= 100,
                                         },
