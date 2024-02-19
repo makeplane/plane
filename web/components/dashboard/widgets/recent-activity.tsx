@@ -93,7 +93,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                 "w-min my-3 mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
               )}
             >
-              View all activity
+              View all
             </Link>
           )}
         </div>
