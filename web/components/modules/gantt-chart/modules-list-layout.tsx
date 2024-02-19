@@ -22,7 +22,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await updateModuleDetails(workspaceSlug.toString(), module.project, module.id, payload);
+    await updateModuleDetails(workspaceSlug.toString(), module.project_id, module.id, payload);
   };
 
   const blockFormat = (blocks: string[]) =>

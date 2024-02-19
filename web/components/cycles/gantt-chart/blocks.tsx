@@ -40,7 +40,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
             ? "rgb(var(--color-text-200))"
             : "",
       }}
-      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project}/cycles/${cycleDetails?.id}`)}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
@@ -78,7 +78,7 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <div
       className="relative flex h-full w-full items-center gap-2"
-      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project}/cycles/${cycleDetails?.id}`)}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
     >
       <ContrastIcon
         className="h-5 w-5 flex-shrink-0"
