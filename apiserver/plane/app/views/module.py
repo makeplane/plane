@@ -4,10 +4,8 @@ import json
 # Django Imports
 from django.utils import timezone
 from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
-from django.core import serializers
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.core.serializers.json import DjangoJSONEncoder
 
 
 # Third party imports
@@ -38,11 +36,9 @@ from plane.db.models import (
     ModuleFavorite,
     IssueLink,
     IssueAttachment,
-    IssueSubscriber,
     ModuleUserProperties,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
 
@@ -62,7 +58,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def get_queryset(self):
-        subquery = ModuleFavorite.objects.filter(
+        favorite_subquery = ModuleFavorite.objects.filter(
             user=self.request.user,
             module_id=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
@@ -73,7 +69,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             .get_queryset()
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .annotate(is_favorite=Exists(subquery))
+            .annotate(is_favorite=Exists(favorite_subquery))
             .select_related("project")
             .select_related("workspace")
             .select_related("lead")
@@ -331,17 +327,16 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ProjectEntityPermission,
     ]
 
-
     def get_queryset(self):
         return (
             Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
-                issue_module__module_id=self.kwargs.get("module_id")
+                issue_module__module_id=self.kwargs.get("module_id"),
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("labels", "assignees")
-            .prefetch_related('issue_module__module')
+            .prefetch_related("issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -384,7 +379,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
-        if not len(issues):
+        if not issues:
             return Response(
                 {"error": "Issues are required"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -420,15 +415,12 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             for issue in issues
         ]
-        issues = (self.get_queryset().filter(pk__in=issues))
-        serializer = IssueSerializer(issues , many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+        return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
     # create multiple module inside an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
-        if not len(modules):
+        if not modules:
             return Response(
                 {"error": "Modules are required"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -466,10 +458,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             for module in modules
         ]
 
-        issue = (self.get_queryset().filter(pk=issue_id).first())
-        serializer = IssueSerializer(issue)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.get(
@@ -484,7 +473,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"module_name": module_issue.module.name}),
+            current_instance=json.dumps(
+                {"module_name": module_issue.module.name}
+            ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

@@ -67,6 +67,7 @@ from .cycle import (
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .issue import (
+    IssueListEndpoint,
     IssueViewSet,
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
