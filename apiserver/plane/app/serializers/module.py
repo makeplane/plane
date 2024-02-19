@@ -5,7 +5,6 @@ from rest_framework import serializers
 from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer
 from .project import ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
 
 from plane.db.models import (
     User,
@@ -24,7 +23,6 @@ class ModuleWriteSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-
 
     class Meta:
         model = Module
@@ -198,7 +196,7 @@ class ModuleSerializer(DynamicBaseSerializer):
             "sort_order",
             "external_source",
             "external_id",
-            # computer fields
+            # computed fields
             "is_favorite",
             "total_issues",
             "cancelled_issues",

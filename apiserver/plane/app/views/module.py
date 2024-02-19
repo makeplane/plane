@@ -346,7 +346,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                issue=OuterRef("id")
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
