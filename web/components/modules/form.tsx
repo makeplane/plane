@@ -158,13 +158,17 @@ export const ModuleForm: React.FC<Props> = (props) => {
                         from: "Start date",
                         to: "End date",
                       }}
+                      hideIcon={{
+                        to: true,
+                      }}
+                      tabIndex={3}
                     />
                   )}
                 />
               )}
             />
             <div className="h-7">
-              <ModuleStatusSelect control={control} error={errors.status} tabIndex={5} />
+              <ModuleStatusSelect control={control} error={errors.status} tabIndex={4} />
             </div>
             <Controller
               control={control}
@@ -178,7 +182,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     multiple={false}
                     buttonVariant="border-with-text"
                     placeholder="Lead"
-                    tabIndex={6}
+                    tabIndex={5}
                   />
                 </div>
               )}
@@ -196,7 +200,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
                     placeholder="Members"
-                    tabIndex={7}
+                    tabIndex={6}
                   />
                 </div>
               )}
@@ -205,10 +209,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 pt-5">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={8}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={7}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={9}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={8}>
           {status ? (isSubmitting ? "Updating" : "Update module") : isSubmitting ? "Creating" : "Create module"}
         </Button>
       </div>

@@ -146,6 +146,10 @@ export const CycleForm: React.FC<Props> = (props) => {
                           from: "Start date",
                           to: "End date",
                         }}
+                        hideIcon={{
+                          to: true,
+                        }}
+                        tabIndex={3}
                       />
                     )}
                   />
@@ -156,10 +160,10 @@ export const CycleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100 pt-5 ">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={5}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={6}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
           {data ? (isSubmitting ? "Updating" : "Update cycle") : isSubmitting ? "Creating" : "Create cycle"}
         </Button>
       </div>

@@ -3,7 +3,7 @@ import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { DateRange, DayPicker, Matcher } from "react-day-picker";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarDays } from "lucide-react";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
@@ -26,6 +26,11 @@ type Props = {
   cancelButtonText?: string;
   className?: string;
   disabled?: boolean;
+  hideIcon?: {
+    from?: boolean;
+    to?: boolean;
+  };
+  icon?: React.ReactNode;
   minDate?: Date;
   maxDate?: Date;
   onSelect: (range: DateRange | undefined) => void;
@@ -53,6 +58,11 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     cancelButtonText = "Cancel",
     className,
     disabled = false,
+    hideIcon = {
+      from: true,
+      to: true,
+    },
+    icon = <CalendarDays className="h-3 w-3 flex-shrink-0" />,
     minDate,
     maxDate,
     onSelect,
@@ -164,19 +174,13 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
             showTooltip={showTooltip}
             variant={buttonVariant}
           >
-            <span
-              className={cn("h-full grid place-items-center rounded-sm min-w-16 pl-2", {
-                "text-custom-text-400": !dateRange.from,
-              })}
-            >
+            <span className="h-full flex items-center justify-center gap-1 rounded-sm flex-grow">
+              {!hideIcon.from && icon}
               {dateRange.from ? renderFormattedDate(dateRange.from) : placeholder.from}
             </span>
-            <ArrowRight className="h-3 w-3 text-custom-text-300" />
-            <span
-              className={cn("h-full grid place-items-center rounded-sm min-w-16 pr-2", {
-                "text-custom-text-400": !dateRange.to,
-              })}
-            >
+            <ArrowRight className="h-3 w-3 text-custom-text-300 flex-shrink-0" />
+            <span className="h-full flex items-center justify-center gap-1 rounded-sm flex-grow">
+              {!hideIcon.to && icon}
               {dateRange.to ? renderFormattedDate(dateRange.to) : placeholder.to}
             </span>
           </DropdownButton>
@@ -203,6 +207,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               mode="range"
               disabled={disabledDays}
               showOutsideDays
+              initialFocus
               footer={
                 bothRequired && (
                   <div className="grid grid-cols-2 items-center gap-3.5 pt-6 relative">

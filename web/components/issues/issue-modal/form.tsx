@@ -507,11 +507,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChangeTargetDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
                             handleFormChange();
                           }}
+                          hideIcon={{
+                            to: true,
+                          }}
                           placeholder={{
                             from: "Start date",
                             to: "Due date",
                           }}
                           bothRequired={false}
+                          tabIndex={10}
                         />
                       )}
                     />
@@ -531,7 +535,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }}
                           value={value}
                           buttonVariant="border-with-text"
-                          tabIndex={12}
+                          tabIndex={11}
                         />
                       </div>
                     )}
@@ -551,7 +555,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             handleFormChange();
                           }}
                           buttonVariant="border-with-text"
-                          tabIndex={13}
+                          tabIndex={12}
                           multiple
                           showCount
                         />
@@ -573,7 +577,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }}
                           projectId={projectId}
                           buttonVariant="border-with-text"
-                          tabIndex={14}
+                          tabIndex={13}
                         />
                       </div>
                     )}
@@ -603,7 +607,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     </button>
                   }
                   placement="bottom-start"
-                  tabIndex={15}
+                  tabIndex={14}
                 >
                   {watch("parent_id") ? (
                     <>
@@ -653,7 +657,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
             }}
-            tabIndex={16}
+            tabIndex={15}
           >
             <div className="flex cursor-pointer items-center justify-center">
               <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
@@ -661,7 +665,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             <span className="text-xs">Create more</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={17}>
+            <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={16}>
               Discard
             </Button>
 
@@ -673,7 +677,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     size="sm"
                     loading={isSubmitting}
                     onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
-                    tabIndex={18}
+                    tabIndex={17}
                   >
                     {isSubmitting ? "Moving" : "Move from draft"}
                   </Button>
@@ -683,7 +687,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     size="sm"
                     loading={isSubmitting}
                     onClick={handleSubmit((data) => handleFormSubmit(data, true))}
-                    tabIndex={18}
+                    tabIndex={17}
                   >
                     {isSubmitting ? "Saving" : "Save as draft"}
                   </Button>
@@ -691,7 +695,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               </Fragment>
             )}
 
-            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={isDraft ? 19 : 18}>
+            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={isDraft ? 18 : 17}>
               {data?.id ? (isSubmitting ? "Updating" : "Update issue") : isSubmitting ? "Creating" : "Create issue"}
             </Button>
           </div>
