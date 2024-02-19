@@ -112,8 +112,8 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserActivity(): Promise<IUserActivityResponse> {
-    return this.get(`/api/users/me/activities/`)
+  async getUserActivity(params: { per_page: number; cursor?: string }): Promise<IUserActivityResponse> {
+    return this.get("/api/users/me/activities/", { params })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

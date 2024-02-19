@@ -4,7 +4,7 @@ import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
-import { ActivityListPage } from "components/profile";
+import { WorkspaceActivityListPage } from "components/profile";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -27,7 +27,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
   const activityPages: JSX.Element[] = [];
   for (let i = 0; i < pageCount; i++)
     activityPages.push(
-      <ActivityListPage
+      <WorkspaceActivityListPage
         key={i}
         cursor={`${PER_PAGE}:${i}:0`}
         perPage={PER_PAGE}

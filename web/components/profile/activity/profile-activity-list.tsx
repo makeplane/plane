@@ -1,33 +1,61 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react";
+import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
-// editor
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // hooks
 import { useUser } from "hooks/store";
+// services
+import { UserService } from "services/user.service";
+// editor
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 // ui
 import { ActivitySettingsLoader } from "components/ui";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
-// types
-import { IUserActivityResponse } from "@plane/types";
+// fetch-keys
+import { USER_ACTIVITY } from "constants/fetch-keys";
+
+// services
+const userService = new UserService();
 
 type Props = {
-  activity: IUserActivityResponse | undefined;
+  cursor: string;
+  perPage: number;
+  updateResultsCount: (count: number) => void;
+  updateTotalPages: (count: number) => void;
 };
 
-export const ActivityList: React.FC<Props> = observer((props) => {
-  const { activity } = props;
+export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
+  const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
   // store hooks
   const { currentUser } = useUser();
 
+  const { data: userProfileActivity } = useSWR(
+    USER_ACTIVITY({
+      cursor,
+    }),
+    () =>
+      userService.getUserActivity({
+        cursor,
+        per_page: perPage,
+      })
+  );
+
+  useEffect(() => {
+    if (!userProfileActivity) return;
+
+    updateTotalPages(userProfileActivity.total_pages);
+    updateResultsCount(userProfileActivity.results.length);
+  }, [updateResultsCount, updateTotalPages, userProfileActivity]);
+
   return (
     <>
-      {activity ? (
+      {userProfileActivity ? (
         <ul role="list">
-          {activity.results.map((activityItem: any) => {
+          {userProfileActivity.results.map((activityItem: any) => {
             if (activityItem.field === "comment")
               return (
                 <div key={activityItem.id} className="mt-2">
