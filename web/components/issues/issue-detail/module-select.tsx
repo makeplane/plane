@@ -10,6 +10,7 @@ import { Spinner } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
 import type { TIssueOperations } from "./root";
+import { xor } from "lodash";
 
 type TIssueModuleSelect = {
   className?: string;
@@ -34,19 +35,15 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
 
   const handleIssueModuleChange = async (moduleIds: string[]) => {
     if (!issue || !issue.module_ids) return;
-
     setIsUpdating(true);
-
-    if (moduleIds.length === 0)
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, issue.module_ids);
-    else if (moduleIds.length > issue.module_ids.length) {
-      const newModuleIds = moduleIds.filter((m) => !issue.module_ids?.includes(m));
-      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, newModuleIds);
-    } else if (moduleIds.length < issue.module_ids.length) {
-      const removedModuleIds = issue.module_ids.filter((m) => !moduleIds.includes(m));
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, removedModuleIds);
+    const updatedModuleId = xor(issue.module_ids, moduleIds)[0];
+    if (updatedModuleId !== undefined) {
+      if (issue.module_ids.includes(updatedModuleId)) {
+        await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, [updatedModuleId]);
+      } else {
+        await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, [updatedModuleId]);
+      }
     }
-
     setIsUpdating(false);
   };
 

@@ -356,7 +356,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       runInAction(() => {
         moduleIds.forEach((moduleId) => {
           update(this.issues, moduleId, (moduleIssueIds = []) => {
-            if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
+            if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
             else return uniq(concat(moduleIssueIds, [issueId]));
           });
           update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
