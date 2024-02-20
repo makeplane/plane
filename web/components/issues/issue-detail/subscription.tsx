@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Bell, BellOff } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // UI
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -47,6 +47,13 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       });
     }
   };
+
+  if (!subscription)
+    return (
+      <Loader>
+        <Loader.Item width="92px" height="27px" />
+      </Loader>
+    );
 
   return (
     <div>
