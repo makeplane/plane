@@ -99,7 +99,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
             path: router.asPath,
           });

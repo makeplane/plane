@@ -109,7 +109,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
             path: router.asPath,
           });
@@ -119,7 +119,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
             path: router.asPath,
           });

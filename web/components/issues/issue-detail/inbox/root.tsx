@@ -67,7 +67,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
             payload: { ...response, state: "SUCCESS", element: "Inbox" },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
             path: router.asPath,
           });
@@ -82,7 +82,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
             payload: { state: "SUCCESS", element: "Inbox" },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
             path: router.asPath,
           });

@@ -2,6 +2,9 @@ import { action, computed, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
 // stores
 import { RootStore } from "./root.store";
+// helpers
+import { getUserRole } from "helpers/user.helper";
+// constants
 import {
   GROUP_WORKSPACE,
   WORKSPACE_CREATED,
@@ -64,6 +67,7 @@ export class EventTrackerStore implements IEventTrackerStore {
     return {
       workspace_id: currentWorkspaceDetails?.id,
       project_id: currentProjectDetails?.id,
+      user_project_role: getUserRole(currentProjectDetails?.member_role as number),
     };
   }
 

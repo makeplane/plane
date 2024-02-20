@@ -35,9 +35,9 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   // store hooks
   const {
     currentUser,
-    membership: { currentProjectRole, currentWorkspaceRole },
+    membership: { currentWorkspaceRole },
   } = useUser();
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, workspaces } = useWorkspace();
   const {
     config: { envConfig },
   } = useApplication();
@@ -52,7 +52,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
                 user={currentUser}
                 currentWorkspaceId= {currentWorkspace?.id}
                 workspaceRole={currentWorkspaceRole}
-                projectRole={currentProjectRole}
+                workspaces={workspaces}
                 posthogAPIKey={envConfig?.posthog_api_key || null}
                 posthogHost={envConfig?.posthog_host || null}
               >
