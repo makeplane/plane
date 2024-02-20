@@ -55,6 +55,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
         value={issue.cycle_id}
         onChange={handleCycle}
         disabled={disabled}
+        placeholder="Select cycle"
         buttonVariant="transparent-with-text"
         buttonClassName="rounded-none text-left"
         buttonContainerClassName="w-full"

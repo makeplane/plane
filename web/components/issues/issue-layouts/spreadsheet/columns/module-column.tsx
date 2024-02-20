@@ -63,6 +63,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         value={issue?.module_ids ?? []}
         onChange={handleModule}
         disabled={disabled}
+        placeholder="Select modules"
         buttonVariant="transparent-with-text"
         buttonClassName="rounded-none text-left"
         buttonContainerClassName="w-full"
