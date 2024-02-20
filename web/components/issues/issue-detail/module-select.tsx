@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import xor from "lodash/xor";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // components
@@ -10,7 +11,6 @@ import { Spinner } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
 import type { TIssueOperations } from "./root";
-import { xor } from "lodash";
 
 type TIssueModuleSelect = {
   className?: string;
