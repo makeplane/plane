@@ -23,7 +23,7 @@ const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { getViewDetailsById } = useGlobalView();
   // derived values
-  const globalViewDetails = globalViewId ? getViewDetailsById(globalViewId as string) : undefined;
+  const globalViewDetails = globalViewId ? getViewDetailsById(globalViewId.toString()) : undefined;
   const defaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
   const pageTitle =
     currentWorkspace?.name && defaultView?.label
