@@ -6,6 +6,7 @@
   "workspaces": [
     "web",
     "space",
+    "god-mode",
     "packages/auth",
     "packages/editor/*",
     "packages/eslint-config-custom",
@@ -32,7 +33,7 @@
     "turbo": "^1.11.3"
   },
   "resolutions": {
-    "@types/react": "18.2.42"
+    "@types/react": "18.2.48"
   },
   "packageManager": "yarn@1.22.19"
 }

@@ -5,8 +5,8 @@ import { useApplication } from "hooks/store";
 // layouts
 import { AdminAuthWrapper, UserAuthWrapper } from "layouts/auth-layout";
 // components
-import { InstanceAdminSidebar } from "./sidebar";
-import { InstanceAdminHeader } from "./header";
+import { InstanceAdminSidebar } from "../../../god-mode/app/sidebar";
+import { InstanceAdminHeader } from "../../../god-mode/app/header";
 import { InstanceSetupView } from "components/instance";
 
 export interface IInstanceAdminLayout {
