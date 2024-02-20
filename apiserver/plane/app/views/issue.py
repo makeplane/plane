@@ -11,19 +11,21 @@ from django.db.models import (
     Func,
     F,
     Q,
-    Count,
     Case,
     Value,
     CharField,
     When,
     Exists,
     Max,
-    IntegerField,
 )
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third Party imports
 from rest_framework.response import Response
@@ -66,20 +68,17 @@ from plane.db.models import (
     Label,
     IssueLink,
     IssueAttachment,
-    State,
     IssueSubscriber,
     ProjectMember,
     IssueReaction,
     CommentReaction,
-    ProjectDeployBoard,
-    IssueVote,
     IssueRelation,
-    ProjectPublicMember,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
+
 
 class IssueListEndpoint(BaseAPIView):
 
@@ -88,28 +87,23 @@ class IssueListEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-        issues = request.GET.get("issues", False)
+        issue_ids = request.GET.get("issues", False)
 
-        if not issues:
+        if not issue_ids:
             return Response(
                 {"error": "Issues are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
-        issues = [issue for issue in issues.split(",") if issue != ""]
+
+        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
 
         queryset = (
             Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project_id, pk__in=issues
+                workspace__slug=slug, project_id=project_id, pk__in=issue_ids
             )
+            .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -132,6 +126,32 @@ class IssueListEndpoint(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         ).distinct()
 
@@ -211,8 +231,39 @@ class IssueListEndpoint(BaseAPIView):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        serializer = IssueSerializer(queryset, many=True, fields=self.fields, expand=self.expand)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if self.fields or self.expand:
+            issues = IssueSerializer(
+                queryset, many=True, fields=self.fields, expand=self.expand
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
@@ -1217,7 +1268,7 @@ class IssueArchiveViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))            
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1264,10 +1315,7 @@ class IssueArchiveViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -1712,15 +1760,17 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=issue
-                    if relation_type == "blocking"
-                    else issue_id,
-                    related_issue_id=issue_id
-                    if relation_type == "blocking"
-                    else issue,
-                    relation_type="blocked_by"
-                    if relation_type == "blocking"
-                    else relation_type,
+                    issue_id=(
+                        issue if relation_type == "blocking" else issue_id
+                    ),
+                    related_issue_id=(
+                        issue_id if relation_type == "blocking" else issue
+                    ),
+                    relation_type=(
+                        "blocked_by"
+                        if relation_type == "blocking"
+                        else relation_type
+                    ),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
@@ -1801,9 +1851,7 @@ class IssueDraftViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.filter(
-                project_id=self.kwargs.get("project_id")
-            )
+            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_draft=True)
             .select_related("workspace", "project", "state", "parent")
@@ -1860,10 +1908,7 @@ class IssueDraftViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -1962,7 +2007,9 @@ class IssueDraftViewSet(BaseViewSet):
             issue = (
                 self.get_queryset().filter(pk=serializer.data["id"]).first()
             )
-            return Response(IssueSerializer(issue).data, status=status.HTTP_201_CREATED)
+            return Response(
+                IssueSerializer(issue).data, status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
