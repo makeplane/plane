@@ -77,12 +77,16 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     return (
       <>
         {showCount ? (
-          <>
+          <div className="relative flex items-center gap-1">
             {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-            <span className="flex-grow truncate text-left">
-              {value.length > 0 ? `${value.length} Module${value.length === 1 ? "" : "s"}` : placeholder}
-            </span>
-          </>
+            <div className="flex-grow truncate max-w-40">
+              {value.length > 0
+                ? value.length === 1
+                  ? `${getModuleById(value[0])?.name || "module"}`
+                  : `${value.length} Module${value.length === 1 ? "" : "s"}`
+                : placeholder}
+            </div>
+          </div>
         ) : value.length > 0 ? (
           <div className="flex items-center gap-2 py-0.5 flex-wrap">
             {value.map((moduleId) => {
@@ -298,7 +302,12 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
               isActive={isOpen}
               tooltipHeading="Module"
               tooltipContent={
-                Array.isArray(value) ? `${value?.length ?? 0} module${value?.length !== 1 ? "s" : ""}` : ""
+                Array.isArray(value)
+                  ? `${value
+                      .map((moduleId) => getModuleById(moduleId)?.name)
+                      .toString()
+                      .replaceAll(",", ", ")}`
+                  : ""
               }
               showTooltip={showTooltip}
               variant={buttonVariant}
