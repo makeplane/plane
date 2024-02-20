@@ -276,10 +276,9 @@ export class InboxIssue implements IInboxIssue {
         this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
         const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
         set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
-        update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) => {
-          if (data.status === pendingStatus) return count + 1;
-          return count - 1;
-        });
+        update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) =>
+          data.status === pendingStatus ? count + 1 : count - 1
+        );
       });
 
       runInAction(() => {
