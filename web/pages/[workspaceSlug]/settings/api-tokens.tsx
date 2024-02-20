@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useTheme } from "next-themes";
 // store hooks
-import { useUser } from "hooks/store";
+import { useUser, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -23,6 +23,7 @@ import { NextPageWithLayout } from "lib/types";
 import { API_TOKENS_LIST } from "constants/fetch-keys";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { PageHead } from "components/core";
 
 const apiTokenService = new APITokenService();
 
@@ -39,6 +40,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     membership: { currentWorkspaceRole },
     currentUser,
   } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
@@ -49,12 +51,16 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
   const emptyStateDetail = WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS["api-tokens"];
   const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
   const emptyStateImage = getEmptyStateImagePath("workspace-settings", "api-tokens", isLightMode);
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - API Tokens` : undefined;
 
   if (!isAdmin)
     return (
-      <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-      </div>
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center p-4">
+          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        </div>
+      </>
     );
 
   if (!tokens) {
@@ -63,6 +69,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title={pageTitle} />
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       <section className="h-full w-full overflow-y-auto py-8 pr-9">
         {tokens.length > 0 ? (
