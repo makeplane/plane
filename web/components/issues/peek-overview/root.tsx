@@ -69,20 +69,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   // state
   const [loader, setLoader] = useState(false);
 
-  useEffect(() => {
-    if (peekIssue) {
-      setLoader(true);
-      fetchIssue(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
-        setLoader(false);
-      });
-    }
-  }, [peekIssue, fetchIssue]);
-
   const issueOperations: TIssuePeekOperations = useMemo(
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await fetchIssue(workspaceSlug, projectId, issueId);
+          await fetchIssue(workspaceSlug, projectId, issueId, is_archived);
         } catch (error) {
           console.error("Error fetching the parent issue");
         }
@@ -324,8 +315,19 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeModulesFromIssue,
       setToastAlert,
       onIssueUpdate,
+      captureIssueEvent,
+      router.asPath,
     ]
   );
+
+  useEffect(() => {
+    if (peekIssue) {
+      setLoader(true);
+      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId).finally(() => {
+        setLoader(false);
+      });
+    }
+  }, [peekIssue, issueOperations]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 

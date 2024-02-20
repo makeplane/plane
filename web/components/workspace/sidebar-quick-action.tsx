@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateDraftIssueModal } from "components/issues";
@@ -16,6 +16,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
 
   const { theme: themeStore, commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
+  const { joinedProjectIds } = useProject();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -30,6 +31,8 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   const isSidebarCollapsed = themeStore.sidebarCollapsed;
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
+  const disabled = joinedProjectIds.length === 0;
 
   const onMouseEnter = () => {
     //if renet before timout clear the timeout
@@ -73,17 +76,18 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               type="button"
               className={`relative flex flex-shrink-0 flex-grow items-center gap-2 rounded py-1.5 outline-none ${
                 isSidebarCollapsed ? "justify-center" : ""
-              }`}
+              } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
               onClick={() => {
                 setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
                 commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
+              disabled={disabled}
             >
               <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
               {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
             </button>
 
-            {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
+            {!disabled && storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
               <>
                 <div
                   className={`h-8 w-0.5 bg-custom-sidebar-background-80 ${isSidebarCollapsed ? "hidden" : "block"}`}

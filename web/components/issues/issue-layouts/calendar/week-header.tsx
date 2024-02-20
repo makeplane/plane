@@ -13,7 +13,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium ${
+      className={`relative grid divide-x-[0.5px] divide-custom-border-400 text-sm font-medium ${
         showWeekends ? "grid-cols-7" : "grid-cols-5"
       }`}
     >
@@ -24,7 +24,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
         if (!showWeekends && (day.shortTitle === "Sat" || day.shortTitle === "Sun")) return null;
 
         return (
-          <div key={day.shortTitle} className="flex h-11 items-center bg-custom-background-90 px-4">
+          <div key={day.shortTitle} className="flex h-11 items-center justify-end bg-custom-background-90 px-4">
             {day.shortTitle}
           </div>
         );

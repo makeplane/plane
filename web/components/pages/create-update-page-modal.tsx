@@ -68,7 +68,6 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
             state: "SUCCESS",
           },
         });
-        console.log("Page updated successfully", pageStore);
       } else {
         await createProjectPage(formData);
       }

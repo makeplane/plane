@@ -14,7 +14,7 @@ import { FileService } from "services/file.service";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { GptAssistantPopover } from "components/core";
+import { GptAssistantPopover, PageHead } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
@@ -256,113 +256,116 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return pageIdMobx ? (
-    <div className="flex h-full flex-col justify-between">
-      <div className="h-full w-full overflow-hidden">
-        {isPageReadOnly ? (
-          <DocumentReadOnlyEditorWithRef
-            onActionCompleteHandler={actionCompleteAlert}
-            ref={editorRef}
-            value={pageDescription}
-            customClassName={"tracking-tight w-full px-0"}
-            borderOnFocus={false}
-            noBorder
-            documentDetails={{
-              title: pageTitle,
-              created_by: created_by,
-              created_on: created_at,
-              last_updated_at: updated_at,
-              last_updated_by: updated_by,
-            }}
-            pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
-            pageDuplicationConfig={userCanDuplicate && !archived_at ? { action: duplicate_page } : undefined}
-            pageArchiveConfig={
-              userCanArchive
-                ? {
-                    action: archived_at ? unArchivePage : archivePage,
-                    is_archived: archived_at ? true : false,
-                    archived_at: archived_at ? new Date(archived_at) : undefined,
-                  }
-                : undefined
-            }
-          />
-        ) : (
-          <div className="relative h-full w-full overflow-hidden">
-            <Controller
-              name="description_html"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <DocumentEditorWithRef
-                  isSubmitting={isSubmitting}
-                  documentDetails={{
-                    title: pageTitle,
-                    created_by: created_by,
-                    created_on: created_at,
-                    last_updated_at: updated_at,
-                    last_updated_by: updated_by,
-                  }}
-                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                  deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                  restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                  value={pageDescription}
-                  setShouldShowAlert={setShowAlert}
-                  cancelUploadImage={fileService.cancelUpload}
-                  ref={editorRef}
-                  debouncedUpdatesEnabled={false}
-                  setIsSubmitting={setIsSubmitting}
-                  updatePageTitle={updatePageTitle}
-                  onActionCompleteHandler={actionCompleteAlert}
-                  customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
-                  onChange={(_description_json: Object, description_html: string) => {
-                    setShowAlert(true);
-                    onChange(description_html);
-                    handleSubmit(updatePage)();
-                  }}
-                  duplicationConfig={userCanDuplicate ? { action: duplicate_page } : undefined}
-                  pageArchiveConfig={
-                    userCanArchive
-                      ? {
-                          is_archived: archived_at ? true : false,
-                          action: archived_at ? unArchivePage : archivePage,
-                        }
-                      : undefined
-                  }
-                  pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
-                />
-              )}
+    <>
+      <PageHead title={pageTitle} />
+      <div className="flex h-full flex-col justify-between">
+        <div className="h-full w-full overflow-hidden">
+          {isPageReadOnly ? (
+            <DocumentReadOnlyEditorWithRef
+              onActionCompleteHandler={actionCompleteAlert}
+              ref={editorRef}
+              value={pageDescription}
+              customClassName={"tracking-tight w-full px-0"}
+              borderOnFocus={false}
+              noBorder
+              documentDetails={{
+                title: pageTitle,
+                created_by: created_by,
+                created_on: created_at,
+                last_updated_at: updated_at,
+                last_updated_by: updated_by,
+              }}
+              pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
+              pageDuplicationConfig={userCanDuplicate && !archived_at ? { action: duplicate_page } : undefined}
+              pageArchiveConfig={
+                userCanArchive
+                  ? {
+                      action: archived_at ? unArchivePage : archivePage,
+                      is_archived: archived_at ? true : false,
+                      archived_at: archived_at ? new Date(archived_at) : undefined,
+                    }
+                  : undefined
+              }
             />
-            {projectId && envConfig?.has_openai_configured && (
-              <div className="absolute right-[68px] top-2.5">
-                <GptAssistantPopover
-                  isOpen={gptModalOpen}
-                  projectId={projectId.toString()}
-                  handleClose={() => {
-                    setGptModal((prevData) => !prevData);
-                    // this is done so that the title do not reset after gpt popover closed
-                    reset(getValues());
-                  }}
-                  onResponse={(response) => {
-                    handleAiAssistance(response);
-                  }}
-                  placement="top-end"
-                  button={
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                      onClick={() => setGptModal((prevData) => !prevData)}
-                    >
-                      <Sparkle className="h-4 w-4" />
-                      AI
-                    </button>
-                  }
-                  className="!min-w-[38rem]"
-                />
-              </div>
-            )}
-          </div>
-        )}
-        <IssuePeekOverview />
+          ) : (
+            <div className="relative h-full w-full overflow-hidden">
+              <Controller
+                name="description_html"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <DocumentEditorWithRef
+                    isSubmitting={isSubmitting}
+                    documentDetails={{
+                      title: pageTitle,
+                      created_by: created_by,
+                      created_on: created_at,
+                      last_updated_at: updated_at,
+                      last_updated_by: updated_by,
+                    }}
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                    deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                    restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                    value={pageDescription}
+                    setShouldShowAlert={setShowAlert}
+                    cancelUploadImage={fileService.cancelUpload}
+                    ref={editorRef}
+                    debouncedUpdatesEnabled={false}
+                    setIsSubmitting={setIsSubmitting}
+                    updatePageTitle={updatePageTitle}
+                    onActionCompleteHandler={actionCompleteAlert}
+                    customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
+                    onChange={(_description_json: Object, description_html: string) => {
+                      setShowAlert(true);
+                      onChange(description_html);
+                      handleSubmit(updatePage)();
+                    }}
+                    duplicationConfig={userCanDuplicate ? { action: duplicate_page } : undefined}
+                    pageArchiveConfig={
+                      userCanArchive
+                        ? {
+                            is_archived: archived_at ? true : false,
+                            action: archived_at ? unArchivePage : archivePage,
+                          }
+                        : undefined
+                    }
+                    pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
+                  />
+                )}
+              />
+              {projectId && envConfig?.has_openai_configured && (
+                <div className="absolute right-[68px] top-2.5">
+                  <GptAssistantPopover
+                    isOpen={gptModalOpen}
+                    projectId={projectId.toString()}
+                    handleClose={() => {
+                      setGptModal((prevData) => !prevData);
+                      // this is done so that the title do not reset after gpt popover closed
+                      reset(getValues());
+                    }}
+                    onResponse={(response) => {
+                      handleAiAssistance(response);
+                    }}
+                    placement="top-end"
+                    button={
+                      <button
+                        type="button"
+                        className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
+                        onClick={() => setGptModal((prevData) => !prevData)}
+                      >
+                        <Sparkle className="h-4 w-4" />
+                        AI
+                      </button>
+                    }
+                    className="!min-w-[38rem]"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          <IssuePeekOverview />
+        </div>
       </div>
-    </div>
+    </>
   ) : (
     <div className="grid h-full w-full place-items-center">
       <Spinner />
