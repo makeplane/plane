@@ -299,7 +299,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                           <network.icon className="h-3.5 w-3.5" />
                           <div className="-mt-1">
                             <p>{network.label}</p>
-                            <p className="text-xs text-custom-text-400">{network.description}.</p>
+                            <p className="text-xs text-custom-text-400">{network.description}</p>
                           </div>
                         </div>
                       </CustomSelect.Option>
