@@ -291,7 +291,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     buttonClassName="!border-custom-border-200 !shadow-none font-medium rounded-md"
                     input
                     disabled={!isAdmin}
-                    optionsClassName="w-full"
+                    // optionsClassName="w-full"
                   >
                     {NETWORK_CHOICES.map((network) => (
                       <CustomSelect.Option key={network.key} value={network.key}>
