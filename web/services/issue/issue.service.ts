@@ -59,6 +59,16 @@ export class IssueService extends APIService {
       });
   }
 
+  async retrieveIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/list/`, {
+      params: { issues: issueIds.join(",") },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssueActivities(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/history/`)
       .then((response) => response?.data)
