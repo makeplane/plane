@@ -1,8 +1,9 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react";
 // hooks
-import { useModule } from "hooks/store";
+import { useModule, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -10,37 +11,44 @@ import { AppLayout } from "layouts/app-layout";
 import { ModuleDetailsSidebar } from "components/modules";
 import { ModuleLayoutRoot } from "components/issues";
 import { ModuleIssuesHeader } from "components/headers";
-// ui
+import { PageHead } from "components/core";
 import { EmptyState } from "components/common";
 // assets
 import emptyModule from "public/empty-state/module.svg";
 // types
 import { NextPageWithLayout } from "lib/types";
 
-const ModuleIssuesPage: NextPageWithLayout = () => {
+const ModuleIssuesPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
   // store hooks
-  const { fetchModuleDetails } = useModule();
+  const { fetchModuleDetails, getModuleById } = useModule();
+  const { getProjectById } = useProject();
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
-
+  // fetching module details
   const { error } = useSWR(
     workspaceSlug && projectId && moduleId ? `CURRENT_MODULE_DETAILS_${moduleId.toString()}` : null,
     workspaceSlug && projectId && moduleId
       ? () => fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
+  // derived values
+  const projectModule = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name && projectModule?.name ? `${project?.name} - ${projectModule?.name}` : undefined;
 
   const toggleSidebar = () => {
     setValue(`${!isSidebarCollapsed}`);
   };
 
   if (!workspaceSlug || !projectId || !moduleId) return <></>;
+
   return (
     <>
+      <PageHead title={pageTitle} />
       {error ? (
         <EmptyState
           image={emptyModule}
@@ -71,7 +79,7 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 ModuleIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
