@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -10,7 +11,7 @@ import { NextPageWithLayout } from "lib/types";
 // hooks
 import { useWorkspace } from "hooks/store";
 
-const WorkspacePage: NextPageWithLayout = () => {
+const WorkspacePage: NextPageWithLayout = observer(() => {
   const { currentWorkspace } = useWorkspace();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Dashboard` : undefined;
@@ -21,7 +22,7 @@ const WorkspacePage: NextPageWithLayout = () => {
       <WorkspaceDashboardView />
     </>
   );
-};
+});
 
 WorkspacePage.getLayout = function getLayout(page: ReactElement) {
   return <AppLayout header={<WorkspaceDashboardHeader />}>{page}</AppLayout>;

@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react";
 // hooks
 import { useProject, useProjectView } from "hooks/store";
 // layouts
@@ -16,7 +17,7 @@ import emptyView from "public/empty-state/view.svg";
 // types
 import { NextPageWithLayout } from "lib/types";
 
-const ProjectViewIssuesPage: NextPageWithLayout = () => {
+const ProjectViewIssuesPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
@@ -55,7 +56,7 @@ const ProjectViewIssuesPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 ProjectViewIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (

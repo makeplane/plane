@@ -1,5 +1,6 @@
 import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
 import useToast from "hooks/use-toast";
@@ -8,7 +9,8 @@ import { useIssueDetail, useIssues, useProject } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { IssueDetailRoot } from "components/issues";
-import { ProjectArchivedIssueDetailsHeader } from "components/headers";import { PageHead } from "components/core";
+import { ProjectArchivedIssueDetailsHeader } from "components/headers";
+import { PageHead } from "components/core";
 // ui
 import { ArchiveIcon, Loader } from "@plane/ui";
 // icons
@@ -18,7 +20,7 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 
-const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
+const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
@@ -82,7 +84,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
 
   return (
     <>
-    <PageHead title={pageTitle} />
+      <PageHead title={pageTitle} />
       {issueLoader ? (
         <Loader className="flex h-full gap-5 p-5">
           <div className="basis-2/3 space-y-2">
@@ -130,7 +132,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 ArchivedIssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (

@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 // components
 import { PageHead } from "components/core";
 import { WorkspaceActiveCycleHeader } from "components/headers";
@@ -10,7 +11,7 @@ import { NextPageWithLayout } from "lib/types";
 // hooks
 import { useWorkspace } from "hooks/store";
 
-const WorkspaceActiveCyclesPage: NextPageWithLayout = () => {
+const WorkspaceActiveCyclesPage: NextPageWithLayout = observer(() => {
   const { currentWorkspace } = useWorkspace();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Active Cycles` : undefined;
@@ -21,7 +22,7 @@ const WorkspaceActiveCyclesPage: NextPageWithLayout = () => {
       <WorkspaceActiveCyclesUpgrade />
     </>
   );
-};
+});
 
 WorkspaceActiveCyclesPage.getLayout = function getLayout(page: ReactElement) {
   return <AppLayout header={<WorkspaceActiveCycleHeader />}>{page}</AppLayout>;
