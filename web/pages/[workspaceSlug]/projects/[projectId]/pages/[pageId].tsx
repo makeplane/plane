@@ -258,7 +258,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const userCanLock =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  return pageIdMobx && issues && issuesLoading ? (
+  return pageIdMobx && issues && !issuesLoading ? (
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full flex-col justify-between">
