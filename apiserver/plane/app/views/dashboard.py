@@ -502,7 +502,7 @@ class DashboardEndpoint(BaseAPIView):
                     )
                 )
             )
-            .values('id', 'active_issue_count')
+            .values('active_issue_count', user_id=F('id'))
         )
         return user_active_issue_counts
 
