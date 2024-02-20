@@ -820,6 +820,8 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 }
             )
 
+        # Update the cycle issues
+        CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
