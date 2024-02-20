@@ -105,7 +105,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const inboxesMap = currentProjectDetails?.inbox_view ? getInboxesByProjectId(currentProjectDetails.id) : undefined;
+  const inboxesMap = project?.inbox_view ? getInboxesByProjectId(projectId) : undefined;
   const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
 
   const handleAddToFavorites = () => {
