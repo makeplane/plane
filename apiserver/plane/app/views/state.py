@@ -16,7 +16,7 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
 )
 from plane.db.models import State, Issue
-
+from plane.utils.cache import invalidate_path_cache
 
 class StateViewSet(BaseViewSet):
     serializer_class = StateSerializer
@@ -38,6 +38,7 @@ class StateViewSet(BaseViewSet):
             .distinct()
         )
 
+    @invalidate_path_cache("workspaces/:slug/states/", True)
     def create(self, request, slug, project_id):
         serializer = StateSerializer(data=request.data)
         if serializer.is_valid():
@@ -58,6 +59,7 @@ class StateViewSet(BaseViewSet):
             return Response(state_dict, status=status.HTTP_200_OK)
         return Response(states, status=status.HTTP_200_OK)
 
+    @invalidate_path_cache("workspaces/:slug/states/", True)
     def mark_as_default(self, request, slug, project_id, pk):
         # Select all the states which are marked as default
         _ = State.objects.filter(
@@ -68,6 +70,7 @@ class StateViewSet(BaseViewSet):
         ).update(default=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @invalidate_path_cache("workspaces/:slug/states/", True)
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
             ~Q(name="Triage"),

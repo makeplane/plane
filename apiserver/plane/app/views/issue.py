@@ -81,6 +81,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
+from plane.utils.cache import invalidate_path_cache
 
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
@@ -699,6 +700,21 @@ class LabelViewSet(BaseViewSet):
         ProjectMemberPermission,
     ]
 
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("parent")
+            .distinct()
+            .order_by("sort_order")
+        )
+
+    @invalidate_path_cache("/api/workspaces/:slug/labels/")
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -718,19 +734,13 @@ class LabelViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("parent")
-            .distinct()
-            .order_by("sort_order")
-        )
+    @invalidate_path_cache("/api/workspaces/:slug/labels/")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @invalidate_path_cache("/api/workspaces/:slug/labels/")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
@@ -1085,7 +1095,7 @@ class IssueArchiveViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))            
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1132,10 +1142,7 @@ class IssueArchiveViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -1580,15 +1587,17 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=issue
-                    if relation_type == "blocking"
-                    else issue_id,
-                    related_issue_id=issue_id
-                    if relation_type == "blocking"
-                    else issue,
-                    relation_type="blocked_by"
-                    if relation_type == "blocking"
-                    else relation_type,
+                    issue_id=(
+                        issue if relation_type == "blocking" else issue_id
+                    ),
+                    related_issue_id=(
+                        issue_id if relation_type == "blocking" else issue
+                    ),
+                    relation_type=(
+                        "blocked_by"
+                        if relation_type == "blocking"
+                        else relation_type
+                    ),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
@@ -1669,9 +1678,7 @@ class IssueDraftViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.filter(
-                project_id=self.kwargs.get("project_id")
-            )
+            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_draft=True)
             .select_related("workspace", "project", "state", "parent")
@@ -1728,10 +1735,7 @@ class IssueDraftViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -1830,7 +1834,9 @@ class IssueDraftViewSet(BaseViewSet):
             issue = (
                 self.get_queryset().filter(pk=serializer.data["id"]).first()
             )
-            return Response(IssueSerializer(issue).data, status=status.HTTP_201_CREATED)
+            return Response(
+                IssueSerializer(issue).data, status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
