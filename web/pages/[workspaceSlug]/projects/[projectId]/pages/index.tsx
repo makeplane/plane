@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 import useSize from "hooks/use-window-size";
@@ -24,6 +24,7 @@ import { PAGE_TABS_LIST } from "constants/page";
 import { useProjectPages } from "hooks/store/use-project-page";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { PageHead } from "components/core";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -63,7 +64,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-
+  const { getProjectById } = useProject();
   const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
     useProjectPages();
   // hooks
@@ -101,10 +102,12 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     }
   };
 
+  // derived values
   const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
   const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "pages", isLightMode);
-
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
 
   const MobileTabList = () => (
     <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
@@ -129,6 +132,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title={pageTitle} />
       {projectPageIds && archivedPageIds && projectPageIds.length + archivedPageIds.length > 0 ? (
         <>
           {workspaceSlug && projectId && (

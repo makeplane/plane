@@ -1,12 +1,14 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react";
 // hooks
-import { useCycle } from "hooks/store";
+import { useCycle, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { PageHead } from "components/core";
 import { CycleIssuesHeader } from "components/headers";
 import { CycleDetailsSidebar } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
@@ -17,27 +19,36 @@ import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { NextPageWithLayout } from "lib/types";
 
-const CycleDetailPage: NextPageWithLayout = () => {
+const CycleDetailPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
   // store hooks
-  const { fetchCycleDetails } = useCycle();
-
+  const { fetchCycleDetails, getCycleById } = useCycle();
+  const { getProjectById } = useProject();
+  // hooks
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
-  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
-
+  // fetching cycle details
   const { error } = useSWR(
     workspaceSlug && projectId && cycleId ? `CYCLE_DETAILS_${cycleId.toString()}` : null,
     workspaceSlug && projectId && cycleId
       ? () => fetchCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
+  // derived values
+  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
+  const cycle = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name && cycle?.name ? `${project?.name} - ${cycle?.name}` : undefined;
 
+  /**
+   * Toggles the sidebar
+   */
   const toggleSidebar = () => setValue(`${!isSidebarCollapsed}`);
 
   return (
     <>
+      <PageHead title={pageTitle} />
       {error ? (
         <EmptyState
           image={emptyCycle}
@@ -70,7 +81,7 @@ const CycleDetailPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 CycleDetailPage.getLayout = function getLayout(page: ReactElement) {
   return (

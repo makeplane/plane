@@ -48,6 +48,7 @@ export interface IGroupByKanBan {
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   isDragStarted?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -72,6 +73,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     canEditProperties,
     scrollableContainerRef,
     isDragStarted,
+    showEmptyGroup = true,
   } = props;
 
   const member = useMember();
@@ -84,6 +86,10 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   if (!list) return null;
 
+  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)[_list.id]?.length > 0);
+
+  const groupList = showEmptyGroup ? list : groupWithIssues;
+
   const visibilityGroupBy = (_list: IGroupByColumn) =>
     sub_group_by ? false : kanbanFilters?.group_by.includes(_list.id) ? true : false;
 
@@ -91,9 +97,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   return (
     <div className={`relative w-full flex gap-3 ${sub_group_by ? "h-full" : "h-full"}`}>
-      {list &&
-        list.length > 0 &&
-        list.map((_list: IGroupByColumn) => {
+      {groupList &&
+        groupList.length > 0 &&
+        groupList.map((_list: IGroupByColumn) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
@@ -196,6 +202,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     canEditProperties,
     scrollableContainerRef,
     isDragStarted,
+    showEmptyGroup,
   } = props;
 
   const issueKanBanView = useKanbanView();
@@ -222,6 +229,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       canEditProperties={canEditProperties}
       scrollableContainerRef={scrollableContainerRef}
       isDragStarted={isDragStarted}
+      showEmptyGroup={showEmptyGroup}
     />
   );
 });
