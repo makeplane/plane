@@ -142,7 +142,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
 
     class Meta:
         model = ModuleLink
@@ -214,6 +213,15 @@ class ModuleSerializer(DynamicBaseSerializer):
             "updated_at",
         ]
         read_only_fields = fields
+
+
+
+class ModuleDetailSerializer(ModuleSerializer):
+
+    link_module = ModuleLinkSerializer(read_only=True, many=True)
+
+    class Meta(ModuleSerializer.Meta):
+        fields = ModuleSerializer.Meta.fields + ['link_module']
 
 
 class ModuleFavoriteSerializer(BaseSerializer):

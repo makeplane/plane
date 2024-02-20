@@ -25,6 +25,7 @@ from plane.app.serializers import (
     ModuleFavoriteSerializer,
     IssueSerializer,
     ModuleUserPropertiesSerializer,
+    ModuleDetailSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -337,35 +338,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             .order_by("label_name")
         )
 
-        data = queryset.values(  # Required fields
-            "id",
-            "workspace_id",
-            "project_id",
-            # Model fields
-            "name",
-            "description",
-            "description_text",
-            "description_html",
-            "start_date",
-            "target_date",
-            "status",
-            "lead_id",
-            "member_ids",
-            "view_props",
-            "sort_order",
-            "external_source",
-            "external_id",
-            # computed fields
-            "is_favorite",
-            "total_issues",
-            "cancelled_issues",
-            "completed_issues",
-            "started_issues",
-            "unstarted_issues",
-            "backlog_issues",
-            "created_at",
-            "updated_at",
-        ).first()
+        data = ModuleDetailSerializer(queryset.first()).data
         data["distribution"] = {
             "assignees": assignee_distribution,
             "labels": label_distribution,
