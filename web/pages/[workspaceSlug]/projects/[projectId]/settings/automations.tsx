@@ -10,6 +10,7 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import useToast from "hooks/use-toast";
 // components
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
+import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
 // types
 import { NextPageWithLayout } from "lib/types";
@@ -41,16 +42,21 @@ const AutomationSettingsPage: NextPageWithLayout = observer(() => {
     });
   };
 
+  // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Automations` : undefined;
 
   return (
-    <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-      <div className="flex items-center border-b border-custom-border-100 py-3.5">
-        <h3 className="text-xl font-medium">Automations</h3>
-      </div>
-      <AutoArchiveAutomation handleChange={handleChange} />
-      <AutoCloseAutomation handleChange={handleChange} />
-    </section>
+    <>
+      <PageHead title={pageTitle} />
+      <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+        <div className="flex items-center border-b border-custom-border-100 py-3.5">
+          <h3 className="text-xl font-medium">Automations</h3>
+        </div>
+        <AutoArchiveAutomation handleChange={handleChange} />
+        <AutoCloseAutomation handleChange={handleChange} />
+      </section>
+    </>
   );
 });
 
