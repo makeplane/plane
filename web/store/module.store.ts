@@ -22,6 +22,7 @@ export interface IModuleStore {
   getProjectModuleIds: (projectId: string) => string[] | null;
   // actions
   // fetch
+  fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
@@ -73,6 +74,7 @@ export class ModulesStore implements IModuleStore {
       // computed
       projectModuleIds: computed,
       // actions
+      fetchWorkspaceModules: action,
       fetchModules: action,
       fetchModuleDetails: action,
       createModule: action,
@@ -124,6 +126,21 @@ export class ModulesStore implements IModuleStore {
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
   });
+
+  /**
+   * @description fetch all modules
+   * @param workspaceSlug
+   * @returns IModule[]
+   */
+  fetchWorkspaceModules = async (workspaceSlug: string) =>
+    await this.moduleService.getWorkspaceModules(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((module) => {
+          set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+        });
+      });
+      return response;
+    });
 
   /**
    * @description fetch all modules

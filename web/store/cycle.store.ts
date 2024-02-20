@@ -33,6 +33,7 @@ export interface ICycleStore {
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   // fetch
+  fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
@@ -79,6 +80,7 @@ export class CycleStore implements ICycleStore {
       currentProjectDraftCycleIds: computed,
       currentProjectActiveCycleId: computed,
       // actions
+      fetchWorkspaceCycles: action,
       fetchAllCycles: action,
       fetchActiveCycle: action,
       fetchCycleDetails: action,
@@ -219,6 +221,22 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
 
   /**
+   * @description fetch all cycles
+   * @param workspaceSlug
+   * @returns ICycle[]
+   */
+  fetchWorkspaceCycles = async (workspaceSlug: string) =>
+    await this.cycleService.getWorkspaceCycles(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((cycle) => {
+          set(this.cycleMap, [cycle.id], { ...this.cycleMap[cycle.id], ...cycle });
+          set(this.fetchedMap, cycle.project_id, true);
+        });
+      });
+      return response;
+    });
+
+  /**
    * @description fetches all cycles for a project
    * @param workspaceSlug
    * @param projectId
@@ -337,7 +355,6 @@ export class CycleStore implements ICycleStore {
    */
   addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
@@ -362,7 +379,6 @@ export class CycleStore implements ICycleStore {
    */
   removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);

@@ -81,7 +81,11 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     router: { workspaceSlug },
   } = useApplication();
   const { getProjectCycleIds, fetchAllCycles, getCycleById } = useCycle();
-  const cycleIds = getProjectCycleIds(projectId);
+
+  const cycleIds = (getProjectCycleIds(projectId) ?? [])?.filter((cycleId) => {
+    const cycleDetails = getCycleById(cycleId);
+    return cycleDetails?.status ? (cycleDetails?.status.toLowerCase() != "completed" ? true : false) : true;
+  });
 
   const options: DropdownOptions = cycleIds?.map((cycleId) => {
     const cycleDetails = getCycleById(cycleId);
