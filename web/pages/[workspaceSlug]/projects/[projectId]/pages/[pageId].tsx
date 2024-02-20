@@ -339,6 +339,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                         : undefined
                     }
                     pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
+                    embedConfig={{
+                      issueEmbedConfig: {
+                        issues: issues,
+                        fetchIssue: fetchIssue,
+                        clickAction: issueWidgetClickAction,
+                      },
+                    }}
                   />
                 )}
               />
