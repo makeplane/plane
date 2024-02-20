@@ -8,6 +8,7 @@ import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
+import { PageHead } from "components/core";
 import {
   ProfileActivity,
   ProfilePriorityDistribution,
@@ -42,21 +43,24 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
   });
 
   return (
-    <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9">
-      <ProfileStats userProfile={userProfile} />
-      <ProfileWorkload stateDistribution={stateDistribution} />
-      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
-        <ProfilePriorityDistribution userProfile={userProfile} />
-        <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
+    <>
+      <PageHead title="Profile - Summary" />
+      <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9">
+        <ProfileStats userProfile={userProfile} />
+        <ProfileWorkload stateDistribution={stateDistribution} />
+        <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
+          <ProfilePriorityDistribution userProfile={userProfile} />
+          <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
+        </div>
+        <ProfileActivity />
       </div>
-      <ProfileActivity />
-    </div>
+    </>
   );
 };
 
 ProfileOverviewPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader type='Summary' />}>
+    <AppLayout header={<UserProfileHeader type="Summary" />}>
       <ProfileAuthWrapper>{page}</ProfileAuthWrapper>
     </AppLayout>
   );
