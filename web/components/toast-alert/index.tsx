@@ -12,7 +12,7 @@ const ToastAlerts = () => {
   return (
     <div className="pointer-events-none fixed right-5 top-5 z-50 h-full w-80 space-y-5 overflow-hidden">
       {alerts.map((alert) => (
-        <div className="relative overflow-hidden rounded-md text-white" key={alert.id}>
+        <div className="t-toast-alert relative overflow-hidden rounded-md text-white" key={alert.id}>
           <div className="absolute right-1 top-1">
             <button
               type="button"
@@ -28,10 +28,10 @@ const ToastAlerts = () => {
               alert.type === "success"
                 ? "bg-[#06d6a0]"
                 : alert.type === "error"
-                  ? "bg-[#ef476f]"
-                  : alert.type === "warning"
-                    ? "bg-[#e98601]"
-                    : "bg-[#1B9aaa]"
+                ? "bg-[#ef476f]"
+                : alert.type === "warning"
+                ? "bg-[#e98601]"
+                : "bg-[#1B9aaa]"
             }`}
           >
             <div className="flex items-center gap-x-3">
@@ -47,8 +47,8 @@ const ToastAlerts = () => {
                 )}
               </div>
               <div>
-                <p className="font-semibold">{alert.title}</p>
-                {alert.message && <p className="mt-1 text-xs">{alert.message}</p>}
+                <p className="t-toast-alert-title font-semibold">{alert.title}</p>
+                {alert.message && <p className="t-toast-alert-message  mt-1 text-xs">{alert.message}</p>}
               </div>
             </div>
           </div>

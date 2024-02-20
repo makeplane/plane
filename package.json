@@ -22,6 +22,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@playwright/test": "^1.41.2",
+    "@types/node": "^20.11.19",
     "autoprefixer": "^10.4.15",
     "eslint-config-custom": "*",
     "postcss": "^8.4.29",
