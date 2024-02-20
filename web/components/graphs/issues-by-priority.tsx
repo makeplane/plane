@@ -46,14 +46,7 @@ const CustomTick = (props: any) => {
       <foreignObject width={tickWidth} height="50">
         <div className="flex items-center gap-1">
           <PriorityIcon priority={`${value}`.toLowerCase() as TIssuePriorities} withContainer />
-          <span
-            className="text-sm font-medium"
-            style={{
-              color: PRIORITY_TEXT_COLORS[`${value}`.toLowerCase() as TIssuePriorities],
-            }}
-          >
-            {value}
-          </span>
+          <span className="text-sm font-medium">{value}</span>
         </div>
       </foreignObject>
     </g>

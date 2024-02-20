@@ -1,69 +1,38 @@
-import { useEffect } from "react";
-import Link from "next/link";
-import { observer } from "mobx-react-lite";
-// hooks
-import { useDashboard, useMember, useUser } from "hooks/store";
+import { useState } from "react";
 // components
-import { RecentCollaboratorsEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
+import { CollaboratorsList, WidgetProps } from "components/dashboard/widgets";
+8;
 // ui
-import { Avatar } from "@plane/ui";
-// types
-import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
+import { Button } from "@plane/ui";
 
-type CollaboratorListItemProps = {
-  issueCount: number;
-  userId: string;
-  workspaceSlug: string;
-};
+const PER_PAGE = 8;
 
-const WIDGET_KEY = "recent_collaborators";
-
-const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((props) => {
-  const { issueCount, userId, workspaceSlug } = props;
-  // store hooks
-  const { currentUser } = useUser();
-  const { getUserDetails } = useMember();
-  // derived values
-  const userDetails = getUserDetails(userId);
-  const isCurrentUser = userId === currentUser?.id;
-
-  if (!userDetails) return null;
-
-  return (
-    <Link href={`/${workspaceSlug}/profile/${userId}`} className="group text-center">
-      <div className="flex justify-center">
-        <Avatar
-          src={userDetails.avatar}
-          name={isCurrentUser ? "You" : userDetails.display_name}
-          size={69}
-          className="!text-3xl !font-medium"
-          showTooltip={false}
-        />
-      </div>
-      <h6 className="mt-6 text-xs font-semibold group-hover:underline truncate">
-        {isCurrentUser ? "You" : userDetails?.display_name}
-      </h6>
-      <p className="text-sm mt-2">
-        {issueCount} active issue{issueCount > 1 ? "s" : ""}
-      </p>
-    </Link>
-  );
-});
-
-export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props) => {
+export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
   const { dashboardId, workspaceSlug } = props;
-  // store hooks
-  const { fetchWidgetStats, getWidgetStats } = useDashboard();
-  const widgetStats = getWidgetStats<TRecentCollaboratorsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
+  // states
+  const [pageCount, setPageCount] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [resultsCount, setResultsCount] = useState(0);
 
-  useEffect(() => {
-    fetchWidgetStats(workspaceSlug, dashboardId, {
-      widget_key: WIDGET_KEY,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const updateTotalPages = (count: number) => setTotalPages(count);
 
-  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
+  const updateResultsCount = (count: number) => setResultsCount(count);
+
+  const handleLoadMore = () => setPageCount((prev) => prev + 1);
+
+  const collaboratorsPages: JSX.Element[] = [];
+  for (let i = 0; i < pageCount; i++)
+    collaboratorsPages.push(
+      <CollaboratorsList
+        key={i}
+        dashboardId={dashboardId}
+        cursor={`${PER_PAGE}:${i}:0`}
+        perPage={PER_PAGE}
+        updateResultsCount={updateResultsCount}
+        updateTotalPages={updateTotalPages}
+        workspaceSlug={workspaceSlug}
+      />
+    );
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300">
@@ -73,7 +42,15 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props)
           Top eight active members in your project by last activity
         </p>
       </div>
-      {widgetStats.length > 1 ? (
+      {collaboratorsPages}
+      {pageCount < totalPages && resultsCount !== 0 && (
+        <div className="flex items-center justify-center text-xs w-full">
+          <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+            Load more
+          </Button>
+        </div>
+      )}
+      {/* {widgetStats.length > 1 ? (
         <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
           {widgetStats.map((user) => (
             <CollaboratorListItem
@@ -88,7 +65,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = observer((props)
         <div className="h-full grid place-items-center">
           <RecentCollaboratorsEmptyState />
         </div>
-      )}
+      )} */}
     </div>
   );
-});
+};

@@ -102,6 +102,11 @@ export type TWidgetStatsRequestParams =
   | {
       target_date: string;
       widget_key: "issues_by_priority";
+    }
+  | {
+      per_page: number;
+      cursor: string;
+      widget_key: "recent_collaborators";
     };
 
 export type TWidgetIssue = TIssue & {
@@ -146,8 +151,17 @@ export type TRecentActivityWidgetResponse = IIssueActivity;
 export type TRecentProjectsWidgetResponse = string[];
 
 export type TRecentCollaboratorsWidgetResponse = {
-  active_issue_count: number;
-  user_id: string;
+  count: number;
+  extra_stats: Object | null;
+  next_cursor: string;
+  next_page_results: boolean;
+  prev_cursor: string;
+  prev_page_results: boolean;
+  results: {
+    active_issue_count: number;
+    user_id: string;
+  }[];
+  total_pages: number;
 };
 
 export type TWidgetStatsResponse =
@@ -158,7 +172,7 @@ export type TWidgetStatsResponse =
   | TCreatedIssuesWidgetResponse
   | TRecentActivityWidgetResponse[]
   | TRecentProjectsWidgetResponse
-  | TRecentCollaboratorsWidgetResponse[];
+  | TRecentCollaboratorsWidgetResponse;
 
 // dashboard
 export type TDashboard = {
