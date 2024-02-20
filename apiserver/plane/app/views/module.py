@@ -4,11 +4,12 @@ import json
 # Django Imports
 from django.utils import timezone
 from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
-from django.core import serializers
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.core.serializers.json import DjangoJSONEncoder
-
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework.response import Response
@@ -42,7 +43,6 @@ from plane.db.models import (
     ModuleUserProperties,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
 
@@ -331,17 +331,15 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ProjectEntityPermission,
     ]
 
-
     def get_queryset(self):
         return (
             Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
-                issue_module__module_id=self.kwargs.get("module_id")
+                issue_module__module_id=self.kwargs.get("module_id"),
             )
             .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("labels", "assignees")
-            .prefetch_related('issue_module__module')
+            .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -365,6 +363,32 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         ).distinct()
 
     @method_decorator(gzip_page)
@@ -376,10 +400,39 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ]
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = self.get_queryset().filter(**filters)
-        serializer = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if self.fields or self.expand:
+            issues = IssueSerializer(
+                issue_queryset, many=True, fields=fields if fields else None
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+        return Response(issues, status=status.HTTP_200_OK)
 
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):
@@ -420,10 +473,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             for issue in issues
         ]
-        issues = (self.get_queryset().filter(pk__in=issues))
-        serializer = IssueSerializer(issues , many=True)
+        issues = self.get_queryset().filter(pk__in=issues)
+        serializer = IssueSerializer(issues, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
 
     # create multiple module inside an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
@@ -466,10 +518,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             for module in modules
         ]
 
-        issue = (self.get_queryset().filter(pk=issue_id).first())
+        issue = self.get_queryset().filter(pk=issue_id).first()
         serializer = IssueSerializer(issue)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
     def destroy(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.get(
@@ -484,7 +535,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"module_name": module_issue.module.name}),
+            current_instance=json.dumps(
+                {"module_name": module_issue.module.name}
+            ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
