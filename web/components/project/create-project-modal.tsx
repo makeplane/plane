@@ -160,7 +160,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             payload: {
               ...payload,
               state: "FAILED",
-            }
+            },
           });
         });
       });
@@ -365,13 +365,14 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               tabIndex={4}
                             >
                               {NETWORK_CHOICES.map((network) => (
-                                <CustomSelect.Option
-                                  key={network.key}
-                                  value={network.key}
-                                  className="flex items-center gap-1"
-                                >
-                                  <network.icon className="h-4 w-4" />
-                                  {network.label}
+                                <CustomSelect.Option key={network.key} value={network.key}>
+                                  <div className="flex items-start gap-2">
+                                    <network.icon className="h-3.5 w-3.5" />
+                                    <div className="-mt-1">
+                                      <p>{network.label}</p>
+                                      <p className="text-xs text-custom-text-400">{network.description}.</p>
+                                    </div>
+                                  </div>
                                 </CustomSelect.Option>
                               ))}
                             </CustomSelect>
