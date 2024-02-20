@@ -50,7 +50,6 @@ from plane.app.serializers import (
     CommentReactionSerializer,
     IssueRelationSerializer,
     RelatedIssueSerializer,
-    IssueDetailSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -269,14 +268,37 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         issue = (
             self.get_queryset()
             .filter(pk=pk)
+            .values(
+                "id",
+                "name",
+                "description_html",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
             .first()
         )
-        return Response(
-            IssueDetailSerializer(
-                issue, fields=self.fields, expand=self.expand
-            ).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(issue, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1213,14 +1235,37 @@ class IssueArchiveViewSet(BaseViewSet):
         issue = (
             self.get_queryset()
             .filter(pk=pk)
+            .values(
+                "id",
+                "name",
+                "description_html",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
             .first()
         )
-        return Response(
-            IssueDetailSerializer(
-                issue, fields=self.fields, expand=self.expand
-            ).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(issue, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1870,20 +1915,44 @@ class IssueDraftViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = self.get_queryset().filter(pk=pk).first()
-        return Response(
-            IssueSerializer(
-                issue, fields=self.fields, expand=self.expand
-            ).data,
-            status=status.HTTP_200_OK,
+        issue = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .values(
+                "id",
+                "name",
+                "description_html",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+            .first()
         )
+        return Response(issue, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
-        )
-        current_instance = json.dumps(
-            IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
         issue.delete()
         issue_activity.delay(
@@ -1892,7 +1961,7 @@ class IssueDraftViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(pk),
             project_id=str(project_id),
-            current_instance=current_instance,
+            current_instance={},
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
