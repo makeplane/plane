@@ -620,13 +620,6 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=self.request.user, issue_id=OuterRef("id")
-                    )
-                )
-            )
         )
         serializer = IssueSerializer(
             issues, many=True, fields=fields if fields else None
