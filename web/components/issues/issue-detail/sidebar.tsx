@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { differenceInCalendarDays } from "date-fns";
 import {
   LinkIcon,
   Signal,
@@ -11,8 +12,7 @@ import {
   XCircle,
   CircleDot,
   CopyPlus,
-  CalendarClock,
-  CalendarCheck2,
+  CalendarDays,
 } from "lucide-react";
 // hooks
 import { useEstimate, useIssueDetail, useProject, useUser } from "hooks/store";
@@ -36,10 +36,11 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // icons
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
+import { cn } from "helpers/common.helper";
 // types
 import type { TIssueOperations } from "./root";
 
@@ -88,6 +89,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
 
   return (
     <>
@@ -195,7 +198,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                <CalendarClock className="h-4 w-4 flex-shrink-0" />
+                <CalendarDays className="h-4 w-4 flex-shrink-0" />
                 <span>Start date</span>
               </div>
               <DateDropdown
@@ -221,7 +224,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+                <CalendarDays className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
               <DateDropdown
@@ -237,9 +240,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonVariant="transparent-with-text"
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+                buttonClassName={cn("text-sm", {
+                  "text-custom-text-400": !issue.target_date,
+                  "text-red-500": targetDateDistance <= 0,
+                })}
                 hideIcon
-                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+                clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
                 // TODO: add this logic
                 // showPlaceholderIcon
               />

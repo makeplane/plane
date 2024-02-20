@@ -22,6 +22,8 @@ type Props = {
   bothRequired?: boolean;
   buttonClassName?: string;
   buttonContainerClassName?: string;
+  buttonFromDateClassName?: string;
+  buttonToDateClassName?: string;
   buttonVariant: TButtonVariants;
   cancelButtonText?: string;
   className?: string;
@@ -54,6 +56,8 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     bothRequired = true,
     buttonClassName,
     buttonContainerClassName,
+    buttonFromDateClassName,
+    buttonToDateClassName,
     buttonVariant,
     cancelButtonText = "Cancel",
     className,
@@ -174,12 +178,22 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
             showTooltip={showTooltip}
             variant={buttonVariant}
           >
-            <span className="h-full flex items-center justify-center gap-1 rounded-sm flex-grow">
+            <span
+              className={cn(
+                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                buttonFromDateClassName
+              )}
+            >
               {!hideIcon.from && icon}
               {dateRange.from ? renderFormattedDate(dateRange.from) : placeholder.from}
             </span>
             <ArrowRight className="h-3 w-3 flex-shrink-0" />
-            <span className="h-full flex items-center justify-center gap-1 rounded-sm flex-grow">
+            <span
+              className={cn(
+                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                buttonToDateClassName
+              )}
+            >
               {!hideIcon.to && icon}
               {dateRange.to ? renderFormattedDate(dateRange.to) : placeholder.to}
             </span>

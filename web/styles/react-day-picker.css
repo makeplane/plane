@@ -301,7 +301,7 @@
   height: 0.5em;
   background-color: var(--rdp-background-color);
   border-radius: 100%;
-  transform: translate(-50%,0);
+  transform: translate(-50%, 0);
 }
 
 .rdp-day_selected,
@@ -366,5 +366,3 @@ td:has(.rdp-day_range_start.rdp-day_range_end)::before {
   background-color: var(--rdp-background-color) !important;
   color: inherit !important;
 }
-
-/*# sourceMappingURL=style.css.map */
