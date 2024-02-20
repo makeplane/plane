@@ -871,20 +871,9 @@ class SubIssuesEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 parent_id=issue_id, workspace__slug=slug
             )
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -898,6 +887,40 @@ class SubIssuesEndpoint(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~models.Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~models.Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~models.Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
             .annotate(state_group=F("state__group"))
         )
