@@ -21,9 +21,9 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     ProjectMember,
-    IssueSubscriber,
 )
 from plane.app.serializers import (
+    IssueCreateSerializer,
     IssueSerializer,
     InboxSerializer,
     InboxIssueSerializer,
@@ -253,7 +253,7 @@ class InboxIssueViewSet(BaseViewSet):
                     ),
                 }
 
-            issue_serializer = IssueSerializer(
+            issue_serializer = IssueCreateSerializer(
                 issue, data=issue_data, partial=True
             )
 
