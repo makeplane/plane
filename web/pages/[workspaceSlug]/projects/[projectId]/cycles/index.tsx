@@ -21,7 +21,7 @@ import { NextPageWithLayout } from "lib/types";
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { CyclesListMobileHeader } from "components/cycles/cycles-list-mobile-header";
-
+import useSize from "hooks/use-window-size";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -34,6 +34,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
     currentUser,
   } = useUser();
   const { currentProjectCycleIds, loader } = useCycle();
+  const { windowWidth } = useSize();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -129,7 +130,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <div className="flex items-center self-end sm:self-center md:self-center lg:self-center gap-1 rounded bg-custom-background-80 p-1">
                   {CYCLE_VIEW_LAYOUTS.map((layout) => {
                     if (layout.key === "gantt" && cycleTab === "draft") return null;
-
+                    if (layout.key === 'gantt' && windowWidth < 768) return null;
                     return (
                       <Tooltip key={layout.key} tooltipContent={layout.title}>
                         <button
