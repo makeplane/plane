@@ -342,13 +342,6 @@ class InboxIssueViewSet(BaseViewSet):
         issue = (
             self.get_queryset()
             .filter(pk=issue_id)
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=request.user, issue_id=OuterRef("id")
-                    )
-                )
-            )
             .first()
         )
         serializer = IssueDetailSerializer(

@@ -269,13 +269,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         issue = (
             self.get_queryset()
             .filter(pk=pk)
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=request.user, issue_id=OuterRef("id")
-                    )
-                )
-            )
             .first()
         )
         return Response(
@@ -1220,13 +1213,6 @@ class IssueArchiveViewSet(BaseViewSet):
         issue = (
             self.get_queryset()
             .filter(pk=pk)
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        subscriber=request.user, issue_id=OuterRef("id")
-                    )
-                )
-            )
             .first()
         )
         return Response(
