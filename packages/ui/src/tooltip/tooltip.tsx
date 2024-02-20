@@ -47,7 +47,7 @@ export const Tooltip: React.FC<ITooltipProps> = ({
     hoverCloseDelay={closeDelay}
     content={
       <div
-        className={`relative z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md ${className}`}
+        className={`relative hidden md:block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md ${className}`}
       >
         {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
         {tooltipContent}
