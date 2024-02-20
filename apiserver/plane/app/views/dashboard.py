@@ -461,29 +461,25 @@ def dashboard_recent_projects(self, request, slug):
 
 
 def dashboard_recent_collaborators(self, request, slug):
-    # Fetch all users who have performed an activity in the projects where the user exists
-    users_with_activities = (
-        IssueActivity.objects.filter(
-            workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
+    project_members = ProjectMember.objects.filter(
+        workspace__slug=slug,
+        project__project_projectmember__member=request.user,
+        project__project_projectmember__is_active=True,
+    ).values_list("member", flat=True).distinct()
+
+    # Order the queryset so that the logged-in user comes first
+    project_members = project_members.order_by(
+        Case(
+            When(member=request.user, then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
         )
-        .values("actor")
-        .annotate(num_activities=Count("actor"))
-        .order_by(
-            Case(
-                When(actor=request.user, then=Value(0)),
-                default=Value(1),
-            ),
-            "-num_activities",
-        )
-        .values_list("actor", flat=True)
     )
 
     return self.paginate(
         request=request,
-        queryset=users_with_activities,
-        controller=self.get_results_controller
+        queryset=project_members,
+        controller=self.get_results_controller,
     )
 
 
@@ -495,14 +491,17 @@ class DashboardEndpoint(BaseAPIView):
                 active_issue_count=Count(
                     Case(
                         When(
-                            issue_assignee__issue__state__group__in=["unstarted", "started"], 
-                            then=1
-                        ), 
-                        output_field=IntegerField()
+                            issue_assignee__issue__state__group__in=[
+                                "unstarted",
+                                "started",
+                            ],
+                            then=1,
+                        ),
+                        output_field=IntegerField(),
                     )
                 )
             )
-            .values('active_issue_count', user_id=F('id'))
+            .values("active_issue_count", user_id=F("id"))
         )
         return user_active_issue_counts
 
