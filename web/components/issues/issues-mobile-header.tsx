@@ -4,7 +4,7 @@ import router from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
 // icons
-import { Calendar, ChevronDown, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
+import { Calendar, ChevronDown, Kanban, List, Sheet } from "lucide-react";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
 // hooks
@@ -20,7 +20,6 @@ export const IssuesMobileHeader = observer(() => {
         { key: "kanban", title: "Kanban view", icon: Kanban },
         { key: "calendar", title: "Calendar view", icon: Calendar },
         { key: "spreadsheet", title: "Spreadsheet view", icon: Sheet },
-        { key: "gantt_chart", title: "Gantt view", icon: GanttChartSquare },
     ];
     const [analyticsModal, setAnalyticsModal] = useState(false);
     const { workspaceSlug, projectId } = router.query as {

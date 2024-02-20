@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // ui
 import { Tooltip } from "@plane/ui";
@@ -6,6 +6,8 @@ import { Tooltip } from "@plane/ui";
 import { TIssueLayouts } from "@plane/types";
 // constants
 import { ISSUE_LAYOUTS } from "constants/issue";
+// hooks
+import useSize from "hooks/use-window-size";
 
 type Props = {
   layouts: TIssueLayouts[];
@@ -15,6 +17,18 @@ type Props = {
 
 export const LayoutSelection: React.FC<Props> = (props) => {
   const { layouts, onChange, selectedLayout } = props;
+  const { windowWidth } = useSize();
+
+  useEffect(() => {
+    const handleMobileLayout = () => {
+      if (selectedLayout === "gantt_chart") {
+        onChange("list");
+      }
+    };
+    if (windowWidth < 768) {
+      handleMobileLayout();
+    }
+  }, [onChange, selectedLayout, windowWidth]);
 
   return (
     <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">

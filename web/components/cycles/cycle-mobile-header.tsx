@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 //components
 import { CustomMenu } from "@plane/ui";
 // icons
-import { Calendar, ChevronDown, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
+import { Calendar, ChevronDown, Kanban, List, Sheet } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember } from "hooks/store";
@@ -21,7 +21,6 @@ export const CycleMobileHeader = observer(() => {
     { key: "kanban", title: "Kanban view", icon: Kanban },
     { key: "calendar", title: "Calendar view", icon: Calendar },
     { key: "spreadsheet", title: "Spreadsheet view", icon: Sheet },
-    { key: "gantt_chart", title: "Gantt view", icon: GanttChartSquare },
   ];
 
   const { workspaceSlug, projectId, cycleId } = router.query as {

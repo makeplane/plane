@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import router from "next/router";
 // icons
-import { Calendar, ChevronDown, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
+import { Calendar, ChevronDown, Kanban, List, Sheet } from "lucide-react";
 // components
 import { ProjectAnalyticsModal } from "components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
@@ -21,7 +21,6 @@ export const ModuleMobileHeader = observer(() => {
     { key: "kanban", title: "Kanban view", icon: Kanban },
     { key: "calendar", title: "Calendar view", icon: Calendar },
     { key: "spreadsheet", title: "Spreadsheet view", icon: Sheet },
-    { key: "gantt_chart", title: "Gantt view", icon: GanttChartSquare },
   ];
   const { workspaceSlug, projectId, moduleId } = router.query as {
     workspaceSlug: string;
