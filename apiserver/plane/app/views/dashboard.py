@@ -14,6 +14,7 @@ from django.db.models import (
     JSONField,
     Func,
     Prefetch,
+    IntegerField,
 )
 from django.utils import timezone
 
@@ -34,6 +35,8 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     IssueRelation,
+    IssueAssignee,
+    User,
 )
 from plane.app.serializers import (
     IssueActivitySerializer,
@@ -480,10 +483,28 @@ def dashboard_recent_collaborators(self, request, slug):
     return self.paginate(
         request=request,
         queryset=users_with_activities,
+        controller=self.get_results_controller
     )
 
 
 class DashboardEndpoint(BaseAPIView):
+    def get_results_controller(self, users_with_activities):
+        user_active_issue_counts = (
+            User.objects.filter(id__in=users_with_activities)
+            .annotate(
+                active_issue_count=Count(
+                    Case(
+                        When(
+                            issue_assignee__issue__state__group__in=["unstarted", "started"], 
+                            then=1
+                        ), 
+                        output_field=IntegerField()
+                    )
+                )
+            )
+            .values('id', 'active_issue_count')
+        )
+        return user_active_issue_counts
 
     def create(self, request, slug):
         serializer = DashboardSerializer(data=request.data)
