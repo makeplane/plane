@@ -86,7 +86,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
 
   const cycleIds = (getProjectCycleIds(projectId) ?? [])?.filter((cycleId) => {
     const cycleDetails = getCycleById(cycleId);
-    return cycleDetails?.status.toLowerCase() != "completed" ? true : false;
+    return cycleDetails?.status ? (cycleDetails?.status.toLowerCase() != "completed" ? true : false) : true;
   });
 
   const options: DropdownOptions = cycleIds?.map((cycleId) => {
@@ -172,7 +172,10 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn(
+              "clickable block h-full w-full outline-none hover:bg-custom-background-80",
+              buttonContainerClassName
+            )}
             onClick={handleOnClick}
           >
             {button}
@@ -182,7 +185,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,

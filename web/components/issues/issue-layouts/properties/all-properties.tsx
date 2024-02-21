@@ -1,8 +1,10 @@
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+import xor from "lodash/xor";
 // hooks
-import { useEventTracker, useEstimate, useLabel, useApplication } from "hooks/store";
+import { useEventTracker, useEstimate, useLabel, useIssues } from "hooks/store";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
@@ -12,6 +14,8 @@ import {
   EstimateDropdown,
   PriorityDropdown,
   ProjectMemberDropdown,
+  ModuleDropdown,
+  CycleDropdown,
   StateDropdown,
 } from "components/dropdowns";
 // helpers
@@ -20,6 +24,7 @@ import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // constants
 import { ISSUE_UPDATED } from "constants/event-tracker";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -36,12 +41,39 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
   const {
-    router: { workspaceSlug },
-  } = useApplication();
+    issues: { addModulesToIssue, removeModulesFromIssue },
+  } = useIssues(EIssuesStoreType.MODULE);
+  const {
+    issues: { addIssueToCycle, removeIssueFromCycle },
+  } = useIssues(EIssuesStoreType.CYCLE);
   // router
   const router = useRouter();
+  const { workspaceSlug, cycleId, moduleId } = router.query;
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const currentLayout = `${activeLayout} layout`;
+
+  const issueOperations = useMemo(
+    () => ({
+      addModulesToIssue: async (moduleIds: string[]) => {
+        if (!workspaceSlug || !issue.project_id || !issue.id) return;
+        await addModulesToIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds);
+      },
+      removeModulesFromIssue: async (moduleIds: string[]) => {
+        if (!workspaceSlug || !issue.project_id || !issue.id) return;
+        await removeModulesFromIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds);
+      },
+      addIssueToCycle: async (cycleId: string) => {
+        if (!workspaceSlug || !issue.project_id || !issue.id) return;
+        await addIssueToCycle?.(workspaceSlug.toString(), issue.project_id, cycleId, [issue.id]);
+      },
+      removeIssueFromCycle: async (cycleId: string) => {
+        if (!workspaceSlug || !issue.project_id || !issue.id) return;
+        await removeIssueFromCycle?.(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
+      },
+    }),
+    [workspaceSlug, issue, addModulesToIssue, removeModulesFromIssue, addIssueToCycle, removeIssueFromCycle]
+  );
+
   const handleState = (stateId: string) => {
     handleIssues({ ...issue, state_id: stateId }).then(() => {
       captureIssueEvent({
@@ -97,6 +129,45 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       });
     });
   };
+
+  const handleModule = useCallback(
+    (moduleIds: string[] | null) => {
+      if (!issue || !issue.module_ids || !moduleIds) return;
+
+      const updatedModuleIds = xor(issue.module_ids, moduleIds);
+      const modulesToAdd: string[] = [];
+      const modulesToRemove: string[] = [];
+      for (const moduleId of updatedModuleIds)
+        if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
+        else modulesToAdd.push(moduleId);
+      if (modulesToAdd.length > 0) issueOperations.addModulesToIssue(modulesToAdd);
+      if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
+
+      captureIssueEvent({
+        eventName: ISSUE_UPDATED,
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
+      });
+    },
+    [issueOperations, captureIssueEvent, currentLayout, router, issue]
+  );
+
+  const handleCycle = useCallback(
+    (cycleId: string | null) => {
+      if (!issue || issue.cycle_id === cycleId) return;
+      if (cycleId) issueOperations.addIssueToCycle?.(cycleId);
+      else issueOperations.removeIssueFromCycle?.(issue.cycle_id ?? "");
+
+      captureIssueEvent({
+        eventName: ISSUE_UPDATED,
+        payload: { ...issue, state: "SUCCESS", element: currentLayout },
+        path: router.asPath,
+        updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
+      });
+    },
+    [issue, issueOperations, captureIssueEvent, currentLayout, router.asPath]
+  );
 
   const handleStartDate = (date: Date | null) => {
     handleIssues({ ...issue, start_date: date ? renderFormattedPayloadDate(date) : null }).then(() => {
@@ -248,6 +319,40 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           />
         </div>
       </WithDisplayPropertiesHOC>
+
+      {/* modules */}
+      {moduleId === undefined && (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+          <div className="h-5">
+            <ModuleDropdown
+              projectId={issue?.project_id}
+              value={issue?.module_ids ?? []}
+              onChange={handleModule}
+              disabled={isReadOnly}
+              multiple
+              buttonVariant="border-with-text"
+              showCount={true}
+              showTooltip
+            />
+          </div>
+        </WithDisplayPropertiesHOC>
+      )}
+
+      {/* cycles */}
+      {cycleId === undefined && (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+          <div className="h-5">
+            <CycleDropdown
+              projectId={issue?.project_id}
+              value={issue?.cycle_id}
+              onChange={handleCycle}
+              disabled={isReadOnly}
+              buttonVariant="border-with-text"
+              showTooltip
+            />
+          </div>
+        </WithDisplayPropertiesHOC>
+      )}
 
       {/* estimates */}
       {areEstimatesEnabledForCurrentProject && (

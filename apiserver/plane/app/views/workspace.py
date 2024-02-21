@@ -22,6 +22,7 @@ from django.db.models import (
     When,
     Max,
     IntegerField,
+    Sum,
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
@@ -73,6 +74,9 @@ from plane.db.models import (
     WorkspaceUserProperties,
     Estimate,
     EstimatePoint,
+    Module,
+    ModuleLink,
+    Cycle,
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -85,6 +89,12 @@ from plane.app.permissions import (
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.event_tracking_task import workspace_invite_event
+from plane.app.serializers.module import (
+    ModuleSerializer,
+)
+from plane.app.serializers.cycle import (
+    CycleSerializer,
+)
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -1488,6 +1498,192 @@ class WorkspaceEstimatesEndpoint(BaseAPIView):
         )
         serializer = WorkspaceEstimateSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkspaceModulesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def get(self, request, slug):
+        modules = (
+            Module.objects.filter(workspace__slug=slug)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("lead")
+            .prefetch_related("members")
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related(
+                        "module", "created_by"
+                    ),
+                )
+            )
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                ),
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        )
+
+        serializer = ModuleSerializer(modules, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
+
+
+class WorkspaceCyclesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def get(self, request, slug):
+        cycles = (
+            Cycle.objects.filter(workspace__slug=slug)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("owned_by")
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle",
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="cancelled",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="unstarted",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="backlog",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                total_estimates=Sum("issue_cycle__issue__estimate_point")
+            )
+            .annotate(
+                completed_estimates=Sum(
+                    "issue_cycle__issue__estimate_point",
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                started_estimates=Sum(
+                    "issue_cycle__issue__estimate_point",
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+        serializer = CycleSerializer(cycles, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
 
 class WorkspaceUserPropertiesEndpoint(BaseAPIView):

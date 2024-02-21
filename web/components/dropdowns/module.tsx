@@ -278,7 +278,10 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn(
+              "clickable block h-full w-full outline-none hover:bg-custom-background-80",
+              buttonContainerClassName
+            )}
             onClick={handleOnClick}
           >
             {button}
@@ -288,7 +291,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "clickable block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,

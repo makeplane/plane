@@ -242,7 +242,10 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         >
           <div className="w-full overflow-hidden">
             <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
-              <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100" tabIndex={-1}>
+              <div
+                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
+                tabIndex={-1}
+              >
                 {issueDetail.name}
               </div>
             </Tooltip>
@@ -251,15 +254,15 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       </td>
       {/* Rest of the columns */}
       {SPREADSHEET_PROPERTY_LIST.map((property) => (
-          <IssueColumn
-            displayProperties={displayProperties}
-            issueDetail={issueDetail}
-            disableUserActions={disableUserActions}
-            property={property}
-            handleIssues={handleIssues}
-            isEstimateEnabled={isEstimateEnabled}
-          />
-        ))}
+        <IssueColumn
+          displayProperties={displayProperties}
+          issueDetail={issueDetail}
+          disableUserActions={disableUserActions}
+          property={property}
+          handleIssues={handleIssues}
+          isEstimateEnabled={isEstimateEnabled}
+        />
+      ))}
     </>
   );
 });
