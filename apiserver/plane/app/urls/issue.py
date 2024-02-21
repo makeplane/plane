@@ -90,11 +90,13 @@ urlpatterns = [
         BulkImportIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
+    # deprecated endpoint TODO: remove once confirmed
     path(
         "workspaces/<str:slug>/my-issues/",
         UserWorkSpaceIssues.as_view(),
         name="workspace-issues",
     ),
+    ## 
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),

@@ -10,3 +10,5 @@ export * from "./start-date-column";
 export * from "./state-column";
 export * from "./sub-issue-column";
 export * from "./updated-on-column";
+export * from "./module-column";
+export * from "./cycle-column";

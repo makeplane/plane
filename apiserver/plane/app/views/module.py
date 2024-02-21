@@ -449,8 +449,7 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 issue_module__module_id=self.kwargs.get("module_id"),
             )
             .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("labels", "assignees")
-            .prefetch_related("issue_module__module")
+            .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -474,6 +473,32 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         ).distinct()
 
     @method_decorator(gzip_page)
@@ -485,10 +510,39 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ]
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = self.get_queryset().filter(**filters)
-        serializer = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if self.fields or self.expand:
+            issues = IssueSerializer(
+                issue_queryset, many=True, fields=fields if fields else None
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+        return Response(issues, status=status.HTTP_200_OK)
 
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):
