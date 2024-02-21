@@ -131,7 +131,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                           backgroundColor: label?.color ?? "#000000",
                         }}
                       />
-                      <div className="line-clamp-1 inline-block w-auto max-w-[100px] truncate">{label?.name}</div>
+                      <div className="line-clamp-1 inline-block w-auto max-w-[80px] md:max-w-[100px] truncate">
+                        {label?.name}
+                      </div>
                     </div>
                   </div>
                 </Tooltip>

@@ -127,7 +127,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
-      className={cn("h-full", className)}
+      className={cn("h-full w-full", className)}
       value={value}
       onChange={dropdownOnChange}
       disabled={disabled}

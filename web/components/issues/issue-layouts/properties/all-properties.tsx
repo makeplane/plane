@@ -152,8 +152,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5">
+        <div className="h-5 w-min max-w-[250px]">
           <StateDropdown
+            className="w-full "
             value={issue.state_id}
             onChange={handleState}
             projectId={issue.project_id}
