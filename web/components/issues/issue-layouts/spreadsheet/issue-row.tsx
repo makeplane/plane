@@ -188,7 +188,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     <>
       <td
         className={cn(
-          "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200",
+          "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-[1] border-custom-border-200",
           {
             "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
           },
