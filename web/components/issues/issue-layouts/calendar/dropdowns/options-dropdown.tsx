@@ -53,12 +53,18 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const handleLayoutChange = (layout: TCalendarLayouts) => {
     if (!workspaceSlug || !projectId) return;
 
-    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
-      calendar: {
-        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
-        layout,
+    issuesFilterStore.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.DISPLAY_FILTERS,
+      {
+        calendar: {
+          ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+          layout,
+        },
       },
-    });
+      viewId
+    );
 
     issueCalendarView.updateCalendarPayload(
       layout === "month"
