@@ -24,6 +24,7 @@ export interface IEventTrackerStore {
   trackElement: string | undefined;
   // computed
   getRequiredProperties: any;
+  getTrackElement: string | undefined;
   // actions
   resetSession: () => void;
   setTrackElement: (element: string) => void;
@@ -47,6 +48,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       trackElement: observable,
       // computed
       getRequiredProperties: computed,
+      getTrackElement: computed,
       // actions
       resetSession: action,
       setTrackElement: action,
@@ -56,6 +58,13 @@ export class EventTrackerStore implements IEventTrackerStore {
     });
     // store
     this.rootStore = _rootStore;
+  }
+
+  /**
+   * @description: Returns the current track element.
+   */
+  get getTrackElement() {
+    return this.trackElement;
   }
 
   /**

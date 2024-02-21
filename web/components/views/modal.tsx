@@ -28,7 +28,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const { cycleId, moduleId, viewId } = router.query;
   // store hooks
   const { createView, updateView } = useProjectView();
-  const { captureEvent, trackElement } = useEventTracker();
+  const { captureEvent, getTrackElement } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -44,8 +44,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
           view_id: res.id,
           filters: res.filters,
           element_id: cycleId ?? moduleId ?? viewId ?? projectId,
-          element: trackElement
-            ? trackElement
+          element: getTrackElement
+            ? getTrackElement
             : cycleId
             ? "Cycle issues page"
             : moduleId
