@@ -95,12 +95,11 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
                 <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
                   <ToggleSwitch
                     value={Boolean(parseInt(enableMagicLogin))}
-                    // onChange={() => {
-                    //   Boolean(parseInt(enableMagicLogin)) === true
-                    //     ? updateConfig("ENABLE_MAGIC_LINK_LOGIN", "0")
-                    //     : updateConfig("ENABLE_MAGIC_LINK_LOGIN", "1");
-                    // }}
-                    onChange={() => {}}
+                    onChange={() => {
+                      Boolean(parseInt(enableMagicLogin)) === true
+                        ? updateConfig("ENABLE_MAGIC_LINK_LOGIN", "0")
+                        : updateConfig("ENABLE_MAGIC_LINK_LOGIN", "1");
+                    }}
                     size="sm"
                     disabled={isSubmitting}
                   />
