@@ -21,6 +21,10 @@ export interface IProjectPageStore {
   privateProjectPageIds: string[] | undefined;
   publicProjectPageIds: string[] | undefined;
   recentProjectPages: IRecentPages | undefined;
+
+  // page
+  getPageDetails: (projectId: string, pageId: string) => IPageStore | undefined;
+
   // fetch actions
   fetchProjectPages: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -58,6 +62,7 @@ export class ProjectPageStore implements IProjectPageStore {
       // fetch actions
       fetchProjectPages: action,
       fetchArchivedProjectPages: action,
+      getPageDetails: action,
       // crud actions
       createPage: action,
       deletePage: action,
@@ -66,6 +71,8 @@ export class ProjectPageStore implements IProjectPageStore {
 
     this.pageService = new PageService();
   }
+
+  getPageDetails = (projectId: string, pageId: string) => this.projectPageMap[projectId][pageId];
 
   get projectPageIds() {
     const projectId = this.rootStore.app.router.projectId;
