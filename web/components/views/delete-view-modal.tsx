@@ -4,12 +4,13 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { useProjectView } from "hooks/store";
+import { useProjectView, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
 import { IProjectView } from "@plane/types";
+import { VIEW_DELETED } from "constants/event-tracker";
 
 type Props = {
   data: IProjectView;
@@ -26,6 +27,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteView } = useProjectView();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -42,20 +44,29 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
     await deleteView(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         handleClose();
-
+        captureEvent(VIEW_DELETED, {
+          view_id: data.id,
+          element: "Views page",
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "View deleted successfully.",
         });
       })
-      .catch(() =>
+      .catch(() => {
+        captureEvent(VIEW_DELETED, {
+          view_id: data.id,
+          element: "Views page",
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "View could not be deleted. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => {
         setIsDeleteLoading(false);
       });

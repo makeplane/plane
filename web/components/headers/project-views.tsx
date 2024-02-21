@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
@@ -24,6 +24,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
+  const { setTrackElement } = useEventTracker();
 
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -75,7 +76,10 @@ export const ProjectViewsHeader: React.FC = observer(() => {
                 variant="primary"
                 size="sm"
                 prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
-                onClick={() => toggleCreateViewModal(true)}
+                onClick={() => {
+                  setTrackElement("Views page");
+                  toggleCreateViewModal(true);
+                }}
               >
                 Create View
               </Button>

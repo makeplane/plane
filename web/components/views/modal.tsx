@@ -1,13 +1,16 @@
 import { FC, Fragment } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useProjectView } from "hooks/store";
+import { useEventTracker, useProjectView } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ProjectViewForm } from "components/views";
 // types
 import { IProjectView } from "@plane/types";
+// constants
+import { VIEW_CREATED, VIEW_UPDATED } from "constants/event-tracker";
 
 type Props = {
   data?: IProjectView | null;
@@ -20,8 +23,12 @@ type Props = {
 
 export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
+  // router
+  const router = useRouter();
+  const { cycleId, moduleId, viewId } = router.query;
   // store hooks
   const { createView, updateView } = useProjectView();
+  const { captureEvent, trackElement } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -31,33 +38,64 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
 
   const handleCreateView = async (payload: IProjectView) => {
     await createView(workspaceSlug, projectId, payload)
-      .then(() => {
+      .then((res) => {
         handleClose();
+        captureEvent(VIEW_CREATED, {
+          view_id: res.id,
+          filters: res.filters,
+          element_id: cycleId ?? moduleId ?? viewId ?? projectId,
+          element: trackElement
+            ? trackElement
+            : cycleId
+            ? "Cycle issues page"
+            : moduleId
+            ? "Module issues page"
+            : viewId
+            ? "View issues page"
+            : "Project issues page",
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "View created successfully.",
         });
       })
-      .catch(() =>
+      .catch(() => {
+        captureEvent(VIEW_CREATED, {
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   const handleUpdateView = async (payload: IProjectView) => {
     await updateView(workspaceSlug, projectId, data?.id as string, payload)
-      .then(() => handleClose())
-      .catch((err) =>
+      .then((res) => {
+        captureEvent(VIEW_UPDATED, {
+          view_id: res.id,
+          filters: res.filters,
+          element: "Views page",
+          state: "SUCCESS",
+        });
+        handleClose();
+      })
+      .catch((err) => {
+        captureEvent(VIEW_UPDATED, {
+          view_id: data?.id,
+          element: "Views page",
+          state: "FAILED",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err.detail ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   const handleFormSubmit = async (formData: IProjectView) => {

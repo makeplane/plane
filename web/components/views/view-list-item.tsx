@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // hooks
-import { useProjectView, useUser } from "hooks/store";
+import { useEventTracker, useProjectView, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
@@ -17,6 +17,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { IProjectView } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { VIEW_FAVORITED, VIEW_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   view: IProjectView;
@@ -37,17 +38,30 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
+  const { captureEvent } = useEventTracker();
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
+      captureEvent(VIEW_FAVORITED, {
+        view_id: view.id,
+        element: "Views page",
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
+      captureEvent(VIEW_UNFAVORITED, {
+        view_id: view.id,
+        element: "Views page",
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {

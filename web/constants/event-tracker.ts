@@ -165,6 +165,12 @@ export const MODULE_UNFAVORITED = "Module unfavorited";
 export const MODULE_LINK_CREATED = "Module link created";
 export const MODULE_LINK_UPDATED = "Module link updated";
 export const MODULE_LINK_DELETED = "Module link deleted";
+// Project View Events
+export const VIEW_CREATED = "View created";
+export const VIEW_UPDATED = "View updated";
+export const VIEW_DELETED = "View deleted";
+export const VIEW_FAVORITED = "View favorited";
+export const VIEW_UNFAVORITED = "View unfavorited";
 // Issue Events
 export const ISSUE_CREATED = "Issue created";
 export const ISSUE_UPDATED = "Issue updated";

@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useProjectView, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProjectView, useUser } from "hooks/store";
 // components
 import { ProjectViewListItem } from "components/views";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
@@ -28,6 +28,7 @@ export const ProjectViewsList = observer(() => {
     currentUser,
   } = useUser();
   const { projectViewIds, getViewById, loader } = useProjectView();
+  const { setTrackElement } = useEventTracker();
 
   if (loader || !projectViewIds) return <ViewListLoader />;
 
@@ -73,7 +74,10 @@ export const ProjectViewsList = observer(() => {
           }}
           primaryButton={{
             text: VIEW_EMPTY_STATE_DETAILS["project-views"].primaryButton.text,
-            onClick: () => toggleCreateViewModal(true),
+            onClick: () => {
+              setTrackElement("Views empty state");
+              toggleCreateViewModal(true);
+            },
           }}
           size="lg"
           disabled={!isEditingAllowed}
