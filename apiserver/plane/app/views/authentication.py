@@ -543,6 +543,8 @@ class GoogleAuthEndpoint(BaseAPIView):
         else:
             user = User.objects.create(email=email, username=uuid.uuid4().hex)
             user.set_password(uuid.uuid4().hex)
+            # Create profile
+            _ = Profile.objects.create(user=user)
 
             account = Account.objects.create(
                 user=user,
@@ -569,7 +571,6 @@ class GoogleAuthEndpoint(BaseAPIView):
                 metadata=request.data.get("metadata", {}),
             )
 
-            _ = Profile.objects.create(user=user)
             user.save()
             serializer = UserAdminLiteSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
