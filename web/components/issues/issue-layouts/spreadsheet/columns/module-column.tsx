@@ -65,8 +65,8 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
         disabled={disabled}
         placeholder="Select modules"
         buttonVariant="transparent-with-text"
-        buttonClassName="rounded-none text-left"
-        buttonContainerClassName="w-full"
+        buttonContainerClassName="w-full relative flex items-center p-2"
+        buttonClassName="relative border-[0.5px] border-custom-border-400 h-4.5"
         onClose={onClose}
         multiple
         showCount={true}
