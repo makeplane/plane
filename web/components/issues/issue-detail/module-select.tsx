@@ -36,8 +36,8 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
   const handleIssueModuleChange = async (moduleIds: string[]) => {
     if (!issue || !issue.module_ids) return;
     setIsUpdating(true);
-    const updatedModuleId = xor(issue.module_ids, moduleIds)[0];
-    if (updatedModuleId !== undefined) {
+    const updatedModuleIds = xor(issue.module_ids, moduleIds);
+    for (const updatedModuleId of updatedModuleIds) {
       if (issue.module_ids.includes(updatedModuleId)) {
         await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, [updatedModuleId]);
       } else {
