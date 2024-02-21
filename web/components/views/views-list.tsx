@@ -44,7 +44,7 @@ export const ProjectViewsList = observer(() => {
     <>
       {viewsList.length > 0 ? (
         <div className="flex h-full w-full flex-col">
-          <div className="flex w-full flex-col overflow-hidden">
+          <div className="flex w-full flex-col flex-shrink-0 overflow-hidden">
             <div className="flex w-full items-center gap-2.5 border-b border-custom-border-200 px-5 py-3">
               <Search className="text-custom-text-200" size={14} strokeWidth={2} />
               <Input
@@ -56,11 +56,13 @@ export const ProjectViewsList = observer(() => {
               />
             </div>
           </div>
-          {filteredViewsList.length > 0 ? (
-            filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
-          ) : (
-            <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
-          )}
+          <div className="flex flex-col h-full w-full vertical-scrollbar scrollbar-lg">
+            {filteredViewsList.length > 0 ? (
+              filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
+            ) : (
+              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+            )}
+          </div>
         </div>
       ) : (
         <EmptyState

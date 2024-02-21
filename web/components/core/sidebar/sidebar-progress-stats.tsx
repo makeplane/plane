@@ -125,7 +125,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
       </Tab.List>
       <Tab.Panels className="flex w-full items-center justify-between text-custom-text-200">
-        <Tab.Panel as="div" className="flex min-h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
+        <Tab.Panel
+          as="div"
+          className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
+        >
           {distribution?.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
@@ -182,7 +185,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
             </div>
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
+        <Tab.Panel
+          as="div"
+          className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
+        >
           {distribution?.labels.length > 0 ? (
             distribution.labels.map((label, index) => (
               <SingleProgressStats
@@ -222,7 +228,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
             </div>
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
+        <Tab.Panel
+          as="div"
+          className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5 vertical-scrollbar scrollbar-sm"
+        >
           {Object.keys(groupedIssues).map((group, index) => (
             <SingleProgressStats
               key={index}

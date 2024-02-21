@@ -132,7 +132,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     }, 300);
   };
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
-  const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative mt-6 h-44 w-full">
@@ -269,23 +269,44 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             <Controller
               name="network"
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  onChange={onChange}
-                  label={selectedNetwork?.label ?? "Select network"}
-                  buttonClassName="!border-custom-border-200 !shadow-none font-medium rounded-md"
-                  input
-                  disabled={!isAdmin}
-                  optionsClassName="w-full"
-                >
-                  {NETWORK_CHOICES.map((network) => (
-                    <CustomSelect.Option key={network.key} value={network.key}>
-                      {network.label}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
-              )}
+              render={({ field: { value, onChange } }) => {
+                const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
+
+                return (
+                  <CustomSelect
+                    value={value}
+                    onChange={onChange}
+                    label={
+                      <div className="flex items-center gap-1">
+                        {selectedNetwork ? (
+                          <>
+                            <selectedNetwork.icon className="h-3.5 w-3.5" />
+                            {selectedNetwork.label}
+                          </>
+                        ) : (
+                          <span className="text-custom-text-400">Select network</span>
+                        )}
+                      </div>
+                    }
+                    buttonClassName="!border-custom-border-200 !shadow-none font-medium rounded-md"
+                    input
+                    disabled={!isAdmin}
+                    // optionsClassName="w-full"
+                  >
+                    {NETWORK_CHOICES.map((network) => (
+                      <CustomSelect.Option key={network.key} value={network.key}>
+                        <div className="flex items-start gap-2">
+                          <network.icon className="h-3.5 w-3.5" />
+                          <div className="-mt-1">
+                            <p>{network.label}</p>
+                            <p className="text-xs text-custom-text-400">{network.description}</p>
+                          </div>
+                        </div>
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                );
+              }}
             />
           </div>
         </div>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react";
 // hooks
-import { useEventTracker, useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
@@ -44,6 +44,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
+  const { getUserDetails } = useMember();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -230,13 +231,14 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
             </div>
 
             <div className="relative flex flex-shrink-0 items-center gap-3">
-              <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
+              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`}>
                 <div className="flex w-10 cursor-default items-center justify-center">
-                  {cycleDetails.assignees.length > 0 ? (
+                  {cycleDetails.assignee_ids?.length > 0 ? (
                     <AvatarGroup showTooltip={false}>
-                      {cycleDetails.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                      ))}
+                      {cycleDetails.assignee_ids?.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   ) : (
                     <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
