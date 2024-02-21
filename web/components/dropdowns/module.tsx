@@ -88,13 +88,13 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
             </div>
           </div>
         ) : value.length > 0 ? (
-          <div className="flex items-center gap-2 py-0.5 flex-wrap">
+          <div className="flex items-center gap-2 py-0.5 max-w-full flex-grow truncate flex-wrap">
             {value.map((moduleId) => {
               const moduleDetails = getModuleById(moduleId);
               return (
                 <div
                   key={moduleId}
-                  className="flex items-center gap-1 bg-custom-background-80 text-custom-text-200 rounded px-1.5 py-1"
+                  className="flex items-center gap-1 max-w-full bg-custom-background-80 text-custom-text-200 rounded px-1.5 py-1"
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
