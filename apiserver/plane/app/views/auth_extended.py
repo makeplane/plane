@@ -7,6 +7,7 @@ import string
 import pytz
 from datetime import datetime, timedelta
 from django.contrib.auth import login, authenticate
+
 ## Django imports
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import (
@@ -492,79 +493,18 @@ class EmailCheckEndpoint(BaseAPIView):
 
 class AccountEndpoint(BaseAPIView):
 
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def get(self, request, provider, provider_id):
-        try:
-            account = Account.objects.get(
-                provider_account_id=provider_id, provider=provider
-            )
+    def get(self, request, pk=None):
+        if pk:
+            account = Account.objects.get(pk=pk, user=request.user)
             serializer = AccountSerializer(account)
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Account.DoesNotExist:
-            return Response(
-                {"error": "Account does not exists"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, provider, provider_id):
-        user_id = request.data.get("userId", False)
-        if not user_id:
-            return Response(
-                {"error": "UserId, Provider and provider id is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        account, created = Account.objects.get_or_create(
-            user_id=user_id,
-            provider=provider,
-            provider_account_id=provider_id,
-            defaults={
-                "access_token": request.data.get("access_token"),
-                "refresh_token": request.data.get("refresh_token", None),
-                "access_token_expired_at": (
-                    datetime.fromtimestamp(
-                        request.data.get("access_token_expired_at"),
-                        tz=pytz.utc,
-                    )
-                    if request.data.get("access_token_expired_at")
-                    else None
-                ),
-                "refresh_token_expired_at": (
-                    datetime.fromtimestamp(
-                        request.data.get("refresh_token_expired_at"),
-                        tz=pytz.utc,
-                    )
-                    if request.data.get("refresh_token_expired_at")
-                    else None
-                ),
-            },
+        account = Account.objects.filter(user=request.user)
+        serializer = AccountSerializer(account, many=True)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
         )
-
-        if not created:
-            # account access and refresh token
-            account.access_token = request.data.get("access_token")
-            account.access_token_expired_at = (
-                datetime.fromtimestamp(
-                    request.data.get("access_token_expired_at"),
-                    tz=pytz.utc,
-                )
-                if request.data.get("access_token_expired_at")
-                else None
-            )
-            account.metadata = request.data.get("metadata", {})
-
-        # last connected at
-        account.last_connected_at = timezone.now()
-        account.save()
-
-        serializer = AccountSerializer(account)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SessionEndpoint(BaseAPIView):
@@ -582,7 +522,6 @@ class SessionEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
 
     def post(self, request):
         user_id = request.data.get("user_id", False)

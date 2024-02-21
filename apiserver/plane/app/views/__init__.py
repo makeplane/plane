@@ -94,7 +94,6 @@ from .auth_extended import (
     ChangePasswordEndpoint,
     SetUserPasswordEndpoint,
     EmailCheckEndpoint,
-    MagicGenerateEndpoint,
     AccountEndpoint,
     SessionEndpoint,
     UserIdentifierEndpoint,
@@ -105,9 +104,12 @@ from .auth_extended import (
 
 from .authentication import (
     SignInEndpoint,
+    SignUpEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
+    MagicGenerateEndpoint,
     GoogleAuthEndpoint,
+    GithubAuthEndpoint,
 )
 
 from .module import (
