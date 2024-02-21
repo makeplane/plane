@@ -83,9 +83,6 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
           <div className="relative flex w-full items-center justify-between rounded p-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4 overflow-hidden">
-                <div className="grid h-10 w-10 flex-shrink-0 place-items-center rounded bg-custom-background-90 group-hover:bg-custom-background-100">
-                  <PhotoFilterIcon className="h-3.5 w-3.5" />
-                </div>
                 <div className="flex flex-col overflow-hidden ">
                   <p className="truncate break-all text-sm font-medium  leading-4">{view.name}</p>
                   {view?.description && <p className="break-all text-xs text-custom-text-200">{view.description}</p>}
