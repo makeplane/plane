@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+import xor from "lodash/xor";
 // hooks
 import { useEventTracker, useEstimate, useLabel, useIssues } from "hooks/store";
 // components
@@ -133,14 +134,14 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     (moduleIds: string[] | null) => {
       if (!issue || !issue.module_ids || !moduleIds) return;
 
-      if (moduleIds.length === 0) issueOperations.removeModulesFromIssue(issue.module_ids);
-      else if (moduleIds.length > issue.module_ids.length) {
-        const newModuleIds = moduleIds.filter((m) => !issue.module_ids?.includes(m));
-        issueOperations.addModulesToIssue(newModuleIds);
-      } else if (moduleIds.length < issue.module_ids.length) {
-        const removedModuleIds = issue.module_ids.filter((m) => !moduleIds.includes(m));
-        issueOperations.removeModulesFromIssue(removedModuleIds);
-      }
+      const updatedModuleIds = xor(issue.module_ids, moduleIds);
+      const modulesToAdd: string[] = [];
+      const modulesToRemove: string[] = [];
+      for (const moduleId of updatedModuleIds)
+        if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
+        else modulesToAdd.push(moduleId);
+      if (modulesToAdd.length > 0) issueOperations.addModulesToIssue(modulesToAdd);
+      if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
 
       captureIssueEvent({
         eventName: ISSUE_UPDATED,

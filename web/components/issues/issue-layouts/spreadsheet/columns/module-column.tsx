@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import xor from "lodash/xor";
 // hooks
 import { useEventTracker, useIssues } from "hooks/store";
 // components
@@ -32,15 +33,16 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
     async (moduleIds: string[] | null) => {
       if (!workspaceSlug || !issue || !issue.module_ids || !moduleIds) return;
 
-      if (moduleIds.length === 0)
-        removeModulesFromIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue.module_ids);
-      else if (moduleIds.length > issue.module_ids.length) {
-        const newModuleIds = moduleIds.filter((m) => !issue.module_ids?.includes(m));
-        addModulesToIssue(workspaceSlug.toString(), issue.project_id, issue.id, newModuleIds);
-      } else if (moduleIds.length < issue.module_ids.length) {
-        const removedModuleIds = issue.module_ids.filter((m) => !moduleIds.includes(m));
-        removeModulesFromIssue(workspaceSlug.toString(), issue.project_id, issue.id, removedModuleIds);
-      }
+      const updatedModuleIds = xor(issue.module_ids, moduleIds);
+      const modulesToAdd: string[] = [];
+      const modulesToRemove: string[] = [];
+      for (const moduleId of updatedModuleIds)
+        if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
+        else modulesToAdd.push(moduleId);
+      if (modulesToAdd.length > 0)
+        addModulesToIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd);
+      if (modulesToRemove.length > 0)
+        removeModulesFromIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToRemove);
 
       captureIssueEvent({
         eventName: "Issue updated",
