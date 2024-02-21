@@ -6,7 +6,7 @@ import { useGlobalView } from "hooks/store";
 // components
 import { GlobalViewListItem } from "components/workspace";
 // ui
-import { Loader } from "@plane/ui";
+import { ViewListLoader } from "components/ui";
 
 type Props = {
   searchQuery: string;
@@ -25,15 +25,7 @@ export const GlobalViewsList: React.FC<Props> = observer((props) => {
     workspaceSlug ? () => fetchAllGlobalViews(workspaceSlug.toString()) : null
   );
 
-  if (!currentWorkspaceViews)
-    return (
-      <Loader className="space-y-4 p-4">
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-      </Loader>
-    );
+  if (!currentWorkspaceViews) return <ViewListLoader />;
 
   const filteredViewsList = getSearchedViews(searchQuery);
 

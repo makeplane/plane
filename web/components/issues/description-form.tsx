@@ -13,7 +13,6 @@ import { TIssueOperations } from "./issue-detail";
 import { FileService } from "services/file.service";
 import { useMention, useWorkspace } from "hooks/store";
 import { observer } from "mobx-react";
-import { isNil } from "lodash";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -42,10 +41,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
-
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
-
+  // hooks
   const { setShowAlert } = useReloadConfirmations();
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
@@ -58,8 +56,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
     formState: { errors },
   } = useForm<TIssue>({
     defaultValues: {
-      name: "",
-      description_html: "",
+      name: issue?.name,
+      description_html: issue?.description_html,
     },
   });
 
@@ -68,24 +66,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
     id: issue.id,
     description_html: issue.description_html,
   });
-
-  // adding issue.description_html or issue.name to dependency array causes
-  // editor rerendering on every save
-  useEffect(() => {
-    if (issue.id) {
-      setLocalTitleValue(issue.name);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [issue.id]); // TODO: verify the exhaustive-deps warning
-
-  useEffect(() => {
-    if (issue.description_html) {
-      setLocalIssueDescription((state) => {
-        if (!isNil(state.description_html)) return state;
-        return { id: issue.id, description_html: issue.description_html };
-      });
-    }
-  }, [issue.description_html]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<TIssue>) => {
@@ -123,7 +103,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
     reset({
       ...issue,
     });
-  }, [issue, reset]);
+    setLocalIssueDescription({
+      id: issue.id,
+      description_html: issue.description_html === "" ? "<p></p>" : issue.description_html,
+    });
+    setLocalTitleValue(issue.name);
+  }, [issue, issue.description_html, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
   // TODO: Verify the exhaustive-deps warning
@@ -177,7 +162,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <div className="relative">
-        {issue.description_html ? (
+        {localIssueDescription.description_html ? (
           <Controller
             name="description_html"
             control={control}

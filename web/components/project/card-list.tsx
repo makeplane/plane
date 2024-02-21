@@ -4,8 +4,8 @@ import { useTheme } from "next-themes";
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
-import { Loader } from "@plane/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { ProjectsLoader } from "components/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
@@ -27,22 +27,12 @@ export const ProjectCardList = observer(() => {
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  if (!workspaceProjectIds)
-    return (
-      <Loader className="grid grid-cols-3 gap-4">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-      </Loader>
-    );
+  if (!workspaceProjectIds) return <ProjectsLoader />;
 
   return (
     <>
       {workspaceProjectIds.length > 0 ? (
-        <div className="h-full w-full overflow-y-auto p-8">
+        <div className="h-full w-full overflow-y-auto p-8 vertical-scrollbar scrollbar-lg">
           {searchedProjects.length == 0 ? (
             <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
           ) : (

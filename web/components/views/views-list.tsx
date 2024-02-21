@@ -8,7 +8,8 @@ import { useApplication, useProjectView, useUser } from "hooks/store";
 import { ProjectViewListItem } from "components/views";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Input, Loader, Spinner } from "@plane/ui";
+import { Input } from "@plane/ui";
+import { ViewListLoader } from "components/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { VIEW_EMPTY_STATE_DETAILS } from "constants/empty-state";
@@ -28,22 +29,7 @@ export const ProjectViewsList = observer(() => {
   } = useUser();
   const { projectViewIds, getViewById, loader } = useProjectView();
 
-  if (loader)
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <Spinner />
-      </div>
-    );
-
-  if (!projectViewIds)
-    return (
-      <Loader className="space-y-4 p-4">
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-      </Loader>
-    );
+  if (loader || !projectViewIds) return <ViewListLoader />;
 
   const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
@@ -58,7 +44,7 @@ export const ProjectViewsList = observer(() => {
     <>
       {viewsList.length > 0 ? (
         <div className="flex h-full w-full flex-col">
-          <div className="flex w-full flex-col overflow-hidden">
+          <div className="flex w-full flex-col flex-shrink-0 overflow-hidden">
             <div className="flex w-full items-center gap-2.5 border-b border-custom-border-200 px-5 py-3">
               <Search className="text-custom-text-200" size={14} strokeWidth={2} />
               <Input
@@ -70,11 +56,13 @@ export const ProjectViewsList = observer(() => {
               />
             </div>
           </div>
-          {filteredViewsList.length > 0 ? (
-            filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
-          ) : (
-            <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
-          )}
+          <div className="flex flex-col h-full w-full vertical-scrollbar scrollbar-lg">
+            {filteredViewsList.length > 0 ? (
+              filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
+            ) : (
+              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+            )}
+          </div>
         </div>
       ) : (
         <EmptyState

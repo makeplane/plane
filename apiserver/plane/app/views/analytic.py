@@ -1,6 +1,7 @@
 # Django imports
 from django.db.models import Count, Sum, F, Q
 from django.db.models.functions import ExtractMonth
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -331,8 +332,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             .order_by("state_group")
         )
 
+        current_year = timezone.now().year
         issue_completed_month_wise = (
-            base_issues.filter(completed_at__isnull=False)
+            base_issues.filter(completed_at__year=current_year)
             .annotate(month=ExtractMonth("completed_at"))
             .values("month")
             .annotate(count=Count("*"))

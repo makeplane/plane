@@ -108,7 +108,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div ref={containerRef} className="relative overflow-auto h-full w-full">
+    <div ref={containerRef} className="relative overflow-auto h-full w-full vertical-scrollbar scrollbar-lg">
       {groups &&
         groups.length > 0 &&
         groups.map(

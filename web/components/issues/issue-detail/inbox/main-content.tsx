@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
-import { IssueDescriptionForm, IssueUpdateStatus, TIssueOperations } from "components/issues";
+import { IssueUpdateStatus, TIssueOperations } from "components/issues";
+import { IssueTitleInput } from "../../title-input";
+import { IssueDescriptionInput } from "../../description-input";
 import { IssueReaction } from "../reactions";
 import { IssueActivity } from "../issue-activity";
 import { InboxIssueStatus } from "../../../inbox/inbox-issue-status";
@@ -29,11 +32,30 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
-  const issue = getIssueById(issueId);
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 3000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
+
+  const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue) return <></>;
 
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
+
+  const issueDescription =
+    issue.description_html !== undefined || issue.description_html !== null
+      ? issue.description_html != ""
+        ? issue.description_html
+        : "<p></p>"
+      : undefined;
 
   return (
     <>
@@ -57,15 +79,26 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issue} />
         </div>
 
-        <IssueDescriptionForm
+        <IssueTitleInput
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
+          projectId={issue.project_id}
+          issueId={issue.id}
           isSubmitting={isSubmitting}
-          issue={issue}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
           disabled={!is_editable}
+          value={issue.name}
+        />
+
+        <IssueDescriptionInput
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          value={issueDescription}
+          initialValue={issueDescription}
+          disabled={!is_editable}
+          issueOperations={issueOperations}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
         />
 
         {currentUser && (

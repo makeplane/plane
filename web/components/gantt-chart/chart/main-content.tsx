@@ -33,6 +33,7 @@ type Props = {
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
   updateCurrentViewRenderPayload: (direction: "left" | "right", currentView: TGanttViews) => void;
+  quickAdd?: React.JSX.Element | undefined;
 };
 
 export const GanttChartMainContent: React.FC<Props> = (props) => {
@@ -52,6 +53,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
     sidebarToRender,
     title,
     updateCurrentViewRenderPayload,
+    quickAdd,
   } = props;
   // chart hook
   const { currentView, currentViewData, updateScrollLeft } = useChart();
@@ -88,7 +90,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
       // DO NOT REMOVE THE ID
       id="gantt-container"
       className={cn(
-        "h-full w-full overflow-auto horizontal-scroll-enable flex border-t-[0.5px] border-custom-border-200",
+        "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
         {
           "mb-8": bottomSpacing,
         }
@@ -101,6 +103,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
         enableReorder={enableReorder}
         sidebarToRender={sidebarToRender}
         title={title}
+        quickAdd={quickAdd}
       />
       <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
         <ActiveChartView />

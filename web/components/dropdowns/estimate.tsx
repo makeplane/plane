@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
@@ -60,6 +60,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -110,13 +111,11 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
 
   const onOpen = () => {
     if (!activeEstimate && workspaceSlug) fetchProjectEstimates(workspaceSlug, projectId);
-    if (referenceElement) referenceElement.focus();
   };
 
   const handleClose = () => {
     if (!isOpen) return;
     setIsOpen(false);
-    if (referenceElement) referenceElement.blur();
     onClose && onClose();
   };
 
@@ -139,6 +138,12 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   return (
     <Combobox
@@ -205,6 +210,8 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
+                as="input"
+                ref={inputRef}
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}

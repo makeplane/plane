@@ -12,6 +12,7 @@ type GanttChartRootProps = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blockToRender: (data: any) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
+  quickAdd?: React.JSX.Element | undefined;
   enableBlockLeftResize?: boolean;
   enableBlockRightResize?: boolean;
   enableBlockMove?: boolean;
@@ -37,6 +38,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
     enableAddBlock = false,
     bottomSpacing = false,
     showAllBlocks = false,
+    quickAdd,
   } = props;
 
   return (
@@ -56,6 +58,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
         enableAddBlock={enableAddBlock}
         bottomSpacing={bottomSpacing}
         showAllBlocks={showAllBlocks}
+        quickAdd={quickAdd}
       />
     </ChartContextProvider>
   );

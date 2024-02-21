@@ -1,7 +1,8 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import size from "lodash/size";
 // mobx store
 import { useIssues } from "hooks/store";
 // components
@@ -15,10 +16,11 @@ import {
   ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
-// ui
-import { Spinner } from "@plane/ui";
+import { ActiveLoader } from "components/ui";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+// types
+import { IIssueFilterOptions } from "@plane/types";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   // router
@@ -44,46 +46,72 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     }
   );
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
+  const userFilters = issuesFilter?.issueFilters?.filters;
+
+  const issueFilterCount = size(
+    Object.fromEntries(
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
+    )
+  );
+
+  const handleClearAllFilters = () => {
+    if (!workspaceSlug || !projectId || !moduleId) return;
+    const newFilters: IIssueFilterOptions = {};
+    Object.keys(userFilters ?? {}).forEach((key) => {
+      newFilters[key as keyof IIssueFilterOptions] = null;
+    });
+    issuesFilter.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      {
+        ...newFilters,
+      },
+      moduleId.toString()
+    );
+  };
 
   if (!workspaceSlug || !projectId || !moduleId) return <></>;
+
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ModuleEmptyState
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            moduleId={moduleId.toString()}
+            activeLayout={activeLayout}
+            handleClearAllFilters={handleClearAllFilters}
+            isEmptyFilters={issueFilterCount > 0}
+          />
         </div>
       ) : (
-        <>
-          {issues?.groupedIssueIds?.length === 0 ? (
-            <ModuleEmptyState
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              moduleId={moduleId.toString()}
-              activeLayout={activeLayout}
-            />
-          ) : (
-            <>
-              <div className="h-full w-full overflow-auto">
-                {activeLayout === "list" ? (
-                  <ModuleListLayout />
-                ) : activeLayout === "kanban" ? (
-                  <ModuleKanBanLayout />
-                ) : activeLayout === "calendar" ? (
-                  <ModuleCalendarLayout />
-                ) : activeLayout === "gantt_chart" ? (
-                  <ModuleGanttLayout />
-                ) : activeLayout === "spreadsheet" ? (
-                  <ModuleSpreadsheetLayout />
-                ) : null}
-              </div>
-              {/* peek overview */}
-              <IssuePeekOverview />
-            </>
-          )}
-        </>
+        <Fragment>
+          <div className="h-full w-full overflow-auto">
+            {activeLayout === "list" ? (
+              <ModuleListLayout />
+            ) : activeLayout === "kanban" ? (
+              <ModuleKanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <ModuleCalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <ModuleGanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ModuleSpreadsheetLayout />
+            ) : null}
+          </div>
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
       )}
     </div>
   );

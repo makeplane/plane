@@ -9,8 +9,8 @@ import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/d
 import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
 import { ProjectDraftEmptyState } from "../empty-states";
 import { IssuePeekOverview } from "components/issues/peek-overview";
+import { ActiveLoader } from "components/ui";
 // ui
-import { Spinner } from "@plane/ui";
 import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
 // constants
 import { EIssuesStoreType } from "constants/issue";
@@ -39,30 +39,29 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
 
   if (!workspaceSlug || !projectId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <DraftIssueAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectDraftEmptyState />
         </div>
       ) : (
-        <>
-          {!issues?.groupedIssueIds ? (
-            <ProjectDraftEmptyState />
-          ) : (
-            <div className="relative h-full w-full overflow-auto">
-              {activeLayout === "list" ? (
-                <DraftIssueListLayout />
-              ) : activeLayout === "kanban" ? (
-                <DraftKanBanLayout />
-              ) : null}
-              {/* issue peek overview */}
-              <IssuePeekOverview />
-            </div>
-          )}
-        </>
+        <div className="relative h-full w-full overflow-auto">
+          {activeLayout === "list" ? (
+            <DraftIssueListLayout />
+          ) : activeLayout === "kanban" ? (
+            <DraftKanBanLayout />
+          ) : null}
+          {/* issue peek overview */}
+          <IssuePeekOverview />
+        </div>
       )}
     </div>
   );
