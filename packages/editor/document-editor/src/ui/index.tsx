@@ -1,6 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { UploadImage, DeleteImage, RestoreImage, getEditorClassNames, useEditor } from "@plane/editor-core";
+import {
+  UploadImage,
+  DeleteImage,
+  RestoreImage,
+  getEditorClassNames,
+  useEditor,
+  IMentionSuggestion,
+} from "@plane/editor-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
 import { EditorHeader } from "src/ui/components/editor-header";
@@ -43,6 +50,9 @@ interface IDocumentEditor {
   debouncedUpdatesEnabled?: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
 
+  mentionHighlights?: string[];
+  mentionSuggestions?: IMentionSuggestion[];
+
   // embed configuration
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
@@ -66,6 +76,8 @@ const DocumentEditor = ({
   editorContentCustomClassNames,
   value,
   uploadFile,
+  mentionHighlights,
+  mentionSuggestions,
   deleteFile,
   restoreFile,
   isSubmitting,
@@ -109,6 +121,8 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
+    mentionSuggestions,
+    mentionHighlights,
     extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
   });
 

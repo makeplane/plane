@@ -6,7 +6,7 @@ import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useMention, usePage, useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services
@@ -29,6 +29,8 @@ import { NextPageWithLayout } from "lib/types";
 import { EUserProjectRoles } from "constants/project";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { IssuePeekOverview } from "components/issues";
+import { ProjectMemberService } from "services/project";
+import { UserService } from "services/user.service";
 
 // services
 const fileService = new FileService();
@@ -84,7 +86,21 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       : null
   );
 
+  const projectMemberService = new ProjectMemberService();
+
+  const { data: projectMembers } = useSWR(["projectMembers", workspaceSlug, projectId], async () => {
+    const members = await projectMemberService.fetchProjectMembers(workspaceSlug, projectId);
+    const detailedMembers = await Promise.all(
+      members.map(async (member) => projectMemberService.getProjectMember(workspaceSlug, projectId, member.id))
+    );
+    console.log("ye toh chal", detailedMembers);
+    return detailedMembers;
+  });
+
   const pageStore = usePage(pageId as string);
+
+  // store hooks
+  const { getMentionSuggestions, mentionHighlights, mentionSuggestions } = useMention({ workspaceSlug, projectId });
 
   const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
 
@@ -273,6 +289,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               last_updated_at: updated_at,
               last_updated_by: updated_by,
             }}
+            mentionHighlights={mentionHighlights}
             pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
             pageDuplicationConfig={userCanDuplicate && !archived_at ? { action: duplicate_page } : undefined}
             pageArchiveConfig={
@@ -300,6 +317,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     last_updated_at: updated_at,
                     last_updated_by: updated_by,
                   }}
+                  mentionSuggestions={getMentionSuggestions(projectMembers)}
+                  mentionHighlights={mentionHighlights}
                   uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                   deleteFile={fileService.getDeleteImageFunction(workspaceId)}
                   restoreFile={fileService.getRestoreImageFunction(workspaceId)}

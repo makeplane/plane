@@ -22,6 +22,8 @@ interface IDocumentReadOnlyEditor {
   documentDetails: DocumentDetails;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
+  mentionHighlights?: string[];
+
   pageDuplicationConfig?: IDuplicationConfig;
   onActionCompleteHandler: (action: {
     title: string;
@@ -44,6 +46,7 @@ const DocumentReadOnlyEditor = ({
   borderOnFocus,
   customClassName,
   value,
+  mentionHighlights,
   documentDetails,
   forwardedRef,
   pageDuplicationConfig,
@@ -58,6 +61,7 @@ const DocumentReadOnlyEditor = ({
 
   const editor = useReadOnlyEditor({
     value,
+    mentionHighlights,
     forwardedRef,
     rerenderOnPropsChange,
     extensions: [IssueWidgetPlaceholder()],

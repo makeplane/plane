@@ -19,6 +19,8 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
       props.command({
         id: item.id,
         label: item.title,
+        entity_identifier: item.entity_identifier,
+        entity_name: item.entity_name,
         target: "users",
         redirect_uri: item.redirect_uri,
       });

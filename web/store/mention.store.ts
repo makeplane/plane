@@ -33,9 +33,12 @@ export class MentionStore implements IMentionStore {
 
     const suggestions = (projectMemberIds ?? [])?.map((memberId) => {
       const memberDetails = this.rootStore.memberRoot.project.getProjectMemberDetails(memberId);
+      // __AUTO_GENERATED_PRINT_VAR_START__
+      console.log("MentionStore#mentionSuggestions#(anon) memberDetails are: %s", memberDetails?.member.id); // __AUTO_GENERATED_PRINT_VAR_END__
 
       return {
-        id: `${memberDetails?.member?.id}`,
+        entity_name: "user_mention",
+        entity_identifier: `${memberDetails?.member?.id}`,
         type: "User",
         title: `${memberDetails?.member?.display_name}`,
         subtitle: memberDetails?.member?.email ?? "",
