@@ -133,7 +133,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
         <div className="h-full w-full overflow-y-auto px-5">
           <h5 className="text-sm font-medium mt-6">Properties</h5>
           {/* TODO: render properties using a common component */}
-          <div className={`mt-3 space-y-2 ${!is_editable ? "opacity-60" : ""}`}>
+          <div className={`mt-3 mb-2 space-y-2.5 ${!is_editable ? "opacity-60" : ""}`}>
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
@@ -269,8 +269,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             )}
 
             {projectDetails?.module_view && (
-              <div className="flex items-center gap-2 min-h-8 h-full">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <div className="flex gap-2 min-h-8">
+                <div className="flex gap-1 pt-2 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
                   <span>Module</span>
                 </div>
@@ -376,20 +376,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 disabled={!is_editable}
               />
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 min-h-8 py-2">
-            <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-              <Tag className="h-4 w-4 flex-shrink-0" />
-              <span>Labels</span>
-            </div>
-            <div className="w-3/5 flex-grow min-h-8 h-full">
-              <IssueLabel
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                disabled={!is_editable}
-              />
+            <div className="flex gap-2 min-h-8">
+              <div className="flex gap-1 pt-2 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <Tag className="h-4 w-4 flex-shrink-0" />
+                <span>Labels</span>
+              </div>
+              <div className="w-3/5 flex-grow min-h-8 h-full">
+                <IssueLabel
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  disabled={!is_editable}
+                />
+              </div>
             </div>
           </div>
 
