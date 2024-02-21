@@ -48,6 +48,13 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     }
   };
 
+  if (!subscription)
+    return (
+      <Loader>
+        <Loader.Item width="92px" height="27px" />
+      </Loader>
+    );
+
   return (
     <>
       {subscription ? (
