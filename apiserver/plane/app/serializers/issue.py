@@ -455,6 +455,7 @@ class IssueLinkLiteSerializer(BaseSerializer):
             "url",
             "metadata",
             "created_by_id",
+            "created_at",
         ]
         read_only_fields = fields
 
@@ -478,7 +479,14 @@ class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
 
     class Meta:
         model = IssueAttachment
-        fields = ["id", "asset", "attributes", "issue_id"]
+        fields = [
+            "id",
+            "asset",
+            "attributes",
+            "issue_id",
+            "updated_at",
+            "updated_by_id",
+        ]
         read_only_fields = fields
 
 
