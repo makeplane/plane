@@ -10,14 +10,13 @@ import { Tooltip } from "@plane/ui";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import {
   DateDropdown,
-  DateRangeDropdown,
   EstimateDropdown,
   PriorityDropdown,
   ProjectMemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
 // helpers
-import { checkIfDatesAreEqual, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // constants
@@ -195,11 +194,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* start date */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        shouldRenderProperty={(properties) => !properties.due_date}
-        displayPropertyKey="start_date"
-      >
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
         <div className="h-5">
           <DateDropdown
             value={issue.start_date ?? null}
@@ -214,11 +209,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* target/due date */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        shouldRenderProperty={(properties) => !properties.start_date}
-        displayPropertyKey="due_date"
-      >
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
         <div className="h-5">
           <DateDropdown
             value={issue?.target_date ?? null}
@@ -230,34 +221,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             clearIconClassName="!text-custom-text-100"
             disabled={isReadOnly}
             showTooltip
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      {/* start & target date range */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey={["start_date", "due_date"]}>
-        <div className="h-5">
-          <DateRangeDropdown
-            value={{
-              from: issue.start_date ? new Date(issue.start_date) : undefined,
-              to: issue.target_date ? new Date(issue.target_date) : undefined,
-            }}
-            onSelect={(val) => {
-              if (!checkIfDatesAreEqual(issue.start_date, val?.from)) handleStartDate(val?.from ?? null);
-              if (!checkIfDatesAreEqual(issue.target_date, val?.to)) handleTargetDate(val?.to ?? null);
-            }}
-            placeholder={{
-              from: "Start date",
-              to: "Due date",
-            }}
-            hideIcon={{
-              to: true,
-            }}
-            buttonVariant="border-with-text"
-            buttonToDateClassName={targetDateDistance !== undefined && targetDateDistance <= 0 ? "text-red-500" : ""}
-            disabled={isReadOnly}
-            showTooltip
-            bothRequired={false}
           />
         </div>
       </WithDisplayPropertiesHOC>
