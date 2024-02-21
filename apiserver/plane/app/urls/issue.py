@@ -2,6 +2,7 @@ from django.urls import path
 
 
 from plane.app.views import (
+    IssueListEndpoint,
     IssueViewSet,
     LabelViewSet,
     BulkCreateIssueLabelsEndpoint,
@@ -25,6 +26,11 @@ from plane.app.views import (
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/list/",
+        IssueListEndpoint.as_view(),
+        name="project-issue",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueViewSet.as_view(

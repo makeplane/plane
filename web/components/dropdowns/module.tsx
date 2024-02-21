@@ -77,20 +77,24 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     return (
       <>
         {showCount ? (
-          <>
+          <div className="relative flex items-center gap-1">
             {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
-            <span className="flex-grow truncate text-left">
-              {value.length > 0 ? `${value.length} Module${value.length === 1 ? "" : "s"}` : placeholder}
-            </span>
-          </>
+            <div className="flex-grow truncate max-w-40">
+              {value.length > 0
+                ? value.length === 1
+                  ? `${getModuleById(value[0])?.name || "module"}`
+                  : `${value.length} Module${value.length === 1 ? "" : "s"}`
+                : placeholder}
+            </div>
+          </div>
         ) : value.length > 0 ? (
-          <div className="flex items-center gap-2 py-0.5 flex-wrap">
+          <div className="flex items-center gap-2 py-0.5 max-w-full flex-grow truncate flex-wrap">
             {value.map((moduleId) => {
               const moduleDetails = getModuleById(moduleId);
               return (
                 <div
                   key={moduleId}
-                  className="flex items-center gap-1 bg-custom-background-80 text-custom-text-200 rounded px-1.5 py-1"
+                  className="flex items-center gap-1 max-w-full bg-custom-background-80 text-custom-text-200 rounded px-1.5 py-1"
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
@@ -298,7 +302,12 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
               isActive={isOpen}
               tooltipHeading="Module"
               tooltipContent={
-                Array.isArray(value) ? `${value?.length ?? 0} module${value?.length !== 1 ? "s" : ""}` : ""
+                Array.isArray(value)
+                  ? `${value
+                      .map((moduleId) => getModuleById(moduleId)?.name)
+                      .toString()
+                      .replaceAll(",", ", ")}`
+                  : ""
               }
               showTooltip={showTooltip}
               variant={buttonVariant}

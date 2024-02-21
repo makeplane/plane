@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
@@ -88,6 +88,25 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
       issue: undefined,
     },
   });
+
+  const scrollToSubIssuesView = useCallback(() => {
+    if (router.asPath.split("#")[1] === "sub-issues") {
+      setTimeout(() => {
+        const subIssueDiv = document.getElementById(`sub-issues`);
+        if (subIssueDiv)
+          subIssueDiv.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+      }, 200);
+    }
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (router.asPath) {
+      scrollToSubIssuesView();
+    }
+  }, [router.asPath, scrollToSubIssuesView]);
 
   const handleIssueCrudState = (
     key: "create" | "existing" | "update" | "delete",
@@ -260,9 +279,34 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   const subIssues = subIssuesByIssueId(parentIssueId);
   const subIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
 
+  const handleFetchSubIssues = useCallback(async () => {
+    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+    }
+    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+  }, [
+    parentIssueId,
+    projectId,
+    setSubIssueHelpers,
+    subIssueHelpers.issue_visibility,
+    subIssueOperations,
+    workspaceSlug,
+  ]);
+
+  useEffect(() => {
+    handleFetchSubIssues();
+
+    return () => {
+      handleFetchSubIssues();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parentIssueId]);
+
   if (!issue) return <></>;
   return (
-    <div className="h-full w-full space-y-2">
+    <div id="sub-issues" className="h-full w-full space-y-2">
       {!subIssues ? (
         <div className="py-3 text-center text-sm  font-medium text-custom-text-300">Loading...</div>
       ) : (
@@ -272,14 +316,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               <div className="relative flex items-center gap-4 text-xs">
                 <div
                   className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
-                  onClick={async () => {
-                    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
-                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-                      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-                    }
-                    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
-                  }}
+                  onClick={handleFetchSubIssues}
                 >
                   <div className="flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center">
                     {subIssueHelpers.preview_loader.includes(parentIssueId) ? (
@@ -341,38 +378,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                   />
                 </div>
               )}
-
-              <div>
-                <CustomMenu
-                  label={
-                    <div className="flex items-center gap-1">
-                      <Plus className="h-3 w-3" />
-                      Add sub-issue
-                    </div>
-                  }
-                  buttonClassName="whitespace-nowrap"
-                  placement="bottom-end"
-                  noBorder
-                  noChevron
-                >
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      setTrackElement("Issue detail add sub-issue");
-                      handleIssueCrudState("create", parentIssueId, null);
-                    }}
-                  >
-                    Create new
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      setTrackElement("Issue detail add sub-issue");
-                      handleIssueCrudState("existing", parentIssueId, null);
-                    }}
-                  >
-                    Add an existing issue
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
             </>
           ) : (
             !disabled && (

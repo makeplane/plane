@@ -33,7 +33,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await updateCycleDetails(workspaceSlug.toString(), cycle.project, cycle.id, payload);
+    await updateCycleDetails(workspaceSlug.toString(), cycle.project_id, cycle.id, payload);
   };
 
   const blockFormat = (blocks: (ICycle | null)[]) => {
