@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
-import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
