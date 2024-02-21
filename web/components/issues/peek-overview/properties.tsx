@@ -1,16 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import {
-  Signal,
-  Tag,
-  Triangle,
-  LayoutPanelTop,
-  CircleDot,
-  CopyPlus,
-  XCircle,
-  CalendarClock,
-  CalendarCheck2,
-} from "lucide-react";
+import { differenceInCalendarDays } from "date-fns";
+import { Signal, Tag, Triangle, LayoutPanelTop, CircleDot, CopyPlus, XCircle, CalendarDays } from "lucide-react";
 // hooks
 import { useIssueDetail, useProject } from "hooks/store";
 // ui icons
@@ -33,6 +24,8 @@ import {
 } from "components/dropdowns";
 // components
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+// helpers
+import { cn } from "helpers/common.helper";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -60,6 +53,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
 
   return (
     <div className="mt-1">
@@ -129,7 +124,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarClock className="h-4 w-4 flex-shrink-0" />
+            <CalendarDays className="h-4 w-4 flex-shrink-0" />
             <span>Start date</span>
           </div>
           <DateDropdown
@@ -156,7 +151,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* due date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+            <CalendarDays className="h-4 w-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <DateDropdown
@@ -172,9 +167,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={cn("text-sm", {
+              "text-custom-text-400": !issue.target_date,
+              "text-red-500": targetDateDistance <= 0,
+            })}
             hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
             // TODO: add this logic
             // showPlaceholderIcon
           />

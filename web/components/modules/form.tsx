@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // components
 import { ModuleStatusSelect } from "components/modules";
-import { DateDropdown, ProjectDropdown, ProjectMemberDropdown } from "components/dropdowns";
+import { DateRangeDropdown, ProjectDropdown, ProjectMemberDropdown } from "components/dropdowns";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
@@ -27,18 +27,12 @@ const defaultValues: Partial<IModule> = {
   member_ids: [],
 };
 
-export const ModuleForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  projectId,
-  setActiveProject,
-  data,
-}) => {
+export const ModuleForm: React.FC<Props> = (props) => {
+  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data } = props;
+  // form info
   const {
     formState: { errors, isSubmitting, dirtyFields },
     handleSubmit,
-    watch,
     control,
     reset,
   } = useForm<IModule>({
@@ -66,15 +60,6 @@ export const ModuleForm: React.FC<Props> = ({
       ...data,
     });
   }, [data, reset]);
-
-  const startDate = watch("start_date");
-  const targetDate = watch("target_date");
-
-  const minDate = startDate ? new Date(startDate) : null;
-  minDate?.setDate(minDate.getDate());
-
-  const maxDate = targetDate ? new Date(targetDate) : null;
-  maxDate?.setDate(maxDate.getDate());
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
@@ -152,36 +137,39 @@ export const ModuleForm: React.FC<Props> = ({
             <Controller
               control={control}
               name="start_date"
-              render={({ field: { value, onChange } }) => (
-                <div className="h-7">
-                  <DateDropdown
-                    value={value}
-                    onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
-                    buttonVariant="border-with-text"
-                    placeholder="Start date"
-                    maxDate={maxDate ?? undefined}
-                    tabIndex={3}
-                  />
-                </div>
+              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                    <DateRangeDropdown
+                      buttonVariant="border-with-text"
+                      className="h-7"
+                      minDate={new Date()}
+                      value={{
+                        from: startDateValue ? new Date(startDateValue) : undefined,
+                        to: endDateValue ? new Date(endDateValue) : undefined,
+                      }}
+                      onSelect={(val) => {
+                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                      }}
+                      placeholder={{
+                        from: "Start date",
+                        to: "End date",
+                      }}
+                      hideIcon={{
+                        to: true,
+                      }}
+                      tabIndex={3}
+                    />
+                  )}
+                />
               )}
             />
-            <Controller
-              control={control}
-              name="target_date"
-              render={({ field: { value, onChange } }) => (
-                <div className="h-7">
-                  <DateDropdown
-                    value={value}
-                    onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
-                    buttonVariant="border-with-text"
-                    placeholder="Target date"
-                    minDate={minDate ?? undefined}
-                    tabIndex={4}
-                  />
-                </div>
-              )}
-            />
-            <ModuleStatusSelect control={control} error={errors.status} tabIndex={5} />
+            <div className="h-7">
+              <ModuleStatusSelect control={control} error={errors.status} tabIndex={4} />
+            </div>
             <Controller
               control={control}
               name="lead_id"
@@ -194,7 +182,7 @@ export const ModuleForm: React.FC<Props> = ({
                     multiple={false}
                     buttonVariant="border-with-text"
                     placeholder="Lead"
-                    tabIndex={6}
+                    tabIndex={5}
                   />
                 </div>
               )}
@@ -212,7 +200,7 @@ export const ModuleForm: React.FC<Props> = ({
                     buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
                     placeholder="Members"
-                    tabIndex={7}
+                    tabIndex={6}
                   />
                 </div>
               )}
@@ -221,10 +209,10 @@ export const ModuleForm: React.FC<Props> = ({
         </div>
       </div>
       <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 pt-5">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={8}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={7}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={9}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={8}>
           {status ? (isSubmitting ? "Updating" : "Update module") : isSubmitting ? "Creating" : "Create module"}
         </Button>
       </div>

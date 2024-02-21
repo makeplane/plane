@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+import { differenceInCalendarDays } from "date-fns";
+import { Layers, Link, Paperclip } from "lucide-react";
 import xor from "lodash/xor";
 // hooks
 import { useEventTracker, useEstimate, useLabel, useIssues } from "hooks/store";
@@ -230,6 +231,8 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
+  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
+
   return (
     <div className={className}>
       {/* basic properties */}
@@ -279,7 +282,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           <DateDropdown
             value={issue.start_date ?? null}
             onChange={handleStartDate}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             maxDate={maxDate ?? undefined}
             placeholder="Start date"
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
@@ -295,10 +297,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           <DateDropdown
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
             minDate={minDate ?? undefined}
             placeholder="Due date"
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
+            buttonClassName={targetDateDistance <= 0 ? "text-red-500" : ""}
+            clearIconClassName="!text-custom-text-100"
             disabled={isReadOnly}
             showTooltip
           />
@@ -375,7 +378,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="sub_issue_count"
-        shouldRenderProperty={!!issue?.sub_issues_count}
+        shouldRenderProperty={(properties) => !!properties.sub_issue_count}
       >
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div
@@ -392,7 +395,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="attachment_count"
-        shouldRenderProperty={!!issue?.attachment_count}
+        shouldRenderProperty={(properties) => !!properties.attachment_count}
       >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
@@ -406,7 +409,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="link"
-        shouldRenderProperty={!!issue?.link_count}
+        shouldRenderProperty={(properties) => !!properties.link}
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">

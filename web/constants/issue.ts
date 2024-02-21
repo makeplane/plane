@@ -106,14 +106,14 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   title: string;
 }[] = [
   { key: "assignee", title: "Assignee" },
-  { key: "start_date", title: "Start Date" },
-  { key: "due_date", title: "Due Date" },
+  { key: "start_date", title: "Start date" },
+  { key: "due_date", title: "Due date" },
   { key: "key", title: "ID" },
   { key: "labels", title: "Labels" },
   { key: "priority", title: "Priority" },
   { key: "state", title: "State" },
-  { key: "sub_issue_count", title: "Sub Issue Count" },
-  { key: "attachment_count", title: "Attachment Count" },
+  { key: "sub_issue_count", title: "Sub issue count" },
+  { key: "attachment_count", title: "Attachment count" },
   { key: "link", title: "Link" },
   { key: "estimate", title: "Estimate" },
   { key: "modules", title: "Modules" },
