@@ -33,10 +33,7 @@ export interface IAppProvider {
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
-  const {
-    currentUser,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { currentUser } = useUser();
   const { currentWorkspace, workspaces } = useWorkspace();
   const {
     config: { envConfig },
@@ -50,8 +47,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
             <CrispWrapper user={currentUser}>
               <PostHogProvider
                 user={currentUser}
-                currentWorkspaceId= {currentWorkspace?.id}
-                workspaceRole={currentWorkspaceRole}
+                currentWorkspaceId={currentWorkspace?.id}
                 workspaces={workspaces}
                 posthogAPIKey={envConfig?.posthog_api_key || null}
                 posthogHost={envConfig?.posthog_host || null}

@@ -3,24 +3,21 @@ import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // mobx store provider
-import { IUser } from "@plane/types";
-// helpers
-import { getUserRole } from "helpers/user.helper";
+import { IUser, IWorkspace } from "@plane/types";
 // constants
 import { GROUP_WORKSPACE } from "constants/event-tracker";
 
 export interface IPosthogWrapper {
   children: ReactNode;
   user: IUser | null;
+  workspaces: Record<string, IWorkspace>;
   currentWorkspaceId: string | undefined;
-  workspaceRole: number | undefined;
-  projectRole: number | undefined;
   posthogAPIKey: string | null;
   posthogHost: string | null;
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, workspaceRole, currentWorkspaceId, projectRole, posthogAPIKey, posthogHost } = props;
+  const { children, user, workspaces, currentWorkspaceId, posthogAPIKey, posthogHost } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router
@@ -35,11 +32,10 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         last_name: user.last_name,
         email: user.email,
         use_case: user.use_case,
-        workspace_role: workspaceRole ? getUserRole(workspaceRole) : undefined,
-        project_role: projectRole ? getUserRole(projectRole) : undefined,
+        workspaces: Object.keys(workspaces),
       });
     }
-  }, [user, workspaceRole, projectRole]);
+  }, [user, workspaces]);
 
   useEffect(() => {
     if (posthogAPIKey && posthogHost) {
