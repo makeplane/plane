@@ -224,11 +224,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/modules/",
         WorkspaceModulesEndpoint.as_view(),
-        name="workspace-state",
+        name="workspace-modules",
     ),
     path(
         "workspaces/<str:slug>/cycles/",
         WorkspaceCyclesEndpoint.as_view(),
-        name="workspace-state",
+        name="workspace-cycles",
     ),
 ]
