@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
@@ -260,6 +260,31 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   const subIssues = subIssuesByIssueId(parentIssueId);
   const subIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
 
+  const handleFetchSubIssues = useCallback(async () => {
+    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+    }
+    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+  }, [
+    parentIssueId,
+    projectId,
+    setSubIssueHelpers,
+    subIssueHelpers.issue_visibility,
+    subIssueOperations,
+    workspaceSlug,
+  ]);
+
+  useEffect(() => {
+    handleFetchSubIssues();
+
+    return () => {
+      handleFetchSubIssues();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parentIssueId]);
+
   if (!issue) return <></>;
   return (
     <div className="h-full w-full space-y-2">
@@ -272,14 +297,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               <div className="relative flex items-center gap-4 text-xs">
                 <div
                   className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
-                  onClick={async () => {
-                    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
-                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-                      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-                    }
-                    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
-                  }}
+                  onClick={handleFetchSubIssues}
                 >
                   <div className="flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center">
                     {subIssueHelpers.preview_loader.includes(parentIssueId) ? (
