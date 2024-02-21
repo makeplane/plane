@@ -19,12 +19,15 @@ from django.db.models import (
     When,
     Exists,
     Max,
-    IntegerField,
 )
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third Party imports
 from rest_framework.response import Response
@@ -50,6 +53,7 @@ from plane.app.serializers import (
     CommentReactionSerializer,
     IssueRelationSerializer,
     RelatedIssueSerializer,
+    IssueDetailSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -142,6 +146,32 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~models.Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~models.Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~models.Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         ).distinct()
 
@@ -268,37 +298,20 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         issue = (
             self.get_queryset()
             .filter(pk=pk)
-            .values(
-                "id",
-                "name",
-                "description_html",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            ).annotate()
             .first()
         )
-        return Response(issue, status=status.HTTP_200_OK)
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(

@@ -560,7 +560,9 @@ class IssueSerializer(DynamicBaseSerializer):
     state_id = serializers.PrimaryKeyRelatedField(read_only=True)
     parent_id = serializers.PrimaryKeyRelatedField(read_only=True)
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    module_ids = serializers.SerializerMethodField()
+    module_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, allow_null=True
+    )
 
     # Many to many
     label_ids = serializers.PrimaryKeyRelatedField(
@@ -606,56 +608,29 @@ class IssueSerializer(DynamicBaseSerializer):
         ]
         read_only_fields = fields
 
-    def get_module_ids(self, obj):
-        # Access the prefetched modules and extract module IDs
-        return [
-            module
-            for module in obj.issue_module.values_list("module_id", flat=True)
+
+class IssueLiteSerializer(DynamicBaseSerializer):
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "sequence_id",
+            "project_id",
         ]
+        read_only_fields = fields
 
 
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
+    is_subscribed = serializers.BooleanField()
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [
             "description_html",
+            "is_subscribed",
         ]
-
-
-class IssueLiteSerializer(DynamicBaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(
-        read_only=True, source="workspace"
-    )
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    state_detail = StateLiteSerializer(read_only=True, source="state")
-    label_details = LabelLiteSerializer(
-        read_only=True, source="labels", many=True
-    )
-    assignee_details = UserLiteSerializer(
-        read_only=True, source="assignees", many=True
-    )
-    sub_issues_count = serializers.IntegerField(read_only=True)
-    cycle_id = serializers.UUIDField(read_only=True)
-    module_id = serializers.UUIDField(read_only=True)
-    attachment_count = serializers.IntegerField(read_only=True)
-    link_count = serializers.IntegerField(read_only=True)
-    issue_reactions = IssueReactionSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Issue
-        fields = "__all__"
-        read_only_fields = [
-            "start_date",
-            "target_date",
-            "completed_at",
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        read_only_fields = fields
 
 
 class IssuePublicSerializer(BaseSerializer):

@@ -58,7 +58,7 @@ class DynamicBaseSerializer(BaseSerializer):
                     IssueSerializer,
                     LabelSerializer,
                     CycleIssueSerializer,
-                    IssueFlatSerializer,
+                    IssueLiteSerializer,
                     IssueRelationSerializer,
                     InboxIssueLiteSerializer
                 )
@@ -79,12 +79,12 @@ class DynamicBaseSerializer(BaseSerializer):
                     "assignees": UserLiteSerializer,
                     "labels": LabelSerializer,
                     "issue_cycle": CycleIssueSerializer,
-                    "parent": IssueSerializer,
+                    "parent": IssueLiteSerializer,
                     "issue_relation": IssueRelationSerializer,
                     "issue_inbox" : InboxIssueLiteSerializer,
                 }
                 
-                self.fields[field] = expansion[field](many=True if field in ["members", "assignees", "labels", "issue_cycle", "issue_relation", "issue_inbox"] else False)            
+                self.fields[field] = expansion[field](many=True if field in ["members", "assignees", "labels", "issue_cycle", "issue_relation", "issue_inbox"] else False)
 
         return self.fields
 
@@ -105,7 +105,8 @@ class DynamicBaseSerializer(BaseSerializer):
                         LabelSerializer,
                         CycleIssueSerializer,
                         IssueRelationSerializer,
-                        InboxIssueLiteSerializer
+                        InboxIssueLiteSerializer,
+                        IssueLiteSerializer,
                     )
 
                     # Expansion mapper
@@ -124,7 +125,7 @@ class DynamicBaseSerializer(BaseSerializer):
                         "assignees": UserLiteSerializer,
                         "labels": LabelSerializer,
                         "issue_cycle": CycleIssueSerializer,
-                        "parent": IssueSerializer,
+                        "parent": IssueLiteSerializer,
                         "issue_relation": IssueRelationSerializer,
                         "issue_inbox" : InboxIssueLiteSerializer,
                     }
