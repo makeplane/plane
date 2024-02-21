@@ -36,6 +36,8 @@ class PageSerializer(BaseSerializer):
             "labels",
             "parent",
             "is_favorite",
+            "is_locked", 
+            "archived_at",
             "workspace",
             "project",
             "created_at",
@@ -105,7 +107,7 @@ class PageDetailSerializer(PageSerializer):
     description_html = serializers.CharField() 
 
     class Meta(PageSerializer.Meta):
-        fields = PageSerializer.Meta.fields + ['description_html', 'is_locked', 'archived_at']
+        fields = PageSerializer.Meta.fields + ['description_html']
 
 
 class SubPageSerializer(BaseSerializer):
