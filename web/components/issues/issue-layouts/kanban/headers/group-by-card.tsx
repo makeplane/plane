@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
+import { CreateUpdateIssueModal } from "components/issues";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks

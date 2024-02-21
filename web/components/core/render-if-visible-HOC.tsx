@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, ReactNode, MutableRefObject } from 
 type Props = {
   defaultHeight?: string;
   verticalOffset?: number;
-  horizonatlOffset?: number;
+  horizontalOffset?: number;
   root?: MutableRefObject<HTMLElement | null>;
   children: ReactNode;
   as?: keyof JSX.IntrinsicElements;
@@ -20,7 +20,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     defaultHeight = "300px",
     root,
     verticalOffset = 50,
-    horizonatlOffset = 0,
+    horizontalOffset = 0,
     as = "div",
     children,
     classNames = "",
@@ -52,17 +52,18 @@ const RenderIfVisible: React.FC<Props> = (props) => {
         },
         {
           root: root?.current,
-          rootMargin: `${verticalOffset}% ${horizonatlOffset}% ${verticalOffset}% ${horizonatlOffset}%`,
+          rootMargin: `${verticalOffset}% ${horizontalOffset}% ${verticalOffset}% ${horizontalOffset}%`,
         }
       );
       observer.observe(intersectionRef.current);
       return () => {
         if (intersectionRef.current) {
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           observer.unobserve(intersectionRef.current);
         }
       };
     }
-  }, [root?.current, intersectionRef, children, changingReference]);
+  }, [intersectionRef, children, changingReference, root, verticalOffset, horizontalOffset]);
 
   //Set height after render
   useEffect(() => {

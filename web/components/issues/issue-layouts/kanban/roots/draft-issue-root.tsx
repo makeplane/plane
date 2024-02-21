@@ -42,7 +42,7 @@ export const DraftKanBanLayout: React.FC = observer(() => {
       issueActions={issueActions}
       issuesFilter={issuesFilter}
       issues={issues}
-      showLoader={true}
+      showLoader
       QuickActions={ProjectIssueQuickActions}
     />
   );

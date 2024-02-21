@@ -181,7 +181,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                       name="first_name"
                       type="text"
                       value={value}
-                      autoFocus={true}
+                      autoFocus
                       onChange={(event) => {
                         setUserName(event.target.value);
                         onChange(event);

@@ -80,7 +80,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then((res) => {
+      .then(() => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);

@@ -148,7 +148,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               classNames="space-y-2 px-3 py-2"
               root={scrollableContainerRef}
               defaultHeight="100px"
-              horizonatlOffset={50}
+              horizontalOffset={50}
               alwaysRender={snapshot.isDragging}
               pauseHeightUpdateWhileRendering={isDragStarted}
               changingReference={issueIds}

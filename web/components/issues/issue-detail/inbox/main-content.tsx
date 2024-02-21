@@ -65,7 +65,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           projectId={projectId}
           inboxId={inboxId}
           issueId={issueId}
-          showDescription={true}
+          showDescription
         />
 
         <div className="mb-2.5 flex items-center">

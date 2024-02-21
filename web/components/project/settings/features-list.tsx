@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
 // hooks
-import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { IProject } from "@plane/types";

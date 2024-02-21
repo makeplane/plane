@@ -58,7 +58,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
     if (!data || !canDelete) return;
 
     await deleteWorkspace(data.slug)
-      .then((res) => {
+      .then(() => {
         handleClose();
         router.push("/");
         captureWorkspaceEvent({

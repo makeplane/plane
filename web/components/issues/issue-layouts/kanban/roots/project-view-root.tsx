@@ -33,7 +33,7 @@ export const ProjectViewKanBanLayout: React.FC<IViewKanBanLayout> = observer((pr
       issueActions={issueActions}
       issuesFilter={issuesFilter}
       issues={issues}
-      showLoader={true}
+      showLoader
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROJECT_VIEW}
       viewId={viewId?.toString()}

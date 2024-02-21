@@ -107,7 +107,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                         customMenuItems={customMenuItems}
                         dragHandleProps={dragHandleProps}
                         handleLabelDelete={handleLabelDelete}
-                        isLabelGroup={true}
+                        isLabelGroup
                       />
                     )}
 

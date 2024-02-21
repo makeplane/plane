@@ -319,7 +319,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         value={issue.state_id ?? undefined}
                         onChange={() => {}}
                         projectId={projectId?.toString() ?? ""}
-                        disabled={true}
+                        disabled
                         buttonVariant="background-with-text"
                       />
                       {issue.target_date && (

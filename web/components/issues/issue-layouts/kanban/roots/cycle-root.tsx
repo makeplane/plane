@@ -53,7 +53,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       issueActions={issueActions}
       issues={issues}
       issuesFilter={issuesFilter}
-      showLoader={true}
+      showLoader
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId?.toString() ?? ""}
       storeType={EIssuesStoreType.CYCLE}

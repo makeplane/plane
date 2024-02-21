@@ -36,7 +36,7 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // icons
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";

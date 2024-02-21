@@ -58,7 +58,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
       posthog?.identify(user.email);
       posthog?.group(GROUP_WORKSPACE, currentWorkspaceId);
     }
-  }, [currentWorkspaceId, user]);
+  }, [currentWorkspaceId, lastWorkspaceId, user]);
 
   useEffect(() => {
     // Track page views

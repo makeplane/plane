@@ -5,12 +5,10 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
 // hooks
-import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useMember, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
-// helpers
-import { getUserRole } from "helpers/user.helper";
 // constants
 import { ROLE } from "constants/workspace";
 import { EUserProjectRoles } from "constants/project";

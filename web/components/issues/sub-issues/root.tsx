@@ -252,7 +252,17 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         }
       },
     }),
-    [fetchSubIssues, createSubIssues, updateSubIssue, removeSubIssue, deleteSubIssue, setToastAlert, setSubIssueHelpers]
+    [
+      fetchSubIssues,
+      createSubIssues,
+      updateSubIssue,
+      removeSubIssue,
+      deleteSubIssue,
+      setToastAlert,
+      setSubIssueHelpers,
+      captureIssueEvent,
+      router.asPath,
+    ]
   );
 
   const issue = getIssueById(parentIssueId);

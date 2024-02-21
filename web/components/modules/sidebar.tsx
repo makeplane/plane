@@ -27,7 +27,7 @@ import { ProjectMemberDropdown } from "components/dropdowns";
 import { CustomRangeDatePicker } from "components/ui";
 import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
 // helpers
-import { isDateGreaterThanToday, renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -85,7 +85,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
         });
       })
-      .catch((_) => {
+      .catch(() => {
         captureModuleEvent({
           eventName: MODULE_UPDATED,
           payload: { ...data, state: "FAILED" },
@@ -319,12 +319,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <Controller
               control={control}
               name="status"
-              render={({ field: { value, onChange } }) => (
+              render={({ field: { value } }) => (
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                        }`}
+                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
+                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                      }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
@@ -373,13 +374,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                        }`}
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                      }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("start_date") ? "" : "text-custom-text-400"
-                          }`}
+                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
+                          watch("start_date") ? "" : "text-custom-text-400"
+                        }`}
                       >
                         {renderFormattedDate(startDate) ?? "No date selected"}
                       </span>
@@ -427,13 +430,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <>
                     <Popover.Button
                       ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                        }`}
+                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
+                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                      }`}
                       disabled={!isEditingAllowed}
                     >
                       <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${watch("target_date") ? "" : "text-custom-text-400"
-                          }`}
+                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
+                          watch("target_date") ? "" : "text-custom-text-400"
+                        }`}
                       >
                         {renderFormattedDate(endDate) ?? "No date selected"}
                       </span>

@@ -21,7 +21,7 @@ import { ProjectAnalyticsModal } from "components/analytics";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
 // icons
 import { ArrowRight, PanelRight, Plus } from "lucide-react";
 // helpers
@@ -178,7 +178,12 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                         }
                       />
                     </span>
-                    <Link href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`} className="block md:hidden pl-2 text-custom-text-300">...</Link>
+                    <Link
+                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                      className="block md:hidden pl-2 text-custom-text-300"
+                    >
+                      ...
+                    </Link>
                   </span>
                 }
               />
@@ -249,7 +254,12 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
             {canUserCreateIssue && (
               <>
-                <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                <Button
+                  className="hidden md:block"
+                  onClick={() => setAnalyticsModal(true)}
+                  variant="neutral-primary"
+                  size="sm"
+                >
                   Analytics
                 </Button>
                 <Button
@@ -270,8 +280,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
               onClick={toggleSidebar}
             >
-              <ArrowRight className={`h-4 w-4 duration-300 hidden md:block ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
-              <PanelRight className={cn("w-4 h-4 block md:hidden", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+              <ArrowRight
+                className={`h-4 w-4 duration-300 hidden md:block ${isSidebarCollapsed ? "-rotate-180" : ""}`}
+              />
+              <PanelRight
+                className={cn(
+                  "w-4 h-4 block md:hidden",
+                  !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200"
+                )}
+              />
             </button>
           </div>
         </div>
