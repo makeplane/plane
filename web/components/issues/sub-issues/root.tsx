@@ -89,6 +89,25 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     },
   });
 
+  const scrollToSubIssuesView = useCallback(() => {
+    if (router.asPath.split("#")[1] === "sub-issues") {
+      setTimeout(() => {
+        const subIssueDiv = document.getElementById(`sub-issues`);
+        if (subIssueDiv)
+          subIssueDiv.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+      }, 200);
+    }
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (router.asPath) {
+      scrollToSubIssuesView();
+    }
+  }, [router.asPath, scrollToSubIssuesView]);
+
   const handleIssueCrudState = (
     key: "create" | "existing" | "update" | "delete",
     _parentIssueId: string | null,
@@ -287,7 +306,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
 
   if (!issue) return <></>;
   return (
-    <div className="h-full w-full space-y-2">
+    <div id="sub-issues" className="h-full w-full space-y-2">
       {!subIssues ? (
         <div className="py-3 text-center text-sm  font-medium text-custom-text-300">Loading...</div>
       ) : (
