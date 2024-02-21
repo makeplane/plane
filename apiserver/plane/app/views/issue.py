@@ -353,9 +353,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
             issue = self.get_queryset().filter(pk=pk).first()
-            return Response(
-                IssueSerializer(issue).data, status=status.HTTP_200_OK
-            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, pk=None):
@@ -1946,7 +1944,7 @@ class IssueDraftViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
