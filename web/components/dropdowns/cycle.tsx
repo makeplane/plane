@@ -10,11 +10,12 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // icons
-import { ContrastIcon } from "@plane/ui";
+import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
 import { TDropdownProps } from "./types";
+import { TCycleGroups } from "@plane/types";
 // constants
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
@@ -82,17 +83,22 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     router: { workspaceSlug },
   } = useApplication();
   const { getProjectCycleIds, fetchAllCycles, getCycleById } = useCycle();
-  const cycleIds = getProjectCycleIds(projectId);
+
+  const cycleIds = (getProjectCycleIds(projectId) ?? [])?.filter((cycleId) => {
+    const cycleDetails = getCycleById(cycleId);
+    return cycleDetails?.status.toLowerCase() != "completed" ? true : false;
+  });
 
   const options: DropdownOptions = cycleIds?.map((cycleId) => {
     const cycleDetails = getCycleById(cycleId);
+    const cycleStatus = cycleDetails?.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
 
     return {
       value: cycleId,
       query: `${cycleDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+          <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
           <span className="flex-grow truncate">{cycleDetails?.name}</span>
         </div>
       ),

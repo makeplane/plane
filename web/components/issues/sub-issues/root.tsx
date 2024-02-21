@@ -341,38 +341,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                   />
                 </div>
               )}
-
-              <div>
-                <CustomMenu
-                  label={
-                    <div className="flex items-center gap-1">
-                      <Plus className="h-3 w-3" />
-                      Add sub-issue
-                    </div>
-                  }
-                  buttonClassName="whitespace-nowrap"
-                  placement="bottom-end"
-                  noBorder
-                  noChevron
-                >
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      setTrackElement("Issue detail add sub-issue");
-                      handleIssueCrudState("create", parentIssueId, null);
-                    }}
-                  >
-                    Create new
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      setTrackElement("Issue detail add sub-issue");
-                      handleIssueCrudState("existing", parentIssueId, null);
-                    }}
-                  >
-                    Add an existing issue
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
             </>
           ) : (
             !disabled && (
