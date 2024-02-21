@@ -32,8 +32,7 @@ export interface ICycle {
   name: string;
   owned_by: string;
   progress_snapshot: TProgressSnapshot;
-  project: string;
-  project_detail: IProjectLite;
+  project_id: string;
   status: TCycleGroups;
   sort_order: number;
   start_date: string | null;
@@ -42,12 +41,11 @@ export interface ICycle {
   unstarted_issues: number;
   updated_at: Date;
   updated_by: string;
-  assignees: IUserLite[];
+  assignee_ids: string[];
   view_props: {
     filters: IIssueFilterOptions;
   };
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
+  workspace_id: string;
 }
 
 export type TProgressSnapshot = {

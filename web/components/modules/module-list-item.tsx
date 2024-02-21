@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // hooks
-import { useModule, useUser, useEventTracker } from "hooks/store";
+import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
@@ -37,6 +37,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { getUserDetails } = useMember();
   const { setTrackElement, captureEvent } = useEventTracker();
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -153,7 +154,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         />
       )}
       <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
-      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project}/modules/${moduleDetails.id}`}>
+      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <div className="group flex w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 flex-col sm:flex-row px-5 py-6 text-sm hover:bg-custom-background-90">
           <div className="relative flex w-full items-center gap-3 justify-between overflow-hidden">
             <div className="relative w-full flex items-center gap-3 overflow-hidden">
@@ -206,13 +207,14 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </div>
 
             <div className="flex-shrink-0 relative flex items-center gap-3">
-              <Tooltip tooltipContent={`${moduleDetails.members_detail.length} Members`}>
+              <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`}>
                 <div className="flex w-10 cursor-default items-center justify-center gap-1">
-                  {moduleDetails.members_detail.length > 0 ? (
+                  {moduleDetails.member_ids.length > 0 ? (
                     <AvatarGroup showTooltip={false}>
-                      {moduleDetails.members_detail.map((member) => (
-                        <Avatar key={member.id} name={member.display_name} src={member.avatar} />
-                      ))}
+                      {moduleDetails.member_ids.map((member_id) => {
+                        const member = getUserDetails(member_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   ) : (
                     <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">

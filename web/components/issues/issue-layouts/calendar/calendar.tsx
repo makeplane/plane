@@ -74,7 +74,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
       <div className="flex h-full w-full flex-col overflow-hidden">
         <CalendarHeader issuesFilterStore={issuesFilterStore} viewId={viewId} />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
-        <div className="h-full w-full overflow-y-auto">
+        <div className="h-full w-full overflow-y-auto vertical-scrollbar scrollbar-lg">
           {layout === "month" && (
             <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-400">
               {allWeeksOfActiveMonth &&
