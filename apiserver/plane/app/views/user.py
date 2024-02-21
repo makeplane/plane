@@ -28,7 +28,7 @@ class UserEndpoint(BaseViewSet):
     def get_object(self):
         return self.request.user
 
-    @cache_user_response(60 * 15)
+    @cache_user_response(60 * 60)
     def retrieve(self, request):
         serialized_data = UserMeSerializer(request.user).data
         return Response(
@@ -36,12 +36,12 @@ class UserEndpoint(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @cache_user_response(60 * 15)
+    @cache_user_response(60 * 60)
     def retrieve_user_settings(self, request):
         serialized_data = UserMeSettingsSerializer(request.user).data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-    @cache_user_response(60 * 15)
+    @cache_user_response(60 * 60)
     def retrieve_instance_admin(self, request):
         instance = Instance.objects.first()
         is_admin = InstanceAdmin.objects.filter(

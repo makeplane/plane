@@ -12,13 +12,14 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseAPIView
 from plane.license.utils.instance_value import get_configuration_value
-
+from plane.utils.cache import cache_path_response
 
 class ConfigurationEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
 
+    @cache_path_response(60 * 60 * 2)
     def get(self, request):
         # Get all the configuration
         (
@@ -136,6 +137,7 @@ class MobileConfigurationEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    @cache_path_response(60 * 60 * 2)
     def get(self, request):
         (
             GOOGLE_CLIENT_ID,
