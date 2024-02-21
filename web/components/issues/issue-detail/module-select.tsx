@@ -37,13 +37,22 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
     if (!issue || !issue.module_ids) return;
     setIsUpdating(true);
     const updatedModuleIds = xor(issue.module_ids, moduleIds);
-    for (const updatedModuleId of updatedModuleIds) {
-      if (issue.module_ids.includes(updatedModuleId)) {
-        await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, [updatedModuleId]);
+    const modulesToAdd: string[] = [];
+    const modulesToRemove: string[] = [];
+
+    for (const moduleId of updatedModuleIds) {
+      if (issue.module_ids.includes(moduleId)) {
+        modulesToRemove.push(moduleId);
       } else {
-        await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, [updatedModuleId]);
+        modulesToAdd.push(moduleId);
       }
     }
+    if (modulesToRemove.length > 0)
+      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, modulesToRemove);
+
+    if (modulesToAdd.length > 0)
+      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, modulesToAdd);
+
     setIsUpdating(false);
   };
 
