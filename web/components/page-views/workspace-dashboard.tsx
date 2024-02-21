@@ -70,7 +70,7 @@ export const WorkspaceDashboardView = observer(() => {
           {joinedProjectIds.length > 0 ? (
             <>
               <IssuePeekOverview />
-              <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
+              <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
                 {currentUser && <UserGreetingsView user={currentUser} />}
 
                 <DashboardWidgets />

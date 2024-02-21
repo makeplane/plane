@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
-import { useEventTracker, useMember, useUser } from "hooks/store";
+import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -11,6 +11,7 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
+import { PageHead } from "components/core";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -37,6 +38,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   const {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
+  const { currentWorkspace } = useWorkspace();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -83,11 +85,14 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
       });
   };
 
+  // derived values
   const hasAddMemberPermission =
     currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
   return (
     <>
+      <PageHead title={pageTitle} />
       <SendWorkspaceInvitationModal
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}

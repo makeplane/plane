@@ -47,7 +47,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
     <>
       {!defaultAnalyticsError ? (
         defaultAnalytics ? (
-          <div className="h-full overflow-y-auto p-5 text-sm">
+          <div className="h-full overflow-y-auto p-5 text-sm vertical-scrollbar scrollbar-lg">
             <div className={`grid grid-cols-1 gap-5 ${fullScreen ? "md:grid-cols-2" : ""}`}>
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
               <AnalyticsScope defaultAnalytics={defaultAnalytics} />

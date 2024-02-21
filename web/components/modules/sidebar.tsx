@@ -35,8 +35,8 @@ import { EUserProjectRoles } from "constants/project";
 import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
-  lead: "",
-  members: [],
+  lead_id: "",
+  member_ids: [],
   start_date: null,
   target_date: null,
   status: "backlog",
@@ -382,13 +382,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
             <Controller
               control={control}
-              name="lead"
+              name="lead_id"
               render={({ field: { value } }) => (
                 <div className="w-3/5 h-7">
                   <ProjectMemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
-                      submitChanges({ lead: val });
+                      submitChanges({ lead_id: val });
                     }}
                     projectId={projectId?.toString() ?? ""}
                     multiple={false}
@@ -406,13 +406,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
             <Controller
               control={control}
-              name="members"
+              name="member_ids"
               render={({ field: { value } }) => (
                 <div className="w-3/5 h-7">
                   <ProjectMemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
-                      submitChanges({ members: val });
+                      submitChanges({ member_ids: val });
                     }}
                     multiple
                     projectId={projectId?.toString() ?? ""}

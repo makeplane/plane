@@ -23,8 +23,8 @@ const defaultValues: Partial<IModule> = {
   name: "",
   description: "",
   status: "backlog",
-  lead: null,
-  members: [],
+  lead_id: null,
+  member_ids: [],
 };
 
 export const ModuleForm: React.FC<Props> = (props) => {
@@ -37,12 +37,12 @@ export const ModuleForm: React.FC<Props> = (props) => {
     reset,
   } = useForm<IModule>({
     defaultValues: {
-      project: projectId,
+      project_id: projectId,
       name: data?.name || "",
       description: data?.description || "",
       status: data?.status || "backlog",
-      lead: data?.lead || null,
-      members: data?.members || [],
+      lead_id: data?.lead_id || null,
+      member_ids: data?.member_ids || [],
     },
   });
 
@@ -68,7 +68,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
           {!status && (
             <Controller
               control={control}
-              name="project"
+              name="project_id"
               render={({ field: { value, onChange } }) => (
                 <div className="h-7">
                   <ProjectDropdown
@@ -172,7 +172,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
             </div>
             <Controller
               control={control}
-              name="lead"
+              name="lead_id"
               render={({ field: { value, onChange } }) => (
                 <div className="h-7">
                   <ProjectMemberDropdown
@@ -189,7 +189,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
             />
             <Controller
               control={control}
-              name="members"
+              name="member_ids"
               render={({ field: { value, onChange } }) => (
                 <div className="h-7">
                   <ProjectMemberDropdown

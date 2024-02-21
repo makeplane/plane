@@ -35,7 +35,7 @@ export const CycleForm: React.FC<Props> = (props) => {
     reset,
   } = useForm<ICycle>({
     defaultValues: {
-      project: projectId,
+      project_id: projectId,
       name: data?.name || "",
       description: data?.description || "",
       start_date: data?.start_date || null,
@@ -57,7 +57,7 @@ export const CycleForm: React.FC<Props> = (props) => {
           {!status && (
             <Controller
               control={control}
-              name="project"
+              name="project_id"
               render={({ field: { value, onChange } }) => (
                 <ProjectDropdown
                   value={value}

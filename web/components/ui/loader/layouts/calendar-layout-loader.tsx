@@ -28,7 +28,7 @@ export const CalendarLayoutLoader = () => (
         <span className="h-7 w-20 bg-custom-background-80 rounded" />
       </div>
     </div>
-    <span className="relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium grid-cols-5">
+    <span className="relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium grid-cols-5 pr-[1rem]">
       {[...Array(5)].map((_, index) => (
         <span key={index} className="h-11 w-full bg-custom-background-80" />
       ))}
