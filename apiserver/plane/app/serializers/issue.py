@@ -444,6 +444,21 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
 
+class IssueLinkLiteSerializer(BaseSerializer):
+
+    class Meta:
+        model = IssueLink
+        fields = [
+            "id",
+            "issue_id",
+            "title",
+            "url",
+            "metadata",
+            "created_by_id",
+        ]
+        read_only_fields = fields
+
+
 class IssueAttachmentSerializer(BaseSerializer):
     class Meta:
         model = IssueAttachment
@@ -459,6 +474,14 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
+class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
+
+    class Meta:
+        model = IssueAttachment
+        fields = ["id", "asset", "attributes", "issue_id"]
+        read_only_fields = fields
+
+
 class IssueReactionSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
@@ -471,6 +494,13 @@ class IssueReactionSerializer(BaseSerializer):
             "issue",
             "actor",
         ]
+
+
+class IssueReactionLiteSerializer(DynamicBaseSerializer):
+
+    class Meta:
+        model = IssueReaction
+        fields = ["actor_id", "issue_id", "reaction"]
 
 
 class CommentReactionSerializer(BaseSerializer):
