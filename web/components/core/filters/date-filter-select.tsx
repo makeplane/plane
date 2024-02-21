@@ -51,10 +51,10 @@ export const DateFilterSelect: React.FC<Props> = ({ title, value, onChange }) =>
   >
     {dueDateRange.map((option, index) => (
       <CustomSelect.Option key={index} value={option.value}>
-        <>
+        <div className="flex items-center gap-2">
           <span>{option.icon}</span>
           {title} {option.name}
-        </>
+        </div>
       </CustomSelect.Option>
     ))}
   </CustomSelect>
