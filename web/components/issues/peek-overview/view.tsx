@@ -109,7 +109,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               disabled={disabled}
             />
             {/* content */}
-            <div className="relative h-full w-full overflow-hidden overflow-y-auto">
+            <div className="relative h-full w-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md">
               {isLoading && !issue ? (
                 <div className="flex h-full w-full items-center justify-center">
                   <Spinner />
@@ -140,7 +140,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                       </div>
                     ) : (
-                      <div className={`flex h-full w-full overflow-auto`}>
+                      <div className={`flex h-full w-full overflow-auto vertical-scrollbar`}>
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
                           <div>
                             <PeekOverviewIssueDetails

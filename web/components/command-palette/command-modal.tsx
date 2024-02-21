@@ -229,7 +229,7 @@ export const CommandModal: React.FC = observer(() => {
                     />
                   </div>
 
-                  <Command.List className="max-h-96 overflow-scroll p-2">
+                  <Command.List className="max-h-96 overflow-scroll p-2 vertical-scrollbar scrollbar-sm">
                     {searchTerm !== "" && (
                       <h5 className="mx-[3px] my-4 text-xs text-custom-text-100">
                         Search results for{" "}
