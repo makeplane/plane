@@ -46,7 +46,7 @@ def migrate_user_extra_profile(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("db", "0058_alter_moduleissue_issue_and_more"),
+        ("db", "0060_cycle_progress_snapshot"),
     ]
 
     operations = [

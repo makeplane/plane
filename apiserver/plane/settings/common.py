@@ -112,7 +112,7 @@ TEMPLATES = [
 SESSION_COOKIE_SECURE = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1800
-SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_NAME = "next-auth.session-token"
 SESSION_COOKIE_DOMAIN = None
 
 # CSRF cookies

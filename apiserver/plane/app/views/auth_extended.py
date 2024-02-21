@@ -577,7 +577,7 @@ class SessionEndpoint(BaseAPIView):
         session = Session.objects.filter(session_key=token).first()
         if session:
             session_data = SessionStore().decode(session.session_data)
-            user = User.objects.get(pk=session_data.get("user_id"))
+            user = User.objects.get(pk=session_data.get("_auth_user_id"))
             serializer = UserAdminLiteSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
@@ -591,8 +591,9 @@ class SessionEndpoint(BaseAPIView):
                 {"error": "UserID is required for creating the sesison"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        request.session['user_id'] = user_id
-        request.session.save()
+        user = User.objects.get(pk=user_id)
+        # login the user with the session
+        login(user=user, request=request)
         return Response(
             {"session": str(request.session.session_key)},
             status=status.HTTP_200_OK,
