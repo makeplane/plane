@@ -48,7 +48,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     [setIsSubmitting]
   );
 
-  if (disabled) <div className="text-2xl font-medium">{title}</div>;
+  if (disabled) return <div className="text-2xl font-medium">{title}</div>;
 
   return (
     <div className="relative">
