@@ -4,7 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import { RootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
-import { IIssueLabel, IProject, IState, IUserLite } from "@plane/types";
+import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
 import { IIssueStore, IssueStore } from "./issue.store";
 import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
@@ -39,6 +39,8 @@ export interface IIssueRootStore {
   workSpaceMemberRolesMap: Record<string, IWorkspaceMembership> | undefined;
   memberMap: Record<string, IUserLite> | undefined;
   projectMap: Record<string, IProject> | undefined;
+  moduleMap: Record<string, IModule> | undefined;
+  cycleMap: Record<string, ICycle> | undefined;
 
   rootStore: RootStore;
 
@@ -91,6 +93,8 @@ export class IssueRootStore implements IIssueRootStore {
   workSpaceMemberRolesMap: Record<string, IWorkspaceMembership> | undefined = undefined;
   memberMap: Record<string, IUserLite> | undefined = undefined;
   projectMap: Record<string, IProject> | undefined = undefined;
+  moduleMap: Record<string, IModule> | undefined = undefined;
+  cycleMap: Record<string, ICycle> | undefined = undefined;
 
   rootStore: RootStore;
 
@@ -142,6 +146,8 @@ export class IssueRootStore implements IIssueRootStore {
       memberMap: observable,
       workSpaceMemberRolesMap: observable,
       projectMap: observable,
+      moduleMap: observable,
+      cycleMap: observable,
     });
 
     this.rootStore = rootStore;
@@ -163,6 +169,8 @@ export class IssueRootStore implements IIssueRootStore {
       if (!isEmpty(rootStore?.memberRoot?.memberMap)) this.memberMap = rootStore?.memberRoot?.memberMap || undefined;
       if (!isEmpty(rootStore?.projectRoot?.project?.projectMap))
         this.projectMap = rootStore?.projectRoot?.project?.projectMap;
+      if (!isEmpty(rootStore?.module?.moduleMap)) this.moduleMap = rootStore?.module?.moduleMap;
+      if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
     });
 
     this.issues = new IssueStore();

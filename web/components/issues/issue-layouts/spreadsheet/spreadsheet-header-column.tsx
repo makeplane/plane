@@ -25,7 +25,7 @@ export const SpreadsheetHeaderColumn = observer((props: Props) => {
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
       displayPropertyKey={property}
-      shouldRenderProperty={shouldRenderProperty}
+      shouldRenderProperty={() => shouldRenderProperty}
     >
       <th
         className="h-11 w-full min-w-[8rem] items-center bg-custom-background-90 text-sm font-medium px-4 py-1 border border-b-0 border-t-0 border-custom-border-100"
