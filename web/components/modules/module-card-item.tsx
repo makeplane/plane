@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // hooks
-import { useEventTracker, useModule, useUser } from "hooks/store";
+import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
@@ -37,6 +37,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { getUserDetails } = useMember();
   const { setTrackElement, captureEvent } = useEventTracker();
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -147,8 +148,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (
@@ -163,7 +164,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
         />
       )}
       <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
-      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project}/modules/${moduleDetails.id}`}>
+      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
@@ -195,13 +196,14 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
               </div>
-              {moduleDetails.members_detail.length > 0 && (
-                <Tooltip tooltipContent={`${moduleDetails.members_detail.length} Members`}>
+              {moduleDetails.member_ids?.length > 0 && (
+                <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
-                      {moduleDetails.members_detail.map((member) => (
-                        <Avatar key={member.id} name={member.display_name} src={member.avatar} />
-                      ))}
+                      {moduleDetails.member_ids.map((member_id) => {
+                        const member = getUserDetails(member_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   </div>
                 </Tooltip>

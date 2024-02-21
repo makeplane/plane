@@ -99,7 +99,7 @@ export class ModulesStore implements IModuleStore {
   get projectModuleIds() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
-    let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId);
     projectModules = sortBy(projectModules, [(m) => m.sort_order]);
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds || null;
@@ -119,7 +119,7 @@ export class ModulesStore implements IModuleStore {
   getProjectModuleIds = computedFn((projectId: string) => {
     if (!this.fetchedMap[projectId]) return null;
 
-    let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId);
     projectModules = sortBy(projectModules, [(m) => m.sort_order]);
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
