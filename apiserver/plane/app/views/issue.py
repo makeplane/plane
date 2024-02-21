@@ -326,7 +326,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~models.Q(labels__id__isnull=True),
+                        filter=~Q(labels__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -334,7 +334,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~models.Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -342,7 +342,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~models.Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -1086,7 +1086,7 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~models.Q(labels__id__isnull=True),
+                        filter=~Q(labels__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -1094,7 +1094,7 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~models.Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -1102,7 +1102,7 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~models.Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -1437,7 +1437,7 @@ class IssueArchiveViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~models.Q(labels__id__isnull=True),
+                        filter=~Q(labels__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -1445,7 +1445,7 @@ class IssueArchiveViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~models.Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -1453,7 +1453,7 @@ class IssueArchiveViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~models.Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -2076,7 +2076,7 @@ class IssueDraftViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~models.Q(labels__id__isnull=True),
+                        filter=~Q(labels__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -2084,7 +2084,7 @@ class IssueDraftViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~models.Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -2092,7 +2092,7 @@ class IssueDraftViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~models.Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
