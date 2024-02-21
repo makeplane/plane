@@ -195,6 +195,23 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
         )
 
 
+class AccountEndpoint(BaseAPIView):
+
+    def get(self, request, pk=None):
+        if pk:
+            account = Account.objects.get(pk=pk, user=request.user)
+            serializer = AccountSerializer(account)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        account = Account.objects.filter(user=request.user)
+        serializer = AccountSerializer(account, many=True)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
+
+
 class ProfileEndpoint(BaseAPIView):
     def get(self, request):
         profile = Profile.objects.get(user=request.user)

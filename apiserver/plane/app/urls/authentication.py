@@ -19,7 +19,6 @@ from plane.app.views import (
     ForgotPasswordEndpoint,
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
-    AccountEndpoint,
     SessionEndpoint,
     ## End Auth Extender
     # API Tokens
@@ -93,18 +92,6 @@ urlpatterns = [
         ForgotPasswordEndpoint.as_view(),
         name="forgot-password",
     ),
-    # Accounts
-    path(
-        "auth/accounts/",
-        AccountEndpoint.as_view(),
-        name="accounts",
-    ),
-    path(
-        "auth/accounts/<uuid:pk>/",
-        AccountEndpoint.as_view(),
-        name="accounts",
-    ),
-    ## End Accounts
     # Sessions
     path(
         "auth/sessions/",

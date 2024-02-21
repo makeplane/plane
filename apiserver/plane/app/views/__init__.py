@@ -18,6 +18,7 @@ from .user import (
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
+    AccountEndpoint,
     ProfileEndpoint,
 )
 
@@ -94,11 +95,7 @@ from .auth_extended import (
     ChangePasswordEndpoint,
     SetUserPasswordEndpoint,
     EmailCheckEndpoint,
-    AccountEndpoint,
     SessionEndpoint,
-    UserIdentifierEndpoint,
-    UserEmailEndpoint,
-    UserRegisterEndpoint,
 )
 
 

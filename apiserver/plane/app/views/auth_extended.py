@@ -490,23 +490,6 @@ class EmailCheckEndpoint(BaseAPIView):
                     status=status.HTTP_200_OK,
                 )
 
-
-class AccountEndpoint(BaseAPIView):
-
-    def get(self, request, pk=None):
-        if pk:
-            account = Account.objects.get(pk=pk, user=request.user)
-            serializer = AccountSerializer(account)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        account = Account.objects.filter(user=request.user)
-        serializer = AccountSerializer(account, many=True)
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-        )
-
-
 class SessionEndpoint(BaseAPIView):
 
     permission_classes = [
@@ -538,78 +521,3 @@ class SessionEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-
-class UserIdentifierEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def get(self, request, id=None):
-        user = User.objects.get(pk=id)
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class UserEmailEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def post(self, request, email=None):
-        email = request.data.get("email", False)
-        if not email:
-            return Response(
-                {"error": "Email is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user = User.objects.get(email=email)
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class UserRegisterEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def post(self, request):
-        email = request.data.get("email", False)
-        if not email:
-            return Response(
-                {"error": "Email is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Get name
-        name = request.data.get("name", False)
-        # Get avatar
-        avatar = request.data.get("image", False)
-
-        user = User.objects.filter(email=email).first()
-
-        if user is None:
-            user = User.objects.create(
-                email=email,
-                username=uuid.uuid4().hex,
-                password=make_password(uuid.uuid4().hex),
-                is_password_autoset=True,
-            )
-
-            # Save name
-            if name:
-                user.first_name = name.split(" ")[0]
-                if len(name.split(" ")) == 2:
-                    user.last_name = name.split(" ")[1]
-            # avatar
-            if avatar:
-                user.avatar = avatar
-            user.save()
-            serializer = UserSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)

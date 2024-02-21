@@ -203,27 +203,6 @@ class Account(TimeAuditModel):
         ordering = ("-created_at",)
 
 
-class Session(TimeAuditModel):
-    id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        primary_key=True,
-    )
-    user = models.ForeignKey(
-        "db.User", on_delete=models.CASCADE, related_name="sessions"
-    )
-    expires = models.DateTimeField()
-    token = models.TextField(unique=True)
-
-    class Meta:
-        verbose_name = "Session"
-        verbose_name_plural = "Sessions"
-        db_table = "sessions"
-        ordering = ("-created_at",)
-
-
 @receiver(post_save, sender=User)
 def send_welcome_slack(sender, instance, created, **kwargs):
     try:
