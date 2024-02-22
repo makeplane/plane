@@ -256,19 +256,10 @@ urlpatterns = [
             {
                 "get": "retrieve",
                 "post": "archive",
-                "delete": "destroy",
+                "delete": "unarchive",
             }
         ),
-        name="project-issue-archive",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/<uuid:pk>/",
-        IssueArchiveViewSet.as_view(
-            {
-                "post": "unarchive",
-            }
-        ),
-        name="project-issue-archive",
+        name="project-issue-archive-unarchive",
     ),
     ## End Issue Archives
     ## Issue Relation
