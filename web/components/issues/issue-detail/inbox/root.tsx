@@ -138,7 +138,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   if (!issue) return <></>;
   return (
     <div className="flex h-full overflow-hidden">
-      <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+      <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5 vertical-scrollbar scrollbar-md">
         <InboxIssueMainContent
           workspaceSlug={workspaceSlug}
           projectId={projectId}

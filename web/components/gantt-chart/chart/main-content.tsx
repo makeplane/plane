@@ -90,7 +90,7 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
       // DO NOT REMOVE THE ID
       id="gantt-container"
       className={cn(
-        "h-full w-full overflow-auto horizontal-scroll-enable flex border-t-[0.5px] border-custom-border-200",
+        "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
         {
           "mb-8": bottomSpacing,
         }

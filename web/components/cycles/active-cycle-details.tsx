@@ -222,12 +222,13 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   <span className="text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
                 </div>
 
-                {activeCycle.assignees.length > 0 && (
+                {activeCycle.assignee_ids.length > 0 && (
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <AvatarGroup>
-                      {activeCycle.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                      ))}
+                      {activeCycle.assignee_ids.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   </div>
                 )}

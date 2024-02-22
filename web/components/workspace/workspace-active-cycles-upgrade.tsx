@@ -19,7 +19,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const isDarkMode = currentUser?.theme.theme === "dark";
 
   return (
-    <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full">
+    <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full vertical-scrollbar scrollbar-lg">
       <div
         className={cn("flex item-center justify-between rounded-xl min-h-[25rem]", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": currentUser?.theme.theme === "dark",
