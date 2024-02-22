@@ -219,7 +219,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       <MoreHorizontal className="h-3.5 w-3.5" />
                     </div>
                   }
-                  className={`hidden flex-shrink-0 group-hover:block ${isMenuActive ? "!block" : ""}`}
+                  className={`md:hidden flex-shrink-0 md:group-hover:block ${isMenuActive ? "!block" : ""}`}
                   buttonClassName="!text-custom-sidebar-text-400"
                   ellipsis
                   placement="bottom-start"

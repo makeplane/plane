@@ -260,11 +260,13 @@ const activityDetails: {
     message: (activity, showIssue, workspaceSlug) => {
       if (activity.old_value === "")
         return (
-          <>
+          <div className="relative flex flex-wrap items-center gap-1 overflow-hidden">
             added a new label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="relative inline-flex overflow-hidden items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
+              <span className="overflow-hidden block truncate line-clamp-1 whitespace-nowrap font-medium text-custom-text-100">
+                {activity.new_value}
+              </span>
             </span>
             {showIssue && (
               <span className="">
@@ -272,15 +274,17 @@ const activityDetails: {
                 to <IssueLink activity={activity} />
               </span>
             )}
-          </>
+          </div>
         );
       else
         return (
-          <>
+          <div className="relative flex flex-wrap items-center gap-1 overflow-hidden">
             removed the label{" "}
-            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="relative inline-flex overflow-hidden items-center gap-2 whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.old_value}</span>
+              <span className="overflow-hidden block truncate line-clamp-1 whitespace-nowrap font-medium text-custom-text-100">
+                {activity.old_value}
+              </span>
             </span>
             {showIssue && (
               <span>
@@ -288,7 +292,7 @@ const activityDetails: {
                 from <IssueLink activity={activity} />
               </span>
             )}
-          </>
+          </div>
         );
     },
     icon: <TagIcon size={12} color="#6b7280" aria-hidden="true" />,
@@ -678,12 +682,12 @@ export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessage
   const { workspaceSlug } = router.query;
 
   return (
-    <>
+    <div className="w-full">
       {activityDetails[activity.field as keyof typeof activityDetails]?.message(
         activity,
         showIssue,
         workspaceSlug ? workspaceSlug.toString() : activity.workspace_detail?.slug ?? ""
       )}
-    </>
+    </div>
   );
 };

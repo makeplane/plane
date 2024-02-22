@@ -32,7 +32,7 @@ export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
     <div className="h-full w-full realtive flex flex-row">
       <div className="w-full realtive flex flex-col">
         <ProfileNavbar isAuthorized={isAuthorized} showProfileIssuesFilter={showProfileIssuesFilter} />
-        <ProfileMobileHeader />
+        {(isAuthorized || !isAuthorizedPath) && <ProfileMobileHeader />}
         {isAuthorized || !isAuthorizedPath ? (
           <div className={`w-full overflow-hidden md:h-full ${className}`}>{children}</div>
         ) : (

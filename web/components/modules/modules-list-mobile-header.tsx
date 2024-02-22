@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // icons
-import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
+import { LayoutGrid, List } from "lucide-react";
 // constants
 import { CustomMenu } from "@plane/ui";
 import { MODULE_VIEW_LAYOUTS } from "constants/module";
@@ -18,7 +18,7 @@ export const ModulesListMobileHeader = observer(() => {
             // placement="bottom-start"
             customButton={
                 <span className="flex items-center gap-2">
-                    {modulesView === 'gantt_chart' ? <GanttChartSquare className="w-3 h-3" /> : modulesView === 'grid' ? <LayoutGrid className="w-3 h-3" /> : <List className="w-3 h-3" />}
+                    {modulesView === 'grid' ? <LayoutGrid className="w-3 h-3" /> : <List className="w-3 h-3" />}
                     <span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>
                 </span>
             }

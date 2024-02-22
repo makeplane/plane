@@ -39,21 +39,20 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
-    <div className="group flex items-center">
-      <div className="flex items-center">
+    <div className="group flex items-center w-full">
+      <div className="flex items-center w-full">
         <DragHandle isDragging={isDragging} dragHandleProps={dragHandleProps} />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>
 
       <div
         ref={actionSectionRef}
-        className={`absolute right-3 flex items-start gap-3.5 px-4 ${
-          isMenuActive || isLabelGroup
+        className={`right-3 flex items-start gap-3.5 px-4 ${isMenuActive || isLabelGroup
             ? "opacity-100"
             : "md:opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
-        } ${isLabelGroup && "-top-0.5"}`}
+          } ${isLabelGroup && "-top-0.5"}`}
       >
-        <CustomMenu ellipsis buttonClassName="h-4 w-4 leading-4 text-custom-sidebar-text-400">
+        <CustomMenu ellipsis buttonClassName="text-custom-sidebar-text-400">
           {customMenuItems.map(
             ({ isVisible, onClick, CustomIcon, text, key }) =>
               isVisible && (

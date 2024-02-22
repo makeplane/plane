@@ -137,7 +137,7 @@ export const ProjectSidebarList: FC = observer(() => {
                             </Disclosure.Button>
                             {isAuthorizedUser && (
                               <button
-                                className="opacity-0 group-hover:opacity-100"
+                                className="md:opacity-0 md:group-hover:opacity-100"
                                 onClick={() => {
                                   setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
                                   setIsFavoriteProjectCreate(true);
@@ -163,8 +163,8 @@ export const ProjectSidebarList: FC = observer(() => {
                                 key={projectId}
                                 draggableId={projectId}
                                 index={index}
-                                // FIXME refactor the Draggable to a different component
-                                //isDragDisabled={!project.is_member}
+                              // FIXME refactor the Draggable to a different component
+                              //isDragDisabled={!project.is_member}
                               >
                                 {(provided, snapshot) => (
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
@@ -215,7 +215,7 @@ export const ProjectSidebarList: FC = observer(() => {
                             </Disclosure.Button>
                             {isAuthorizedUser && (
                               <button
-                                className="opacity-0 group-hover:opacity-100"
+                                className="md:opacity-0 md:group-hover:opacity-100"
                                 onClick={() => {
                                   setTrackElement("Sidebar");
                                   setIsFavoriteProjectCreate(false);

@@ -25,7 +25,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
         <Tooltip tooltipContent="Delete token">
           <button
             onClick={() => setDeleteModalOpen(true)}
-            className="absolute right-4 hidden place-items-center group-hover:grid"
+            className="absolute right-4 md:hidden place-items-center md:group-hover:grid"
           >
             <XCircle className="h-4 w-4 text-red-500" />
           </button>

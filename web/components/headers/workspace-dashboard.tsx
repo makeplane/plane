@@ -60,8 +60,8 @@ export const WorkspaceDashboardHeader = () => {
           >
             <Image
               src={resolvedTheme === "dark" ? githubWhiteImage : githubBlackImage}
-              height={16}
-              width={16}
+              height={14}
+              width={14}
               alt="GitHub Logo"
             />
             <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>

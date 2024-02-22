@@ -41,7 +41,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
       {widgetStats.length > 0 ? (
         <div className="space-y-6 mt-4 mx-7">
           {widgetStats.map((activity) => (
-            <div key={activity.id} className="flex gap-5">
+            <div key={activity.id} className="relative flex gap-5 overflow-hidden">
               <div className="flex-shrink-0">
                 {activity.field ? (
                   activity.new_value === "restore" ? (
@@ -66,7 +66,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                   </div>
                 )}
               </div>
-              <div className="-mt-1 break-all break-words">
+              <div className="-mt-1 overflow-hidden">
                 <p className="text-sm text-custom-text-200">
                   <span className="font-medium text-custom-text-100">
                     {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
