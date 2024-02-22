@@ -24,8 +24,8 @@ const defaultValues: Partial<IModule> = {
   name: "",
   description: "",
   status: "backlog",
-  lead: null,
-  members: [],
+  lead_id: null,
+  member_ids: [],
 };
 
 export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
@@ -51,7 +51,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const handleCreateModule = async (payload: Partial<IModule>) => {
     if (!workspaceSlug || !projectId) return;
 
-    const selectedProjectId = payload.project ?? projectId.toString();
+    const selectedProjectId = payload.project_id ?? projectId.toString();
     await createModule(workspaceSlug.toString(), selectedProjectId, payload)
       .then((res) => {
         handleClose();
@@ -81,7 +81,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId || !data) return;
 
-    const selectedProjectId = payload.project ?? projectId.toString();
+    const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateModuleDetails(workspaceSlug.toString(), selectedProjectId, data.id, payload)
       .then((res) => {
         handleClose();
@@ -129,8 +129,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
 
     // if data is present, set active project to the project of the
     // issue. This has more priority than the project in the url.
-    if (data && data.project) {
-      setActiveProject(data.project);
+    if (data && data.project_id) {
+      setActiveProject(data.project_id);
       return;
     }
 

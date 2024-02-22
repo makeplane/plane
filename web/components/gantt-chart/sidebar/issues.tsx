@@ -7,42 +7,23 @@ import { useIssueDetail } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { GanttQuickAddIssueForm, IssueGanttSidebarBlock } from "components/issues";
+import { IssueGanttSidebarBlock } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
-import { TIssue } from "@plane/types";
 import { BLOCK_HEIGHT } from "../constants";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
   enableReorder: boolean;
-  enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    viewId?: string
-  ) => Promise<TIssue | undefined>;
-  viewId?: string;
-  disableIssueCreation?: boolean;
   showAllBlocks?: boolean;
 };
 
-export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
-  const {
-    blockUpdateHandler,
-    blocks,
-    enableReorder,
-    enableQuickIssueCreate,
-    quickAddCallback,
-    viewId,
-    disableIssueCreation,
-    showAllBlocks = false,
-  } = props;
+export const IssueGanttSidebar: React.FC<Props> = observer((props: Props) => {
+  const { blockUpdateHandler, blocks, enableReorder, showAllBlocks = false } = props;
 
   const { activeBlock, dispatch } = useChart();
   const { peekIssue } = useIssueDetail();
@@ -187,9 +168,6 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
           )}
         </Droppable>
       </DragDropContext>
-      {enableQuickIssueCreate && !disableIssueCreation && (
-        <GanttQuickAddIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
-      )}
     </>
   );
 });

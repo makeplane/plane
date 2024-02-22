@@ -4,7 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Link, Trash2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useEventTracker, useIssues ,useUser} from "hooks/store";
+import { useEventTracker, useIssues, useUser } from "hooks/store";
 // components
 import { DeleteArchivedIssueModal } from "components/issues";
 // helpers
@@ -37,7 +37,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const handleCopyIssueLink = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`).then(() =>
+    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project_id}/archived-issues/${issue.id}`).then(() =>
       setToastAlert({
         type: "success",
         title: "Link copied",
@@ -75,7 +75,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
           <CustomMenu.MenuItem
             onClick={() => {
               setTrackElement(activeLayout);
-            setDeleteIssueModal(true);
+              setDeleteIssueModal(true);
             }}
           >
             <div className="flex items-center gap-2">

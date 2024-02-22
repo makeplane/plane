@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useForm } from "react-hook-form";
-import { Disclosure, Popover, Transition } from "@headlessui/react";
+import { Controller, useForm } from "react-hook-form";
+import { Disclosure, Transition } from "@headlessui/react";
 import isEmpty from "lodash/isEmpty";
 // services
 import { CycleService } from "services/cycle.service";
@@ -14,27 +14,12 @@ import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
 // ui
-import { CustomRangeDatePicker } from "components/ui";
 import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
 // icons
-import {
-  ChevronDown,
-  LinkIcon,
-  Trash2,
-  UserCircle2,
-  AlertCircle,
-  ChevronRight,
-  CalendarCheck2,
-  CalendarClock,
-} from "lucide-react";
+import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import {
-  findHowManyDaysLeft,
-  isDateGreaterThanToday,
-  renderFormattedPayloadDate,
-  renderFormattedDate,
-} from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "@plane/types";
 // constants
@@ -42,6 +27,7 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 import { CYCLE_UPDATED } from "constants/event-tracker";
 // fetch-keys
 import { CYCLE_STATUS } from "constants/cycle";
+import { DateRangeDropdown } from "components/dropdowns";
 
 type Props = {
   cycleId: string;
@@ -61,9 +47,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { cycleId, handleClose } = props;
   // states
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-  // refs
-  const startDateButtonRef = useRef<HTMLButtonElement | null>(null);
-  const endDateButtonRef = useRef<HTMLButtonElement | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -74,13 +57,13 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useUser();
   const { getCycleById, updateCycleDetails } = useCycle();
   const { getUserDetails } = useMember();
-
+  // derived values
   const cycleDetails = getCycleById(cycleId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by) : undefined;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
-  const { setValue, reset, watch } = useForm({
+  // form info
+  const { control, reset } = useForm({
     defaultValues,
   });
 
@@ -145,160 +128,38 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     }
   };
 
-  const handleStartDateChange = async (date: string) => {
-    setValue("start_date", date);
+  const handleDateChange = async (startDate: Date | undefined, endDate: Date | undefined) => {
+    if (!startDate || !endDate) return;
 
-    if (!watch("end_date") || watch("end_date") === "") endDateButtonRef.current?.click();
+    let isDateValid = false;
 
-    if (watch("start_date") && watch("end_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create cycle in past date. Please enter a valid date.",
-        });
-        reset({ ...cycleDetails });
-        return;
-      }
+    const payload = {
+      start_date: renderFormattedPayloadDate(startDate),
+      end_date: renderFormattedPayloadDate(endDate),
+    };
 
-      if (cycleDetails?.start_date && cycleDetails?.end_date) {
-        const isDateValidForExistingCycle = await dateChecker({
-          start_date: `${watch("start_date")}`,
-          end_date: `${watch("end_date")}`,
-          cycle_id: cycleDetails.id,
-        });
-
-        if (isDateValidForExistingCycle) {
-          submitChanges(
-            {
-              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-            },
-            "start_date"
-          );
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "Cycle updated successfully.",
-          });
-        } else {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-          });
-        }
-
-        reset({ ...cycleDetails });
-        return;
-      }
-
-      const isDateValid = await dateChecker({
-        start_date: `${watch("start_date")}`,
-        end_date: `${watch("end_date")}`,
+    if (cycleDetails && cycleDetails.start_date && cycleDetails.end_date)
+      isDateValid = await dateChecker({
+        ...payload,
+        cycle_id: cycleDetails.id,
       });
+    else isDateValid = await dateChecker(payload);
 
-      if (isDateValid) {
-        submitChanges(
-          {
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          },
-          "start_date"
-        );
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Cycle updated successfully.",
-        });
-      } else {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message:
-            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-        });
-        reset({ ...cycleDetails });
-      }
-    }
-  };
-
-  const handleEndDateChange = async (date: string) => {
-    setValue("end_date", date);
-
-    if (!watch("start_date") || watch("start_date") === "") startDateButtonRef.current?.click();
-
-    if (watch("start_date") && watch("end_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create cycle in past date. Please enter a valid date.",
-        });
-        reset({ ...cycleDetails });
-        return;
-      }
-
-      if (cycleDetails?.start_date && cycleDetails?.end_date) {
-        const isDateValidForExistingCycle = await dateChecker({
-          start_date: `${watch("start_date")}`,
-          end_date: `${watch("end_date")}`,
-          cycle_id: cycleDetails.id,
-        });
-
-        if (isDateValidForExistingCycle) {
-          submitChanges(
-            {
-              start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-              end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-            },
-            "end_date"
-          );
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "Cycle updated successfully.",
-          });
-        } else {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-          });
-        }
-        reset({ ...cycleDetails });
-        return;
-      }
-
-      const isDateValid = await dateChecker({
-        start_date: `${watch("start_date")}`,
-        end_date: `${watch("end_date")}`,
+    if (isDateValid) {
+      submitChanges(payload, "date_range");
+      setToastAlert({
+        type: "success",
+        title: "Success!",
+        message: "Cycle updated successfully.",
       });
-
-      if (isDateValid) {
-        submitChanges(
-          {
-            start_date: renderFormattedPayloadDate(`${watch("start_date")}`),
-            end_date: renderFormattedPayloadDate(`${watch("end_date")}`),
-          },
-          "end_date"
-        );
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Cycle updated successfully.",
-        });
-      } else {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message:
-            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-        });
-        reset({ ...cycleDetails });
-      }
+    } else {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message:
+          "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
+      });
+      reset({ ...cycleDetails });
     }
   };
 
@@ -350,9 +211,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
       </Loader>
     );
-
-  const endDate = new Date(watch("end_date") ?? cycleDetails.end_date ?? "");
-  const startDate = new Date(watch("start_date") ?? cycleDetails.start_date ?? "");
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
@@ -440,125 +298,52 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <CalendarClock className="h-4 w-4" />
-              <span className="text-base">Start date</span>
+              <span className="text-base">Date range</span>
             </div>
-            <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
-                {({ close }) => (
-                  <>
-                    <Popover.Button
-                      ref={startDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
-                      disabled={isCompleted || !isEditingAllowed}
-                    >
-                      <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("start_date") ? "" : "text-custom-text-400"
-                        }`}
-                      >
-                        {renderFormattedDate(startDate) ?? "No date selected"}
-                      </span>
-                    </Popover.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute right-0 top-10 z-20 transform overflow-hidden">
-                        <CustomRangeDatePicker
-                          value={watch("start_date") ? watch("start_date") : cycleDetails?.start_date}
-                          onChange={(val) => {
-                            if (val) {
-                              setTrackElement("CYCLE_PAGE_SIDEBAR_START_DATE_BUTTON");
-                              handleStartDateChange(val);
-                              close();
-                            }
-                          }}
-                          startDate={watch("start_date") ?? watch("end_date") ?? null}
-                          endDate={watch("end_date") ?? watch("start_date") ?? null}
-                          maxDate={new Date(`${watch("end_date")}`)}
-                          selectsStart={watch("end_date") ? true : false}
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
+            <div className="w-3/5 h-7">
+              <Controller
+                control={control}
+                name="start_date"
+                render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                  <Controller
+                    control={control}
+                    name="end_date"
+                    render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                      <DateRangeDropdown
+                        className="h-7"
+                        buttonContainerClassName="w-full"
+                        buttonVariant="background-with-text"
+                        minDate={new Date()}
+                        value={{
+                          from: startDateValue ? new Date(startDateValue) : undefined,
+                          to: endDateValue ? new Date(endDateValue) : undefined,
+                        }}
+                        onSelect={(val) => {
+                          onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                          onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                          handleDateChange(val?.from, val?.to);
+                        }}
+                        placeholder={{
+                          from: "Start date",
+                          to: "End date",
+                        }}
+                        required={cycleDetails.status !== "draft"}
+                      />
+                    )}
+                  />
                 )}
-              </Popover>
+              />
             </div>
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarCheck2 className="h-4 w-4" />
-              <span className="text-base">Target date</span>
-            </div>
-            <div className="relative flex w-1/2 items-center rounded-sm">
-              <Popover className="flex h-full w-full items-center justify-center rounded-lg">
-                {({ close }) => (
-                  <>
-                    <Popover.Button
-                      ref={endDateButtonRef}
-                      className={`w-full cursor-pointer rounded-sm text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
-                      disabled={isCompleted || !isEditingAllowed}
-                    >
-                      <span
-                        className={`group flex w-full items-center justify-between gap-2 px-1.5 py-1 text-sm ${
-                          watch("end_date") ? "" : "text-custom-text-400"
-                        }`}
-                      >
-                        {renderFormattedDate(endDate) ?? "No date selected"}
-                      </span>
-                    </Popover.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute right-0 top-10 z-20 transform overflow-hidden">
-                        <CustomRangeDatePicker
-                          value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
-                          onChange={(val) => {
-                            if (val) {
-                              setTrackElement("CYCLE_PAGE_SIDEBAR_END_DATE_BUTTON");
-                              handleEndDateChange(val);
-                              close();
-                            }
-                          }}
-                          startDate={watch("start_date") ?? watch("end_date") ?? null}
-                          endDate={watch("end_date") ?? watch("start_date") ?? null}
-                          minDate={new Date(`${watch("start_date")}`)}
-                          selectsEnd={watch("start_date") ? true : false}
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <UserCircle2 className="h-4 w-4" />
               <span className="text-base">Lead</span>
             </div>
-            <div className="flex w-1/2 items-center rounded-sm">
+            <div className="flex w-3/5 items-center rounded-sm">
               <div className="flex items-center gap-2.5">
                 <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
                 <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
@@ -567,11 +352,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
 
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="flex w-1/2 items-center">
+            <div className="flex w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>

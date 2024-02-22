@@ -5,13 +5,13 @@ import { observer } from "mobx-react-lite";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import { useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
-import { ImagePickerPopover, UserImageUploadModal } from "components/core";
+import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
 import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
@@ -57,7 +57,8 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
   // custom hooks
-  const { } = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
+  const {} = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
+  const { theme: themeStore } = useApplication();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -137,9 +138,10 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title="Profile - General Settings" />
       <div className="flex flex-col h-full">
         <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
-          <SidebarHamburgerToggle />
+          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         </div>
         <div className="overflow-hidden">
           <Controller

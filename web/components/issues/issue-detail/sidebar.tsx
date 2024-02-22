@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { differenceInCalendarDays } from "date-fns";
 import {
   LinkIcon,
   Signal,
@@ -11,11 +12,10 @@ import {
   XCircle,
   CircleDot,
   CopyPlus,
-  CalendarClock,
-  CalendarCheck2,
+  CalendarDays,
 } from "lucide-react";
 // hooks
-import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssueDetail, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -36,10 +36,11 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // icons
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
+import { cn } from "helpers/common.helper";
 // types
 import type { TIssueOperations } from "./root";
 
@@ -56,11 +57,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, is_archived, is_editable } = props;
   // router
   const router = useRouter();
-  const { inboxIssueId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
-  const { projectStates } = useProjectState();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const { setToastAlert } = useToast();
   const {
@@ -91,7 +90,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
+  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
 
   return (
     <>
@@ -108,22 +107,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
       )}
 
       <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-        <div className="flex items-center justify-between px-5 pb-3">
-          <div className="flex items-center gap-x-2">
-            {currentIssueState ? (
-              <StateGroupIcon
-                className="h-4 w-4"
-                stateGroup={currentIssueState.group}
-                color={currentIssueState.color}
-              />
-            ) : inboxIssueId ? (
-              <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
-            ) : null}
-            <h4 className="text-lg font-medium text-custom-text-300">
-              {projectDetails?.identifier}-{issue?.sequence_id}
-            </h4>
-          </div>
-
+        <div className="flex items-center justify-end px-5 pb-3">
           <div className="flex flex-wrap items-center gap-2">
             {currentUser && !is_archived && (
               <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
@@ -152,7 +136,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
         <div className="h-full w-full overflow-y-auto px-5">
           <h5 className="text-sm font-medium mt-6">Properties</h5>
           {/* TODO: render properties using a common component */}
-          <div className={`mt-3 space-y-2 ${!is_editable ? "opacity-60" : ""}`}>
+          <div className={`mt-3 mb-2 space-y-2.5 ${!is_editable ? "opacity-60" : ""}`}>
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
@@ -187,8 +171,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
-                  }`}
+                buttonClassName={`text-sm justify-between ${
+                  issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"
+                }`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -213,7 +198,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                <CalendarClock className="h-4 w-4 flex-shrink-0" />
+                <CalendarDays className="h-4 w-4 flex-shrink-0" />
                 <span>Start date</span>
               </div>
               <DateDropdown
@@ -232,14 +217,14 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
-              // TODO: add this logic
-              // showPlaceholderIcon
+                // TODO: add this logic
+                // showPlaceholderIcon
               />
             </div>
 
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+                <CalendarDays className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
               <DateDropdown
@@ -255,11 +240,14 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonVariant="transparent-with-text"
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+                buttonClassName={cn("text-sm", {
+                  "text-custom-text-400": !issue.target_date,
+                  "text-red-500": targetDateDistance <= 0,
+                })}
                 hideIcon
-                clearIconClassName="h-3 w-3 hidden group-hover:inline"
-              // TODO: add this logic
-              // showPlaceholderIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+                // TODO: add this logic
+                // showPlaceholderIcon
               />
             </div>
 
@@ -287,8 +275,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             )}
 
             {projectDetails?.module_view && (
-              <div className="flex items-center gap-2 min-h-8 h-full">
-                <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+              <div className="flex gap-2 min-h-8">
+                <div className="flex gap-1 pt-2 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
                   <span>Module</span>
                 </div>
@@ -394,20 +382,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 disabled={!is_editable}
               />
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 min-h-8 py-2">
-            <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-              <Tag className="h-4 w-4 flex-shrink-0" />
-              <span>Labels</span>
-            </div>
-            <div className="w-3/5 flex-grow min-h-8 h-full">
-              <IssueLabel
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                disabled={!is_editable}
-              />
+            <div className="flex gap-2 min-h-8">
+              <div className="flex gap-1 pt-2 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
+                <Tag className="h-4 w-4 flex-shrink-0" />
+                <span>Labels</span>
+              </div>
+              <div className="w-3/5 flex-grow min-h-8 h-full">
+                <IssueLabel
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  disabled={!is_editable}
+                />
+              </div>
             </div>
           </div>
 

@@ -54,7 +54,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    theme: { sidebarCollapsed, toggleSidebar },
+    theme: { sidebarCollapsed, toggleMobileSidebar },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
@@ -98,7 +98,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
-      toggleSidebar();
+      toggleMobileSidebar();
     }
   };
   const workspacesList = Object.values(workspaces ?? {});
@@ -156,8 +156,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
             >
               <Menu.Items as={Fragment}>
                 <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg divide-y divide-custom-border-100 outline-none">
-                  <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4">
-                    <h6 className="sticky top-0 z-10 h-full w-full bg-custom-background-100 pt-3 text-sm font-medium text-custom-sidebar-text-400">
+                  <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4 vertical-scrollbar scrollbar-sm">
+                    <h6 className="sticky top-0 z-10 h-full w-full pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
                     {workspacesList ? (
@@ -220,10 +220,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     )}
                   </div>
                   <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
-                    <Link
-                      href="/create-workspace"
-                      className="w-full"
-                    >
+                    <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
                         className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 font-medium"

@@ -170,7 +170,7 @@ export class IssueHelperStore implements TIssueHelperStore {
    * @returns string | string[] of sortable fields to be used for sorting
    */
   populateIssueDataForSorting(
-    dataType: "state_id" | "label_ids" | "assignee_ids",
+    dataType: "state_id" | "label_ids" | "assignee_ids" | "module_ids" | "cycle_id",
     dataIds: string | string[] | null | undefined,
     order?: "asc" | "desc"
   ) {
@@ -202,7 +202,23 @@ export class IssueHelperStore implements TIssueHelperStore {
         if (!memberMap) break;
         for (const dataId of dataIdsArray) {
           const member = memberMap[dataId];
-          if (memberMap && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
+          if (member && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
+        }
+        break;
+      case "module_ids":
+        const moduleMap = this.rootStore?.moduleMap;
+        if (!moduleMap) break;
+        for (const dataId of dataIdsArray) {
+          const _module = moduleMap[dataId];
+          if (_module && _module.name) dataValues.push(_module.name.toLocaleLowerCase());
+        }
+        break;
+      case "cycle_id":
+        const cycleMap = this.rootStore?.cycleMap;
+        if (!cycleMap) break;
+        for (const dataId of dataIdsArray) {
+          const cycle = cycleMap[dataId];
+          if (cycle && cycle.name) dataValues.push(cycle.name.toLocaleLowerCase());
         }
         break;
     }
@@ -309,6 +325,36 @@ export class IssueHelperStore implements TIssueHelperStore {
           [
             this.getSortOrderToFilterEmptyValues.bind(null, "label_ids"), //preferring sorting based on empty values to always keep the empty values below
             (issue) => this.populateIssueDataForSorting("label_ids", issue["label_ids"], "desc"),
+          ],
+          ["asc", "desc"]
+        );
+
+      case "modules__name":
+        return orderBy(array, [
+          this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "asc"),
+        ]);
+      case "-modules__name":
+        return orderBy(
+          array,
+          [
+            this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
+            (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "desc"),
+          ],
+          ["asc", "desc"]
+        );
+
+      case "cycle__name":
+        return orderBy(array, [
+          this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "asc"),
+        ]);
+      case "-cycle__name":
+        return orderBy(
+          array,
+          [
+            this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
+            (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "desc"),
           ],
           ["asc", "desc"]
         );

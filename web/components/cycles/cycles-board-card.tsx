@@ -1,8 +1,9 @@
 import { FC, MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { observer } from "mobx-react";
 // hooks
-import { useEventTracker, useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
@@ -26,7 +27,7 @@ export interface ICyclesBoardCard {
   cycleId: string;
 }
 
-export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
+export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -39,6 +40,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
+  const { getUserDetails } = useMember();
   // toast alert
   const { setToastAlert } = useToast();
   // computed
@@ -69,8 +71,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
@@ -211,13 +213,14 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
-              {cycleDetails.assignees.length > 0 && (
-                <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
+              {cycleDetails.assignee_ids.length > 0 && (
+                <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
-                      {cycleDetails.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee?.display_name} src={assignee.avatar} />
-                      ))}
+                      {cycleDetails.assignee_ids.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   </div>
                 </Tooltip>
@@ -295,4 +298,4 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       </Link>
     </div>
   );
-};
+});

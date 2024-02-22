@@ -68,8 +68,8 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
-      },
-    });
+      },}
+    );
 
     issueCalendarView.updateCalendarPayload(
       layout === "month"

@@ -6,6 +6,8 @@ import { observer } from "mobx-react";
 import { useInbox, useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
+// ui
+import { InboxLayoutLoader } from "components/ui";
 // components
 import { ProjectInboxHeader } from "components/headers";
 // types
@@ -33,7 +35,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="flex h-full flex-col">
-      {currentProjectDetails?.inbox_view ? <div>Loading...</div> : <div>You don{"'"}t have access to inbox</div>}
+      {currentProjectDetails?.inbox_view ? <InboxLayoutLoader /> : <div>You don{"'"}t have access to inbox</div>}
     </div>
   );
 });

@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
+import { DateDropdown } from "components/dropdowns";
 import { Calendar } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-// components
-import { CustomDatePicker } from "components/ui";
 // ui
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
 // helpers
@@ -167,7 +166,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     <CustomSelect
                       customButton={
                         <div
-                          className={`flex items-center gap-2 rounded border-[0.5px] border-custom-border-200 px-2 py-1 ${
+                          className={`flex items-center gap-2 rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 ${
                             neverExpires ? "text-custom-text-400" : ""
                           }`}
                         >
@@ -194,20 +193,13 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 }}
               />
               {watch("expired_at") === "custom" && (
-                <CustomDatePicker
+                <DateDropdown
                   value={customDate}
-                  onChange={(date) => setCustomDate(date ? new Date(date) : null)}
+                  onChange={(date) => setCustomDate(date)}
                   minDate={tomorrow}
-                  customInput={
-                    <div
-                      className={`flex cursor-pointer items-center gap-2 !rounded border-[0.5px] border-custom-border-200 px-2 py-1 text-xs !shadow-none !duration-0 ${
-                        customDate ? "w-[7.5rem]" : ""
-                      } ${neverExpires ? "!cursor-not-allowed text-custom-text-400" : "hover:bg-custom-background-80"}`}
-                    >
-                      <Calendar className="h-3 w-3" />
-                      {customDate ? renderFormattedDate(customDate) : "Set date"}
-                    </div>
-                  }
+                  icon={<Calendar className="h-3 w-3" />}
+                  buttonVariant="border-with-text"
+                  placeholder="Set date"
                   disabled={neverExpires}
                 />
               )}
