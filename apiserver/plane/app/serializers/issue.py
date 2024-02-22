@@ -508,7 +508,12 @@ class IssueReactionLiteSerializer(DynamicBaseSerializer):
 
     class Meta:
         model = IssueReaction
-        fields = ["actor_id", "issue_id", "reaction"]
+        fields = [
+            "id",
+            "actor_id",
+            "issue_id",
+            "reaction",
+        ]
 
 
 class CommentReactionSerializer(BaseSerializer):
@@ -644,13 +649,15 @@ class IssueSerializer(DynamicBaseSerializer):
         read_only_fields = fields
 
 
-
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta(IssueSerializer.Meta):
-        fields = IssueSerializer.Meta.fields + ["description_html", "is_subscribed"]
+        fields = IssueSerializer.Meta.fields + [
+            "description_html",
+            "is_subscribed",
+        ]
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):
