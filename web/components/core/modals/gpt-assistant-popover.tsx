@@ -17,7 +17,9 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  onResponse: (response: any) => void;
+  onResponse: (question: string, response: any) => void;
+  onGenerateResponse?: (question: string, response: any) => void;
+  onReGenerateResponse?: (question: string, response: any) => void;
   onError?: (error: any) => void;
   placement?: Placement;
   prompt?: string;
@@ -33,7 +35,19 @@ type FormData = {
 const aiService = new AIService();
 
 export const GptAssistantPopover: React.FC<Props> = (props) => {
-  const { isOpen, projectId, handleClose, onResponse, onError, placement, prompt, button, className = "" } = props;
+  const {
+    isOpen,
+    projectId,
+    handleClose,
+    onResponse,
+    onGenerateResponse,
+    onReGenerateResponse,
+    onError,
+    placement,
+    prompt,
+    button,
+    className = "",
+  } = props;
   // states
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
@@ -55,6 +69,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
     handleSubmit,
     control,
     reset,
+    getValues,
     setFocus,
     formState: { isSubmitting },
   } = useForm<FormData>({
@@ -120,6 +135,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
     }
 
     await callAIService(formData);
+    if (response !== "" && onReGenerateResponse) onReGenerateResponse(formData.task, response);
+    else if (response === "" && onGenerateResponse) onGenerateResponse(formData.task, response);
   };
 
   useEffect(() => {
@@ -164,7 +181,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
     <Button
       variant="primary"
       onClick={() => {
-        onResponse(response);
+        onResponse(getValues("task"), response);
         onClose();
       }}
     >

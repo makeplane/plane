@@ -1,5 +1,6 @@
 import { FC, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import {
   AlertCircle,
@@ -13,18 +14,21 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+// hooks
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
+import { useEventTracker, useMember, usePage, useUser } from "hooks/store";
+// helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
+// types
+import { IIssueLabel } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { useRouter } from "next/router";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { useMember, usePage, useUser } from "hooks/store";
-import { IIssueLabel } from "@plane/types";
+import { PAGE_ARCHIVED, PAGE_FAVORITED, PAGE_RESTORED, PAGE_UNFAVORITED, PAGE_UPDATED } from "constants/event-tracker";
 
 export interface IPagesListItem {
   pageId: string;
@@ -38,21 +42,21 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
 
   const pageStore = usePage(pageId);
 
-  // states
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-
   const [deletePageModal, setDeletePageModal] = useState(false);
-
+  // store hooks
   const {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-
   const {
     project: { getProjectMemberDetails },
   } = useMember();
+  const { captureEvent } = useEventTracker();
 
   if (!pageStore) return null;
 
@@ -81,42 +85,81 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   const handleAddToFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    addToFavorites();
+    addToFavorites().then(() => {
+      captureEvent(PAGE_FAVORITED, {
+        page_id: pageId,
+        element: "Project pages page",
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    removeFromFavorites();
+    removeFromFavorites().then(() => {
+      captureEvent(PAGE_UNFAVORITED, {
+        page_id: pageId,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleMakePublic = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    makePublic();
+    makePublic().then(() => {
+      captureEvent(PAGE_UPDATED, {
+        page_id: pageId,
+        access: "public",
+        element: "Project pages page",
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleMakePrivate = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    makePrivate();
+    makePrivate().then(() => {
+      captureEvent(PAGE_UPDATED, {
+        page_id: pageId,
+        access: "private",
+        element: "Project pages page",
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleArchivePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    await archivePage(workspaceSlug as string, projectId as string, pageId as string);
+    await archivePage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+      captureEvent(PAGE_ARCHIVED, {
+        page_id: pageId,
+        access: access == 1 ? "private" : "public",
+        element: "Project pages page",
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleRestorePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    await restorePage(workspaceSlug as string, projectId as string, pageId as string);
+    await restorePage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+      captureEvent(PAGE_RESTORED, {
+        page_id: pageId,
+        access: access == 1 ? "private" : "public",
+        element: "Project pages page",
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleDeletePage = (e: React.MouseEvent<HTMLElement>) => {

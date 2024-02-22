@@ -184,6 +184,17 @@ export const STATE_DELETED = "State deleted";
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";
 export const PAGE_DELETED = "Page deleted";
+export const PAGE_FAVORITED = "Page favorited";
+export const PAGE_UNFAVORITED = "Page unfavorited";
+export const PAGE_ARCHIVED = "Page archived";
+export const PAGE_LOCKED = "Page locked";
+export const PAGE_UNLOCKED = "Page unlocked";
+export const PAGE_DUPLICATED = "Page duplicated";
+export const PAGE_RESTORED = "Page restored";
+// AI Assistant Events
+export const AI_TRIGGERED = "AI triggered";
+export const AI_RES_USED = "AI response used";
+export const AI_RES_REGENERATED = "AI response regenerated";
 // Member Events
 export const MEMBER_INVITED = "Member invited";
 export const MEMBER_ACCEPTED = "Member accepted";

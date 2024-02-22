@@ -6,7 +6,7 @@ import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useEventTracker, usePage, useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useToast from "hooks/use-toast";
 // services
@@ -29,6 +29,16 @@ import { NextPageWithLayout } from "lib/types";
 import { EUserProjectRoles } from "constants/project";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { IssuePeekOverview } from "components/issues";
+import {
+  AI_RES_REGENERATED,
+  AI_RES_USED,
+  AI_TRIGGERED,
+  PAGE_ARCHIVED,
+  PAGE_DUPLICATED,
+  PAGE_LOCKED,
+  PAGE_RESTORED,
+  PAGE_UNLOCKED,
+} from "constants/event-tracker";
 
 // services
 const fileService = new FileService();
@@ -53,6 +63,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -115,6 +126,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     updateDescription: updateDescriptionAction,
     id: pageIdMobx,
     isSubmitting,
+    access,
     setIsSubmitting,
     owned_by,
     is_locked,
@@ -130,13 +142,19 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     await updateDescriptionAction(formData.description_html);
   };
 
-  const handleAiAssistance = async (response: string) => {
+  const handleAiAssistance = async (question: string, response: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
     const newDescription = `${watch("description_html")}<p>${response}</p>`;
     setValue("description_html", newDescription);
     editorRef.current?.setEditorValue(newDescription);
     updateDescriptionAction(newDescription);
+    captureEvent(AI_RES_USED, {
+      page_id: pageId,
+      element: "Pages detail page",
+      question: question,
+      answer: response,
+    });
   };
 
   const actionCompleteAlert = ({
@@ -180,7 +198,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     };
 
     try {
-      await createPage(formData);
+      await createPage(formData).then(() => {
+        captureEvent(PAGE_DUPLICATED, {
+          page_id: pageId,
+          access: access == 1 ? "private" : "public",
+          element: "Pages detail page",
+          state: "SUCCESS",
+        });
+      });
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be duplicated`,
@@ -193,7 +218,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const archivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await archivePageAction(workspaceSlug as string, projectId as string, pageId as string);
+      await archivePageAction(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+        captureEvent(PAGE_ARCHIVED, {
+          page_id: pageId,
+          access: access == 1 ? "private" : "public",
+          element: "Pages detail page",
+          state: "SUCCESS",
+        });
+      });
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be archived`,
@@ -206,7 +238,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const unArchivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await restorePageAction(workspaceSlug as string, projectId as string, pageId as string);
+      await restorePageAction(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+        captureEvent(PAGE_RESTORED, {
+          page_id: pageId,
+          access: access == 1 ? "private" : "public",
+          element: "Pages detail page",
+          state: "SUCCESS",
+        });
+      });
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be restored`,
@@ -219,7 +258,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const lockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await lockPageAction();
+      await lockPageAction().then(() => {
+        captureEvent(PAGE_LOCKED, {
+          page_id: pageId,
+          access: access == 1 ? "private" : "public",
+          element: "Pages detail page",
+          state: "SUCCESS",
+        });
+      });
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be locked`,
@@ -232,7 +278,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const unlockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await unlockPageAction();
+      await unlockPageAction().then(() => {
+        captureEvent(PAGE_UNLOCKED, {
+          page_id: pageId,
+          access: access == 1 ? "private" : "public",
+          element: "Pages detail page",
+          state: "SUCCESS",
+        });
+      });
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be unlocked`,
@@ -342,8 +395,21 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       // this is done so that the title do not reset after gpt popover closed
                       reset(getValues());
                     }}
-                    onResponse={(response) => {
-                      handleAiAssistance(response);
+                    onResponse={handleAiAssistance}
+                    onGenerateResponse={(question) => {
+                      captureEvent(AI_TRIGGERED, {
+                        page_id: pageId,
+                        element: "Pages detail page",
+                        question: question,
+                      });
+                    }}
+                    onReGenerateResponse={(question, response) => {
+                      captureEvent(AI_RES_REGENERATED, {
+                        page_id: pageId,
+                        element: "Pages detail page",
+                        question: question,
+                        prev_answer: response,
+                      });
                     }}
                     placement="top-end"
                     button={

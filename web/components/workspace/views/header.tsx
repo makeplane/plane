@@ -66,7 +66,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
     const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
 
     if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
-  }, [globalViewId]);
+  }, [globalViewId, captureEvent]);
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
