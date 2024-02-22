@@ -11,7 +11,6 @@ import useToast from "hooks/use-toast";
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { cn } from "helpers/common.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -110,9 +109,9 @@ export const ProjectSidebarList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={cn("h-full space-y-2 overflow-y-auto px-4 vertical-scrollbar scrollbar-md", {
-          "border-t border-custom-sidebar-border-300": isScrolled,
-        })}
+        className={`h-full space-y-2 overflow-y-auto pl-4 vertical-scrollbar scrollbar-md ${
+          isScrolled ? "border-t border-custom-sidebar-border-300" : ""
+        }`}
       >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
