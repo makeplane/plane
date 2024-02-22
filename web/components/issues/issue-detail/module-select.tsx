@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import xor from "lodash/xor";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // components
@@ -36,16 +37,22 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
     if (!issue || !issue.module_ids) return;
 
     setIsUpdating(true);
+    const updatedModuleIds = xor(issue.module_ids, moduleIds);
+    const modulesToAdd: string[] = [];
+    const modulesToRemove: string[] = [];
 
-    if (moduleIds.length === 0)
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, issue.module_ids);
-    else if (moduleIds.length > issue.module_ids.length) {
-      const newModuleIds = moduleIds.filter((m) => !issue.module_ids?.includes(m));
-      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, newModuleIds);
-    } else if (moduleIds.length < issue.module_ids.length) {
-      const removedModuleIds = issue.module_ids.filter((m) => !moduleIds.includes(m));
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, removedModuleIds);
+    for (const moduleId of updatedModuleIds) {
+      if (issue.module_ids.includes(moduleId)) {
+        modulesToRemove.push(moduleId);
+      } else {
+        modulesToAdd.push(moduleId);
+      }
     }
+    if (modulesToRemove.length > 0)
+      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, modulesToRemove);
+
+    if (modulesToAdd.length > 0)
+      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, modulesToAdd);
 
     setIsUpdating(false);
   };

@@ -154,22 +154,22 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                             className={({ active }) =>
                               `${
                                 active ? "bg-custom-background-80" : ""
-                              } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
                             }
                             value={label.id}
                           >
                             {({ selected }) => (
                               <div className="flex w-full justify-between gap-2 rounded">
-                                <div className="flex items-center justify-start gap-2">
+                                <div className="flex items-center justify-start gap-2 truncate">
                                   <span
                                     className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                                     style={{
                                       backgroundColor: label.color,
                                     }}
                                   />
-                                  <span>{label.name}</span>
+                                  <span className="truncate">{label.name}</span>
                                 </div>
-                                <div className="flex items-center justify-center rounded p-1">
+                                <div className="flex shrink-0 items-center justify-center rounded p-1">
                                   <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                 </div>
                               </div>

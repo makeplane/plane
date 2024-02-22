@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { useEstimate, useLabel, useProjectState } from "./store";
+import { useCycle, useEstimate, useLabel, useModule, useProjectState } from "./store";
 
 export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | undefined) => {
   const { fetchWorkspaceLabels } = useLabel();
@@ -7,6 +7,22 @@ export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | u
   const { fetchWorkspaceStates } = useProjectState();
 
   const { fetchWorkspaceEstimates } = useEstimate();
+
+  const { fetchWorkspaceModules } = useModule();
+
+  const { fetchWorkspaceCycles } = useCycle();
+
+  // fetch workspace Modules
+  useSWR(
+    workspaceSlug ? `WORKSPACE_MODULES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceModules(workspaceSlug.toString()) : null
+  );
+
+  // fetch workspace Cycles
+  useSWR(
+    workspaceSlug ? `WORKSPACE_CYCLES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceCycles(workspaceSlug.toString()) : null
+  );
 
   // fetch workspace labels
   useSWR(

@@ -15,6 +15,10 @@ from django.db.models import (
     Func,
     Prefetch,
 )
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 # Third Party imports
@@ -130,7 +134,32 @@ def dashboard_assigned_issues(self, request, slug):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-        .order_by("created_at")
+        .annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
     )
 
     # Priority Ordering
@@ -258,6 +287,32 @@ def dashboard_created_issues(self, request, slug):
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
+        )
+        .annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
         )
         .order_by("created_at")
     )

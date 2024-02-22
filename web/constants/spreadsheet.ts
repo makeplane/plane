@@ -1,6 +1,6 @@
 import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
-import { LayersIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
-import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarClock, CalendarCheck } from "lucide-react";
+import { LayersIcon, DoubleCircleIcon, UserGroupIcon, DiceIcon, ContrastIcon } from "@plane/ui";
+import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip } from "lucide-react";
 import { FC } from "react";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
 import {
@@ -10,6 +10,8 @@ import {
   SpreadsheetDueDateColumn,
   SpreadsheetEstimateColumn,
   SpreadsheetLabelColumn,
+  SpreadsheetModuleColumn,
+  SpreadsheetCycleColumn,
   SpreadsheetLinkColumn,
   SpreadsheetPriorityColumn,
   SpreadsheetStartDateColumn,
@@ -58,7 +60,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "target_date",
     descendingOrderTitle: "Old",
-    icon: CalendarCheck,
+    icon: CalendarDays,
     Column: SpreadsheetDueDateColumn,
   },
   estimate: {
@@ -79,6 +81,24 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: Tag,
     Column: SpreadsheetLabelColumn,
   },
+  modules: {
+    title: "Modules",
+    ascendingOrderKey: "modules__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-modules__name",
+    descendingOrderTitle: "Z",
+    icon: DiceIcon,
+    Column: SpreadsheetModuleColumn,
+  },
+  cycle: {
+    title: "Cycle",
+    ascendingOrderKey: "cycle__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-cycle__name",
+    descendingOrderTitle: "Z",
+    icon: ContrastIcon,
+    Column: SpreadsheetCycleColumn,
+  },
   priority: {
     title: "Priority",
     ascendingOrderKey: "priority",
@@ -94,7 +114,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "start_date",
     descendingOrderTitle: "Old",
-    icon: CalendarClock,
+    icon: CalendarDays,
     Column: SpreadsheetStartDateColumn,
   },
   state: {
@@ -149,6 +169,8 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "priority",
   "assignee",
   "labels",
+  "modules",
+  "cycle",
   "start_date",
   "due_date",
   "estimate",
