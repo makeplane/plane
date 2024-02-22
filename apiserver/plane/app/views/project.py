@@ -743,8 +743,8 @@ class ProjectMemberViewSet(BaseViewSet):
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
-            is_active=True,
             member__is_bot=False,
+            is_active=True,
         ).select_related("project", "member", "workspace")
 
         serializer = ProjectMemberRoleSerializer(
