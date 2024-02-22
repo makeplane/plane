@@ -4,11 +4,13 @@ export type TIssueLinkEditableFields = {
 };
 
 export type TIssueLink = TIssueLinkEditableFields & {
-  created_at: Date;
-  created_by: string;
-  created_by_detail: IUserLite;
+  created_by_id: string;
   id: string;
   metadata: any;
+  issue_id: string;
+
+  //need
+  created_at: Date;
 };
 
 export type TIssueLinkMap = {

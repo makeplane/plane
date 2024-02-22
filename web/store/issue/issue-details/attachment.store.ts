@@ -11,6 +11,7 @@ import { IIssueDetail } from "./root.store";
 import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap } from "@plane/types";
 
 export interface IIssueAttachmentStoreActions {
+  addAttachments: (issueId: string, attachments: TIssueAttachment[]) => void;
   fetchAttachments: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueAttachment[]>;
   createAttachment: (
     workspaceSlug: string,
@@ -83,17 +84,21 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   // actions
+  addAttachments = (issueId: string, attachments: TIssueAttachment[]) => {
+    if (attachments && attachments.length > 0) {
+      const _attachmentIds = attachments.map((attachment) => attachment.id);
+      runInAction(() => {
+        update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, _attachmentIds)));
+        attachments.forEach((attachment) => set(this.attachmentMap, attachment.id, attachment));
+      });
+    }
+  };
+
   fetchAttachments = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const response = await this.issueAttachmentService.getIssueAttachment(workspaceSlug, projectId, issueId);
 
-      if (response && response.length > 0) {
-        const _attachmentIds = response.map((attachment) => attachment.id);
-        runInAction(() => {
-          update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, _attachmentIds)));
-          response.forEach((attachment) => set(this.attachmentMap, attachment.id, attachment));
-        });
-      }
+      this.addAttachments(issueId, response);
 
       return response;
     } catch (error) {

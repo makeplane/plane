@@ -1,14 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // type
-import type {
-  TIssue,
-  IIssueDisplayProperties,
-  ILinkDetails,
-  TIssueLink,
-  TIssueSubIssues,
-  TIssueActivity,
-} from "@plane/types";
+import type { TIssue, IIssueDisplayProperties, TIssueLink, TIssueSubIssues, TIssueActivity } from "@plane/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -201,7 +194,7 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     data: Partial<TIssueLink>
-  ): Promise<ILinkDetails> {
+  ): Promise<TIssueLink> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -215,7 +208,7 @@ export class IssueService extends APIService {
     issueId: string,
     linkId: string,
     data: Partial<TIssueLink>
-  ): Promise<ILinkDetails> {
+  ): Promise<TIssueLink> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`,
       data

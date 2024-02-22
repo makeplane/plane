@@ -24,7 +24,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   const { setToastAlert } = useToast();
   // state
   const [loading, setLoading] = useState(false);
-
+  
   const subscription = getSubscriptionByIssueId(issueId);
 
   const handleSubscription = async () => {
