@@ -39,7 +39,7 @@ export interface IEventTrackerStore {
   capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
-  captureIssuesListOpenedEvent: (path: string, filters: any) => void;
+  captureIssuesListOpenedEvent: (payload: any) => void;
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
@@ -248,12 +248,9 @@ export class EventTrackerStore implements IEventTrackerStore {
    * @param {string} path
    * @param {any} filters
    */
-  captureIssuesListOpenedEvent = (path: string, filters: any) => {
+  captureIssuesListOpenedEvent = (payload: any) => {
     const eventPayload = {
-      ...getIssuesListOpenedPayload({
-        path: path,
-        filters: filters,
-      }),
+      ...getIssuesListOpenedPayload(payload),
       ...this.getRequiredProperties,
     };
     posthog?.capture(ISSUES_LIST_OPENED, eventPayload);

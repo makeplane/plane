@@ -40,7 +40,11 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && cycleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
-        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
+        captureIssuesListOpenedEvent({
+          path: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+          element_id: cycleId,
+        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

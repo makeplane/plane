@@ -123,6 +123,16 @@ export const getProjectStateEventPayload = (payload: any) => {
 
 export const getIssuesListOpenedPayload = (payload: any) => ({
   element: elementFromPath(payload.path),
+  element_id: payload.element_id,
+  type: payload.project_id ? "Project" : "Workspace",
+  layout: payload?.displayFilters?.layout,
+  filters: payload?.filters,
+  display_properties: payload?.displayProperties,
+});
+
+export const getIssuesFilterEventPayload = (payload: any) => ({
+  element: elementFromPath(payload.path),
+  element_id: payload.element_id, 
   type: payload.project_id ? "Project" : "Workspace",
   layout: payload?.displayFilters?.layout,
   filters: payload?.filters,
@@ -176,6 +186,10 @@ export const ISSUE_DELETED = "Issue deleted";
 // Issue Checkout Events
 export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";
+// Issues Filter Events
+export const FILTER_APPLIED = "Filter applied";
+export const FILTER_REMOVED = "Filter removed";
+export const FILTER_SEARCHED = "Filter searched";
 // Project State Events
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";

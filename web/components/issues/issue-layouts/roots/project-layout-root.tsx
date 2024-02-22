@@ -33,7 +33,11 @@ export const ProjectLayoutRoot: FC = observer(() => {
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null, async () => {
     if (workspaceSlug && projectId) {
       await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-      captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
+      captureIssuesListOpenedEvent({
+        path: router.asPath,
+        filters: issuesFilter?.issueFilters?.filters,
+        element_id: projectId,
+      });
       await issues?.fetchIssues(
         workspaceSlug.toString(),
         projectId.toString(),

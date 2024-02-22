@@ -28,7 +28,11 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
+        captureIssuesListOpenedEvent({
+          path: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+          element_id: projectId,
+        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),
