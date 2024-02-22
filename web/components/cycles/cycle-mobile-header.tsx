@@ -100,6 +100,7 @@ export const CycleMobileHeader = () => {
         >
           {layouts.map((layout, index) => (
             <CustomMenu.MenuItem
+              key={ISSUE_LAYOUTS[index].key}
               onClick={() => {
                 handleLayoutChange(ISSUE_LAYOUTS[index].key);
               }}
