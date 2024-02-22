@@ -11,7 +11,7 @@ from plane.app.serializers import (
     EstimatePointSerializer,
     EstimateReadSerializer,
 )
-from plane.utils.cache import invalidate_path_cache
+from plane.utils.cache import invalidate_cache
 
 class ProjectEstimatePointEndpoint(BaseAPIView):
     permission_classes = [
@@ -49,7 +49,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         serializer = EstimateReadSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_path_cache("/api/workspaces/:slug/estimates/", True)
+    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True)
     def create(self, request, slug, project_id):
         if not request.data.get("estimate", False):
             return Response(
@@ -115,7 +115,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @invalidate_path_cache("/api/workspaces/:slug/estimates/", True)
+    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True)
     def partial_update(self, request, slug, project_id, estimate_id):
         if not request.data.get("estimate", False):
             return Response(
@@ -184,7 +184,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @invalidate_path_cache("/api/workspaces/:slug/estimates/", True)
+    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True)
     def destroy(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.get(
             pk=estimate_id, workspace__slug=slug, project_id=project_id
