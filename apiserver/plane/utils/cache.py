@@ -19,13 +19,15 @@ def cache_user_response(timeout, path=None):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
             # Function to generate cache key
-            auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+            auth_header = None if request.user.is_anonymous else str(request.user.id)
             custom_path = path if path is not None else request.get_full_path()
             key = generate_cache_key(custom_path, auth_header)
             cached_result = cache.get(key)
             if cached_result is not None:
+                print("Cache Hit")
                 return Response(cached_result['data'], status=cached_result['status'])
-
+            
+            print("Cache Miss")
             response = view_func(instance, request, *args, **kwargs)
 
             if response.status_code == 200:
@@ -35,17 +37,25 @@ def cache_user_response(timeout, path=None):
         return _wrapped_view
     return decorator
 
-def invalidate_user_cache(path):
+def invalidate_user_cache(path, include_url_params=False):
     """invalidate cache per user"""
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
             # Invalidate cache before executing the view function
-            custom_path = path if path is not None else request.get_full_path()
-            auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+            if include_url_params:
+                path_with_values = path
+                for key, value in kwargs.items():
+                    path_with_values = path_with_values.replace(f":{key}", str(value))
+
+                custom_path = path_with_values   
+            else:
+                custom_path = path if path is not None else request.get_full_path()
+
+            auth_header = None if request.user.is_anonymous else str(request.user.id)
             key = generate_cache_key(custom_path, auth_header)
             cache.delete(key)
-
+            print("Invalidating cache")
             # Execute the view function
             return view_func(instance, request, *args, **kwargs)
         return _wrapped_view
@@ -59,11 +69,13 @@ def cache_path_response(timeout, path=None):
         def _wrapped_view(instance, request, *args, **kwargs):
             # Function to generate cache key
             custom_path = path if path is not None else request.get_full_path()
-            key = generate_cache_key(custom_path, None)
+            key = generate_cache_key(custom_path, None if request.user.is_anonymous else str(request.user.id))
             cached_result = cache.get(key)
             if cached_result is not None:
+                print("Cache Hit")
                 return Response(cached_result['data'], status=cached_result['status'])
-
+            
+            print("Cache Miss")
             response = view_func(instance, request, *args, **kwargs)
 
             if response.status_code == 200:
@@ -89,9 +101,9 @@ def invalidate_path_cache(path=None, include_url_params=False):
             else:
                 custom_path = path if path is not None else request.get_full_path()
 
-            key = generate_cache_key(custom_path, None)
+            key = generate_cache_key(custom_path, None if request.user.is_anonymous else str(request.user.id))
             cache.delete(key)
-
+            print("Invalidating cache")
             # Execute the view function
             return view_func(instance, request, *args, **kwargs)
         return _wrapped_view
