@@ -1,10 +1,10 @@
 import { FC } from "react";
-// context
-import { useChart } from "../../hooks";
+// hooks
+import { useGanttChart } from "components/gantt-chart/hooks/use-gantt-chart";
 
 export const WeekChartView: FC<any> = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
+  const { currentView, currentViewData, renderView } = useGanttChart();
 
   return (
     <>

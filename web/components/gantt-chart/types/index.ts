@@ -1,10 +1,3 @@
-// context types
-export type allViewsType = {
-  key: string;
-  title: string;
-  data: Object | null;
-};
-
 export interface IGanttBlock {
   data: any;
   id: string;
@@ -30,7 +23,6 @@ export interface IBlockUpdateData {
 export type TGanttViews = "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
 
 export interface ChartContextData {
-  allViews: allViewsType[];
   currentView: TGanttViews;
   currentViewData: ChartDataType | undefined;
   renderView: any;

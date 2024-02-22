@@ -1,7 +1,6 @@
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
-import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -13,6 +12,8 @@ import { cn } from "helpers/common.helper";
 import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
 // constants
 import { BLOCK_HEIGHT } from "../constants";
+import { useGanttChart } from "../hooks/use-gantt-chart";
+import { observer } from "mobx-react";
 
 type Props = {
   title: string;
@@ -21,19 +22,14 @@ type Props = {
   enableReorder: boolean;
 };
 
-export const CycleGanttSidebar: React.FC<Props> = (props) => {
+export const CycleGanttSidebar: React.FC<Props> = observer((props) => {
   const { blockUpdateHandler, blocks, enableReorder } = props;
   // chart hook
-  const { activeBlock, dispatch } = useChart();
+  const { activeBlock, updateActiveBlock } = useGanttChart();
 
   // update the active block on hover
-  const updateActiveBlock = (block: IGanttBlock | null) => {
-    dispatch({
-      type: "PARTIAL_UPDATE",
-      payload: {
-        activeBlock: block,
-      },
-    });
+  const handleActiveBlock = (block: IGanttBlock | null) => {
+    updateActiveBlock(block);
   };
 
   const handleOrderChange = (result: DropResult) => {
@@ -100,8 +96,8 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
                           className={cn({
                             "rounded bg-custom-background-80": snapshot.isDragging,
                           })}
-                          onMouseEnter={() => updateActiveBlock(block)}
-                          onMouseLeave={() => updateActiveBlock(null)}
+                          onMouseEnter={() => handleActiveBlock(block)}
+                          onMouseLeave={() => handleActiveBlock(null)}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                         >
@@ -155,4 +151,4 @@ export const CycleGanttSidebar: React.FC<Props> = (props) => {
       </Droppable>
     </DragDropContext>
   );
-};
+});

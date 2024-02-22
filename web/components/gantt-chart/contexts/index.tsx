@@ -2,7 +2,7 @@ import React, { createContext, useState } from "react";
 // types
 import { ChartContextData, ChartContextActionPayload, ChartContextReducer } from "../types";
 // data
-import { allViewsWithData, currentViewDataWithView } from "../data";
+import { currentViewDataWithView } from "../data";
 
 export const ChartContext = createContext<ChartContextReducer | undefined>(undefined);
 
@@ -29,7 +29,6 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     currentView: initialView,
     currentViewData: currentViewDataWithView(initialView),
     renderView: [],
-    allViews: allViewsWithData,
     activeBlock: null,
   });
   const [scrollLeft, setScrollLeft] = useState(0);

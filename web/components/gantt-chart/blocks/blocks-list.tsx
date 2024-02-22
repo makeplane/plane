@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import { FC } from "react";
 // hooks
 import { useIssueDetail } from "hooks/store";
-import { useChart } from "../hooks";
 // helpers
 import { ChartAddBlock, ChartDraggable } from "components/gantt-chart";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
@@ -11,6 +10,7 @@ import { cn } from "helpers/common.helper";
 import { IBlockUpdateData, IGanttBlock } from "../types";
 // constants
 import { BLOCK_HEIGHT, HEADER_HEIGHT } from "../constants";
+import { useGanttChart } from "../hooks/use-gantt-chart";
 
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
@@ -39,16 +39,11 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
   // store hooks
   const { peekIssue } = useIssueDetail();
   // chart hook
-  const { activeBlock, dispatch } = useChart();
+  const { activeBlock, updateActiveBlock } = useGanttChart();
 
   // update the active block on hover
-  const updateActiveBlock = (block: IGanttBlock | null) => {
-    dispatch({
-      type: "PARTIAL_UPDATE",
-      payload: {
-        activeBlock: block,
-      },
-    });
+  const handleActiveBlock = (block: IGanttBlock | null) => {
+    updateActiveBlock(block);
   };
 
   const handleChartBlockPosition = (
@@ -109,8 +104,8 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
                 "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
                   peekIssue?.issueId === block.data.id,
               })}
-              onMouseEnter={() => updateActiveBlock(block)}
-              onMouseLeave={() => updateActiveBlock(null)}
+              onMouseEnter={() => handleActiveBlock(block)}
+              onMouseLeave={() => handleActiveBlock(null)}
             >
               {isBlockVisibleOnChart ? (
                 <ChartDraggable

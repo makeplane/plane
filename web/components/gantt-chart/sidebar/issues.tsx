@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
 import { MoreVertical } from "lucide-react";
 // hooks
-import { useChart } from "components/gantt-chart/hooks";
 import { useIssueDetail } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
@@ -14,6 +13,7 @@ import { cn } from "helpers/common.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
 import { BLOCK_HEIGHT } from "../constants";
+import { useGanttChart } from "../hooks/use-gantt-chart";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -25,17 +25,12 @@ type Props = {
 export const IssueGanttSidebar: React.FC<Props> = observer((props: Props) => {
   const { blockUpdateHandler, blocks, enableReorder, showAllBlocks = false } = props;
 
-  const { activeBlock, dispatch } = useChart();
+  const { activeBlock, updateActiveBlock } = useGanttChart();
   const { peekIssue } = useIssueDetail();
 
   // update the active block on hover
-  const updateActiveBlock = (block: IGanttBlock | null) => {
-    dispatch({
-      type: "PARTIAL_UPDATE",
-      payload: {
-        activeBlock: block,
-      },
-    });
+  const handleActiveBlock = (block: IGanttBlock | null) => {
+    updateActiveBlock(block);
   };
 
   const handleOrderChange = (result: DropResult) => {
@@ -113,8 +108,8 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props: Props) => {
                               "rounded-l border border-r-0 border-custom-primary-70 hover:border-custom-primary-70":
                                 peekIssue?.issueId === block.data.id,
                             })}
-                            onMouseEnter={() => updateActiveBlock(block)}
-                            onMouseLeave={() => updateActiveBlock(null)}
+                            onMouseEnter={() => handleActiveBlock(block)}
+                            onMouseLeave={() => handleActiveBlock(null)}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                           >

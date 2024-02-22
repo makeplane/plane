@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 // hooks
-import { IGanttBlock, useChart } from "components/gantt-chart";
+import { IGanttBlock } from "components/gantt-chart";
 // helpers
 import { cn } from "helpers/common.helper";
 // constants
 import { SIDEBAR_WIDTH } from "../constants";
+import { useGanttChart } from "../hooks/use-gantt-chart";
+import { observer } from "mobx-react";
 
 type Props = {
   block: IGanttBlock;
@@ -16,7 +18,7 @@ type Props = {
   enableBlockMove: boolean;
 };
 
-export const ChartDraggable: React.FC<Props> = (props) => {
+export const ChartDraggable: React.FC<Props> = observer((props) => {
   const { block, blockToRender, handleBlock, enableBlockLeftResize, enableBlockRightResize, enableBlockMove } = props;
   // states
   const [isLeftResizing, setIsLeftResizing] = useState(false);
@@ -26,7 +28,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
   // refs
   const resizableRef = useRef<HTMLDivElement>(null);
   // chart hook
-  const { currentViewData, scrollLeft } = useChart();
+  const { currentViewData, scrollLeft } = useGanttChart();
   // check if cursor reaches either end while resizing/dragging
   const checkScrollEnd = (e: MouseEvent): number => {
     const SCROLL_THRESHOLD = 70;
@@ -312,4 +314,4 @@ export const ChartDraggable: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+});
