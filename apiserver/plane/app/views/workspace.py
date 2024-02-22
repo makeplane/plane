@@ -1248,6 +1248,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 Project.objects.filter(
                     workspace__slug=slug,
                     project_projectmember__member=request.user,
+                    project_projectmember__is_active=True,
                 )
                 .annotate(
                     created_issues=Count(
