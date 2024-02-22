@@ -1,6 +1,7 @@
 import { APIService } from "services/api.service";
 // type
 import { API_BASE_URL } from "helpers/common.helper";
+import { TIssue } from "@plane/types";
 
 export class IssueArchiveService extends APIService {
   constructor() {
@@ -25,7 +26,7 @@ export class IssueArchiveService extends APIService {
       });
   }
 
-  async retrieveArchivedIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async retrieveArchivedIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssue> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
