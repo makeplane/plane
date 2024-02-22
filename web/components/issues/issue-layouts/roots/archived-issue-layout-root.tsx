@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // mobx store
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // components
 import {
   ArchivedIssueListLayout,
@@ -21,12 +21,14 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

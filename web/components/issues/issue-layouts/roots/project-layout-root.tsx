@@ -16,7 +16,7 @@ import {
 // ui
 import { Spinner } from "@plane/ui";
 // hooks
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // helpers
 import { ActiveLoader } from "components/ui";
 // constants
@@ -28,10 +28,12 @@ export const ProjectLayoutRoot: FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null, async () => {
     if (workspaceSlug && projectId) {
       await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+      captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
       await issues?.fetchIssues(
         workspaceSlug.toString(),
         projectId.toString(),

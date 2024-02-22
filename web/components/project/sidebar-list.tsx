@@ -139,7 +139,7 @@ export const ProjectSidebarList: FC = observer(() => {
                               <button
                                 className="opacity-0 group-hover:opacity-100"
                                 onClick={() => {
-                                  setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
+                                  setTrackElement("Sidebar");
                                   setIsFavoriteProjectCreate(true);
                                   setIsProjectModalOpen(true);
                                 }}

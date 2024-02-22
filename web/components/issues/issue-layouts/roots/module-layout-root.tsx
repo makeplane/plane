@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import size from "lodash/size";
 // mobx store
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // components
 import {
   IssuePeekOverview,
@@ -28,6 +28,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId && moduleId
@@ -36,6 +37,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && moduleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
+        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

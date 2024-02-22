@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // mobx store
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // components
 import {
   IssuePeekOverview,
@@ -28,12 +28,14 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
+        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

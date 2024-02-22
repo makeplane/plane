@@ -145,6 +145,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     if (window.innerWidth < 768) {
       themeStore.toggleMobileSidebar();
     }
+    setTrackElement('Project sidebar');
   };
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));

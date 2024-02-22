@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import size from "lodash/size";
 // hooks
-import { useCycle, useIssues } from "hooks/store";
+import { useCycle, useEventTracker, useIssues } from "hooks/store";
 // components
 import {
   CycleAppliedFiltersRoot,
@@ -29,6 +29,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
+  const { captureIssuesListOpenedEvent } = useEventTracker();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
@@ -39,6 +40,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && cycleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+        captureIssuesListOpenedEvent(router.asPath, issuesFilter?.issueFilters?.filters);
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),

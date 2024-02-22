@@ -21,7 +21,6 @@ export const getWorkspaceEventPayload = (payload: any) => ({
 });
 
 export const getProjectEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
   project_id: payload.id,
   identifier: payload.identifier,
   project_visibility: payload.network == 2 ? "Public" : "Private",
@@ -34,8 +33,6 @@ export const getProjectEventPayload = (payload: any) => ({
 });
 
 export const getCycleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
   cycle_id: payload.id,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -48,8 +45,6 @@ export const getCycleEventPayload = (payload: any) => ({
 });
 
 export const getModuleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
   module_id: payload.id,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -64,8 +59,6 @@ export const getModuleEventPayload = (payload: any) => ({
 });
 
 export const getPageEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
   access: payload.access === 0 ? "Public" : "Private",
@@ -109,19 +102,7 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     eventPayload = {
       ...eventPayload,
       ...updates,
-      updated_from: props.path?.includes("workspace-views")
-        ? "All views"
-        : props.path?.includes("cycles")
-        ? "Cycle"
-        : props.path?.includes("modules")
-        ? "Module"
-        : props.path?.includes("views")
-        ? "Project view"
-        : props.path?.includes("inbox")
-        ? "Inbox"
-        : props.path?.includes("draft")
-        ? "Draft"
-        : "Project",
+      updated_from: elementFromPath(path),
     };
   }
   return eventPayload;
@@ -129,8 +110,6 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
 
 export const getProjectStateEventPayload = (payload: any) => {
   return {
-    workspace_id: payload.workspace_id,
-    project_id: payload.id,
     state_id: payload.id,
     created_at: payload.created_at,
     updated_at: payload.updated_at,
@@ -140,6 +119,25 @@ export const getProjectStateEventPayload = (payload: any) => {
     state: payload.state,
     element: payload.element,
   };
+};
+
+export const getIssuesListOpenedPayload = (payload: any) => ({
+  element: elementFromPath(payload.path),
+  type: payload.project_id ? "Project" : "Workspace",
+  layout: payload?.displayFilters?.layout,
+  filters: payload?.filters,
+  display_properties: payload?.displayProperties,
+});
+
+const elementFromPath = (path?: string) => {
+  if (path?.includes("workspace-views")) return "Workspace view";
+  if (path?.includes("cycles")) return "Cycle";
+  if (path?.includes("modules")) return "Module";
+  if (path?.includes("views")) return "Project view";
+  if (path?.includes("inbox")) return "Inbox";
+  if (path?.includes("draft")) return "Draft";
+  if (path?.includes("archived")) return "Archive";
+  return "Project";
 };
 
 // Workspace crud Events
@@ -175,6 +173,8 @@ export const VIEW_UNFAVORITED = "View unfavorited";
 export const ISSUE_CREATED = "Issue created";
 export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
+// Issue Checkout Events
+export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";
 // Project State Events
 export const STATE_CREATED = "State created";
@@ -235,7 +235,7 @@ export const NOTIFICATION_SNOOZED = "Notification snoozed";
 export const NOTIFICATION_READ = "Notification marked read";
 export const UNREAD_NOTIFICATIONS = "Unread notifications viewed";
 export const NOTIFICATIONS_READ = "All notifications marked read";
-export const SNOOZED_NOTIFICATIONS= "Snoozed notifications viewed";
+export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
