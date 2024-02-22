@@ -1,15 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useProjectState } from "hooks/store";
+import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 // components
 import { DateDropdown } from "components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { cn } from "helpers/common.helper";
 // types
 import { TIssue } from "@plane/types";
+import { cn } from "helpers/common.helper";
 
 type Props = {
   issue: TIssue;
@@ -20,10 +18,8 @@ type Props = {
 
 export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props) => {
   const { issue, onChange, disabled, onClose } = props;
-  // store hooks
-  const { getStateById } = useProjectState();
-  // derived values
-  const stateDetails = getStateById(issue.state_id);
+
+  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
@@ -46,7 +42,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn("rounded-none text-left", {
-          "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+          "text-red-500": targetDateDistance <= 0,
         })}
         clearIconClassName="!text-custom-text-100"
         onClose={onClose}
