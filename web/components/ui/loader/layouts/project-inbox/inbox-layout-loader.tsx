@@ -1,19 +1,26 @@
 import React from "react";
 // ui
 import { InboxSidebarLoader } from "./inbox-sidebar-loader";
+import { Loader } from "@plane/ui";
 
 export const InboxLayoutLoader = () => (
   <div className="relative flex h-full overflow-hidden">
     <InboxSidebarLoader />
     <div className="w-full">
-      <div className="grid h-full place-items-center p-4 text-custom-text-200">
-        <div className="grid h-full place-items-center">
-          <div className="my-5 flex flex-col items-center gap-4">
-            <span className="h-[60px] w-[60px] bg-custom-background-80 rounded" />
-            <span className="h-6 w-96 bg-custom-background-80 rounded" />
-          </div>
+      <Loader className="flex h-full gap-5 p-5">
+        <div className="basis-2/3 space-y-2">
+          <Loader.Item height="30px" width="40%" />
+          <Loader.Item height="15px" width="60%" />
+          <Loader.Item height="15px" width="60%" />
+          <Loader.Item height="15px" width="40%" />
         </div>
-      </div>
+        <div className="basis-1/3 space-y-3">
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+        </div>
+      </Loader>
     </div>
   </div>
 );
