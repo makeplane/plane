@@ -35,6 +35,8 @@ export const icons = {
     />
   </svg>
 `,
+  toggleColumnHeader: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--color-text-300))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-right"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></svg>`,
+  toggleRowHeader: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--color-text-300))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-right"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></svg>`,
   insertBottomTableIcon: `<svg
     xmlns="http://www.w3.org/2000/svg"
     length={24}

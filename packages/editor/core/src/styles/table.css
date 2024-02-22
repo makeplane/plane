@@ -9,8 +9,8 @@
   border-collapse: collapse;
   table-layout: fixed;
   margin: 0;
-  margin-bottom: 3rem;
-  border: 1px solid rgba(var(--color-border-200));
+  margin-bottom: 1rem;
+  border: 2px solid rgba(var(--color-border-200));
   width: 100%;
 }
 
@@ -43,7 +43,8 @@
 .tableWrapper table th {
   font-weight: bold;
   text-align: left;
-  background-color: rgba(var(--color-primary-100));
+  background-color: #d9e4ff;
+  color: #171717;
 }
 
 .tableWrapper table th * {
