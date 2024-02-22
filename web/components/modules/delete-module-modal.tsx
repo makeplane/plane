@@ -45,7 +45,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
 
     await deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
-        if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
+        if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project_id}/modules`);
         handleClose();
         setToastAlert({
           type: "success",

@@ -179,7 +179,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
           : "-"}
       </div>
       <div className="text-xs flex justify-center">
-        {issue.assignee_ids.length > 0 ? (
+        {issue.assignee_ids && issue.assignee_ids?.length > 0 ? (
           <AvatarGroup>
             {issue.assignee_ids?.map((assigneeId) => {
               const userDetails = getUserDetails(assigneeId);

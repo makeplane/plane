@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+import isEmpty from "lodash/isEmpty";
 // component
 import { Button, TransferIcon } from "@plane/ui";
 // icon
@@ -43,7 +44,7 @@ export const TransferIssues: React.FC<Props> = (props) => {
         <span>Completed cycles are not editable.</span>
       </div>
 
-      {transferableIssuesCount > 0 && (
+      {isEmpty(cycleDetails?.progress_snapshot) && transferableIssuesCount > 0 && (
         <div>
           <Button variant="primary" prependIcon={<TransferIcon color="white" />} onClick={handleClick}>
             Transfer Issues

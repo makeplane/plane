@@ -1,11 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 // components
 import { DateDropdown } from "components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { TIssue } from "@plane/types";
+import { cn } from "helpers/common.helper";
 
 type Props = {
   issue: TIssue;
@@ -16,6 +18,8 @@ type Props = {
 
 export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props) => {
   const { issue, onChange, disabled, onClose } = props;
+
+  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
@@ -36,8 +40,11 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         disabled={disabled}
         placeholder="Due date"
         buttonVariant="transparent-with-text"
-        buttonClassName="rounded-none text-left"
         buttonContainerClassName="w-full"
+        buttonClassName={cn("rounded-none text-left", {
+          "text-red-500": targetDateDistance <= 0,
+        })}
+        clearIconClassName="!text-custom-text-100"
         onClose={onClose}
       />
     </div>

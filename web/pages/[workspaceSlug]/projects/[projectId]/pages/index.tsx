@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 import useSize from "hooks/use-window-size";
@@ -24,6 +24,7 @@ import { PAGE_TABS_LIST } from "constants/page";
 import { useProjectPages } from "hooks/store/use-project-page";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { PageHead } from "components/core";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -63,7 +64,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-
+  const { getProjectById } = useProject();
   const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
     useProjectPages();
   // hooks
@@ -101,10 +102,12 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     }
   };
 
+  // derived values
   const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
   const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "pages", isLightMode);
-
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
 
   const MobileTabList = () => (
     <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
@@ -129,6 +132,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title={pageTitle} />
       {projectPageIds && archivedPageIds && projectPageIds.length + archivedPageIds.length > 0 ? (
         <>
           {workspaceSlug && projectId && (
@@ -138,8 +142,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               projectId={projectId.toString()}
             />
           )}
-          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:p-6">
-            <div className="justify-between gap-4 hidden md:flex">
+          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:py-6">
+            <div className="justify-between gap-4 hidden md:flex px-6">
               <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
             </div>
             <Tab.Group
@@ -167,7 +171,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               {windowWidth < 768 ? (
                 <MobileTabList />
               ) : (
-                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
+                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex px-6">
                   <div className="flex flex-wrap items-center gap-4">
                     {PAGE_TABS_LIST.map((tab) => (
                       <Tab
@@ -188,22 +192,22 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               )}
 
               <Tab.Panels as={Fragment}>
-                <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto">
+                <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto vertical-scrollbar scrollbar-lg pl-6">
                   <RecentPagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <AllPagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <FavoritePagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <PrivatePagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <SharedPagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <ArchivedPagesList />
                 </Tab.Panel>
               </Tab.Panels>

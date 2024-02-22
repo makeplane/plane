@@ -30,6 +30,10 @@ export type TIssueOrderByOptions =
   | "-assignees__first_name"
   | "labels__name"
   | "-labels__name"
+  | "modules__name"
+  | "-modules__name"
+  | "cycle__name"
+  | "-cycle__name"
   | "target_date"
   | "-target_date"
   | "estimate_point"
@@ -109,6 +113,8 @@ export interface IIssueDisplayProperties {
   estimate?: boolean;
   created_on?: boolean;
   updated_on?: boolean;
+  modules?: boolean;
+  cycle?: boolean;
 }
 
 export type TIssueKanbanFilters = {
