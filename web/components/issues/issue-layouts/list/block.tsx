@@ -76,6 +76,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issue?.tempId}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <span>{issue.name}</span>
