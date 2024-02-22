@@ -743,7 +743,6 @@ class ProjectMemberViewSet(BaseViewSet):
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
-            member__is_bot=False,
             is_active=True,
         ).select_related("project", "member", "workspace")
 

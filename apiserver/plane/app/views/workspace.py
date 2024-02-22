@@ -560,7 +560,6 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .get_queryset()
             .filter(
                 workspace__slug=self.kwargs.get("slug"),
-                member__is_bot=False,
                 is_active=True,
             )
             .select_related("workspace", "workspace__owner")
@@ -768,7 +767,6 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         project_ids = (
             ProjectMember.objects.filter(
                 member=request.user,
-                member__is_bot=False,
                 is_active=True,
             )
             .values_list("project_id", flat=True)
@@ -778,7 +776,6 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         # Get all the project members in which the user is involved
         project_members = ProjectMember.objects.filter(
             workspace__slug=slug,
-            member__is_bot=False,
             project_id__in=project_ids,
             is_active=True,
         ).select_related("project", "member", "workspace")
