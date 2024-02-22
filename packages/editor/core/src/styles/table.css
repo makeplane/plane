@@ -10,14 +10,14 @@
   table-layout: fixed;
   margin: 0;
   margin-bottom: 1rem;
-  border: 2px solid rgba(var(--color-border-200));
+  border: 2px solid rgba(var(--color-border-300));
   width: 100%;
 }
 
 .tableWrapper table td,
 .tableWrapper table th {
   min-width: 1em;
-  border: 1px solid rgba(var(--color-border-200));
+  border: 1px solid rgba(var(--color-border-300));
   padding: 10px 15px;
   vertical-align: top;
   box-sizing: border-box;
@@ -70,7 +70,7 @@
   bottom: -2px;
   width: 4px;
   z-index: 99;
-  background-color: rgba(var(--color-primary-400));
+  background-color: #d9e4ff;
   pointer-events: none;
 }
 
@@ -113,7 +113,7 @@
 }
 
 .tableWrapper .tableControls .rowsControlDiv {
-  background-color: rgba(var(--color-primary-100));
+  background-color: #d9e4ff;
   border: 1px solid rgba(var(--color-border-200));
   border-radius: 2px;
   background-size: 1.25rem;
@@ -128,7 +128,7 @@
 }
 
 .tableWrapper .tableControls .columnsControlDiv {
-  background-color: rgba(var(--color-primary-100));
+  background-color: #d9e4ff;
   border: 1px solid rgba(var(--color-border-200));
   border-radius: 2px;
   background-size: 1.25rem;
