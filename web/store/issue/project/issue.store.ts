@@ -21,8 +21,8 @@ export interface IProjectIssues {
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 }
@@ -144,8 +144,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     try {
       this.rootStore.issues.updateIssue(issueId, data);
 
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
-      return response;
+      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
@@ -154,14 +153,13 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+      await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         pull(this.issues[projectId], issueId);
       });
 
       this.rootStore.issues.removeIssue(issueId);
-      return response;
     } catch (error) {
       throw error;
     }
