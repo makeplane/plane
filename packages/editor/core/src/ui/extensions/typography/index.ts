@@ -1,26 +1,25 @@
 import { Extension } from "@tiptap/core";
 import {
-  TypographyOptions,
-  emDash,
-  ellipsis,
-  leftArrow,
-  rightArrow,
   copyright,
-  trademark,
-  servicemark,
-  registeredTrademark,
-  oneHalf,
-  plusMinus,
-  notEqual,
-  laquo,
-  raquo,
-  multiplication,
-  superscriptTwo,
-  superscriptThree,
-  oneQuarter,
-  threeQuarters,
+  ellipsis,
+  emDash,
   impliesArrowRight,
-} from "src/ui/extensions/typography/inputRules";
+  laquo,
+  multiplication,
+  notEqual,
+  oneHalf,
+  oneQuarter,
+  plusMinus,
+  raquo,
+  registeredTrademark,
+  rightArrow,
+  servicemark,
+  superscriptThree,
+  superscriptTwo,
+  threeQuarters,
+  trademark,
+  TypographyOptions,
+} from "src/ui/extensions/typography/input-rules";
 
 export const CustomTypographyExtension = Extension.create<TypographyOptions>({
   name: "typography",
@@ -38,10 +37,6 @@ export const CustomTypographyExtension = Extension.create<TypographyOptions>({
 
     if (this.options.ellipsis !== false) {
       rules.push(ellipsis(this.options.ellipsis));
-    }
-
-    if (this.options.leftArrow !== false) {
-      rules.push(leftArrow(this.options.leftArrow));
     }
 
     if (this.options.rightArrow !== false) {

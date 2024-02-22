@@ -27,6 +27,7 @@ import { RestoreImage } from "src/types/restore-image";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
 import { CustomTypographyExtension } from "src/ui/extensions/typography";
+import { LeftArrow } from "./typography/left-arrow";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -86,6 +87,7 @@ export const CoreEditorExtensions = (
       class: "rounded-lg border border-custom-border-300",
     },
   }),
+  LeftArrow,
   TiptapUnderline,
   TextStyle,
   Color,
