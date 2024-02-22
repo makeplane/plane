@@ -26,8 +26,15 @@ export class IssueArchiveService extends APIService {
       });
   }
 
-  async retrieveArchivedIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssue> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issueId}/`)
+  async retrieveArchivedIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    queries?: any
+  ): Promise<TIssue> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issueId}/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

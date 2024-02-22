@@ -59,7 +59,8 @@ export class IssueStore implements IIssueStore {
 
       let issue: TIssue;
 
-      if (isArchived) issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId);
+      if (isArchived)
+        issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId, query);
       else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
       if (!issue) throw new Error("Issue not found");
