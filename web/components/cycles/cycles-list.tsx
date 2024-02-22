@@ -37,7 +37,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
           {cycleIds.length > 0 ? (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
-                <div className="flex h-full w-full flex-col overflow-y-auto">
+                <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
                   {cycleIds.map((cycleId) => (
                     <CyclesListItem
                       key={cycleId}

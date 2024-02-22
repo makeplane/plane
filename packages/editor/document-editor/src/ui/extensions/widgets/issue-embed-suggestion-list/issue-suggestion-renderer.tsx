@@ -145,7 +145,7 @@ const IssueSuggestionList = ({
     <div
       id="issue-list-container"
       ref={commandListContainer}
-      className=" fixed z-[10] max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
+      className=" fixed z-[10] max-h-80 w-96 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
     >
       {sections.map((section) => {
         const sectionItems = displayedItems[section];
@@ -175,8 +175,8 @@ const IssueSuggestionList = ({
                   >
                     <h5 className="whitespace-nowrap text-xs text-custom-text-300">{item.identifier}</h5>
                     <PriorityIcon priority={item.priority} />
-                    <div>
-                      <p className="flex-grow truncate text-xs">{item.title}</p>
+                    <div className="w-full truncate">
+                      <p className="flex-grow w-full truncate text-xs">{item.title}</p>
                     </div>
                   </button>
                 ))}

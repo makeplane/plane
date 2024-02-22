@@ -1,7 +1,5 @@
-# Python imports
-from itertools import groupby
-
 # Django imports
+from django.db import IntegrityError
 from django.db.models import Q
 
 # Third party imports
@@ -34,37 +32,51 @@ class StateAPIEndpoint(BaseAPIView):
         )
 
     def post(self, request, slug, project_id):
-        serializer = StateSerializer(
-            data=request.data, context={"project_id": project_id}
-        )
-        if serializer.is_valid():
-            if (
-                request.data.get("external_id")
-                and request.data.get("external_source")
-                and State.objects.filter(
-                    project_id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                ).exists()
-            ):
-                state = State.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    external_id=request.data.get("external_id"),
-                    external_source=request.data.get("external_source"),
-                ).first()
-                return Response(
-                    {
-                        "error": "State with the same external id and external source already exists",
-                        "id": str(state.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
+        try:
+            serializer = StateSerializer(
+                data=request.data, context={"project_id": project_id}
+            )
+            if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and State.objects.filter(
+                        project_id=project_id,
+                        workspace__slug=slug,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).exists()
+                ):
+                    state = State.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        external_id=request.data.get("external_id"),
+                        external_source=request.data.get("external_source"),
+                    ).first()
+                    return Response(
+                        {
+                            "error": "State with the same external id and external source already exists",
+                            "id": str(state.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
 
-            serializer.save(project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                serializer.save(project_id=project_id)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            state = State.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                name=request.data.get("name"),
+            ).first()
+            return Response(
+                {
+                    "error": "State with the same name already exists in the project",
+                    "id": str(state.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
 
     def get(self, request, slug, project_id, state_id=None):
         if state_id:

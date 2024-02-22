@@ -56,7 +56,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
   const filteredOptions = currentProjectIncompleteCycleIds?.filter((optionId) => {
     const cycleDetails = getCycleById(optionId);
 
-    return cycleDetails?.name.toLowerCase().includes(query.toLowerCase());
+    return cycleDetails?.name?.toLowerCase().includes(query?.toLowerCase());
   });
 
   // useEffect(() => {
