@@ -1,11 +1,12 @@
-import { FC, useState } from "react";
 import { Bell, BellOff } from "lucide-react";
 import { observer } from "mobx-react-lite";
+import { FC, useState } from "react";
 // UI
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
+import isNil from "lodash/isNil";
 
 export type TIssueSubscription = {
   workspaceSlug: string;
@@ -24,7 +25,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   const { setToastAlert } = useToast();
   // state
   const [loading, setLoading] = useState(false);
-  
+
   const isSubscribed = getSubscriptionByIssueId(issueId);
 
   const handleSubscription = async () => {
@@ -47,6 +48,13 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       });
     }
   };
+
+  if (isNil(isSubscribed))
+    return (
+      <Loader>
+        <Loader.Item width="106px" height="28px" />
+      </Loader>
+    );
 
   return (
     <div>

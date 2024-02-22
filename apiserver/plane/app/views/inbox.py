@@ -5,6 +5,10 @@ import json
 from django.utils import timezone
 from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Exists
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third party imports
 from rest_framework import status
@@ -128,6 +132,32 @@ class InboxIssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         ).distinct()
 
     def list(self, request, slug, project_id, inbox_id):
@@ -137,11 +167,40 @@ class InboxIssueViewSet(BaseViewSet):
             .filter(**filters)
             .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
         )
-        issues_data = IssueSerializer(
-            issue_queryset, expand=self.expand, many=True
-        ).data
+        if self.expand:
+            issues = IssueSerializer(
+                issue_queryset, expand=self.expand, many=True
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
         return Response(
-            issues_data,
+            issues,
             status=status.HTTP_200_OK,
         )
 
@@ -371,7 +430,12 @@ class InboxIssueViewSet(BaseViewSet):
                 )
             )
         ).first()
-        return Response(issue, status=status.HTTP_200_OK)
+
+        if issue is None:
+            return Response({"error": "Requested object was not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = IssueSerializer(issue)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, inbox_id, issue_id):
         inbox_issue = InboxIssue.objects.get(

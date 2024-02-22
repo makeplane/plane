@@ -1,20 +1,37 @@
 import { ReactElement } from "react";
+import { useRouter } from "next/router";
+import { observer } from "mobx-react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
+// hooks
+import { useGlobalView, useWorkspace } from "hooks/store";
 // components
 import { GlobalViewsHeader } from "components/workspace";
 import { AllIssueLayoutRoot } from "components/issues";
 import { GlobalIssuesHeader } from "components/headers";
+import { PageHead } from "components/core";
 // types
 import { NextPageWithLayout } from "lib/types";
-import { observer } from "mobx-react";
-import { useWorkspace } from "hooks/store";
-import { PageHead } from "components/core";
+// constants
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
 
 const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {
+  // router
+  const router = useRouter();
+  const { globalViewId } = router.query;
+  // store hooks
   const { currentWorkspace } = useWorkspace();
+  const { getViewDetailsById } = useGlobalView();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Views` : undefined;
+  const globalViewDetails = globalViewId ? getViewDetailsById(globalViewId.toString()) : undefined;
+  const defaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
+  const pageTitle =
+    currentWorkspace?.name && defaultView?.label
+      ? `${currentWorkspace?.name} - ${defaultView?.label}`
+      : currentWorkspace?.name && globalViewDetails?.name
+      ? `${currentWorkspace?.name} - ${globalViewDetails?.name}`
+      : undefined;
+
   return (
     <>
       <PageHead title={pageTitle} />

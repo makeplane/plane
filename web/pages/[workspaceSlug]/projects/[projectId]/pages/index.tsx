@@ -142,8 +142,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               projectId={projectId.toString()}
             />
           )}
-          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:p-6">
-            <div className="justify-between gap-4 hidden md:flex">
+          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:py-6">
+            <div className="justify-between gap-4 hidden md:flex px-6">
               <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
             </div>
             <Tab.Group
@@ -171,7 +171,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               {windowWidth < 768 ? (
                 <MobileTabList />
               ) : (
-                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex">
+                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex px-6">
                   <div className="flex flex-wrap items-center gap-4">
                     {PAGE_TABS_LIST.map((tab) => (
                       <Tab
@@ -192,22 +192,22 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               )}
 
               <Tab.Panels as={Fragment}>
-                <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto">
+                <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto vertical-scrollbar scrollbar-lg pl-6">
                   <RecentPagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <AllPagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <FavoritePagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <PrivatePagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <SharedPagesList />
                 </Tab.Panel>
-                <Tab.Panel as="div" className="h-full overflow-hidden">
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
                   <ArchivedPagesList />
                 </Tab.Panel>
               </Tab.Panels>

@@ -52,7 +52,13 @@ export interface IModuleIssues {
     data: TIssue,
     moduleId?: string | undefined
   ) => Promise<TIssue | undefined>;
-  addIssuesToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
+  addIssuesToModule: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueIds: string[],
+    fetchAddedIssues?: boolean
+  ) => Promise<void>;
   removeIssuesFromModule: (
     workspaceSlug: string,
     projectId: string,
@@ -187,7 +193,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       if (!moduleId) throw new Error("Module Id is required");
 
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id]);
+      await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return response;
@@ -266,11 +272,19 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  addIssuesToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
+  addIssuesToModule = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueIds: string[],
+    fetchAddedIssues = true
+  ) => {
     try {
-      const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
         issues: issueIds,
       });
+
+      if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
 
       runInAction(() => {
         update(this.issues, moduleId, (moduleIssueIds = []) => {
@@ -286,8 +300,6 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
         });
       });
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
-      return issueToModule;
     } catch (error) {
       throw error;
     }
@@ -353,7 +365,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       runInAction(() => {
         moduleIds.forEach((moduleId) => {
           update(this.issues, moduleId, (moduleIssueIds = []) => {
-            if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
+            if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
             else return uniq(concat(moduleIssueIds, [issueId]));
           });
           update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>

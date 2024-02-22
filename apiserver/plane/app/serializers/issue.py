@@ -594,20 +594,17 @@ class IssueStateSerializer(DynamicBaseSerializer):
 
 class IssueSerializer(DynamicBaseSerializer):
     # ids
-    project_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    state_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    parent_id = serializers.PrimaryKeyRelatedField(read_only=True)
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
     module_ids = serializers.ListField(
         child=serializers.UUIDField(), required=False, allow_null=True
     )
 
     # Many to many
-    label_ids = serializers.PrimaryKeyRelatedField(
-        read_only=True, many=True, source="labels"
+    label_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, allow_null=True
     )
-    assignee_ids = serializers.PrimaryKeyRelatedField(
-        read_only=True, many=True, source="assignees"
+    assignee_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, allow_null=True
     )
 
     # Count items
@@ -645,6 +642,15 @@ class IssueSerializer(DynamicBaseSerializer):
             "archived_at",
         ]
         read_only_fields = fields
+
+
+
+class IssueDetailSerializer(IssueSerializer):
+    description_html = serializers.CharField()
+    is_subscribed = serializers.BooleanField(read_only=True)
+
+    class Meta(IssueSerializer.Meta):
+        fields = IssueSerializer.Meta.fields + ["description_html", "is_subscribed"]
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):

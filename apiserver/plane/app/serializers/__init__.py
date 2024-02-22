@@ -75,6 +75,7 @@ from .issue import (
 )
 
 from .module import (
+    ModuleDetailSerializer,
     ModuleWriteSerializer,
     ModuleSerializer,
     ModuleIssueSerializer,

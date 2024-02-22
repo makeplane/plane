@@ -39,7 +39,7 @@ export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
                 peekCycle
                   ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
                   : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
-              } auto-rows-max transition-all `}
+              } auto-rows-max transition-all  vertical-scrollbar scrollbar-lg`}
             >
               {cycleIds.map((cycleId) => (
                 <CyclesBoardCard key={cycleId} workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
