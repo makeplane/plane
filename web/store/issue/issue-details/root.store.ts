@@ -217,6 +217,8 @@ export class IssueDetail implements IIssueDetail {
     this.subIssues.deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
 
   // subscription
+  addSubscription = (issueId: string, isSubscribed: boolean | undefined | null) =>
+    this.subscription.addSubscription(issueId, isSubscribed);
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.subscription.fetchSubscriptions(workspaceSlug, projectId, issueId);
   createSubscription = async (workspaceSlug: string, projectId: string, issueId: string) =>

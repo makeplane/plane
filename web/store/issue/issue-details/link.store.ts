@@ -53,6 +53,7 @@ export class IssueLinkStore implements IIssueLinkStore {
       // computed
       issueLinks: computed,
       // actions
+      addLinks: action.bound,
       fetchLinks: action,
       createLink: action,
       updateLink: action,

@@ -51,7 +51,7 @@ export class IssueReactionStore implements IIssueReactionStore {
       reactions: observable,
       reactionMap: observable,
       // actions
-      addReactions: action,
+      addReactions: action.bound,
       fetchReactions: action,
       createReaction: action,
       removeReaction: action,

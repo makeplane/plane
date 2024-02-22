@@ -75,13 +75,15 @@ export class IssueStore implements IIssueStore {
       // state
 
       // issue reactions
-      if (issue.issue_reactions) this.rootIssueDetailStore.reaction.addReactions(issueId, issue.issue_reactions);
+      if (issue.issue_reactions) this.rootIssueDetailStore.addReactions(issueId, issue.issue_reactions);
 
       // fetch issue links
-      if (issue.issue_link) this.rootIssueDetailStore.link.addLinks(issueId, issue.issue_link);
+      if (issue.issue_link) this.rootIssueDetailStore.addLinks(issueId, issue.issue_link);
 
       // fetch issue attachments
-      if (issue.issue_attachment) this.rootIssueDetailStore.attachment.addAttachments(issueId, issue.issue_attachment);
+      if (issue.issue_attachment) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachment);
+
+      this.rootIssueDetailStore.addSubscription(issueId, issue.is_subscribed);
 
       // fetch issue activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);

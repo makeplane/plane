@@ -25,17 +25,17 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   // state
   const [loading, setLoading] = useState(false);
   
-  const subscription = getSubscriptionByIssueId(issueId);
+  const isSubscribed = getSubscriptionByIssueId(issueId);
 
   const handleSubscription = async () => {
     setLoading(true);
     try {
-      if (subscription?.subscribed) await removeSubscription(workspaceSlug, projectId, issueId);
+      if (isSubscribed) await removeSubscription(workspaceSlug, projectId, issueId);
       else await createSubscription(workspaceSlug, projectId, issueId);
       setToastAlert({
         type: "success",
-        title: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
-        message: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        title: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
       });
       setLoading(false);
     } catch (error) {
@@ -52,7 +52,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     <div>
       <Button
         size="sm"
-        prependIcon={subscription?.subscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
+        prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
@@ -61,7 +61,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
           <span>
             <span className="hidden sm:block">Loading</span>...
           </span>
-        ) : subscription?.subscribed ? (
+        ) : isSubscribed ? (
           <div className="hidden sm:block">Unsubscribe</div>
         ) : (
           <div className="hidden sm:block">Subscribe</div>

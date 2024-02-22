@@ -55,6 +55,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
       // computed
       issueAttachments: computed,
       // actions
+      addAttachments: action.bound,
       fetchAttachments: action,
       createAttachment: action,
       removeAttachment: action,
