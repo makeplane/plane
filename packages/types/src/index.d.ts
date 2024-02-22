@@ -32,6 +32,9 @@ export * from "./api_token";
 export * from "./instance";
 export * from "./app";
 
+// enterprise
+export * from "./active-cycle";
+
 export type NestedKeyOf<ObjectType extends object> = {
   [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
     ? ObjectType[Key] extends { pop: any; push: any }

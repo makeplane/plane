@@ -38,6 +38,7 @@ from plane.app.serializers import (
     IssueSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
+    ActiveCycleSerializer,
 )
 from plane.app.permissions import (
     WorkspaceUserPermission,
@@ -425,9 +426,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
 
     def partial_update(self, request, slug, project_id, pk):
-        queryset = (
-            self.get_queryset()
-            .filter(workspace__slug=slug, project_id=project_id, pk=pk)
+        queryset = self.get_queryset().filter(
+            workspace__slug=slug, project_id=project_id, pk=pk
         )
         cycle = queryset.first()
         request_data = request.data
@@ -878,7 +878,9 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
 
         # Update the cycle issues
-        CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
+        CycleIssue.objects.bulk_update(
+            updated_records, ["cycle_id"], batch_size=100
+        )
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
@@ -1306,16 +1308,14 @@ class ActiveCycleEndpoint(BaseAPIView):
                 "completion_chart": {},
             }
             if cycle["start_date"] and cycle["end_date"]:
-                cycle["distribution"][
-                    "completion_chart"
-                ] = burndown_plot(
+                cycle["distribution"]["completion_chart"] = burndown_plot(
                     queryset=active_cycles.get(pk=cycle["id"]),
                     slug=self.kwargs.get("slug"),
-                    project_id=cycle["project"],
+                    project_id=cycle["project_id"],
                     cycle_id=cycle["id"],
                 )
         return results
-    
+
     def get(self, request, slug):
         subquery = CycleFavorite.objects.filter(
             user=self.request.user,
@@ -1393,27 +1393,6 @@ class ActiveCycleEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
-            .annotate(
-                completed_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                started_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
             .annotate(
                 status=Case(
                     When(
@@ -1421,7 +1400,9 @@ class ActiveCycleEndpoint(BaseAPIView):
                         & Q(end_date__gte=timezone.now()),
                         then=Value("CURRENT"),
                     ),
-                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
+                    When(
+                        start_date__gt=timezone.now(), then=Value("UPCOMING")
+                    ),
                     When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
                     When(
                         Q(start_date__isnull=True) & Q(end_date__isnull=True),
@@ -1434,22 +1415,30 @@ class ActiveCycleEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
-                    queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                    queryset=User.objects.only(
+                        "avatar", "first_name", "id"
+                    ).distinct(),
                 )
             )
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__labels",
-                    queryset=Label.objects.only("name", "color", "id").distinct(),
+                    queryset=Label.objects.only(
+                        "name", "color", "id"
+                    ).distinct(),
                 )
             )
             .order_by("-created_at")
         )
-        
+
         return self.paginate(
             request=request,
             queryset=active_cycles,
-            on_results=lambda active_cycles: CycleSerializer(active_cycles, many=True).data,
-            controller=lambda results: self.get_results_controller(results, active_cycles),
-            default_per_page=int(request.GET.get("per_page", 3))
+            on_results=lambda active_cycles: ActiveCycleSerializer(
+                active_cycles, many=True
+            ).data,
+            controller=lambda results: self.get_results_controller(
+                results, active_cycles
+            ),
+            default_per_page=int(request.GET.get("per_page", 3)),
         )
