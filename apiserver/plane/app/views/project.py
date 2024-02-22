@@ -744,6 +744,7 @@ class ProjectMemberViewSet(BaseViewSet):
             project_id=project_id,
             workspace__slug=slug,
             is_active=True,
+            member__is_bot=False,
         ).select_related("project", "member", "workspace")
 
         serializer = ProjectMemberRoleSerializer(
