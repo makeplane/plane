@@ -50,11 +50,11 @@ class UserEndpoint(BaseViewSet):
             {"is_instance_admin": is_admin}, status=status.HTTP_200_OK
         )
 
-    @invalidate_cache("/api/users/me/")
+    @invalidate_cache(path="/api/users/me/")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    @invalidate_cache("/api/users/me/")
+    @invalidate_cache(path="/api/users/me/")
     def deactivate(self, request):
         # Check all workspace user is active
         user = self.get_object()
@@ -154,7 +154,7 @@ class UserEndpoint(BaseViewSet):
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
-    @invalidate_cache("/api/users/me/")
+    @invalidate_cache(path="/api/users/me/")
     def patch(self, request):
         user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_onboarded = request.data.get("is_onboarded", False)
@@ -166,7 +166,7 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
 
-    @invalidate_cache("/api/users/me/")
+    @invalidate_cache(path="/api/users/me/")
     def patch(self, request):
         user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_tour_completed = request.data.get("is_tour_completed", False)

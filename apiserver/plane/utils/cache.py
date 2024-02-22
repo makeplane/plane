@@ -38,7 +38,7 @@ def cache_response(timeout, path=None):
         return _wrapped_view
     return decorator
 
-def invalidate_cache(path, url_params=False):
+def invalidate_cache(path=None, url_params=False):
     """invalidate cache per user"""
     def decorator(view_func):
         @wraps(view_func)

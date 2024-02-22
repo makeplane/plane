@@ -94,10 +94,7 @@ from plane.app.permissions import (
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.event_tracking_task import workspace_invite_event
-from plane.utils.cache import (
-    cache_path_response,
-    invalidate_path_cache,
-)
+from plane.utils.cache import cache_response, invalidate_cache
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -566,7 +563,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .select_related("member")
         )
 
-    @cache_path_response(60 * 5)
+    @cache_response(60 * 5)
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
@@ -591,7 +588,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_path_cache("/api/workspaces/:slug/members/", True)
+    @invalidate_cache(path="/api/workspaces/:slug/members/", url_params=True)
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
             pk=pk,
@@ -634,7 +631,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @invalidate_path_cache("/api/workspaces/:slug/members/", True)
+    @invalidate_cache(path="/api/workspaces/:slug/members/", url_params=True)
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
@@ -699,7 +696,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @invalidate_path_cache("/api/workspaces/:slug/members/", True)
+    @invalidate_cache(path="/api/workspaces/:slug/members/", url_params=True)
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,
@@ -1487,7 +1484,7 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         WorkspaceViewerPermission,
     ]
 
-    @cache_path_response(60 * 60 * 1)
+    @cache_response(60 * 60 * 1)
     def get(self, request, slug):
         labels = Label.objects.filter(
             workspace__slug=slug,
@@ -1502,7 +1499,7 @@ class WorkspaceStatesEndpoint(BaseAPIView):
         WorkspaceEntityPermission,
     ]
 
-    @cache_path_response(60 * 60 * 1)
+    @cache_response(60 * 60 * 1)
     def get(self, request, slug):
         states = State.objects.filter(
             workspace__slug=slug,
@@ -1517,7 +1514,7 @@ class WorkspaceEstimatesEndpoint(BaseAPIView):
         WorkspaceEntityPermission,
     ]
 
-    @cache_path_response(60 * 60 * 1)
+    @cache_response(60 * 60 * 1)
     def get(self, request, slug):
         estimate_ids = Project.objects.filter(
             workspace__slug=slug, estimate__isnull=False
