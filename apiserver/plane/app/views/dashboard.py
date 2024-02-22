@@ -496,6 +496,7 @@ def dashboard_recent_collaborators(self, request, slug):
         )
         .values_list("member", flat=True)
         .order_by("is_current_user", "-num_activities")
+        .distinct()
     )
 
 
