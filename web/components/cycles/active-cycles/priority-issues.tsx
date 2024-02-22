@@ -9,7 +9,7 @@ import { useIssues, useProjectState } from "hooks/store";
 // icons
 import { CalendarCheck } from "lucide-react";
 // types
-import { ICycle } from "@plane/types";
+import { IActiveCycle } from "@plane/types";
 // components
 import { StateDropdown } from "components/dropdowns";
 // helpers
@@ -21,7 +21,7 @@ import { EIssuesStoreType } from "constants/issue";
 export type ActiveCyclePriorityIssuesProps = {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycle: IActiveCycle;
 };
 
 export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = observer((props) => {

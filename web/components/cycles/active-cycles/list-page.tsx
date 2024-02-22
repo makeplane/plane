@@ -46,7 +46,7 @@ export const ActiveCyclesListPage: FC<ActiveCyclesListPageProps> = (props) => {
     <>
       {workspaceActiveCycles.results.map((cycle: any) => (
         <div key={cycle.id} className="px-5 pt-5 last:pb-5">
-          <ActiveCycleInfoCard workspaceSlug={workspaceSlug?.toString()} projectId={cycle.project} cycle={cycle} />
+          <ActiveCycleInfoCard workspaceSlug={workspaceSlug?.toString()} projectId={cycle.project_id} cycle={cycle} />
         </div>
       ))}
     </>
