@@ -196,9 +196,9 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const updateDraftIssue = async (payload: Partial<TIssue>) => {
     await draftIssues
       .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
-      .then((res) => {
+      .then(() => {
         if (isUpdatingSingleIssue) {
-          mutate<TIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
+          mutate<TIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...payload } as TIssue), false);
         } else {
           if (payload.parent_id) mutate(SUB_ISSUES(payload.parent_id.toString()));
         }

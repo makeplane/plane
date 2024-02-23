@@ -6,21 +6,22 @@ import { NotificationService } from "services/notification.service";
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueSubscriptionStoreActions {
-  fetchSubscriptions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
-  createSubscription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
-  removeSubscription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
+  addSubscription: (issueId: string, isSubscribed: boolean | undefined | null) => void;
+  fetchSubscriptions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<boolean>;
+  createSubscription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  removeSubscription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 }
 
 export interface IIssueSubscriptionStore extends IIssueSubscriptionStoreActions {
   // observables
-  subscriptionMap: Record<string, Record<string, Record<string, boolean>>>; // Record defines subscriptionId as key and link as value
+  subscriptionMap: Record<string, Record<string, boolean>>; // Record defines subscriptionId as key and link as value
   // helper methods
-  getSubscriptionByIssueId: (issueId: string) => Record<string, boolean> | undefined;
+  getSubscriptionByIssueId: (issueId: string) => boolean | undefined;
 }
 
 export class IssueSubscriptionStore implements IIssueSubscriptionStore {
   // observables
-  subscriptionMap: Record<string, Record<string, Record<string, boolean>>> = {};
+  subscriptionMap: Record<string, Record<string, boolean>> = {};
   // root store
   rootIssueDetail: IIssueDetail;
   // services
@@ -31,6 +32,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
       // observables
       subscriptionMap: observable,
       // actions
+      addSubscription: action.bound,
       fetchSubscriptions: action,
       createSubscription: action,
       removeSubscription: action,
@@ -49,22 +51,26 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
     return this.subscriptionMap[issueId]?.[currentUserId] ?? undefined;
   };
 
+  addSubscription = (issueId: string, isSubscribed: boolean | undefined | null) => {
+    const currentUserId = this.rootIssueDetail.rootIssueStore.currentUserId;
+    if (!currentUserId) throw new Error("user id not available");
+
+    runInAction(() => {
+      set(this.subscriptionMap, [issueId, currentUserId], isSubscribed ?? false);
+    });
+  };
+
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const currentUserId = this.rootIssueDetail.rootIssueStore.currentUserId;
-      if (!currentUserId) throw new Error("user id not available");
-
       const subscription = await this.notificationService.getIssueNotificationSubscriptionStatus(
         workspaceSlug,
         projectId,
         issueId
       );
 
-      runInAction(() => {
-        set(this.subscriptionMap, [issueId, currentUserId], subscription);
-      });
+      this.addSubscription(issueId, subscription?.subscribed);
 
-      return subscription;
+      return subscription?.subscribed;
     } catch (error) {
       throw error;
     }
@@ -79,9 +85,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
         set(this.subscriptionMap, [issueId, currentUserId], { subscribed: true });
       });
 
-      const response = await this.notificationService.subscribeToIssueNotifications(workspaceSlug, projectId, issueId);
-
-      return response;
+      await this.notificationService.subscribeToIssueNotifications(workspaceSlug, projectId, issueId);
     } catch (error) {
       this.fetchSubscriptions(workspaceSlug, projectId, issueId);
       throw error;
@@ -97,13 +101,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
         set(this.subscriptionMap, [issueId, currentUserId], { subscribed: false });
       });
 
-      const response = await this.notificationService.unsubscribeFromIssueNotifications(
-        workspaceSlug,
-        projectId,
-        issueId
-      );
-
-      return response;
+      await this.notificationService.unsubscribeFromIssueNotifications(workspaceSlug, projectId, issueId);
     } catch (error) {
       this.fetchSubscriptions(workspaceSlug, projectId, issueId);
       throw error;
