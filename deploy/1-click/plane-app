@@ -646,6 +646,14 @@ function start_server() {
         while ! sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
             sleep 1
         done
+
+        # Wait for the application to start
+        api_container_id=$(sudo docker container ls -q -f "name=plane-api-1")
+        while ! sudo docker logs api_container_id | grep -i "Application startup complete.";
+        do
+            show_message "Waiting for Plane Server to start..." "replace_last_line" >&2
+            sleep 1
+        done
         show_message "Plane Server Started ($APP_RELEASE) ✅" "replace_last_line" >&2
         show_message "---------------------------------------------------------------" >&2
         show_message "Access the Plane application at http://$MY_IP" >&2
