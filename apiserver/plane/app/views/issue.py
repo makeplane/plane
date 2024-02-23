@@ -572,12 +572,18 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        issue = self.get_queryset().filter(pk=pk).first()
+
+        if not issue:
+            return Response(
+                {"error": "Issue not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
             issue, data=request.data, partial=True
@@ -2296,9 +2302,14 @@ class IssueDraftViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        issue = self.get_queryset().filter(pk=pk).first()
+
+        if not issue:
+            return Response(
+                {"error": "Issue does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueSerializer(issue, data=request.data, partial=True)
 
         if serializer.is_valid():
