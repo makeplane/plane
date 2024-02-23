@@ -225,9 +225,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
       if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
       else _kanbanFilters.push(value);
-      issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: _kanbanFilters,
-      });
+      issuesFilter.updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.KANBAN_FILTERS,
+        {
+          [toggle]: _kanbanFilters,
+        },
+        viewId
+      );
     }
   };
 
