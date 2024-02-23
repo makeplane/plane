@@ -1,7 +1,8 @@
 import { APIService } from "services/api.service";
-// type
-import { API_BASE_URL } from "helpers/common.helper";
+// types
 import { TIssue } from "@plane/types";
+// constants
+import { API_BASE_URL } from "helpers/common.helper";
 
 export class IssueArchiveService extends APIService {
   constructor() {
@@ -18,8 +19,16 @@ export class IssueArchiveService extends APIService {
       });
   }
 
+  async archiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async unarchiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/unarchive/${issueId}/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -32,7 +41,7 @@ export class IssueArchiveService extends APIService {
     issueId: string,
     queries?: any
   ): Promise<TIssue> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issueId}/`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`, {
       params: queries,
     })
       .then((response) => response?.data)

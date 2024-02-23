@@ -70,7 +70,7 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
     const archivedIssueIds = this.issues[projectId];
     if (!archivedIssueIds) return undefined;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(archivedIssueIds);
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(archivedIssueIds, "archived");
     if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
