@@ -256,7 +256,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "Analytics",
     href: `/analytics`,
     access: EUserWorkspaceRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/analytics`,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics`),
     Icon: BarChart2,
   },
   {
