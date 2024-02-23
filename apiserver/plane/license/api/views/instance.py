@@ -1,23 +1,17 @@
 # Python imports
-import json
-import os
-import requests
 import uuid
-import random
-import string
+
 
 # Django imports
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.conf import settings
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
 
 # Module imports
 from plane.app.views import BaseAPIView
@@ -30,7 +24,8 @@ from plane.license.api.serializers import (
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
-from plane.db.models import User, WorkspaceMember, ProjectMember
+from plane.db.models import User
+from plane.app.serializers import UserMeSerializer
 from plane.license.utils.encryption import encrypt_data
 
 
@@ -157,13 +152,6 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    return (
-        str(refresh.access_token),
-        str(refresh),
-    )
-
 
 class InstanceAdminSignInEndpoint(BaseAPIView):
     permission_classes = [
@@ -247,12 +235,8 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
         instance.save()
 
         # get tokens for user
-        access_token, refresh_token = get_tokens_for_user(user)
-        data = {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        }
-        return Response(data, status=status.HTTP_200_OK)
+        serializer = UserMeSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SignUpScreenVisitedEndpoint(BaseAPIView):
