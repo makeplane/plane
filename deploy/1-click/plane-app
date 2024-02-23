@@ -90,7 +90,7 @@ function prepare_environment() {
 
     show_message "- Updating OS with required tools ✋"  >&2
     sudo "$PACKAGE_MANAGER" update -y
-    sudo "$PACKAGE_MANAGER" upgrade -y
+    # sudo "$PACKAGE_MANAGER" upgrade -y
 
     local required_tools=("curl" "awk" "wget" "nano" "dialog" "git" "uidmap")
 
