@@ -21,6 +21,7 @@ import {
 } from "components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // constants
@@ -383,9 +384,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div
             onClick={issue.sub_issues_count ? redirectToIssueDetail : () => {}}
-            className={`flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 ${
-              issue.sub_issues_count && "hover:bg-custom-background-80 cursor-pointer"
-            }`}
+            className={cn(
+              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+              {
+                "hover:bg-custom-background-80 cursor-pointer": issue.sub_issues_count,
+              }
+            )}
           >
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.sub_issues_count}</div>
