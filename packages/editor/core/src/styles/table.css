@@ -63,6 +63,35 @@
   pointer-events: none;
 }
 
+.colorPicker {
+  display: grid;
+  padding: 8px 8px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+
+.colorPickerLabel {
+  font-size: 0.85rem;
+  color: #6b7280;
+  padding: 8px 8px;
+  padding-bottom: 0px;
+}
+
+.colorPickerItem {
+  margin: 2px 0px;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.divider {
+  background-color: #e5e7eb;
+  height: 1px;
+  margin: 3px 0;
+}
+
 .tableWrapper table .column-resize-handle {
   position: absolute;
   right: -2px;
@@ -145,10 +174,13 @@
 .tableWrapper .tableControls .tableColorPickerToolbox {
   border: 1px solid rgba(var(--color-border-300));
   background-color: rgba(var(--color-background-100));
+  border-radius: 5px;
+  /*make the shadow lighter  */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   padding: 0.25rem;
   display: flex;
   flex-direction: column;
-  width: 200px;
+  width: max-content;
   gap: 0.25rem;
 }
 
@@ -159,7 +191,7 @@
   align-items: center;
   gap: 0.5rem;
   border: none;
-  padding: 0.1rem;
+  padding: 0.3rem 0.5rem 0.1rem 0.1rem;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
@@ -174,9 +206,7 @@
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .iconContainer,
 .tableWrapper .tableControls .tableToolbox .toolboxItem .colorContainer,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .colorContainer {
-  border: 1px solid rgba(var(--color-border-300));
-  border-radius: 3px;
-  padding: 4px;
+  padding: 4px 0px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,8 +218,8 @@
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .iconContainer svg,
 .tableWrapper .tableControls .tableToolbox .toolboxItem .colorContainer svg,
 .tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .colorContainer svg {
-  width: 2rem;
-  height: 2rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .tableToolbox {
