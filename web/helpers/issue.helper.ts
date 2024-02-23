@@ -1,11 +1,20 @@
 import { v4 as uuidv4 } from "uuid";
+import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { TIssue, TIssueGroupByOptions, TIssueLayouts, TIssueOrderByOptions, TIssueParams } from "@plane/types";
+import {
+  TIssue,
+  TIssueGroupByOptions,
+  TIssueLayouts,
+  TIssueOrderByOptions,
+  TIssueParams,
+  TStateGroups,
+} from "@plane/types";
 import { IGanttBlock } from "components/gantt-chart";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -134,6 +143,26 @@ export const createIssuePayload: (projectId: string, formData: Partial<TIssue>) 
   return payload;
 };
 
+/**
+ * @description check if the issue due date should be highlighted
+ * @param date
+ * @param stateGroup
+ * @returns boolean
+ */
+export const shouldHighlightIssueDueDate = (
+  date: string | Date | null,
+  stateGroup: TStateGroups | undefined
+): boolean => {
+  if (!date || !stateGroup) return false;
+  // if the issue is completed or cancelled, don't highlight the due date
+  if ([STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateGroup)) return false;
+
+  const parsedDate = new Date(date);
+  const targetDateDistance = differenceInCalendarDays(parsedDate, new Date());
+
+  // if the issue is overdue, highlight the due date
+  return targetDateDistance <= 0;
+};
 export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>
   blocks?.map((block) => ({
     data: block,

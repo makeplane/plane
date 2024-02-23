@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { differenceInCalendarDays } from "date-fns";
 import {
   LinkIcon,
   Signal,
@@ -15,7 +14,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 // hooks
-import { useEstimate, useIssueDetail, useProject, useUser } from "hooks/store";
+import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -41,6 +40,7 @@ import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon } 
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { cn } from "helpers/common.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 // types
 import type { TIssueOperations } from "./root";
 
@@ -65,6 +65,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { getStateById } = useProjectState();
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
@@ -83,14 +84,13 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const projectDetails = issue ? getProjectById(issue.project_id) : null;
+  const stateDetails = getStateById(issue.state_id);
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
-
-  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
 
   return (
     <>
@@ -242,7 +242,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={cn("text-sm", {
                   "text-custom-text-400": !issue.target_date,
-                  "text-red-500": targetDateDistance <= 0,
+                  "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
                 })}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
