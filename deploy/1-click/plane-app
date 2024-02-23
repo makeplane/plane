@@ -92,7 +92,7 @@ function prepare_environment() {
     sudo "$PACKAGE_MANAGER" update -y
     # sudo "$PACKAGE_MANAGER" upgrade -y
 
-    local required_tools=("curl" "awk" "wget" "nano" "dialog" "git" "uidmap")
+    local required_tools=("curl" "awk" "wget" "nano" "dialog" "git" "uidmap" "jq")
 
     for tool in "${required_tools[@]}"; do
         if ! command -v $tool &> /dev/null; then
@@ -290,40 +290,40 @@ function configure_plane() {
     fi
 
 
-    smtp_host=$(read_env "EMAIL_HOST")
-    smtp_user=$(read_env "EMAIL_HOST_USER")
-    smtp_password=$(read_env "EMAIL_HOST_PASSWORD")
-    smtp_port=$(read_env "EMAIL_PORT")
-    smtp_from=$(read_env "EMAIL_FROM")
-    smtp_tls=$(read_env "EMAIL_USE_TLS")
-    smtp_ssl=$(read_env "EMAIL_USE_SSL")
+    # smtp_host=$(read_env "EMAIL_HOST")
+    # smtp_user=$(read_env "EMAIL_HOST_USER")
+    # smtp_password=$(read_env "EMAIL_HOST_PASSWORD")
+    # smtp_port=$(read_env "EMAIL_PORT")
+    # smtp_from=$(read_env "EMAIL_FROM")
+    # smtp_tls=$(read_env "EMAIL_USE_TLS")
+    # smtp_ssl=$(read_env "EMAIL_USE_SSL")
 
-    SMTP_SETTINGS=$(dialog \
-        --ok-label "Next" \
-        --cancel-label "Skip" \
-        --backtitle "Plane Configuration" \
-        --title "SMTP Settings" \
-        --form "" \
-        0 0 0 \
-        "Host:"        1 1	  "$smtp_host" 	              1 10 80 0 \
-        "User:"        2 1	  "$smtp_user" 	              2 10 80 0 \
-        "Password:"    3 1	  "$smtp_password" 	              3 10 80 0 \
-        "Port:"        4 1	  "${smtp_port:-587}"               4 10 5 0 \
-        "From:"        5 1	  "${smtp_from:-Mailer <mailer@example.com>}"               5 10 80 0 \
-        "TLS:"         6 1	  "${smtp_tls:-1}"                 6 10 1 1 \
-        "SSL:"         7 1	  "${smtp_ssl:-0}"                 7 10 1 1 \
-    2>&1 1>&3)
+    # SMTP_SETTINGS=$(dialog \
+    #     --ok-label "Next" \
+    #     --cancel-label "Skip" \
+    #     --backtitle "Plane Configuration" \
+    #     --title "SMTP Settings" \
+    #     --form "" \
+    #     0 0 0 \
+    #     "Host:"        1 1	  "$smtp_host" 	              1 10 80 0 \
+    #     "User:"        2 1	  "$smtp_user" 	              2 10 80 0 \
+    #     "Password:"    3 1	  "$smtp_password" 	              3 10 80 0 \
+    #     "Port:"        4 1	  "${smtp_port:-587}"               4 10 5 0 \
+    #     "From:"        5 1	  "${smtp_from:-Mailer <mailer@example.com>}"               5 10 80 0 \
+    #     "TLS:"         6 1	  "${smtp_tls:-1}"                 6 10 1 1 \
+    #     "SSL:"         7 1	  "${smtp_ssl:-0}"                 7 10 1 1 \
+    # 2>&1 1>&3)
 
-    save_smtp_settings=0
-    if [ $? -eq 0 ]; then
-        save_smtp_settings=1
-        smtp_host=$(echo "$SMTP_SETTINGS" | sed -n 1p)
-        smtp_user=$(echo "$SMTP_SETTINGS" | sed -n 2p)
-        smtp_password=$(echo "$SMTP_SETTINGS" | sed -n 3p)
-        smtp_port=$(echo "$SMTP_SETTINGS" | sed -n 4p)
-        smtp_from=$(echo "$SMTP_SETTINGS" | sed -n 5p)
-        smtp_tls=$(echo "$SMTP_SETTINGS" | sed -n 6p)
-    fi
+    # save_smtp_settings=0
+    # if [ $? -eq 0 ]; then
+    #     save_smtp_settings=1
+    #     smtp_host=$(echo "$SMTP_SETTINGS" | sed -n 1p)
+    #     smtp_user=$(echo "$SMTP_SETTINGS" | sed -n 2p)
+    #     smtp_password=$(echo "$SMTP_SETTINGS" | sed -n 3p)
+    #     smtp_port=$(echo "$SMTP_SETTINGS" | sed -n 4p)
+    #     smtp_from=$(echo "$SMTP_SETTINGS" | sed -n 5p)
+    #     smtp_tls=$(echo "$SMTP_SETTINGS" | sed -n 6p)
+    # fi
     external_pgdb_url=$(dialog \
                     --backtitle "Plane Configuration" \
                     --title "Using External Postgres Database ?" \
@@ -383,15 +383,6 @@ function configure_plane() {
             domain_name:          $domain_name
             upload_limit:         $upload_limit
 
-            save_smtp_settings:   $save_smtp_settings
-            smtp_host:            $smtp_host
-            smtp_user:            $smtp_user
-            smtp_password:        $smtp_password
-            smtp_port:            $smtp_port
-            smtp_from:            $smtp_from
-            smtp_tls:             $smtp_tls
-            smtp_ssl:             $smtp_ssl
-
             save_aws_settings:    $save_aws_settings
             aws_region:           $aws_region
             aws_access_key:       $aws_access_key
@@ -413,15 +404,15 @@ function configure_plane() {
         fi
 
         # check enable smpt settings value
-        if [ $save_smtp_settings == 1 ]; then
-            update_env "EMAIL_HOST" "$smtp_host"
-            update_env "EMAIL_HOST_USER" "$smtp_user"
-            update_env "EMAIL_HOST_PASSWORD" "$smtp_password"
-            update_env "EMAIL_PORT" "$smtp_port"
-            update_env "EMAIL_FROM" "$smtp_from"
-            update_env "EMAIL_USE_TLS" "$smtp_tls"
-            update_env "EMAIL_USE_SSL" "$smtp_ssl"
-        fi
+        # if [ $save_smtp_settings == 1 ]; then
+        #     update_env "EMAIL_HOST" "$smtp_host"
+        #     update_env "EMAIL_HOST_USER" "$smtp_user"
+        #     update_env "EMAIL_HOST_PASSWORD" "$smtp_password"
+        #     update_env "EMAIL_PORT" "$smtp_port"
+        #     update_env "EMAIL_FROM" "$smtp_from"
+        #     update_env "EMAIL_USE_TLS" "$smtp_tls"
+        #     update_env "EMAIL_USE_SSL" "$smtp_ssl"
+        # fi
 
         # check enable aws settings value
         if [[ $save_aws_settings == 1 &&  $aws_access_key != ""  &&  $aws_secret_key != "" ]] ; then
