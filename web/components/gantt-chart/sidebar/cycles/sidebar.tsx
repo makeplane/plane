@@ -1,8 +1,8 @@
-import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { IssuesSidebarBlock } from "./issues/block";
+import { CyclesSidebarBlock } from "./block";
 // types
 import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
 
@@ -11,10 +11,9 @@ type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
   enableReorder: boolean;
-  enableQuickIssueCreate?: boolean;
 };
 
-export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
+export const CycleGanttSidebar: React.FC<Props> = (props) => {
   const { blockUpdateHandler, blocks, enableReorder } = props;
 
   const handleOrderChange = (result: DropResult) => {
@@ -63,11 +62,7 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
     <DragDropContext onDragEnd={handleOrderChange}>
       <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
-          <div
-            className="mt-3 max-h-full overflow-y-auto pl-2.5"
-            ref={droppableProvided.innerRef}
-            {...droppableProvided.droppableProps}
-          >
+          <div className="h-full" ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
             <>
               {blocks ? (
                 blocks.map((block, index) => (
@@ -78,7 +73,7 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                     isDragDisabled={!enableReorder}
                   >
                     {(provided, snapshot) => (
-                      <IssuesSidebarBlock
+                      <CyclesSidebarBlock
                         block={block}
                         enableReorder={enableReorder}
                         provided={provided}

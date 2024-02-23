@@ -11,6 +11,7 @@ import {
   TIssueParams,
   TStateGroups,
 } from "@plane/types";
+import { IGanttBlock } from "components/gantt-chart";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
@@ -162,3 +163,11 @@ export const shouldHighlightIssueDueDate = (
   // if the issue is overdue, highlight the due date
   return targetDateDistance <= 0;
 };
+export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>
+  blocks?.map((block) => ({
+    data: block,
+    id: block.id,
+    sort_order: block.sort_order,
+    start_date: block.start_date ? new Date(block.start_date) : null,
+    target_date: block.target_date ? new Date(block.target_date) : null,
+  }));

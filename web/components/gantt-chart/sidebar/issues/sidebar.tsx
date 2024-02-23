@@ -1,21 +1,20 @@
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
+// components
+import { IssuesSidebarBlock } from "./block";
 // ui
 import { Loader } from "@plane/ui";
-// components
-import { IssuesSidebarBlock } from "./issues/block";
 // types
-import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
+import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
 
 type Props = {
-  title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
   enableReorder: boolean;
-  enableQuickIssueCreate?: boolean;
+  showAllBlocks?: boolean;
 };
 
-export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
-  const { blockUpdateHandler, blocks, enableReorder } = props;
+export const IssueGanttSidebar: React.FC<Props> = (props) => {
+  const { blockUpdateHandler, blocks, enableReorder, showAllBlocks = false } = props;
 
   const handleOrderChange = (result: DropResult) => {
     if (!blocks) return;
@@ -63,30 +62,33 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
     <DragDropContext onDragEnd={handleOrderChange}>
       <Droppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
-          <div
-            className="mt-3 max-h-full overflow-y-auto pl-2.5"
-            ref={droppableProvided.innerRef}
-            {...droppableProvided.droppableProps}
-          >
+          <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
             <>
               {blocks ? (
-                blocks.map((block, index) => (
-                  <Draggable
-                    key={`sidebar-block-${block.id}`}
-                    draggableId={`sidebar-block-${block.id}`}
-                    index={index}
-                    isDragDisabled={!enableReorder}
-                  >
-                    {(provided, snapshot) => (
-                      <IssuesSidebarBlock
-                        block={block}
-                        enableReorder={enableReorder}
-                        provided={provided}
-                        snapshot={snapshot}
-                      />
-                    )}
-                  </Draggable>
-                ))
+                blocks.map((block, index) => {
+                  const isBlockVisibleOnSidebar = block.start_date && block.target_date;
+
+                  // hide the block if it doesn't have start and target dates and showAllBlocks is false
+                  if (!showAllBlocks && !isBlockVisibleOnSidebar) return;
+
+                  return (
+                    <Draggable
+                      key={`sidebar-block-${block.id}`}
+                      draggableId={`sidebar-block-${block.id}`}
+                      index={index}
+                      isDragDisabled={!enableReorder}
+                    >
+                      {(provided, snapshot) => (
+                        <IssuesSidebarBlock
+                          block={block}
+                          enableReorder={enableReorder}
+                          provided={provided}
+                          snapshot={snapshot}
+                        />
+                      )}
+                    </Draggable>
+                  );
+                })
               ) : (
                 <Loader className="space-y-3 pr-2">
                   <Loader.Item height="34px" />
