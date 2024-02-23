@@ -502,8 +502,6 @@ function install() {
                     update_env "WEB_URL" "http://$MY_IP"
                     update_env "CORS_ALLOWED_ORIGINS" "http://$MY_IP"
 
-                    printUsageInstructions
-
                     update_config "INSTALLATION_DATE" "$(date '+%Y-%m-%d')"
                     
                     show_message "Plane Installed Successfully ✅"
@@ -753,6 +751,7 @@ elif [ "$1" == "restart" ]; then
 elif [ "$1" == "--install" ] || [ "$1" == "-i" ]; then
     install
     start_server
+    printUsageInstructions
 elif [ "$1" == "--configure" ] || [ "$1" == "-c" ]; then
     configure_plane
     printUsageInstructions
