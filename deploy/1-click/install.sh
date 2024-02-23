@@ -14,7 +14,7 @@ else
 fi
 
 sudo chmod +x /usr/local/bin/plane-app
-sudo sed -i 's/export DEPLOY_BRANCH=${BRANCH:-master}/export DEPLOY_BRANCH='${BRANCH:-master}'/' /usr/local/bin/plane-app
-sudo sed -i 's/CODE_REPO=${GIT_REPO:-makeplane/plane}/CODE_REPO='$GIT_REPO'/' /usr/local/bin/plane-app
+sudo sed -i 's@export DEPLOY_BRANCH=${BRANCH:-master}@export DEPLOY_BRANCH='${BRANCH:-master}'@' /usr/local/bin/plane-app
+sudo sed -i 's@CODE_REPO=${GIT_REPO:-makeplane/plane}@CODE_REPO='$GIT_REPO'@' /usr/local/bin/plane-app
 
 plane-app -i #--help
