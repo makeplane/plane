@@ -22,7 +22,7 @@ from plane.app.views import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
-    ExportWorkspaceUserActivityEndpoint
+    ExportWorkspaceUserActivityEndpoint,
     WorkspaceModulesEndpoint,
     WorkspaceCyclesEndpoint,
 )
