@@ -39,7 +39,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
         <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-          <div className="relative flex w-full items-center justify-between rounded p-4">
+          <div className="relative flex h-[52px] w-full items-center justify-between rounded p-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
