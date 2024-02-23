@@ -33,6 +33,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   useEffect(() => {
     if (debouncedValue && debouncedValue !== value) {
       issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }, false).finally(() => {
+        setTitle(debouncedValue.trim());
         setIsSubmitting("saved");
       });
     }
