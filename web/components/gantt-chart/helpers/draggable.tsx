@@ -236,7 +236,7 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
     return () => {
       observer.unobserve(resizableBlock);
     };
-  }, [block.data.name]);
+  }, []);
 
   return (
     <>
