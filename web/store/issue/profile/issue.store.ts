@@ -41,13 +41,13 @@ export interface IProfileIssues {
     issueId: string,
     data: Partial<TIssue>,
     userId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     userId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   quickAddIssue: undefined;
 }
 
@@ -221,14 +221,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       if (!userId) throw new Error("user id is required");
 
       this.rootStore.issues.updateIssue(issueId, data);
-      const response = await this.rootIssueStore.projectIssues.updateIssue(
-        workspaceSlug,
-        projectId,
-        data.id as keyof TIssue,
-        data
-      );
-
-      return response;
+      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, data.id as keyof TIssue, data);
     } catch (error) {
       if (this.currentView) this.fetchIssues(workspaceSlug, undefined, "mutation", userId, this.currentView);
       throw error;
@@ -243,7 +236,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
   ) => {
     if (!userId) return;
     try {
-      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
 
@@ -252,8 +245,6 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
         runInAction(() => {
           this.issues[userId][uniqueViewId].splice(issueIndex, 1);
         });
-
-      return response;
     } catch (error) {
       throw error;
     }

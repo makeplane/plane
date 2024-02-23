@@ -20,7 +20,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
   const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
-  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by) : undefined;
+  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
   const moduleLeadDetails = moduleDetails && moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
   return (

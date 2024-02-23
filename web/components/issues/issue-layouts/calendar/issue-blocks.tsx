@@ -79,6 +79,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                   target="_blank"
                   onClick={() => handleIssuePeekOverview(issue)}
                   className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+                  disabled={!!issue?.tempId}
                 >
                   <>
                     {issue?.tempId !== undefined && (

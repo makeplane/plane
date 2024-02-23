@@ -190,6 +190,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your full name..."
                       className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
+                      maxLength={24}
                     />
                   )}
                 />

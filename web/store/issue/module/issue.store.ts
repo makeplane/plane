@@ -39,13 +39,13 @@ export interface IModuleIssues {
     issueId: string,
     data: Partial<TIssue>,
     moduleId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     moduleId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -212,9 +212,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     try {
       if (!moduleId) throw new Error("Module Id is required");
 
-      const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-      return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
       throw error;
@@ -230,7 +229,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     try {
       if (!moduleId) throw new Error("Module Id is required");
 
-      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       const issueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === issueId);
@@ -238,8 +237,6 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
         runInAction(() => {
           this.issues[moduleId].splice(issueIndex, 1);
         });
-
-      return response;
     } catch (error) {
       throw error;
     }
