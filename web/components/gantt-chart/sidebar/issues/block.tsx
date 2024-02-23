@@ -27,8 +27,7 @@ export const IssuesSidebarBlock: React.FC<Props> = observer((props) => {
   const { updateActiveBlockId, isBlockActive } = useGanttChart();
   const { peekIssue } = useIssueDetail();
 
-  const duration =
-    !block.start_date || !block.target_date ? null : findTotalDaysInRange(block.start_date, block.target_date);
+  const duration = findTotalDaysInRange(block.start_date, block.target_date);
 
   return (
     <div
