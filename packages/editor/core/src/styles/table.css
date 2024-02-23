@@ -175,7 +175,6 @@
   border: 1px solid rgba(var(--color-border-300));
   background-color: rgba(var(--color-background-100));
   border-radius: 5px;
-  /*make the shadow lighter  */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   padding: 0.25rem;
   display: flex;
