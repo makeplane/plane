@@ -96,7 +96,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         showToast: boolean = true
       ) => {
         try {
-          const response = await updateIssue(workspaceSlug, projectId, issueId, data);
+          await updateIssue(workspaceSlug, projectId, issueId, data);
           if (showToast) {
             setToastAlert({
               title: "Issue updated successfully",
@@ -106,7 +106,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           }
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
@@ -160,7 +160,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          const response = await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           setToastAlert({
             title: "Cycle added to issue successfully",
             type: "success",
@@ -168,7 +168,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...issueIds, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,

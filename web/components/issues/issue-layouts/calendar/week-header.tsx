@@ -24,7 +24,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
         if (!showWeekends && (day.shortTitle === "Sat" || day.shortTitle === "Sun")) return null;
 
         return (
-          <div key={day.shortTitle} className="flex h-11 items-center bg-custom-background-90 px-4">
+          <div key={day.shortTitle} className="flex h-11 items-center justify-end bg-custom-background-90 px-4">
             {day.shortTitle}
           </div>
         );

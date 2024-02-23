@@ -104,22 +104,24 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
 
         <Combobox.Options className="fixed z-10">
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
+            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-300" />
-              <Combobox.Input
-                className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
-                displayValue={(assigned: any) => assigned?.name}
-              />
+            <div className="px-2">
+              <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+                <Combobox.Input
+                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search"
+                  displayValue={(assigned: any) => assigned?.name}
+                />
+              </div>
             </div>
-            <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
+            <div className={`mt-2 max-h-48 space-y-1 px-2 pr-0 overflow-y-scroll vertical-scrollbar scrollbar-sm`}>
               {isLoading ? (
                 <p className="text-center text-custom-text-200">Loading...</p>
               ) : filteredOptions.length > 0 ? (

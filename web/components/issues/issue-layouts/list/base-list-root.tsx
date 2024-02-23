@@ -10,6 +10,7 @@ import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { IDraftIssuesFilter, IDraftIssues } from "store/issue/draft";
 import { IArchivedIssuesFilter, IArchivedIssues } from "store/issue/archived";
+import { EIssueActions } from "../types";
 // components
 import { IQuickActionProps } from "./list-view-types";
 // constants
@@ -17,12 +18,6 @@ import { EUserProjectRoles } from "constants/project";
 import { TCreateModalStoreTypes } from "constants/issue";
 // hooks
 import { useIssues, useUser } from "hooks/store";
-
-enum EIssueActions {
-  UPDATE = "update",
-  DELETE = "delete",
-  REMOVE = "remove",
-}
 
 interface IBaseListRoot {
   issuesFilter:
