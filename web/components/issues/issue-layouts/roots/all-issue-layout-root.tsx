@@ -44,7 +44,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const { workspaceProjectIds } = useProject();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureIssuesListOpenedEvent } = useEventTracker();
 
   const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
@@ -100,6 +100,10 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       if (workspaceSlug && globalViewId) {
         await fetchAllGlobalViews(workspaceSlug.toString());
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
+        captureIssuesListOpenedEvent({
+          path: router.asPath,
+          element_id: globalViewId,
+        });
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();
       }

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useMember, useUser, useIssues } from "hooks/store";
+import { useLabel, useMember, useUser, useIssues, useEventTracker } from "hooks/store";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
@@ -18,6 +18,16 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import {
+  DP_APPLIED,
+  DP_REMOVED,
+  elementFromPath,
+  FILTER_APPLIED,
+  FILTER_REMOVED,
+  FILTER_SEARCHED,
+  LAYOUT_CHANGED,
+  LP_UPDATED,
+} from "constants/event-tracker";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -46,6 +56,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+  const { captureIssuesFilterEvent, captureEvent, captureIssuesDisplayFilterEvent } = useEventTracker();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
@@ -53,14 +64,18 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !globalViewId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
+      let isFilterRemoved = false;
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else isFilterRemoved = true;
         });
       } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
+        if (issueFilters?.filters?.[key]?.includes(value)) {
+          isFilterRemoved = true;
+          newValues.splice(newValues.indexOf(value), 1);
+        } else newValues.push(value);
       }
 
       updateFilters(
@@ -69,7 +84,18 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         EIssueFilterType.FILTERS,
         { [key]: newValues },
         globalViewId.toString()
-      );
+      ).then(() => {
+        captureIssuesFilterEvent({
+          eventName: isFilterRemoved ? FILTER_REMOVED : FILTER_APPLIED,
+          payload: {
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: globalViewId,
+            filter_property: value,
+            filter_type: key,
+          },
+        });
+      });
     },
     [workspaceSlug, issueFilters, updateFilters, globalViewId]
   );
@@ -83,9 +109,20 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         EIssueFilterType.DISPLAY_FILTERS,
         updatedDisplayFilter,
         globalViewId.toString()
+      ).then(() =>
+        captureIssuesDisplayFilterEvent({
+          eventName: LP_UPDATED,
+          payload: {
+            property_type: Object.keys(updatedDisplayFilter).join(","),
+            property: Object.values(updatedDisplayFilter)?.[0],
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: globalViewId,
+          },
+        })
       );
     },
-    [workspaceSlug, updateFilters, globalViewId]
+    [workspaceSlug, updateFilters, globalViewId, issueFilters]
   );
 
   const handleDisplayProperties = useCallback(
@@ -97,9 +134,19 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         EIssueFilterType.DISPLAY_PROPERTIES,
         property,
         globalViewId.toString()
+      ).then(() =>
+        captureIssuesDisplayFilterEvent({
+          eventName: Object.values(property)?.[0] === true ? DP_APPLIED : DP_REMOVED,
+          payload: {
+            display_property: Object.keys(property).join(","),
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: globalViewId,
+          },
+        })
       );
     },
-    [workspaceSlug, updateFilters, globalViewId]
+    [workspaceSlug, updateFilters, globalViewId, issueFilters]
   );
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
@@ -160,6 +207,17 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                   handleFiltersUpdate={handleFiltersUpdate}
                   labels={workspaceLabels ?? undefined}
                   memberIds={workspaceMemberIds ?? undefined}
+                  onSearchCapture={() =>
+                    captureIssuesFilterEvent({
+                      eventName: FILTER_SEARCHED,
+                      payload: {
+                        path: router.asPath,
+                        current_filters: issueFilters?.filters,
+                        layout: issueFilters?.displayFilters?.layout,
+                        element_id: globalViewId,
+                      },
+                    })
+                  }
                 />
               </FiltersDropdown>
               <FiltersDropdown title="Display" placement="bottom-end">

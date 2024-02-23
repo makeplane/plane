@@ -19,6 +19,9 @@ import {
   getPageEventPayload,
   ISSUES_LIST_OPENED,
   getIssuesListOpenedPayload,
+  getIssuesFilterEventPayload,
+  getIssuesDisplayFilterPayload,
+  LP_UPDATED,
 } from "constants/event-tracker";
 
 export interface IEventTrackerStore {
@@ -40,6 +43,8 @@ export interface IEventTrackerStore {
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
   captureIssuesListOpenedEvent: (payload: any) => void;
+  captureIssuesFilterEvent: (props: EventProps) => void;
+  captureIssuesDisplayFilterEvent: (props: EventProps) => void;
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
@@ -245,15 +250,46 @@ export class EventTrackerStore implements IEventTrackerStore {
 
   /**
    * @description: Captures the event whenever the issues list is opened.
-   * @param {string} path
-   * @param {any} filters
+   * @param {any} payload
    */
   captureIssuesListOpenedEvent = (payload: any) => {
     const eventPayload = {
       ...getIssuesListOpenedPayload(payload),
       ...this.getRequiredProperties,
+      type: this.getRequiredProperties.project_id ? "Project" : "Workspace",
     };
     posthog?.capture(ISSUES_LIST_OPENED, eventPayload);
+    this.setTrackElement(undefined);
+  };
+
+  /**
+   * @description: Captures the event whenever the issues filters are changed.
+   * @param {IssueEventProps} props
+   */
+  captureIssuesFilterEvent = (props: EventProps) => {
+    const { eventName, payload } = props;
+    const eventPayload = {
+      ...getIssuesFilterEventPayload(payload),
+      ...this.getRequiredProperties,
+      type: this.getRequiredProperties.project_id ? "Project" : "Workspace",
+    };
+    posthog?.capture(eventName, eventPayload);
+    this.setTrackElement(undefined);
+  };
+
+  /**
+   * @description: Captures the event whenever the issues display-filters are changed.
+   * @param {IssueEventProps} props
+   */
+  captureIssuesDisplayFilterEvent = (props: EventProps) => {
+    const { eventName, payload } = props;
+    const eventPayload = {
+      ...getIssuesDisplayFilterPayload(payload),
+      ...this.getRequiredProperties,
+      type: this.getRequiredProperties.project_id ? "Project" : "Workspace",
+      current_display_filter: eventName === LP_UPDATED ? payload?.filters?.displayFilters : undefined,
+    };
+    posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
 }

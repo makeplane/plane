@@ -31,6 +31,16 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  DP_APPLIED,
+  DP_REMOVED,
+  elementFromPath,
+  FILTER_APPLIED,
+  FILTER_REMOVED,
+  FILTER_SEARCHED,
+  LAYOUT_CHANGED,
+  LP_UPDATED,
+} from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
 import { ModuleMobileHeader } from "components/modules/module-mobile-header";
@@ -77,7 +87,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent, captureIssuesFilterEvent, captureIssuesDisplayFilterEvent } =
+    useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -100,7 +111,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId).then(() =>
+        captureEvent(LAYOUT_CHANGED, {
+          layout: layout,
+          element: elementFromPath(router.asPath),
+          element_id: moduleId,
+        })
+      );
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -109,17 +126,31 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
-
+      let isFilterRemoved = false;
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else isFilterRemoved = true;
         });
       } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
+        if (issueFilters?.filters?.[key]?.includes(value)) {
+          isFilterRemoved = true;
+          newValues.splice(newValues.indexOf(value), 1);
+        } else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, moduleId).then(() => {
+        captureIssuesFilterEvent({
+          eventName: isFilterRemoved ? FILTER_REMOVED : FILTER_APPLIED,
+          payload: {
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: moduleId,
+            filter_property: value,
+            filter_type: key,
+          },
+        });
+      });
     },
     [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
@@ -127,17 +158,39 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId).then(
+        () =>
+          captureIssuesDisplayFilterEvent({
+            eventName: LP_UPDATED,
+            payload: {
+              property_type: Object.keys(updatedDisplayFilter).join(","),
+              property: Object.values(updatedDisplayFilter)?.[0],
+              path: router.asPath,
+              filters: issueFilters,
+              element_id: moduleId,
+            },
+          })
+      );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters]
+    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId).then(() =>
+        captureIssuesDisplayFilterEvent({
+          eventName: Object.values(property)?.[0] === true ? DP_APPLIED : DP_REMOVED,
+          payload: {
+            display_property: Object.keys(property).join(","),
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: moduleId,
+          },
+        })
+      );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters]
+    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters]
   );
 
   // derived values
@@ -237,6 +290,17 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   labels={projectLabels}
                   memberIds={projectMemberIds ?? undefined}
                   states={projectStates}
+                  onSearchCapture={() =>
+                    captureIssuesFilterEvent({
+                      eventName: FILTER_SEARCHED,
+                      payload: {
+                        path: router.asPath,
+                        current_filters: issueFilters?.filters,
+                        layout: issueFilters?.displayFilters?.layout,
+                        element_id: moduleId,
+                      },
+                    })
+                  }
                 />
               </FiltersDropdown>
               <FiltersDropdown title="Display" placement="bottom-end">

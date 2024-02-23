@@ -1,3 +1,5 @@
+import { ISSUE_ORDER_BY_OPTIONS } from "./issue";
+
 export type IssueEventProps = {
   eventName: string;
   payload: any;
@@ -124,23 +126,40 @@ export const getProjectStateEventPayload = (payload: any) => {
 export const getIssuesListOpenedPayload = (payload: any) => ({
   element: elementFromPath(payload.path),
   element_id: payload.element_id,
-  type: payload.project_id ? "Project" : "Workspace",
   layout: payload?.displayFilters?.layout,
   filters: payload?.filters,
   display_properties: payload?.displayProperties,
 });
 
 export const getIssuesFilterEventPayload = (payload: any) => ({
+  filter_type: payload?.filter_type,
+  filter_property: payload?.filter_property,
+  layout: payload?.filters?.displayFilters?.layout,
+  current_filters: payload?.filters?.filters,
   element: elementFromPath(payload.path),
-  element_id: payload.element_id, 
-  type: payload.project_id ? "Project" : "Workspace",
-  layout: payload?.displayFilters?.layout,
-  filters: payload?.filters,
-  display_properties: payload?.displayProperties,
+  element_id: payload.element_id,
 });
 
-const elementFromPath = (path?: string) => {
-  if (path?.includes("workspace-views")) return "Workspace view";
+export const getIssuesDisplayFilterPayload = (payload: any) => {
+  const property =
+    payload.property_type == "order_by"
+      ? ISSUE_ORDER_BY_OPTIONS?.filter((option) => option.key === payload.property)?.[0]
+          .title.toLocaleLowerCase()
+          .replaceAll(" ", "_")
+      : payload.property;
+  return {
+    layout: payload?.filters?.displayFilters?.layout,
+    current_display_properties: payload?.filters?.displayProperties,
+    element: elementFromPath(payload.path),
+    element_id: payload.element_id,
+    display_property: payload.display_property,
+    property: property,
+    property_type: payload.property_type,
+  };
+};
+
+export const elementFromPath = (path?: string) => {
+  if (path?.includes("workspace-views")) return "Global view";
   if (path?.includes("cycles")) return "Cycle";
   if (path?.includes("modules")) return "Module";
   if (path?.includes("views")) return "Project view";
@@ -190,6 +209,12 @@ export const ISSUE_OPENED = "Issue opened";
 export const FILTER_APPLIED = "Filter applied";
 export const FILTER_REMOVED = "Filter removed";
 export const FILTER_SEARCHED = "Filter searched";
+// Issues Display Property Events
+export const DP_APPLIED = "Display property applied";
+export const DP_REMOVED = "Display property removed";
+// Issues Layout Property Event
+export const LP_UPDATED = "Layout property updated";
+export const LAYOUT_CHANGED = "Layout changed";
 // Project State Events
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";

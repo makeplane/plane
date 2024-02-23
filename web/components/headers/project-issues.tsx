@@ -23,6 +23,16 @@ import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  DP_APPLIED,
+  DP_REMOVED,
+  elementFromPath,
+  FILTER_APPLIED,
+  FILTER_REMOVED,
+  FILTER_SEARCHED,
+  LAYOUT_CHANGED,
+  LP_UPDATED,
+} from "constants/event-tracker";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 import { EUserProjectRoles } from "constants/project";
@@ -45,7 +55,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
-  const { setTrackElement } = useEventTracker();
+  const { captureEvent, setTrackElement, captureIssuesFilterEvent, captureIssuesDisplayFilterEvent } =
+    useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -59,17 +70,31 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
-
+      let isFilterRemoved = false;
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
+          else isFilterRemoved = true;
         });
       } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
+        if (issueFilters?.filters?.[key]?.includes(value)) {
+          newValues.splice(newValues.indexOf(value), 1);
+          isFilterRemoved = true;
+        } else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }).then(() =>
+        captureIssuesFilterEvent({
+          eventName: isFilterRemoved ? FILTER_REMOVED : FILTER_APPLIED,
+          payload: {
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: projectId,
+            filter_property: value,
+            filter_type: key,
+          },
+        })
+      );
     },
     [workspaceSlug, projectId, issueFilters, updateFilters]
   );
@@ -77,7 +102,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }).then(() =>
+        captureEvent(LAYOUT_CHANGED, {
+          layout: layout,
+          element: elementFromPath(router.asPath),
+          element_id: projectId,
+        })
+      );
     },
     [workspaceSlug, projectId, updateFilters]
   );
@@ -85,17 +116,38 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter).then(() =>
+        captureIssuesDisplayFilterEvent({
+          eventName: LP_UPDATED,
+          payload: {
+            property_type: Object.keys(updatedDisplayFilter).join(","),
+            property: Object.values(updatedDisplayFilter)?.[0],
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: projectId,
+          },
+        })
+      );
     },
-    [workspaceSlug, projectId, updateFilters]
+    [workspaceSlug, projectId, updateFilters, issueFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property).then(() => {
+        captureIssuesDisplayFilterEvent({
+          eventName: Object.values(property)?.[0] === true ? DP_APPLIED : DP_REMOVED,
+          payload: {
+            display_property: Object.keys(property).join(","),
+            path: router.asPath,
+            filters: issueFilters,
+            element_id: projectId,
+          },
+        });
+      });
     },
-    [workspaceSlug, projectId, updateFilters]
+    [workspaceSlug, projectId, updateFilters, issueFilters]
   );
 
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
@@ -183,6 +235,17 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 labels={projectLabels}
                 memberIds={projectMemberIds ?? undefined}
                 states={projectStates}
+                onSearchCapture={() =>
+                  captureIssuesFilterEvent({
+                    eventName: FILTER_SEARCHED,
+                    payload: {
+                      path: router.asPath,
+                      current_filters: issueFilters?.filters,
+                      layout: issueFilters?.displayFilters?.layout,
+                      element_id: projectId,
+                    },
+                  })
+                }
               />
             </FiltersDropdown>
             <FiltersDropdown title="Display" placement="bottom-end">
