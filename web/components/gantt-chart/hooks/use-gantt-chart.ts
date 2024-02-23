@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // mobx store
-import { GanttStoreContext } from "../contexts/index copy";
+import { GanttStoreContext } from "components/gantt-chart/contexts";
 // types
 import { IGanttStore } from "store/issue/issue_gantt_view.store";
 

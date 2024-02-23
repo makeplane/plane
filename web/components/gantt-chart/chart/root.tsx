@@ -91,20 +91,19 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
 
     // updating the prevData, currentData and nextData
     if (currentRender.payload.length > 0) {
+      updateCurrentViewData(currentRender.state);
+
       if (side === "left") {
         updateCurrentView(selectedCurrentView);
-        updateCurrentViewData(currentRender.state);
         updateRenderView([...currentRender.payload, ...renderView]);
         updatingCurrentLeftScrollPosition(currentRender.scrollWidth);
         setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
       } else if (side === "right") {
         updateCurrentView(view);
-        updateCurrentViewData(currentRender.state);
         updateRenderView([...renderView, ...currentRender.payload]);
         setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
       } else {
         updateCurrentView(view);
-        updateCurrentViewData(currentRender.state);
         updateRenderView(currentRender.payload);
         setItemsContainerWidth(currentRender.scrollWidth);
         setTimeout(() => {

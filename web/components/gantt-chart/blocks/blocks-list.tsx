@@ -21,6 +21,7 @@ export type GanttChartBlocksProps = {
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
   enableAddBlock: boolean;
+  ganttContainerRef: React.RefObject<HTMLDivElement>;
   showAllBlocks: boolean;
 };
 
@@ -34,6 +35,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
     enableBlockRightResize,
     enableBlockMove,
     enableAddBlock,
+    ganttContainerRef,
     showAllBlocks,
   } = props;
   // store hooks
@@ -115,6 +117,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = observer((props) 
                   enableBlockLeftResize={enableBlockLeftResize}
                   enableBlockRightResize={enableBlockRightResize}
                   enableBlockMove={enableBlockMove}
+                  ganttContainerRef={ganttContainerRef}
                 />
               ) : (
                 enableAddBlock && <ChartAddBlock block={block} blockUpdateHandler={blockUpdateHandler} />

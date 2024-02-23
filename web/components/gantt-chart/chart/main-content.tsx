@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useGanttChart } from "../hooks/use-gantt-chart";
@@ -57,6 +58,8 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     updateCurrentViewRenderPayload,
     quickAdd,
   } = props;
+  // refs
+  const ganttContainerRef = useRef<HTMLDivElement>(null);
   // chart hook
   const { currentView, currentViewData } = useGanttChart();
   // handling scroll functionality
@@ -97,6 +100,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
           "mb-8": bottomSpacing,
         }
       )}
+      ref={ganttContainerRef}
       onScroll={onScroll}
     >
       <GanttChartSidebar
@@ -107,7 +111,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
         title={title}
         quickAdd={quickAdd}
       />
-      <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
+      <div className="relative h-full flex-shrink-0 flex-grow">
         <ActiveChartView />
         {currentViewData && (
           <GanttChartBlocksList
@@ -119,6 +123,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
             enableBlockRightResize={enableBlockRightResize}
             enableBlockMove={enableBlockMove}
             enableAddBlock={enableAddBlock}
+            ganttContainerRef={ganttContainerRef}
             showAllBlocks={showAllBlocks}
           />
         )}
