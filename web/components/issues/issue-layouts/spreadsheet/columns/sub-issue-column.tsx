@@ -30,8 +30,10 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
 
   return (
     <div
-      onClick={redirectToIssueDetail}
-      className="flex h-11 w-full items-center px-2.5 py-1 text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80 cursor-pointer"
+      onClick={issue?.sub_issues_count ? redirectToIssueDetail : () => {}}
+      className={`flex h-11 w-full items-center px-2.5 py-1 text-xs border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80 ${
+        issue?.sub_issues_count && "cursor-pointer"
+      }`}
     >
       {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
     </div>
