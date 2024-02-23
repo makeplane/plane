@@ -21,7 +21,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
   // store
   const { getUserDetails } = useMember();
-  const cycleOwnerDetails = cycle ? getUserDetails(cycle.owned_by) : undefined;
+  const cycleOwnerDetails = cycle && cycle.owned_by_id ? getUserDetails(cycle.owned_by_id) : undefined;
 
   const daysLeft = findHowManyDaysLeft(cycle.end_date) ?? 0;
   const currentCycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
