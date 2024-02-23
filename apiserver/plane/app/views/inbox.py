@@ -3,7 +3,7 @@ import json
 
 # Django import
 from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
+from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Exists
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -25,13 +25,14 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     ProjectMember,
+    IssueReaction,
+    IssueSubscriber,
 )
 from plane.app.serializers import (
+    IssueCreateSerializer,
     IssueSerializer,
     InboxSerializer,
     InboxIssueSerializer,
-    IssueCreateSerializer,
-    IssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -295,11 +296,7 @@ class InboxIssueViewSet(BaseViewSet):
         issue_data = request.data.pop("issue", False)
 
         if bool(issue_data):
-            issue = Issue.objects.get(
-                pk=inbox_issue.issue_id,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+            issue = self.get_queryset().filter(pk=inbox_issue.issue_id).first()
             # Only allow guests and viewers to edit name and description
             if project_member.role <= 10:
                 # viewers and guests since only viewers and guests
@@ -385,9 +382,7 @@ class InboxIssueViewSet(BaseViewSet):
                         if state is not None:
                             issue.state = state
                             issue.save()
-                issue = self.get_queryset().filter(pk=issue_id).first()
-                serializer = IssueSerializer(issue, expand=self.expand)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
@@ -397,11 +392,45 @@ class InboxIssueViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, inbox_id, issue_id):
-        issue = self.get_queryset().filter(pk=issue_id).first()
-        serializer = IssueDetailSerializer(
-            issue,
-            expand=self.expand,
-        )
+        issue = (
+            self.get_queryset()
+            .filter(pk=issue_id)
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related(
+                        "issue", "actor"
+                    ),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_attachment",
+                    queryset=IssueAttachment.objects.select_related("issue"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+        ).first()
+
+        if issue is None:
+            return Response({"error": "Requested object was not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = IssueSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, inbox_id, issue_id):

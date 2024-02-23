@@ -194,7 +194,6 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [response?.id], response);
       });
-      this.fetchModules(workspaceSlug, projectId);
       return response;
     });
 

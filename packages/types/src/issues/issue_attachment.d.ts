@@ -1,17 +1,15 @@
 export type TIssueAttachment = {
   id: string;
-  created_at: string;
-  updated_at: string;
   attributes: {
     name: string;
     size: number;
   };
   asset: string;
-  created_by: string;
+  issue_id: string;
+
+  //need
+  updated_at: string;
   updated_by: string;
-  project: string;
-  workspace: string;
-  issue: string;
 };
 
 export type TIssueAttachmentMap = {
