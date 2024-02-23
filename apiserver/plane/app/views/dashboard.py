@@ -211,11 +211,11 @@ def dashboard_assigned_issues(self, request, slug):
     if issue_type == "overdue":
         overdue_issues_count = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         ).count()
         overdue_issues = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         )[:5]
         return Response(
             {
@@ -230,11 +230,11 @@ def dashboard_assigned_issues(self, request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         ).count()
         upcoming_issues = assigned_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         )[:5]
         return Response(
             {
@@ -364,11 +364,11 @@ def dashboard_created_issues(self, request, slug):
     if issue_type == "overdue":
         overdue_issues_count = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         ).count()
         overdue_issues = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now()
+            target_date__lt=timezone.now(),
         )[:5]
         return Response(
             {
@@ -381,11 +381,11 @@ def dashboard_created_issues(self, request, slug):
     if issue_type == "upcoming":
         upcoming_issues_count = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         ).count()
         upcoming_issues = created_issues.filter(
             state__group__in=["backlog", "unstarted", "started"],
-            target_date__gte=timezone.now()
+            target_date__gte=timezone.now(),
         )[:5]
         return Response(
             {
@@ -502,7 +502,9 @@ def dashboard_recent_projects(self, request, slug):
         ).exclude(id__in=unique_project_ids)
 
         # Append additional project IDs to the existing list
-        unique_project_ids.update(additional_projects.values_list("id", flat=True))
+        unique_project_ids.update(
+            additional_projects.values_list("id", flat=True)
+        )
 
     return Response(
         list(unique_project_ids)[:4],
@@ -621,7 +623,9 @@ class DashboardEndpoint(BaseAPIView):
             dashboard_type = request.GET.get("dashboard_type", None)
             if dashboard_type == "home":
                 dashboard, created = Dashboard.objects.get_or_create(
-                    type_identifier=dashboard_type, owned_by=request.user, is_default=True
+                    type_identifier=dashboard_type,
+                    owned_by=request.user,
+                    is_default=True,
                 )
 
                 if created:
@@ -638,7 +642,9 @@ class DashboardEndpoint(BaseAPIView):
 
                     updated_dashboard_widgets = []
                     for widget_key in widgets_to_fetch:
-                        widget = Widget.objects.filter(key=widget_key).values_list("id", flat=True)
+                        widget = Widget.objects.filter(
+                            key=widget_key
+                        ).values_list("id", flat=True)
                         if widget:
                             updated_dashboard_widgets.append(
                                 DashboardWidget(

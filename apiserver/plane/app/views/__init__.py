@@ -183,7 +183,4 @@ from .webhook import (
     WebhookSecretRegenerateEndpoint,
 )
 
-from .dashboard import (
-    DashboardEndpoint,
-    WidgetsEndpoint
-)
+from .dashboard import DashboardEndpoint, WidgetsEndpoint

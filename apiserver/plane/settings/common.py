@@ -1,4 +1,5 @@
 """Global Settings"""
+
 # Python imports
 import os
 import ssl

@@ -1,4 +1,5 @@
 """Development settings"""
+
 from .common import *  # noqa
 
 DEBUG = True

@@ -96,7 +96,7 @@ urlpatterns = [
         UserWorkSpaceIssues.as_view(),
         name="workspace-issues",
     ),
-    ## 
+    ##
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),

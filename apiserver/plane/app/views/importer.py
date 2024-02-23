@@ -332,9 +332,11 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                 Issue(
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    state_id=issue_data.get("state")
-                    if issue_data.get("state", False)
-                    else default_state.id,
+                    state_id=(
+                        issue_data.get("state")
+                        if issue_data.get("state", False)
+                        else default_state.id
+                    ),
                     name=issue_data.get("name", "Issue Created through Bulk"),
                     description_html=issue_data.get(
                         "description_html", "<p></p>"

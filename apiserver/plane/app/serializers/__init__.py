@@ -121,7 +121,10 @@ from .inbox import (
 
 from .analytic import AnalyticViewSerializer
 
-from .notification import NotificationSerializer, UserNotificationPreferenceSerializer
+from .notification import (
+    NotificationSerializer,
+    UserNotificationPreferenceSerializer,
+)
 
 from .exporter import ExporterHistorySerializer
 

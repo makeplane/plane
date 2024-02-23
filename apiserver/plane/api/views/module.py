@@ -178,7 +178,9 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                 and Module.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", module.external_source),
+                    external_source=request.data.get(
+                        "external_source", module.external_source
+                    ),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):

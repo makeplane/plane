@@ -577,9 +577,11 @@ class ProjectJoinEndpoint(BaseAPIView):
                     _ = WorkspaceMember.objects.create(
                         workspace_id=project_invite.workspace_id,
                         member=user,
-                        role=15
-                        if project_invite.role >= 15
-                        else project_invite.role,
+                        role=(
+                            15
+                            if project_invite.role >= 15
+                            else project_invite.role
+                        ),
                     )
                 else:
                     # Else make him active
@@ -686,9 +688,14 @@ class ProjectMemberViewSet(BaseViewSet):
         )
 
         bulk_project_members = []
-        member_roles = {member.get("member_id"): member.get("role") for member in members}
+        member_roles = {
+            member.get("member_id"): member.get("role") for member in members
+        }
         # Update roles in the members array based on the member_roles dictionary
-        for project_member in  ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members]):
+        for project_member in ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=[member.get("member_id") for member in members],
+        ):
             project_member.role = member_roles[str(project_member.member_id)]
             project_member.is_active = True
             bulk_project_members.append(project_member)
@@ -711,9 +718,9 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 10),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=sort_order[0] - 10000
-                    if len(sort_order)
-                    else 65535,
+                    sort_order=(
+                        sort_order[0] - 10000 if len(sort_order) else 65535
+                    ),
                 )
             )
             bulk_issue_props.append(
@@ -734,7 +741,10 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_issue_props, batch_size=10, ignore_conflicts=True
         )
 
-        project_members = ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members])
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=[member.get("member_id") for member in members],
+        )
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

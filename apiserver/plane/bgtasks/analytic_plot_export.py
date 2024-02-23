@@ -212,9 +212,9 @@ def generate_segmented_rows(
                 None,
             )
             if assignee:
-                generated_row[
-                    0
-                ] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                generated_row[0] = (
+                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                )
 
         if x_axis == LABEL_ID:
             label = next(
@@ -281,9 +281,9 @@ def generate_segmented_rows(
                 None,
             )
             if assignee:
-                row_zero[
-                    index + 2
-                ] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                row_zero[index + 2] = (
+                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                )
 
     if segmented == LABEL_ID:
         for index, segm in enumerate(row_zero[2:]):
@@ -368,9 +368,9 @@ def generate_non_segmented_rows(
                 None,
             )
             if assignee:
-                row[
-                    0
-                ] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                row[0] = (
+                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
+                )
 
         if x_axis == LABEL_ID:
             label = next(

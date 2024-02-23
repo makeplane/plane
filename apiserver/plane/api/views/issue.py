@@ -673,7 +673,6 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -711,7 +710,10 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
         # Validation check if the issue already exists
         if (
             str(request.data.get("external_id"))
-            and (issue_comment.external_id != str(request.data.get("external_id")))
+            and (
+                issue_comment.external_id
+                != str(request.data.get("external_id"))
+            )
             and Issue.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
@@ -728,7 +730,6 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
                 },
                 status=status.HTTP_409_CONFLICT,
             )
-
 
         serializer = IssueCommentSerializer(
             issue_comment, data=request.data, partial=True

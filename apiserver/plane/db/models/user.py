@@ -170,6 +170,7 @@ def create_user_notification(sender, instance, created, **kwargs):
     if created and not instance.is_bot:
         # Module imports
         from plane.db.models import UserNotificationPreference
+
         UserNotificationPreference.objects.create(
             user=instance,
             property_change=False,

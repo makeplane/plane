@@ -366,7 +366,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            module = queryset.values(  
+            module = queryset.values(
                 # Required fields
                 "id",
                 "workspace_id",

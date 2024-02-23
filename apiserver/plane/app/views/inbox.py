@@ -432,8 +432,11 @@ class InboxIssueViewSet(BaseViewSet):
         ).first()
 
         if issue is None:
-            return Response({"error": "Requested object was not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+            return Response(
+                {"error": "Requested object was not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

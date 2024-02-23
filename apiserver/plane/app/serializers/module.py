@@ -215,13 +215,12 @@ class ModuleSerializer(DynamicBaseSerializer):
         read_only_fields = fields
 
 
-
 class ModuleDetailSerializer(ModuleSerializer):
 
     link_module = ModuleLinkSerializer(read_only=True, many=True)
 
     class Meta(ModuleSerializer.Meta):
-        fields = ModuleSerializer.Meta.fields + ['link_module']
+        fields = ModuleSerializer.Meta.fields + ["link_module"]
 
 
 class ModuleFavoriteSerializer(BaseSerializer):

@@ -133,9 +133,11 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             is_password_autoset=True,
             is_bot=True,
             first_name=integration.title,
-            avatar=integration.avatar_url
-            if integration.avatar_url is not None
-            else "",
+            avatar=(
+                integration.avatar_url
+                if integration.avatar_url is not None
+                else ""
+            ),
         )
 
         # Create an API Token for the bot user

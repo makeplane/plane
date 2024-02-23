@@ -144,12 +144,17 @@ def generate_table_row(issue):
         issue["description_stripped"],
         issue["state__name"],
         issue["priority"],
-        f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-        if issue["created_by__first_name"] and issue["created_by__last_name"]
-        else "",
-        f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-        if issue["assignees__first_name"] and issue["assignees__last_name"]
-        else "",
+        (
+            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
+            else ""
+        ),
+        (
+            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+            if issue["assignees__first_name"] and issue["assignees__last_name"]
+            else ""
+        ),
         issue["labels__name"],
         issue["issue_cycle__cycle__name"],
         dateConverter(issue["issue_cycle__cycle__start_date"]),
@@ -172,12 +177,17 @@ def generate_json_row(issue):
         "Description": issue["description_stripped"],
         "State": issue["state__name"],
         "Priority": issue["priority"],
-        "Created By": f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-        if issue["created_by__first_name"] and issue["created_by__last_name"]
-        else "",
-        "Assignee": f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-        if issue["assignees__first_name"] and issue["assignees__last_name"]
-        else "",
+        "Created By": (
+            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
+            else ""
+        ),
+        "Assignee": (
+            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+            if issue["assignees__first_name"] and issue["assignees__last_name"]
+            else ""
+        ),
         "Labels": issue["labels__name"],
         "Cycle Name": issue["issue_cycle__cycle__name"],
         "Cycle Start Date": dateConverter(

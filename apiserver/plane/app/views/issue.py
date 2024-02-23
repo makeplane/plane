@@ -95,7 +95,9 @@ class IssueListEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
+        issue_ids = [
+            issue_id for issue_id in issue_ids.split(",") if issue_id != ""
+        ]
 
         queryset = (
             Issue.issue_objects.filter(

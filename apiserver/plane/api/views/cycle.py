@@ -318,7 +318,9 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 and Cycle.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", cycle.external_source),
+                    external_source=request.data.get(
+                        "external_source", cycle.external_source
+                    ),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):

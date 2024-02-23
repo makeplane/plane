@@ -424,9 +424,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
 
     def partial_update(self, request, slug, project_id, pk):
-        queryset = (
-            self.get_queryset()
-            .filter(workspace__slug=slug, project_id=project_id, pk=pk)
+        queryset = self.get_queryset().filter(
+            workspace__slug=slug, project_id=project_id, pk=pk
         )
         cycle = queryset.first()
         request_data = request.data
@@ -877,7 +876,9 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
 
         # Update the cycle issues
-        CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
+        CycleIssue.objects.bulk_update(
+            updated_records, ["cycle_id"], batch_size=100
+        )
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
