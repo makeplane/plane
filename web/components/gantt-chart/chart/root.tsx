@@ -1,6 +1,9 @@
 import { FC, useEffect, useState } from "react";
+import { observer } from "mobx-react";
+// hooks
+import { useGanttChart } from "../hooks/use-gantt-chart";
 // components
-import { GanttChartHeader, useChart, GanttChartMainContent } from "components/gantt-chart";
+import { GanttChartHeader, GanttChartMainContent } from "components/gantt-chart";
 // views
 import {
   generateMonthChart,
@@ -34,7 +37,7 @@ type ChartViewRootProps = {
   quickAdd?: React.JSX.Element | undefined;
 };
 
-export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
+export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
   const {
     border,
     title,
@@ -57,7 +60,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
   const [fullScreenMode, setFullScreenMode] = useState(false);
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
   // hooks
-  const { currentView, currentViewData, renderView, dispatch } = useChart();
+  const { currentView, currentViewData, renderView, updateCurrentView, updateCurrentViewData, updateRenderView } =
+    useGanttChart();
 
   // rendering the block structure
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
@@ -87,36 +91,20 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
 
     // updating the prevData, currentData and nextData
     if (currentRender.payload.length > 0) {
+      updateCurrentViewData(currentRender.state);
+
       if (side === "left") {
-        dispatch({
-          type: "PARTIAL_UPDATE",
-          payload: {
-            currentView: selectedCurrentView,
-            currentViewData: currentRender.state,
-            renderView: [...currentRender.payload, ...renderView],
-          },
-        });
+        updateCurrentView(selectedCurrentView);
+        updateRenderView([...currentRender.payload, ...renderView]);
         updatingCurrentLeftScrollPosition(currentRender.scrollWidth);
         setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
       } else if (side === "right") {
-        dispatch({
-          type: "PARTIAL_UPDATE",
-          payload: {
-            currentView: view,
-            currentViewData: currentRender.state,
-            renderView: [...renderView, ...currentRender.payload],
-          },
-        });
+        updateCurrentView(view);
+        updateRenderView([...renderView, ...currentRender.payload]);
         setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
       } else {
-        dispatch({
-          type: "PARTIAL_UPDATE",
-          payload: {
-            currentView: view,
-            currentViewData: currentRender.state,
-            renderView: [...currentRender.payload],
-          },
-        });
+        updateCurrentView(view);
+        updateRenderView(currentRender.payload);
         setItemsContainerWidth(currentRender.scrollWidth);
         setTimeout(() => {
           handleScrollToCurrentSelectedDate(currentRender.state, currentRender.state.data.currentDate);
@@ -206,4 +194,4 @@ export const ChartViewRoot: FC<ChartViewRootProps> = (props) => {
       />
     </div>
   );
-};
+});
