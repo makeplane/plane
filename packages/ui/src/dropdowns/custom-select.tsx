@@ -122,7 +122,7 @@ const Option = (props: ICustomSelectItemProps) => {
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200",
+          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200 flex items-center justify-between gap-2",
           {
             "bg-custom-background-80": active,
           },
@@ -131,10 +131,10 @@ const Option = (props: ICustomSelectItemProps) => {
       }
     >
       {({ selected }) => (
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">{children}</div>
+        <>
+          {children}
           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-        </div>
+        </>
       )}
     </Listbox.Option>
   );

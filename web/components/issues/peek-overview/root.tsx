@@ -15,7 +15,6 @@ import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
-  onIssueUpdate?: (issue: Partial<TIssue>) => Promise<void>;
 }
 
 export type TIssuePeekOperations = {
@@ -46,7 +45,7 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { is_archived = false, onIssueUpdate } = props;
+  const { is_archived = false } = props;
   // hooks
   const { setToastAlert } = useToast();
   // router
@@ -87,7 +86,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       ) => {
         try {
           const response = await updateIssue(workspaceSlug, projectId, issueId, data);
-          if (onIssueUpdate) await onIssueUpdate(response);
           if (showToast)
             setToastAlert({
               title: "Issue updated successfully",
@@ -96,7 +94,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: Object.keys(data).join(","),
               change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
@@ -146,7 +144,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          const response = await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           setToastAlert({
             title: "Cycle added to issue successfully",
             type: "success",
@@ -154,7 +152,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,
@@ -314,7 +312,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeIssueFromModule,
       removeModulesFromIssue,
       setToastAlert,
-      onIssueUpdate,
       captureIssueEvent,
       router.asPath,
     ]

@@ -25,7 +25,8 @@ import { DeleteImage } from "src/types/delete-image";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
-import { CustomCodeInlineExtension } from "./code-inline";
+import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
+import { CustomTypographyExtension } from "src/ui/extensions/typography";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -79,6 +80,7 @@ export const CoreEditorExtensions = (
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
+  CustomTypographyExtension,
   ImageExtension(deleteFile, restoreFile, cancelUploadImage).configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
