@@ -516,50 +516,96 @@ def dashboard_recent_projects(self, request, slug):
 
 
 def dashboard_recent_collaborators(self, request, slug):
-    # Fetch all users who have performed an activity in the projects where the user exists
-    users_with_activities = (
+    # Subquery to count activities for each project member
+    activity_count_subquery = (
         IssueActivity.objects.filter(
             workspace__slug=slug,
+            actor=OuterRef("member"),
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
         )
         .values("actor")
-        .annotate(num_activities=Count("actor"))
-        .order_by(
-            Case(
-                When(actor=request.user, then=Value(0)),
-                default=Value(1),
-            ),
-            "-num_activities",
-        )
-        .values_list("actor", flat=True)
+        .annotate(num_activities=Count("pk"))
+        .values("num_activities")
     )
+
+    # Get all project members and annotate them with activity counts
+    project_members_with_activities = (
+        ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
+        )
+        .annotate(
+            num_activities=Coalesce(
+                Subquery(activity_count_subquery),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            is_current_user=Case(
+                When(member=request.user, then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField(),
+            ),
+        )
+        .values_list("member", flat=True)
+        .order_by("is_current_user", "-num_activities")
+        .distinct()
+    )
+    search = request.query_params.get("search", None)
+    if search:
+        project_members_with_activities = (
+            project_members_with_activities.filter(
+                Q(member__display_name__icontains=search)
+                | Q(member__first_name__icontains=search)
+                | Q(member__last_name__icontains=search)
+            )
+        )
 
     return self.paginate(
         request=request,
-        queryset=users_with_activities,
-        controller=self.get_results_controller
+        queryset=project_members_with_activities,
+        controller=self.get_results_controller,
     )
 
 
 class DashboardEndpoint(BaseAPIView):
-    def get_results_controller(self, users_with_activities):
+    def get_results_controller(self, project_members_with_activities):
         user_active_issue_counts = (
-            User.objects.filter(id__in=users_with_activities)
+            User.objects.filter(id__in=project_members_with_activities)
             .annotate(
                 active_issue_count=Count(
                     Case(
                         When(
-                            issue_assignee__issue__state__group__in=["unstarted", "started"], 
-                            then=1
-                        ), 
-                        output_field=IntegerField()
+                            issue_assignee__issue__state__group__in=[
+                                "unstarted",
+                                "started",
+                            ],
+                            then=1,
+                        ),
+                        output_field=IntegerField(),
                     )
                 )
             )
-            .values('active_issue_count', user_id=F('id'))
+            .values("active_issue_count", user_id=F("id"))
         )
-        return user_active_issue_counts
+        # Create a dictionary to store the active issue counts by user ID
+        active_issue_counts_dict = {
+            user["user_id"]: user["active_issue_count"]
+            for user in user_active_issue_counts
+        }
+
+        # Preserve the sequence of project members with activities
+        paginated_results = [
+            {
+                "user_id": member_id,
+                "active_issue_count": active_issue_counts_dict.get(
+                    member_id, 0
+                ),
+            }
+            for member_id in project_members_with_activities
+        ]
+        return paginated_results
 
     def create(self, request, slug):
         serializer = DashboardSerializer(data=request.data)
