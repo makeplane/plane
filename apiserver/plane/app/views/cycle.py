@@ -1218,9 +1218,6 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             "started_issues": old_cycle.first().started_issues,
             "unstarted_issues": old_cycle.first().unstarted_issues,
             "backlog_issues": old_cycle.first().backlog_issues,
-            "total_estimates": old_cycle.first().total_estimates,
-            "completed_estimates": old_cycle.first().completed_estimates,
-            "started_estimates": old_cycle.first().started_estimates,
             "distribution": {
                 "labels": label_distribution_data,
                 "assignees": assignee_distribution_data,

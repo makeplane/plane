@@ -2,15 +2,15 @@ import { makeObservable } from "mobx";
 // services
 import { IssueArchiveService, IssueService } from "services/issue";
 // types
-import { IIssueDetail } from "./root.store";
 import { TIssue } from "@plane/types";
 import { computedFn } from "mobx-utils";
+import { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
   // actions
   fetchIssue: (workspaceSlug: string, projectId: string, issueId: string, isArchived?: boolean) => Promise<TIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<TIssue>;
   addModulesToIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<any>;
@@ -54,12 +54,13 @@ export class IssueStore implements IIssueStore {
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, isArchived = false) => {
     try {
       const query = {
-        expand: "state,assignees,labels,parent",
+        expand: "issue_reactions,issue_attachment,issue_link,parent",
       };
 
-      let issue: any;
+      let issue: TIssue;
 
-      if (isArchived) issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId);
+      if (isArchived)
+        issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId, query);
       else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
       if (!issue) throw new Error("Issue not found");
@@ -75,22 +76,21 @@ export class IssueStore implements IIssueStore {
       // state
 
       // issue reactions
-      this.rootIssueDetailStore.reaction.fetchReactions(workspaceSlug, projectId, issueId);
+      if (issue.issue_reactions) this.rootIssueDetailStore.addReactions(issueId, issue.issue_reactions);
 
       // fetch issue links
-      this.rootIssueDetailStore.link.fetchLinks(workspaceSlug, projectId, issueId);
+      if (issue.issue_link) this.rootIssueDetailStore.addLinks(issueId, issue.issue_link);
 
       // fetch issue attachments
-      this.rootIssueDetailStore.attachment.fetchAttachments(workspaceSlug, projectId, issueId);
+      if (issue.issue_attachment) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachment);
+
+      this.rootIssueDetailStore.addSubscription(issueId, issue.is_subscribed);
 
       // fetch issue activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
 
       // fetch issue comments
       this.rootIssueDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
-
-      // fetch issue subscription
-      this.rootIssueDetailStore.subscription.fetchSubscriptions(workspaceSlug, projectId, issueId);
 
       // fetch sub issues
       this.rootIssueDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
@@ -109,14 +109,8 @@ export class IssueStore implements IIssueStore {
   };
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-    const issue = await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
-      workspaceSlug,
-      projectId,
-      issueId,
-      data
-    );
+    await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    return issue;
   };
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
