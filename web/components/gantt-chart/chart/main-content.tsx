@@ -111,7 +111,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
         title={title}
         quickAdd={quickAdd}
       />
-      <div className="relative h-full flex-shrink-0 flex-grow">
+      <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
         <ActiveChartView />
         {currentViewData && (
           <GanttChartBlocksList
