@@ -750,7 +750,8 @@ elif [ "$1" == "restart" ]; then
 elif [ "$1" == "--install" ] || [ "$1" == "-i" ]; then
     install
     start_server
-    printUsageInstructions
+    show_message "" >&2
+    show_message "To view help, use plane-app --help " >&2
 elif [ "$1" == "--configure" ] || [ "$1" == "-c" ]; then
     configure_plane
     printUsageInstructions
