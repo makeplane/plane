@@ -1,19 +1,22 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // helpers
 import { currentViewDataWithView } from "components/gantt-chart/data";
 // types
-import { ChartDataType, IGanttBlock, TGanttViews } from "components/gantt-chart";
+import { ChartDataType, TGanttViews } from "components/gantt-chart";
 
 export interface IGanttStore {
   // observables
   currentView: TGanttViews;
   currentViewData: ChartDataType | undefined;
-  activeBlock: IGanttBlock | null;
+  activeBlockId: string | null;
   renderView: any;
+  // computed functions
+  isBlockActive: (blockId: string) => boolean;
   // actions
   updateCurrentView: (view: TGanttViews) => void;
   updateCurrentViewData: (data: ChartDataType | undefined) => void;
-  updateActiveBlock: (block: IGanttBlock | null) => void;
+  updateActiveBlockId: (blockId: string | null) => void;
   updateRenderView: (data: any[]) => void;
 }
 
@@ -21,8 +24,7 @@ export class GanttStore implements IGanttStore {
   // observables
   currentView: TGanttViews = "month";
   currentViewData: ChartDataType | undefined = undefined;
-  scrollLeft = 0;
-  activeBlock: IGanttBlock | null = null;
+  activeBlockId: string | null = null;
   renderView: any[] = [];
 
   constructor() {
@@ -30,21 +32,27 @@ export class GanttStore implements IGanttStore {
       // observables
       currentView: observable.ref,
       currentViewData: observable,
-      activeBlock: observable,
+      activeBlockId: observable.ref,
       renderView: observable,
       // actions
-      updateCurrentView: action,
-      updateCurrentViewData: action,
-      updateActiveBlock: action,
-      updateRenderView: action,
+      updateCurrentView: action.bound,
+      updateCurrentViewData: action.bound,
+      updateActiveBlockId: action.bound,
+      updateRenderView: action.bound,
     });
 
     this.initGantt();
   }
 
   /**
+   * @description check if block is active
+   * @param {string} blockId
+   */
+  isBlockActive = computedFn((blockId: string): boolean => this.activeBlockId === blockId);
+
+  /**
    * @description update current view
-   * @param view
+   * @param {TGanttViews} view
    */
   updateCurrentView = (view: TGanttViews) => {
     this.currentView = view;
@@ -52,7 +60,7 @@ export class GanttStore implements IGanttStore {
 
   /**
    * @description update current view data
-   * @param data
+   * @param {ChartDataType | undefined} data
    */
   updateCurrentViewData = (data: ChartDataType | undefined) => {
     this.currentViewData = data;
@@ -60,15 +68,15 @@ export class GanttStore implements IGanttStore {
 
   /**
    * @description update active block
-   * @param block
+   * @param {string | null} block
    */
-  updateActiveBlock = (block: IGanttBlock | null) => {
-    this.activeBlock = block;
+  updateActiveBlockId = (blockId: string | null) => {
+    this.activeBlockId = blockId;
   };
 
   /**
    * @description update render view
-   * @param data
+   * @param {any[]} data
    */
   updateRenderView = (data: any[]) => {
     this.renderView = data;
