@@ -85,7 +85,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         showToast: boolean = true
       ) => {
         try {
-          const response = await updateIssue(workspaceSlug, projectId, issueId, data);
+          await updateIssue(workspaceSlug, projectId, issueId, data);
           if (showToast)
             setToastAlert({
               title: "Issue updated successfully",
@@ -116,9 +116,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          let response;
-          if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
-          else response = await removeIssue(workspaceSlug, projectId, issueId);
+          if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
+          else await removeIssue(workspaceSlug, projectId, issueId);
           setToastAlert({
             title: "Issue deleted successfully",
             type: "success",

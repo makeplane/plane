@@ -81,7 +81,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, viewId, updateFilters]
+    [workspaceSlug, projectId, viewId, updateFilters, captureEvent, router.asPath]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -114,7 +114,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         });
       });
     },
-    [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
+    [workspaceSlug, projectId, viewId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
   );
 
   const handleDisplayFilters = useCallback(
@@ -133,7 +133,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, viewId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, viewId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const handleDisplayProperties = useCallback(
@@ -151,7 +151,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, viewId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, viewId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;

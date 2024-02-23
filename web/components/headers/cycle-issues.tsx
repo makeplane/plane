@@ -116,7 +116,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, cycleId, updateFilters]
+    [workspaceSlug, projectId, cycleId, updateFilters, captureEvent, router.asPath]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -149,7 +149,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
+    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
   );
 
   const handleDisplayFilters = useCallback(
@@ -169,7 +169,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           })
       );
     },
-    [workspaceSlug, projectId, cycleId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, cycleId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const handleDisplayProperties = useCallback(
@@ -187,7 +187,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, cycleId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, cycleId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   // derived values

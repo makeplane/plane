@@ -83,7 +83,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { theme: themeStore } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { currentProjectDetails, addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
+  const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { getInboxesByProjectId, getInboxById } = useInbox();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -145,7 +145,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     if (window.innerWidth < 768) {
       themeStore.toggleMobileSidebar();
     }
-    setTrackElement('Project sidebar');
+    setTrackElement("Project sidebar");
   };
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));

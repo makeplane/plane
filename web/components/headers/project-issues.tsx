@@ -96,7 +96,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, issueFilters, updateFilters]
+    [workspaceSlug, projectId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
   );
 
   const handleLayoutChange = useCallback(
@@ -110,7 +110,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, updateFilters]
+    [workspaceSlug, projectId, updateFilters, captureEvent, router.asPath]
   );
 
   const handleDisplayFilters = useCallback(
@@ -129,7 +129,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const handleDisplayProperties = useCallback(
@@ -147,7 +147,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         });
       });
     },
-    [workspaceSlug, projectId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;

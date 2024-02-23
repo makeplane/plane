@@ -9,7 +9,6 @@ import { ILinkDetails, UserAuth } from "@plane/types";
 // hooks
 import useToast from "hooks/use-toast";
 import { observer } from "mobx-react";
-import { useMeasure } from "@nivo/core";
 import { useMember } from "hooks/store";
 
 type Props = {

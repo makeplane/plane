@@ -8,7 +8,7 @@ import { mutate } from "swr";
 import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { usePopper } from "react-popper";
 // hooks
-import { useApplication, useEventTracker, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

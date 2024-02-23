@@ -21,11 +21,9 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 import {
   DP_APPLIED,
   DP_REMOVED,
-  elementFromPath,
   FILTER_APPLIED,
   FILTER_REMOVED,
   FILTER_SEARCHED,
-  LAYOUT_CHANGED,
   LP_UPDATED,
 } from "constants/event-tracker";
 
@@ -56,7 +54,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { captureIssuesFilterEvent, captureEvent, captureIssuesDisplayFilterEvent } = useEventTracker();
+  const { captureIssuesFilterEvent, captureIssuesDisplayFilterEvent } = useEventTracker();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
@@ -97,7 +95,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         });
       });
     },
-    [workspaceSlug, issueFilters, updateFilters, globalViewId]
+    [workspaceSlug, issueFilters, updateFilters, globalViewId, captureIssuesFilterEvent, router.asPath]
   );
 
   const handleDisplayFilters = useCallback(
@@ -122,7 +120,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         })
       );
     },
-    [workspaceSlug, updateFilters, globalViewId, issueFilters]
+    [workspaceSlug, updateFilters, globalViewId, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const handleDisplayProperties = useCallback(
@@ -146,7 +144,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         })
       );
     },
-    [workspaceSlug, updateFilters, globalViewId, issueFilters]
+    [workspaceSlug, updateFilters, globalViewId, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;

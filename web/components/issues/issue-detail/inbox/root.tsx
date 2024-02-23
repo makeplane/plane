@@ -115,7 +115,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
         }
       },
     }),
-    [inboxId, fetchInboxIssueById, updateInboxIssue, removeInboxIssue, setToastAlert]
+    [inboxId, fetchInboxIssueById, updateInboxIssue, removeInboxIssue, setToastAlert, captureIssueEvent, router.asPath]
   );
 
   useSWR(

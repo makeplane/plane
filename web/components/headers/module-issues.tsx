@@ -21,7 +21,7 @@ import { ProjectAnalyticsModal } from "components/analytics";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
 // icons
 import { ArrowRight, PanelRight, Plus } from "lucide-react";
 // helpers
@@ -119,7 +119,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters]
+    [workspaceSlug, projectId, moduleId, updateFilters, captureEvent, router.asPath]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -152,7 +152,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         });
       });
     },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
+    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
   );
 
   const handleDisplayFilters = useCallback(
@@ -172,7 +172,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           })
       );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const handleDisplayProperties = useCallback(
@@ -190,7 +190,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters]
+    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   // derived values

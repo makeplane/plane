@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { useEventTracker, useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -28,7 +28,6 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
   // store hooks
   const { captureProjectEvent } = useEventTracker();
-  const { currentWorkspace } = useWorkspace();
   const { deleteProject } = useProject();
   // router
   const router = useRouter();

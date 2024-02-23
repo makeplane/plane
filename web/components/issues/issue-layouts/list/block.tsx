@@ -24,7 +24,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // hooks
   const {
-    router: { workspaceSlug, projectId },
+    router: { workspaceSlug },
   } = useApplication();
   const { getProjectById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();

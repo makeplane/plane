@@ -42,7 +42,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     if (debouncedValue && onSearchCapture) onSearchCapture();
-  }, [debouncedValue]);
+  }, [debouncedValue, onSearchCapture]);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">

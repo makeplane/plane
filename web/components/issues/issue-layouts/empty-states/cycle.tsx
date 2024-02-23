@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
@@ -43,7 +43,6 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
-  const { updateIssue, fetchIssue } = useIssueDetail();
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();

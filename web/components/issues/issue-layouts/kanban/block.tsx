@@ -44,7 +44,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   // hooks
   const { getProjectById } = useProject();
   const {
-    router: { workspaceSlug, projectId },
+    router: { workspaceSlug },
   } = useApplication();
   const { setPeekIssue } = useIssueDetail();
 
