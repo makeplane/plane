@@ -79,7 +79,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
     def get_queryset(self):
         sort_order = ProjectMember.objects.filter(
             member=self.request.user,
-            project_id=self.kwargs.get("pk"),
+            project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
             is_active=True,
         ).values("sort_order")
