@@ -498,7 +498,15 @@ def dashboard_recent_collaborators(self, request, slug):
         .order_by("is_current_user", "-num_activities")
         .distinct()
     )
-
+    search = request.query_params.get("search", None)
+    if search:
+        project_members_with_activities = (
+            project_members_with_activities.filter(
+                Q(member__display_name__icontains=search)
+                | Q(member__first_name__icontains=search)
+                | Q(member__last_name__icontains=search)
+            )
+        )
 
     return self.paginate(
         request=request,
@@ -528,11 +536,19 @@ class DashboardEndpoint(BaseAPIView):
             .values("active_issue_count", user_id=F("id"))
         )
         # Create a dictionary to store the active issue counts by user ID
-        active_issue_counts_dict = {user["user_id"]: user["active_issue_count"] for user in user_active_issue_counts}
+        active_issue_counts_dict = {
+            user["user_id"]: user["active_issue_count"]
+            for user in user_active_issue_counts
+        }
 
         # Preserve the sequence of project members with activities
         paginated_results = [
-            {"user_id": member_id, "active_issue_count": active_issue_counts_dict.get(member_id, 0)}
+            {
+                "user_id": member_id,
+                "active_issue_count": active_issue_counts_dict.get(
+                    member_id, 0
+                ),
+            }
             for member_id in project_members_with_activities
         ]
         return paginated_results
