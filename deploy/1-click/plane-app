@@ -150,11 +150,11 @@ function download_plane() {
     show_message "Downloading Plane Setup Files ✋"  >&2
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/docker-compose.yml?token=$(date +%s) 
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/selfhost/docker-compose.yml?token=$(date +%s) 
 
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/variables-upgrade.env \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/variables.env?token=$(date +%s) 
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/selfhost/variables.env?token=$(date +%s) 
 
     # if .env does not exists rename variables-upgrade.env to .env
     if [ ! -f "$PLANE_INSTALL_DIR/.env" ]; then
@@ -202,7 +202,7 @@ function printUsageInstructions() {
 }
 function build_local_image() {
     show_message "- Downloading Plane Source Code ✋" >&2
-    REPO=https://github.com/makeplane/plane.git
+    REPO=https://github.com/$CODE_REPO.git
     CURR_DIR=$PWD
     PLANE_TEMP_CODE_DIR=$PLANE_INSTALL_DIR/temp
     sudo rm -rf $PLANE_TEMP_CODE_DIR > /dev/null
@@ -704,7 +704,7 @@ function update_installer() {
     show_message "Updating Plane Installer ✋" >&2
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o /usr/local/bin/plane-app  \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/1-click/plane-app?token=$(date +%s) 
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/1-click/plane-app?token=$(date +%s) 
 
     sudo chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
     show_message "Plane Installer Updated ✅" "replace_last_line" >&2
@@ -721,7 +721,8 @@ fi
 
 PLANE_INSTALL_DIR=/opt/plane
 DATA_DIR=$PLANE_INSTALL_DIR/data
-LOG_DIR=$PLANE_INSTALL_DIR/log
+LOG_DIR=$PLANE_INSTALL_DIR/logs
+CODE_REPO=${GIT_REPO:-makeplane/plane}
 OS_SUPPORTED=false
 CPU_ARCH=$(uname -m)
 PROGRESS_MSG=""
@@ -751,6 +752,7 @@ elif [ "$1" == "restart" ]; then
     restart_server
 elif [ "$1" == "--install" ] || [ "$1" == "-i" ]; then
     install
+    start_server
 elif [ "$1" == "--configure" ] || [ "$1" == "-c" ]; then
     configure_plane
     printUsageInstructions
