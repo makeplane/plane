@@ -1,6 +1,7 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 // types
 import { RootStore } from "../root.store";
 import { IProject } from "@plane/types";
@@ -128,7 +129,10 @@ export class ProjectStore implements IProjectStore {
   get joinedProjectIds() {
     const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
     if (!currentWorkspace) return [];
-    const projectIds = Object.values(this.projectMap ?? {})
+
+    let projects = Object.values(this.projectMap ?? {});
+    projects = sortBy(projects, "sort_order");
+    const projectIds = projects
       .filter((project) => project.workspace === currentWorkspace.id && project.is_member)
       .map((project) => project.id);
     return projectIds;
@@ -140,7 +144,10 @@ export class ProjectStore implements IProjectStore {
   get favoriteProjectIds() {
     const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
     if (!currentWorkspace) return [];
-    const projectIds = Object.values(this.projectMap ?? {})
+
+    let projects = Object.values(this.projectMap ?? {});
+    projects = sortBy(projects, "sort_order");
+    const projectIds = projects
       .filter((project) => project.workspace === currentWorkspace.id && project.is_favorite)
       .map((project) => project.id);
     return projectIds;
