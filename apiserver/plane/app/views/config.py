@@ -19,7 +19,7 @@ class ConfigurationEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    @cache_response(60 * 60 * 2)
+    @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         # Get all the configuration
         (
@@ -137,7 +137,7 @@ class MobileConfigurationEndpoint(BaseAPIView):
         AllowAny,
     ]
 
-    @cache_response(60 * 60 * 2)
+    @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         (
             GOOGLE_CLIENT_ID,

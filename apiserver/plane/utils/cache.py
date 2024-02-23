@@ -1,6 +1,6 @@
 from django.core.cache import cache
-from django.utils.encoding import force_bytes
-import hashlib
+# from django.utils.encoding import force_bytes
+# import hashlib
 from functools import wraps
 from rest_framework.response import Response
 
@@ -11,10 +11,10 @@ def generate_cache_key(custom_path, auth_header=None):
         key_data = f"{custom_path}:{auth_header}"
     else:
         key_data = custom_path
-    return hashlib.md5(force_bytes(key_data)).hexdigest()
+    return key_data
 
 
-def cache_response(timeout=60 * 60, path=None):
+def cache_response(timeout=60 * 60, path=None, user=True):
     """decorator to create cache per user"""
 
     def decorator(view_func):
@@ -22,7 +22,7 @@ def cache_response(timeout=60 * 60, path=None):
         def _wrapped_view(instance, request, *args, **kwargs):
             # Function to generate cache key
             auth_header = (
-                None if request.user.is_anonymous else str(request.user.id)
+                None if request.user.is_anonymous else str(request.user.id) if user else None
             )
             custom_path = path if path is not None else request.get_full_path()
             key = generate_cache_key(custom_path, auth_header)
@@ -50,7 +50,7 @@ def cache_response(timeout=60 * 60, path=None):
     return decorator
 
 
-def invalidate_cache(path=None, url_params=False):
+def invalidate_cache(path=None, url_params=False, user=True):
     """invalidate cache per user"""
 
     def decorator(view_func):
@@ -71,7 +71,7 @@ def invalidate_cache(path=None, url_params=False):
                 )
 
             auth_header = (
-                None if request.user.is_anonymous else str(request.user.id)
+                None if request.user.is_anonymous else str(request.user.id) if user else None
             )
             key = generate_cache_key(custom_path, auth_header)
             cache.delete(key)

@@ -1002,7 +1002,7 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
-    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True)
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -1022,11 +1022,11 @@ class LabelViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True)
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True)
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
