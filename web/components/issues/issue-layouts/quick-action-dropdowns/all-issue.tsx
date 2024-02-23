@@ -39,6 +39,8 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // toast alert
   const { setToastAlert } = useToast();
 
+  const isArchivingAllowed = handleArchive && !readOnly;
+
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
 
   const handleOpenInNewTab = () => window.open(`/${issueLink}}`, "_blank");
@@ -132,7 +134,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
             </div>
           </CustomMenu.MenuItem>
         )}
-        {!readOnly && (
+        {isArchivingAllowed && (
           <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)}>
             <div className="flex items-center gap-2">
               <Archive className="h-3 w-3" />

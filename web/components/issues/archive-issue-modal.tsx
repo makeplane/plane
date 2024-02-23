@@ -38,9 +38,7 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
   };
 
   const handleArchiveIssue = async () => {
-    console.log("Outside");
     if (!onSubmit) return;
-    console.log("Inside");
 
     setIsArchiving(true);
     await onSubmit()

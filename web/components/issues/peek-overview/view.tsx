@@ -16,6 +16,7 @@ import {
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
   TIssueOperations,
+  ArchiveIssueModal,
 } from "components/issues";
 import { IssueActivity } from "../issue-detail/issue-activity";
 // ui
@@ -43,7 +44,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     setPeekIssue,
     isAnyModalOpen,
     isDeleteIssueModalOpen,
+    isArchiveIssueModalOpen,
     toggleDeleteIssueModal,
+    toggleArchiveIssueModal,
     issue: { getIssueById },
   } = useIssueDetail();
   const issue = getIssueById(issueId);
@@ -58,6 +61,15 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   return (
     <>
+      {issue && !is_archived && (
+        <ArchiveIssueModal
+          isOpen={isArchiveIssueModalOpen}
+          handleClose={() => toggleArchiveIssueModal(false)}
+          data={issue}
+          onSubmit={() => issueOperations.archive(workspaceSlug, projectId, issueId)}
+        />
+      )}
+
       {issue && !is_archived && (
         <DeleteIssueModal
           isOpen={isDeleteIssueModalOpen}
@@ -96,11 +108,10 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             {/* header */}
             <IssuePeekOverviewHeader
               peekMode={peekMode}
-              setPeekMode={(value: TPeekModes) => {
-                setPeekMode(value);
-              }}
+              setPeekMode={(value) => setPeekMode(value)}
               removeRoutePeekId={removeRoutePeekId}
               toggleDeleteIssueModal={toggleDeleteIssueModal}
+              toggleArchiveIssueModal={toggleArchiveIssueModal}
               isArchived={is_archived}
               issueId={issueId}
               workspaceSlug={workspaceSlug}

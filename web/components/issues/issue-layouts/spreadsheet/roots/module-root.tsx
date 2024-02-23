@@ -33,7 +33,7 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
       },
       [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
-        issues.archiveIssue(workspaceSlug, issue.project_id, issue.id);
+        issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
       },
     }),
     [issues, workspaceSlug, moduleId]

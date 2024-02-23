@@ -16,7 +16,7 @@ import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
-import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
 import { observer } from "mobx-react";
 
 export type TIssueOperations = {
@@ -29,6 +29,7 @@ export type TIssueOperations = {
     showToast?: boolean
   ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
@@ -63,6 +64,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     fetchIssue,
     updateIssue,
     removeIssue,
+    archiveIssue,
     addIssueToCycle,
     removeIssueFromCycle,
     addModulesToIssue,
@@ -154,6 +156,32 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_DELETED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            path: router.asPath,
+          });
+        }
+      },
+      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await archiveIssue(workspaceSlug, projectId, issueId);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue archived successfully.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be archived. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "FAILED", element: "Issue details page" },
             path: router.asPath,
           });
         }
@@ -321,6 +349,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       fetchIssue,
       updateIssue,
       removeIssue,
+      archiveIssue,
       removeArchivedIssue,
       addIssueToCycle,
       removeIssueFromCycle,

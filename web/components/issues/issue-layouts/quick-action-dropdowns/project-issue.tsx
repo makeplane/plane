@@ -45,7 +45,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
-  const isArchivingAllowed = isEditingAllowed;
+  const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isDeletingAllowed = isEditingAllowed;
 
   const { setToastAlert } = useToast();
@@ -72,8 +72,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   );
 
   const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
-
-  console.log("handleArchive", handleArchive);
 
   return (
     <>

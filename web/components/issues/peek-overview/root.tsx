@@ -11,7 +11,7 @@ import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
-import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
@@ -27,6 +27,7 @@ export type TIssuePeekOperations = {
     showToast?: boolean
   ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
@@ -60,6 +61,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     peekIssue,
     updateIssue,
     removeIssue,
+    archiveIssue,
     issue: { getIssueById, fetchIssue },
   } = useIssueDetail();
   const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
@@ -85,7 +87,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         showToast: boolean = true
       ) => {
         try {
-          const response = await updateIssue(workspaceSlug, projectId, issueId, data);
+          await updateIssue(workspaceSlug, projectId, issueId, data);
           if (showToast)
             setToastAlert({
               title: "Issue updated successfully",
@@ -116,9 +118,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          let response;
-          if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
-          else response = await removeIssue(workspaceSlug, projectId, issueId);
+          if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
+          await removeIssue(workspaceSlug, projectId, issueId);
           setToastAlert({
             title: "Issue deleted successfully",
             type: "success",
@@ -137,6 +138,34 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
+            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        }
+      },
+      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        console.log("Archiving...", archiveIssue);
+        try {
+          await archiveIssue(workspaceSlug, projectId, issueId);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue archived successfully.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          console.log("error", error);
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be archived. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             path: router.asPath,
           });
@@ -305,6 +334,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       fetchIssue,
       updateIssue,
       removeIssue,
+      archiveIssue,
       removeArchivedIssue,
       addIssueToCycle,
       removeIssueFromCycle,

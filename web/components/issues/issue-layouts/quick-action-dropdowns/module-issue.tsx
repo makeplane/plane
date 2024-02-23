@@ -48,7 +48,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   } = useUser();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
-  const isArchivingAllowed = isEditingAllowed;
+  const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isDeletingAllowed = isEditingAllowed;
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;

@@ -35,7 +35,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       },
       [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !cycleId) return;
-        await issues.archiveIssue(workspaceSlug.toString(), issue.project_id, issue.id);
+        await issues.archiveIssue(workspaceSlug.toString(), issue.project_id, issue.id, cycleId.toString());
       },
     }),
     [issues, workspaceSlug, cycleId, projectId]

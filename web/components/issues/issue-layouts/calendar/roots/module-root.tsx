@@ -36,7 +36,7 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
       },
       [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
-        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id);
+        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
       },
     }),
     [issues, workspaceSlug, moduleId]
