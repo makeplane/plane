@@ -1,16 +1,16 @@
 #!/bin/bash
 
-export CODE_REPO=makeplane/plane
+export GIT_REPO=makeplane/plane
 
 # Check if the user has sudo access
 if command -v curl &> /dev/null; then
     sudo curl -sSL \
         -o /usr/local/bin/plane-app \
-        https://raw.githubusercontent.com/$CODE_REPO/${BRANCH:-master}/deploy/1-click/plane-app?token=$(date +%s)
+        https://raw.githubusercontent.com/$GIT_REPO/${BRANCH:-master}/deploy/1-click/plane-app?token=$(date +%s)
 else 
     sudo wget -q \
         -O /usr/local/bin/plane-app \
-        https://raw.githubusercontent.com/$CODE_REPO/${BRANCH:-master}/deploy/1-click/plane-app?token=$(date +%s)
+        https://raw.githubusercontent.com/$GIT_REPO/${BRANCH:-master}/deploy/1-click/plane-app?token=$(date +%s)
 fi
 
 sudo chmod +x /usr/local/bin/plane-app
