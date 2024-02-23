@@ -11,7 +11,7 @@ import "styles/react-datepicker.css";
 import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
 import { StoreProvider } from "contexts/store-context";
-
+// lib
 import { AppProvider } from "lib/app-provider";
 // types
 import { NextPageWithLayout } from "lib/types";

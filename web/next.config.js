@@ -24,6 +24,10 @@ const nextConfig = {
           source: "/api/:slug*",
           destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/:slug*/`,
         },
+        {
+          source: "/god-mode",
+          destination: `${process.env.NEXT_PUBLIC_GOD_MODE}/`,
+        },
       ],
     };
   },
