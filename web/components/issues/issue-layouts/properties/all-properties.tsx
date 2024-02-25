@@ -346,7 +346,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* cycles */}
       {cycleId === undefined && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5">
+          <div className="h-5 truncate">
             <CycleDropdown
               projectId={issue?.project_id}
               value={issue?.cycle_id}
