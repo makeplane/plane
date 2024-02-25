@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 // hooks
-import { IGanttBlock, useChart } from "components/gantt-chart";
+import { IGanttBlock } from "components/gantt-chart";
 // helpers
 import { cn } from "helpers/common.helper";
 // constants
 import { SIDEBAR_WIDTH } from "../constants";
+import { useGanttChart } from "../hooks/use-gantt-chart";
+import { observer } from "mobx-react";
 
 type Props = {
   block: IGanttBlock;
@@ -14,19 +16,29 @@ type Props = {
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
+  ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const ChartDraggable: React.FC<Props> = (props) => {
-  const { block, blockToRender, handleBlock, enableBlockLeftResize, enableBlockRightResize, enableBlockMove } = props;
+export const ChartDraggable: React.FC<Props> = observer((props) => {
+  const {
+    block,
+    blockToRender,
+    handleBlock,
+    enableBlockLeftResize,
+    enableBlockRightResize,
+    enableBlockMove,
+    ganttContainerRef,
+  } = props;
   // states
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
+  const [scrollLeft, setScrollLeft] = useState(0);
   // refs
   const resizableRef = useRef<HTMLDivElement>(null);
   // chart hook
-  const { currentViewData, scrollLeft } = useChart();
+  const { currentViewData } = useGanttChart();
   // check if cursor reaches either end while resizing/dragging
   const checkScrollEnd = (e: MouseEvent): number => {
     const SCROLL_THRESHOLD = 70;
@@ -213,6 +225,17 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     scrollLeft > block.position.marginLeft + block.position.width;
 
   useEffect(() => {
+    const ganttContainer = ganttContainerRef.current;
+    if (!ganttContainer) return;
+
+    const handleScroll = () => setScrollLeft(ganttContainer.scrollLeft);
+    ganttContainer.addEventListener("scroll", handleScroll);
+    return () => {
+      ganttContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, [ganttContainerRef]);
+
+  useEffect(() => {
     const intersectionRoot = document.querySelector("#gantt-container") as HTMLDivElement;
     const resizableBlock = resizableRef.current;
     if (!resizableBlock || !intersectionRoot) return;
@@ -234,7 +257,7 @@ export const ChartDraggable: React.FC<Props> = (props) => {
     return () => {
       observer.unobserve(resizableBlock);
     };
-  }, [block.data.name]);
+  }, []);
 
   return (
     <>
@@ -312,4 +335,4 @@ export const ChartDraggable: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+});

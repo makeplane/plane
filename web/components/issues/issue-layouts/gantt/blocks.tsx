@@ -29,6 +29,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const handleIssuePeekOverview = () =>
     workspaceSlug &&
     issueDetails &&
+    !issueDetails.tempId &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
 
   return (
@@ -89,8 +90,9 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
       target="_blank"
       onClick={handleIssuePeekOverview}
       className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+      disabled={!!issueDetails?.tempId}
     >
-      <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
+      <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
         {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />}
         <div className="flex-shrink-0 text-xs text-custom-text-300">
           {projectDetails?.identifier} {issueDetails?.sequence_id}
