@@ -82,7 +82,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             render={({ field: { value, onChange } }) => (
               <LiteTextEditorWithRef
                 onEnterKeyPress={(e) => {
-                  handleSubmit(onSubmit)(e);
+                  !(watch("comment_html") === "") && handleSubmit(onSubmit)(e);
                 }}
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
