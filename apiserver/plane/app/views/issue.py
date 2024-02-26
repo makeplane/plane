@@ -1633,14 +1633,14 @@ class IssueArchiveViewSet(BaseViewSet):
             project_id=project_id,
             pk=pk,
         )
-        if issue.state.group not in ["completed"]:
+        if issue.state.group not in ["completed", "cancelled"]:
             return Response(
-                {"error": "Can only archive a completed issue"},
+                {"error": "Can only archive completed or cancelled state group issue"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_activity.delay(
             type="issue.activity.updated",
-            requested_data=json.dumps({"archived_at": str(timezone.now().date())}),
+            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
