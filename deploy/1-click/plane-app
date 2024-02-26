@@ -164,6 +164,12 @@ function download_plane() {
     show_message "Plane Setup Files Downloaded ✅" "replace_last_line"  >&2
     show_message ""  >&2
 
+    sudo curl -H 'Cache-Control: no-cache, no-store' \
+        -s -o $PLANE_INSTALL_DIR/plane-cron  \
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/1-click/plane-crom?token=$(date +%s) 
+
+    sudo chmod +x $PLANE_INSTALL_DIR/plane-cron
+
     echo "PLANE_DOWNLOADED"
     return 0
 }
@@ -494,7 +500,9 @@ function install() {
                     update_env "CORS_ALLOWED_ORIGINS" "http://$MY_IP"
 
                     update_config "INSTALLATION_DATE" "$(date '+%Y-%m-%d')"
-                    
+
+                    sudo touch /etc/cron.daily/makeplane
+
                     show_message "Plane Installed Successfully ✅"
                     show_message ""
                 else
