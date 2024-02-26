@@ -163,7 +163,7 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset().filter(archived_at__isnull=True)
+        queryset = self.get_queryset()
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
@@ -220,25 +220,6 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def archive_list(self, request, slug, project_id):
-        subquery = PageFavorite.objects.filter(
-            user=self.request.user,
-            page_id=OuterRef("pk"),
-            project_id=self.kwargs.get("project_id"),
-            workspace__slug=self.kwargs.get("slug"),
-        )
-        pages = (
-            Page.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            .filter(archived_at__isnull=False)
-            .annotate(is_favorite=Exists(subquery))
-        )
-
-        pages = PageSerializer(pages, many=True).data
-        return Response(pages, status=status.HTTP_200_OK)
-
     def destroy(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
@@ -281,23 +262,6 @@ class PageFavoriteViewSet(BaseViewSet):
 
     serializer_class = PageFavoriteSerializer
     model = PageFavorite
-
-    def list(self, request, slug, project_id):
-        subquery = PageFavorite.objects.filter(
-            user=self.request.user,
-            page_id=OuterRef("pk"),
-            project_id=self.kwargs.get("project_id"),
-            workspace__slug=self.kwargs.get("slug"),
-        )
-        pages = Page.objects.filter(
-            page_favorites__user=request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-        ).annotate(is_favorite=Exists(subquery))
-
-        return Response(
-            PageSerializer(pages, many=True).data, status=status.HTTP_200_OK
-        )
 
     def create(self, request, slug, project_id, pk):
         _ = PageFavorite.objects.create(
