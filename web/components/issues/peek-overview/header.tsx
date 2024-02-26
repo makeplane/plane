@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react";
-import { MoveRight, MoveDiagonal, Link2, Trash2 } from "lucide-react";
+import { MoveRight, MoveDiagonal, Link2, Trash2, Archive } from "lucide-react";
 // ui
-import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
+import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Tooltip } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
@@ -43,6 +43,7 @@ export type PeekOverviewHeaderProps = {
   isArchived: boolean;
   disabled: boolean;
   toggleDeleteIssueModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (value: boolean) => void;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
 
@@ -57,6 +58,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     disabled,
     removeRoutePeekId,
     toggleDeleteIssueModal,
+    toggleArchiveIssueModal,
     isSubmitting,
   } = props;
   // router
@@ -138,13 +140,22 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <button onClick={handleCopyText}>
-            <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
-          </button>
-          {!disabled && (
-            <button onClick={() => toggleDeleteIssueModal(true)}>
-              <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+          <Tooltip tooltipContent="Copy link">
+            <button onClick={handleCopyText}>
+              <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
             </button>
+          </Tooltip>
+          <Tooltip tooltipContent="Archive">
+            <button onClick={() => toggleArchiveIssueModal(true)}>
+              <Archive className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            </button>
+          </Tooltip>
+          {!disabled && (
+            <Tooltip tooltipContent="Delete">
+              <button onClick={() => toggleDeleteIssueModal(true)}>
+                <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              </button>
+            </Tooltip>
           )}
         </div>
       </div>

@@ -48,7 +48,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
             <div className="">
               <h4 className="text-sm font-medium">Auto-archive closed issues</h4>
               <p className="text-sm tracking-tight text-custom-text-200">
-                Plane will auto archive issues that have been completed or cancelled.
+                Plane will auto archive issues that have been completed or canceled.
               </p>
             </div>
           </div>
@@ -73,7 +73,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                   <CustomSelect
                     value={currentProjectDetails?.archive_in}
                     label={`${currentProjectDetails?.archive_in} ${
-                      currentProjectDetails?.archive_in === 1 ? "Month" : "Months"
+                      currentProjectDetails?.archive_in === 1 ? "month" : "months"
                     }`}
                     onChange={(val: number) => {
                       handleChange({ archive_in: val });
@@ -93,7 +93,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                         className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => setmonthModal(true)}
                       >
-                        Customise Time Range
+                        Customize time range
                       </button>
                     </>
                   </CustomSelect>

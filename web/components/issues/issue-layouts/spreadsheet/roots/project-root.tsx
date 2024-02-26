@@ -28,6 +28,11 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
 
         await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug) return;
+
+        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id);
+      },
     }),
     [issues, workspaceSlug]
   );

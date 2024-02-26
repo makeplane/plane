@@ -83,7 +83,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { theme: themeStore } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { currentProjectDetails, addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
+  const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { getInboxesByProjectId, getInboxById } = useInbox();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -270,17 +270,14 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-
-                  {project.archive_in > 0 && (
-                    <CustomMenu.MenuItem>
-                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
-                        <div className="flex items-center justify-start gap-2">
-                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Archived Issues</span>
-                        </div>
-                      </Link>
-                    </CustomMenu.MenuItem>
-                  )}
+                  <CustomMenu.MenuItem>
+                    <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
+                      <div className="flex items-center justify-start gap-2">
+                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>Archived issues</span>
+                      </div>
+                    </Link>
+                  </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem>
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                       <div className="flex items-center justify-start gap-2">

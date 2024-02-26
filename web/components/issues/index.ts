@@ -20,4 +20,5 @@ export * from "./draft-issue-modal";
 export * from "./delete-draft-issue-modal";
 
 // archived issue
+export * from "./archive-issue-modal";
 export * from "./delete-archived-issue-modal";
