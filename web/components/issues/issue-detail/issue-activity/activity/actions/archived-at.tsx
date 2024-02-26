@@ -32,7 +32,7 @@ export const IssueArchivedAtActivity: FC<TIssueArchivedAtActivity> = observer((p
       }
       activityId={activityId}
       ends={ends}
-      automaticActivity={activity.new_value === "archive"}
+      customUserName={activity.new_value === "archive" ? "Plane" : undefined}
     >
       {activity.new_value === "restore" ? "restored the issue" : "archived the issue"}.
     </IssueActivityBlockComponent>

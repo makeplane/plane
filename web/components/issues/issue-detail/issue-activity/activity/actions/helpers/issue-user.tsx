@@ -5,11 +5,11 @@ import { useIssueDetail } from "hooks/store";
 
 type TIssueUser = {
   activityId: string;
-  automaticActivity?: boolean;
+  customUserName?: string;
 };
 
 export const IssueUser: FC<TIssueUser> = (props) => {
-  const { activityId, automaticActivity = false } = props;
+  const { activityId, customUserName } = props;
   // hooks
   const {
     activity: { getActivityById },
@@ -21,8 +21,8 @@ export const IssueUser: FC<TIssueUser> = (props) => {
 
   return (
     <>
-      {automaticActivity ? (
-        <span className="text-custom-text-100 font-medium">Plane</span>
+      {customUserName ? (
+        <span className="text-custom-text-100 font-medium">{customUserName}</span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
