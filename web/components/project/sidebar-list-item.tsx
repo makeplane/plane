@@ -270,19 +270,21 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem>
-                    <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
-                      <div className="flex items-center justify-start gap-2">
-                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Archived issues</span>
-                      </div>
-                    </Link>
-                  </CustomMenu.MenuItem>
+                  {!isViewerOrGuest && (
+                    <CustomMenu.MenuItem>
+                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <span>Archived issues</span>
+                        </div>
+                      </Link>
+                    </CustomMenu.MenuItem>
+                  )}
                   <CustomMenu.MenuItem>
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                       <div className="flex items-center justify-start gap-2">
                         <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                        <span>Draft Issues</span>
+                        <span>Draft issues</span>
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
