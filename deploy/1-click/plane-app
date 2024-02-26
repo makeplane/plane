@@ -638,7 +638,7 @@ function start_server() {
             sleep 1
         done
         # wait for migrator container to exit with status 0 before starting the application
-        migrator_container_id=$(sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "name=migrator")
+        migrator_container_id=$(sudo docker container ls -aq -f "name=plane-migrator")
 
         # if migrator container is running, wait for it to exit
         if [ -n "$migrator_container_id" ]; then
@@ -659,7 +659,7 @@ function start_server() {
             fi
         fi
 
-        api_container_id=$(sudo docker container ls -q -f "name=plane-api-1")
+        api_container_id=$(sudo docker container ls -q -f "name=plane-api")
         while ! sudo docker logs $api_container_id 2>&1 | grep -i "Application startup complete";
         do
             show_message "Waiting for Plane Server ($APP_RELEASE) to start...✋✋" "replace_last_line" >&2
