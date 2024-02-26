@@ -360,7 +360,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             />
           </div>
           <div
-            className="h-full w-full sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5 fixed md:relative bg-custom-sidebar-background-100 right-0 z-[5]"
+            className="h-full w-full min-w-[300px] lg:min-w-80 xl:min-w-96 sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5 fixed md:relative bg-custom-sidebar-background-100 right-0 z-[5]"
             style={themeStore.issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
           >
             <IssueDetailsSidebar
