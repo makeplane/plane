@@ -62,7 +62,7 @@ export const ProjectSidebarList: FC = observer(() => {
     if (!destination || !workspaceSlug) return;
     if (source.index === destination.index) return;
 
-    let joinedProjectsList: IProject[] = [];
+    const joinedProjectsList: IProject[] = [];
     joinedProjects.map((projectId) => {
       const _project = getProjectById(projectId);
       if (_project) joinedProjectsList.push(_project);
