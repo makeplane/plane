@@ -55,9 +55,9 @@ jobs:
       - name: Set Frontend Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:stable,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:latest
           else
             TAG=${{ env.FRONTEND_TAG }}
           fi
@@ -106,9 +106,9 @@ jobs:
       - name: Set Space Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:stable,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest
           else
             TAG=${{ env.SPACE_TAG }}
           fi
@@ -157,9 +157,9 @@ jobs:
       - name: Set Backend Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:stable,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:latest
           else
             TAG=${{ env.BACKEND_TAG }}
           fi
@@ -209,9 +209,9 @@ jobs:
       - name: Set Proxy Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ github.event.release.tag_name }}
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:stable,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:stable
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:latest
           else
             TAG=${{ env.PROXY_TAG }}
           fi

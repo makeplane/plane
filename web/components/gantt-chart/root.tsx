@@ -2,7 +2,7 @@ import { FC } from "react";
 // components
 import { ChartViewRoot, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 // context
-import { ChartContextProvider } from "./contexts";
+import { GanttStoreProvider } from "components/gantt-chart/contexts";
 
 type GanttChartRootProps = {
   border?: boolean;
@@ -42,7 +42,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
   } = props;
 
   return (
-    <ChartContextProvider>
+    <GanttStoreProvider>
       <ChartViewRoot
         border={border}
         title={title}
@@ -60,6 +60,6 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
         showAllBlocks={showAllBlocks}
         quickAdd={quickAdd}
       />
-    </ChartContextProvider>
+    </GanttStoreProvider>
   );
 };

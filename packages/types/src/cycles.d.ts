@@ -30,7 +30,7 @@ export interface ICycle {
   is_favorite: boolean;
   issue: string;
   name: string;
-  owned_by: string;
+  owned_by_id: string;
   progress_snapshot: TProgressSnapshot;
   project_id: string;
   status: TCycleGroups;

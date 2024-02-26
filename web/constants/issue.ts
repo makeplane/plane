@@ -395,8 +395,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         type: [null, "active", "backlog"],
       },
       extra_options: {
-        access: false,
-        values: [],
+        access: true,
+        values: ["sub_issue"],
       },
     },
     gantt_chart: {
