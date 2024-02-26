@@ -16,12 +16,13 @@ import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   handleClick: () => void;
+  disabled?: boolean;
 };
 
 const cycleService = new CycleService();
 
 export const TransferIssues: React.FC<Props> = (props) => {
-  const { handleClick } = props;
+  const { handleClick, disabled = false } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -46,7 +47,12 @@ export const TransferIssues: React.FC<Props> = (props) => {
 
       {isEmpty(cycleDetails?.progress_snapshot) && transferableIssuesCount > 0 && (
         <div>
-          <Button variant="primary" prependIcon={<TransferIcon color="white" />} onClick={handleClick}>
+          <Button
+            variant="primary"
+            prependIcon={<TransferIcon color="white" />}
+            onClick={handleClick}
+            disabled={disabled}
+          >
             Transfer Issues
           </Button>
         </div>

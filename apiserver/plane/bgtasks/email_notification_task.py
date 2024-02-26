@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 # Module imports
 from plane.db.models import EmailNotificationLog, User, Issue
@@ -301,5 +302,7 @@ def send_email_notification(
             print("Duplicate task recived. Skipping...")
             return
     except (Issue.DoesNotExist, User.DoesNotExist) as e:
+        if settings.DEBUG:
+            print(e)
         release_lock(lock_id=lock_id)
         return

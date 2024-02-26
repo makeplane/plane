@@ -182,7 +182,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      const response = await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
+      await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
       setToastAlert({
         type: "success",
         title: "Success!",
@@ -190,11 +190,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
-        payload: { ...response, state: "SUCCESS" },
+        payload: { ...payload, issueId: data.id, state: "SUCCESS" },
         path: router.asPath,
       });
       handleClose();
-      return response;
     } catch (error) {
       setToastAlert({
         type: "error",

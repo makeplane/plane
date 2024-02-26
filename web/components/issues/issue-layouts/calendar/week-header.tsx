@@ -13,7 +13,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium ${
+      className={`relative sticky top-0 z-[1] grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium ${
         showWeekends ? "grid-cols-7" : "grid-cols-5"
       }`}
     >

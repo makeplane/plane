@@ -30,13 +30,13 @@ export interface IWorkspaceIssues {
     issueId: string,
     data: Partial<TIssue>,
     viewId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     viewId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
 }
 
 export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssues {
@@ -165,8 +165,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       if (!viewId) throw new Error("View id is required");
 
       this.rootStore.issues.updateIssue(issueId, data);
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
-      return response;
+      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
       if (viewId) this.fetchIssues(workspaceSlug, viewId, "mutation");
       throw error;
@@ -184,7 +183,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
       const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+      await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[uniqueViewId].findIndex((_issueId) => _issueId === issueId);
       if (issueIndex >= 0)
@@ -193,8 +192,6 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
         });
 
       this.rootStore.issues.removeIssue(issueId);
-
-      return response;
     } catch (error) {
       throw error;
     }
