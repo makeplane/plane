@@ -67,6 +67,13 @@ export const ModuleOptions = (props: Props) => {
     if (workspaceSlug && !moduleIds) fetchModules(workspaceSlug, projectId);
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   const options: DropdownOptions = moduleIds?.map((moduleId) => {
     const moduleDetails = getModuleById(moduleId);
     return {
@@ -113,6 +120,7 @@ export const ModuleOptions = (props: Props) => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search"
             displayValue={(assigned: any) => assigned?.name}
+            onKeyDown={searchInputKeyDown}
           />
         </div>
         <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

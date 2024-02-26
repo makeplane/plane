@@ -80,6 +80,13 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     </div>
   );
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   if (!issue) return <></>;
 
   return (
@@ -118,6 +125,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search"
                   displayValue={(assigned: any) => assigned?.name}
+                  onKeyDown={searchInputKeyDown}
                 />
               </div>
             </div>

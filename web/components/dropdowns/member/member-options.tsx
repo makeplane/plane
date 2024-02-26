@@ -61,6 +61,13 @@ export const MemberOptions = (props: Props) => {
     if (!memberIds && workspaceSlug && projectId) fetchProjectMembers(workspaceSlug, projectId);
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   const options = memberIds?.map((userId) => {
     const userDetails = getUserDetails(userId);
 
@@ -97,6 +104,7 @@ export const MemberOptions = (props: Props) => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search"
             displayValue={(assigned: any) => assigned?.name}
+            onKeyDown={searchInputKeyDown}
           />
         </div>
         <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
