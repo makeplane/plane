@@ -64,6 +64,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
 
   const filterParams = getRedirectionFilters(selectedTab);
   const tabsList = selectedDurationFilter === "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
+  const selectedTabIndex = tabsList.findIndex((tab) => tab.key === selectedTab);
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
@@ -81,30 +82,25 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           onChange={(val) => {
             if (val === selectedDurationFilter) return;
 
+            let newTab = selectedTab;
             // switch to pending tab if target date is changed to none
-            if (val === "none" && selectedTab !== "completed") {
-              handleUpdateFilters({ duration: val, tab: "pending" });
-              return;
-            }
+            if (val === "none" && selectedTab !== "completed") newTab = "pending";
             // switch to upcoming tab if target date is changed to other than none
-            if (val !== "none" && selectedDurationFilter === "none" && selectedTab !== "completed") {
-              handleUpdateFilters({
-                duration: val,
-                tab: "upcoming",
-              });
-              return;
-            }
+            if (val !== "none" && selectedDurationFilter === "none" && selectedTab !== "completed") newTab = "upcoming";
 
-            handleUpdateFilters({ duration: val });
+            handleUpdateFilters({
+              duration: val,
+              tab: newTab,
+            });
           }}
         />
       </div>
       <Tab.Group
         as="div"
-        selectedIndex={tabsList.findIndex((tab) => tab.key === selectedTab)}
+        selectedIndex={selectedTabIndex}
         onChange={(i) => {
-          const selectedTab = tabsList[i];
-          handleUpdateFilters({ tab: selectedTab.key ?? "pending" });
+          const newSelectedTab = tabsList[i];
+          handleUpdateFilters({ tab: newSelectedTab.key ?? "completed" });
         }}
         className="h-full flex flex-col"
       >
@@ -112,18 +108,21 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           <TabsList durationFilter={selectedDurationFilter} selectedTab={selectedTab} />
         </div>
         <Tab.Panels as="div" className="h-full">
-          {tabsList.map((tab) => (
-            <Tab.Panel key={tab.key} as="div" className="h-full flex flex-col">
-              <WidgetIssuesList
-                issues={widgetStats.issues}
-                tab={tab.key}
-                totalIssues={widgetStats.count}
-                type="created"
-                workspaceSlug={workspaceSlug}
-                isLoading={fetching}
-              />
-            </Tab.Panel>
-          ))}
+          {tabsList.map((tab) => {
+            if (tab.key !== selectedTab) return null;
+
+            return (
+              <Tab.Panel key={tab.key} as="div" className="h-full flex flex-col" static>
+                <WidgetIssuesList
+                  tab={tab.key}
+                  type="created"
+                  workspaceSlug={workspaceSlug}
+                  widgetStats={widgetStats}
+                  isLoading={fetching}
+                />
+              </Tab.Panel>
+            );
+          })}
         </Tab.Panels>
       </Tab.Group>
     </div>
