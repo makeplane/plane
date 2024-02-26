@@ -218,9 +218,12 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
       const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
-      await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
+      const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: response.archived_at,
+        });
         pull(this.issues[uniqueViewId], issueId);
       });
     } catch (error) {
