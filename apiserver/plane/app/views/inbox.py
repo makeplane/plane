@@ -296,11 +296,7 @@ class InboxIssueViewSet(BaseViewSet):
         issue_data = request.data.pop("issue", False)
 
         if bool(issue_data):
-            issue = Issue.objects.get(
-                pk=inbox_issue.issue_id,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+            issue = self.get_queryset().filter(pk=inbox_issue.issue_id).first()
             # Only allow guests and viewers to edit name and description
             if project_member.role <= 10:
                 # viewers and guests since only viewers and guests
