@@ -33,6 +33,7 @@ from plane.app.serializers import (
     IssueSerializer,
     InboxSerializer,
     InboxIssueSerializer,
+    IssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -426,11 +427,10 @@ class InboxIssueViewSet(BaseViewSet):
                 )
             )
         ).first()
-
         if issue is None:
             return Response({"error": "Requested object was not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = IssueSerializer(issue)
+        serializer = IssueDetailSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, inbox_id, issue_id):
