@@ -8,8 +8,6 @@ import { useEventTracker, usePage } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
-// types
-import { useProjectPages } from "hooks/store/use-project-page";
 // constants
 import { PAGE_DELETED } from "constants/event-tracker";
 
@@ -28,16 +26,18 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { deletePage } = useProjectPages();
-  const { capturePageEvent } = useEventTracker();
-  const pageStore = usePage(pageId);
+  // const { deletePage } = useProjectPages();
+  // const { capturePageEvent } = useEventTracker();
+  // const pageStore = usePage(pageId);
 
   // toast alert
   const { setToastAlert } = useToast();
 
-  if (!pageStore) return null;
+  // if (!pageStore) return null;
 
-  const { name } = pageStore;
+  // const { name } = pageStore;
+
+  const name = undefined;
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -50,39 +50,39 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
     setIsDeleting(true);
 
     // Delete Page will only delete the page from the archive page map, at this point only archived pages can be deleted
-    await deletePage(workspaceSlug.toString(), projectId as string, pageId)
-      .then(() => {
-        capturePageEvent({
-          eventName: PAGE_DELETED,
-          payload: {
-            ...pageStore,
-            state: "SUCCESS",
-          },
-        });
-        handleClose();
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Page deleted successfully.",
-        });
-      })
-      .catch(() => {
-        capturePageEvent({
-          eventName: PAGE_DELETED,
-          payload: {
-            ...pageStore,
-            state: "FAILED",
-          },
-        });
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Page could not be deleted. Please try again.",
-        });
-      })
-      .finally(() => {
-        setIsDeleting(false);
-      });
+    // await deletePage(workspaceSlug.toString(), projectId as string, pageId)
+    //   .then(() => {
+    //     capturePageEvent({
+    //       eventName: PAGE_DELETED,
+    //       payload: {
+    //         ...pageStore,
+    //         state: "SUCCESS",
+    //       },
+    //     });
+    //     handleClose();
+    //     setToastAlert({
+    //       type: "success",
+    //       title: "Success!",
+    //       message: "Page deleted successfully.",
+    //     });
+    //   })
+    //   .catch(() => {
+    //     capturePageEvent({
+    //       eventName: PAGE_DELETED,
+    //       payload: {
+    //         ...pageStore,
+    //         state: "FAILED",
+    //       },
+    //     });
+    //     setToastAlert({
+    //       type: "error",
+    //       title: "Error!",
+    //       message: "Page could not be deleted. Please try again.",
+    //     });
+    //   })
+    //   .finally(() => {
+    //     setIsDeleting(false);
+    //   });
   };
 
   return (

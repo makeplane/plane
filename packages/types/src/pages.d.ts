@@ -1,59 +1,36 @@
-// types
-import { TIssue, IIssueLabel, IWorkspaceLite, IProjectLite } from "@plane/types";
+enum EPageAccess {
+  PUBLIC = 0,
+  PRIVATE = 1,
+}
 
-export interface IPage {
-  access: number;
-  archived_at: string | null;
-  blocks: IPageBlock[];
-  color: string;
-  created_at: Date;
-  created_by: string;
-  description: string;
-  description_html: string;
-  description_stripped: string | null;
-  id: string;
+export type TPageAccess = EPageAccess.PRIVATE | EPageAccess.PUBLIC;
+
+export type TPage = {
+  id: string | undefined;
+  name: string | undefined;
+  description_html: string | undefined;
+  color: string | undefined;
+  labels: string[] | undefined;
+  owned_by: string | undefined;
+  access: TPageAccess | undefined;
   is_favorite: boolean;
   is_locked: boolean;
-  label_details: IIssueLabel[];
-  labels: string[];
-  name: string;
-  owned_by: string;
-  project: string;
-  project_detail: IProjectLite;
-  updated_at: Date;
-  updated_by: string;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
-}
+  archived_at: string | undefined;
+  workspace: string | undefined;
+  project: string | undefined;
+  created_by: string | undefined;
+  updated_by: string | undefined;
+  created_at: Date | undefined;
+  updated_at: Date | undefined;
+};
 
-export interface IRecentPages {
-  today: string[];
-  yesterday: string[];
-  this_week: string[];
-  older: string[];
-  [key: string]: string[];
-}
+// page filters
+export type TPageFiltersSortKey = "name" | "created_at" | "updated_at";
 
-export interface IPageBlock {
-  completed_at: Date | null;
-  created_at: Date;
-  created_by: string;
-  description: any;
-  description_html: any;
-  description_stripped: any;
-  id: string;
-  issue: string | null;
-  issue_detail: TIssue | null;
-  name: string;
-  page: string;
-  project: string;
-  project_detail: IProjectLite;
-  sort_order: number;
-  sync: boolean;
-  updated_at: Date;
-  updated_by: string;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
-}
+export type TPageFiltersSortBy = "asc" | "desc";
 
-export type TPageViewProps = "list" | "detailed" | "masonry";
+export type TPageFilters = {
+  search: string;
+  sortKey: TPageFiltersSortKey;
+  sortBy: TPageFiltersSortBy;
+};

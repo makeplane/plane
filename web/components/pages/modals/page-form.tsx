@@ -2,15 +2,15 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input, Tooltip } from "@plane/ui";
 // types
-import { IPage } from "@plane/types";
+// import { IPage } from "@plane/types";
 // constants
-import { PAGE_ACCESS_SPECIFIERS } from "constants/page";
-import { IPageStore } from "store/page.store";
+// import { PAGE_ACCESS_SPECIFIERS } from "constants/page";
+// import { IPageStore } from "store/pages/page.store";
 
 type Props = {
-  handleFormSubmit: (values: IPage) => Promise<void>;
+  handleFormSubmit: (values: any) => Promise<void>;
   handleClose: () => void;
-  pageStore?: IPageStore;
+  pageStore?: any;
 };
 
 const defaultValues = {
@@ -26,13 +26,13 @@ export const PageForm: React.FC<Props> = (props) => {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
-  } = useForm<IPage>({
+  } = useForm<any>({
     defaultValues: pageStore
       ? { name: pageStore.name, description: pageStore.description, access: pageStore.access }
       : defaultValues,
   });
 
-  const handleCreateUpdatePage = (formData: IPage) => handleFormSubmit(formData);
+  const handleCreateUpdatePage = (formData: any) => handleFormSubmit(formData);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
@@ -74,7 +74,7 @@ export const PageForm: React.FC<Props> = (props) => {
           render={({ field: { value, onChange } }) => (
             <div className="flex items-center gap-2">
               <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
-                {PAGE_ACCESS_SPECIFIERS.map((access, index) => (
+                {/* {PAGE_ACCESS_SPECIFIERS.map((access, index) => (
                   <Tooltip key={access.key} tooltipContent={access.label}>
                     <button
                       type="button"
@@ -92,11 +92,11 @@ export const PageForm: React.FC<Props> = (props) => {
                       />
                     </button>
                   </Tooltip>
-                ))}
+                ))} */}
               </div>
-              <h6 className="text-xs font-medium">
+              {/* <h6 className="text-xs font-medium">
                 {PAGE_ACCESS_SPECIFIERS.find((access) => access.key === value)?.label}
-              </h6>
+              </h6> */}
             </div>
           )}
         />

@@ -4,7 +4,7 @@ import { Sparkle } from "lucide-react";
 import { GptAssistantPopover } from "components/core";
 // hooks
 import useToast from "hooks/use-toast";
-import { usePage, useProjectPages } from "hooks/store";
+import { usePage } from "hooks/store";
 
 export type PageDocumentProps = {
   workspaceSlug: string;
@@ -16,38 +16,38 @@ export const PageDocument: FC<PageDocumentProps> = (props) => {
   const { workspaceSlug, projectId, pageId } = props;
   // hooks
   const { setToastAlert } = useToast();
-  const {
-    archivePage: archivePageAction,
-    restorePage: restorePageAction,
-    createPage: createPageAction,
-    projectPageMap,
-    projectArchivedPageMap,
-    fetchProjectPages,
-    fetchArchivedProjectPages,
-    cleanup,
-  } = useProjectPages();
+  // const {
+  //   archivePage: archivePageAction,
+  //   restorePage: restorePageAction,
+  //   createPage: createPageAction,
+  //   projectPageMap,
+  //   projectArchivedPageMap,
+  //   fetchProjectPages,
+  //   fetchArchivedProjectPages,
+  //   cleanup,
+  // } = useProjectPages();
   const pageStore = usePage(pageId);
-  const {
-    lockPage: lockPageAction,
-    unlockPage: unlockPageAction,
-    updateName: updateNameAction,
-    updateDescription: updateDescriptionAction,
-    id: pageIdMobx,
-    isSubmitting,
-    setIsSubmitting,
-    owned_by,
-    is_locked,
-    archived_at,
-    created_at,
-    created_by,
-    updated_at,
-    updated_by,
-  } = pageStore;
+  // const {
+  //   lockPage: lockPageAction,
+  //   unlockPage: unlockPageAction,
+  //   updateName: updateNameAction,
+  //   updateDescription: updateDescriptionAction,
+  //   id: pageIdMobx,
+  //   isSubmitting,
+  //   setIsSubmitting,
+  //   owned_by,
+  //   is_locked,
+  //   archived_at,
+  //   created_at,
+  //   created_by,
+  //   updated_at,
+  //   updated_by,
+  // } = pageStore;
 
   const archivePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await archivePageAction(workspaceSlug as string, projectId as string, pageId as string);
+      // await archivePageAction(workspaceSlug as string, projectId as string, pageId as string);
     } catch (error) {
       setToastAlert({
         title: `Page could not be archived`,
@@ -60,7 +60,7 @@ export const PageDocument: FC<PageDocumentProps> = (props) => {
   const unArchivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await restorePageAction(workspaceSlug as string, projectId as string, pageId as string);
+      // await restorePageAction(workspaceSlug as string, projectId as string, pageId as string);
     } catch (error) {
       setToastAlert({
         title: `Page could not be restored`,
@@ -73,7 +73,7 @@ export const PageDocument: FC<PageDocumentProps> = (props) => {
   const lockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await lockPageAction();
+      // await lockPageAction();
     } catch (error) {
       setToastAlert({
         title: `Page could not be locked`,
@@ -86,7 +86,7 @@ export const PageDocument: FC<PageDocumentProps> = (props) => {
   const unlockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await unlockPageAction();
+      // await unlockPageAction();
     } catch (error) {
       setToastAlert({
         title: `Page could not be unlocked`,
@@ -97,7 +97,7 @@ export const PageDocument: FC<PageDocumentProps> = (props) => {
   };
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <DocumentEditorWithRef
+      {/* <DocumentEditorWithRef
         isSubmitting={isSubmitting}
         documentDetails={{
           title: pageTitle,
@@ -161,7 +161,7 @@ export const PageDocument: FC<PageDocumentProps> = (props) => {
             className="!min-w-[38rem]"
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

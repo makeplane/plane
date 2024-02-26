@@ -25,7 +25,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const { currentProjectDetails } = useProject();
 
-  const pageDetails = usePage(pageId as string);
+  // const pageDetails = usePage(pageId as string);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -74,7 +74,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
+            {/* <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
                 <BreadcrumbLink
@@ -82,7 +82,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
                   icon={<FileText className="h-4 w-4 text-custom-text-300" />}
                 />
               }
-            />
+            /> */}
           </Breadcrumbs>
         </div>
       </div>

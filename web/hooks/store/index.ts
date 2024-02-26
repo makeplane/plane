@@ -9,7 +9,10 @@ export * from "./use-label";
 export * from "./use-member";
 export * from "./use-mention";
 export * from "./use-module";
-export * from "./use-page";
+
+export * from "./pages/use-page";
+export * from "./pages/use-page-detail";
+
 export * from "./use-project-publish";
 export * from "./use-project-state";
 export * from "./use-project-view";
@@ -22,4 +25,3 @@ export * from "./use-kanban-view";
 export * from "./use-issue-detail";
 export * from "./use-inbox";
 export * from "./use-inbox-issues";
-export * from "./use-project-specific-pages";

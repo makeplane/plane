@@ -16,7 +16,7 @@ import { IEstimateStore, EstimateStore } from "./estimate.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IMentionStore, MentionStore } from "./mention.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
-import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
+import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { ILabelStore, LabelStore } from "./label.store";
 
 enableStaticRendering(typeof window === "undefined");
@@ -39,7 +39,7 @@ export class RootStore {
   estimate: IEstimateStore;
   mention: IMentionStore;
   dashboard: IDashboardStore;
-  projectPages: IProjectPageStore;
+  projectPage: IProjectPageStore;
 
   constructor() {
     this.app = new AppRootStore(this);
@@ -59,8 +59,8 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPage = new ProjectPageStore(this);
   }
 
   resetOnSignout() {
@@ -78,7 +78,7 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPage = new ProjectPageStore(this);
   }
 }

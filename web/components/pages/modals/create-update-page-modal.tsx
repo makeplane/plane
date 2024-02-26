@@ -6,15 +6,15 @@ import { PageForm } from "./page-form";
 // hooks
 import { useEventTracker } from "hooks/store";
 // types
-import { IPage } from "@plane/types";
-import { useProjectPages } from "hooks/store/use-project-page";
-import { IPageStore } from "store/page.store";
+// import { IPage } from "@plane/types";
+// import { usePage } from "hooks/store/";
+// import { IPageStore } from "store/pages/page.store";
 // constants
 import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   // data?: IPage | null;
-  pageStore?: IPageStore;
+  pageStore?: any;
   handleClose: () => void;
   isOpen: boolean;
   projectId: string;
@@ -26,55 +26,55 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { createPage } = useProjectPages();
-  const { capturePageEvent } = useEventTracker();
+  // const { createPage } = useProjectPages();
+  // const { capturePageEvent } = useEventTracker();
 
-  const createProjectPage = async (payload: IPage) => {
+  const createProjectPage = async (payload: any) => {
     if (!workspaceSlug) return;
-    await createPage(workspaceSlug.toString(), projectId, payload)
-      .then((res) => {
-        capturePageEvent({
-          eventName: PAGE_CREATED,
-          payload: {
-            ...res,
-            state: "SUCCESS",
-          },
-        });
-      })
-      .catch(() => {
-        capturePageEvent({
-          eventName: PAGE_CREATED,
-          payload: {
-            state: "FAILED",
-          },
-        });
-      });
+    // await createPage(workspaceSlug.toString(), projectId, payload)
+    //   .then((res) => {
+    //     capturePageEvent({
+    //       eventName: PAGE_CREATED,
+    //       payload: {
+    //         ...res,
+    //         state: "SUCCESS",
+    //       },
+    //     });
+    //   })
+    //   .catch(() => {
+    //     capturePageEvent({
+    //       eventName: PAGE_CREATED,
+    //       payload: {
+    //         state: "FAILED",
+    //       },
+    //     });
+    //   });
   };
 
-  const handleFormSubmit = async (formData: IPage) => {
+  const handleFormSubmit = async (formData: any) => {
     if (!workspaceSlug || !projectId) return;
-    try {
-      if (pageStore) {
-        if (pageStore.name !== formData.name) {
-          await pageStore.updateName(formData.name);
-        }
-        if (pageStore.access !== formData.access) {
-          formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
-        }
-        capturePageEvent({
-          eventName: PAGE_UPDATED,
-          payload: {
-            ...pageStore,
-            state: "SUCCESS",
-          },
-        });
-      } else {
-        await createProjectPage(formData);
-      }
-      handleClose();
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   if (pageStore) {
+    //     if (pageStore.name !== formData.name) {
+    //       await pageStore.updateName(formData.name);
+    //     }
+    //     if (pageStore.access !== formData.access) {
+    //       formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
+    //     }
+    //     capturePageEvent({
+    //       eventName: PAGE_UPDATED,
+    //       payload: {
+    //         ...pageStore,
+    //         state: "SUCCESS",
+    //       },
+    //     });
+    //   } else {
+    //     await createProjectPage(formData);
+    //   }
+    //   handleClose();
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (

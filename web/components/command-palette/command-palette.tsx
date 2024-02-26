@@ -13,7 +13,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateProjectViewModal } from "components/views";
-import { CreateUpdatePageModal } from "components/pages";
+// import { CreateUpdatePageModal } from "components/pages";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // services
@@ -206,11 +206,11 @@ export const CommandPalette: FC = observer(() => {
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
-          <CreateUpdatePageModal
+          {/* <CreateUpdatePageModal
             isOpen={isCreatePageModalOpen}
             handleClose={() => toggleCreatePageModal(false)}
             projectId={projectId.toString()}
-          />
+          /> */}
         </>
       )}
 
