@@ -33,15 +33,6 @@ urlpatterns = [
     ),
     # favorite pages
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/",
-        PageFavoriteViewSet.as_view(
-            {
-                "get": "list",
-            }
-        ),
-        name="user-favorite-pages",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:pk>/",
         PageFavoriteViewSet.as_view(
             {
@@ -52,15 +43,6 @@ urlpatterns = [
         name="user-favorite-pages",
     ),
     # archived pages
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-pages/",
-        PageViewSet.as_view(
-            {
-                "get": "archive_list",
-            }
-        ),
-        name="project-pages-archived",
-    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/archive/",
         PageViewSet.as_view(
