@@ -539,12 +539,15 @@ function upgrade() {
             prepare_environment
 
             if [ $? -eq 0 ]; then
+                stop_server
                 download_plane
                 if [ $? -eq 0 ]; then
                     check_for_docker_images
                     upgrade_configuration
                     update_config "UPGRADE_DATE" "$(date)"
-                
+
+                    start_server
+
                     show_message ""
                     show_message "Plane Upgraded Successfully ✅"
                     show_message ""
@@ -783,9 +786,7 @@ elif [ "$1" == "--configure" ] || [ "$1" == "-c" ]; then
     configure_plane
     printUsageInstructions
 elif [ "$1" == "--upgrade" ] || [ "$1" == "-up" ]; then
-    stop_server
     upgrade
-    start_server
 elif [ "$1" == "--uninstall" ] || [ "$1" == "-un" ]; then
     uninstall
 elif [ "$1" == "--update-installer" ] || [ "$1" == "-ui" ]; then
