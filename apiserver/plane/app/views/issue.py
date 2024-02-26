@@ -1660,7 +1660,7 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = timezone.now().date()
         issue.save()
 
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
     
 
     def unarchive(self, request, slug, project_id, pk=None):
@@ -1686,7 +1686,7 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = None
         issue.save()
 
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueSubscriberViewSet(BaseViewSet):
