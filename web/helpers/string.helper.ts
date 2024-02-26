@@ -4,6 +4,7 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
+import * as DOMPurify from 'dompurify';
 
 export const addSpaceIfCamelCase = (str: string) => {
   if (str === undefined || str === null) return "";
@@ -227,7 +228,7 @@ export const checkEmailValidity = (email: string): boolean => {
 
 export const isEmptyHtmlString = (htmlString: string) => {
   // Remove HTML tags using regex
-  const strippedString = htmlString.replace(/<[^>]*>/g, "");
+  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] });
   // Trim the string and check if it's empty
-  return strippedString.trim() === "";
+  return cleanText.trim() === "";
 };
