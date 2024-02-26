@@ -778,17 +778,15 @@ elif [ "$1" == "--configure" ] || [ "$1" == "-c" ]; then
     configure_plane
     printUsageInstructions
 elif [ "$1" == "--upgrade" ] || [ "$1" == "-up" ]; then
+    stop_server
     upgrade
+    start_server
 elif [ "$1" == "--uninstall" ] || [ "$1" == "-un" ]; then
     uninstall
 elif [ "$1" == "--update-installer" ] || [ "$1" == "-ui" ]; then
     update_installer
 elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     show_help
-elif [ "$1" == "--daily-update" ]; then
-    stop_server
-    upgrade
-    start_server
 else
     show_help
 fi
