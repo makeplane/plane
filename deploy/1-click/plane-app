@@ -497,7 +497,7 @@ function install() {
 
                     sudo touch /etc/cron.daily/makeplane
                     sudo chmod +x /etc/cron.daily/makeplane
-                    sudo echo "0 2 * * * /usr/local/bin/plane-app --upgrade" > /etc/cron.daily/makeplane
+                    sudo echo "0 2 * * *    /usr/local/bin/plane-app --upgrade" > /etc/cron.daily/makeplane
                     sudo crontab /etc/cron.daily/makeplane 
 
                     show_message "Plane Installed Successfully ✅"
