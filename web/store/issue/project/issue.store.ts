@@ -171,9 +171,12 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
 
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
+      const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: response.archived_at,
+        });
         pull(this.issues[projectId], issueId);
       });
     } catch (error) {

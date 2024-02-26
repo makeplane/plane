@@ -19,7 +19,13 @@ export class IssueArchiveService extends APIService {
       });
   }
 
-  async archiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async archiveIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<{
+    archived_at: string;
+  }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {

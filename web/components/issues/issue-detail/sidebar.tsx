@@ -25,6 +25,7 @@ import {
   IssueModuleSelect,
   IssueParentSelect,
   IssueLabel,
+  ArchiveIssueModal,
 } from "components/issues";
 import { IssueSubscription } from "./subscription";
 import {
@@ -58,7 +59,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, is_archived, is_editable } = props;
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [isArchiving, setIsArchiving] = useState(false);
+  const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   // router
   const router = useRouter();
   // store hooks
@@ -92,20 +93,16 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const handleArchiveIssue = async () => {
     if (!issueOperations.archive) return;
-    setIsArchiving(true);
-    await issueOperations.archive(workspaceSlug, projectId, issueId).finally(() => setIsArchiving(false));
-    router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues`);
+    await issueOperations.archive(workspaceSlug, projectId, issueId);
+    router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`);
   };
   // derived values
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   // auth
-  const isArchivingAllowed =
-    !is_archived &&
-    issueOperations.archive &&
-    is_editable &&
-    !!stateDetails &&
-    [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
+  const isArchivingAllowed = !is_archived && issueOperations.archive && is_editable;
+  const isInArchivableGroup =
+    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -115,15 +112,18 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {workspaceSlug && projectId && issue && (
-        <DeleteIssueModal
-          handleClose={() => setDeleteIssueModal(false)}
-          isOpen={deleteIssueModal}
-          data={issue}
-          onSubmit={handleDeleteIssue}
-        />
-      )}
-
+      <DeleteIssueModal
+        handleClose={() => setDeleteIssueModal(false)}
+        isOpen={deleteIssueModal}
+        data={issue}
+        onSubmit={handleDeleteIssue}
+      />
+      <ArchiveIssueModal
+        isOpen={archiveIssueModal}
+        handleClose={() => setArchiveIssueModal(false)}
+        data={issue}
+        onSubmit={handleArchiveIssue}
+      />
       <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-end px-5 pb-3">
           <div className="flex flex-wrap items-center gap-4">
@@ -134,19 +134,29 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <Tooltip tooltipContent="Copy link">
                 <button
                   type="button"
-                  className="h-5 w-5 grid place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
+                  className="h-5 w-5 grid place-items-center hover:text-custom-text-200 rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
                   onClick={handleCopyText}
                 >
                   <LinkIcon className="h-4 w-4" />
                 </button>
               </Tooltip>
               {isArchivingAllowed && (
-                <Tooltip tooltipContent="Archive">
+                <Tooltip
+                  tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
+                >
                   <button
                     type="button"
-                    className="h-5 w-5 grid place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
-                    onClick={handleArchiveIssue}
-                    disabled={isArchiving}
+                    className={cn(
+                      "h-5 w-5 grid place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary",
+                      {
+                        "hover:text-custom-text-200": isInArchivableGroup,
+                        "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
+                      }
+                    )}
+                    onClick={() => {
+                      if (!isInArchivableGroup) return;
+                      setArchiveIssueModal(true);
+                    }}
                   >
                     <ArchiveIcon className="h-4 w-4" />
                   </button>
@@ -156,7 +166,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <Tooltip tooltipContent="Delete">
                   <button
                     type="button"
-                    className="h-5 w-5 grid place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
+                    className="h-5 w-5 grid place-items-center hover:text-custom-text-200 rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
                     onClick={() => setDeleteIssueModal(true)}
                   >
                     <Trash2 className="h-4 w-4" />

@@ -9,9 +9,12 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
 import useToast from "hooks/use-toast";
 // store hooks
-import { useUser } from "hooks/store";
+import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+// helpers
+import { cn } from "helpers/common.helper";
 // components
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
+import { STATE_GROUPS } from "constants/state";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -65,9 +68,15 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const router = useRouter();
   // store hooks
   const { currentUser } = useUser();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { getStateById } = useProjectState();
   // hooks
   const { setToastAlert } = useToast();
   // derived values
+  const issueDetails = getIssueById(issueId);
+  const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
   const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`;
@@ -87,8 +96,10 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     router.push({ pathname: `/${issueLink}` });
     removeRoutePeekId();
   };
-
+  // auth
   const isArchivingAllowed = !isArchived && !disabled;
+  const isInArchivableGroup =
+    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
   const isRestoringAllowed = isArchived && !disabled;
 
   return (
@@ -99,11 +110,11 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     >
       <div className="flex items-center gap-4">
         <button onClick={removeRoutePeekId}>
-          <MoveRight className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
         </button>
 
         <button onClick={redirectToIssueDetail}>
-          <MoveDiagonal className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+          <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
         </button>
         {currentMode && (
           <div className="flex flex-shrink-0 items-center gap-2">
@@ -112,7 +123,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
               onChange={(val: any) => setPeekMode(val)}
               customButton={
                 <button type="button" className="">
-                  <currentMode.icon className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                  <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
                 </button>
               }
             >
@@ -146,9 +157,20 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             </button>
           </Tooltip>
           {isArchivingAllowed && (
-            <Tooltip tooltipContent="Archive">
-              <button onClick={() => toggleArchiveIssueModal(true)}>
-                <ArchiveIcon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            <Tooltip
+              tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
+            >
+              <button
+                className={cn("text-custom-text-300", {
+                  "hover:text-custom-text-200": isInArchivableGroup,
+                  "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
+                })}
+                onClick={() => {
+                  if (!isInArchivableGroup) return;
+                  toggleArchiveIssueModal(true);
+                }}
+              >
+                <ArchiveIcon className="h-4 w-4" />
               </button>
             </Tooltip>
           )}
