@@ -8,7 +8,7 @@ import { IProject } from "@plane/types";
 // services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
-import { cloneDeep } from "lodash";
+import { cloneDeep, update } from "lodash";
 export interface IProjectStore {
   // observables
   searchQuery: string;
@@ -30,12 +30,6 @@ export interface IProjectStore {
   // favorites actions
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
-  // project-order action
-  orderJoinedProjectsWithSortOrder: (
-    sourceIndex: number,
-    destinationIndex: number,
-    projectId: string
-  ) => number | undefined;
   // project-view action
   updateProjectView: (workspaceSlug: string, projectId: string, viewProps: any) => Promise<any>;
   // CRUD actions
@@ -77,8 +71,6 @@ export class ProjectStore implements IProjectStore {
       // favorites actions
       addProjectToFavorites: action,
       removeProjectFromFavorites: action,
-      // project-order action
-      orderJoinedProjectsWithSortOrder: action,
       // project-view action
       updateProjectView: action,
       // CRUD actions
@@ -137,6 +129,7 @@ export class ProjectStore implements IProjectStore {
 
     let projects = Object.values(this.projectMap ?? {});
     projects = sortBy(projects, "sort_order");
+
     const projectIds = projects
       .filter((project) => project.workspace === currentWorkspace.id && project.is_member)
       .map((project) => project.id);
@@ -267,67 +260,24 @@ export class ProjectStore implements IProjectStore {
   };
 
   /**
-   * Updates the sort order of the project.
-   * @param sortIndex
-   * @param destinationIndex
-   * @param projectId
-   * @returns
-   */
-  orderJoinedProjectsWithSortOrder = (sourceIndex: number, destinationIndex: number, projectId: string) => {
-    if (destinationIndex < 0) return undefined;
-
-    const joinedProjects = this.joinedProjectIds;
-    if (!joinedProjects || joinedProjects.length === 0) return undefined;
-
-    const projectsList = (Object.values(this.projectMap || {}) || []).filter((project) =>
-      joinedProjects.includes(project.id)
-    );
-    if (projectsList.length === 0) return undefined;
-
-    console.log("joinedProjects", joinedProjects);
-
-    let updatedSortOrder: number | undefined = undefined;
-    const sortOrderDefaultValue = 10000;
-
-    console.log("coming here...");
-    console.log("destinationIndex", destinationIndex);
-    console.log("projectsList.length", projectsList.length);
-
-    if (destinationIndex === 0) {
-      updatedSortOrder = (projectsList[destinationIndex].sort_order || 0) - sortOrderDefaultValue;
-    } else if (destinationIndex === projectsList.length - 1) {
-      console.log("projectsList[destinationIndex].sort_order", projectsList[destinationIndex].sort_order);
-      updatedSortOrder = (projectsList[destinationIndex].sort_order || 0) + sortOrderDefaultValue;
-    } else {
-      const destinationTopProjectSortOrder = projectsList[destinationIndex - 1].sort_order || 0;
-      const destinationBottomProjectSortOrder = projectsList[destinationIndex].sort_order || 0;
-      console.log("destinationTopProjectSortOrder", destinationTopProjectSortOrder);
-      console.log("destinationBottomProjectSortOrder", destinationBottomProjectSortOrder);
-      const _sortValue = (destinationTopProjectSortOrder + destinationBottomProjectSortOrder) / 2;
-      console.log("_sortValue", _sortValue);
-      updatedSortOrder = (destinationTopProjectSortOrder + destinationBottomProjectSortOrder) / 2;
-    }
-
-    runInAction(() => {
-      set(this.projectMap, [projectId, "sort_order"], updatedSortOrder);
-    });
-
-    return updatedSortOrder;
-  };
-
-  /**
    * Updates the project view
    * @param workspaceSlug
    * @param projectId
    * @param viewProps
    * @returns
    */
-  updateProjectView = async (workspaceSlug: string, projectId: string, viewProps: any) => {
+  updateProjectView = async (workspaceSlug: string, projectId: string, viewProps: { sort_order: number }) => {
+    const currentProjectSortOrder = this.getProjectById(projectId)?.sort_order;
     try {
+      runInAction(() => {
+        set(this.projectMap, [projectId, "sort_order"], viewProps?.sort_order);
+      });
       const response = await this.projectService.setProjectView(workspaceSlug, projectId, viewProps);
-      await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {
+      runInAction(() => {
+        set(this.projectMap, [projectId, "sort_order"], currentProjectSortOrder);
+      });
       console.log("Failed to update sort order of the projects");
       throw error;
     }

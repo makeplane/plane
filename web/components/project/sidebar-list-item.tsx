@@ -209,11 +209,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </span>
                     )}
 
-                    {!isCollapsed && (
-                      <p className="truncate text-custom-sidebar-text-200">
-                        {project.sort_order}-{project.name}
-                      </p>
-                    )}
+                    {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
                   </div>
                   {!isCollapsed && (
                     <ChevronDown

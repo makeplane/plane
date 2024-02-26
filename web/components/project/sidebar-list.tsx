@@ -1,4 +1,4 @@
-import { useState, FC, useRef, useEffect } from "react";
+import { useState, FC, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -11,8 +11,10 @@ import useToast from "hooks/use-toast";
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
+import { orderJoinedProjects } from "helpers/project.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { IProject } from "@plane/types";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -31,9 +33,9 @@ export const ProjectSidebarList: FC = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const {
+    getProjectById,
     joinedProjectIds: joinedProjects,
     favoriteProjectIds: favoriteProjects,
-    orderJoinedProjectsWithSortOrder,
     updateProjectView,
   } = useProject();
   // router
@@ -54,14 +56,19 @@ export const ProjectSidebarList: FC = observer(() => {
     });
   };
 
-  const onDragEnd = async (result: DropResult) => {
+  const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
-
     if (!destination || !workspaceSlug) return;
-
     if (source.index === destination.index) return;
 
-    const updatedSortOrder = orderJoinedProjectsWithSortOrder(source.index, destination.index, draggableId);
+    let joinedProjectsList: IProject[] = [];
+    joinedProjects.map((projectId) => {
+      const _project = getProjectById(projectId);
+      if (_project) joinedProjectsList.push(_project);
+    });
+    if (joinedProjectsList.length <= 0) return;
+
+    const updatedSortOrder = orderJoinedProjects(source.index, destination.index, draggableId, joinedProjectsList);
     if (updatedSortOrder != undefined)
       updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
         setToastAlert({
