@@ -15,9 +15,9 @@ export const MonthChartView: FC<any> = observer(() => {
   const monthBlocks: IMonthBlock[] = renderView;
 
   return (
-    <div className="absolute top-0 left-0 h-full w-max flex divide-x divide-custom-border-100/50">
+    <div className="absolute top-0 left-0 min-h-full h-max w-max flex divide-x divide-custom-border-100/50">
       {monthBlocks?.map((block, rootIndex) => (
-        <div key={`month-${block?.month}-${block?.year}`} className="relative">
+        <div key={`month-${block?.month}-${block?.year}`} className="relative flex flex-col">
           <div
             className="w-full sticky top-0 z-[5] bg-custom-background-100"
             style={{
