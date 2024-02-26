@@ -35,7 +35,7 @@ export const LabelListItem: FC<TLabelListItem> = (props) => {
   return (
     <div
       key={labelId}
-      className={`transition-all relative flex items-center gap-1  border border-custom-border-100 rounded-full text-xs p-0.5 px-1 group ${
+      className={`transition-all relative flex items-center gap-1 truncate border border-custom-border-100 rounded-full text-xs p-0.5 px-1 group ${
         !disabled ? "cursor-pointer hover:border-red-500/50 hover:bg-red-500/20" : "cursor-not-allowed"
       } `}
       onClick={handleLabel}
@@ -46,7 +46,7 @@ export const LabelListItem: FC<TLabelListItem> = (props) => {
           backgroundColor: label.color ?? "#000000",
         }}
       />
-      <div className="flex-shrink-0">{label.name}</div>
+      <div className="truncate">{label.name}</div>
       {!disabled && (
         <div className="flex-shrink-0">
           <X className="transition-all h-2.5 w-2.5 group-hover:text-red-500" />
