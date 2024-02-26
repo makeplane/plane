@@ -29,7 +29,7 @@ export type TIssueOperations = {
     showToast?: boolean
   ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
@@ -379,7 +379,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         />
       ) : (
         <div className="flex w-full h-full overflow-hidden">
-          <div className="h-full w-full max-w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+          <div className="h-full w-full max-w-2/3 space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
               projectId={projectId}
@@ -389,7 +389,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             />
           </div>
           <div
-            className="h-full w-full sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5 fixed md:relative bg-custom-sidebar-background-100 right-0 z-[5]"
+            className="h-full w-full sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-200 py-5 fixed md:relative bg-custom-sidebar-background-100 right-0 z-[5]"
             style={themeStore.issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
           >
             <IssueDetailsSidebar

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { CustomMenu } from "@plane/ui";
-import { Archive, Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { ArchiveIcon, CustomMenu } from "@plane/ui";
+import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import omit from "lodash/omit";
 // hooks
 import useToast from "hooks/use-toast";
-import { useEventTracker } from "hooks/store";
+import { useEventTracker, useProjectState } from "hooks/store";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -15,6 +15,7 @@ import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const {
@@ -34,17 +35,23 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // hooks
+  // store hooks
   const { setTrackElement } = useEventTracker();
+  const { getStateById } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();
-
-  const isArchivingAllowed = handleArchive && !readOnly;
+  // derived values
+  const stateDetails = getStateById(issue.state_id);
+  // auth
+  const isArchivingAllowed =
+    handleArchive &&
+    !readOnly &&
+    !!stateDetails &&
+    [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
 
-  const handleOpenInNewTab = () => window.open(`/${issueLink}}`, "_blank");
-
+  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
       setToastAlert({
@@ -137,7 +144,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         {isArchivingAllowed && (
           <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)}>
             <div className="flex items-center gap-2">
-              <Archive className="h-3 w-3" />
+              <ArchiveIcon className="h-3 w-3" />
               Archive
             </div>
           </CustomMenu.MenuItem>

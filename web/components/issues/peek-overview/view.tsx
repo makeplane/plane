@@ -9,7 +9,6 @@ import useKeypress from "hooks/use-keypress";
 import { useIssueDetail } from "hooks/store";
 // components
 import {
-  DeleteArchivedIssueModal,
   DeleteIssueModal,
   IssuePeekOverviewHeader,
   TPeekModes,
@@ -66,7 +65,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           isOpen={isArchiveIssueModalOpen}
           handleClose={() => toggleArchiveIssueModal(false)}
           data={issue}
-          onSubmit={() => issueOperations.archive(workspaceSlug, projectId, issueId)}
+          onSubmit={async () => {
+            if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
+          }}
         />
       )}
 
@@ -83,7 +84,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       )}
 
       {issue && is_archived && (
-        <DeleteArchivedIssueModal
+        <DeleteIssueModal
           data={issue}
           isOpen={isDeleteIssueModalOpen}
           handleClose={() => toggleDeleteIssueModal(false)}

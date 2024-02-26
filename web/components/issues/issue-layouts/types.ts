@@ -3,4 +3,5 @@ export enum EIssueActions {
   DELETE = "delete",
   REMOVE = "remove",
   ARCHIVE = "archive",
+  RESTORE = "restore",
 }

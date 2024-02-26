@@ -42,6 +42,7 @@ export interface IBaseKanBanLayout {
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   showLoader?: boolean;
   viewId?: string;
@@ -191,6 +192,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         }
         handleArchive={
           issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
+        }
+        handleRestore={
+          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
         }
         readOnly={!isEditingAllowed || isCompletedCycle}
       />

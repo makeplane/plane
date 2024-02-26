@@ -27,7 +27,7 @@ export class IssueArchiveService extends APIService {
       });
   }
 
-  async unarchiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async restoreIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -44,14 +44,6 @@ export class IssueArchiveService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`, {
       params: queries,
     })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteArchivedIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issuesId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { CustomMenu } from "@plane/ui";
-import { Archive, Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { ArchiveIcon, CustomMenu } from "@plane/ui";
+import { observer } from "mobx-react";
+import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import omit from "lodash/omit";
 // hooks
-import { useEventTracker, useIssues, useUser } from "hooks/store";
+import { useEventTracker, useIssues, useProjectState, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -16,8 +17,9 @@ import { IQuickActionProps } from "../list/list-view-types";
 // constant
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
 
-export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
+export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
     issue,
     handleDelete,
@@ -41,18 +43,24 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
   } = useUser();
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
-
+  const { getStateById } = useProjectState();
+  // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
-
+  const stateDetails = getStateById(issue.state_id);
+  // auth
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
-  const isArchivingAllowed = handleArchive && isEditingAllowed;
+  const isArchivingAllowed =
+    handleArchive &&
+    isEditingAllowed &&
+    !!stateDetails &&
+    [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
 
   const { setToastAlert } = useToast();
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
 
-  const handleOpenInNewTab = () => window.open(`/${issueLink}}`, "_blank");
+  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
 
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
@@ -149,7 +157,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         {isArchivingAllowed && (
           <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)}>
             <div className="flex items-center gap-2">
-              <Archive className="h-3 w-3" />
+              <ArchiveIcon className="h-3 w-3" />
               Archive
             </div>
           </CustomMenu.MenuItem>
@@ -170,4 +178,4 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
       </CustomMenu>
     </>
   );
-};
+});
