@@ -35,7 +35,7 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // icons
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon } from "@plane/ui";
+import { ArchiveIcon, ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, Tooltip, UserGroupIcon } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -43,6 +43,7 @@ import { cn } from "helpers/common.helper";
 import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 // types
 import type { TIssueOperations } from "./root";
+import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   workspaceSlug: string;
@@ -55,6 +56,9 @@ type Props = {
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, is_archived, is_editable } = props;
+  // states
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
   // router
   const router = useRouter();
   // store hooks
@@ -66,8 +70,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  // states
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -83,8 +85,27 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     });
   };
 
-  const projectDetails = issue ? getProjectById(issue.project_id) : null;
+  const handleDeleteIssue = async () => {
+    await issueOperations.remove(workspaceSlug, projectId, issueId);
+    router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+  };
+
+  const handleArchiveIssue = async () => {
+    if (!issueOperations.archive) return;
+    setIsArchiving(true);
+    await issueOperations.archive(workspaceSlug, projectId, issueId).finally(() => setIsArchiving(false));
+    router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues`);
+  };
+  // derived values
+  const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
+  // auth
+  const isArchivingAllowed =
+    !is_archived &&
+    issueOperations.archive &&
+    is_editable &&
+    !!stateDetails &&
+    [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -99,37 +120,50 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           handleClose={() => setDeleteIssueModal(false)}
           isOpen={deleteIssueModal}
           data={issue}
-          onSubmit={async () => {
-            await issueOperations.remove(workspaceSlug, projectId, issueId);
-            router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
-          }}
+          onSubmit={handleDeleteIssue}
         />
       )}
 
       <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-end px-5 pb-3">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-4">
             {currentUser && !is_archived && (
               <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
             )}
-
-            <button
-              type="button"
-              className="rounded-md border border-custom-border-200 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
-              onClick={handleCopyText}
-            >
-              <LinkIcon className="h-3.5 w-3.5" />
-            </button>
-
-            {is_editable && (
-              <button
-                type="button"
-                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
-                onClick={() => setDeleteIssueModal(true)}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            )}
+            <div className="flex items-center flex-wrap gap-2.5 text-custom-text-300">
+              <Tooltip tooltipContent="Copy link">
+                <button
+                  type="button"
+                  className="h-5 w-5 grid place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
+                  onClick={handleCopyText}
+                >
+                  <LinkIcon className="h-4 w-4" />
+                </button>
+              </Tooltip>
+              {isArchivingAllowed && (
+                <Tooltip tooltipContent="Archive">
+                  <button
+                    type="button"
+                    className="h-5 w-5 grid place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
+                    onClick={handleArchiveIssue}
+                    disabled={isArchiving}
+                  >
+                    <ArchiveIcon className="h-4 w-4" />
+                  </button>
+                </Tooltip>
+              )}
+              {is_editable && (
+                <Tooltip tooltipContent="Delete">
+                  <button
+                    type="button"
+                    className="h-5 w-5 grid place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary"
+                    onClick={() => setDeleteIssueModal(true)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </Tooltip>
+              )}
+            </div>
           </div>
         </div>
 

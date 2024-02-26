@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState, useMemo } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -144,7 +144,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
-        console.log("Archiving...", archiveIssue);
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
           setToastAlert({
@@ -158,7 +157,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
-          console.log("error", error);
           setToastAlert({
             type: "error",
             title: "Error!",
@@ -366,16 +364,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const isLoading = !issue || loader ? true : false;
 
   return (
-    <Fragment>
-      <IssueView
-        workspaceSlug={peekIssue.workspaceSlug}
-        projectId={peekIssue.projectId}
-        issueId={peekIssue.issueId}
-        isLoading={isLoading}
-        is_archived={is_archived}
-        disabled={is_archived || !is_editable}
-        issueOperations={issueOperations}
-      />
-    </Fragment>
+    <IssueView
+      workspaceSlug={peekIssue.workspaceSlug}
+      projectId={peekIssue.projectId}
+      issueId={peekIssue.issueId}
+      isLoading={isLoading}
+      is_archived={is_archived}
+      disabled={is_archived || !is_editable}
+      issueOperations={issueOperations}
+    />
   );
 });

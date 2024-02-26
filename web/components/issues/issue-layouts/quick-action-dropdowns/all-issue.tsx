@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { CustomMenu } from "@plane/ui";
-import { Archive, Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { ArchiveIcon, CustomMenu } from "@plane/ui";
+import { observer } from "mobx-react";
+import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import omit from "lodash/omit";
 // hooks
 import useToast from "hooks/use-toast";
-import { useEventTracker } from "hooks/store";
+import { useEventTracker, useProjectState } from "hooks/store";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -15,8 +16,9 @@ import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
 
-export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
+export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
     issue,
     handleDelete,
@@ -34,17 +36,22 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // hooks
+  // store hooks
   const { setTrackElement } = useEventTracker();
+  const { getStateById } = useProjectState();
   // toast alert
   const { setToastAlert } = useToast();
-
-  const isArchivingAllowed = handleArchive && !readOnly;
+  // derived values
+  const stateDetails = getStateById(issue.state_id);
+  const isEditingAllowed = !readOnly;
+  // auth
+  const isArchivingAllowed = handleArchive && isEditingAllowed;
+  const isInArchivableGroup =
+    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
 
-  const handleOpenInNewTab = () => window.open(`/${issueLink}}`, "_blank");
-
+  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
       setToastAlert({
@@ -95,7 +102,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         closeOnSelect
         ellipsis
       >
-        {!readOnly && (
+        {isEditingAllowed && (
           <CustomMenu.MenuItem
             onClick={() => {
               setTrackElement("Global issues");
@@ -121,7 +128,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
             Copy link
           </div>
         </CustomMenu.MenuItem>
-        {!readOnly && (
+        {isEditingAllowed && (
           <CustomMenu.MenuItem
             onClick={() => {
               setTrackElement("Global issues");
@@ -135,14 +142,28 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           </CustomMenu.MenuItem>
         )}
         {isArchivingAllowed && (
-          <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)}>
-            <div className="flex items-center gap-2">
-              <Archive className="h-3 w-3" />
-              Archive
-            </div>
+          <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)} disabled={!isInArchivableGroup}>
+            {isInArchivableGroup ? (
+              <div className="flex items-center gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                Archive
+              </div>
+            ) : (
+              <div className="flex items-start gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                <div className="-mt-1">
+                  <p>Archive</p>
+                  <p className="text-xs text-custom-text-400">
+                    Only completed or canceled
+                    <br />
+                    issues can be archived
+                  </p>
+                </div>
+              </div>
+            )}
           </CustomMenu.MenuItem>
         )}
-        {!readOnly && (
+        {isEditingAllowed && (
           <CustomMenu.MenuItem
             onClick={() => {
               setTrackElement("Global issues");
@@ -158,4 +179,4 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
       </CustomMenu>
     </>
   );
-};
+});

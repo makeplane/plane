@@ -12,9 +12,9 @@ import { IssueDetailRoot } from "components/issues";
 import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 import { PageHead } from "components/core";
 // ui
-import { ArchiveIcon, Loader } from "@plane/ui";
+import { ArchiveIcon, Button, Loader } from "@plane/ui";
 // icons
-import { History } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
@@ -32,7 +32,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
     issue: { getIssueById },
   } = useIssueDetail();
   const {
-    issues: { removeIssueFromArchived },
+    issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
@@ -52,12 +52,12 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
 
   if (!issue) return <></>;
 
-  const handleUnArchive = async () => {
+  const handleRestore = async () => {
     if (!workspaceSlug || !projectId || !archivedIssueId) return;
 
     setIsRestoring(true);
 
-    await removeIssueFromArchived(workspaceSlug as string, projectId as string, archivedIssueId as string)
+    await restoreIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       .then(() => {
         setToastAlert({
           type: "success",
@@ -102,21 +102,22 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
         </Loader>
       ) : (
         <div className="flex h-full overflow-hidden">
-          <div className="h-full w-full space-y-2 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+          <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
             {issue?.archived_at && (
               <div className="flex items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
                 <div className="flex items-center gap-2">
                   <ArchiveIcon className="h-3.5 w-3.5" />
                   <p>This issue has been archived by Plane.</p>
                 </div>
-                <button
-                  className="flex items-center gap-2 rounded-md border border-custom-border-200 p-1.5 text-sm"
-                  onClick={handleUnArchive}
+                <Button
+                  className="flex items-center gap-1.5 rounded-md border border-custom-border-200 p-1.5 text-sm"
+                  onClick={handleRestore}
                   disabled={isRestoring}
+                  variant="neutral-primary"
                 >
-                  <History className="h-3.5 w-3.5" />
-                  <span>{isRestoring ? "Restoring..." : "Restore Issue"}</span>
-                </button>
+                  <RotateCcw className="h-3 w-3" />
+                  <span>{isRestoring ? "Restoring" : "Restore"}</span>
+                </Button>
               </div>
             )}
             {workspaceSlug && projectId && archivedIssueId && (

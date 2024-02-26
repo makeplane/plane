@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react";
-import { MoveRight, MoveDiagonal, Link2, Trash2, Archive } from "lucide-react";
+import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
-import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Tooltip } from "@plane/ui";
+import { ArchiveIcon, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Tooltip } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
@@ -70,12 +70,12 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   // derived values
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
+  const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`;
+
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(
-      `${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`
-    ).then(() => {
+    copyUrlToClipboard(issueLink).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -83,13 +83,13 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       });
     });
   };
-
   const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`,
-    });
+    router.push({ pathname: `/${issueLink}` });
     removeRoutePeekId();
   };
+
+  const isArchivingAllowed = !isArchived && !disabled;
+  const isRestoringAllowed = isArchived && !disabled;
 
   return (
     <div
@@ -145,11 +145,20 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
             </button>
           </Tooltip>
-          <Tooltip tooltipContent="Archive">
-            <button onClick={() => toggleArchiveIssueModal(true)}>
-              <Archive className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-            </button>
-          </Tooltip>
+          {isArchivingAllowed && (
+            <Tooltip tooltipContent="Archive">
+              <button onClick={() => toggleArchiveIssueModal(true)}>
+                <ArchiveIcon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              </button>
+            </Tooltip>
+          )}
+          {isRestoringAllowed && (
+            <Tooltip tooltipContent="Restore">
+              <button onClick={() => toggleArchiveIssueModal(true)}>
+                <RotateCcw className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              </button>
+            </Tooltip>
+          )}
           {!disabled && (
             <Tooltip tooltipContent="Delete">
               <button onClick={() => toggleDeleteIssueModal(true)}>

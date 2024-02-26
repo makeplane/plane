@@ -45,9 +45,9 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
       .then(() => onClose())
       .catch(() =>
         setToastAlert({
-          title: "Error",
           type: "error",
-          message: "Failed to delete issue",
+          title: "Error!",
+          message: "Issue could not be archived. Please try again.",
         })
       )
       .finally(() => setIsArchiving(false));
