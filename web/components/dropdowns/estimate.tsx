@@ -137,6 +137,13 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     toggleDropdown();
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   useOutsideClickDetector(dropdownRef, handleClose);
 
   useEffect(() => {
@@ -217,6 +224,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
