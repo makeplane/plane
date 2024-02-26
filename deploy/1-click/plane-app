@@ -166,7 +166,7 @@ function download_plane() {
 
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/plane-cron  \
-        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/1-click/plane-crom?token=$(date +%s) 
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/1-click/plane-cron?token=$(date +%s) 
 
     sudo chmod +x $PLANE_INSTALL_DIR/plane-cron
 
