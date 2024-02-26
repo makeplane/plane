@@ -1,7 +1,0 @@
-#!/bin/bash
-
-plane-app stop
-
-plane-app --upgrade
-
-plane-app start

@@ -164,12 +164,6 @@ function download_plane() {
     show_message "Plane Setup Files Downloaded ✅" "replace_last_line"  >&2
     show_message ""  >&2
 
-    sudo curl -H 'Cache-Control: no-cache, no-store' \
-        -s -o $PLANE_INSTALL_DIR/plane-cron  \
-        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/1-click/plane-cron?token=$(date +%s) 
-
-    sudo chmod +x $PLANE_INSTALL_DIR/plane-cron
-
     echo "PLANE_DOWNLOADED"
     return 0
 }
@@ -791,6 +785,10 @@ elif [ "$1" == "--update-installer" ] || [ "$1" == "-ui" ]; then
     update_installer
 elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     show_help
+elif [ "$1" == "--daily-update" ]; then
+    stop_server
+    upgrade
+    start_server
 else
     show_help
 fi
