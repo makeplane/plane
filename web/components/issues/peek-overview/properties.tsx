@@ -14,13 +14,7 @@ import {
   TIssueOperations,
   IssueRelationSelect,
 } from "components/issues";
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  ProjectMemberDropdown,
-  StateDropdown,
-} from "components/dropdowns";
+import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // helpers
@@ -87,7 +81,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
             <span>Assignees</span>
           </div>
-          <ProjectMemberDropdown
+          <MemberDropdown
             value={issue?.assignee_ids ?? undefined}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
             disabled={disabled}

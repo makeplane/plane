@@ -27,13 +27,7 @@ import {
   IssueLabel,
 } from "components/issues";
 import { IssueSubscription } from "./subscription";
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  ProjectMemberDropdown,
-  StateDropdown,
-} from "components/dropdowns";
+import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // icons
 import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon } from "@plane/ui";
 // helpers
@@ -161,7 +155,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
-              <ProjectMemberDropdown
+              <MemberDropdown
                 value={issue?.assignee_ids ?? undefined}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
                 disabled={!is_editable}

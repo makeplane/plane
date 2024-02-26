@@ -44,7 +44,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const {
     router: { workspaceSlug, projectId, cycleId, moduleId, viewId: projectViewId },
   } = useApplication();
-  const { currentWorkspace } = useWorkspace();
   const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
