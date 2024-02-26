@@ -133,7 +133,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
 
-        <div className="h-full w-full overflow-y-auto px-5">
+        <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="text-sm font-medium mt-6">Properties</h5>
           {/* TODO: render properties using a common component */}
           <div className={`mt-3 mb-2 space-y-2.5 ${!is_editable ? "opacity-60" : ""}`}>

@@ -77,6 +77,12 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
     ]
 
     def get_queryset(self):
+        sort_order = ProjectMember.objects.filter(
+            member=self.request.user,
+            project_id=OuterRef("pk"),
+            workspace__slug=self.kwargs.get("slug"),
+            is_active=True,
+        ).values("sort_order")
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -147,6 +153,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     )
                 )
             )
+            .annotate(sort_order=Subquery(sort_order))
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
@@ -166,16 +173,8 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             for field in request.GET.get("fields", "").split(",")
             if field
         ]
-
-        sort_order_query = ProjectMember.objects.filter(
-            member=request.user,
-            project_id=OuterRef("pk"),
-            workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
-        ).values("sort_order")
         projects = (
             self.get_queryset()
-            .annotate(sort_order=Subquery(sort_order_query))
             .order_by("sort_order", "name")
         )
         if request.GET.get("per_page", False) and request.GET.get(
@@ -204,7 +203,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 serializer.save()
 
                 # Add the user as Administrator to the project
-                project_member = ProjectMember.objects.create(
+                _ = ProjectMember.objects.create(
                     project_id=serializer.data["id"],
                     member=request.user,
                     role=20,
