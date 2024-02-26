@@ -42,15 +42,6 @@ export function CoreEditorProps(
       return false;
     },
     handleDrop: (view, event, _slice, moved) => {
-      if (typeof window !== "undefined") {
-        const selection: any = window?.getSelection();
-        if (selection.rangeCount !== 0) {
-          const range = selection.getRangeAt(0);
-          if (findTableAncestor(range.startContainer)) {
-            return;
-          }
-        }
-      }
       if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
         event.preventDefault();
         const file = event.dataTransfer.files[0];

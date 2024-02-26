@@ -601,15 +601,15 @@ class IssueSerializer(DynamicBaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
     module_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False, allow_null=True
+        child=serializers.UUIDField(), required=False,
     )
 
     # Many to many
     label_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False, allow_null=True
+        child=serializers.UUIDField(), required=False,
     )
     assignee_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False, allow_null=True
+        child=serializers.UUIDField(), required=False,
     )
 
     # Count items
