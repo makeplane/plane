@@ -496,6 +496,9 @@ function install() {
                     update_config "INSTALLATION_DATE" "$(date '+%Y-%m-%d')"
 
                     sudo touch /etc/cron.daily/makeplane
+                    sudo chmod +x /etc/cron.daily/makeplane
+                    sudo echo "0 2 * * * /usr/local/bin/plane-app --upgrade" > /etc/cron.daily/makeplane
+                    sudo crontab /etc/cron.daily/makeplane 
 
                     show_message "Plane Installed Successfully ✅"
                     show_message ""
@@ -598,6 +601,8 @@ function uninstall() {
             sudo rm $PLANE_INSTALL_DIR/variables-upgrade.env &> /dev/null
             sudo rm $PLANE_INSTALL_DIR/config.env &> /dev/null
             sudo rm $PLANE_INSTALL_DIR/docker-compose.yaml &> /dev/null
+            sudo crontab -r &> /dev/null
+            sudo rm /etc/cron.daily/makeplane &> /dev/null
             
             # rm -rf $PLANE_INSTALL_DIR &> /dev/null
             show_message "- Configuration Cleaned ✅"
