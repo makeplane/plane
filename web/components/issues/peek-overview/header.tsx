@@ -47,6 +47,7 @@ export type PeekOverviewHeaderProps = {
   disabled: boolean;
   toggleDeleteIssueModal: (value: boolean) => void;
   toggleArchiveIssueModal: (value: boolean) => void;
+  handleRestoreIssue: () => void;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
 
@@ -62,6 +63,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     removeRoutePeekId,
     toggleDeleteIssueModal,
     toggleArchiveIssueModal,
+    handleRestoreIssue,
     isSubmitting,
   } = props;
   // router
@@ -152,7 +154,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <Tooltip tooltipContent="Copy link">
-            <button onClick={handleCopyText}>
+            <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
             </button>
           </Tooltip>
@@ -161,6 +163,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
               tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
             >
               <button
+                type="button"
                 className={cn("text-custom-text-300", {
                   "hover:text-custom-text-200": isInArchivableGroup,
                   "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
@@ -176,14 +179,14 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           )}
           {isRestoringAllowed && (
             <Tooltip tooltipContent="Restore">
-              <button onClick={() => toggleArchiveIssueModal(true)}>
+              <button type="button" onClick={handleRestoreIssue}>
                 <RotateCcw className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
             </Tooltip>
           )}
           {!disabled && (
             <Tooltip tooltipContent="Delete">
-              <button onClick={() => toggleDeleteIssueModal(true)}>
+              <button type="button" onClick={() => toggleDeleteIssueModal(true)}>
                 <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
             </Tooltip>

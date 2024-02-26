@@ -58,6 +58,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const handleKeyDown = () => !isAnyModalOpen && removeRoutePeekId();
   useKeypress("Escape", handleKeyDown);
 
+  const handleRestore = async () => {
+    if (!issueOperations.restore) return;
+    await issueOperations.restore(workspaceSlug, projectId, issueId);
+    removeRoutePeekId();
+  };
+
   return (
     <>
       {issue && !is_archived && (
@@ -113,6 +119,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               removeRoutePeekId={removeRoutePeekId}
               toggleDeleteIssueModal={toggleDeleteIssueModal}
               toggleArchiveIssueModal={toggleArchiveIssueModal}
+              handleRestoreIssue={handleRestore}
               isArchived={is_archived}
               issueId={issueId}
               workspaceSlug={workspaceSlug}
@@ -136,7 +143,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
@@ -146,7 +153,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                         />
 
                         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
@@ -160,7 +167,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               projectId={projectId}
                               issueId={issueId}
                               issueOperations={issueOperations}
-                              disabled={disabled}
+                              disabled={disabled || is_archived}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
@@ -178,7 +185,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled}
+                            disabled={disabled || is_archived}
                           />
                         </div>
                       </div>

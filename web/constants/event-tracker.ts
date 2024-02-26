@@ -168,6 +168,7 @@ export const ISSUE_CREATED = "Issue created";
 export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
 export const ISSUE_ARCHIVED = "Issue archived";
+export const ISSUE_RESTORED = "Issue restored";
 export const ISSUE_OPENED = "Issue opened";
 // Project State Events
 export const STATE_CREATED = "State created";
