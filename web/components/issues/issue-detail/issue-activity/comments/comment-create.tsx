@@ -11,6 +11,8 @@ import { TIssueComment } from "@plane/types";
 // icons
 import { Globe2, Lock } from "lucide-react";
 import { useMention, useWorkspace } from "hooks/store";
+// helpers
+import { isEmptyHtmlString } from "helpers/string.helper";
 
 const fileService = new FileService();
 
@@ -67,7 +69,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     watch("comment_html") === "" ||
     watch("comment_html")?.trim() === "" ||
     watch("comment_html") === "<p></p>" ||
-    /^<p>\s+<\/p>$/.test(watch("comment_html") ?? "<p> </p>");
+    isEmptyHtmlString(watch("comment_html") ?? "");
 
   return (
     <div
