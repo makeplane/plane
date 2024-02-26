@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import {
   DragDropContext,
@@ -10,9 +9,9 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useTheme } from "next-themes";
 // hooks
+import { useLabel, useUser } from "hooks/store";
 import useDraggableInPortal from "hooks/use-draggable-portal";
 // components
 import {
@@ -21,45 +20,43 @@ import {
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
 } from "components/labels";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { EmptyState } from "components/common";
-// images
-import emptyLabel from "public/empty-state/label.svg";
 // types
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
+// constants
+import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const LABELS_ROOT = "labels.root";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const renderDraggable = useDraggableInPortal();
-
-  // store
-  const {
-    projectLabel: { fetchProjectLabels, projectLabels, updateLabelPosition, projectLabelsTree },
-  } = useMobxStore();
   // states
   const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabel | null>(null);
   const [isDraggingGroup, setIsDraggingGroup] = useState(false);
-  // ref
+  // refs
   const scrollToRef = useRef<HTMLFormElement>(null);
-
-  // api call to fetch project details
-  useSWR(
-    workspaceSlug && projectId ? "PROJECT_LABELS" : null,
-    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
-  );
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const { currentUser } = useUser();
+  const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
+  // portal
+  const renderDraggable = useDraggableInPortal();
 
   const newLabel = () => {
     setIsUpdating(false);
     setLabelForm(true);
   };
+
+  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["labels"];
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("project-settings", "labels", isLightMode);
 
   const onDragEnd = (result: DropResult) => {
     const { combine, draggableId, destination, source } = result;
@@ -99,16 +96,15 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         data={selectDeleteLabel ?? null}
         onClose={() => setSelectDeleteLabel(null)}
       />
-
       <div className="flex items-center justify-between border-b border-custom-border-100 py-3.5">
         <h3 className="text-xl font-medium">Labels</h3>
         <Button variant="primary" onClick={newLabel} size="sm">
           Add label
         </Button>
       </div>
-      <div className="w-full">
+      <div className="h-full w-full py-8">
         {showLabelForm && (
-          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2">
+          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2 my-2">
             <CreateUpdateLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}
@@ -121,109 +117,105 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
             />
           </div>
         )}
-        {/* labels */}
-        <>
-          {projectLabelsTree && (
-            <DragDropContext
-              onDragEnd={onDragEnd}
-              autoScrollerOptions={{
-                startFromPercentage: 1,
-                disabled: false,
-                maxScrollAtPercentage: 0,
-                maxPixelScroll: 2,
-              }}
-            >
-              <Droppable
-                droppableId={LABELS_ROOT}
-                isCombineEnabled={!isDraggingGroup}
-                ignoreContainerClipping
-                isDropDisabled={isUpdating}
+        {projectLabels ? (
+          projectLabels.length === 0 && !showLabelForm ? (
+            <div className="flex items-center justify-center h-full w-full">
+              <EmptyState
+                title={emptyStateDetail.title}
+                description={emptyStateDetail.description}
+                image={emptyStateImage}
+                size="lg"
+              />
+            </div>
+          ) : (
+            projectLabelsTree && (
+              <DragDropContext
+                onDragEnd={onDragEnd}
+                autoScrollerOptions={{
+                  startFromPercentage: 1,
+                  disabled: false,
+                  maxScrollAtPercentage: 0,
+                  maxPixelScroll: 2,
+                }}
               >
-                {(droppableProvided, droppableSnapshot) => (
-                  <div className="mt-3" ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-                    {projectLabelsTree.map((label, index) => {
-                      if (label.children && label.children.length) {
+                <Droppable
+                  droppableId={LABELS_ROOT}
+                  isCombineEnabled={!isDraggingGroup}
+                  ignoreContainerClipping
+                  isDropDisabled={isUpdating}
+                >
+                  {(droppableProvided, droppableSnapshot) => (
+                    <div className="mt-3" ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+                      {projectLabelsTree.map((label, index) => {
+                        if (label.children && label.children.length) {
+                          return (
+                            <Draggable
+                              key={`label.draggable.${label.id}`}
+                              draggableId={`label.draggable.${label.id}.group`}
+                              index={index}
+                              isDragDisabled={isUpdating}
+                            >
+                              {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
+                                const isGroup = droppableSnapshot.draggingFromThisWith?.split(".")[3] === "group";
+                                setIsDraggingGroup(isGroup);
+
+                                return (
+                                  <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
+                                    <ProjectSettingLabelGroup
+                                      key={label.id}
+                                      label={label}
+                                      labelChildren={label.children || []}
+                                      isDropDisabled={isGroup}
+                                      dragHandleProps={provided.dragHandleProps!}
+                                      handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
+                                      draggableSnapshot={snapshot}
+                                      isUpdating={isUpdating}
+                                      setIsUpdating={setIsUpdating}
+                                    />
+                                  </div>
+                                );
+                              }}
+                            </Draggable>
+                          );
+                        }
                         return (
                           <Draggable
                             key={`label.draggable.${label.id}`}
-                            draggableId={`label.draggable.${label.id}.group`}
+                            draggableId={`label.draggable.${label.id}`}
                             index={index}
                             isDragDisabled={isUpdating}
                           >
-                            {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
-                              const isGroup = droppableSnapshot.draggingFromThisWith?.split(".")[3] === "group";
-                              setIsDraggingGroup(isGroup);
-
-                              return (
-                                <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
-                                  <ProjectSettingLabelGroup
-                                    key={label.id}
-                                    label={label}
-                                    labelChildren={label.children || []}
-                                    isDropDisabled={isGroup}
-                                    dragHandleProps={provided.dragHandleProps!}
-                                    handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
-                                    draggableSnapshot={snapshot}
-                                    isUpdating={isUpdating}
-                                    setIsUpdating={setIsUpdating}
-                                  />
-                                </div>
-                              );
-                            }}
+                            {renderDraggable((provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+                              <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
+                                <ProjectSettingLabelItem
+                                  dragHandleProps={provided.dragHandleProps!}
+                                  draggableSnapshot={snapshot}
+                                  label={label}
+                                  setIsUpdating={setIsUpdating}
+                                  handleLabelDelete={(label) => setSelectDeleteLabel(label)}
+                                  isChild={false}
+                                />
+                              </div>
+                            ))}
                           </Draggable>
                         );
-                      }
-                      return (
-                        <Draggable
-                          key={`label.draggable.${label.id}`}
-                          draggableId={`label.draggable.${label.id}`}
-                          index={index}
-                          isDragDisabled={isUpdating}
-                        >
-                          {renderDraggable((provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                            <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
-                              <ProjectSettingLabelItem
-                                dragHandleProps={provided.dragHandleProps!}
-                                draggableSnapshot={snapshot}
-                                label={label}
-                                setIsUpdating={setIsUpdating}
-                                handleLabelDelete={(label) => setSelectDeleteLabel(label)}
-                                isChild={false}
-                              />
-                            </div>
-                          ))}
-                        </Draggable>
-                      );
-                    })}
-                    {droppableProvided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          )}
-        </>
-
-        {/* loading state */}
-        {!projectLabels && (
-          <Loader className="space-y-5">
-            <Loader.Item height="42px" />
-            <Loader.Item height="42px" />
-            <Loader.Item height="42px" />
-            <Loader.Item height="42px" />
-          </Loader>
-        )}
-
-        {/* empty state */}
-        {projectLabels && projectLabels.length === 0 && (
-          <EmptyState
-            title="No labels yet"
-            description="Create labels to help organize and filter issues in you project"
-            image={emptyLabel}
-            primaryButton={{
-              text: "Add label",
-              onClick: () => newLabel(),
-            }}
-          />
+                      })}
+                      {droppableProvided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            )
+          )
+        ) : (
+          !showLabelForm && (
+            <Loader className="space-y-5">
+              <Loader.Item height="42px" />
+              <Loader.Item height="42px" />
+              <Loader.Item height="42px" />
+              <Loader.Item height="42px" />
+            </Loader>
+          )
         )}
       </div>
     </>

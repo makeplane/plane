@@ -4,16 +4,15 @@ import { Button, Tooltip } from "@plane/ui";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { useWebhook, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
 // types
-import { IWebhook } from "types";
+import { IWebhook } from "@plane/types";
 
 type Props = {
   data: Partial<IWebhook>;
@@ -27,11 +26,9 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, webhookId } = router.query;
-  // store
-  const {
-    webhook: { currentWebhook, regenerateSecretKey, webhookSecretKey },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
   // hooks
   const { setToastAlert } = useToast();
 
@@ -56,11 +53,11 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   };
 
   const handleRegenerateSecretKey = () => {
-    if (!workspaceSlug || !webhookId) return;
+    if (!workspaceSlug || !data.id) return;
 
     setIsRegenerating(true);
 
-    regenerateSecretKey(workspaceSlug.toString(), webhookId.toString())
+    regenerateSecretKey(workspaceSlug.toString(), data.id)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -68,8 +65,10 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
           message: "New key regenerated successfully.",
         });
 
-        const csvData = getCurrentHookAsCSV(currentWorkspace, currentWebhook, webhookSecretKey);
-        csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
+        if (currentWebhook && webhookSecretKey) {
+          const csvData = getCurrentHookAsCSV(currentWorkspace, currentWebhook, webhookSecretKey);
+          csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
+        }
       })
       .catch((err) =>
         setToastAlert({
@@ -92,10 +91,10 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
     <>
       {(data || webhookSecretKey) && (
         <div className="space-y-2">
-          <div className="text-sm font-medium">Secret key</div>
+          {webhookId && <div className="text-sm font-medium">Secret key</div>}
           <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
           <div className="flex items-center gap-4">
-            <div className="flex min-w-[30rem] max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
+            <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
               <div className="select-none overflow-hidden font-medium">
                 {shouldShowKey ? (
                   <p className="text-xs">{webhookSecretKey}</p>

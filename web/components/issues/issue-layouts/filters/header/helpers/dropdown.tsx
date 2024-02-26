@@ -12,10 +12,12 @@ type Props = {
   title?: string;
   placement?: Placement;
   disabled?: boolean;
+  tabIndex?: number;
+  menuButton?: React.ReactNode;
 };
 
 export const FiltersDropdown: React.FC<Props> = (props) => {
-  const { children, title = "Dropdown", placement, disabled = false } = props;
+  const { children, title = "Dropdown", placement, disabled = false, tabIndex, menuButton } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -32,7 +34,9 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
         return (
           <>
             <Popover.Button as={React.Fragment}>
-              <Button
+              {menuButton ? <button role="button" ref={setReferenceElement}>
+                {menuButton}
+              </button> : <Button
                 disabled={disabled}
                 ref={setReferenceElement}
                 variant="neutral-primary"
@@ -40,11 +44,12 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                 appendIcon={
                   <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
                 }
+                tabIndex={tabIndex}
               >
                 <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
                   <span>{title}</span>
                 </div>
-              </Button>
+              </Button>}
             </Popover.Button>
             <Transition
               as={Fragment}

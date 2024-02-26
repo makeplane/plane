@@ -13,7 +13,9 @@ class TimeAuditModel(models.Model):
         auto_now_add=True,
         verbose_name="Created At",
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Last Modified At")
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Last Modified At"
+    )
 
     class Meta:
         abstract = True

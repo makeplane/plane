@@ -1,43 +1,55 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useCycle, useIssues } from "hooks/store";
 // components
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { useRouter } from "next/router";
 import { EIssueActions } from "../../types";
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
+import { EIssuesStoreType } from "constants/issue";
 
 export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
 
-  const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { currentProjectCompletedCycleIds } = useCycle();
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
 
-      cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-      cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
-    },
-    [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
-      cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
-    },
-  };
+        issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue, cycleId);
+      },
+      [EIssueActions.DELETE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+        issues.removeIssue(workspaceSlug, issue.project_id, issue.id, cycleId);
+      },
+      [EIssueActions.REMOVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+        issues.removeIssueFromCycle(workspaceSlug, issue.project_id, cycleId, issue.id);
+      },
+    }),
+    [issues, workspaceSlug, cycleId]
+  );
+
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+
+  const canEditIssueProperties = () => !isCompletedCycle;
 
   return (
     <BaseSpreadsheetRoot
-      issueStore={cycleIssueStore}
-      issueFiltersStore={cycleIssueFilterStore}
+      issueStore={issues}
+      issueFiltersStore={issuesFilter}
       viewId={cycleId}
       issueActions={issueActions}
       QuickActions={CycleIssueQuickActions}
+      canEditPropertiesBasedOnProject={canEditIssueProperties}
+      isCompletedCycle={isCompletedCycle}
     />
   );
 });

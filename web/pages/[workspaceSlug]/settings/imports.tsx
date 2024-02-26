@@ -1,38 +1,49 @@
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser, useWorkspace } from "hooks/store";
 // layouts
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { AppLayout } from "layouts/app-layout";
 // components
 import IntegrationGuide from "components/integration/guide";
 import { WorkspaceSettingHeader } from "components/headers";
+import { PageHead } from "components/core";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const ImportsPage: NextPageWithLayout = observer(() => {
+  // store hooks
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
+  // derived values
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
 
   if (!isAdmin)
     return (
-      <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-      </div>
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center p-4">
+          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        </div>
+      </>
     );
 
   return (
-    <section className="w-full overflow-y-auto py-8 pr-9">
-      <div className="flex items-center border-b border-custom-border-100 py-3.5">
-        <h3 className="text-xl font-medium">Imports</h3>
-      </div>
-      <IntegrationGuide />
-    </section>
+    <>
+      <PageHead title={pageTitle} />
+      <section className="w-full overflow-y-auto py-8 pr-9">
+        <div className="flex items-center border-b border-custom-border-100 py-3.5">
+          <h3 className="text-xl font-medium">Imports</h3>
+        </div>
+        <IntegrationGuide />
+      </section>
+    </>
   );
 });
 

@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // hooks
+import { useEventTracker, useModule } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types
-import type { IModule } from "types";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import type { IModule } from "@plane/types";
+// constants
+import { MODULE_DELETED } from "constants/event-tracker";
 
 type Props = {
   data: IModule;
@@ -20,17 +22,15 @@ type Props = {
 
 export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose } = props;
-
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
-
-  const {
-    module: moduleStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
+  // store hooks
+  const { captureModuleEvent } = useEventTracker();
+  const { deleteModule } = useModule();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
@@ -43,18 +43,18 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await moduleStore
-      .deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
+    await deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
-        if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
+        if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project_id}/modules`);
         handleClose();
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Module deleted successfully.",
         });
-        postHogEventTracker("MODULE_DELETED", {
-          state: "SUCCESS",
+        captureModuleEvent({
+          eventName: MODULE_DELETED,
+          payload: { ...data, state: "SUCCESS" },
         });
       })
       .catch(() => {
@@ -63,8 +63,9 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });
-        postHogEventTracker("MODULE_DELETED", {
-          state: "FAILED",
+        captureModuleEvent({
+          eventName: MODULE_DELETED,
+          payload: { ...data, state: "FAILED" },
         });
       })
       .finally(() => {

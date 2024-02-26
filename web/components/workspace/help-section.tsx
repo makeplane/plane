@@ -2,15 +2,15 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-import { DiscordIcon, GithubIcon } from "@plane/ui";
+import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // assets
 import packageJson from "package.json";
+import useSize from "hooks/use-window-size";
 
 const helpOptions = [
   {
@@ -41,11 +41,13 @@ export interface WorkspaceHelpSectionProps {
 }
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
-  // store
+  // store hooks
   const {
-    theme: { sidebarCollapsed, toggleSidebar },
+    theme: { sidebarCollapsed, toggleSidebar, toggleMobileSidebar },
     commandPalette: { toggleShortcutModal },
-  } = useMobxStore();
+  } = useApplication();
+
+  const [windowWidth] = useSize();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
@@ -58,9 +60,8 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   return (
     <>
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
-          isCollapsed ? "flex-col" : ""
-        }`}
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${isCollapsed ? "flex-col" : ""
+          }`}
       >
         {!isCollapsed && (
           <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2.5 py-1.5 text-center text-sm font-medium text-green-500 outline-none">
@@ -68,40 +69,45 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           </div>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
-          <button
-            type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-              isCollapsed ? "w-full" : ""
-            }`}
-            onClick={() => toggleShortcutModal(true)}
-          >
-            <Zap className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-              isCollapsed ? "w-full" : ""
-            }`}
-            onClick={() => setIsNeedHelpOpen((prev) => !prev)}
-          >
-            <HelpCircle className="h-3.5 w-3.5" />
-          </button>
+          <Tooltip tooltipContent="Shortcuts">
+            <button
+              type="button"
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${isCollapsed ? "w-full" : ""
+                }`}
+              onClick={() => toggleShortcutModal(true)}
+            >
+              <Zap className="h-3.5 w-3.5" />
+            </button>
+          </Tooltip>
+          <Tooltip tooltipContent="Help">
+            <button
+              type="button"
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${isCollapsed ? "w-full" : ""
+                }`}
+              onClick={() => setIsNeedHelpOpen((prev) => !prev)}
+            >
+              <HelpCircle className="h-3.5 w-3.5" />
+            </button>
+          </Tooltip>
+
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
-            onClick={() => toggleSidebar()}
+            onClick={() => windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar()}
           >
             <MoveLeft className="h-3.5 w-3.5" />
           </button>
-          <button
-            type="button"
-            className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
-              isCollapsed ? "w-full" : ""
-            }`}
-            onClick={() => toggleSidebar()}
-          >
-            <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
-          </button>
+
+          <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`}>
+            <button
+              type="button"
+              className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${isCollapsed ? "w-full" : ""
+                }`}
+              onClick={() => windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar()}
+            >
+              <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
+            </button>
+          </Tooltip>
         </div>
 
         <div className="relative">
@@ -115,9 +121,8 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             leaveTo="transform opacity-0 scale-95"
           >
             <div
-              className={`absolute bottom-2 min-w-[10rem] ${
-                isCollapsed ? "left-full" : "-left-[75px]"
-              } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
+              className={`absolute bottom-2 min-w-[10rem] ${isCollapsed ? "left-full" : "-left-[75px]"
+                } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
               ref={helpOptionsRef}
             >
               <div className="space-y-1 pb-2">

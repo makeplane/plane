@@ -1,44 +1,46 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useTheme } from "next-themes";
+// store hooks
+import { useEstimate, useProject, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
-//hooks
-import useToast from "hooks/use-toast";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { EmptyState } from "components/common";
-// icons
-import { Plus } from "lucide-react";
-// images
-import emptyEstimate from "public/empty-state/estimate.svg";
 // types
-import { IEstimate } from "types";
+import { IEstimate } from "@plane/types";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
+// constants
+import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const EstimatesList: React.FC = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const {
-    project: { currentProjectDetails, updateProject },
-    projectEstimates: { projectEstimates, getProjectEstimateById },
-  } = useMobxStore();
   // states
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
   const [estimateToDelete, setEstimateToDelete] = useState<string | null>(null);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
-  // hooks
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const { updateProject, currentProjectDetails } = useProject();
+  const { projectEstimates, getProjectEstimateById } = useEstimate();
+  const { currentUser } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
-  // derived values
-  const estimatesList = projectEstimates;
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
-    setEstimateToUpdate(estimate);
+    // Order the points array by key before updating the estimate to update state
+    setEstimateToUpdate({
+      ...estimate,
+      points: orderArrayBy(estimate.points, "key"),
+    });
   };
 
   const disableEstimates = () => {
@@ -55,6 +57,10 @@ export const EstimatesList: React.FC = observer(() => {
       });
     });
   };
+
+  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["estimate"];
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("project-settings", "estimates", isLightMode);
 
   return (
     <>
@@ -96,10 +102,10 @@ export const EstimatesList: React.FC = observer(() => {
         </div>
       </section>
 
-      {estimatesList ? (
-        estimatesList.length > 0 ? (
+      {projectEstimates ? (
+        projectEstimates.length > 0 ? (
           <section className="h-full overflow-y-auto bg-custom-background-100">
-            {estimatesList.map((estimate) => (
+            {projectEstimates.map((estimate) => (
               <EstimateListItem
                 key={estimate.id}
                 estimate={estimate}
@@ -109,19 +115,12 @@ export const EstimatesList: React.FC = observer(() => {
             ))}
           </section>
         ) : (
-          <div className="h-full w-full overflow-y-auto">
+          <div className="h-full w-full py-8">
             <EmptyState
-              title="No estimates yet"
-              description="Estimates help you communicate the complexity of an issue."
-              image={emptyEstimate}
-              primaryButton={{
-                icon: <Plus className="h-4 w-4" />,
-                text: "Add Estimate",
-                onClick: () => {
-                  setEstimateFormOpen(true);
-                  setEstimateToUpdate(undefined);
-                },
-              }}
+              title={emptyStateDetail.title}
+              description={emptyStateDetail.description}
+              image={emptyStateImage}
+              size="lg"
             />
           </div>
         )

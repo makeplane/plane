@@ -2,24 +2,23 @@ import { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// icons
 import { X } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
-import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
-import { WorkspaceMemberSelect } from "components/workspace";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
+import { WorkspaceMemberDropdown } from "components/dropdowns";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
-// types
-import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { PROJECT_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -63,12 +62,11 @@ export interface ICreateProjectForm {
 export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
+  const { captureProjectEvent } = useEventTracker();
   const {
-    project: projectStore,
-    workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // toast
@@ -95,11 +93,10 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     reValidateMode: "onChange",
   });
 
-  const { memberDetails } = useWorkspaceMyMembership();
-
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition onClose={onClose} />;
+  if (currentWorkspaceRole && isOpen)
+    if (currentWorkspaceRole < EUserWorkspaceRoles.MEMBER) return <IsGuestCondition onClose={onClose} />;
 
   const handleClose = () => {
     onClose();
@@ -110,7 +107,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
-    projectStore.addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
+    addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -127,18 +124,18 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     else payload.emoji = formData.emoji_and_icon;
 
     payload.project_lead = formData.project_lead_member;
+    // Upper case identifier
+    payload.identifier = payload.identifier.toUpperCase();
 
-    return projectStore
-      .createProject(workspaceSlug.toString(), payload)
+    return createProject(workspaceSlug.toString(), payload)
       .then((res) => {
         const newPayload = {
           ...res,
           state: "SUCCESS",
         };
-        postHogEventTracker("PROJECT_CREATED", newPayload, {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          gorupId: res.workspace,
+        captureProjectEvent({
+          eventName: PROJECT_CREATED,
+          payload: newPayload,
         });
         setToastAlert({
           type: "success",
@@ -157,17 +154,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             title: "Error!",
             message: err.data[key],
           });
-          postHogEventTracker(
-            "PROJECT_CREATED",
-            {
+          captureProjectEvent({
+            eventName: PROJECT_CREATED,
+            payload: {
+              ...payload,
               state: "FAILED",
             },
-            {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              gorupId: currentWorkspace?.id!,
-            }
-          );
+          });
         });
       });
   };
@@ -178,22 +171,15 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       return;
     }
     if (e.target.value === "") setValue("identifier", "");
-    else
-      setValue(
-        "identifier",
-        e.target.value
-          .replace(/[^a-zA-Z0-9]/g, "")
-          .toUpperCase()
-          .substring(0, 5)
-      );
+    else setValue("identifier", e.target.value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "").substring(0, 5));
     onChange(e);
   };
 
   const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    const alphanumericValue = value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
     setIsChangeInIdentifierRequired(false);
-    onChange(alphanumericValue.toUpperCase());
+    onChange(alphanumericValue);
   };
 
   return (
@@ -212,7 +198,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -233,7 +219,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                   )}
 
                   <div className="absolute right-2 top-2 p-2">
-                    <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose}>
+                    <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={8}>
                       <X className="h-5 w-5 text-white" />
                     </button>
                   </div>
@@ -245,6 +231,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                       }}
                       control={control}
                       value={watch("cover_image")}
+                      tabIndex={9}
                     />
                   </div>
                   <div className="absolute -bottom-[22px] left-3">
@@ -260,6 +247,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           }
                           onChange={onChange}
                           value={value}
+                          tabIndex={10}
                         />
                       )}
                     />
@@ -285,11 +273,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               name="name"
                               type="text"
                               value={value}
-                              tabIndex={1}
                               onChange={handleNameChange(onChange)}
                               hasError={Boolean(errors.name)}
                               placeholder="Project Title"
                               className="w-full focus:border-blue-400"
+                              tabIndex={1}
                             />
                           )}
                         />
@@ -301,15 +289,17 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           name="identifier"
                           rules={{
                             required: "Identifier is required",
+                            // allow only alphanumeric & non-latin characters
                             validate: (value) =>
-                              /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
+                              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) ||
+                              "Only Alphanumeric & Non-latin characters are allowed.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
                             },
                             maxLength: {
-                              value: 6,
-                              message: "Identifier must at most be of 6 characters",
+                              value: 12,
+                              message: "Identifier must at most be of 12 characters",
                             },
                           }}
                           render={({ field: { value, onChange } }) => (
@@ -318,11 +308,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               name="identifier"
                               type="text"
                               value={value}
-                              tabIndex={2}
                               onChange={handleIdentifierChange(onChange)}
                               hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
-                              className="w-full text-xs focus:border-blue-400"
+                              className="w-full text-xs focus:border-blue-400 uppercase"
+                              tabIndex={2}
                             />
                           )}
                         />
@@ -337,11 +327,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               id="description"
                               name="description"
                               value={value}
-                              tabIndex={3}
                               placeholder="Description..."
                               onChange={onChange}
                               className="!h-24 text-sm focus:border-blue-400"
                               hasError={Boolean(errors?.description)}
+                              tabIndex={3}
                             />
                           )}
                         />
@@ -349,20 +339,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                      <div className="flex-shrink-0" tabIndex={4}>
-                        <Controller
-                          name="network"
-                          control={control}
-                          render={({ field: { onChange, value } }) => (
+                      <Controller
+                        name="network"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <div className="flex-shrink-0" tabIndex={4}>
                             <CustomSelect
                               value={value}
                               onChange={onChange}
-                              buttonClassName="border-[0.5px] shadow-md !py-1.5 shadow-none"
                               label={
-                                <div className="flex items-center gap-2 text-custom-text-300">
+                                <div className="flex items-center gap-1">
                                   {currentNetwork ? (
                                     <>
-                                      <currentNetwork.icon className="h-[18px] w-[18px]" />
+                                      <currentNetwork.icon className="h-3 w-3" />
                                       {currentNetwork.label}
                                     </>
                                   ) : (
@@ -370,38 +359,41 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                                   )}
                                 </div>
                               }
+                              placement="bottom-start"
                               noChevron
+                              tabIndex={4}
                             >
                               {NETWORK_CHOICES.map((network) => (
-                                <CustomSelect.Option
-                                  key={network.key}
-                                  value={network.key}
-                                  className="flex items-center gap-1"
-                                >
-                                  <network.icon className="h-4 w-4" />
-                                  {network.label}
+                                <CustomSelect.Option key={network.key} value={network.key}>
+                                  <div className="flex items-start gap-2">
+                                    <network.icon className="h-3.5 w-3.5" />
+                                    <div className="-mt-1">
+                                      <p>{network.label}</p>
+                                      <p className="text-xs text-custom-text-400">{network.description}</p>
+                                    </div>
+                                  </div>
                                 </CustomSelect.Option>
                               ))}
                             </CustomSelect>
-                          )}
-                        />
-                      </div>
-                      <div className="flex-shrink-0" tabIndex={5}>
-                        <Controller
-                          name="project_lead_member"
-                          control={control}
-                          render={({ field: { value, onChange } }) => (
-                            <WorkspaceMemberSelect
-                              value={
-                                workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]
-                              }
+                          </div>
+                        )}
+                      />
+                      <Controller
+                        name="project_lead_member"
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <div className="h-7 flex-shrink-0" tabIndex={5}>
+                            <WorkspaceMemberDropdown
+                              value={value}
                               onChange={onChange}
-                              options={workspaceMembers || []}
-                              placeholder="Select Lead"
+                              placeholder="Lead"
+                              multiple={false}
+                              buttonVariant="border-with-text"
+                              tabIndex={5}
                             />
-                          )}
-                        />
-                      </div>
+                          </div>
+                        )}
+                      />
                     </div>
                   </div>
 

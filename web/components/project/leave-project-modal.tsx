@@ -4,14 +4,15 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangleIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useEventTracker, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useToast from "hooks/use-toast";
 // types
-import { IProject } from "types";
+import { IProject } from "@plane/types";
+// constants
+import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 
 type FormData = {
   projectName: string;
@@ -34,11 +35,11 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
+  const { captureEvent } = useEventTracker();
   const {
-    user: { leaveProject },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
+    membership: { leaveProject },
+  } = useUser();
   // toast
   const { setToastAlert } = useToast();
 
@@ -64,8 +65,9 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
             .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
-              postHogEventTracker("PROJECT_MEMBER_LEAVE", {
+              captureEvent(PROJECT_MEMBER_LEAVE, {
                 state: "SUCCESS",
+                element: "Project settings members page",
               });
             })
             .catch(() => {
@@ -74,8 +76,9 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
-              postHogEventTracker("PROJECT_MEMBER_LEAVE", {
+              captureEvent(PROJECT_MEMBER_LEAVE, {
                 state: "FAILED",
+                element: "Project settings members page",
               });
             });
         } else {

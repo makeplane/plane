@@ -7,6 +7,7 @@ from plane.app.views import (
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
     BulkImportModulesEndpoint,
+    ModuleUserPropertiesEndpoint,
 )
 
 
@@ -34,17 +35,26 @@ urlpatterns = [
         name="project-modules",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/modules/",
         ModuleIssueViewSet.as_view(
             {
+                "post": "create_issue_modules",
+            }
+        ),
+        name="issue-module",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/issues/",
+        ModuleIssueViewSet.as_view(
+            {
+                "post": "create_module_issues",
                 "get": "list",
-                "post": "create",
             }
         ),
         name="project-module-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/issues/<uuid:issue_id>/",
         ModuleIssueViewSet.as_view(
             {
                 "get": "retrieve",
@@ -100,5 +110,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-modules/<str:service>/",
         BulkImportModulesEndpoint.as_view(),
         name="bulk-modules-create",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",
+        ModuleUserPropertiesEndpoint.as_view(),
+        name="cycle-user-filters",
     ),
 ]

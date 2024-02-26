@@ -4,8 +4,8 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
-// mobx store provider
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // constants
 import { THEMES } from "constants/themes";
 // layouts
@@ -17,7 +17,7 @@ import { SWRConfig } from "swr";
 import { SWR_CONFIG } from "constants/swr-config";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
-const PosthogWrapper = dynamic(() => import("lib/wrappers/posthog-wrapper"), { ssr: false });
+const PostHogProvider = dynamic(() => import("lib/posthog-provider"), { ssr: false });
 const CrispWrapper = dynamic(() => import("lib/wrappers/crisp-wrapper"), { ssr: false });
 
 // nprogress
@@ -32,11 +32,15 @@ export interface IAppProvider {
 
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
   const {
-    user: { currentUser, currentWorkspaceRole, currentProjectRole },
-    appConfig: { envConfig },
-  } = useMobxStore();
+    currentUser,
+    membership: { currentProjectRole, currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const {
+    config: { envConfig },
+  } = useApplication();
 
   return (
     <ThemeProvider themes={THEMES} defaultTheme="system">
@@ -44,15 +48,16 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
         <InstanceLayout>
           <StoreWrapper>
             <CrispWrapper user={currentUser}>
-              <PosthogWrapper
+              <PostHogProvider
                 user={currentUser}
+                currentWorkspaceId={currentWorkspace?.id}
                 workspaceRole={currentWorkspaceRole}
                 projectRole={currentProjectRole}
                 posthogAPIKey={envConfig?.posthog_api_key || null}
                 posthogHost={envConfig?.posthog_host || null}
               >
                 <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-              </PosthogWrapper>
+              </PostHogProvider>
             </CrispWrapper>
           </StoreWrapper>
         </InstanceLayout>

@@ -1,16 +1,16 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
 import { usePopper } from "react-popper";
+import { Check, ChevronDown, Search, Tags } from "lucide-react";
+// hooks
+import { useApplication, useLabel } from "hooks/store";
+import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 // components
 import { Combobox } from "@headlessui/react";
 import { Tooltip } from "@plane/ui";
-import { Check, ChevronDown, Search, Tags } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
-import { RootStore } from "store/root";
-import { IIssueLabel } from "types";
+import { IIssueLabel } from "@plane/types";
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -26,6 +26,7 @@ export interface IIssuePropertyLabels {
   maxRender?: number;
   noLabelBorder?: boolean;
   placeholderText?: string;
+  onClose?: () => void;
 }
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
@@ -34,6 +35,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     value,
     defaultOptions = [],
     onChange,
+    onClose,
     disabled,
     hideDropdownArrow = false,
     className,
@@ -44,48 +46,32 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
     placeholderText,
   } = props;
-
-  const {
-    workspace: workspaceStore,
-    projectLabel: { fetchProjectLabels, labels },
-  }: RootStore = useMobxStore();
-  const workspaceSlug = workspaceStore?.workspaceSlug;
-
+  // states
   const [query, setQuery] = useState("");
-
+  // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { fetchProjectLabels, getProjectLabels } = useLabel();
 
-  const fetchLabels = () => {
-    setIsLoading(true);
-    if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+  const storeLabels = getProjectLabels(projectId);
+
+  const openDropDown = () => {
+    if (!storeLabels && workspaceSlug && projectId) {
+      setIsLoading(true);
+      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    }
   };
 
-  if (!value) return null;
+  const handleClose = () => {
+    onClose && onClose();
+  };
 
-  let projectLabels: IIssueLabel[] = defaultOptions;
-  const storeLabels = projectId && labels ? labels[projectId] : [];
-  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
-
-  const options = projectLabels.map((label) => ({
-    value: label.id,
-    query: label.name,
-    content: (
-      <div className="flex items-center justify-start gap-2 overflow-hidden">
-        <span
-          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: label.color,
-          }}
-        />
-        <div className="line-clamp-1 inline-block truncate">{label.name}</div>
-      </div>
-    ),
-  }));
-
-  const filteredOptions =
-    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+  const handleKeyDown = useDropdownKeyDown(openDropDown, handleClose, false);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -99,17 +85,41 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     ],
   });
 
+  if (!value) return null;
+
+  let projectLabels: IIssueLabel[] = defaultOptions;
+  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+
+  const options = projectLabels.map((label) => ({
+    value: label?.id,
+    query: label?.name,
+    content: (
+      <div className="flex items-center justify-start gap-2 overflow-hidden">
+        <span
+          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+          style={{
+            backgroundColor: label?.color,
+          }}
+        />
+        <div className="line-clamp-1 inline-block truncate">{label?.name}</div>
+      </div>
+    ),
+  }));
+
+  const filteredOptions =
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+
   const label = (
     <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-custom-text-200">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
             {projectLabels
-              ?.filter((l) => value.includes(l.id))
+              ?.filter((l) => value.includes(l?.id))
               .map((label) => (
-                <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name ?? ""}>
+                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
                   <div
-                    key={label.id}
+                    key={label?.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
                       !disabled && "cursor-pointer"
                     } h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs`}
@@ -121,20 +131,24 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                           backgroundColor: label?.color ?? "#000000",
                         }}
                       />
-                      <div className="line-clamp-1 inline-block w-auto max-w-[100px] truncate">{label.name}</div>
+                      <div className="line-clamp-1 inline-block w-auto max-w-[100px] truncate">{label?.name}</div>
                     </div>
                   </div>
                 </Tooltip>
               ))}
           </>
         ) : (
-          <div className="flex h-full flex-shrink-0 cursor-pointer items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
+          <div
+            className={`flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
+              disabled ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
+          >
             <Tooltip
               position="top"
               tooltipHeading="Labels"
               tooltipContent={projectLabels
-                ?.filter((l) => value.includes(l.id))
-                .map((l) => l.name)
+                ?.filter((l) => value.includes(l?.id))
+                .map((l) => l?.name)
                 .join(", ")}
             >
               <div className="flex h-full items-center gap-1.5 text-custom-text-200">
@@ -147,7 +161,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       ) : (
         <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
           <div
-            className={`h-full flex items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
               noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
             }`}
           >
@@ -166,23 +180,21 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       value={value}
       onChange={onChange}
       disabled={disabled}
+      onKeyDownCapture={handleKeyDown}
       multiple
     >
       <Combobox.Button as={Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex w-full items-center justify-between gap-1 text-xs ${
+          className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            !storeLabels && fetchLabels();
-          }}
+          onClick={openDropDown}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -203,7 +215,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
-              displayValue={(assigned: any) => assigned?.name}
+              displayValue={(assigned: any) => assigned?.name || ""}
             />
           </div>
           <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
@@ -214,12 +226,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 <Combobox.Option
                   key={option.value}
                   value={option.value}
-                  className={({ selected }) =>
+                  className={({ active, selected }) =>
                     `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                      selected ? "text-custom-text-100" : "text-custom-text-200"
-                    }`
+                      active ? "bg-custom-background-80" : ""
+                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {({ selected }) => (
                     <>

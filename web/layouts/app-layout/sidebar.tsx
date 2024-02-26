@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import {
@@ -8,22 +8,36 @@ import {
   WorkspaceSidebarQuickAction,
 } from "components/workspace";
 import { ProjectSidebarList } from "components/project";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
-  // store
-  const { theme: themStore } = useMobxStore();
+  // store hooks
+  const { theme: themStore } = useApplication();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useOutsideClickDetector(ref, () => {
+    if (themStore.mobileSidebarCollapsed === false) {
+      if (window.innerWidth < 768) {
+        themStore.toggleMobileSidebar();
+      }
+    }
+  });
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative ${
-        themStore?.sidebarCollapsed ? "" : "md:w-[280px]"
-      } ${themStore?.sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
+      className={`inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300
+        fixed md:relative
+        ${themStore.mobileSidebarCollapsed ? "-ml-[280px]" : ""}
+        sm:${themStore.mobileSidebarCollapsed ? "-ml-[280px]" : ""}
+        md:ml-0 ${themStore.sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+        lg:ml-0 ${themStore.sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+      `}
     >
-      <div className="flex h-full w-full flex-1 flex-col">
+      <div ref={ref} className="flex h-full w-full flex-1 flex-col">
         <WorkspaceSidebarDropdown />
         <WorkspaceSidebarQuickAction />
         <WorkspaceSidebarMenu />

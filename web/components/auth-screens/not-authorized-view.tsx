@@ -1,12 +1,12 @@
 import React from "react";
-// next
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-// hooks
-import useUser from "hooks/use-user";
 // images
 import ProjectNotAuthorizedImg from "public/auth/project-not-authorized.svg";
 import WorkspaceNotAuthorizedImg from "public/auth/workspace-not-authorized.svg";
@@ -16,9 +16,11 @@ type Props = {
   type: "project" | "workspace";
 };
 
-export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
-  const { user } = useUser();
-  const { asPath: currentPath } = useRouter();
+export const NotAuthorizedView: React.FC<Props> = observer((props) => {
+  const { actionButton, type } = props;
+  const { currentUser } = useUser();
+  const { query } = useRouter();
+  const { next_path } = query;
 
   return (
     <DefaultLayout>
@@ -34,10 +36,10 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
         <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
 
         <div className="w-full max-w-md text-base text-custom-text-200">
-          {user ? (
+          {currentUser ? (
             <p>
-              You have signed in as {user.email}. <br />
-              <Link href={`/?next=${currentPath}`}>
+              You have signed in as {currentUser.email}. <br />
+              <Link href={`/?next_path=${next_path}`}>
                 <span className="font-medium text-custom-text-100">Sign in</span>
               </Link>{" "}
               with different account that has access to this page.
@@ -45,7 +47,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
           ) : (
             <p>
               You need to{" "}
-              <Link href={`/?next=${currentPath}`}>
+              <Link href={`/?next_path=${next_path}`}>
                 <span className="font-medium text-custom-text-100">Sign in</span>
               </Link>{" "}
               with an account that has access to this page.
@@ -57,4 +59,4 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
       </div>
     </DefaultLayout>
   );
-};
+});

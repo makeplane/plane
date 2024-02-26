@@ -1,54 +1,56 @@
 import React from "react";
-
-// components
-import { ViewDueDateSelect } from "components/issues";
+import { observer } from "mobx-react-lite";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { useProjectState } from "hooks/store";
+// components
+import { DateDropdown } from "components/dropdowns";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { cn } from "helpers/common.helper";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
-  expandedIssues: string[];
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetDueDateColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled, onClose } = props;
+  // store hooks
+  const { getStateById } = useProjectState();
+  // derived values
+  const stateDetails = getStateById(issue.state_id);
 
   return (
-    <>
-      <ViewDueDateSelect
-        issue={issue}
-        onChange={(val) => {
-          onChange(issue, { target_date: val });
-          if (issue.parent) {
-            mutateSubIssues(issue, { target_date: val });
-          }
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <DateDropdown
+        value={issue.target_date}
+        minDate={issue.start_date ? new Date(issue.start_date) : undefined}
+        onChange={(data) => {
+          const targetDate = data ? renderFormattedPayloadDate(data) : null;
+          onChange(
+            issue,
+            { target_date: targetDate },
+            {
+              changed_property: "target_date",
+              change_details: targetDate,
+            }
+          );
         }}
-        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1 border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
-        noBorder
         disabled={disabled}
+        placeholder="Due date"
+        buttonVariant="transparent-with-text"
+        buttonContainerClassName="w-full"
+        buttonClassName={cn("rounded-none text-left", {
+          "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+        })}
+        clearIconClassName="!text-custom-text-100"
+        onClose={onClose}
       />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
-          <div className={`h-11`}>
-            <SpreadsheetDueDateColumn
-              key={subIssue.id}
-              issue={subIssue}
-              onChange={onChange}
-              expandedIssues={expandedIssues}
-              disabled={disabled}
-            />
-          </div>
-        ))}
-    </>
+    </div>
   );
-};
+});

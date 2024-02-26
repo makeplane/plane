@@ -1,31 +1,24 @@
-// next
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Plus, PlusIcon } from "lucide-react";
+// hooks
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 // components
 import { EmptyState } from "components/common";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 import emptyProject from "public/empty-state/project.svg";
-// icons
-import { Plus, PlusIcon } from "lucide-react";
 
 export const GlobalViewEmptyState: React.FC = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
+  // store hooks
   const {
-    commandPalette: commandPaletteStore,
-    project: projectStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+    commandPalette: { toggleCreateIssueModal, toggleCreateProjectModal },
+  } = useApplication();
+  const { setTrackElement } = useEventTracker();
+  const { workspaceProjectIds } = useProject();
 
   return (
     <div className="grid h-full w-full place-items-center">
-      {!projects || projects?.length === 0 ? (
+      {!workspaceProjectIds || workspaceProjectIds?.length === 0 ? (
         <EmptyState
           image={emptyProject}
           title="No projects yet"
@@ -34,8 +27,8 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
             icon: <Plus className="h-4 w-4" />,
             text: "New Project",
             onClick: () => {
-              setTrackElement("ALL_ISSUES_EMPTY_STATE");
-              commandPaletteStore.toggleCreateProjectModal(true);
+              setTrackElement("All issues empty state");
+              toggleCreateProjectModal(true);
             },
           }}
         />
@@ -48,8 +41,8 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
-              setTrackElement("ALL_ISSUES_EMPTY_STATE");
-              commandPaletteStore.toggleCreateIssueModal(true);
+              setTrackElement("All issues empty state");
+              toggleCreateIssueModal(true);
             },
           }}
         />

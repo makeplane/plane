@@ -1,5 +1,4 @@
 import StarterKit from "@tiptap/starter-kit";
-import TiptapLink from "@tiptap/extension-link";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
@@ -8,15 +7,16 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import TableHeader from "../extensions/table/table-header/table-header";
-import Table from "../extensions/table/table";
-import TableCell from "../extensions/table/table-cell/table-cell";
-import TableRow from "../extensions/table/table-row/table-row";
+import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
+import { Table } from "src/ui/extensions/table/table";
+import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
+import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 
-import ReadOnlyImageExtension from "../extensions/image/read-only-image";
-import { isValidHttpUrl } from "../../lib/utils";
-import { Mentions } from "../mentions";
-import { IMentionSuggestion } from "@plane/editor-types";
+import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
+import { isValidHttpUrl } from "src/lib/utils";
+import { Mentions } from "src/ui/mentions";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   mentionSuggestions: IMentionSuggestion[];
@@ -50,7 +50,9 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
       },
     },
     codeBlock: false,
-    horizontalRule: false,
+    horizontalRule: {
+      HTMLAttributes: { class: "mt-4 mb-4" },
+    },
     dropcursor: {
       color: "rgba(var(--color-text-100))",
       width: 2,
@@ -58,7 +60,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     gapcursor: false,
   }),
   Gapcursor,
-  TiptapLink.configure({
+  CustomLinkExtension.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
     HTMLAttributes: {

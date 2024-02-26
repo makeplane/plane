@@ -2,18 +2,18 @@ import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
+import { useEventTracker, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
-import { IWorkspace } from "types";
+import { IWorkspace } from "@plane/types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+import { WORKSPACE_CREATED } from "constants/event-tracker";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -43,19 +43,17 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
       default: "Create Workspace",
     },
   } = props;
-
+  // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-
+  // router
   const router = useRouter();
-
-  const {
-    workspace: workspaceStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
+  // store hooks
+  const { captureWorkspaceEvent } = useEventTracker();
+  const { createWorkspace } = useWorkspace();
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
     control,
@@ -71,12 +69,15 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
 
-          await workspaceStore
-            .createWorkspace(formData)
+          await createWorkspace(formData)
             .then(async (res) => {
-              postHogEventTracker("WORKSPACE_CREATED", {
-                ...res,
-                state: "SUCCESS",
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  ...res,
+                  state: "SUCCESS",
+                  element: "Create workspace page",
+                },
               });
               setToastAlert({
                 type: "success",
@@ -87,13 +88,17 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() => {
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  state: "FAILED",
+                  element: "Create workspace page",
+                },
+              });
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
-              });
-              postHogEventTracker("WORKSPACE_CREATED", {
-                state: "FAILED",
               });
             });
         } else setSlugError(true);
@@ -103,9 +108,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           type: "error",
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
-        });
-        postHogEventTracker("WORKSPACE_CREATED", {
-          state: "FAILED",
         });
       });
   };
@@ -203,7 +205,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                   input
-                  width="w-full"
+                  optionsClassName="w-full"
                 >
                   {ORGANIZATION_SIZE.map((item) => (
                     <CustomSelect.Option key={item} value={item}>

@@ -1,13 +1,11 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject } from "hooks/store";
 // components
 import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "components/analytics";
 // types
-import { IAnalyticsParams } from "types";
+import { IAnalyticsParams } from "@plane/types";
 
 type Props = {
   control: Control<IAnalyticsParams, any>;
@@ -20,18 +18,12 @@ type Props = {
 export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
   const { control, setValue, params, fullScreen, isProjectLevel } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const { project: projectStore } = useMobxStore();
-
-  const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+  const { workspaceProjectIds: workspaceProjectIds } = useProject();
 
   return (
     <div
-      className={`grid items-center gap-4 px-5 py-2.5 ${isProjectLevel ? "grid-cols-3" : "grid-cols-2"} ${
-        fullScreen ? "md:py-5 lg:grid-cols-4" : ""
-      }`}
+      className={`grid items-center gap-4 px-5 py-2.5 ${isProjectLevel ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2"} ${fullScreen ? "md:py-5 lg:grid-cols-4" : ""
+        }`}
     >
       {!isProjectLevel && (
         <div>
@@ -40,7 +32,11 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
             name="project"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <SelectProject value={value ?? undefined} onChange={onChange} projects={projectsList ?? undefined} />
+              <SelectProject
+                value={value ?? undefined}
+                onChange={onChange}
+                projectIds={workspaceProjectIds ?? undefined}
+              />
             )}
           />
         </div>

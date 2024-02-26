@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
-// icons
 import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import Link from "next/link";
 // hooks
+import { useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteProjectModal, JoinProjectModal } from "components/project";
@@ -15,7 +14,9 @@ import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import type { IProject } from "types";
+import type { IProject } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -26,21 +27,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast
+  // toast alert
   const { setToastAlert } = useToast();
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
+  // store hooks
+  const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
 
-  const { project: projectStore }: RootStore = useMobxStore();
-
-  const isOwner = project.member_role === 20;
-  const isMember = project.member_role === 15;
+  project.member_role;
+  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
+  const isMember = project.member_role === EUserProjectRoles.MEMBER;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
-    projectStore.addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -52,7 +54,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    projectStore.removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -73,7 +75,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     });
   };
 
-  const projectMembersIds = project.members.map((member) => member.member_id);
+  const projectMembersIds = project.members?.map((member) => member.member_id);
 
   return (
     <>
@@ -120,8 +122,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   {project.emoji
                     ? renderEmoji(project.emoji)
                     : project.icon_prop
-                      ? renderEmoji(project.icon_prop)
-                      : null}
+                    ? renderEmoji(project.icon_prop)
+                    : null}
                 </span>
               </div>
 
@@ -177,7 +179,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               }
               position="top"
             >
-              {projectMembersIds.length > 0 ? (
+              {projectMembersIds && projectMembersIds.length > 0 ? (
                 <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
                   <AvatarGroup showTooltip={false}>
                     {projectMembersIds.map((memberId) => {
@@ -194,17 +196,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               )}
             </Tooltip>
             {(isOwner || isMember) && (
-              <button
+              <Link
                 className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
                 onClick={(e) => {
-                  e.preventDefault();
                   e.stopPropagation();
-
-                  router.push(`/${workspaceSlug}/projects/${project.id}/settings`);
                 }}
+                href={`/${workspaceSlug}/projects/${project.id}/settings`}
               >
                 <Pencil className="h-3.5 w-3.5" />
-              </button>
+              </Link>
             )}
 
             {!project.is_member ? (

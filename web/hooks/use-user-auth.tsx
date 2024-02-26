@@ -1,43 +1,42 @@
 import { useEffect, useState } from "react";
-// next imports
 import { useRouter } from "next/router";
-// swr
-import useSWR from "swr";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
+// types
+import { IUser } from "@plane/types";
 
 const workspaceService = new WorkspaceService();
-
-const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
-  const router = useRouter();
-  const { next_url } = router.query;
-
+type Props = {
+  routeAuth?: "sign-in" | "onboarding" | "admin" | null;
+  user: IUser | null;
+  isLoading: boolean;
+};
+const useUserAuth = (props: Props) => {
+  const { routeAuth, user, isLoading } = props;
+  // states
   const [isRouteAccess, setIsRouteAccess] = useState(true);
-  const {
-    user: { fetchCurrentUser },
-  } = useMobxStore();
+  // router
+  const router = useRouter();
+  const { next_path } = router.query;
 
-  const {
-    data: user,
-    isLoading,
-    error,
-    mutate,
-  } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
-    refreshInterval: 0,
-    shouldRetryOnError: false,
-  });
+  const isValidURL = (url: string): boolean => {
+    const disallowedSchemes = /^(https?|ftp):\/\//i;
+    return !disallowedSchemes.test(url);
+  };
 
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
       workspaceService.userWorkspaces().then(async (userWorkspaces) => {
+        if (!user) return;
+
+        const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
         const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
+
         if (lastActiveWorkspace) {
           router.push(`/${lastActiveWorkspace.slug}`);
           return;
-        } else if (userWorkspaces.length > 0) {
-          router.push(`/${userWorkspaces[0].slug}`);
+        } else if (firstWorkspace) {
+          router.push(`/${firstWorkspace.slug}`);
           return;
         } else {
           router.push(`/profile`);
@@ -84,8 +83,15 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
       if (!isLoading) {
         setIsRouteAccess(() => true);
         if (user) {
-          if (next_url) router.push(next_url.toString());
-          else handleUserRouteAuthentication();
+          if (next_path) {
+            if (isValidURL(next_path.toString())) {
+              router.push(next_path.toString());
+              return;
+            } else {
+              router.push("/");
+              return;
+            }
+          } else handleUserRouteAuthentication();
         } else {
           if (routeAuth === "sign-in") {
             setIsRouteAccess(() => false);
@@ -97,12 +103,10 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
         }
       }
     }
-  }, [user, isLoading, routeAuth, router, next_url]);
+  }, [user, isLoading, routeAuth, router, next_path]);
 
   return {
     isLoading: isRouteAccess,
-    user: error ? undefined : user,
-    mutateUser: mutate,
     // assignedIssuesLength: user?.assigned_issues ?? 0,
     // workspaceInvitesLength: user?.workspace_invites ?? 0,
   };

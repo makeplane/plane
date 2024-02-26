@@ -1,17 +1,16 @@
 import { FC } from "react";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useCycle } from "hooks/store";
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui components
-import { Loader } from "@plane/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // types
-import { TCycleLayout } from "types";
+import { TCycleLayout, TCycleView } from "@plane/types";
 
 export interface ICyclesView {
-  filter: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete";
+  filter: TCycleView;
   layout: TCycleLayout;
   workspaceSlug: string;
   projectId: string;
@@ -20,74 +19,50 @@ export interface ICyclesView {
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { filter, layout, workspaceSlug, projectId, peekCycle } = props;
-
-  // store
-  const { cycle: cycleStore } = useMobxStore();
-
-  // api call to fetch cycles list
-  useSWR(
-    workspaceSlug && projectId && filter ? `CYCLES_LIST_${projectId}_${filter}` : null,
-    workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
-  );
+  // store hooks
+  const {
+    currentProjectCompletedCycleIds,
+    currentProjectDraftCycleIds,
+    currentProjectUpcomingCycleIds,
+    currentProjectCycleIds,
+    loader,
+  } = useCycle();
 
   const cyclesList =
     filter === "completed"
-      ? cycleStore.projectCompletedCycles
+      ? currentProjectCompletedCycleIds
       : filter === "draft"
-        ? cycleStore.projectDraftCycles
-        : filter === "upcoming"
-          ? cycleStore.projectUpcomingCycles
-          : cycleStore.projectCycles;
+      ? currentProjectDraftCycleIds
+      : filter === "upcoming"
+      ? currentProjectUpcomingCycleIds
+      : currentProjectCycleIds;
+
+  if (loader || !cyclesList)
+    return (
+      <>
+        {layout === "list" && <CycleModuleListLayout />}
+        {layout === "board" && <CycleModuleBoardLayout />}
+        {layout === "gantt" && <GanttLayoutLoader />}
+      </>
+    );
 
   return (
     <>
       {layout === "list" && (
-        <>
-          {cyclesList ? (
-            <CyclesList cycles={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
-          ) : (
-            <Loader className="space-y-4 p-8">
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-            </Loader>
-          )}
-        </>
+        <CyclesList cycleIds={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
       )}
 
       {layout === "board" && (
-        <>
-          {cyclesList ? (
-            <CyclesBoard
-              cycles={cyclesList}
-              filter={filter}
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              peekCycle={peekCycle}
-            />
-          ) : (
-            <Loader className="grid grid-cols-1 gap-9 p-8 md:grid-cols-2 lg:grid-cols-3">
-              <Loader.Item height="200px" />
-              <Loader.Item height="200px" />
-              <Loader.Item height="200px" />
-            </Loader>
-          )}
-        </>
+        <CyclesBoard
+          cycleIds={cyclesList}
+          filter={filter}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          peekCycle={peekCycle}
+        />
       )}
 
-      {layout === "gantt" && (
-        <>
-          {cyclesList ? (
-            <CyclesListGanttChartView cycles={cyclesList} workspaceSlug={workspaceSlug} />
-          ) : (
-            <Loader className="space-y-4">
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-            </Loader>
-          )}
-        </>
-      )}
+      {layout === "gantt" && <CyclesListGanttChartView cycleIds={cyclesList} workspaceSlug={workspaceSlug} />}
     </>
   );
 });

@@ -1,29 +1,30 @@
 import React, { useState } from "react";
-
+import { observer } from "mobx-react";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
+// hooks
+import { useProject } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-// types
-import { IProject } from "types";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  projects: IProject[] | undefined;
   searchQuery: string;
 };
 
-export const FilterProjects: React.FC<Props> = (props) => {
-  const { appliedFilters, handleUpdate, projects, searchQuery } = props;
-
+export const FilterProjects: React.FC<Props> = observer((props) => {
+  const { appliedFilters, handleUpdate, searchQuery } = props;
+  // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
-
+  // store
+  const { getProjectById, workspaceProjectIds } = useProject();
+  // derived values
+  const projects = workspaceProjectIds?.map((projectId) => getProjectById(projectId)!) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-
   const filteredOptions = projects?.filter((project) => project.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const handleViewToggle = () => {
@@ -92,4 +93,4 @@ export const FilterProjects: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

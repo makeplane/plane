@@ -1,8 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // constants
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
 
@@ -12,8 +12,8 @@ export const WorkspaceSettingsSidebar = () => {
   const { workspaceSlug } = router.query;
   // mobx store
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
 
@@ -25,11 +25,11 @@ export const WorkspaceSettingsSidebar = () => {
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>
               workspaceMemberInfo >= link.access && (
-                <Link key={link.href} href={`/${workspaceSlug}/${link.href}`}>
+                <Link key={link.key} href={`/${workspaceSlug}${link.href}`}>
                   <span>
                     <div
                       className={`rounded-md px-4 py-2 text-sm font-medium ${
-                        router.pathname.split("/")?.[3] === link.href.split("/")?.[2]
+                        link.highlight(router.asPath, `/${workspaceSlug}`)
                           ? "bg-custom-primary-100/10 text-custom-primary-100"
                           : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                       }`}

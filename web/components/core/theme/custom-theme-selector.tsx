@@ -1,12 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { useTheme } from "next-themes";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // ui
 import { Button, InputColorPicker } from "@plane/ui";
 // types
-import { IUserTheme } from "types";
+import { IUserTheme } from "@plane/types";
 
 const inputRules = {
   required: "Background color is required",
@@ -25,8 +25,8 @@ const inputRules = {
 };
 
 export const CustomThemeSelector: React.FC = observer(() => {
-  const { user: userStore } = useMobxStore();
-  const userTheme = userStore?.currentUser?.theme;
+  const { currentUser, updateCurrentUser } = useUser();
+  const userTheme = currentUser?.theme;
   // hooks
   const { setTheme } = useTheme();
 
@@ -61,12 +61,11 @@ export const CustomThemeSelector: React.FC = observer(() => {
 
     setTheme("custom");
 
-    return userStore.updateCurrentUser({ theme: payload });
+    return updateCurrentUser({ theme: payload });
   };
 
   const handleValueChange = (val: string | undefined, onChange: any) => {
     let hex = val;
-
     // prepend a hashtag if it doesn't exist
     if (val && val[0] !== "#") hex = `#${val}`;
 
@@ -94,7 +93,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                       placeholder="#0d101b"
                       className="w-full"
                       style={{
-                        backgroundColor: value,
+                        backgroundColor: watch("background"),
                         color: watch("text"),
                       }}
                       hasError={Boolean(errors?.background)}
@@ -120,8 +119,8 @@ export const CustomThemeSelector: React.FC = observer(() => {
                       placeholder="#c5c5c5"
                       className="w-full"
                       style={{
-                        backgroundColor: watch("background"),
-                        color: value,
+                        backgroundColor: watch("text"),
+                        color: watch("background"),
                       }}
                       hasError={Boolean(errors?.text)}
                     />
@@ -146,7 +145,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                       placeholder="#3f76ff"
                       className="w-full"
                       style={{
-                        backgroundColor: value,
+                        backgroundColor: watch("primary"),
                         color: watch("text"),
                       }}
                       hasError={Boolean(errors?.primary)}
@@ -172,7 +171,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                       placeholder="#0d101b"
                       className="w-full"
                       style={{
-                        backgroundColor: value,
+                        backgroundColor: watch("sidebarBackground"),
                         color: watch("sidebarText"),
                       }}
                       hasError={Boolean(errors?.sidebarBackground)}
@@ -200,8 +199,8 @@ export const CustomThemeSelector: React.FC = observer(() => {
                       placeholder="#c5c5c5"
                       className="w-full"
                       style={{
-                        backgroundColor: watch("sidebarBackground"),
-                        color: value,
+                        backgroundColor: watch("sidebarText"),
+                        color: watch("sidebarBackground"),
                       }}
                       hasError={Boolean(errors?.sidebarText)}
                     />

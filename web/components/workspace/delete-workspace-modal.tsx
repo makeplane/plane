@@ -4,14 +4,15 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useEventTracker, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IWorkspace } from "types";
+import type { IWorkspace } from "@plane/types";
+// constants
+import { WORKSPACE_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -26,16 +27,14 @@ const defaultValues = {
 
 export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   const { isOpen, data, onClose } = props;
-
+  // router
   const router = useRouter();
-
-  const {
-    workspace: workspaceStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
+  // store hooks
+  const { captureWorkspaceEvent } = useEventTracker();
+  const { deleteWorkspace } = useWorkspace();
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     control,
     formState: { errors, isSubmitting },
@@ -58,14 +57,17 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   const onSubmit = async () => {
     if (!data || !canDelete) return;
 
-    await workspaceStore
-      .deleteWorkspace(data.slug)
+    await deleteWorkspace(data.slug)
       .then((res) => {
         handleClose();
         router.push("/");
-        postHogEventTracker("WORKSPACE_DELETED", {
-          res,
-          state: "SUCCESS",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "SUCCESS",
+            element: "Workspace general settings page",
+          },
         });
         setToastAlert({
           type: "success",
@@ -79,8 +81,13 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         });
-        postHogEventTracker("WORKSPACE_DELETED", {
-          state: "FAILED",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "FAILED",
+            element: "Workspace general settings page",
+          },
         });
       });
   };

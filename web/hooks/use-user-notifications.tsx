@@ -10,7 +10,7 @@ import useToast from "./use-toast";
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 // type
-import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "types";
+import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 
 const PER_PAGE = 30;
 
@@ -264,6 +264,13 @@ const useUserNotification = () => {
 
     await userNotificationServices
       .markAllNotificationsAsRead(workspaceSlug.toString(), markAsReadParams)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "All Notifications marked as read.",
+        });
+      })
       .catch(() => {
         setToastAlert({
           type: "error",

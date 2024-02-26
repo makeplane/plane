@@ -1,83 +1,69 @@
-import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
-import { Loader } from "@plane/ui";
-// images
-import emptyProject from "public/empty-state/empty_project.webp";
-// icons
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { ProjectsLoader } from "components/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
-export interface IProjectCardList {
-  workspaceSlug: string;
-}
-
-export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
-  const { workspaceSlug } = props;
-  // store
+export const ProjectCardList = observer(() => {
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
-    project: projectStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+    currentUser,
+  } = useUser();
+  const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("onboarding", "projects", isLightMode);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  if (!projects) {
-    return (
-      <Loader className="grid grid-cols-3 gap-4">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-      </Loader>
-    );
-  }
+  if (!workspaceProjectIds) return <ProjectsLoader />;
 
   return (
     <>
-      {projects.length > 0 ? (
-        <div className="h-full w-full overflow-y-auto p-8">
-          {projectStore.searchedProjects.length == 0 ? (
+      {workspaceProjectIds.length > 0 ? (
+        <div className="h-full w-full overflow-y-auto p-8 vertical-scrollbar scrollbar-lg">
+          {searchedProjects.length == 0 ? (
             <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
           ) : (
             <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-              {projectStore.searchedProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+              {searchedProjects.map((projectId) => {
+                const projectDetails = getProjectById(projectId);
+
+                if (!projectDetails) return;
+
+                return <ProjectCard key={projectDetails.id} project={projectDetails} />;
+              })}
             </div>
           )}
         </div>
       ) : (
-        <NewEmptyState
-          image={emptyProject}
-          title="Start a Project"
-          description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
-          comicBox={{
-            title: "Everything starts with a project in Plane",
-            direction: "right",
-            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+        <EmptyState
+          image={emptyStateImage}
+          title={WORKSPACE_EMPTY_STATE_DETAILS["projects"].title}
+          description={WORKSPACE_EMPTY_STATE_DETAILS["projects"].description}
+          primaryButton={{
+            text: WORKSPACE_EMPTY_STATE_DETAILS["projects"].primaryButton.text,
+            onClick: () => {
+              setTrackElement("Project empty state");
+              commandPaletteStore.toggleCreateProjectModal(true);
+            },
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  text: "Start your first project",
-                  onClick: () => {
-                    setTrackElement("PROJECTS_EMPTY_STATE");
-                    commandPaletteStore.toggleCreateProjectModal(true);
-                  },
-                }
-              : null
-          }
+          comicBox={{
+            title: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.title,
+            description: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.description,
+          }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}

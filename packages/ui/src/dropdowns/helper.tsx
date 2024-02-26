@@ -3,6 +3,7 @@ import { Placement } from "@blueprintjs/popover2";
 
 export interface IDropdownProps {
   customButtonClassName?: string;
+  customButtonTabIndex?: number;
   buttonClassName?: string;
   className?: string;
   customButton?: JSX.Element;
@@ -13,8 +14,8 @@ export interface IDropdownProps {
   noChevron?: boolean;
   onOpen?: () => void;
   optionsClassName?: string;
-  width?: "auto" | string;
   placement?: Placement;
+  tabIndex?: number;
 }
 
 export interface ICustomMenuDropdownProps extends IDropdownProps {
@@ -23,6 +24,9 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   noBorder?: boolean;
   verticalEllipsis?: boolean;
   menuButtonOnClick?: (...args: any) => void;
+  onMenuClose?: () => void;
+  closeOnSelect?: boolean;
+  portalElement?: Element | null;
 }
 
 export interface ICustomSelectProps extends IDropdownProps {
@@ -34,6 +38,7 @@ export interface ICustomSelectProps extends IDropdownProps {
 interface CustomSearchSelectProps {
   footerOption?: JSX.Element;
   onChange: any;
+  onClose?: () => void;
   options:
     | {
         value: any;

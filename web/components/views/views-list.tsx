@@ -1,54 +1,50 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Search } from "lucide-react";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useProjectView, useUser } from "hooks/store";
 // components
 import { ProjectViewListItem } from "components/views";
-import { NewEmptyState } from "components/common/new-empty-state";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Input, Loader } from "@plane/ui";
-// assets
-import emptyView from "public/empty-state/empty_view.webp";
-// icons
-import { Plus, Search } from "lucide-react";
+import { Input } from "@plane/ui";
+import { ViewListLoader } from "components/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
+import { VIEW_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const ProjectViewsList = observer(() => {
+  // states
   const [query, setQuery] = useState("");
-
-  const router = useRouter();
-  const { projectId } = router.query;
-
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
   const {
-    projectViews: projectViewsStore,
-    commandPalette: commandPaletteStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
+    commandPalette: { toggleCreateViewModal },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+    currentUser,
+  } = useUser();
+  const { projectViewIds, getViewById, loader } = useProjectView();
 
-  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
+  if (loader || !projectViewIds) return <ViewListLoader />;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
-  if (!viewsList)
-    return (
-      <Loader className="space-y-4 p-4">
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-        <Loader.Item height="72px" />
-      </Loader>
-    );
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "views", isLightMode);
 
-  const filteredViewsList = viewsList.filter((v) => v.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
       {viewsList.length > 0 ? (
         <div className="flex h-full w-full flex-col">
-          <div className="flex w-full flex-col overflow-hidden">
+          <div className="flex w-full flex-col flex-shrink-0 overflow-hidden">
             <div className="flex w-full items-center gap-2.5 border-b border-custom-border-200 px-5 py-3">
               <Search className="text-custom-text-200" size={14} strokeWidth={2} />
               <Input
@@ -60,31 +56,28 @@ export const ProjectViewsList = observer(() => {
               />
             </div>
           </div>
-          {filteredViewsList.length > 0 ? (
-            filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
-          ) : (
-            <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
-          )}
+          <div className="flex flex-col h-full w-full vertical-scrollbar scrollbar-lg">
+            {filteredViewsList.length > 0 ? (
+              filteredViewsList.map((view) => <ProjectViewListItem key={view.id} view={view} />)
+            ) : (
+              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+            )}
+          </div>
         </div>
       ) : (
-        <NewEmptyState
-          title="Save filtered views for your project. Create as many as you need."
-          description="Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best."
-          image={emptyView}
+        <EmptyState
+          title={VIEW_EMPTY_STATE_DETAILS["project-views"].title}
+          description={VIEW_EMPTY_STATE_DETAILS["project-views"].description}
+          image={EmptyStateImagePath}
           comicBox={{
-            title: "Views work atop Issue properties.",
-            description: "You can create a view from here with as many properties as filters as you see fit.",
-            direction: "right",
+            title: VIEW_EMPTY_STATE_DETAILS["project-views"].comicBox.title,
+            description: VIEW_EMPTY_STATE_DETAILS["project-views"].comicBox.description,
           }}
-          primaryButton={
-            isEditingAllowed
-              ? {
-                  icon: <Plus size={14} strokeWidth={2} />,
-                  text: "Build your first view",
-                  onClick: () => commandPaletteStore.toggleCreateViewModal(true),
-                }
-              : null
-          }
+          primaryButton={{
+            text: VIEW_EMPTY_STATE_DETAILS["project-views"].primaryButton.text,
+            onClick: () => toggleCreateViewModal(true),
+          }}
+          size="lg"
           disabled={!isEditingAllowed}
         />
       )}

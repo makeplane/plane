@@ -1,9 +1,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+// hooks
+import { useProject, useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -12,12 +11,13 @@ import { ClipboardList } from "lucide-react";
 import JoinProjectImg from "public/auth/project-not-authorized.svg";
 
 export const JoinProject: React.FC = () => {
+  // states
   const [isJoiningProject, setIsJoiningProject] = useState(false);
-
+  // store hooks
   const {
-    project: projectStore,
-    user: { joinProject },
-  }: RootStore = useMobxStore();
+    membership: { joinProject },
+  } = useUser();
+  const { fetchProjects } = useProject();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -28,12 +28,8 @@ export const JoinProject: React.FC = () => {
     setIsJoiningProject(true);
 
     joinProject(workspaceSlug.toString(), [projectId.toString()])
-      .then(() => {
-        projectStore.fetchProjects(workspaceSlug.toString());
-      })
-      .finally(() => {
-        setIsJoiningProject(false);
-      });
+      .then(() => fetchProjects(workspaceSlug.toString()))
+      .finally(() => setIsJoiningProject(false));
   };
 
   return (

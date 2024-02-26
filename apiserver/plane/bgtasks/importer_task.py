@@ -24,8 +24,8 @@ from plane.db.models import (
     Label,
     User,
     IssueProperty,
+    UserNotificationPreference,
 )
-from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
 @shared_task
@@ -51,8 +51,13 @@ def service_importer(service, importer_id):
                     for user in users
                     if user.get("import", False) == "invite"
                 ],
-                batch_size=10,
+                batch_size=100,
                 ignore_conflicts=True,
+            )
+
+            _ = UserNotificationPreference.objects.bulk_create(
+                [UserNotificationPreference(user=user) for user in new_users],
+                batch_size=100,
             )
 
             _ = [
@@ -130,12 +135,17 @@ def service_importer(service, importer_id):
             repository_id = importer.metadata.get("repository_id", False)
 
             workspace_integration = WorkspaceIntegration.objects.get(
-                workspace_id=importer.workspace_id, integration__provider="github"
+                workspace_id=importer.workspace_id,
+                integration__provider="github",
             )
 
             # Delete the old repository object
-            GithubRepositorySync.objects.filter(project_id=importer.project_id).delete()
-            GithubRepository.objects.filter(project_id=importer.project_id).delete()
+            GithubRepositorySync.objects.filter(
+                project_id=importer.project_id
+            ).delete()
+            GithubRepository.objects.filter(
+                project_id=importer.project_id
+            ).delete()
 
             # Create a Label for github
             label = Label.objects.filter(

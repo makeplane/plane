@@ -3,16 +3,15 @@ import { observer } from "mobx-react-lite";
 // components
 import { PagesListView } from "components/pages/pages-list";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const SharedPagesList: FC = observer(() => {
-  const {
-    page: { sharedProjectPages },
-  } = useMobxStore();
+  const projectPageStore = useProjectPages();
+  const { publicProjectPageIds } = projectPageStore;
 
-  if (!sharedProjectPages)
+  if (!publicProjectPageIds)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -21,5 +20,5 @@ export const SharedPagesList: FC = observer(() => {
       </Loader>
     );
 
-  return <PagesListView pages={sharedProjectPages} />;
+  return <PagesListView pageIds={publicProjectPageIds} />;
 });

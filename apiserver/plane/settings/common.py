@@ -1,4 +1,5 @@
 """Global Settings"""
+
 # Python imports
 import os
 import ssl
@@ -71,13 +72,19 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ),
 }
 
 # Django Auth Backend
-AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)  # default
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+)  # default
 
 # Root Urls
 ROOT_URLCONF = "plane.urls"
@@ -229,9 +236,9 @@ AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
-AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get(
-    "MINIO_ENDPOINT_URL", None
-)
+AWS_S3_ENDPOINT_URL = os.environ.get(
+    "AWS_S3_ENDPOINT_URL", None
+) or os.environ.get("MINIO_ENDPOINT_URL", None)
 if AWS_S3_ENDPOINT_URL:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
@@ -274,24 +281,23 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 
 if REDIS_SSL:
     redis_url = os.environ.get("REDIS_URL")
-    broker_url = (
-        f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
-    )
+    broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
     CELERY_BROKER_URL = broker_url
-    CELERY_RESULT_BACKEND = broker_url
 else:
     CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
 
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
+    "plane.bgtasks.email_notification_task",
 )
 
 # Sentry Settings
 # Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get("SENTRY_DSN").startswith("https://"):
+if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
+    "SENTRY_DSN"
+).startswith("https://"):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN", ""),
         integrations=[
@@ -302,13 +308,15 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get("SENTRY_DSN").st
         traces_sample_rate=1,
         send_default_pii=True,
         environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
-        profiles_sample_rate=1.0,
+        profiles_sample_rate=float(
+            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0.5)
+        ),
     )
 
 
 # Application Envs
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
-SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
+
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Unsplash Access key
@@ -329,8 +337,11 @@ POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 
 # instance key
 INSTANCE_KEY = os.environ.get(
-    "INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3"
+    "INSTANCE_KEY",
+    "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3",
 )
 
 # Skip environment variable configuration
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))

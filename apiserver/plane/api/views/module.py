@@ -55,7 +55,9 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related("module", "created_by"),
+                    queryset=ModuleLink.objects.select_related(
+                        "module", "created_by"
+                    ),
                 )
             )
             .annotate(
@@ -121,21 +123,74 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
     def post(self, request, slug, project_id):
-        project = Project.objects.get(workspace__slug=slug, pk=project_id)
-        serializer = ModuleSerializer(data=request.data, context={"project": project})
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        serializer = ModuleSerializer(
+            data=request.data,
+            context={
+                "project_id": project_id,
+                "workspace_id": project.workspace_id,
+            },
+        )
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and Module.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                module = Module.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).first()
+                return Response(
+                    {
+                        "error": "Module with the same external id and external source already exists",
+                        "id": str(module.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             module = Module.objects.get(pk=serializer.data["id"])
             serializer = ModuleSerializer(module)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def patch(self, request, slug, project_id, pk):
-        module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
-        serializer = ModuleSerializer(module, data=request.data)
+        module = Module.objects.get(
+            pk=pk, project_id=project_id, workspace__slug=slug
+        )
+        serializer = ModuleSerializer(
+            module,
+            data=request.data,
+            context={"project_id": project_id},
+            partial=True,
+        )
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and (module.external_id != request.data.get("external_id"))
+                and Module.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source", module.external_source),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Module with the same external id and external source already exists",
+                        "id": str(module.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug, project_id, pk=None):
@@ -162,9 +217,13 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
     def delete(self, request, slug, project_id, pk):
-        module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        module = Module.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
         module_issues = list(
-            ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
+            ModuleIssue.objects.filter(module_id=pk).values_list(
+                "issue", flat=True
+            )
         )
         issue_activity.delay(
             type="module.activity.deleted",
@@ -204,7 +263,9 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
     def get_queryset(self):
         return (
             ModuleIssue.objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("issue")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -228,7 +289,9 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         issues = (
             Issue.issue_objects.filter(issue_module__module_id=module_id)
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -250,7 +313,9 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -271,7 +336,8 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         issues = request.data.get("issues", [])
         if not len(issues):
             return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Issues are required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=module_id
@@ -354,7 +420,10 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def delete(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.get(
-            workspace__slug=slug, project_id=project_id, module_id=module_id, issue_id=issue_id
+            workspace__slug=slug,
+            project_id=project_id,
+            module_id=module_id,
+            issue_id=issue_id,
         )
         module_issue.delete()
         issue_activity.delay(

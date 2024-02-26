@@ -2,10 +2,9 @@
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer
 from .project import ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
 
 from plane.db.models import (
     User,
@@ -14,18 +13,22 @@ from plane.db.models import (
     ModuleIssue,
     ModuleLink,
     ModuleFavorite,
+    ModuleUserProperties,
 )
 
 
 class ModuleWriteSerializer(BaseSerializer):
-    members = serializers.ListField(
+    lead_id = serializers.PrimaryKeyRelatedField(
+        source="lead",
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    member_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
     )
-
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 
     class Meta:
         model = Module
@@ -38,24 +41,30 @@ class ModuleWriteSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-    
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['members'] = [str(member.id) for member in instance.members.all()]
+        data["member_ids"] = [
+            str(member.id) for member in instance.members.all()
+        ]
         return data
 
     def validate(self, data):
-        if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
-            raise serializers.ValidationError("Start date cannot exceed target date")
-        return data    
+        if (
+            data.get("start_date", None) is not None
+            and data.get("target_date", None) is not None
+            and data.get("start_date", None) > data.get("target_date", None)
+        ):
+            raise serializers.ValidationError(
+                "Start date cannot exceed target date"
+            )
+        return data
 
     def create(self, validated_data):
-        members = validated_data.pop("members", None)
-
+        members = validated_data.pop("member_ids", None)
         project = self.context["project"]
 
         module = Module.objects.create(**validated_data, project=project)
-
         if members is not None:
             ModuleMember.objects.bulk_create(
                 [
@@ -76,7 +85,7 @@ class ModuleWriteSerializer(BaseSerializer):
         return module
 
     def update(self, instance, validated_data):
-        members = validated_data.pop("members", None)
+        members = validated_data.pop("member_ids", None)
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -133,7 +142,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
 
     class Meta:
         model = ModuleLink
@@ -151,7 +159,8 @@ class ModuleLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
+            url=validated_data.get("url"),
+            module_id=validated_data.get("module_id"),
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
@@ -159,11 +168,10 @@ class ModuleLinkSerializer(BaseSerializer):
         return ModuleLink.objects.create(**validated_data)
 
 
-class ModuleSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    lead_detail = UserLiteSerializer(read_only=True, source="lead")
-    members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
-    link_module = ModuleLinkSerializer(read_only=True, many=True)
+class ModuleSerializer(DynamicBaseSerializer):
+    member_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, allow_null=True
+    )
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
@@ -174,15 +182,46 @@ class ModuleSerializer(BaseSerializer):
 
     class Meta:
         model = Module
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
+        fields = [
+            # Required fields
+            "id",
+            "workspace_id",
+            "project_id",
+            # Model fields
+            "name",
+            "description",
+            "description_text",
+            "description_html",
+            "start_date",
+            "target_date",
+            "status",
+            "lead_id",
+            "member_ids",
+            "view_props",
+            "sort_order",
+            "external_source",
+            "external_id",
+            # computed fields
+            "is_favorite",
+            "total_issues",
+            "cancelled_issues",
+            "completed_issues",
+            "started_issues",
+            "unstarted_issues",
+            "backlog_issues",
             "created_at",
             "updated_at",
         ]
+        read_only_fields = fields
+
+
+
+class ModuleDetailSerializer(ModuleSerializer):
+
+    link_module = ModuleLinkSerializer(read_only=True, many=True)
+
+    class Meta(ModuleSerializer.Meta):
+        fields = ModuleSerializer.Meta.fields + ['link_module']
 
 
 class ModuleFavoriteSerializer(BaseSerializer):
@@ -196,3 +235,10 @@ class ModuleFavoriteSerializer(BaseSerializer):
             "project",
             "user",
         ]
+
+
+class ModuleUserPropertiesSerializer(BaseSerializer):
+    class Meta:
+        model = ModuleUserProperties
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "module", "user"]

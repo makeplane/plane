@@ -1,92 +1,69 @@
 import { FC } from "react";
-
 import { useRouter } from "next/router";
-
-import { KeyedMutator } from "swr";
-
-// services
-import { CycleService } from "services/cycle.service";
+import { observer } from "mobx-react-lite";
 // hooks
-import useUser from "hooks/use-user";
-import useProjectDetails from "hooks/use-project-details";
+import { useCycle, useUser } from "hooks/store";
 // components
 import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
 import { CycleGanttBlock } from "components/cycles";
 // types
-import { ICycle } from "types";
+import { ICycle } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string;
-  cycles: ICycle[];
-  mutateCycles?: KeyedMutator<ICycle[]>;
+  cycleIds: string[];
 };
 
-// services
-const cycleService = new CycleService();
-
-export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) => {
+export const CyclesListGanttChartView: FC<Props> = observer((props) => {
+  const { cycleIds } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getCycleById, updateCycleDetails } = useCycle();
 
-  const { user } = useUser();
-  const { projectDetails } = useProjectDetails();
+  const handleCycleUpdate = async (cycle: ICycle, data: IBlockUpdateData) => {
+    if (!workspaceSlug || !cycle) return;
 
-  const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
-    if (!workspaceSlug || !user) return;
-    mutateCycles &&
-      mutateCycles((prevData: any) => {
-        if (!prevData) return prevData;
+    const payload: any = { ...data };
+    if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-        const newList = prevData.map((p: any) => ({
-          ...p,
-          ...(p.id === cycle.id
-            ? {
-                start_date: payload.start_date ? payload.start_date : p.start_date,
-                target_date: payload.target_date ? payload.target_date : p.end_date,
-                sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
-              }
-            : {}),
-        }));
-
-        if (payload.sort_order) {
-          const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
-          newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
-        }
-
-        return newList;
-      }, false);
-
-    const newPayload: any = { ...payload };
-
-    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
-
-    cycleService.patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload);
+    await updateCycleDetails(workspaceSlug.toString(), cycle.project_id, cycle.id, payload);
   };
 
-  const blockFormat = (blocks: ICycle[]) =>
-    blocks && blocks.length > 0
-      ? blocks
-          .filter((b) => b.start_date && b.end_date && new Date(b.start_date) <= new Date(b.end_date))
-          .map((block) => ({
-            data: block,
-            id: block.id,
-            sort_order: block.sort_order,
-            start_date: new Date(block.start_date ?? ""),
-            target_date: new Date(block.end_date ?? ""),
-          }))
-      : [];
+  const blockFormat = (blocks: (ICycle | null)[]) => {
+    if (!blocks) return [];
 
-  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+    const filteredBlocks = blocks.filter((b) => b !== null && b.start_date && b.end_date);
+
+    const structuredBlocks = filteredBlocks.map((block) => ({
+      data: block,
+      id: block?.id ?? "",
+      sort_order: block?.sort_order ?? 0,
+      start_date: new Date(block?.start_date ?? ""),
+      target_date: new Date(block?.end_date ?? ""),
+    }));
+
+    return structuredBlocks;
+  };
+
+  const isAllowed =
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="h-full w-full overflow-y-auto">
       <GanttChartRoot
         title="Cycles"
         loaderTitle="Cycles"
-        blocks={cycles ? blockFormat(cycles) : null}
+        blocks={cycleIds ? blockFormat(cycleIds.map((c) => getCycleById(c))) : null}
         blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
         sidebarToRender={(props) => <CycleGanttSidebar {...props} />}
-        blockToRender={(data: ICycle) => <CycleGanttBlock data={data} />}
+        blockToRender={(data: ICycle) => <CycleGanttBlock cycleId={data.id} />}
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}
@@ -94,4 +71,4 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
       />
     </div>
   );
-};
+});

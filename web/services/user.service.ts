@@ -2,7 +2,7 @@
 import { APIService } from "services/api.service";
 // types
 import type {
-  IIssue,
+  TIssue,
   IUser,
   IUserActivityResponse,
   IInstanceAdminStatus,
@@ -10,10 +10,10 @@ import type {
   IUserProfileProjectSegregation,
   IUserSettings,
   IUserWorkspaceDashboard,
-} from "types";
+  IUserEmailNotificationSettings,
+} from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-import { IIssueResponse } from "store/issues/types";
 
 export class UserService extends APIService {
   constructor() {
@@ -32,9 +32,9 @@ export class UserService extends APIService {
     params: any
   ): Promise<
     | {
-        [key: string]: IIssue[];
+        [key: string]: TIssue[];
       }
-    | IIssue[]
+    | TIssue[]
   > {
     return this.get(`/api/workspaces/${workspaceSlug}/my-issues/`, {
       params,
@@ -55,7 +55,7 @@ export class UserService extends APIService {
 
   async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
     return this.get("/api/users/me/instance-admin/")
-      .then((respone) => respone?.data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
@@ -63,6 +63,14 @@ export class UserService extends APIService {
 
   async currentUserSettings(): Promise<IUserSettings> {
     return this.get("/api/users/me/settings/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async currentUserEmailNotificationSettings(): Promise<IUserEmailNotificationSettings> {
+    return this.get("/api/users/me/notification-preferences/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -91,6 +99,14 @@ export class UserService extends APIService {
     return this.patch("/api/users/me/tour-completed/", {
       is_tour_completed: true,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateCurrentUserEmailNotificationSettings(data: Partial<IUserEmailNotificationSettings>): Promise<any> {
+    return this.patch("/api/users/me/notification-preferences/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -152,7 +168,7 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<IIssueResponse> {
+  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
       params,
     })

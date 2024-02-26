@@ -2,18 +2,18 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
-import { CreateUpdateIssueModal } from "components/issues/modal";
-import { CreateUpdateDraftIssueModal } from "components/issues/draft-issue-modal";
 import { ExistingIssuesListModal } from "components/core";
+import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // mobx
 import { observer } from "mobx-react-lite";
 // types
-import { IIssue, ISearchIssueResponse } from "types";
-import { EProjectStore } from "store/command-palette.store";
+import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
+import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -22,12 +22,12 @@ interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
-  kanBanToggle: any;
-  handleKanBanToggle: any;
-  issuePayload: Partial<IIssue>;
+  kanbanFilters: TIssueKanbanFilters;
+  handleKanbanFilters: any;
+  issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  currentStore?: EProjectStore;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  storeType?: TCreateModalStoreTypes;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
 export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
@@ -37,18 +37,20 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     icon,
     title,
     count,
-    kanBanToggle,
-    handleKanBanToggle,
+    kanbanFilters,
+    handleKanbanFilters,
     issuePayload,
     disableIssueCreation,
-    currentStore,
+    storeType,
     addIssuesToView,
   } = props;
-  const verticalAlignPosition = kanBanToggle?.groupByHeaderMinMax.includes(column_id);
-
+  const verticalAlignPosition = sub_group_by ? false : kanbanFilters?.group_by.includes(column_id);
+  // states
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
-
+  // hooks
+  const { setTrackElement } = useEventTracker();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
 
@@ -57,42 +59,38 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const { setToastAlert } = useToast();
 
   const renderExistingIssueModal = moduleId || cycleId;
-  const ExistingIssuesListModalPayload = moduleId ? { module: true } : { cycle: true };
+  const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
     const issues = data.map((i) => i.id);
 
-    addIssuesToView &&
-      addIssuesToView(issues)?.catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the cycle. Please try again.",
-        });
+    try {
+      addIssuesToView && addIssuesToView(issues);
+    } catch (error) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Selected issues could not be added to the cycle. Please try again.",
       });
+    }
   };
 
   return (
     <>
-      {isDraftIssue ? (
-        <CreateUpdateDraftIssueModal
-          isOpen={isOpen}
-          handleClose={() => setIsOpen(false)}
-          prePopulateData={issuePayload}
-          fieldsToShow={["all"]}
-        />
-      ) : (
-        <CreateUpdateIssueModal
-          isOpen={isOpen}
-          handleClose={() => setIsOpen(false)}
-          prePopulateData={issuePayload}
-          currentStore={currentStore}
-        />
-      )}
+      <CreateUpdateIssueModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        data={issuePayload}
+        storeType={storeType}
+        isDraft={isDraftIssue}
+      />
+
       {renderExistingIssueModal && (
         <ExistingIssuesListModal
+          workspaceSlug={workspaceSlug?.toString()}
+          projectId={projectId?.toString()}
           isOpen={openExistingIssueListModal}
           handleClose={() => setOpenExistingIssueListModal(false)}
           searchParams={ExistingIssuesListModalPayload}
@@ -122,7 +120,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         {sub_group_by === null && (
           <div
             className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
-            onClick={() => handleKanBanToggle("groupByHeaderMinMax", column_id)}
+            onClick={() => handleKanbanFilters("group_by", column_id)}
           >
             {verticalAlignPosition ? (
               <Maximize2 width={14} strokeWidth={2} />
@@ -135,24 +133,37 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
             <CustomMenu
-              width="auto"
               customButton={
                 <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
                   <Plus height={14} width={14} strokeWidth={2} />
                 </span>
               }
+              placement="bottom-end"
             >
-              <CustomMenu.MenuItem onClick={() => setIsOpen(true)}>
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  setTrackElement("Kanban layout");
+                  setIsOpen(true);
+                }}
+              >
                 <span className="flex items-center justify-start gap-2">Create issue</span>
               </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => setOpenExistingIssueListModal(true)}>
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  setTrackElement("Kanban layout");
+                  setOpenExistingIssueListModal(true);
+                }}
+              >
                 <span className="flex items-center justify-start gap-2">Add an existing issue</span>
               </CustomMenu.MenuItem>
             </CustomMenu>
           ) : (
             <div
               className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
-              onClick={() => setIsOpen(true)}
+              onClick={() => {
+                setTrackElement("Kanban layout");
+                setIsOpen(true);
+              }}
             >
               <Plus width={14} strokeWidth={2} />
             </div>

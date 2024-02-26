@@ -1,14 +1,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { X } from "lucide-react";
+// hooks
+import { useApplication, useEventTracker, useUser } from "hooks/store";
 // components
 import { TourSidebar } from "components/onboarding";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { X } from "lucide-react";
 // assets
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
 import IssuesTour from "public/onboarding/issues.webp";
@@ -16,6 +15,8 @@ import CyclesTour from "public/onboarding/cycles.webp";
 import ModulesTour from "public/onboarding/modules.webp";
 import ViewsTour from "public/onboarding/views.webp";
 import PagesTour from "public/onboarding/pages.webp";
+// constants
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "constants/event-tracker";
 
 type Props = {
   onComplete: () => void;
@@ -78,13 +79,10 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   const { onComplete } = props;
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
-
-  const {
-    user: userStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-  const user = userStore.currentUser;
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement, captureEvent } = useEventTracker();
+  const { currentUser } = useUser();
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
   const currentStep = TOUR_STEPS[currentStepIndex];
@@ -99,7 +97,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
             </div>
             <div className="flex h-2/5 flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">
-                Welcome to Plane, {user?.first_name} {user?.last_name}
+                Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
               <p className="mt-3 text-sm text-custom-text-200">
                 We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
@@ -107,13 +105,22 @@ export const TourRoot: React.FC<Props> = observer((props) => {
               </p>
               <div className="flex h-full items-end">
                 <div className="mt-8 flex items-center gap-6">
-                  <Button variant="primary" onClick={() => setStep("issues")}>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      captureEvent(PRODUCT_TOUR_STARTED);
+                      setStep("issues");
+                    }}
+                  >
                     Take a Product Tour
                   </Button>
                   <button
                     type="button"
                     className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
-                    onClick={onComplete}
+                    onClick={() => {
+                      captureEvent(PRODUCT_TOUR_SKIPPED);
+                      onComplete();
+                    }}
                   >
                     No thanks, I will explore it myself
                   </button>
@@ -160,8 +167,8 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                   <Button
                     variant="primary"
                     onClick={() => {
+                      setTrackElement("Product tour");
                       onComplete();
-                      setTrackElement("ONBOARDING_TOUR");
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                   >

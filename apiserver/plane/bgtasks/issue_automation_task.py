@@ -36,7 +36,9 @@ def archive_old_issues():
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
-                    updated_at__lte=(timezone.now() - timedelta(days=archive_in * 30)),
+                    updated_at__lte=(
+                        timezone.now() - timedelta(days=archive_in * 30)
+                    ),
                     state__group__in=["completed", "cancelled"],
                 ),
                 Q(issue_cycle__isnull=True)
@@ -46,7 +48,9 @@ def archive_old_issues():
                 ),
                 Q(issue_module__isnull=True)
                 | (
-                    Q(issue_module__module__target_date__lt=timezone.now().date())
+                    Q(
+                        issue_module__module__target_date__lt=timezone.now().date()
+                    )
                     & Q(issue_module__isnull=False)
                 ),
             ).filter(
@@ -74,13 +78,16 @@ def archive_old_issues():
                     _ = [
                         issue_activity.delay(
                             type="issue.activity.updated",
-                            requested_data=json.dumps({"archived_at": str(archive_at)}),
+                            requested_data=json.dumps(
+                                {"archived_at": str(archive_at)}
+                            ),
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
                             current_instance=json.dumps({"archived_at": None}),
                             subscriber=False,
                             epoch=int(timezone.now().timestamp()),
+                            notification=True,
                         )
                         for issue in issues_to_update
                     ]
@@ -108,7 +115,9 @@ def close_old_issues():
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
-                    updated_at__lte=(timezone.now() - timedelta(days=close_in * 30)),
+                    updated_at__lte=(
+                        timezone.now() - timedelta(days=close_in * 30)
+                    ),
                     state__group__in=["backlog", "unstarted", "started"],
                 ),
                 Q(issue_cycle__isnull=True)
@@ -118,7 +127,9 @@ def close_old_issues():
                 ),
                 Q(issue_module__isnull=True)
                 | (
-                    Q(issue_module__module__target_date__lt=timezone.now().date())
+                    Q(
+                        issue_module__module__target_date__lt=timezone.now().date()
+                    )
                     & Q(issue_module__isnull=False)
                 ),
             ).filter(
@@ -131,7 +142,9 @@ def close_old_issues():
             # Check if Issues
             if issues:
                 if project.default_state is None:
-                    close_state = State.objects.filter(group="cancelled").first()
+                    close_state = State.objects.filter(
+                        group="cancelled"
+                    ).first()
                 else:
                     close_state = project.default_state
 
@@ -157,6 +170,7 @@ def close_old_issues():
                             current_instance=None,
                             subscriber=False,
                             epoch=int(timezone.now().timestamp()),
+                            notification=True,
                         )
                         for issue in issues_to_update
                     ]

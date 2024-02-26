@@ -1,35 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import {
-  IssuePeekOverview,
-  SpreadsheetColumnsList,
-  SpreadsheetIssuesColumn,
-  SpreadsheetQuickAddIssueForm,
-} from "components/issues";
-import { Spinner, LayersIcon } from "@plane/ui";
+import { Spinner } from "@plane/ui";
+import { SpreadsheetQuickAddIssueForm } from "components/issues";
+import { SpreadsheetTable } from "./spreadsheet-table";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueActions } from "../types";
+//hooks
+import { useProject } from "hooks/store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  issues: IIssue[] | undefined;
-  members?: IUserLite[] | undefined;
-  labels?: IIssueLabel[] | undefined;
-  states?: IState[] | undefined;
-  quickActions: (issue: IIssue, customActionButton: any) => React.ReactNode; // TODO: replace any with type
-  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
+  issueIds: string[] | undefined;
+  quickActions: (
+    issue: TIssue,
+    customActionButton?: React.ReactElement,
+    portalElement?: HTMLDivElement | null
+  ) => React.ReactNode;
+  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   enableQuickCreateIssue?: boolean;
@@ -41,10 +39,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
-    issues,
-    members,
-    labels,
-    states,
+    issueIds,
     quickActions,
     handleIssues,
     quickAddCallback,
@@ -53,33 +48,15 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     enableQuickCreateIssue,
     disableIssueCreation,
   } = props;
-  // states
-  const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
-  const [isScrolled, setIsScrolled] = useState(false);
   // refs
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  // router
-  const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  const containerRef = useRef<HTMLTableElement | null>(null);
+  const portalRef = useRef<HTMLDivElement | null>(null);
 
-  const handleScroll = () => {
-    if (!containerRef.current) return;
+  const { currentProjectDetails } = useProject();
 
-    const scrollLeft = containerRef.current.scrollLeft;
-    setIsScrolled(scrollLeft > 0);
-  };
+  const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
-  useEffect(() => {
-    const currentContainerRef = containerRef.current;
-
-    if (currentContainerRef) currentContainerRef.addEventListener("scroll", handleScroll);
-
-    return () => {
-      if (currentContainerRef) currentContainerRef.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  if (!issues || issues.length === 0)
+  if (!issueIds || issueIds.length === 0)
     return (
       <div className="grid h-full w-full place-items-center">
         <Spinner />
@@ -87,116 +64,29 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     );
 
   return (
-    <div className="relative flex h-full w-full overflow-x-auto whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
-      <div className="flex h-full w-full flex-col">
-        <div
-          ref={containerRef}
-          className="horizontal-scroll-enable flex divide-x-[0.5px] divide-custom-border-200 overflow-y-auto"
-        >
-          {issues && issues.length > 0 && (
-            <>
-              <div className="sticky left-0 z-[2] w-[28rem]">
-                <div
-                  className="relative z-[2] flex h-max w-full flex-col bg-custom-background-100"
-                  style={{
-                    boxShadow: isScrolled ? "8px -9px 12px rgba(0, 0, 0, 0.05)" : "",
-                  }}
-                >
-                  <div className="sticky top-0 z-[2] flex h-11 w-full items-center border border-l-0 border-custom-border-100 bg-custom-background-90 text-sm font-medium">
-                    {displayProperties.key && (
-                      <span className="flex h-full w-24 flex-shrink-0 items-center px-4 py-2.5">
-                        <span className="mr-1.5 text-custom-text-400">#</span>ID
-                      </span>
-                    )}
-                    <span className="flex h-full w-full flex-grow items-center justify-center px-4 py-2.5">
-                      <LayersIcon className="mr-1.5 h-4 w-4 text-custom-text-400" />
-                      Issue
-                    </span>
-                  </div>
-
-                  {issues.map((issue, index) =>
-                    issue ? (
-                      <SpreadsheetIssuesColumn
-                        key={`${issue?.id}_${index}`}
-                        issue={issue}
-                        expandedIssues={expandedIssues}
-                        setExpandedIssues={setExpandedIssues}
-                        properties={displayProperties}
-                        quickActions={quickActions}
-                        canEditProperties={canEditProperties}
-                      />
-                    ) : null
-                  )}
-                </div>
-              </div>
-
-              <SpreadsheetColumnsList
-                displayFilters={displayFilters}
-                displayProperties={displayProperties}
-                canEditProperties={canEditProperties}
-                expandedIssues={expandedIssues}
-                handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-                handleUpdateIssue={(issue, data) => handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)}
-                issues={issues}
-                members={members}
-                labels={labels}
-                states={states}
-              />
-            </>
+    <div className="relative flex flex-col h-full w-full overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+      <div ref={portalRef} className="spreadsheet-menu-portal" />
+      <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
+        <SpreadsheetTable
+          displayProperties={displayProperties}
+          displayFilters={displayFilters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          issueIds={issueIds}
+          isEstimateEnabled={isEstimateEnabled}
+          portalElement={portalRef}
+          quickActions={quickActions}
+          handleIssues={handleIssues}
+          canEditProperties={canEditProperties}
+          containerRef={containerRef}
+        />
+      </div>
+      <div className="border-t border-custom-border-100">
+        <div className="z-5 sticky bottom-0 left-0 mb-3">
+          {enableQuickCreateIssue && !disableIssueCreation && (
+            <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
           )}
-          <div /> {/* empty div to show right most border */}
-        </div>
-
-        <div className="border-t border-custom-border-100">
-          <div className="z-5 sticky bottom-0 left-0 mb-3">
-            {enableQuickCreateIssue && !disableIssueCreation && (
-              <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
-            )}
-          </div>
-
-          {/* {!disableUserActions &&
-            !isInlineCreateIssueFormOpen &&
-            (type === "issue" ? (
-              <button
-                className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] w-full"
-                onClick={() => setIsInlineCreateIssueFormOpen(true)}
-              >
-                <PlusIcon className="h-4 w-4" />
-                New Issue
-              </button>
-            ) : (
-              <CustomMenu
-                className="sticky left-0 z-10"
-                customButton={
-                  <button
-                    className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
-                    type="button"
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    New Issue
-                  </button>
-                }
-                optionsClassName="left-5 !w-36"
-                noBorder
-              >
-                <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
-                  Create new
-                </CustomMenu.MenuItem>
-                {openIssuesListModal && (
-                  <CustomMenu.MenuItem onClick={openIssuesListModal}>Add an existing issue</CustomMenu.MenuItem>
-                )}
-              </CustomMenu>
-            ))} */}
         </div>
       </div>
-      {workspaceSlug && peekIssueId && peekProjectId && (
-        <IssuePeekOverview
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={peekProjectId.toString()}
-          issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate: any, action: EIssueActions) => await handleIssues(issueToUpdate, action)}
-        />
-      )}
     </div>
   );
 });

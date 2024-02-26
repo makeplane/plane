@@ -12,7 +12,13 @@ from rest_framework import status
 
 # Module imports
 from .base import BaseAPIView, WebhookMixin
-from plane.db.models import Cycle, Issue, CycleIssue, IssueLink, IssueAttachment
+from plane.db.models import (
+    Cycle,
+    Issue,
+    CycleIssue,
+    IssueLink,
+    IssueAttachment,
+)
 from plane.app.permissions import ProjectEntityPermission
 from plane.api.serializers import (
     CycleSerializer,
@@ -102,7 +108,9 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                     ),
                 )
             )
-            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
+            .annotate(
+                total_estimates=Sum("issue_cycle__issue__estimate_point")
+            )
             .annotate(
                 completed_estimates=Sum(
                     "issue_cycle__issue__estimate_point",
@@ -201,7 +209,8 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
         # Incomplete Cycles
         if cycle_view == "incomplete":
             queryset = queryset.filter(
-                Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
+                Q(end_date__gte=timezone.now().date())
+                | Q(end_date__isnull=True),
             )
             return self.paginate(
                 request=request,
@@ -234,12 +243,39 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
         ):
             serializer = CycleSerializer(data=request.data)
             if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Cycle.objects.filter(
+                        project_id=project_id,
+                        workspace__slug=slug,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).exists()
+                ):
+                    cycle = Cycle.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).first()
+                    return Response(
+                        {
+                            "error": "Cycle with the same external id and external source already exists",
+                            "id": str(cycle.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
                 serializer.save(
                     project_id=project_id,
                     owned_by=request.user,
                 )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         else:
             return Response(
                 {
@@ -249,15 +285,22 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
             )
 
     def patch(self, request, slug, project_id, pk):
-        cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        cycle = Cycle.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
 
         request_data = request.data
 
-        if cycle.end_date is not None and cycle.end_date < timezone.now().date():
+        if (
+            cycle.end_date is not None
+            and cycle.end_date < timezone.now().date()
+        ):
             if "sort_order" in request_data:
                 # Can only change sort order
                 request_data = {
-                    "sort_order": request_data.get("sort_order", cycle.sort_order)
+                    "sort_order": request_data.get(
+                        "sort_order", cycle.sort_order
+                    )
                 }
             else:
                 return Response(
@@ -269,17 +312,36 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
 
         serializer = CycleSerializer(cycle, data=request.data, partial=True)
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and (cycle.external_id != request.data.get("external_id"))
+                and Cycle.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source", cycle.external_source),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Cycle with the same external id and external source already exists",
+                        "id": str(cycle.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, pk):
         cycle_issues = list(
-            CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
-                "issue", flat=True
-            )
+            CycleIssue.objects.filter(
+                cycle_id=self.kwargs.get("pk")
+            ).values_list("issue", flat=True)
         )
-        cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        cycle = Cycle.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
 
         issue_activity.delay(
             type="cycle.activity.deleted",
@@ -319,7 +381,9 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
     def get_queryset(self):
         return (
             CycleIssue.objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("issue_id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -342,7 +406,9 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         issues = (
             Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -364,7 +430,9 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -387,14 +455,18 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
         if not issues:
             return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Issues are required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        if cycle.end_date is not None and cycle.end_date < timezone.now().date():
+        if (
+            cycle.end_date is not None
+            and cycle.end_date < timezone.now().date()
+        ):
             return Response(
                 {
                     "error": "The Cycle has already been completed so no new issues can be added"
@@ -479,7 +551,10 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def delete(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.get(
-            issue_id=issue_id, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
+            issue_id=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            cycle_id=cycle_id,
         )
         issue_id = cycle_issue.issue_id
         cycle_issue.delete()

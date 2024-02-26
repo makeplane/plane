@@ -5,7 +5,7 @@ import { Control, Controller, UseFormWatch } from "react-hook-form";
 // ui
 import { CustomSelect, DoubleCircleIcon } from "@plane/ui";
 // types
-import { IModule } from "types";
+import { IModule } from "@plane/types";
 // common
 // constants
 import { MODULE_STATUS } from "constants/module";
@@ -46,10 +46,10 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
           >
             {MODULE_STATUS.map((option) => (
               <CustomSelect.Option key={option.value} value={option.value}>
-                <>
+                <div className="flex items-center gap-2">
                   <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: option.color }} />
                   {option.label}
-                </>
+                </div>
               </CustomSelect.Option>
             ))}
           </CustomSelect>

@@ -1,52 +1,91 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import Link from "next/link";
 // hooks
+import {
+  useApplication,
+  useEventTracker,
+  useCycle,
+  useLabel,
+  useMember,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
 // icons
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus, PanelRight } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { cn } from "helpers/common.helper";
+import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
+
+const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getCycleById } = useCycle();
+  // derived values
+  const cycle = getCycleById(cycleId);
+
+  if (!cycle) return null;
+
+  return (
+    <CustomMenu.MenuItem key={cycle.id}>
+      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`} className="flex items-center gap-1.5">
+        <ContrastIcon className="h-3 w-3" />
+        {truncateText(cycle.name, 40)}
+      </Link>
+    </CustomMenu.MenuItem>
+  );
+};
 
 export const CycleIssuesHeader: React.FC = observer(() => {
+  // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     cycleId: string;
   };
-
+  // store hooks
   const {
-    cycle: cycleStore,
-    projectIssuesFilter: projectIssueFiltersStore,
-    project: { currentProjectDetails },
-    projectMember: { projectMembers },
-    projectLabel: { projectLabels },
-    projectState: projectStateStore,
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-    cycleIssuesFilter: { issueFilters, updateFilters },
-    user: { currentProjectRole },
-  } = useMobxStore();
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.CYCLE);
+  const { currentProjectCycleIds, getCycleById } = useCycle();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+  } = useApplication();
+  const { setTrackElement } = useEventTracker();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
-  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -58,7 +97,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -77,7 +116,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
@@ -85,7 +124,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -93,16 +132,15 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
-  const cyclesList = cycleStore.projectCycles;
-  const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
-
+  // derived values
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const canUserCreateIssue =
-    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -111,115 +149,139 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div className="flex items-center gap-2">
-          <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              icon={
-                currentProjectDetails?.emoji ? (
-                  renderEmoji(currentProjectDetails.emoji)
-                ) : currentProjectDetails?.icon_prop ? (
-                  renderEmoji(currentProjectDetails.icon_prop)
-                ) : (
-                  <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                    {currentProjectDetails?.name.charAt(0)}
-                  </span>
-                )
-              }
-              label={currentProjectDetails?.name ?? "Project"}
-              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Cycles"
-              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="component"
-              component={
-                <CustomMenu
-                  label={
-                    <>
-                      <ContrastIcon className="h-3 w-3" />
-                      {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
-                    </>
-                  }
-                  className="ml-1.5 flex-shrink-0"
-                  width="auto"
-                  placement="bottom-start"
-                >
-                  {cyclesList?.map((cycle) => (
-                    <CustomMenu.MenuItem
-                      key={cycle.id}
-                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
+      <div className="relative z-[15] w-full items-center gap-x-2 gap-y-4">
+        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+          <div className="flex items-center gap-2">
+            <SidebarHamburgerToggle />
+            <Breadcrumbs onBack={router.back}>
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={
+                  <span>
+                    <span className="hidden md:block">
+                      <BreadcrumbLink
+                        label={currentProjectDetails?.name ?? "Project"}
+                        href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                        icon={
+                          currentProjectDetails?.emoji ? (
+                            renderEmoji(currentProjectDetails.emoji)
+                          ) : currentProjectDetails?.icon_prop ? (
+                            renderEmoji(currentProjectDetails.icon_prop)
+                          ) : (
+                            <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
+                              {currentProjectDetails?.name.charAt(0)}
+                            </span>
+                          )
+                        }
+                      />
+                    </span>
+                    <Link
+                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                      className="block md:hidden pl-2 text-custom-text-300"
                     >
-                      <div className="flex items-center gap-1.5">
+                      ...
+                    </Link>
+                  </span>
+                }
+              />
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={
+                  <BreadcrumbLink
+                    label="Cycles"
+                    href={`/${workspaceSlug}/projects/${projectId}/cycles`}
+                    icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+                  />
+                }
+              />
+              <Breadcrumbs.BreadcrumbItem
+                type="component"
+                component={
+                  <CustomMenu
+                    label={
+                      <>
                         <ContrastIcon className="h-3 w-3" />
-                        {truncateText(cycle.name, 40)}
-                      </div>
-                    </CustomMenu.MenuItem>
-                  ))}
-                </CustomMenu>
-              }
+                        <div className=" w-auto max-w-[70px] sm:max-w-[200px] inline-block truncate line-clamp-1 overflow-hidden whitespace-nowrap">
+                          {cycleDetails?.name && cycleDetails.name}
+                        </div>
+                      </>
+                    }
+                    className="ml-1.5 flex-shrink-0"
+                    placement="bottom-start"
+                  >
+                    {currentProjectCycleIds?.map((cycleId) => (
+                      <CycleDropdownOption key={cycleId} cycleId={cycleId} />
+                    ))}
+                  </CustomMenu>
+                }
+              />
+            </Breadcrumbs>
+          </div>
+          <div className="hidden md:flex items-center gap-2 ">
+            <LayoutSelection
+              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+              onChange={(layout) => handleLayoutChange(layout)}
+              selectedLayout={activeLayout}
             />
-          </Breadcrumbs>
-        </div>
-        <div className="flex items-center gap-2">
-          <LayoutSelection
-            layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
-            onChange={(layout) => handleLayoutChange(layout)}
-            selectedLayout={activeLayout}
-          />
-          <FiltersDropdown title="Filters" placement="bottom-end">
-            <FilterSelection
-              filters={issueFilters?.filters ?? {}}
-              handleFiltersUpdate={handleFiltersUpdate}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-              labels={projectLabels ?? undefined}
-              members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
-            />
-          </FiltersDropdown>
-          <FiltersDropdown title="Display" placement="bottom-end">
-            <DisplayFiltersSelection
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-              displayFilters={issueFilters?.displayFilters ?? {}}
-              handleDisplayFiltersUpdate={handleDisplayFilters}
-              displayProperties={issueFilters?.displayProperties ?? {}}
-              handleDisplayPropertiesUpdate={handleDisplayProperties}
-            />
-          </FiltersDropdown>
+            <FiltersDropdown title="Filters" placement="bottom-end">
+              <FilterSelection
+                filters={issueFilters?.filters ?? {}}
+                handleFiltersUpdate={handleFiltersUpdate}
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                }
+                labels={projectLabels}
+                memberIds={projectMemberIds ?? undefined}
+                states={projectStates}
+              />
+            </FiltersDropdown>
+            <FiltersDropdown title="Display" placement="bottom-end">
+              <DisplayFiltersSelection
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                }
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
+                displayProperties={issueFilters?.displayProperties ?? {}}
+                handleDisplayPropertiesUpdate={handleDisplayProperties}
+              />
+            </FiltersDropdown>
 
-          {canUserCreateIssue && (
-            <>
-              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                Analytics
-              </Button>
-              <Button
-                onClick={() => {
-                  setTrackElement("CYCLE_PAGE_HEADER");
-                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
-                }}
-                size="sm"
-                prependIcon={<Plus />}
-              >
-                Add Issue
-              </Button>
-            </>
-          )}
+            {canUserCreateIssue && (
+              <>
+                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                  Analytics
+                </Button>
+                <Button
+                  onClick={() => {
+                    setTrackElement("Cycle issues page");
+                    toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                  }}
+                  size="sm"
+                  prependIcon={<Plus />}
+                >
+                  Add Issue
+                </Button>
+              </>
+            )}
+            <button
+              type="button"
+              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+              onClick={toggleSidebar}
+            >
+              <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
+            </button>
+          </div>
           <button
             type="button"
-            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            className="grid md:hidden h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
             onClick={toggleSidebar}
           >
-            <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
+            <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
+        </div>
+        <div className="block sm:block md:hidden">
+          <CycleMobileHeader />
         </div>
       </div>
     </>

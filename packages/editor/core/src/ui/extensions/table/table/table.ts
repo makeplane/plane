@@ -19,12 +19,12 @@ import {
   tableEditing,
   toggleHeader,
   toggleHeaderCell,
-} from "@tiptap/prosemirror-tables";
+} from "@tiptap/pm/tables";
 
-import { tableControls } from "./table-controls";
-import { TableView } from "./table-view";
-import { createTable } from "./utilities/create-table";
-import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
+import { tableControls } from "src/ui/extensions/table/table/table-controls";
+import { TableView } from "src/ui/extensions/table/table/table-view";
+import { createTable } from "src/ui/extensions/table/table/utilities/create-table";
+import { deleteTableWhenAllCellsSelected } from "src/ui/extensions/table/table/utilities/delete-table-when-all-cells-selected";
 
 export interface TableOptions {
   HTMLAttributes: Record<string, any>;
@@ -72,7 +72,7 @@ declare module "@tiptap/core" {
   }
 }
 
-export default Node.create({
+export const Table = Node.create({
   name: "table",
 
   addOptions() {
@@ -107,10 +107,9 @@ export default Node.create({
   addCommands() {
     return {
       insertTable:
-        ({ rows = 3, cols = 3, withHeaderRow = true } = {}) =>
+        ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
         ({ tr, dispatch, editor }) => {
           const node = createTable(editor.schema, rows, cols, withHeaderRow);
-
           if (dispatch) {
             const offset = tr.selection.anchor + 1;
 

@@ -30,14 +30,15 @@ import {
   toggleStrike,
   toggleTaskList,
   toggleUnderline,
-} from "../../../lib/editor-commands";
-import { UploadImage } from "@plane/editor-types";
+} from "src/lib/editor-commands";
+import { LucideIconType } from "src/types/lucide-icon";
+import { UploadImage } from "src/types/upload-image";
 
 export interface EditorMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIconType;
 }
 
 export const HeadingOneItem = (editor: Editor): EditorMenuItem => ({
@@ -105,7 +106,7 @@ export const TodoListItem = (editor: Editor): EditorMenuItem => ({
 
 export const CodeItem = (editor: Editor): EditorMenuItem => ({
   name: "code",
-  isActive: () => editor?.isActive("code"),
+  isActive: () => editor?.isActive("code") || editor?.isActive("codeBlock"),
   command: () => toggleCodeBlock(editor),
   icon: CodeIcon,
 });
@@ -119,7 +120,7 @@ export const NumberedListItem = (editor: Editor): EditorMenuItem => ({
 
 export const QuoteItem = (editor: Editor): EditorMenuItem => ({
   name: "quote",
-  isActive: () => editor?.isActive("quote"),
+  isActive: () => editor?.isActive("blockquote"),
   command: () => toggleBlockquote(editor),
   icon: QuoteIcon,
 });

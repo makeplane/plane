@@ -1,34 +1,62 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useIssues } from "hooks/store";
 // components
-import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot } from "components/issues";
+import {
+  ArchivedIssueListLayout,
+  ArchivedIssueAppliedFiltersRoot,
+  ProjectArchivedEmptyState,
+  IssuePeekOverview,
+} from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
+// ui
+import { ListLayoutLoader } from "components/ui";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
 
-  const {
-    projectArchivedIssues: { getIssues, fetchIssues },
-    projectArchivedIssuesFilter: { fetchFilters },
-  } = useMobxStore();
-
-  useSWR(workspaceSlug && projectId ? `ARCHIVED_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await fetchIssues(workspaceSlug.toString(), projectId.toString(), getIssues ? "mutation" : "init-loader");
+  useSWR(
+    workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
     }
-  });
+  );
 
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <ListLayoutLoader />;
+  }
+
+  if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ArchivedIssueAppliedFiltersRoot />
-      <div className="h-full w-full overflow-auto">
-        <ArchivedIssueListLayout />
-      </div>
+
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectArchivedEmptyState />
+        </div>
+      ) : (
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto">
+            <ArchivedIssueListLayout />
+          </div>
+          <IssuePeekOverview is_archived />
+        </Fragment>
+      )}
     </div>
   );
 });

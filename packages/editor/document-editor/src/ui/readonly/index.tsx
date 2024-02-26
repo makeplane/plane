@@ -1,15 +1,14 @@
 import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
 import { useRouter } from "next/router";
 import { useState, forwardRef, useEffect } from "react";
-import { EditorHeader } from "../components/editor-header";
-import { PageRenderer } from "../components/page-renderer";
-import { SummarySideBar } from "../components/summary-side-bar";
-import { IssueWidgetExtension } from "../extensions/widgets/IssueEmbedWidget";
-import { IEmbedConfig } from "../extensions/widgets/IssueEmbedWidget/types";
-import { useEditorMarkings } from "../hooks/use-editor-markings";
-import { DocumentDetails } from "../types/editor-types";
-import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "../types/menu-actions";
-import { getMenuOptions } from "../utils/menu-options";
+import { EditorHeader } from "src/ui/components/editor-header";
+import { PageRenderer } from "src/ui/components/page-renderer";
+import { SummarySideBar } from "src/ui/components/summary-side-bar";
+import { useEditorMarkings } from "src/hooks/use-editor-markings";
+import { DocumentDetails } from "src/types/editor-types";
+import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "src/types/menu-actions";
+import { getMenuOptions } from "src/utils/menu-options";
+import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
 
 interface IDocumentReadOnlyEditor {
   value: string;
@@ -29,7 +28,6 @@ interface IDocumentReadOnlyEditor {
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => void;
-  embedConfig?: IEmbedConfig;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -51,7 +49,6 @@ const DocumentReadOnlyEditor = ({
   pageDuplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  embedConfig,
   rerenderOnPropsChange,
   onActionCompleteHandler,
 }: DocumentReadOnlyEditorProps) => {
@@ -63,7 +60,7 @@ const DocumentReadOnlyEditor = ({
     value,
     forwardedRef,
     rerenderOnPropsChange,
-    extensions: [IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig })],
+    extensions: [IssueWidgetPlaceholder()],
   });
 
   useEffect(() => {
@@ -105,12 +102,13 @@ const DocumentReadOnlyEditor = ({
         documentDetails={documentDetails}
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
       />
-      <div className="flex h-full w-full overflow-y-auto">
+      <div className="flex h-full w-full overflow-y-auto frame-renderer">
         <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-80">
           <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
-        <div className="h-full w-full">
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
           <PageRenderer
+            onActionCompleteHandler={onActionCompleteHandler}
             updatePageTitle={() => Promise.resolve()}
             readonly={true}
             editor={editor}

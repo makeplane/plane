@@ -7,9 +7,9 @@ import {
   StateGroupUnstartedIcon,
 } from "components/icons";
 // types
-import { TStateGroups } from "types";
+import { TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
+import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   className?: string;
@@ -31,7 +31,7 @@ export const StateGroupIcon: React.FC<Props> = ({
       <StateGroupBacklogIcon
         width={width}
         height={height}
-        color={color ?? STATE_GROUP_COLORS["backlog"]}
+        color={color ?? STATE_GROUPS["backlog"].color}
         className={`flex-shrink-0 ${className}`}
       />
     );
@@ -40,7 +40,7 @@ export const StateGroupIcon: React.FC<Props> = ({
       <StateGroupCancelledIcon
         width={width}
         height={height}
-        color={color ?? STATE_GROUP_COLORS["cancelled"]}
+        color={color ?? STATE_GROUPS["cancelled"].color}
         className={`flex-shrink-0 ${className}`}
       />
     );
@@ -49,7 +49,7 @@ export const StateGroupIcon: React.FC<Props> = ({
       <StateGroupCompletedIcon
         width={width}
         height={height}
-        color={color ?? STATE_GROUP_COLORS["completed"]}
+        color={color ?? STATE_GROUPS["completed"].color}
         className={`flex-shrink-0 ${className}`}
       />
     );
@@ -58,7 +58,7 @@ export const StateGroupIcon: React.FC<Props> = ({
       <StateGroupStartedIcon
         width={width}
         height={height}
-        color={color ?? STATE_GROUP_COLORS["started"]}
+        color={color ?? STATE_GROUPS["started"].color}
         className={`flex-shrink-0 ${className}`}
       />
     );
@@ -67,7 +67,7 @@ export const StateGroupIcon: React.FC<Props> = ({
       <StateGroupUnstartedIcon
         width={width}
         height={height}
-        color={color ?? STATE_GROUP_COLORS["unstarted"]}
+        color={color ?? STATE_GROUPS["unstarted"].color}
         className={`flex-shrink-0 ${className}`}
       />
     );

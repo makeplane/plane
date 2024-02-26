@@ -2,16 +2,16 @@ import React from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import useToast from "hooks/use-toast";
-// icons
 import { AlertTriangle } from "lucide-react";
+// hooks
+import { useEventTracker, useProject, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IProject } from "types";
-// fetch-keys
-import { useMobxStore } from "lib/mobx/store-provider";
+import type { IProject } from "@plane/types";
+// constants
+import { PROJECT_DELETED } from "constants/event-tracker";
 
 type DeleteProjectModal = {
   isOpen: boolean;
@@ -26,16 +26,14 @@ const defaultValues = {
 
 export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
-  // store
-  const {
-    project: projectStore,
-    workspace: { currentWorkspace },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
+  // store hooks
+  const { captureProjectEvent } = useEventTracker();
+  const { currentWorkspace } = useWorkspace();
+  const { deleteProject } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast
+  // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
@@ -60,23 +58,15 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const onSubmit = async () => {
     if (!workspaceSlug || !canDelete) return;
 
-    await projectStore
-      .deleteProject(workspaceSlug.toString(), project.id)
+    await deleteProject(workspaceSlug.toString(), project.id)
       .then(() => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
-        postHogEventTracker(
-          "PROJECT_DELETED",
-          {
-            state: "SUCCESS",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
-          }
-        );
+        captureProjectEvent({
+          eventName: PROJECT_DELETED,
+          payload: { ...project, state: "SUCCESS", element: "Project general settings" },
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -84,17 +74,10 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         });
       })
       .catch(() => {
-        postHogEventTracker(
-          "PROJECT_DELETED",
-          {
-            state: "FAILED",
-          },
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
-          }
-        );
+        captureProjectEvent({
+          eventName: PROJECT_DELETED,
+          payload: { ...project, state: "FAILED", element: "Project general settings" },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",

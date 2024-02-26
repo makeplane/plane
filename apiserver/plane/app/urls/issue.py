@@ -2,6 +2,7 @@ from django.urls import path
 
 
 from plane.app.views import (
+    IssueListEndpoint,
     IssueViewSet,
     LabelViewSet,
     BulkCreateIssueLabelsEndpoint,
@@ -25,6 +26,11 @@ from plane.app.views import (
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/list/",
+        IssueListEndpoint.as_view(),
+        name="project-issue",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueViewSet.as_view(
@@ -84,11 +90,13 @@ urlpatterns = [
         BulkImportIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
+    # deprecated endpoint TODO: remove once confirmed
     path(
         "workspaces/<str:slug>/my-issues/",
         UserWorkSpaceIssues.as_view(),
         name="workspace-issues",
     ),
+    ## 
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),
@@ -235,7 +243,7 @@ urlpatterns = [
     ## End Comment Reactions
     ## IssueProperty
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-display-properties/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
         IssueUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),
@@ -275,16 +283,17 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/",
         IssueRelationViewSet.as_view(
             {
+                "get": "list",
                 "post": "create",
             }
         ),
         name="issue-relation",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/remove-relation/",
         IssueRelationViewSet.as_view(
             {
-                "delete": "destroy",
+                "post": "remove_relation",
             }
         ),
         name="issue-relation",

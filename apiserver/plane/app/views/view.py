@@ -1,6 +1,6 @@
 # Django imports
 from django.db.models import (
-    Prefetch,
+    Q,
     OuterRef,
     Func,
     F,
@@ -13,38 +13,43 @@ from django.db.models import (
 )
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db.models import Prefetch, OuterRef, Exists
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
 
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet
 from plane.app.serializers import (
-    GlobalViewSerializer,
     IssueViewSerializer,
-    IssueLiteSerializer,
+    IssueSerializer,
     IssueViewFavoriteSerializer,
 )
-from plane.app.permissions import WorkspaceEntityPermission, ProjectEntityPermission
+from plane.app.permissions import (
+    WorkspaceEntityPermission,
+    ProjectEntityPermission,
+)
 from plane.db.models import (
     Workspace,
-    GlobalView,
     IssueView,
     Issue,
     IssueViewFavorite,
-    IssueReaction,
     IssueLink,
     IssueAttachment,
 )
 from plane.utils.issue_filters import issue_filters
-from plane.utils.grouper import group_results
 
 
 class GlobalViewViewSet(BaseViewSet):
-    serializer_class = GlobalViewSerializer
-    model = GlobalView
+    serializer_class = IssueViewSerializer
+    model = IssueView
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -58,6 +63,7 @@ class GlobalViewViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project__isnull=True)
             .select_related("workspace")
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
@@ -72,34 +78,85 @@ class GlobalViewIssuesViewSet(BaseViewSet):
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
                 )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         )
 
     @method_decorator(gzip_page)
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        state_order = [
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+        ]
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
@@ -108,25 +165,14 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             .filter(**filters)
             .filter(project__project_projectmember__member=self.request.user)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
         )
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
             priority_order = (
-                priority_order if order_by_param == "priority" else priority_order[::-1]
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
             )
             issue_queryset = issue_queryset.annotate(
                 priority_order=Case(
@@ -174,17 +220,46 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                     else order_by_param
                 )
             ).order_by(
-                "-max_values" if order_by_param.startswith("-") else "max_values"
+                "-max_values"
+                if order_by_param.startswith("-")
+                else "max_values"
             )
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(
-            issue_dict,
-            status=status.HTTP_200_OK,
-        )
+        if self.fields:
+            issues = IssueSerializer(
+                issue_queryset, many=True, fields=self.fields
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class IssueViewViewSet(BaseViewSet):
@@ -216,6 +291,18 @@ class IssueViewViewSet(BaseViewSet):
             .order_by("-is_favorite", "name")
             .distinct()
         )
+
+    def list(self, request, slug, project_id):
+        queryset = self.get_queryset()
+        fields = [
+            field
+            for field in request.GET.get("fields", "").split(",")
+            if field
+        ]
+        views = IssueViewSerializer(
+            queryset, many=True, fields=fields if fields else None
+        ).data
+        return Response(views, status=status.HTTP_200_OK)
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):

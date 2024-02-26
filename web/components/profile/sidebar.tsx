@@ -1,32 +1,37 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import useSWR from "swr";
-
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
-// hooks
-import useUser from "hooks/use-user";
+// components
+import { ProfileSidebarTime } from "./time";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
 // helpers
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useEffect, useRef } from "react";
 
 // services
 const userService = new UserService();
 
-export const ProfileSidebar = () => {
+export const ProfileSidebar = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
-
-  const { user } = useUser();
+  // store hooks
+  const { currentUser } = useUser();
+  const { theme: themeStore } = useApplication();
+  const ref = useRef<HTMLDivElement>(null);
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
@@ -35,37 +40,49 @@ export const ProfileSidebar = () => {
       : null
   );
 
-  // Create a date object for the current time in the specified timezone
-  const currentTime = new Date();
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: userProjectsData?.user_data.user_timezone,
-    hour12: false, // Use 24-hour format
-    hour: "2-digit",
-    minute: "2-digit",
+  useOutsideClickDetector(ref, () => {
+    if (themeStore.profileSidebarCollapsed === false) {
+      if (window.innerWidth < 768) {
+        themeStore.toggleProfileSidebar();
+      }
+    }
   });
-  const timeString = formatter.format(currentTime);
 
   const userDetails = [
     {
       label: "Joined on",
-      value: renderLongDetailDateFormat(userProjectsData?.user_data.date_joined ?? ""),
+      value: renderFormattedDate(userProjectsData?.user_data.date_joined ?? ""),
     },
     {
       label: "Timezone",
-      value: (
-        <span>
-          {timeString} <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
-        </span>
-      ),
+      value: <ProfileSidebarTime timeZone={userProjectsData?.user_data.user_timezone} />,
     },
   ];
 
+  useEffect(() => {
+    const handleToggleProfileSidebar = () => {
+      if (window && window.innerWidth < 768) {
+        themeStore.toggleProfileSidebar(true);
+      }
+      if (window && themeStore.profileSidebarCollapsed && window.innerWidth >= 768) {
+        themeStore.toggleProfileSidebar(false);
+      }
+    };
+
+    window.addEventListener("resize", handleToggleProfileSidebar);
+    handleToggleProfileSidebar();
+    return () => window.removeEventListener("resize", handleToggleProfileSidebar);
+  }, [themeStore]);
+
   return (
-    <div className="w-full flex-shrink-0 overflow-y-auto shadow-custom-shadow-sm md:h-full md:w-80">
+    <div
+      className={`flex-shrink-0 overflow-hidden overflow-y-auto shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
+      style={themeStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+    >
       {userProjectsData ? (
         <>
           <div className="relative h-32">
-            {user?.id === userId && (
+            {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
                   <span className="grid place-items-center text-black">
@@ -89,8 +106,8 @@ export const ProfileSidebar = () => {
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100">
-                  {userProjectsData.user_data.display_name?.[0]}
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100 capitalize">
+                  {userProjectsData.user_data.first_name?.[0]}
                 </div>
               )}
             </div>
@@ -145,13 +162,12 @@ export const ProfileSidebar = () => {
                             {project.assigned_issues > 0 && (
                               <Tooltip tooltipContent="Completion percentage" position="left">
                                 <div
-                                  className={`rounded px-1 py-0.5 text-xs font-medium ${
-                                    completedIssuePercentage <= 35
-                                      ? "bg-red-500/10 text-red-500"
-                                      : completedIssuePercentage <= 70
-                                        ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-green-500/10 text-green-500"
-                                  }`}
+                                  className={`rounded px-1 py-0.5 text-xs font-medium ${completedIssuePercentage <= 35
+                                    ? "bg-red-500/10 text-red-500"
+                                    : completedIssuePercentage <= 70
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-green-500/10 text-green-500"
+                                    }`}
                                 >
                                   {completedIssuePercentage}%
                                 </div>
@@ -256,4 +272,4 @@ export const ProfileSidebar = () => {
       )}
     </div>
   );
-};
+});

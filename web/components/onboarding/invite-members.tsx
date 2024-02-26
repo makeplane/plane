@@ -18,6 +18,7 @@ import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
@@ -25,9 +26,12 @@ import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // types
-import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { MEMBER_INVITED } from "constants/event-tracker";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // assets
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
@@ -43,7 +47,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: TUserWorkspaceRole;
+  role: EUserWorkspaceRoles;
   role_active: boolean;
 };
 
@@ -70,16 +74,16 @@ const workspaceService = new WorkspaceService();
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 const placeholderEmails = [
-  "charlie.taylor@frstflit.com",
-  "octave.chanute@frstflit.com",
-  "george.spratt@frstflit.com",
-  "frank.coffyn@frstflit.com",
-  "amos.root@frstflit.com",
-  "edward.deeds@frstflit.com",
-  "charles.m.manly@frstflit.com",
-  "glenn.curtiss@frstflit.com",
-  "thomas.selfridge@frstflit.com",
-  "albert.zahm@frstflit.com",
+  "charlie.taylor@frstflt.com",
+  "octave.chanute@frstflt.com",
+  "george.spratt@frstflt.com",
+  "frank.coffyn@frstflt.com",
+  "amos.root@frstflt.com",
+  "edward.deeds@frstflt.com",
+  "charles.m.manly@frstflt.com",
+  "glenn.curtiss@frstflt.com",
+  "thomas.selfridge@frstflt.com",
+  "albert.zahm@frstflt.com",
 ];
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
   const {
@@ -267,6 +271,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   const { setToastAlert } = useToast();
   const { resolvedTheme } = useTheme();
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const {
     control,
@@ -305,6 +311,17 @@ export const InviteMembers: React.FC<Props> = (props) => {
         })),
       })
       .then(async () => {
+        captureEvent(MEMBER_INVITED, {
+          emails: [
+            ...payload.emails.map((email) => ({
+              email: email.email,
+              role: getUserRole(email.role),
+            })),
+          ],
+          project_id: undefined,
+          state: "SUCCESS",
+          element: "Onboarding",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -313,13 +330,18 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
         await nextStep();
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureEvent(MEMBER_INVITED, {
+          project_id: undefined,
+          state: "FAILED",
+          element: "Onboarding",
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error,
-        })
-      );
+        });
+      });
   };
 
   const appendField = () => {
@@ -361,7 +383,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         ))}
 
         <div className="relative mt-20">
-          <div className="absolute right-24 mt-1 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onbording-shadow-sm">
+          <div className="absolute right-24 mt-1 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onboarding-shadow-sm">
             <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user2} alt="user" />
             </div>
@@ -371,7 +393,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div className="absolute right-12 mt-16 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onbording-shadow-sm">
+          <div className="absolute right-12 mt-16 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onboarding-shadow-sm">
             <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user1} alt="user" />
             </div>

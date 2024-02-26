@@ -1,161 +1,113 @@
-import { observable, action, makeObservable, runInAction, computed } from "mobx";
-// types
-import { RootStore } from "../root";
+import { observable, action, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
+import set from "lodash/set";
+import update from "lodash/update";
+import concat from "lodash/concat";
+import uniq from "lodash/uniq";
 // services
-import { InboxService } from "services/inbox.service";
+import { InboxService } from "services/inbox/inbox.service";
 // types
-import { IInbox } from "types";
+import { RootStore } from "store/root.store";
+import { TInboxDetailMap, TInboxDetailIdMap, TInbox } from "@plane/types";
 
-export interface IInboxStore {
-  // states
-  loader: boolean;
-  error: any | null;
-
+export interface IInbox {
   // observables
-  inboxId: string | null;
-
-  inboxesList: {
-    [projectId: string]: IInbox[];
-  };
-  inboxDetails: {
-    [inboxId: string]: IInbox;
-  };
-
-  // actions
-  setInboxId: (inboxId: string | null) => void;
-
-  getInboxId: (projectId: string) => string | null;
-
-  fetchInboxesList: (workspaceSlug: string, projectId: string) => Promise<IInbox[]>;
-  fetchInboxDetails: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<IInbox>;
-
-  // computed
-  isInboxEnabled: boolean;
+  inboxes: TInboxDetailIdMap;
+  inboxMap: TInboxDetailMap;
+  // helper methods
+  getInboxesByProjectId: (projectId: string) => string[] | undefined;
+  getInboxById: (inboxId: string) => TInbox | undefined;
+  // fetch actions
+  fetchInboxes: (workspaceSlug: string, projectId: string) => Promise<TInbox[]>;
+  fetchInboxById: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<TInbox>;
+  updateInbox: (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<TInbox>) => Promise<TInbox>;
 }
 
-export class InboxStore implements IInboxStore {
-  // states
-  loader: boolean = false;
-  error: any | null = null;
-
+export class Inbox implements IInbox {
   // observables
-  inboxId: string | null = null;
-
-  inboxesList: {
-    [projectId: string]: IInbox[];
-  } = {};
-  inboxDetails: {
-    [inboxId: string]: IInbox;
-  } = {};
-
+  inboxes: TInboxDetailIdMap = {};
+  inboxMap: TInboxDetailMap = {};
   // root store
   rootStore;
-
   // services
   inboxService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // states
-      loader: observable.ref,
-      error: observable.ref,
-
       // observables
-      inboxId: observable.ref,
-
-      inboxesList: observable.ref,
-      inboxDetails: observable.ref,
-
+      inboxMap: observable,
+      inboxes: observable,
       // actions
-      setInboxId: action,
-
-      fetchInboxesList: action,
-      getInboxId: action,
-
-      // computed
-      isInboxEnabled: computed,
+      fetchInboxes: action,
+      fetchInboxById: action,
+      updateInbox: action,
     });
-
+    // root store
     this.rootStore = _rootStore;
+    // services
     this.inboxService = new InboxService();
   }
 
-  get isInboxEnabled() {
-    const projectId = this.rootStore.project.projectId;
+  // helper methods
+  getInboxesByProjectId = computedFn((projectId: string) => {
+    if (!projectId) return undefined;
+    return this.inboxes?.[projectId] ?? undefined;
+  });
 
-    if (!projectId) return false;
+  getInboxById = computedFn((inboxId: string) => {
+    if (!inboxId) return undefined;
+    return this.inboxMap[inboxId] ?? undefined;
+  });
 
-    const projectDetails = this.rootStore.project.project_details[projectId];
-
-    if (!projectDetails) return false;
-
-    return projectDetails.inbox_view;
-  }
-
-  getInboxId = (projectId: string) => {
-    const projectDetails = this.rootStore.project.project_details[projectId];
-
-    if (!projectDetails || !projectDetails.inbox_view) return null;
-
-    return this.inboxesList[projectId]?.[0]?.id ?? null;
-  };
-
-  setInboxId = (inboxId: string | null) => {
-    runInAction(() => {
-      this.inboxId = inboxId;
-    });
-  };
-
-  fetchInboxesList = async (workspaceSlug: string, projectId: string) => {
+  // actions
+  fetchInboxes = async (workspaceSlug: string, projectId: string) => {
     try {
+      const response = await this.inboxService.fetchInboxes(workspaceSlug, projectId);
+
+      const _inboxIds = response.map((inbox) => inbox.id);
       runInAction(() => {
-        this.loader = true;
+        response.forEach((inbox) => {
+          set(this.inboxMap, inbox.id, inbox);
+        });
+        set(this.inboxes, projectId, _inboxIds);
       });
 
-      const inboxesResponse = await this.inboxService.getInboxes(workspaceSlug, projectId);
-
-      runInAction(() => {
-        this.loader = false;
-        this.inboxesList = {
-          ...this.inboxesList,
-          [projectId]: inboxesResponse,
-        };
-      });
-
-      return inboxesResponse;
+      return response;
     } catch (error) {
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
       throw error;
     }
   };
 
-  fetchInboxDetails = async (workspaceSlug: string, projectId: string, inboxId: string) => {
+  fetchInboxById = async (workspaceSlug: string, projectId: string, inboxId: string) => {
     try {
-      runInAction(() => {
-        this.loader = true;
-      });
-
-      const inboxDetailsResponse = await this.inboxService.getInboxById(workspaceSlug, projectId, inboxId);
+      const response = await this.inboxService.fetchInboxById(workspaceSlug, projectId, inboxId);
 
       runInAction(() => {
-        this.loader = false;
-        this.inboxDetails = {
-          ...this.inboxDetails,
-          [inboxId]: inboxDetailsResponse,
-        };
+        set(this.inboxMap, inboxId, response);
+        update(this.inboxes, projectId, (inboxIds: string[] = []) => {
+          if (inboxIds.includes(inboxId)) return inboxIds;
+          return uniq(concat(inboxIds, inboxId));
+        });
       });
 
-      return inboxDetailsResponse;
+      return response;
     } catch (error) {
+      throw error;
+    }
+  };
+
+  updateInbox = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<TInbox>) => {
+    try {
+      const response = await this.inboxService.updateInbox(workspaceSlug, projectId, inboxId, data);
+
       runInAction(() => {
-        this.loader = false;
-        this.error = error;
+        Object.keys(response).forEach((key) => {
+          set(this.inboxMap, [inboxId, key], response[key as keyof TInbox]);
+        });
       });
 
+      return response;
+    } catch (error) {
       throw error;
     }
   };

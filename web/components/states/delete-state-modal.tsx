@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// icons
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { useEventTracker, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IState } from "types";
+import type { IState } from "@plane/types";
+// constants
+import { STATE_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -22,20 +21,15 @@ type Props = {
 
 export const DeleteStateModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data } = props;
-
+  // states
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  // store
-  const {
-    projectState: projectStateStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
-  // states
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+  // store hooks
+  const { captureProjectStateEvent } = useEventTracker();
+  const { deleteState } = useProjectState();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
@@ -48,11 +42,14 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await projectStateStore
-      .deleteState(workspaceSlug.toString(), data.project, data.id)
+    await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
-        postHogEventTracker("STATE_DELETE", {
-          state: "SUCCESS",
+        captureProjectStateEvent({
+          eventName: STATE_DELETED,
+          payload: {
+            ...data,
+            state: "SUCCESS",
+          },
         });
         handleClose();
       })
@@ -70,8 +67,12 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
-        postHogEventTracker("STATE_DELETE", {
-          state: "FAILED",
+        captureProjectStateEvent({
+          eventName: STATE_DELETED,
+          payload: {
+            ...data,
+            state: "FAILED",
+          },
         });
       })
       .finally(() => {

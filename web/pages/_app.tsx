@@ -3,19 +3,18 @@ import Head from "next/head";
 import { AppProps } from "next/app";
 // styles
 import "styles/globals.css";
-import "styles/editor.css";
-import "styles/table.css";
 import "styles/command-pallette.css";
 import "styles/nprogress.css";
-import "styles/react-datepicker.css";
 import "styles/emoji.css";
+import "styles/react-day-picker.css";
 // constants
 import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
-import { MobxStoreProvider } from "lib/mobx/store-provider";
+import { StoreProvider } from "contexts/store-context";
+
 import { AppProvider } from "lib/app-provider";
 // types
-import { NextPageWithLayout } from "types/app";
+import { NextPageWithLayout } from "lib/types";
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
@@ -30,9 +29,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <Head>
         <title>{SITE_TITLE}</title>
       </Head>
-      <MobxStoreProvider {...pageProps}>
+      <StoreProvider {...pageProps}>
         <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
-      </MobxStoreProvider>
+      </StoreProvider>
     </>
   );
 }

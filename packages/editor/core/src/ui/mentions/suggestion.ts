@@ -2,10 +2,10 @@ import { ReactRenderer } from "@tiptap/react";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
 
-import MentionList from "./MentionList";
-import { IMentionSuggestion } from "@plane/editor-types";
+import { MentionList } from "src/ui/mentions/mention-list";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
 
-const Suggestion = (suggestions: IMentionSuggestion[]) => ({
+export const Suggestion = (suggestions: IMentionSuggestion[]) => ({
   items: ({ query }: { query: string }) =>
     suggestions.filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5),
   render: () => {
@@ -14,6 +14,7 @@ const Suggestion = (suggestions: IMentionSuggestion[]) => ({
 
     return {
       onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+        props.editor.storage.mentionsOpen = true;
         reactRenderer = new ReactRenderer(MentionList, {
           props,
           editor: props.editor,
@@ -45,15 +46,21 @@ const Suggestion = (suggestions: IMentionSuggestion[]) => ({
           return true;
         }
 
-        // @ts-ignore
-        return reactRenderer?.ref?.onKeyDown(props);
+        const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
+
+        if (navigationKeys.includes(props.event.key)) {
+          // @ts-ignore
+          reactRenderer?.ref?.onKeyDown(props);
+          event?.stopPropagation();
+          return true;
+        }
+        return false;
       },
-      onExit: () => {
+      onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
+        props.editor.storage.mentionsOpen = false;
         popup?.[0].destroy();
         reactRenderer?.destroy();
       },
     };
   },
 });
-
-export default Suggestion;

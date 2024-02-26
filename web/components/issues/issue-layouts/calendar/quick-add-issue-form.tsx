@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -13,24 +12,26 @@ import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
 // types
-import { IIssue, IProject } from "types";
+import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
-  formKey: keyof IIssue;
+  formKey: keyof TIssue;
   groupId?: string;
   subGroupId?: string | null;
-  prePopulatedData?: Partial<IIssue>;
+  prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
-    data: IIssue,
+    data: TIssue,
     viewId?: string
-  ) => Promise<IIssue | undefined>;
+  ) => Promise<TIssue | undefined>;
   viewId?: string;
   onOpen?: () => void;
 };
 
-const defaultValues: Partial<IIssue> = {
+const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
@@ -58,26 +59,23 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
+  const { formKey, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
-
-  // ref
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getProjectById } = useProject();
+  const { captureIssueEvent } = useEventTracker();
+  // refs
   const ref = useRef<HTMLDivElement>(null);
-
   // states
   const [isOpen, setIsOpen] = useState(false);
-
+  // toast alert
   const { setToastAlert } = useToast();
 
   // derived values
-  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
-  const projectDetail: IProject | null =
-    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
+  const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
 
   const {
     reset,
@@ -85,7 +83,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     register,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<IIssue>({ defaultValues });
+  } = useForm<TIssue>({ defaultValues });
 
   const handleClose = () => {
     setIsOpen(false);
@@ -102,7 +100,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
-      const error = errors[key as keyof IIssue];
+      const error = errors[key as keyof TIssue];
 
       setToastAlert({
         type: "error",
@@ -112,12 +110,12 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     });
   }, [errors, setToastAlert]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
+  const onSubmitHandler = async (formData: TIssue) => {
+    if (isSubmitting || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail, projectDetail, {
+    const payload = createIssuePayload(projectId.toString(), {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
@@ -125,13 +123,19 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     try {
       quickAddCallback &&
         (await quickAddCallback(
-          workspaceSlug,
-          projectId,
+          workspaceSlug.toString(),
+          projectId.toString(),
           {
             ...payload,
           },
           viewId
-        ));
+        ).then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
+            path: router.asPath,
+          });
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",
@@ -139,6 +143,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       });
     } catch (err: any) {
       console.error(err);
+      captureIssueEvent({
+        eventName: ISSUE_CREATED,
+        payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
+        path: router.asPath,
+      });
       setToastAlert({
         type: "error",
         title: "Error!",

@@ -1,10 +1,14 @@
 import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
+import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
 import {
   DeleteProjectModal,
@@ -13,35 +17,31 @@ import {
   ProjectDetailsFormLoader,
 } from "components/project";
 // types
-import { NextPageWithLayout } from "types/app";
-// fetch-keys
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
+import { NextPageWithLayout } from "lib/types";
 
 const GeneralSettingsPage: NextPageWithLayout = observer(() => {
-  // store
-  const { project: projectStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { currentProjectDetails, fetchProjectDetails } = useProject();
   // api call to fetch project details
-  useSWR(
-    workspaceSlug && projectId ? "PROJECT_DETAILS" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
-      : null
+  // TODO: removed this API if not necessary
+  const { isLoading } = useSWR(
+    workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
-
+  // derived values
+  const isAdmin = currentProjectDetails?.member_role === 20;
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
   // const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
   // const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  const isAdmin = currentProjectDetails?.member_role === 20;
-
   return (
     <>
+      <PageHead title={pageTitle} />
       {currentProjectDetails && (
         <DeleteProjectModal
           project={currentProjectDetails}
@@ -51,10 +51,11 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
       )}
 
       <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-        {currentProjectDetails && workspaceSlug ? (
+        {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
             workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
             isAdmin={isAdmin}
           />
         ) : (

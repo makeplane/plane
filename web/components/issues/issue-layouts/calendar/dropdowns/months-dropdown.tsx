@@ -2,17 +2,26 @@ import React, { useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+//hooks
+import { useCalendarView } from "hooks/store";
 // icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
 
-export const CalendarMonthsDropdown: React.FC = observer(() => {
-  const { calendar: calendarStore, issueFilter: issueFilterStore } = useMobxStore();
+interface Props {
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+}
+export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) => {
+  const { issuesFilterStore } = props;
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+  const issueCalendarView = useCalendarView();
+
+  const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -29,10 +38,10 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
     ],
   });
 
-  const { activeMonthDate } = calendarStore.calendarFilters;
+  const { activeMonthDate } = issueCalendarView.calendarFilters;
 
   const getWeekLayoutHeader = (): string => {
-    const allDaysOfActiveWeek = calendarStore.allDaysOfActiveWeek;
+    const allDaysOfActiveWeek = issueCalendarView.allDaysOfActiveWeek;
 
     if (!allDaysOfActiveWeek) return "Week view";
 
@@ -55,7 +64,7 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
   };
 
   const handleDateChange = (date: Date) => {
-    calendarStore.updateCalendarFilters({
+    issueCalendarView.updateCalendarFilters({
       activeMonthDate: date,
     });
   };

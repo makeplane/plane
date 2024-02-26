@@ -9,7 +9,7 @@ import type {
   ProjectPreferences,
   IProjectViewProps,
   TProjectIssuesSearchParams,
-} from "types";
+} from "@plane/types";
 
 export class ProjectService extends APIService {
   constructor() {
@@ -72,9 +72,6 @@ export class ProjectService extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: {
-      view_props?: IProjectViewProps;
-      default_props?: IProjectViewProps;
-      preferences?: ProjectPreferences;
       sort_order?: number;
     }
   ): Promise<any> {
@@ -86,7 +83,11 @@ export class ProjectService extends APIService {
   }
 
   async getGithubRepositories(url: string): Promise<GithubRepositoriesResponse> {
-    return this.request(url)
+    return this.request({
+      method: "get",
+      url,
+      headers: this.getAccessToken() ? this.getHeaders() : {},
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

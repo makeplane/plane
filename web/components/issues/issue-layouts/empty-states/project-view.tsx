@@ -1,18 +1,17 @@
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useEventTracker } from "hooks/store";
 // components
 import { EmptyState } from "components/common";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
-import { EProjectStore } from "store/command-palette.store";
+import { EIssuesStoreType } from "constants/issue";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
-  const {
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
 
   return (
     <div className="grid h-full w-full place-items-center">
@@ -24,8 +23,8 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
           text: "New issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
           onClick: () => {
-            setTrackElement("VIEW_EMPTY_STATE");
-            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+            setTrackElement("View issue empty state");
+            commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },
         }}
       />

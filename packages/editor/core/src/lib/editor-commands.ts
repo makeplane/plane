@@ -1,7 +1,7 @@
-import { UploadImage } from "@plane/editor-types";
 import { Editor, Range } from "@tiptap/core";
-import { startImageUpload } from "../ui/plugins/upload-image";
-import { findTableAncestor } from "./utils";
+import { startImageUpload } from "src/ui/plugins/upload-image";
+import { findTableAncestor } from "src/lib/utils";
+import { UploadImage } from "src/types/upload-image";
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
@@ -34,8 +34,32 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
 };
 
 export const toggleCodeBlock = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
-  else editor.chain().focus().toggleCodeBlock().run();
+  // Check if code block is active then toggle code block
+  if (editor.isActive("codeBlock")) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      return;
+    }
+    editor.chain().focus().toggleCodeBlock().run();
+    return;
+  }
+
+  // Check if user hasn't selected any text
+  const isSelectionEmpty = editor.state.selection.empty;
+
+  if (isSelectionEmpty) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      return;
+    }
+    editor.chain().focus().toggleCodeBlock().run();
+  } else {
+    if (range) {
+      editor.chain().focus().deleteRange(range).toggleCode().run();
+      return;
+    }
+    editor.chain().focus().toggleCode().run();
+  }
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
@@ -59,8 +83,8 @@ export const toggleStrike = (editor: Editor, range?: Range) => {
 };
 
 export const toggleBlockquote = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run();
-  else editor.chain().focus().toggleNode("paragraph", "paragraph").toggleBlockquote().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleBlockquote().run();
+  else editor.chain().focus().toggleBlockquote().run();
 };
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
@@ -73,8 +97,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
       }
     }
   }
-  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-  else editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3 }).run();
+  else editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
 };
 
 export const unsetLinkEditor = (editor: Editor) => {

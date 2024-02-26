@@ -1,15 +1,15 @@
-import { SlashCommand } from "@plane/editor-extensions";
+import { UploadImage } from "@plane/editor-core";
+import { DragAndDrop, SlashCommand } from "@plane/editor-extensions";
 import Placeholder from "@tiptap/extension-placeholder";
-import { DragAndDrop } from "@plane/editor-extensions";
-import { UploadImage } from "@plane/editor-types";
 
 export const RichTextEditorExtensions = (
   uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  dragDropEnabled?: boolean
+  dragDropEnabled?: boolean,
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
 ) => [
   SlashCommand(uploadFile, setIsSubmitting),
-  dragDropEnabled === true && DragAndDrop,
+  dragDropEnabled === true && DragAndDrop(setHideDragHandle),
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === "heading") {

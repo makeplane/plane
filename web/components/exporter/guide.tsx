@@ -3,17 +3,20 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
+import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
-
+import { observer } from "mobx-react-lite";
 // hooks
+import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { IntegrationService } from "services/integrations";
 // components
 import { Exporter, SingleExport } from "components/exporter";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { ImportExportSettingsLoader } from "components/ui";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // fetch-keys
@@ -21,18 +24,25 @@ import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { EXPORTERS_LIST } from "constants/workspace";
 
+import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+
 // services
 const integrationService = new IntegrationService();
 
-const IntegrationGuide = () => {
+const IntegrationGuide = observer(() => {
+  // states
   const [refreshing, setRefreshing] = useState(false);
   const per_page = 10;
   const [cursor, setCursor] = useState<string | undefined>(`10:0:0`);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-
-  const { user } = useUserAuth();
+  // theme
+  const { resolvedTheme } = useTheme();
+  // store hooks
+  const { currentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -40,6 +50,10 @@ const IntegrationGuide = () => {
       ? () => integrationService.getExportsServicesList(workspaceSlug as string, cursor, per_page)
       : null
   );
+
+  const emptyStateDetail = WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS["export"];
+  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
+  const emptyStateImage = getEmptyStateImagePath("workspace-settings", "exports", isLightMode);
 
   const handleCsvClose = () => {
     router.replace(`/${workspaceSlug?.toString()}/settings/exports`);
@@ -135,15 +149,17 @@ const IntegrationGuide = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="px-4 py-6 text-sm text-custom-text-200">No previous export available.</p>
+                  <div className="h-full w-full flex items-center justify-center">
+                    <EmptyState
+                      title={emptyStateDetail.title}
+                      description={emptyStateDetail.description}
+                      image={emptyStateImage}
+                      size="sm"
+                    />
+                  </div>
                 )
               ) : (
-                <Loader className="mt-6 grid grid-cols-1 gap-3">
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                  <Loader.Item height="40px" width="100%" />
-                </Loader>
+                <ImportExportSettingsLoader />
               )}
             </div>
           </div>
@@ -153,7 +169,7 @@ const IntegrationGuide = () => {
             isOpen
             handleClose={() => handleCsvClose()}
             data={null}
-            user={user}
+            user={currentUser}
             provider={provider}
             mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`))}
           />
@@ -161,6 +177,6 @@ const IntegrationGuide = () => {
       </div>
     </>
   );
-};
+});
 
 export default IntegrationGuide;

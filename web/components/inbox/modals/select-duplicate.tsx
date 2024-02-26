@@ -13,6 +13,7 @@ import { Button, LayersIcon } from "@plane/ui";
 import { Search } from "lucide-react";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { useProject, useProjectState } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -33,6 +34,10 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  // hooks
+  const { getProjectStates } = useProjectState();
+  const { getProjectById } = useProject();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
@@ -124,32 +129,37 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                             <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
                           )}
                           <ul className="text-sm text-custom-text-100">
-                            {filteredIssues.map((issue) => (
-                              <Combobox.Option
-                                key={issue.id}
-                                as="div"
-                                value={issue.id}
-                                className={({ active, selected }) =>
-                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                    active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  } `
-                                }
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state_detail.color,
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                    {issues?.find((i) => i.id === issue.id)?.project_detail?.identifier}-
-                                    {issue.sequence_id}
-                                  </span>
-                                  <span className="text-custom-text-200">{issue.name}</span>
-                                </div>
-                              </Combobox.Option>
-                            ))}
+                            {filteredIssues.map((issue) => {
+                              const stateColor =
+                                getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)
+                                  ?.color || "";
+
+                              return (
+                                <Combobox.Option
+                                  key={issue.id}
+                                  as="div"
+                                  value={issue.id}
+                                  className={({ active, selected }) =>
+                                    `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                                      active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
+                                    } `
+                                  }
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: stateColor,
+                                      }}
+                                    />
+                                    <span className="flex-shrink-0 text-xs text-custom-text-200">
+                                      {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                                    </span>
+                                    <span className="text-custom-text-200">{issue.name}</span>
+                                  </div>
+                                </Combobox.Option>
+                              );
+                            })}
                           </ul>
                         </li>
                       ) : (

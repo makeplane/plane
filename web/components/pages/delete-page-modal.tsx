@@ -2,36 +2,42 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { AlertTriangle } from "lucide-react";
 // hooks
+import { useEventTracker, usePage } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { AlertTriangle } from "lucide-react";
 // types
-import type { IPage } from "types";
+import { useProjectPages } from "hooks/store/use-project-page";
+// constants
+import { PAGE_DELETED } from "constants/event-tracker";
 
 type TConfirmPageDeletionProps = {
-  data?: IPage | null;
+  pageId: string;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
-  const { data, isOpen, onClose } = props;
+  const { pageId, isOpen, onClose } = props;
 
+  // states
   const [isDeleting, setIsDeleting] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { deletePage } = useProjectPages();
+  const { capturePageEvent } = useEventTracker();
+  const pageStore = usePage(pageId);
 
-  const {
-    page: { deletePage },
-  } = useMobxStore();
-
+  // toast alert
   const { setToastAlert } = useToast();
+
+  if (!pageStore) return null;
+
+  const { name } = pageStore;
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -39,12 +45,20 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   };
 
   const handleDelete = async () => {
-    if (!data || !workspaceSlug || !projectId) return;
+    if (!pageId || !workspaceSlug || !projectId) return;
 
     setIsDeleting(true);
 
-    await deletePage(workspaceSlug.toString(), data.project, data.id)
+    // Delete Page will only delete the page from the archive page map, at this point only archived pages can be deleted
+    await deletePage(workspaceSlug.toString(), projectId as string, pageId)
       .then(() => {
+        capturePageEvent({
+          eventName: PAGE_DELETED,
+          payload: {
+            ...pageStore,
+            state: "SUCCESS",
+          },
+        });
         handleClose();
         setToastAlert({
           type: "success",
@@ -53,6 +67,13 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         });
       })
       .catch(() => {
+        capturePageEvent({
+          eventName: PAGE_DELETED,
+          payload: {
+            ...pageStore,
+            state: "FAILED",
+          },
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -103,8 +124,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete page-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? The Page
-                          will be deleted permanently. This action cannot be undone.
+                          <span className="break-words font-medium text-custom-text-100">{name}</span>? The Page will be
+                          deleted permanently. This action cannot be undone.
                         </p>
                       </div>
                     </div>

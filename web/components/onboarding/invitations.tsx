@@ -1,22 +1,23 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
+// hooks
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 // components
 import { Button } from "@plane/ui";
-
 // helpers
 import { truncateText } from "helpers/string.helper";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
-
-// contants
+// constants
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
+import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // types
-import { IWorkspaceMemberInvitation } from "types";
+import { IWorkspaceMemberInvitation } from "@plane/types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
+import {} from "hooks/store/use-event-tracker";
+import { getUserRole } from "helpers/user.helper";
 
 type Props = {
   handleNextStep: () => void;
@@ -26,14 +27,15 @@ const workspaceService = new WorkspaceService();
 
 export const Invitations: React.FC<Props> = (props) => {
   const { handleNextStep, setTryDiffAccount } = props;
+  // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
+  // store hooks
+  const { captureEvent } = useEventTracker();
+  const { currentUser, updateCurrentUser } = useUser();
+  const { workspaces, fetchWorkspaces } = useWorkspace();
 
-  const {
-    workspace: workspaceStore,
-    user: { currentUser, updateCurrentUser },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
+  const workspacesList = Object.values(workspaces);
 
   const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
@@ -48,9 +50,9 @@ export const Invitations: React.FC<Props> = (props) => {
   };
 
   const updateLastWorkspace = async () => {
-    if (!workspaceStore.workspaces) return;
+    if (!workspacesList) return;
     await updateCurrentUser({
-      last_workspace_id: workspaceStore.workspaces[0].id,
+      last_workspace_id: workspacesList[0]?.id,
     });
   };
 
@@ -58,20 +60,35 @@ export const Invitations: React.FC<Props> = (props) => {
     if (invitationsRespond.length <= 0) return;
 
     setIsJoiningWorkspaces(true);
+    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async (res) => {
-        postHogEventTracker("MEMBER_ACCEPTED", { ...res, state: "SUCCESS", accepted_from: "App" });
-        await workspaceStore.fetchWorkspaces();
+      .then(async () => {
+        captureEvent(MEMBER_ACCEPTED, {
+          member_id: invitation?.id,
+          role: getUserRole(invitation?.role!),
+          project_id: undefined,
+          accepted_from: "App",
+          state: "SUCCESS",
+          element: "Workspace invitations page",
+        });
+        await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
         await handleNextStep();
         await mutateInvitations();
       })
       .catch((error) => {
-        console.log(error);
-        postHogEventTracker("MEMBER_ACCEPTED", { state: "FAILED", accepted_from: "App" });
+        console.error(error);
+        captureEvent(MEMBER_ACCEPTED, {
+          member_id: invitation?.id,
+          role: getUserRole(invitation?.role!),
+          project_id: undefined,
+          accepted_from: "App",
+          state: "FAILED",
+          element: "Workspace invitations page",
+        });
       })
       .finally(() => setIsJoiningWorkspaces(false));
   };
@@ -85,6 +102,7 @@ export const Invitations: React.FC<Props> = (props) => {
             invitations.length > 0 &&
             invitations.map((invitation) => {
               const isSelected = invitationsRespond.includes(invitation.id);
+              const invitedWorkspace = workspaces[invitation.workspace.id];
               return (
                 <div
                   key={invitation.id}
@@ -97,23 +115,23 @@ export const Invitations: React.FC<Props> = (props) => {
                 >
                   <div className="flex-shrink-0">
                     <div className="grid h-9 w-9 place-items-center rounded">
-                      {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
+                      {invitedWorkspace?.logo && invitedWorkspace.logo !== "" ? (
                         <img
-                          src={invitation.workspace.logo}
+                          src={invitedWorkspace.logo}
                           height="100%"
                           width="100%"
                           className="rounded"
-                          alt={invitation.workspace.name}
+                          alt={invitedWorkspace.name}
                         />
                       ) : (
                         <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
-                          {invitation.workspace.name[0]}
+                          {invitedWorkspace?.name[0]}
                         </span>
                       )}
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
+                    <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
                     <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                   </div>
                   <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}>

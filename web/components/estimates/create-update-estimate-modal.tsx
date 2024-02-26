@@ -2,18 +2,16 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
+// store hooks
+import { useEstimate } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { IEstimate, IEstimateFormData } from "types";
+import { IEstimate, IEstimateFormData } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -36,16 +34,14 @@ type FormValues = typeof defaultValues;
 
 export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   const { handleClose, data, isOpen } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
-  const {
-    projectEstimates: { createEstimate, updateEstimate },
-  } = useMobxStore();
-
+  // store hooks
+  const { createEstimate, updateEstimate } = useEstimate();
+  // form info
+  // toast alert
+  const { setToastAlert } = useToast();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -59,8 +55,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     handleClose();
     reset();
   };
-
-  const { setToastAlert } = useToast();
 
   const handleCreateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;
@@ -125,6 +119,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
         type: "error",
         title: "Error!",
         message: "Estimate point cannot be empty.",
+      });
+      return;
+    }
+
+    if (
+      formData.value1.length > 20 ||
+      formData.value2.length > 20 ||
+      formData.value3.length > 20 ||
+      formData.value4.length > 20 ||
+      formData.value5.length > 20 ||
+      formData.value6.length > 20
+    ) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate point cannot have more than 20 characters.",
       });
       return;
     }
@@ -269,6 +279,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                                   <Controller
                                     control={control}
                                     name={`value${i + 1}` as keyof FormValues}
+                                    rules={{
+                                      maxLength: {
+                                        value: 20,
+                                        message: "Estimate point must at most be of 20 characters",
+                                      },
+                                    }}
                                     render={({ field: { value, onChange, ref } }) => (
                                       <Input
                                         ref={ref}
@@ -299,8 +315,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                            ? "Creating Estimate..."
-                            : "Create Estimate"}
+                          ? "Creating Estimate..."
+                          : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

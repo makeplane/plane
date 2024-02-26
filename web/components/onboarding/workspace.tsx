@@ -3,15 +3,15 @@ import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue 
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // hooks
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { RESTRICTED_URLS } from "constants/workspace";
+import { WORKSPACE_CREATED } from "constants/event-tracker";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
@@ -28,14 +28,14 @@ const workspaceService = new WorkspaceService();
 
 export const Workspace: React.FC<Props> = (props) => {
   const { stepChange, user, control, handleSubmit, setValue, errors, isSubmitting } = props;
+  // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-
-  const {
-    workspace: workspaceStore,
-    user: { updateCurrentUser },
-  } = useMobxStore();
-
+  // store hooks
+  const { updateCurrentUser } = useUser();
+  const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
+  const { captureWorkspaceEvent } = useEventTracker();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
@@ -47,37 +47,55 @@ export const Workspace: React.FC<Props> = (props) => {
         if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
 
-          await workspaceStore
-            .createWorkspace(formData)
-            .then(async () => {
+          await createWorkspace(formData)
+            .then(async (res) => {
               setToastAlert({
                 type: "success",
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
-              await workspaceStore.fetchWorkspaces();
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  ...res,
+                  state: "SUCCESS",
+                  first_time: true,
+                  element: "Onboarding",
+                },
+              });
+              await fetchWorkspaces();
               await completeStep();
             })
-            .catch(() =>
+            .catch(() => {
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  state: "FAILED",
+                  first_time: true,
+                  element: "Onboarding",
+                },
+              });
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
-              })
-            );
+              });
+            });
         } else setSlugError(true);
       })
-      .catch(() => {
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
-        });
-      });
+        })
+      );
   };
 
   const completeStep = async () => {
-    if (!user || !workspaceStore.workspaces) return;
+    if (!user || !workspaces) return;
+
+    const firstWorkspace = Object.values(workspaces ?? {})?.[0];
 
     const payload: Partial<TOnboardingSteps> = {
       workspace_create: true,
@@ -86,7 +104,7 @@ export const Workspace: React.FC<Props> = (props) => {
 
     await stepChange(payload);
     await updateCurrentUser({
-      last_workspace_id: workspaceStore.workspaces[0]?.id,
+      last_workspace_id: firstWorkspace?.id,
     });
   };
 

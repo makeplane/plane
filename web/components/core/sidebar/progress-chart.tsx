@@ -1,11 +1,11 @@
 import React from "react";
-
+import { eachDayOfInterval, isValid } from "date-fns";
 // ui
 import { LineGraph } from "components/ui";
 // helpers
-import { getDatesInRange, renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 //types
-import { TCompletionChartDistribution } from "types";
+import { TCompletionChartDistribution } from "@plane/types";
 
 type Props = {
   distribution: TCompletionChartDistribution;
@@ -41,26 +41,32 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
   ));
 
 const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues }) => {
-  const chartData = Object.keys(distribution).map((key) => ({
-    currentDate: renderShortNumericDateFormat(key),
+  const chartData = Object.keys(distribution ?? []).map((key) => ({
+    currentDate: renderFormattedDateWithoutYear(key),
     pending: distribution[key],
   }));
 
   const generateXAxisTickValues = () => {
-    const dates = getDatesInRange(startDate, endDate);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    let dates: Date[] = [];
+    if (isValid(start) && isValid(end)) {
+      dates = eachDayOfInterval({ start, end });
+    }
 
     const maxDates = 4;
     const totalDates = dates.length;
 
-    if (totalDates <= maxDates) return dates.map((d) => renderShortNumericDateFormat(d));
+    if (totalDates <= maxDates) return dates.map((d) => renderFormattedDateWithoutYear(d));
     else {
       const interval = Math.ceil(totalDates / maxDates);
       const limitedDates = [];
 
-      for (let i = 0; i < totalDates; i += interval) limitedDates.push(renderShortNumericDateFormat(dates[i]));
+      for (let i = 0; i < totalDates; i += interval) limitedDates.push(renderFormattedDateWithoutYear(dates[i]));
 
-      if (!limitedDates.includes(renderShortNumericDateFormat(dates[totalDates - 1])))
-        limitedDates.push(renderShortNumericDateFormat(dates[totalDates - 1]));
+      if (!limitedDates.includes(renderFormattedDateWithoutYear(dates[totalDates - 1])))
+        limitedDates.push(renderFormattedDateWithoutYear(dates[totalDates - 1]));
 
       return limitedDates;
     }
@@ -80,12 +86,15 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
           {
             id: "pending",
             color: "#3F76FF",
-            data: chartData.map((item, index) => ({
-              index,
-              x: item.currentDate,
-              y: item.pending,
-              color: "#3F76FF",
-            })),
+            data:
+              chartData.length > 0
+                ? chartData.map((item, index) => ({
+                    index,
+                    x: item.currentDate,
+                    y: item.pending,
+                    color: "#3F76FF",
+                  }))
+                : [],
             enableArea: true,
           },
           {
@@ -115,7 +124,9 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         enableArea
         colors={(datum) => datum.color ?? "#3F76FF"}
         customYAxisTickValues={[0, totalIssues]}
-        gridXValues={chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : ""))}
+        gridXValues={
+          chartData.length > 0 ? chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : "")) : undefined
+        }
         enableSlices="x"
         sliceTooltip={(datum) => (
           <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">

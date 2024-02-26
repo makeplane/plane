@@ -61,7 +61,9 @@ class InstanceEndpoint(BaseAPIView):
     def patch(self, request):
         # Get the instance
         instance = Instance.objects.first()
-        serializer = InstanceSerializer(instance, data=request.data, partial=True)
+        serializer = InstanceSerializer(
+            instance, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -80,7 +82,8 @@ class InstanceAdminEndpoint(BaseAPIView):
 
         if not email:
             return Response(
-                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         instance = Instance.objects.first()
@@ -114,7 +117,9 @@ class InstanceAdminEndpoint(BaseAPIView):
 
     def delete(self, request, pk):
         instance = Instance.objects.first()
-        instance_admin = InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
+        instance_admin = InstanceAdmin.objects.filter(
+            instance=instance, pk=pk
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -125,7 +130,9 @@ class InstanceConfigurationEndpoint(BaseAPIView):
 
     def get(self, request):
         instance_configurations = InstanceConfiguration.objects.all()
-        serializer = InstanceConfigurationSerializer(instance_configurations, many=True)
+        serializer = InstanceConfigurationSerializer(
+            instance_configurations, many=True
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):

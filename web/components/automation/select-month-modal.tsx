@@ -7,7 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IProject } from "types";
+import type { IProject } from "@plane/types";
 
 // types
 type Props = {

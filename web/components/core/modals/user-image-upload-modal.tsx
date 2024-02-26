@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // hooks
@@ -32,12 +32,12 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // store hooks
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 

@@ -52,7 +52,9 @@ class ModuleSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError("Start date cannot exceed target date")
+            raise serializers.ValidationError(
+                "Start date cannot exceed target date"
+            )
 
         if data.get("members", []):
             data["members"] = ProjectMember.objects.filter(
@@ -65,18 +67,18 @@ class ModuleSerializer(BaseSerializer):
     def create(self, validated_data):
         members = validated_data.pop("members", None)
 
-        project = self.context["project"]
+        project_id = self.context["project_id"]
+        workspace_id = self.context["workspace_id"]
 
-        module = Module.objects.create(**validated_data, project=project)
-
+        module = Module.objects.create(**validated_data, project_id=project_id)
         if members is not None:
             ModuleMember.objects.bulk_create(
                 [
                     ModuleMember(
                         module=module,
-                        member=member,
-                        project=project,
-                        workspace=project.workspace,
+                        member_id=str(member),
+                        project_id=project_id,
+                        workspace_id=workspace_id,
                         created_by=module.created_by,
                         updated_by=module.updated_by,
                     )
@@ -97,7 +99,7 @@ class ModuleSerializer(BaseSerializer):
                 [
                     ModuleMember(
                         module=instance,
-                        member=member,
+                        member_id=str(member),
                         project=instance.project,
                         workspace=instance.project.workspace,
                         created_by=instance.created_by,
@@ -146,16 +148,16 @@ class ModuleLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
+            url=validated_data.get("url"),
+            module_id=validated_data.get("module_id"),
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
         return ModuleLink.objects.create(**validated_data)
-    
+
 
 class ModuleLiteSerializer(BaseSerializer):
-
     class Meta:
         model = Module
         fields = "__all__"

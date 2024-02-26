@@ -3,7 +3,7 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { IState } from "types";
+import type { IState } from "@plane/types";
 
 export class ProjectStateService extends APIService {
   constructor() {
@@ -63,6 +63,14 @@ export class ProjectStateService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
+      });
+  }
+
+  async getWorkspaceStates(workspaceSlug: string): Promise<IState[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/states/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 }

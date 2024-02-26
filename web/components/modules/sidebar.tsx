@@ -1,39 +1,42 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Disclosure, Transition } from "@headlessui/react";
+import {
+  AlertCircle,
+  CalendarClock,
+  ChevronDown,
+  ChevronRight,
+  Info,
+  LinkIcon,
+  Plus,
+  Trash2,
+  UserCircle2,
+} from "lucide-react";
 // hooks
+import { useModule, useUser, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
+import { DeleteModuleModal } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
+import { DateRangeDropdown, ProjectMemberDropdown } from "components/dropdowns";
 // ui
-import { CustomRangeDatePicker } from "components/ui";
-import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon } from "@plane/ui";
-// icon
-import { AlertCircle, ChevronDown, ChevronRight, Info, LinkIcon, MoveRight, Plus, Trash2 } from "lucide-react";
+import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
 // helpers
-import {
-  isDateGreaterThanToday,
-  renderDateFormat,
-  renderShortDate,
-  renderShortMonthDate,
-} from "helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, ILinkDetails, IModule, ModuleLink } from "types";
-import { EFilterType } from "store/issues/types";
+import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // constant
 import { MODULE_STATUS } from "constants/module";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserProjectRoles } from "constants/project";
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
-  lead: "",
-  members: [],
+  lead_id: "",
+  member_ids: [],
   start_date: null,
   target_date: null,
   status: "backlog",
@@ -47,38 +50,42 @@ type Props = {
 // TODO: refactor this component
 export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { moduleId, handleClose } = props;
-
+  // states
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
-
+  // store hooks
   const {
-    module: {
-      moduleDetails: _moduleDetails,
-      updateModuleDetails,
-      createModuleLink,
-      updateModuleLink,
-      deleteModuleLink,
-    },
-    moduleIssuesFilter: { issueFilters, updateFilters },
-    user: userStore,
-  } = useMobxStore();
-
-  const userRole = userStore.currentProjectRole;
-  const moduleDetails = _moduleDetails[moduleId] ?? undefined;
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
+  const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
+  const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();
 
-  const { setValue, watch, reset, control } = useForm({
+  const { reset, control } = useForm({
     defaultValues,
   });
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
+      .then((res) => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
+        });
+      })
+      .catch(() => {
+        captureModuleEvent({
+          eventName: MODULE_UPDATED,
+          payload: { ...data, state: "FAILED" },
+        });
+      });
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -88,6 +95,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
       .then(() => {
+        captureEvent(MODULE_LINK_CREATED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link created",
@@ -110,6 +121,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
       .then(() => {
+        captureEvent(MODULE_LINK_UPDATED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link updated",
@@ -130,6 +145,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
+        captureEvent(MODULE_LINK_DELETED, {
+          module_id: moduleId,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Module link deleted",
@@ -163,74 +182,17 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleStartDateChange = async (date: string) => {
-    setValue("start_date", date);
-
-    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create module in past date. Please enter a valid date.",
-        });
-        return;
-      }
-
-      submitChanges({
-        start_date: renderDateFormat(`${watch("start_date")}`),
-        target_date: renderDateFormat(`${watch("target_date")}`),
-      });
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Module updated successfully.",
-      });
-    }
+  const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
+    submitChanges({
+      start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
+      target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
+    });
+    setToastAlert({
+      type: "success",
+      title: "Success!",
+      message: "Module updated successfully.",
+    });
   };
-
-  const handleEndDateChange = async (date: string) => {
-    setValue("target_date", date);
-
-    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
-      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create module in past date. Please enter a valid date.",
-        });
-        return;
-      }
-
-      submitChanges({
-        start_date: renderDateFormat(`${watch("start_date")}`),
-        target_date: renderDateFormat(`${watch("target_date")}`),
-      });
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Module updated successfully.",
-      });
-    }
-  };
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { [key]: newValues }, moduleId);
-    },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
-  );
 
   useEffect(() => {
     if (moduleDetails)
@@ -253,7 +215,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   if (!moduleDetails)
     return (
-      <Loader className="px-5">
+      <Loader>
         <div className="space-y-2">
           <Loader.Item height="15px" width="50%" />
           <Loader.Item height="15px" width="30%" />
@@ -266,24 +228,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       </Loader>
     );
 
-  const startDate = new Date(watch("start_date") ?? moduleDetails.start_date ?? "");
-  const endDate = new Date(watch("target_date") ?? moduleDetails.target_date ?? "");
-
-  const areYearsEqual =
-    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
-
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
   const issueCount =
-    moduleDetails.total_issues === 0
-      ? "0 Issue"
-      : moduleDetails.total_issues === moduleDetails.completed_issues
-      ? moduleDetails.total_issues > 1
-        ? `${moduleDetails.total_issues}`
-        : `${moduleDetails.total_issues}`
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+    moduleDetails.total_issues === 0 ? "0 Issue" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
-  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -315,8 +265,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <LinkIcon className="h-3 w-3 text-custom-text-300" />
             </button>
             {isEditingAllowed && (
-              <CustomMenu width="lg" placement="bottom-end" ellipsis>
-                <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+              <CustomMenu placement="bottom-end" ellipsis>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setTrackElement("Module peek-overview");
+                    setModuleDeleteModal(true);
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
                     <span>Delete module</span>
@@ -328,8 +283,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 pt-2">
             <Controller
               control={control}
               name="status"
@@ -365,82 +319,52 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 </CustomSelect>
               )}
             />
+          </div>
+          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
+        </div>
 
-            <div className="relative flex h-full w-52 items-center gap-2.5">
-              <Popover className="flex h-full items-center justify-center rounded-lg">
-                <Popover.Button
-                  className={`text-sm font-medium text-custom-text-300 ${
-                    isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                  }`}
-                  disabled={!isEditingAllowed}
-                >
-                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                </Popover.Button>
+        {moduleDetails.description && (
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
+            {moduleDetails.description}
+          </span>
+        )}
 
-                <Transition
-                  as={React.Fragment}
-                  enter="transition ease-out duration-200"
-                  enterFrom="opacity-0 translate-y-1"
-                  enterTo="opacity-100 translate-y-0"
-                  leave="transition ease-in duration-150"
-                  leaveFrom="opacity-100 translate-y-0"
-                  leaveTo="opacity-0 translate-y-1"
-                >
-                  <Popover.Panel className="absolute -right-5 top-10 z-20  transform overflow-hidden">
-                    <CustomRangeDatePicker
-                      value={watch("start_date") ? watch("start_date") : moduleDetails?.start_date}
-                      onChange={(val) => {
-                        if (val) {
-                          handleStartDateChange(val);
-                        }
+        <div className="flex items-center justify-start gap-1">
+          <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <CalendarClock className="h-4 w-4" />
+            <span className="text-base">Date range</span>
+          </div>
+          <div className="w-3/5 h-7">
+            <Controller
+              control={control}
+              name="start_date"
+              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                    <DateRangeDropdown
+                      buttonContainerClassName="w-full"
+                      buttonVariant="background-with-text"
+                      minDate={new Date()}
+                      value={{
+                        from: startDateValue ? new Date(startDateValue) : undefined,
+                        to: endDateValue ? new Date(endDateValue) : undefined,
                       }}
-                      startDate={watch("start_date") ?? watch("target_date") ?? null}
-                      endDate={watch("target_date") ?? watch("start_date") ?? null}
-                      maxDate={new Date(`${watch("target_date")}`)}
-                      selectsStart={watch("target_date") ? true : false}
+                      onSelect={(val) => {
+                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                        handleDateChange(val?.from, val?.to);
+                      }}
+                      placeholder={{
+                        from: "Start date",
+                        to: "Target date",
+                      }}
                     />
-                  </Popover.Panel>
-                </Transition>
-              </Popover>
-              <MoveRight className="h-4 w-4 text-custom-text-300" />
-              <Popover className="flex h-full items-center justify-center rounded-lg">
-                <>
-                  <Popover.Button
-                    className={`text-sm font-medium text-custom-text-300 ${
-                      isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
-                    }`}
-                    disabled={!isEditingAllowed}
-                  >
-                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-                  </Popover.Button>
-
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="opacity-0 translate-y-1"
-                    enterTo="opacity-100 translate-y-0"
-                    leave="transition ease-in duration-150"
-                    leaveFrom="opacity-100 translate-y-0"
-                    leaveTo="opacity-0 translate-y-1"
-                  >
-                    <Popover.Panel className="absolute -right-5 top-10 z-20 transform overflow-hidden">
-                      <CustomRangeDatePicker
-                        value={watch("target_date") ? watch("target_date") : moduleDetails?.target_date}
-                        onChange={(val) => {
-                          if (val) {
-                            handleEndDateChange(val);
-                          }
-                        }}
-                        startDate={watch("start_date") ?? watch("target_date") ?? null}
-                        endDate={watch("target_date") ?? watch("start_date") ?? null}
-                        minDate={new Date(`${watch("start_date")}`)}
-                        selectsEnd={watch("start_date") ? true : false}
-                      />
-                    </Popover.Panel>
-                  </Transition>
-                </>
-              </Popover>
-            </div>
+                  )}
+                />
+              )}
+            />
           </div>
         </div>
 
@@ -451,39 +375,61 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
-          <Controller
-            control={control}
-            name="lead"
-            render={({ field: { value } }) => (
-              <SidebarLeadSelect
-                disabled={!isEditingAllowed}
-                value={value}
-                onChange={(val: string) => {
-                  submitChanges({ lead: val });
-                }}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="members"
-            render={({ field: { value } }) => (
-              <SidebarMembersSelect
-                disabled={!isEditingAllowed}
-                value={value}
-                onChange={(val: string[]) => {
-                  submitChanges({ members: val });
-                }}
-              />
-            )}
-          />
-
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <UserCircle2 className="h-4 w-4" />
+              <span className="text-base">Lead</span>
+            </div>
+            <Controller
+              control={control}
+              name="lead_id"
+              render={({ field: { value } }) => (
+                <div className="w-3/5 h-7">
+                  <ProjectMemberDropdown
+                    value={value ?? null}
+                    onChange={(val) => {
+                      submitChanges({ lead_id: val });
+                    }}
+                    projectId={projectId?.toString() ?? ""}
+                    multiple={false}
+                    buttonVariant="background-with-text"
+                    placeholder="Lead"
+                  />
+                </div>
+              )}
+            />
+          </div>
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <UserGroupIcon className="h-4 w-4" />
+              <span className="text-base">Members</span>
+            </div>
+            <Controller
+              control={control}
+              name="member_ids"
+              render={({ field: { value } }) => (
+                <div className="w-3/5 h-7">
+                  <ProjectMemberDropdown
+                    value={value ?? []}
+                    onChange={(val: string[]) => {
+                      submitChanges({ member_ids: val });
+                    }}
+                    multiple
+                    projectId={projectId?.toString() ?? ""}
+                    buttonVariant={value && value?.length > 0 ? "transparent-without-text" : "background-with-text"}
+                    buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
+                    disabled={!isEditingAllowed}
+                  />
+                </div>
+              )}
+            />
+          </div>
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="flex w-1/2 items-center">
+            <div className="h-7 w-3/5 flex items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>
@@ -516,7 +462,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                         <div className="flex items-center gap-1">
                           <AlertCircle height={14} width={14} className="text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
-                            Invalid date. Please enter valid date.
+                            {moduleDetails?.start_date && moduleDetails?.target_date
+                              ? "This module isn't active yet."
+                              : "Invalid date. Please enter valid date."}
                           </span>
                         </div>
                       )}
@@ -525,7 +473,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-3">
-                        {isStartValid && isEndValid ? (
+                        {moduleDetails.start_date && moduleDetails.target_date ? (
                           <div className=" h-full w-full pt-4">
                             <div className="flex  items-start  gap-4 py-2 text-xs">
                               <div className="flex items-center gap-3 text-custom-text-100">
@@ -539,11 +487,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative h-40 w-full max-w-80">
                               <ProgressChart
-                                distribution={moduleDetails.distribution.completion_chart}
-                                startDate={moduleDetails.start_date ?? ""}
-                                endDate={moduleDetails.target_date ?? ""}
+                                distribution={moduleDetails.distribution?.completion_chart ?? {}}
+                                startDate={moduleDetails.start_date}
+                                endDate={moduleDetails.target_date}
                                 totalIssues={moduleDetails.total_issues}
                               />
                             </div>
@@ -565,8 +513,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               totalIssues={moduleDetails.total_issues}
                               module={moduleDetails}
                               isPeekView={Boolean(peekModule)}
-                              filters={issueFilters?.filters}
-                              handleFiltersUpdate={handleFiltersUpdate}
                             />
                           </div>
                         )}
@@ -594,7 +540,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
-                        {userRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+                        {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
                             {isEditingAllowed && (
                               <div className="flex w-full items-center justify-end">
@@ -613,10 +559,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               handleEditLink={handleEditLink}
                               handleDeleteLink={handleDeleteLink}
                               userAuth={{
-                                isGuest: userRole === EUserWorkspaceRoles.GUEST,
-                                isViewer: userRole === EUserWorkspaceRoles.VIEWER,
-                                isMember: userRole === EUserWorkspaceRoles.MEMBER,
-                                isOwner: userRole === EUserWorkspaceRoles.ADMIN,
+                                isGuest: currentProjectRole === EUserProjectRoles.GUEST,
+                                isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
+                                isMember: currentProjectRole === EUserProjectRoles.MEMBER,
+                                isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                               }}
                             />
                           </>
@@ -626,15 +572,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                               <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
                             </div>
-                            {isEditingAllowed && (
-                              <button
-                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
-                                onClick={() => setModuleLinkModal(true)}
-                              >
-                                <Plus className="h-3 w-3" />
-                                Add link
-                              </button>
-                            )}
+                            <button
+                              className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                              onClick={() => setModuleLinkModal(true)}
+                            >
+                              <Plus className="h-3 w-3" />
+                              Add link
+                            </button>
                           </div>
                         )}
                       </div>

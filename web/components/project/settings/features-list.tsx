@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
-import { IProject } from "types";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { IProject } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {};
 
@@ -50,15 +50,15 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
+  // store hooks
+  const { captureEvent } = useEventTracker();
   const {
-    workspace: { currentWorkspace },
-    project: { currentProjectDetails, updateProject },
-    user: { currentUser, currentProjectRole },
-    trackEvent: { setTrackElement, postHogEventTracker },
-  } = useMobxStore();
-  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
-  // hooks
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails, updateProject } = useProject();
+  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleSubmit = async (formData: Partial<IProject>) => {
@@ -88,17 +88,11 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.[feature.property as keyof IProject]}
+            value={Boolean(currentProjectDetails?.[feature.property as keyof IProject])}
             onChange={() => {
-              console.log(currentProjectDetails?.[feature.property as keyof IProject]);
-              setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
-              postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
-                workspace_id: currentWorkspace?.id,
-                workspace_slug: currentWorkspace?.slug,
-                project_id: currentProjectDetails?.id,
-                project_name: currentProjectDetails?.name,
-                project_identifier: currentProjectDetails?.identifier,
+              captureEvent(`Toggle ${feature.title.toLowerCase()}`, {
                 enabled: !currentProjectDetails?.[feature.property as keyof IProject],
+                element: "Project settings feature page",
               });
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],
