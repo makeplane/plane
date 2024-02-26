@@ -637,12 +637,32 @@ function start_server() {
         while ! sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
             sleep 1
         done
+        # wait for migrator container to exit with status 0 before starting the application
+        migrator_container_id=$(sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "name=migrator")
 
-        # Wait for the application to start
+        # if migrator container is running, wait for it to exit
+        if [ -n "$migrator_container_id" ]; then
+            while sudo docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
+                show_message "Waiting for Plane Server ($APP_RELEASE) to start...✋" "replace_last_line" >&2
+                sleep 1
+            done
+        fi
+
+        # if migrator exit status is not 0, show error message and exit
+        if [ -n "$migrator_container_id" ]; then
+            migrator_exit_code=$(sudo docker inspect --format='{{.State.ExitCode}}' $migrator_container_id)
+            if [ $migrator_exit_code -ne 0 ]; then
+                # show_message "Migrator failed with exit code $migrator_exit_code ❌" "replace_last_line" >&2
+                show_message "Plane Server failed to start ❌" "replace_last_line" >&2
+                stop_server
+                exit 1
+            fi
+        fi
+
         api_container_id=$(sudo docker container ls -q -f "name=plane-api-1")
         while ! sudo docker logs $api_container_id 2>&1 | grep -i "Application startup complete";
         do
-            show_message "Waiting for Plane Server ($APP_RELEASE) to start...✋" "replace_last_line" >&2
+            show_message "Waiting for Plane Server ($APP_RELEASE) to start...✋✋" "replace_last_line" >&2
             sleep 1
         done
         show_message "Plane Server Started ($APP_RELEASE) ✅" "replace_last_line" >&2
