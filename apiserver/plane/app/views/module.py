@@ -510,12 +510,12 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
         ]
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = self.get_queryset().filter(**filters)
-        if self.fields or self.expand:
-            issues = IssueSerializer(
-                issue_queryset, many=True, fields=fields if fields else None
-            ).data
-        else:
-            issues = issue_queryset.values(
+        def on_results(issues):
+            if self.expand or self.fields:
+                return IssueSerializer(
+                    issues, many=True, expand=self.expand, fields=self.fields
+                ).data
+            return issues.values(
                 "id",
                 "name",
                 "state_id",
@@ -542,7 +542,17 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
-        return Response(issues, status=status.HTTP_200_OK)
+
+        if request.GET.get("layout", "spreadsheet") in [
+            "layout",
+            "spreadsheet",
+        ]:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=on_results
+            )
+        return on_results(issues=issue_queryset)
 
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):

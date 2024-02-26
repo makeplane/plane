@@ -116,14 +116,15 @@ class OffsetPaginator:
         if offset < 0:
             raise BadPaginationError("Pagination offset cannot be negative")
 
-        results = list(queryset[offset:stop])
+        results = queryset[offset:stop]
+
         if cursor.value != limit:
             results = results[-(limit + 1) :]
 
-        next_cursor = Cursor(limit, page + 1, False, len(results) > limit)
+        next_cursor = Cursor(limit, page + 1, False, results.count() > limit)
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
 
-        results = list(results[:limit])
+        results = results[:limit]
         if self.on_results:
             results = self.on_results(results)
 
@@ -159,13 +160,18 @@ class BasePaginator:
             )
 
         return per_page
-    
+
     def get_layout(self, request):
         layout = request.GET.get("layout", "list")
-        if layout not in ["list", "kanban", "spreadsheet", "calendar", "gantt"]:
+        if layout not in [
+            "list",
+            "kanban",
+            "spreadsheet",
+            "calendar",
+            "gantt",
+        ]:
             raise ValidationError(detail="Invalid layout given")
         return layout
-
 
     def paginate(
         self,
@@ -186,13 +192,12 @@ class BasePaginator:
 
         # Convert the cursor value to integer and float from string
         input_cursor = None
-        if request.GET.get(self.cursor_name):
-            try:
-                input_cursor = cursor_cls.from_string(
-                    request.GET.get(self.cursor_name)
-                )
-            except ValueError:
-                raise ParseError(detail="Invalid cursor parameter.")
+        try:
+            input_cursor = cursor_cls.from_string(
+                request.GET.get(self.cursor_name, f"{per_page}:0:0"),
+            )
+        except ValueError:
+            raise ParseError(detail="Invalid cursor parameter.")
 
         if not paginator:
             paginator = paginator_cls(**paginator_kwargs)

@@ -164,15 +164,12 @@ class IssueListEndpoint(BaseAPIView):
             order_by_param=order_by_param,
         )
 
-        if self.fields or self.expand:
-            issues = IssueSerializer(
-                issue_queryset,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
-            ).data
-        else:
-            issues = issue_queryset.values(
+        def on_results(issues):
+            if self.expand or self.fields:
+                return IssueSerializer(
+                    issues, many=True, expand=self.expand, fields=self.fields
+                ).data
+            return issues.values(
                 "id",
                 "name",
                 "state_id",
@@ -199,7 +196,17 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
             )
-        return Response(issues, status=status.HTTP_200_OK)
+
+        if request.GET.get("layout", "spreadsheet") in [
+            "layout",
+            "spreadsheet",
+        ]:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=on_results
+            )
+        return on_results(issues=issue_queryset)
 
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
@@ -299,15 +306,12 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             order_by_param=order_by_param,
         )
 
-        if self.fields or self.expand:
-            issues = IssueSerializer(
-                issue_queryset,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
-            ).data
-        else:
-            issues = issue_queryset.values(
+        def on_results(issues):
+            if self.expand or self.fields:
+                return IssueSerializer(
+                    issues, many=True, expand=self.expand, fields=self.fields
+                ).data
+            return issues.values(
                 "id",
                 "name",
                 "state_id",
@@ -334,7 +338,18 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
-        return Response(issues, status=status.HTTP_200_OK)
+
+        if request.GET.get("layout", "spreadsheet") in [
+            "layout",
+            "spreadsheet",
+        ]:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=on_results
+            )
+        return on_results(issues=issue_queryset)
+        
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -1296,14 +1311,13 @@ class IssueArchiveViewSet(BaseViewSet):
             if show_sub_issues == "true"
             else issue_queryset.filter(parent__isnull=True)
         )
-        if self.expand or self.fields:
-            issues = IssueSerializer(
-                issue_queryset,
-                many=True,
-                fields=self.fields,
-            ).data
-        else:
-            issues = issue_queryset.values(
+
+        def on_results(issues):
+            if self.expand or self.fields:
+                return IssueSerializer(
+                    issues, many=True, expand=self.expand, fields=self.fields
+                ).data
+            return issues.values(
                 "id",
                 "name",
                 "state_id",
@@ -1330,7 +1344,18 @@ class IssueArchiveViewSet(BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
-        return Response(issues, status=status.HTTP_200_OK)
+
+        if request.GET.get("layout", "spreadsheet") in [
+            "layout",
+            "spreadsheet",
+        ]:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=on_results
+            )
+        return on_results(issues=issue_queryset)
+
 
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
@@ -1900,16 +1925,12 @@ class IssueDraftViewSet(BaseViewSet):
         issue_queryset = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
-        # Only use serializer when expand else return by values
-        if self.expand or self.fields:
-            issues = IssueSerializer(
-                issue_queryset,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
-            ).data
-        else:
-            issues = issue_queryset.values(
+        def on_results(issues):
+            if self.expand or self.fields:
+                return IssueSerializer(
+                    issues, many=True, expand=self.expand, fields=self.fields
+                ).data
+            return issues.values(
                 "id",
                 "name",
                 "state_id",
@@ -1936,7 +1957,17 @@ class IssueDraftViewSet(BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
-        return Response(issues, status=status.HTTP_200_OK)
+
+        if request.GET.get("layout", "spreadsheet") in [
+            "layout",
+            "spreadsheet",
+        ]:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=on_results
+            )
+        return on_results(issues=issue_queryset)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)

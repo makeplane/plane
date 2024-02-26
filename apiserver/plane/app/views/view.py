@@ -155,12 +155,12 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
-        if self.fields:
-            issues = IssueSerializer(
-                issue_queryset, many=True, fields=self.fields
-            ).data
-        else:
-            issues = issue_queryset.values(
+        def on_results(issues):
+            if self.expand or self.fields:
+                return IssueSerializer(
+                    issues, many=True, expand=self.expand, fields=self.fields
+                ).data
+            return issues.values(
                 "id",
                 "name",
                 "state_id",
@@ -187,7 +187,17 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
-        return Response(issues, status=status.HTTP_200_OK)
+
+        if request.GET.get("layout", "spreadsheet") in [
+            "layout",
+            "spreadsheet",
+        ]:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=on_results
+            )
+        return on_results(issues=issue_queryset)
 
 
 class IssueViewViewSet(BaseViewSet):

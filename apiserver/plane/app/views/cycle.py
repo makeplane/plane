@@ -708,7 +708,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
         ]
         order_by = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
-        queryset = (
+        issue_queryset = (
             Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
@@ -773,12 +773,12 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             .order_by(order_by)
         )
-        if self.fields:
-            issues = IssueSerializer(
-                queryset, many=True, fields=fields if fields else None
-            ).data
-        else:
-            issues = queryset.values(
+        def on_results(issues):
+            if self.expand or self.fields:
+                return IssueSerializer(
+                    issues, many=True, expand=self.expand, fields=self.fields
+                ).data
+            return issues.values(
                 "id",
                 "name",
                 "state_id",
@@ -805,7 +805,18 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 "is_draft",
                 "archived_at",
             )
-        return Response(issues, status=status.HTTP_200_OK)
+
+        if request.GET.get("layout", "spreadsheet") in [
+            "layout",
+            "spreadsheet",
+        ]:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=on_results
+            )
+        return on_results(issues=issue_queryset)
+
 
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
