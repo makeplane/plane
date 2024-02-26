@@ -11,6 +11,8 @@ import { TIssueComment } from "@plane/types";
 // icons
 import { Globe2, Lock } from "lucide-react";
 import { useMention, useWorkspace } from "hooks/store";
+// helpers
+import { isEmptyHtmlString } from "helpers/string.helper";
 
 const fileService = new FileService();
 
@@ -51,10 +53,10 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const {
     handleSubmit,
     control,
+    watch,
     formState: { isSubmitting },
     reset,
-    watch,
-  } = useForm<Partial<TIssueComment>>({ defaultValues: { comment_html: "" } });
+  } = useForm<Partial<TIssueComment>>({ defaultValues: { comment_html: "<p></p>" } });
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
     await activityOperations.createComment(formData).finally(() => {
@@ -63,14 +65,19 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     });
   };
 
+  const isEmpty =
+    watch("comment_html") === "" ||
+    watch("comment_html")?.trim() === "" ||
+    watch("comment_html") === "<p></p>" ||
+    isEmptyHtmlString(watch("comment_html") ?? "");
+
   return (
     <div
-    // onKeyDown={(e) => {
-    //   if (e.key === "Enter" && !e.shiftKey) {
-    //     e.preventDefault();
-    //     // handleSubmit(onSubmit)(e);
-    //   }
-    // }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey && !isEmpty) {
+          handleSubmit(onSubmit)(e);
+        }
+      }}
     >
       <Controller
         name="access"
@@ -81,15 +88,12 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditorWithRef
-                onEnterKeyPress={(e) => {
-                  handleSubmit(onSubmit)(e);
-                }}
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.getDeleteImageFunction(workspaceId)}
                 restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                 ref={editorRef}
-                value={value ?? ""}
+                value={!value ? "<p></p>" : value}
                 customClassName="p-2"
                 editorContentCustomClassNames="min-h-[35px]"
                 debouncedUpdatesEnabled={false}
@@ -105,7 +109,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 }
                 submitButton={
                   <Button
-                    disabled={isSubmitting || watch("comment_html") === ""}
+                    disabled={isSubmitting || isEmpty}
                     variant="primary"
                     type="submit"
                     className="!px-2.5 !py-1.5 !text-xs"

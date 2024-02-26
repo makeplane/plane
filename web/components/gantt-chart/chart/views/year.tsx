@@ -1,10 +1,11 @@
 import { FC } from "react";
-// context
-import { useChart } from "../../hooks";
+import { observer } from "mobx-react";
+// hooks
+import { useGanttChart } from "components/gantt-chart/hooks/use-gantt-chart";
 
-export const YearChartView: FC<any> = () => {
+export const YearChartView: FC<any> = observer(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
+  const { currentView, currentViewData, renderView } = useGanttChart();
 
   return (
     <>
@@ -46,4 +47,4 @@ export const YearChartView: FC<any> = () => {
       </div>
     </>
   );
-};
+});

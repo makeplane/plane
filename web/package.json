@@ -34,6 +34,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
+    "dompurify": "^3.0.9",
     "dotenv": "^16.0.3",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
@@ -61,6 +62,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.202",
     "@types/node": "18.0.6",

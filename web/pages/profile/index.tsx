@@ -250,6 +250,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           hasError={Boolean(errors.first_name)}
                           placeholder="Enter your first name"
                           className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
+                          maxLength={24}
                         />
                       )}
                     />
@@ -273,6 +274,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           hasError={Boolean(errors.last_name)}
                           placeholder="Enter your last name"
                           className="w-full rounded-md"
+                          maxLength={24}
                         />
                       )}
                     />
@@ -369,6 +371,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           hasError={Boolean(errors.display_name)}
                           placeholder="Enter your display name"
                           className={`w-full ${errors.display_name ? "border-red-500" : ""}`}
+                          maxLength={24}
                         />
                       )}
                     />
