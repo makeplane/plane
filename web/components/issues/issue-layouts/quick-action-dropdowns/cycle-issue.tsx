@@ -51,11 +51,9 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   const stateDetails = getStateById(issue.state_id);
   // auth
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
-  const isArchivingAllowed =
-    handleArchive &&
-    isEditingAllowed &&
-    !!stateDetails &&
-    [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
+  const isArchivingAllowed = handleArchive && isEditingAllowed;
+  const isInArchivableGroup =
+    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
@@ -169,11 +167,25 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
           </CustomMenu.MenuItem>
         )}
         {isArchivingAllowed && (
-          <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)}>
-            <div className="flex items-center gap-2">
-              <ArchiveIcon className="h-3 w-3" />
-              Archive
-            </div>
+          <CustomMenu.MenuItem onClick={() => setArchiveIssueModal(true)} disabled={!isInArchivableGroup}>
+            {isInArchivableGroup ? (
+              <div className="flex items-center gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                Archive
+              </div>
+            ) : (
+              <div className="flex items-start gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                <div className="-mt-1">
+                  <p>Archive</p>
+                  <p className="text-xs text-custom-text-400">
+                    Only completed or canceled
+                    <br />
+                    issues can be archived
+                  </p>
+                </div>
+              </div>
+            )}
           </CustomMenu.MenuItem>
         )}
         {isDeletingAllowed && (
