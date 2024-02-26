@@ -37,6 +37,7 @@ type Props = {
   snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
   shortContextMenu?: boolean;
+  disableDrag?: boolean;
 };
 
 const navigation = (workspaceSlug: string, projectId: string) => [
@@ -79,7 +80,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
+  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false, disableDrag } = props;
   // store hooks
   const { theme: themeStore } = useApplication();
   const { setTrackElement } = useEventTracker();
@@ -163,7 +164,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 snapshot?.isDragging ? "opacity-60" : ""
               } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
             >
-              {provided && (
+              {provided && !disableDrag && (
                 <Tooltip
                   tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
                   position="top-right"
@@ -208,7 +209,11 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </span>
                     )}
 
-                    {!isCollapsed && <p className="truncate text-custom-sidebar-text-200">{project.name}</p>}
+                    {!isCollapsed && (
+                      <p className="truncate text-custom-sidebar-text-200">
+                        {project.sort_order}-{project.name}
+                      </p>
+                    )}
                   </div>
                   {!isCollapsed && (
                     <ChevronDown

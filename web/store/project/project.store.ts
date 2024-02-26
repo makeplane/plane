@@ -8,6 +8,7 @@ import { IProject } from "@plane/types";
 // services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
+import { cloneDeep } from "lodash";
 export interface IProjectStore {
   // observables
   searchQuery: string;
@@ -30,7 +31,11 @@ export interface IProjectStore {
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   // project-order action
-  orderProjectsWithSortOrder: (sourceIndex: number, destinationIndex: number, projectId: string) => number;
+  orderJoinedProjectsWithSortOrder: (
+    sourceIndex: number,
+    destinationIndex: number,
+    projectId: string
+  ) => number | undefined;
   // project-view action
   updateProjectView: (workspaceSlug: string, projectId: string, viewProps: any) => Promise<any>;
   // CRUD actions
@@ -73,7 +78,7 @@ export class ProjectStore implements IProjectStore {
       addProjectToFavorites: action,
       removeProjectFromFavorites: action,
       // project-order action
-      orderProjectsWithSortOrder: action,
+      orderJoinedProjectsWithSortOrder: action,
       // project-view action
       updateProjectView: action,
       // CRUD actions
@@ -146,7 +151,8 @@ export class ProjectStore implements IProjectStore {
     if (!currentWorkspace) return [];
 
     let projects = Object.values(this.projectMap ?? {});
-    projects = sortBy(projects, "sort_order");
+    projects = sortBy(projects, "created_at");
+
     const projectIds = projects
       .filter((project) => project.workspace === currentWorkspace.id && project.is_favorite)
       .map((project) => project.id);
@@ -267,32 +273,46 @@ export class ProjectStore implements IProjectStore {
    * @param projectId
    * @returns
    */
-  orderProjectsWithSortOrder = (sortIndex: number, destinationIndex: number, projectId: string) => {
-    try {
-      const workspaceSlug = this.rootStore.app.router.workspaceSlug;
-      if (!workspaceSlug) return 0;
-      const projectsList = Object.values(this.projectMap || {}) || [];
-      let updatedSortOrder = projectsList[sortIndex].sort_order;
-      if (destinationIndex === 0) updatedSortOrder = (projectsList[0].sort_order as number) - 1000;
-      else if (destinationIndex === projectsList.length - 1)
-        updatedSortOrder = (projectsList[projectsList.length - 1].sort_order as number) + 1000;
-      else {
-        const destinationSortingOrder = projectsList[destinationIndex].sort_order as number;
-        const relativeDestinationSortingOrder =
-          sortIndex < destinationIndex
-            ? (projectsList[destinationIndex + 1].sort_order as number)
-            : (projectsList[destinationIndex - 1].sort_order as number);
+  orderJoinedProjectsWithSortOrder = (sourceIndex: number, destinationIndex: number, projectId: string) => {
+    if (destinationIndex < 0) return undefined;
 
-        updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
-      }
-      runInAction(() => {
-        set(this.projectMap, [projectId, "sort_order"], updatedSortOrder);
-      });
-      return updatedSortOrder;
-    } catch (error) {
-      console.log("failed to update sort order of the projects");
-      return 0;
+    const joinedProjects = this.joinedProjectIds;
+    if (!joinedProjects || joinedProjects.length === 0) return undefined;
+
+    const projectsList = (Object.values(this.projectMap || {}) || []).filter((project) =>
+      joinedProjects.includes(project.id)
+    );
+    if (projectsList.length === 0) return undefined;
+
+    console.log("joinedProjects", joinedProjects);
+
+    let updatedSortOrder: number | undefined = undefined;
+    const sortOrderDefaultValue = 10000;
+
+    console.log("coming here...");
+    console.log("destinationIndex", destinationIndex);
+    console.log("projectsList.length", projectsList.length);
+
+    if (destinationIndex === 0) {
+      updatedSortOrder = (projectsList[destinationIndex].sort_order || 0) - sortOrderDefaultValue;
+    } else if (destinationIndex === projectsList.length - 1) {
+      console.log("projectsList[destinationIndex].sort_order", projectsList[destinationIndex].sort_order);
+      updatedSortOrder = (projectsList[destinationIndex].sort_order || 0) + sortOrderDefaultValue;
+    } else {
+      const destinationTopProjectSortOrder = projectsList[destinationIndex - 1].sort_order || 0;
+      const destinationBottomProjectSortOrder = projectsList[destinationIndex].sort_order || 0;
+      console.log("destinationTopProjectSortOrder", destinationTopProjectSortOrder);
+      console.log("destinationBottomProjectSortOrder", destinationBottomProjectSortOrder);
+      const _sortValue = (destinationTopProjectSortOrder + destinationBottomProjectSortOrder) / 2;
+      console.log("_sortValue", _sortValue);
+      updatedSortOrder = (destinationTopProjectSortOrder + destinationBottomProjectSortOrder) / 2;
     }
+
+    runInAction(() => {
+      set(this.projectMap, [projectId, "sort_order"], updatedSortOrder);
+    });
+
+    return updatedSortOrder;
   };
 
   /**

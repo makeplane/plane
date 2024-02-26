@@ -33,7 +33,7 @@ export const ProjectSidebarList: FC = observer(() => {
   const {
     joinedProjectIds: joinedProjects,
     favoriteProjectIds: favoriteProjects,
-    orderProjectsWithSortOrder,
+    orderJoinedProjectsWithSortOrder,
     updateProjectView,
   } = useProject();
   // router
@@ -61,15 +61,15 @@ export const ProjectSidebarList: FC = observer(() => {
 
     if (source.index === destination.index) return;
 
-    const updatedSortOrder = orderProjectsWithSortOrder(source.index, destination.index, draggableId);
-
-    updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Something went wrong. Please try again.",
+    const updatedSortOrder = orderJoinedProjectsWithSortOrder(source.index, destination.index, draggableId);
+    if (updatedSortOrder != undefined)
+      updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
       });
-    });
   };
 
   const isCollapsed = sidebarCollapsed || false;
@@ -175,6 +175,7 @@ export const ProjectSidebarList: FC = observer(() => {
                                       snapshot={snapshot}
                                       handleCopyText={() => handleCopyText(projectId)}
                                       shortContextMenu
+                                      disableDrag
                                     />
                                   </div>
                                 )}
