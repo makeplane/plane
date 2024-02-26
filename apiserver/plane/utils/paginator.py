@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, ValidationError
 from collections.abc import Sequence
 import math
 
@@ -159,6 +159,13 @@ class BasePaginator:
             )
 
         return per_page
+    
+    def get_layout(self, request):
+        layout = request.GET.get("layout", "list")
+        if layout not in ["list", "kanban", "spreadsheet", "calendar", "gantt"]:
+            raise ValidationError(detail="Invalid layout given")
+        return layout
+
 
     def paginate(
         self,
@@ -175,6 +182,7 @@ class BasePaginator:
     ):
         """Paginate the request"""
         per_page = self.get_per_page(request, default_per_page, max_per_page)
+        layout = self.get_layout(request=request)
 
         # Convert the cursor value to integer and float from string
         input_cursor = None

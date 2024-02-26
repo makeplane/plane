@@ -45,6 +45,7 @@ from plane.db.models import (
     IssueAttachment,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.order_queryset import order_issue_queryset
 
 
 class GlobalViewViewSet(BaseViewSet):
@@ -142,22 +143,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
-
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
@@ -166,66 +151,9 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             .filter(project__project_projectmember__member=self.request.user)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
-
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
-
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset, order_by_param=order_by_param
+        )
 
         if self.fields:
             issues = IssueSerializer(

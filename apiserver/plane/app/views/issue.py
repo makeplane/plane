@@ -2,6 +2,7 @@
 import json
 import random
 from itertools import chain
+from collections import defaultdict
 
 # Django imports
 from django.utils import timezone
@@ -11,12 +12,7 @@ from django.db.models import (
     Func,
     F,
     Q,
-    Case,
-    Value,
-    CharField,
-    When,
     Exists,
-    Max,
 )
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
@@ -77,7 +73,7 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
-from collections import defaultdict
+from plane.utils.order_queryset import order_issue_queryset
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -95,7 +91,9 @@ class IssueListEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
+        issue_ids = [
+            issue_id for issue_id in issue_ids.split(",") if issue_id != ""
+        ]
 
         queryset = (
             Issue.issue_objects.filter(
@@ -157,83 +155,21 @@ class IssueListEndpoint(BaseAPIView):
 
         filters = issue_filters(request.query_params, "GET")
 
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
-
         order_by_param = request.GET.get("order_by", "-created_at")
-
         issue_queryset = queryset.filter(**filters)
 
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
-
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
+        # Issue queryset
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
 
         if self.fields or self.expand:
             issues = IssueSerializer(
-                queryset, many=True, fields=self.fields, expand=self.expand
+                issue_queryset,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
             ).data
         else:
             issues = issue_queryset.values(
@@ -356,77 +292,14 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
 
         issue_queryset = self.get_queryset().filter(**filters)
         # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
 
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
+        # Issue queryset
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
 
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
-
-        # Only use serializer when expand or fields else return by values
-        if self.expand or self.fields:
+        if self.fields or self.expand:
             issues = IssueSerializer(
                 issue_queryset,
                 many=True,
@@ -630,15 +503,6 @@ class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
         # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
-
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
@@ -682,65 +546,9 @@ class UserWorkSpaceIssues(BaseAPIView):
             .filter(**filters)
         ).distinct()
 
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
-
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset, order_by_param=order_by_param
+        )
 
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
@@ -1475,79 +1283,13 @@ class IssueArchiveViewSet(BaseViewSet):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
 
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
-
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = self.get_queryset().filter(**filters)
 
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
-
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset, order_by_param=order_by_param
+        )
 
         issue_queryset = (
             issue_queryset
@@ -2152,80 +1894,12 @@ class IssueDraftViewSet(BaseViewSet):
             if field
         ]
 
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
-
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = self.get_queryset().filter(**filters)
-
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
-
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
-
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset, order_by_param=order_by_param
+        )
         # Only use serializer when expand else return by values
         if self.expand or self.fields:
             issues = IssueSerializer(
