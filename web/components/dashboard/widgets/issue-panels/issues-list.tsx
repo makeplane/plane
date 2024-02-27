@@ -19,19 +19,18 @@ import { Loader, getButtonStyling } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 import { getRedirectionFilters } from "helpers/dashboard.helper";
 // types
-import { TIssue, TIssuesListTypes } from "@plane/types";
+import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;
-  issues: TIssue[];
   tab: TIssuesListTypes;
-  totalIssues: number;
   type: "assigned" | "created";
+  widgetStats: TAssignedIssuesWidgetResponse | TCreatedIssuesWidgetResponse;
   workspaceSlug: string;
 };
 
 export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
-  const { isLoading, issues, tab, totalIssues, type, workspaceSlug } = props;
+  const { isLoading, tab, type, widgetStats, workspaceSlug } = props;
   // store hooks
   const { setPeekIssue } = useIssueDetail();
 
@@ -59,6 +58,8 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
     },
   };
 
+  const issuesList = widgetStats.issues;
+
   return (
     <>
       <div className="h-full">
@@ -69,7 +70,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
             <Loader.Item height="25px" />
             <Loader.Item height="25px" />
           </Loader>
-        ) : issues.length > 0 ? (
+        ) : issuesList.length > 0 ? (
           <>
             <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
               <h6
@@ -80,7 +81,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
               >
                 Issues
                 <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl px-3 flex items-center text-center justify-center">
-                  {totalIssues}
+                  {widgetStats.count}
                 </span>
               </h6>
               {["upcoming", "pending"].includes(tab) && <h6 className="text-center">Due date</h6>}
@@ -89,7 +90,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
               {type === "created" && <h6 className="text-center">Assigned to</h6>}
             </div>
             <div className="px-4 pb-3 mt-2">
-              {issues.map((issue) => {
+              {issuesList.map((issue) => {
                 const IssueListItem = ISSUE_LIST_ITEM[type][tab];
 
                 if (!IssueListItem) return null;
@@ -112,7 +113,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
           </div>
         )}
       </div>
-      {issues.length > 0 && (
+      {!isLoading && issuesList.length > 0 && (
         <Link
           href={`/${workspaceSlug}/workspace-views/${type}/${filterParams}`}
           className={cn(
