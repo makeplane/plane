@@ -23,6 +23,10 @@ jobs:
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+      build_frontend: ${{ steps.changed_files.outputs.frontend_any_changed }}
+      build_space: ${{ steps.changed_files.outputs.space_any_changed }}
+      build_backend: ${{ steps.changed_files.outputs.backend_any_changed }}
+      build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
 
     steps:
       - id: set_env_variables
@@ -41,7 +45,36 @@ jobs:
           fi
           echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
 
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Get changed files
+        id: changed_files
+        uses: tj-actions/changed-files@v42
+        with:
+          files_yaml: |
+            frontend:
+              - web/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
+            space:
+              - space/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
+            backend:
+              - apiserver/**
+            proxy:
+              - nginx/**
+
   branch_build_push_frontend:
+    if: ${{ needs.branch_build_setup.outputs.build_frontend == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -77,7 +110,7 @@ jobs:
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
 
       - name: Build and Push Frontend to Docker Container Registry
         uses: docker/build-push-action@v5.1.0
@@ -93,6 +126,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_space:
+    if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -128,7 +162,7 @@ jobs:
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
 
       - name: Build and Push Space to Docker Hub
         uses: docker/build-push-action@v5.1.0
@@ -144,6 +178,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_backend:
+    if: ${{ needs.branch_build_setup.outputs.build_backend == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -179,7 +214,7 @@ jobs:
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
 
       - name: Build and Push Backend to Docker Hub
         uses: docker/build-push-action@v5.1.0
@@ -194,8 +229,8 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-
   branch_build_push_proxy:
+    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -231,7 +266,7 @@ jobs:
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
 
       - name: Build and Push Plane-Proxy to Docker Hub
         uses: docker/build-push-action@v5.1.0

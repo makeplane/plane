@@ -2310,17 +2310,10 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
 
         if serializer.is_valid():
-            if request.data.get(
-                "is_draft"
-            ) is not None and not request.data.get("is_draft"):
-                serializer.save(
-                    created_at=timezone.now(), updated_at=timezone.now()
-                )
-            else:
-                serializer.save()
+            serializer.save()
             issue_activity.delay(
                 type="issue_draft.activity.updated",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
