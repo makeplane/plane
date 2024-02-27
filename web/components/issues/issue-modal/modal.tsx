@@ -3,7 +3,16 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useApplication, useEventTracker, useCycle, useIssues, useModule, useProject, useWorkspace } from "hooks/store";
+import {
+  useApplication,
+  useEventTracker,
+  useCycle,
+  useIssues,
+  useModule,
+  useProject,
+  useWorkspace,
+  useIssueDetail,
+} from "hooks/store";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -39,6 +48,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
   const [createMore, setCreateMore] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const [description, setDescription] = useState<string | undefined>(undefined);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const {
@@ -53,7 +63,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
   const { issues: viewIssues } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { issues: profileIssues } = useIssues(EIssuesStoreType.PROFILE);
-  const { issues: draftIssueStore } = useIssues(EIssuesStoreType.DRAFT);
+  const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
+  const { fetchIssue } = useIssueDetail();
   // store mapping based on current store
   const issueStores = {
     [EIssuesStoreType.PROJECT]: {
@@ -86,7 +97,20 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // current store details
   const { store: currentIssueStore, viewId } = issueStores[storeType];
 
+  const fetchIssueDetail = async (issueId: string | undefined) => {
+    if (!workspaceSlug || !projectId) return;
+    if (issueId === undefined) {
+      setDescription("<p></p>");
+      return;
+    }
+    const response = await fetchIssue(workspaceSlug, projectId, issueId, isDraft ? "DRAFT" : "DEFAULT");
+    if (response) setDescription(response?.description_html || "<p></p>");
+  };
+
   useEffect(() => {
+    // fetching issue details
+    if (isOpen) fetchIssueDetail(data?.id);
+
     // if modal is closed, reset active project to null
     // and return to avoid activeProjectId being set to some other project
     if (!isOpen) {
@@ -105,6 +129,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     // in the url. This has the least priority.
     if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProjectId)
       setActiveProjectId(projectId ?? workspaceProjectIds?.[0]);
+
+    // clearing up the description state when we leave the component
+    return () => setDescription(undefined);
   }, [data, projectId, workspaceProjectIds, isOpen, activeProjectId]);
 
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
@@ -142,7 +169,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     try {
       const response = is_draft_issue
-        ? await draftIssueStore.createIssue(workspaceSlug, payload.project_id, payload)
+        ? await draftIssues.createIssue(workspaceSlug, payload.project_id, payload)
         : await currentIssueStore.createIssue(workspaceSlug, payload.project_id, payload, viewId);
       if (!response) throw new Error();
 
@@ -183,7 +210,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
+      isDraft
+        ? await draftIssues.updateIssue(workspaceSlug, payload.project_id, data.id, payload)
+        : await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
+
       setToastAlert({
         type: "success",
         title: "Success!",
@@ -261,6 +291,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                     changesMade={changesMade}
                     data={{
                       ...data,
+                      description_html: description,
                       cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
                       module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
                     }}
@@ -276,6 +307,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                   <IssueFormRoot
                     data={{
                       ...data,
+                      description_html: description,
                       cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId : null,
                       module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId] : null,
                     }}
