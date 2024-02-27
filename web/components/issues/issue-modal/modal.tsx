@@ -98,7 +98,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { store: currentIssueStore, viewId } = issueStores[storeType];
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug) return;
+
+    if (!projectId) {
+      setDescription("<p></p>");
+      return;
+    }
+
     if (issueId === undefined) {
       setDescription("<p></p>");
       return;
