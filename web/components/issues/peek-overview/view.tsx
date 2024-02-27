@@ -73,6 +73,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           data={issue}
           onSubmit={async () => {
             if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
+            removeRoutePeekId();
           }}
         />
       )}
