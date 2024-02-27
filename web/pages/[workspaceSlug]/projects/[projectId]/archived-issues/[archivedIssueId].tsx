@@ -42,7 +42,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
       ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
       : null,
     workspaceSlug && projectId && archivedIssueId
-      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString(), true)
+      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString(), "ARCHIVED")
       : null
   );
 

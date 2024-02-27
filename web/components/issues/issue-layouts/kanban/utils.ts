@@ -45,13 +45,8 @@ export const handleDragDrop = async (
   groupBy: string | null,
   issueMap: IIssueMap,
   issueWithIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined,
-  updateIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>
-  ) => Promise<TIssue | undefined>,
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue | undefined>
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>,
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>
 ) => {
   if (!issueMap || !issueWithIds || !source || !destination || !workspaceSlug || !projectId) return;
 
@@ -115,7 +110,11 @@ export const handleDragDrop = async (
     // for both horizontal and vertical dnd
     updatedIssue = {
       ...updatedIssue,
-      ...handleSortOrder(sourceDroppableId === destinationDroppableId ? sourceIssues : destinationIssues, destination.index, issueMap),
+      ...handleSortOrder(
+        sourceDroppableId === destinationDroppableId ? sourceIssues : destinationIssues,
+        destination.index,
+        issueMap
+      ),
     };
 
     if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {

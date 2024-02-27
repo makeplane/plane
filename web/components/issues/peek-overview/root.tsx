@@ -15,7 +15,7 @@ import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
-  onIssueUpdate?: (issue: Partial<TIssue>) => Promise<void>;
+  is_draft?: boolean;
 }
 
 export type TIssuePeekOperations = {
@@ -46,7 +46,7 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { is_archived = false, onIssueUpdate } = props;
+  const { is_archived = false, is_draft = false } = props;
   // hooks
   const { setToastAlert } = useToast();
   // router
@@ -73,7 +73,12 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await fetchIssue(workspaceSlug, projectId, issueId, is_archived);
+          await fetchIssue(
+            workspaceSlug,
+            projectId,
+            issueId,
+            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
+          );
         } catch (error) {
           console.error("Error fetching the parent issue");
         }
@@ -87,7 +92,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       ) => {
         try {
           const response = await updateIssue(workspaceSlug, projectId, issueId, data);
-          if (onIssueUpdate) await onIssueUpdate(response);
           if (showToast)
             setToastAlert({
               title: "Issue updated successfully",
@@ -96,7 +100,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
@@ -304,6 +308,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }),
     [
       is_archived,
+      is_draft,
       fetchIssue,
       updateIssue,
       removeIssue,
@@ -314,7 +319,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeIssueFromModule,
       removeModulesFromIssue,
       setToastAlert,
-      onIssueUpdate,
       captureIssueEvent,
       router.asPath,
     ]

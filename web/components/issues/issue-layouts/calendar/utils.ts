@@ -8,12 +8,7 @@ export const handleDragDrop = async (
   projectId: string | undefined,
   issueMap: IIssueMap,
   issueWithIds: TGroupedIssues,
-  updateIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>
-  ) => Promise<TIssue | undefined>
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>
 ) => {
   if (!issueMap || !issueWithIds || !workspaceSlug || !projectId) return;
 

@@ -148,6 +148,13 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     toggleDropdown();
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   useOutsideClickDetector(dropdownRef, handleClose);
 
   useEffect(() => {
@@ -204,7 +211,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate">{selectedCycle?.name ?? placeholder}</span>
+                <span className="flex-grow truncate max-w-40">{selectedCycle?.name ?? placeholder}</span>
               )}
               {dropdownArrow && (
                 <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -231,6 +238,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

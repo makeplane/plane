@@ -41,12 +41,7 @@ interface IBaseCalendarRoot {
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
-  updateIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    payload: Partial<TIssue>
-  ) => Promise<TIssue | undefined>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => Promise<void>;
   viewId?: string;
   isCompletedCycle?: boolean;
 }

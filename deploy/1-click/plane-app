@@ -90,9 +90,9 @@ function prepare_environment() {
 
     show_message "- Updating OS with required tools ✋"  >&2
     sudo "$PACKAGE_MANAGER" update -y
-    sudo "$PACKAGE_MANAGER" upgrade -y
+    # sudo "$PACKAGE_MANAGER" upgrade -y
 
-    local required_tools=("curl" "awk" "wget" "nano" "dialog" "git" "uidmap")
+    local required_tools=("curl" "awk" "wget" "nano" "dialog" "git" "uidmap" "jq")
 
     for tool in "${required_tools[@]}"; do
         if ! command -v $tool &> /dev/null; then
@@ -150,11 +150,11 @@ function download_plane() {
     show_message "Downloading Plane Setup Files ✋"  >&2
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/docker-compose.yml?token=$(date +%s) 
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/selfhost/docker-compose.yml?token=$(date +%s) 
 
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o $PLANE_INSTALL_DIR/variables-upgrade.env \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/selfhost/variables.env?token=$(date +%s) 
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/selfhost/variables.env?token=$(date +%s) 
 
     # if .env does not exists rename variables-upgrade.env to .env
     if [ ! -f "$PLANE_INSTALL_DIR/.env" ]; then
@@ -202,7 +202,7 @@ function printUsageInstructions() {
 }
 function build_local_image() {
     show_message "- Downloading Plane Source Code ✋" >&2
-    REPO=https://github.com/makeplane/plane.git
+    REPO=https://github.com/$CODE_REPO.git
     CURR_DIR=$PWD
     PLANE_TEMP_CODE_DIR=$PLANE_INSTALL_DIR/temp
     sudo rm -rf $PLANE_TEMP_CODE_DIR > /dev/null
@@ -290,40 +290,40 @@ function configure_plane() {
     fi
 
 
-    smtp_host=$(read_env "EMAIL_HOST")
-    smtp_user=$(read_env "EMAIL_HOST_USER")
-    smtp_password=$(read_env "EMAIL_HOST_PASSWORD")
-    smtp_port=$(read_env "EMAIL_PORT")
-    smtp_from=$(read_env "EMAIL_FROM")
-    smtp_tls=$(read_env "EMAIL_USE_TLS")
-    smtp_ssl=$(read_env "EMAIL_USE_SSL")
+    # smtp_host=$(read_env "EMAIL_HOST")
+    # smtp_user=$(read_env "EMAIL_HOST_USER")
+    # smtp_password=$(read_env "EMAIL_HOST_PASSWORD")
+    # smtp_port=$(read_env "EMAIL_PORT")
+    # smtp_from=$(read_env "EMAIL_FROM")
+    # smtp_tls=$(read_env "EMAIL_USE_TLS")
+    # smtp_ssl=$(read_env "EMAIL_USE_SSL")
 
-    SMTP_SETTINGS=$(dialog \
-        --ok-label "Next" \
-        --cancel-label "Skip" \
-        --backtitle "Plane Configuration" \
-        --title "SMTP Settings" \
-        --form "" \
-        0 0 0 \
-        "Host:"        1 1	  "$smtp_host" 	              1 10 80 0 \
-        "User:"        2 1	  "$smtp_user" 	              2 10 80 0 \
-        "Password:"    3 1	  "$smtp_password" 	              3 10 80 0 \
-        "Port:"        4 1	  "${smtp_port:-587}"               4 10 5 0 \
-        "From:"        5 1	  "${smtp_from:-Mailer <mailer@example.com>}"               5 10 80 0 \
-        "TLS:"         6 1	  "${smtp_tls:-1}"                 6 10 1 1 \
-        "SSL:"         7 1	  "${smtp_ssl:-0}"                 7 10 1 1 \
-    2>&1 1>&3)
+    # SMTP_SETTINGS=$(dialog \
+    #     --ok-label "Next" \
+    #     --cancel-label "Skip" \
+    #     --backtitle "Plane Configuration" \
+    #     --title "SMTP Settings" \
+    #     --form "" \
+    #     0 0 0 \
+    #     "Host:"        1 1	  "$smtp_host" 	              1 10 80 0 \
+    #     "User:"        2 1	  "$smtp_user" 	              2 10 80 0 \
+    #     "Password:"    3 1	  "$smtp_password" 	              3 10 80 0 \
+    #     "Port:"        4 1	  "${smtp_port:-587}"               4 10 5 0 \
+    #     "From:"        5 1	  "${smtp_from:-Mailer <mailer@example.com>}"               5 10 80 0 \
+    #     "TLS:"         6 1	  "${smtp_tls:-1}"                 6 10 1 1 \
+    #     "SSL:"         7 1	  "${smtp_ssl:-0}"                 7 10 1 1 \
+    # 2>&1 1>&3)
 
-    save_smtp_settings=0
-    if [ $? -eq 0 ]; then
-        save_smtp_settings=1
-        smtp_host=$(echo "$SMTP_SETTINGS" | sed -n 1p)
-        smtp_user=$(echo "$SMTP_SETTINGS" | sed -n 2p)
-        smtp_password=$(echo "$SMTP_SETTINGS" | sed -n 3p)
-        smtp_port=$(echo "$SMTP_SETTINGS" | sed -n 4p)
-        smtp_from=$(echo "$SMTP_SETTINGS" | sed -n 5p)
-        smtp_tls=$(echo "$SMTP_SETTINGS" | sed -n 6p)
-    fi
+    # save_smtp_settings=0
+    # if [ $? -eq 0 ]; then
+    #     save_smtp_settings=1
+    #     smtp_host=$(echo "$SMTP_SETTINGS" | sed -n 1p)
+    #     smtp_user=$(echo "$SMTP_SETTINGS" | sed -n 2p)
+    #     smtp_password=$(echo "$SMTP_SETTINGS" | sed -n 3p)
+    #     smtp_port=$(echo "$SMTP_SETTINGS" | sed -n 4p)
+    #     smtp_from=$(echo "$SMTP_SETTINGS" | sed -n 5p)
+    #     smtp_tls=$(echo "$SMTP_SETTINGS" | sed -n 6p)
+    # fi
     external_pgdb_url=$(dialog \
                     --backtitle "Plane Configuration" \
                     --title "Using External Postgres Database ?" \
@@ -383,15 +383,6 @@ function configure_plane() {
             domain_name:          $domain_name
             upload_limit:         $upload_limit
 
-            save_smtp_settings:   $save_smtp_settings
-            smtp_host:            $smtp_host
-            smtp_user:            $smtp_user
-            smtp_password:        $smtp_password
-            smtp_port:            $smtp_port
-            smtp_from:            $smtp_from
-            smtp_tls:             $smtp_tls
-            smtp_ssl:             $smtp_ssl
-
             save_aws_settings:    $save_aws_settings
             aws_region:           $aws_region
             aws_access_key:       $aws_access_key
@@ -413,15 +404,15 @@ function configure_plane() {
         fi
 
         # check enable smpt settings value
-        if [ $save_smtp_settings == 1 ]; then
-            update_env "EMAIL_HOST" "$smtp_host"
-            update_env "EMAIL_HOST_USER" "$smtp_user"
-            update_env "EMAIL_HOST_PASSWORD" "$smtp_password"
-            update_env "EMAIL_PORT" "$smtp_port"
-            update_env "EMAIL_FROM" "$smtp_from"
-            update_env "EMAIL_USE_TLS" "$smtp_tls"
-            update_env "EMAIL_USE_SSL" "$smtp_ssl"
-        fi
+        # if [ $save_smtp_settings == 1 ]; then
+        #     update_env "EMAIL_HOST" "$smtp_host"
+        #     update_env "EMAIL_HOST_USER" "$smtp_user"
+        #     update_env "EMAIL_HOST_PASSWORD" "$smtp_password"
+        #     update_env "EMAIL_PORT" "$smtp_port"
+        #     update_env "EMAIL_FROM" "$smtp_from"
+        #     update_env "EMAIL_USE_TLS" "$smtp_tls"
+        #     update_env "EMAIL_USE_SSL" "$smtp_ssl"
+        # fi
 
         # check enable aws settings value
         if [[ $save_aws_settings == 1 &&  $aws_access_key != ""  &&  $aws_secret_key != "" ]] ; then
@@ -493,13 +484,24 @@ function install() {
                     check_for_docker_images
 
                     last_installed_on=$(read_config "INSTALLATION_DATE")
-                    if [ "$last_installed_on" == "" ]; then
-                        configure_plane
-                    fi
-                    printUsageInstructions
-
-                    update_config "INSTALLATION_DATE" "$(date)"
+                    # if [ "$last_installed_on" == "" ]; then
+                    #     configure_plane
+                    # fi
                     
+                    update_env "NGINX_PORT" "80"
+                    update_env "DOMAIN_NAME" "$MY_IP"
+                    update_env "WEB_URL" "http://$MY_IP"
+                    update_env "CORS_ALLOWED_ORIGINS" "http://$MY_IP"
+
+                    update_config "INSTALLATION_DATE" "$(date '+%Y-%m-%d')"
+                    
+                    if command -v crontab &> /dev/null; then
+                        sudo touch /etc/cron.daily/makeplane
+                        sudo chmod +x /etc/cron.daily/makeplane
+                        sudo echo "0 2 * * * root /usr/local/bin/plane-app --upgrade" > /etc/cron.daily/makeplane
+                        sudo crontab /etc/cron.daily/makeplane 
+                    fi
+
                     show_message "Plane Installed Successfully ✅"
                     show_message ""
                 else
@@ -539,12 +541,15 @@ function upgrade() {
             prepare_environment
 
             if [ $? -eq 0 ]; then
+                stop_server
                 download_plane
                 if [ $? -eq 0 ]; then
                     check_for_docker_images
                     upgrade_configuration
                     update_config "UPGRADE_DATE" "$(date)"
-                
+
+                    start_server
+
                     show_message ""
                     show_message "Plane Upgraded Successfully ✅"
                     show_message ""
@@ -601,6 +606,11 @@ function uninstall() {
             sudo rm $PLANE_INSTALL_DIR/variables-upgrade.env &> /dev/null
             sudo rm $PLANE_INSTALL_DIR/config.env &> /dev/null
             sudo rm $PLANE_INSTALL_DIR/docker-compose.yaml &> /dev/null
+
+            if command -v crontab &> /dev/null; then
+                sudo crontab -r &> /dev/null
+                sudo rm /etc/cron.daily/makeplane &> /dev/null
+            fi
             
             # rm -rf $PLANE_INSTALL_DIR &> /dev/null
             show_message "- Configuration Cleaned ✅"
@@ -642,7 +652,39 @@ function start_server() {
         while ! sudo docker compose -f "$docker_compose_file" --env-file="$env_file" ps --services --filter "status=running" --quiet | grep -q "."; do
             sleep 1
         done
+        # wait for migrator container to exit with status 0 before starting the application
+        migrator_container_id=$(sudo docker container ls -aq -f "name=plane-migrator")
+
+        # if migrator container is running, wait for it to exit
+        if [ -n "$migrator_container_id" ]; then
+            while sudo docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
+                show_message "Waiting for Plane Server ($APP_RELEASE) to start...✋ (Migrator in progress)" "replace_last_line" >&2
+                sleep 1
+            done
+        fi
+
+        # if migrator exit status is not 0, show error message and exit
+        if [ -n "$migrator_container_id" ]; then
+            migrator_exit_code=$(sudo docker inspect --format='{{.State.ExitCode}}' $migrator_container_id)
+            if [ $migrator_exit_code -ne 0 ]; then
+                # show_message "Migrator failed with exit code $migrator_exit_code ❌" "replace_last_line" >&2
+                show_message "Plane Server failed to start ❌" "replace_last_line" >&2
+                stop_server
+                exit 1
+            fi
+        fi
+
+        api_container_id=$(sudo docker container ls -q -f "name=plane-api")
+        while ! sudo docker logs $api_container_id 2>&1 | grep -i "Application startup complete";
+        do
+            show_message "Waiting for Plane Server ($APP_RELEASE) to start...✋ (API starting)" "replace_last_line" >&2
+            sleep 1
+        done
         show_message "Plane Server Started ($APP_RELEASE) ✅" "replace_last_line" >&2
+        show_message "---------------------------------------------------------------" >&2
+        show_message "Access the Plane application at http://$MY_IP" >&2
+        show_message "---------------------------------------------------------------" >&2
+
     else
         show_message "Plane Server not installed. Please install Plane first ❌" "replace_last_line" >&2
     fi
@@ -694,7 +736,7 @@ function update_installer() {
     show_message "Updating Plane Installer ✋" >&2
     sudo curl -H 'Cache-Control: no-cache, no-store' \
         -s -o /usr/local/bin/plane-app  \
-        https://raw.githubusercontent.com/makeplane/plane/$DEPLOY_BRANCH/deploy/1-click/plane-app?token=$(date +%s) 
+        https://raw.githubusercontent.com/$CODE_REPO/$DEPLOY_BRANCH/deploy/1-click/plane-app?token=$(date +%s) 
 
     sudo chmod +x /usr/local/bin/plane-app > /dev/null&> /dev/null
     show_message "Plane Installer Updated ✅" "replace_last_line" >&2
@@ -711,12 +753,14 @@ fi
 
 PLANE_INSTALL_DIR=/opt/plane
 DATA_DIR=$PLANE_INSTALL_DIR/data
-LOG_DIR=$PLANE_INSTALL_DIR/log
+LOG_DIR=$PLANE_INSTALL_DIR/logs
+CODE_REPO=${GIT_REPO:-makeplane/plane}
 OS_SUPPORTED=false
 CPU_ARCH=$(uname -m)
 PROGRESS_MSG=""
 USE_GLOBAL_IMAGES=0
 PACKAGE_MANAGER=""
+MY_IP=$(curl -s ifconfig.me)
 
 if [[ $CPU_ARCH == "amd64" || $CPU_ARCH == "x86_64" || ( $DEPLOY_BRANCH == "master" && ( $CPU_ARCH == "arm64" || $CPU_ARCH == "aarch64" ) ) ]]; then
     USE_GLOBAL_IMAGES=1
@@ -740,6 +784,9 @@ elif [ "$1" == "restart" ]; then
     restart_server
 elif [ "$1" == "--install" ] || [ "$1" == "-i" ]; then
     install
+    start_server
+    show_message "" >&2
+    show_message "To view help, use plane-app --help " >&2
 elif [ "$1" == "--configure" ] || [ "$1" == "-c" ]; then
     configure_plane
     printUsageInstructions

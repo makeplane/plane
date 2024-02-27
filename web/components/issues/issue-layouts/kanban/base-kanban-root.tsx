@@ -54,13 +54,8 @@ export interface IBaseKanBanLayout {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
-  updateIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>
-  ) => Promise<TIssue | undefined>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue | undefined>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string,

@@ -239,6 +239,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issueDetail?.tempId}
         >
           <div className="w-full overflow-hidden">
             <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
