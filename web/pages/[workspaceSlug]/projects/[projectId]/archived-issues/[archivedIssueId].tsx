@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssueDetail, useIssues, useProject } from "hooks/store";
+import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -19,6 +19,7 @@ import { RotateCcw } from "lucide-react";
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 
 const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
@@ -36,6 +37,9 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId && archivedIssueId
@@ -46,9 +50,12 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
       : null
   );
 
-  const issue = getIssueById(archivedIssueId?.toString() || "") || undefined;
-  const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
+  // derived values
+  const issue = archivedIssueId ? getIssueById(archivedIssueId.toString()) : undefined;
+  const project = issue ? getProjectById(issue?.project_id) : undefined;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+  // auth
+  const canRestoreIssue = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!issue) return <></>;
 
@@ -103,7 +110,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
       ) : (
         <div className="flex h-full overflow-hidden">
           <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
-            {issue?.archived_at && (
+            {issue?.archived_at && canRestoreIssue && (
               <div className="flex items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
                 <div className="flex items-center gap-2">
                   <ArchiveIcon className="h-3.5 w-3.5" />
