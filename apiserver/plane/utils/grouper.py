@@ -1,3 +1,7 @@
+# Django imports
+from django.db.models import Q
+
+# Module imports
 from plane.db.models import State, Label, ProjectMember, Cycle, Module
 
 
@@ -244,19 +248,21 @@ def group_results(results_data, group_by, sub_group_by=False):
 
 
 def issue_grouper(field, slug, project_id):
-    if field == "state":
+    if field == "state_id":
         return list(
             State.objects.filter(
-                workspace__slug=slug, project_id=project_id
+                ~Q(name="Triage"),
+                workspace__slug=slug,
+                project_id=project_id,
             ).values_list("id", flat=True)
         )
-    if field == "labels":
+    if field == "label_ids":
         return list(
             Label.objects.filter(
                 workspace__slug=slug, project_id=project_id
             ).values_list("id", flat=True)
         )
-    if field == "assignees":
+    if field == "assignee_ids":
         return list(
             ProjectMember.objects.filter(
                 workspace__slug=slug, project_id=project_id
@@ -271,13 +277,13 @@ def issue_grouper(field, slug, project_id):
                 workspace__slug=slug, project_id=project_id
             ).values_list("member_id", flat=True)
         )
-    if field == "cycle":
+    if field == "cycle_id":
         return list(
             Cycle.objects.filter(
                 workspace__slug=slug, project_id=project_id
             ).values_list("id", flat=True)
         )
-    if field == "module":
+    if field == "module_ids":
         return list(
             Module.objects.filter(
                 workspace__slug=slug, project_id=project_id

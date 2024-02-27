@@ -77,6 +77,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator
 
+
 class IssueListEndpoint(BaseAPIView):
 
     permission_classes = [
@@ -339,22 +340,24 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 "archived_at",
             )
 
-        if request.GET.get("layout", "spreadsheet") in [
-            "gantt",
-            "spreadsheet",
-        ]:
+        # Group by
+        group_by = request.GET.get("group_by", False)
+
+        # List Paginate
+        if not group_by:
             return self.paginate(
                 request=request, queryset=issue_queryset, on_results=on_results
             )
 
+        # Group paginate
         return self.paginate(
             request=request,
             queryset=issue_queryset,
             on_results=on_results,
             paginator_cls=GroupedOffsetPaginator,
-            group_by_field_name="priority",
+            group_by_field_name=group_by,
             group_by_fields=issue_grouper(
-                field="priority", slug=slug, project_id=project_id
+                field=group_by, slug=slug, project_id=project_id
             ),
         )
 
@@ -2018,7 +2021,9 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(
+            issue, data=request.data, partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()

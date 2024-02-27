@@ -4,7 +4,7 @@ from collections.abc import Sequence
 
 # Django imports
 from django.db.models import Window, F, Count, Q
-from django.db.models.functions import RowNumber
+from django.db.models.functions import RowNumber, DenseRank
 
 # Third party imports
 from rest_framework.response import Response
@@ -149,6 +149,9 @@ class OffsetPaginator:
             max_hits=max_hits,
         )
 
+    def process_results(self, results):
+        raise NotImplementedError
+
 
 class GroupedOffsetPaginator(OffsetPaginator):
     def __init__(
@@ -186,6 +189,10 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Compute the results
         results = {}
         queryset = queryset.annotate(
+            # group_rank=Window(
+            #     expression=DenseRank(),
+            #     order_by=F(self.group_by_field_name).asc()
+            # ),
             row_number=Window(
                 expression=RowNumber(),
                 partition_by=[F(self.group_by_field_name)],
@@ -193,6 +200,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
             )
         )
 
+        # Filter the results
         results = queryset.filter(row_number__gte=offset, row_number__lt=stop)
 
         # Adjust cursors based on the grouped results for pagination
@@ -212,7 +220,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
         max_hits = math.ceil(
-            self.queryset.values(self.group_by_field_name)
+            queryset.values(self.group_by_field_name)
             .annotate(
                 count=Count(
                     self.group_by_field_name,
@@ -221,7 +229,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
             .order_by("-count")[0]["count"]
             / limit
         )
-
         return CursorResult(
             results=results,
             next=next_cursor,
@@ -229,6 +236,17 @@ class GroupedOffsetPaginator(OffsetPaginator):
             hits=None,
             max_hits=max_hits,
         )
+
+    def process_results(self, results):
+        processed_results = {}
+        for result in results:
+            group_value = str(result.get(self.group_by_field_name))
+            if group_value not in processed_results:
+                processed_results[str(group_value)] = {
+                    "results": [],
+                }
+            processed_results[str(group_value)]["results"].append(result)
+        return processed_results
 
 
 class BasePaginator:
@@ -251,18 +269,6 @@ class BasePaginator:
             )
 
         return per_page
-
-    def get_layout(self, request):
-        layout = request.GET.get("layout", "list")
-        if layout not in [
-            "list",
-            "kanban",
-            "spreadsheet",
-            "calendar",
-            "gantt",
-        ]:
-            raise ValidationError(detail="Invalid layout given")
-        return layout
 
     def paginate(
         self,
@@ -292,8 +298,9 @@ class BasePaginator:
             raise ParseError(detail="Invalid cursor parameter.")
 
         if not paginator:
-            paginator_kwargs["group_by_fields"] = group_by_fields
-            paginator_kwargs["group_by_field_name"] = group_by_field_name
+            if group_by_fields and group_by_field_name:
+                paginator_kwargs["group_by_fields"] = group_by_fields
+                paginator_kwargs["group_by_field_name"] = group_by_field_name
             paginator = paginator_cls(**paginator_kwargs)
 
         try:
@@ -306,17 +313,9 @@ class BasePaginator:
         if on_results:
             results = on_results(cursor_result.results)
 
-        processed_results = {}
         if group_by_field_name and group_by_fields:
-            for result in results:
-                group_value = str(result.get(group_by_field_name))
-                if group_value not in processed_results:
-                    processed_results[str(group_value)] = {
-                        "results": [],
-                    }
-                processed_results[str(group_value)]["results"].append(result)
+            results = paginator.process_results(results=results)
 
-        results = processed_results
         # Add Manipulation functions to the response
         if controller is not None:
             results = controller(results)
