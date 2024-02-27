@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
+import { observer } from "mobx-react";
 //components
 import { DiceIcon } from "@plane/ui";
 //store
@@ -28,7 +29,7 @@ interface Props {
   multiple: boolean;
 }
 
-export const ModuleOptions = (props: Props) => {
+export const ModuleOptions = observer((props: Props) => {
   const { projectId, isOpen, referenceElement, placement, multiple } = props;
 
   const [query, setQuery] = useState("");
@@ -159,4 +160,4 @@ export const ModuleOptions = (props: Props) => {
       </div>
     </Combobox.Options>
   );
-};
+});

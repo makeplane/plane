@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
+import { observer } from "mobx-react";
 //components
 import { Avatar } from "@plane/ui";
 //store
@@ -18,7 +19,7 @@ interface Props {
   isOpen: boolean;
 }
 
-export const MemberOptions = (props: Props) => {
+export const MemberOptions = observer((props: Props) => {
   const { projectId, referenceElement, placement, isOpen } = props;
 
   const [query, setQuery] = useState("");
@@ -138,4 +139,4 @@ export const MemberOptions = (props: Props) => {
       </div>
     </Combobox.Options>
   );
-};
+});

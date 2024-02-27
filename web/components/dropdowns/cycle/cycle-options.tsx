@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
+import { observer } from "mobx-react";
 //components
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 //store
@@ -27,7 +28,7 @@ interface Props {
   isOpen: boolean;
 }
 
-export const CycleOptions = (props: any) => {
+export const CycleOptions = observer((props: any) => {
   const { projectId, isOpen, referenceElement, placement } = props;
 
   //state hooks
@@ -158,4 +159,4 @@ export const CycleOptions = (props: any) => {
       </div>
     </Combobox.Options>
   );
-};
+});
