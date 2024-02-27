@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import size from "lodash/size";
+import isEmpty from "lodash/isEmpty";
 // hooks
 import { useCycle, useIssues } from "hooks/store";
 // components
@@ -89,7 +90,12 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
       <div className="relative flex h-full w-full flex-col overflow-hidden">
-        {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
+        {cycleStatus === "completed" && (
+          <TransferIssues
+            handleClick={() => setTransferIssuesModal(true)}
+            disabled={!isEmpty(cycleDetails?.progress_snapshot) ?? false}
+          />
+        )}
         <CycleAppliedFiltersRoot />
 
         {issues?.groupedIssueIds?.length === 0 ? (

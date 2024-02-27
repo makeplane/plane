@@ -8,20 +8,29 @@ import {
   ActiveCyclePriorityIssues,
 } from "components/cycles/active-cycles";
 // types
-import { ICycle } from "@plane/types";
+import { IActiveCycle } from "@plane/types";
+// hooks
+import { useProject } from "hooks/store";
+import { observer } from "mobx-react";
 
 export type ActiveCycleInfoProps = {
-  cycle: ICycle;
+  cycle: IActiveCycle;
   workspaceSlug: string;
   projectId: string;
 };
 
-export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
+export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = observer((props) => {
   const { cycle, workspaceSlug, projectId } = props;
+
+  const { getProjectById } = useProject();
+
+  const projectDetails = getProjectById(projectId);
+
+  if (!projectDetails) return null;
 
   return (
     <>
-      <ActiveCyclesProjectTitle project={cycle.project_detail} />
+      <ActiveCyclesProjectTitle project={projectDetails} />
       <div className="flex flex-col gap-2 rounded border border-custom-border-200">
         <ActiveCycleHeader cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
@@ -32,4 +41,4 @@ export const ActiveCycleInfo: FC<ActiveCycleInfoProps> = (props) => {
       </div>
     </>
   );
-};
+});

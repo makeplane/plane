@@ -1,4 +1,5 @@
 """Global Settings"""
+
 # Python imports
 import os
 import ssl
@@ -307,7 +308,9 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
         traces_sample_rate=1,
         send_default_pii=True,
         environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
-        profiles_sample_rate=1.0,
+        profiles_sample_rate=float(
+            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0.5)
+        ),
     )
 
 

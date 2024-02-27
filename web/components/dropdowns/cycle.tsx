@@ -10,11 +10,12 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // icons
-import { ContrastIcon } from "@plane/ui";
+import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
 import { TDropdownProps } from "./types";
+import { TCycleGroups } from "@plane/types";
 // constants
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
@@ -82,17 +83,22 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     router: { workspaceSlug },
   } = useApplication();
   const { getProjectCycleIds, fetchAllCycles, getCycleById } = useCycle();
-  const cycleIds = getProjectCycleIds(projectId);
+
+  const cycleIds = (getProjectCycleIds(projectId) ?? [])?.filter((cycleId) => {
+    const cycleDetails = getCycleById(cycleId);
+    return cycleDetails?.status ? (cycleDetails?.status.toLowerCase() != "completed" ? true : false) : true;
+  });
 
   const options: DropdownOptions = cycleIds?.map((cycleId) => {
     const cycleDetails = getCycleById(cycleId);
+    const cycleStatus = cycleDetails?.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
 
     return {
       value: cycleId,
       query: `${cycleDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+          <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
           <span className="flex-grow truncate">{cycleDetails?.name}</span>
         </div>
       ),
@@ -142,6 +148,13 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     toggleDropdown();
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   useOutsideClickDetector(dropdownRef, handleClose);
 
   useEffect(() => {
@@ -166,7 +179,10 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+            className={cn(
+              "clickable block h-full w-full outline-none hover:bg-custom-background-80",
+              buttonContainerClassName
+            )}
             onClick={handleOnClick}
           >
             {button}
@@ -176,7 +192,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,
@@ -195,7 +211,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate">{selectedCycle?.name ?? placeholder}</span>
+                <span className="flex-grow truncate max-w-40">{selectedCycle?.name ?? placeholder}</span>
               )}
               {dropdownArrow && (
                 <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -222,6 +238,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

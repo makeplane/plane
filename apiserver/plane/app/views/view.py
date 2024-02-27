@@ -1,6 +1,6 @@
 # Django imports
 from django.db.models import (
-    Prefetch,
+    Q,
     OuterRef,
     Func,
     F,
@@ -13,16 +13,21 @@ from django.db.models import (
 )
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db.models import Prefetch, OuterRef, Exists
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
 
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet
 from plane.app.serializers import (
-    GlobalViewSerializer,
     IssueViewSerializer,
     IssueSerializer,
     IssueViewFavoriteSerializer,
@@ -30,22 +35,16 @@ from plane.app.serializers import (
 from plane.app.permissions import (
     WorkspaceEntityPermission,
     ProjectEntityPermission,
-    WorkspaceViewerPermission,
-    ProjectLitePermission,
 )
 from plane.db.models import (
     Workspace,
-    GlobalView,
     IssueView,
     Issue,
     IssueViewFavorite,
-    IssueReaction,
     IssueLink,
     IssueAttachment,
-    IssueSubscriber,
 )
 from plane.utils.issue_filters import issue_filters
-from plane.utils.grouper import group_results
 
 
 class GlobalViewViewSet(BaseViewSet):
@@ -89,11 +88,54 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
                 )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         )
 
@@ -123,28 +165,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             .filter(**filters)
             .filter(project__project_projectmember__member=self.request.user)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
         )
 
         # Priority Ordering
@@ -207,10 +227,39 @@ class GlobalViewIssuesViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        serializer = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if self.fields:
+            issues = IssueSerializer(
+                issue_queryset, many=True, fields=self.fields
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class IssueViewViewSet(BaseViewSet):

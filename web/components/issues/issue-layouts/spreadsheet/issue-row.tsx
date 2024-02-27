@@ -188,7 +188,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     <>
       <td
         className={cn(
-          "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200",
+          "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-[1] border-custom-border-200",
           {
             "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
           },
@@ -239,10 +239,14 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issueDetail?.tempId}
         >
           <div className="w-full overflow-hidden">
             <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
-              <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100" tabIndex={-1}>
+              <div
+                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
+                tabIndex={-1}
+              >
                 {issueDetail.name}
               </div>
             </Tooltip>
@@ -251,15 +255,15 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       </td>
       {/* Rest of the columns */}
       {SPREADSHEET_PROPERTY_LIST.map((property) => (
-          <IssueColumn
-            displayProperties={displayProperties}
-            issueDetail={issueDetail}
-            disableUserActions={disableUserActions}
-            property={property}
-            handleIssues={handleIssues}
-            isEstimateEnabled={isEstimateEnabled}
-          />
-        ))}
+        <IssueColumn
+          displayProperties={displayProperties}
+          issueDetail={issueDetail}
+          disableUserActions={disableUserActions}
+          property={property}
+          handleIssues={handleIssues}
+          isEstimateEnabled={isEstimateEnabled}
+        />
+      ))}
     </>
   );
 });

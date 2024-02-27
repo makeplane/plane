@@ -1,3 +1,7 @@
+import { useRef } from "react";
+import { observer } from "mobx-react";
+// hooks
+import { useGanttChart } from "../hooks/use-gantt-chart";
 // components
 import {
   BiWeekChartView,
@@ -12,7 +16,6 @@ import {
   TGanttViews,
   WeekChartView,
   YearChartView,
-  useChart,
 } from "components/gantt-chart";
 // helpers
 import { cn } from "helpers/common.helper";
@@ -36,7 +39,7 @@ type Props = {
   quickAdd?: React.JSX.Element | undefined;
 };
 
-export const GanttChartMainContent: React.FC<Props> = (props) => {
+export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const {
     blocks,
     blockToRender,
@@ -55,13 +58,15 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
     updateCurrentViewRenderPayload,
     quickAdd,
   } = props;
+  // refs
+  const ganttContainerRef = useRef<HTMLDivElement>(null);
   // chart hook
-  const { currentView, currentViewData, updateScrollLeft } = useChart();
+  const { currentView, currentViewData } = useGanttChart();
   // handling scroll functionality
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { clientWidth, scrollLeft, scrollWidth } = e.currentTarget;
 
-    updateScrollLeft(scrollLeft);
+    // updateScrollLeft(scrollLeft);
 
     const approxRangeLeft = scrollLeft >= clientWidth + 1000 ? 1000 : scrollLeft - clientWidth;
     const approxRangeRight = scrollWidth - (scrollLeft + clientWidth);
@@ -90,11 +95,12 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
       // DO NOT REMOVE THE ID
       id="gantt-container"
       className={cn(
-        "h-full w-full overflow-auto horizontal-scroll-enable flex border-t-[0.5px] border-custom-border-200",
+        "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
         {
           "mb-8": bottomSpacing,
         }
       )}
+      ref={ganttContainerRef}
       onScroll={onScroll}
     >
       <GanttChartSidebar
@@ -117,10 +123,11 @@ export const GanttChartMainContent: React.FC<Props> = (props) => {
             enableBlockRightResize={enableBlockRightResize}
             enableBlockMove={enableBlockMove}
             enableAddBlock={enableAddBlock}
+            ganttContainerRef={ganttContainerRef}
             showAllBlocks={showAllBlocks}
           />
         )}
       </div>
     </div>
   );
-};
+});

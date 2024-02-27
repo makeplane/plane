@@ -7,16 +7,22 @@ import { IIssueDetail } from "./root.store";
 import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap } from "@plane/types";
 
 export interface IIssueLinkStoreActions {
+  addLinks: (issueId: string, links: TIssueLink[]) => void;
   fetchLinks: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueLink[]>;
-  createLink: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueLink>) => Promise<any>;
+  createLink: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssueLink>
+  ) => Promise<TIssueLink>;
   updateLink: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     linkId: string,
     data: Partial<TIssueLink>
-  ) => Promise<any>;
-  removeLink: (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => Promise<any>;
+  ) => Promise<TIssueLink>;
+  removeLink: (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => Promise<void>;
 }
 
 export interface IIssueLinkStore extends IIssueLinkStoreActions {
@@ -47,6 +53,7 @@ export class IssueLinkStore implements IIssueLinkStore {
       // computed
       issueLinks: computed,
       // actions
+      addLinks: action.bound,
       fetchLinks: action,
       createLink: action,
       updateLink: action,
@@ -77,15 +84,17 @@ export class IssueLinkStore implements IIssueLinkStore {
   };
 
   // actions
+  addLinks = (issueId: string, links: TIssueLink[]) => {
+    runInAction(() => {
+      this.links[issueId] = links.map((link) => link.id);
+      links.forEach((link) => set(this.linkMap, link.id, link));
+    });
+  };
+
   fetchLinks = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const response = await this.issueService.fetchIssueLinks(workspaceSlug, projectId, issueId);
-
-      runInAction(() => {
-        this.links[issueId] = response.map((link) => link.id);
-        response.forEach((link) => set(this.linkMap, link.id, link));
-      });
-
+      this.addLinks(issueId, response);
       return response;
     } catch (error) {
       throw error;
@@ -136,7 +145,7 @@ export class IssueLinkStore implements IIssueLinkStore {
 
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => {
     try {
-      const response = await this.issueService.deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
+      await this.issueService.deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
 
       const linkIndex = this.links[issueId].findIndex((_comment) => _comment === linkId);
       if (linkIndex >= 0)
@@ -147,7 +156,6 @@ export class IssueLinkStore implements IIssueLinkStore {
 
       // fetching activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-      return response;
     } catch (error) {
       throw error;
     }

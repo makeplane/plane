@@ -11,15 +11,22 @@ export enum EUserProjectRoles {
   ADMIN = 20,
 }
 
-export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: LucideIcon }[] = [
+export const NETWORK_CHOICES: {
+  key: 0 | 2;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+}[] = [
   {
     key: 0,
     label: "Private",
+    description: "Accessible only by invite",
     icon: Lock,
   },
   {
     key: 2,
     label: "Public",
+    description: "Anyone in the workspace can join",
     icon: Globe2,
   },
 ];

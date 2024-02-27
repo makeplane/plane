@@ -1,9 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useProjectState } from "hooks/store";
 // components
 import { DateDropdown } from "components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { TIssue } from "@plane/types";
 
@@ -16,6 +20,10 @@ type Props = {
 
 export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props) => {
   const { issue, onChange, disabled, onClose } = props;
+  // store hooks
+  const { getStateById } = useProjectState();
+  // derived values
+  const stateDetails = getStateById(issue.state_id);
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
@@ -36,8 +44,11 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         disabled={disabled}
         placeholder="Due date"
         buttonVariant="transparent-with-text"
-        buttonClassName="rounded-none text-left"
         buttonContainerClassName="w-full"
+        buttonClassName={cn("rounded-none text-left", {
+          "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+        })}
+        clearIconClassName="!text-custom-text-100"
         onClose={onClose}
       />
     </div>

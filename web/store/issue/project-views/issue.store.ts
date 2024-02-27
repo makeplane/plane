@@ -34,13 +34,13 @@ export interface IProjectViewIssues {
     issueId: string,
     data: Partial<TIssue>,
     viewId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     viewId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -181,8 +181,7 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     try {
       if (!viewId) throw new Error("View Id is required");
 
-      const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-      return response;
+      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
@@ -198,15 +197,13 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     try {
       if (!viewId) throw new Error("View Id is required");
 
-      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const issueIndex = this.issues[viewId].findIndex((_issueId) => _issueId === issueId);
       if (issueIndex >= 0)
         runInAction(() => {
           this.issues[viewId].splice(issueIndex, 1);
         });
-
-      return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;

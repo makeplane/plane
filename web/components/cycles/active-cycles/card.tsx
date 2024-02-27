@@ -8,10 +8,10 @@ import {
   ActiveCyclePriorityIssues,
 } from "components/cycles/active-cycles";
 // types
-import { ICycle } from "@plane/types";
+import { IActiveCycle } from "@plane/types";
 
 export type ActiveCycleInfoCardProps = {
-  cycle: ICycle;
+  cycle: IActiveCycle;
   workspaceSlug: string;
   projectId: string;
 };
