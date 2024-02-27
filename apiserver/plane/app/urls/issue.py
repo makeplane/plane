@@ -2,6 +2,7 @@ from django.urls import path
 
 
 from plane.app.views import (
+    IssueListEndpoint,
     IssueViewSet,
     LabelViewSet,
     BulkCreateIssueLabelsEndpoint,
@@ -25,6 +26,11 @@ from plane.app.views import (
 
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/list/",
+        IssueListEndpoint.as_view(),
+        name="project-issue",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueViewSet.as_view(
@@ -84,11 +90,13 @@ urlpatterns = [
         BulkImportIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
+    # deprecated endpoint TODO: remove once confirmed
     path(
         "workspaces/<str:slug>/my-issues/",
         UserWorkSpaceIssues.as_view(),
         name="workspace-issues",
     ),
+    ## 
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),

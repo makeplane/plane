@@ -1,18 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import {
-  Signal,
-  Tag,
-  Triangle,
-  LayoutPanelTop,
-  CircleDot,
-  CopyPlus,
-  XCircle,
-  CalendarClock,
-  CalendarCheck2,
-} from "lucide-react";
+import { Signal, Tag, Triangle, LayoutPanelTop, CircleDot, CopyPlus, XCircle, CalendarDays } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
 import {
@@ -33,6 +23,9 @@ import {
 } from "components/dropdowns";
 // components
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+// helpers
+import { cn } from "helpers/common.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -49,11 +42,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { getStateById } = useProjectState();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
+  const stateDetails = getStateById(issue.state_id);
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -102,7 +97,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -129,7 +124,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarClock className="h-4 w-4 flex-shrink-0" />
+            <CalendarDays className="h-4 w-4 flex-shrink-0" />
             <span>Start date</span>
           </div>
           <DateDropdown
@@ -156,7 +151,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* due date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+            <CalendarDays className="h-4 w-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <DateDropdown
@@ -172,9 +167,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={cn("text-sm", {
+              "text-custom-text-400": !issue.target_date,
+              "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            })}
             hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
             // TODO: add this logic
             // showPlaceholderIcon
           />

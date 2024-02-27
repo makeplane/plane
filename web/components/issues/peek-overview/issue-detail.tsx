@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // store hooks
 import { useIssueDetail, useProject, useUser } from "hooks/store";
@@ -9,7 +9,6 @@ import { TIssueOperations } from "components/issues";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
 import { IssueDescriptionInput } from "../description-input";
-import { debounce } from "lodash";
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -22,19 +21,38 @@ interface IPeekOverviewIssueDetails {
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
-  const { workspaceSlug, issueId, issueOperations, disabled, setIsSubmitting } = props;
+  const { workspaceSlug, issueId, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  // derived values
-  const issue = getIssueById(issueId);
+  // hooks
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
+
+  const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue) return <></>;
 
   const projectDetails = getProjectById(issue?.project_id);
+
+  const issueDescription =
+    issue.description_html !== undefined || issue.description_html !== null
+      ? issue.description_html != ""
+        ? issue.description_html
+        : "<p></p>"
+      : undefined;
 
   return (
     <>
@@ -45,20 +63,24 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
         issueId={issue.id}
+        isSubmitting={isSubmitting}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
         disabled={disabled}
         value={issue.name}
       />
+
       <IssueDescriptionInput
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
         issueId={issue.id}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        issueOperations={issueOperations}
+        value={issueDescription}
+        initialValue={issueDescription}
         disabled={disabled}
-        value={issue.description_html}
+        issueOperations={issueOperations}
+        setIsSubmitting={(value) => setIsSubmitting(value)}
       />
+
       {currentUser && (
         <IssueReaction
           workspaceSlug={workspaceSlug}

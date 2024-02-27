@@ -148,10 +148,14 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
         memberDetails?.member.last_name
       } ${memberDetails?.member.display_name.toLowerCase()}`,
       content: (
-        <div className="flex items-center gap-2">
-          <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
-          {memberDetails?.member.display_name} (
-          {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
+        <div className="flex w-full items-center gap-2">
+          <div className="flex-shrink-0 pt-0.5">
+            <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+          </div>
+          <div className="truncate">
+            {memberDetails?.member.display_name} (
+            {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
+          </div>
         </div>
       ),
     };

@@ -70,10 +70,13 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         </Tooltip>
       ) : (
         <ControlLink
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archived-issues" : "issues"}/${
+            issue.id
+          }`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issue?.tempId}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <span>{issue.name}</span>

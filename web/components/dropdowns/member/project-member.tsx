@@ -130,6 +130,13 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
     toggleDropdown();
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   useOutsideClickDetector(dropdownRef, handleClose);
 
   useEffect(() => {
@@ -182,7 +189,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
             >
               {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} />}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate text-sm leading-5">
+                <span className="flex-grow truncate text-xs leading-5">
                   {Array.isArray(value) && value.length > 0
                     ? value.length === 1
                       ? getUserDetails(value[0])?.display_name
@@ -215,6 +222,7 @@ export const ProjectMemberDropdown: React.FC<Props> = observer((props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

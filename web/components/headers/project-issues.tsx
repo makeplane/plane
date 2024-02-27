@@ -1,8 +1,7 @@
 import { useCallback, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Briefcase, Circle, ExternalLink, Plus, Inbox } from "lucide-react";
+import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
 import {
   useApplication,
@@ -11,7 +10,6 @@ import {
   useProject,
   useProjectState,
   useUser,
-  useInbox,
   useMember,
 } from "hooks/store";
 // components
@@ -54,7 +52,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
-  const { getInboxesByProjectId, getInboxById } = useInbox();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -101,9 +98,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, projectId, updateFilters]
   );
 
-  const inboxesMap = currentProjectDetails?.inbox_view ? getInboxesByProjectId(currentProjectDetails.id) : undefined;
-  const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
-
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -115,7 +109,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className=" relative z-10 items-center gap-x-2 gap-y-4">
+      <div className="relative z-[15] items-center gap-x-2 gap-y-4">
         <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
             <SidebarHamburgerToggle />
@@ -154,7 +148,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
 
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
-                  link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+                  link={
+                    <BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+                  }
                 />
               </Breadcrumbs>
             </div>
@@ -201,24 +197,15 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               />
             </FiltersDropdown>
           </div>
-          {currentProjectDetails?.inbox_view && inboxDetails && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxDetails?.id}`}>
-              <span className="hidden md:block" >
-                <Button variant="neutral-primary" size="sm" className="relative">
-                  Inbox
-                  {inboxDetails?.pending_issue_count > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
-                      {inboxDetails?.pending_issue_count}
-                    </span>
-                  )}
-                </Button>
-              </span>
-              <Inbox className="w-4 h-4 mr-2 text-custom-text-200 block md:hidden" />
-            </Link>
-          )}
+
           {canUserCreateIssue && (
             <>
-              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+              <Button
+                className="hidden md:block"
+                onClick={() => setAnalyticsModal(true)}
+                variant="neutral-primary"
+                size="sm"
+              >
                 Analytics
               </Button>
               <Button

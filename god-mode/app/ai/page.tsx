@@ -47,18 +47,11 @@ const InstanceAIPage = observer(() => {
                 with us.
               </div>
             </div>
-          </div>
-        </>
-      ) : (
-        <Loader className="space-y-4">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
             <Loader.Item height="50px" />
-            <Loader.Item height="50px" />
-          </div>
-          <Loader.Item height="50px" />
-        </Loader>
-      )}
-    </div>
+          </Loader>
+        )}
+      </div>
+    </>
   );
 });
 

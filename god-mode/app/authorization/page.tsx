@@ -74,7 +74,7 @@ const InstanceAuthorizationPage = observer(() => {
           and GitHub accounts, and below are the settings.
         </div>
       </div>
-      {formattedConfig ? (
+      {formattedConfig && (
         <>
           <div className="flex w-full flex-col gap-12 border-b border-custom-border-100 pb-8 lg:w-2/5">
             <div className="pointer-events-none mr-4 flex items-center gap-14 opacity-50">
@@ -127,6 +127,7 @@ const InstanceAuthorizationPage = observer(() => {
               </div>
             </div>
           </div>
+          
           <div className="flex flex-col gap-y-6 py-2">
             <div className="w-full">
               <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
@@ -134,8 +135,13 @@ const InstanceAuthorizationPage = observer(() => {
                   Google
                 </span>
               </div>
-              <div className="px-2 py-6">
-                <InstanceGoogleConfigForm config={formattedConfig} />
+              <div className="w-full">
+                <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
+                  <span className="text-lg font-medium tracking-tight">Github</span>
+                </div>
+                <div className="px-2 py-6">
+                  <InstanceGithubConfigForm config={formattedConfig} />
+                </div>
               </div>
             </div>
             <div className="w-full">
@@ -150,15 +156,8 @@ const InstanceAuthorizationPage = observer(() => {
             </div>
           </div>
         </>
-      ) : (
-        <Loader className="space-y-4">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-            <Loader.Item height="50px" />
-            <Loader.Item height="50px" />
-          </div>
-          <Loader.Item height="50px" />
-        </Loader>
-      )}
+        )}
+      
     </div>
   );
 });
