@@ -58,6 +58,7 @@ from plane.app.permissions import (
 from plane.db.models import (
     Project,
     Issue,
+    State,
     IssueActivity,
     IssueComment,
     IssueProperty,
@@ -71,10 +72,10 @@ from plane.db.models import (
     IssueRelation,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.grouper import group_results
+from plane.utils.grouper import issue_grouper
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
-
+from plane.utils.paginator import GroupedOffsetPaginator
 
 class IssueListEndpoint(BaseAPIView):
 
@@ -202,9 +203,7 @@ class IssueListEndpoint(BaseAPIView):
             "spreadsheet",
         ]:
             return self.paginate(
-                request=request,
-                queryset=issue_queryset,
-                on_results=on_results
+                request=request, queryset=issue_queryset, on_results=on_results
             )
         return on_results(issues=issue_queryset)
 
@@ -311,6 +310,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 return IssueSerializer(
                     issues, many=True, expand=self.expand, fields=self.fields
                 ).data
+
             return issues.values(
                 "id",
                 "name",
@@ -340,16 +340,23 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             )
 
         if request.GET.get("layout", "spreadsheet") in [
-            "layout",
+            "gantt",
             "spreadsheet",
         ]:
             return self.paginate(
-                request=request,
-                queryset=issue_queryset,
-                on_results=on_results
+                request=request, queryset=issue_queryset, on_results=on_results
             )
-        return on_results(issues=issue_queryset)
-        
+
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=on_results,
+            paginator_cls=GroupedOffsetPaginator,
+            group_by_field_name="priority",
+            group_by_fields=issue_grouper(
+                field="priority", slug=slug, project_id=project_id
+            ),
+        )
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -576,12 +583,12 @@ class UserWorkSpaceIssues(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if group_by:
-            grouped_results = group_results(issues, group_by, sub_group_by)
-            return Response(
-                grouped_results,
-                status=status.HTTP_200_OK,
-            )
+        # if group_by:
+        #     grouped_results = group_results(issues, group_by, sub_group_by)
+        #     return Response(
+        #         grouped_results,
+        #         status=status.HTTP_200_OK,
+        #     )
 
         return Response(issues, status=status.HTTP_200_OK)
 
@@ -1350,12 +1357,9 @@ class IssueArchiveViewSet(BaseViewSet):
             "spreadsheet",
         ]:
             return self.paginate(
-                request=request,
-                queryset=issue_queryset,
-                on_results=on_results
+                request=request, queryset=issue_queryset, on_results=on_results
             )
         return on_results(issues=issue_queryset)
-
 
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
@@ -1925,6 +1929,7 @@ class IssueDraftViewSet(BaseViewSet):
         issue_queryset = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
+
         def on_results(issues):
             if self.expand or self.fields:
                 return IssueSerializer(
@@ -1963,9 +1968,7 @@ class IssueDraftViewSet(BaseViewSet):
             "spreadsheet",
         ]:
             return self.paginate(
-                request=request,
-                queryset=issue_queryset,
-                on_results=on_results
+                request=request, queryset=issue_queryset, on_results=on_results
             )
         return on_results(issues=issue_queryset)
 

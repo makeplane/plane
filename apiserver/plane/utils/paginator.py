@@ -1,7 +1,17 @@
+# Python imports
+import math
+from collections.abc import Sequence
+
+# Django imports
+from django.db.models import Window, F, Count, Q
+from django.db.models.functions import RowNumber
+
+# Third party imports
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError, ValidationError
-from collections.abc import Sequence
-import math
+
+# Module imports
+from plane.db.models import Issue
 
 
 class Cursor:
@@ -140,6 +150,87 @@ class OffsetPaginator:
         )
 
 
+class GroupedOffsetPaginator(OffsetPaginator):
+    def __init__(
+        self, queryset, group_by_field_name, group_by_fields, *args, **kwargs
+    ):
+        super().__init__(queryset, *args, **kwargs)
+        self.group_by_field_name = group_by_field_name
+        self.group_by_fields = group_by_fields
+
+    def get_result(self, limit=100, cursor=None):
+        # offset is page #
+        # value is page limit
+        if cursor is None:
+            cursor = Cursor(0, 0, 0)
+
+        limit = min(limit, self.max_limit)
+
+        # Adjust the initial offset and stop based on the cursor and limit
+        queryset = self.queryset
+        if self.key:
+            queryset = queryset.order_by(*self.key)
+
+        page = cursor.offset
+        offset = cursor.offset * cursor.value
+        stop = offset + (cursor.value or limit) + 1
+
+        if self.max_offset is not None and offset >= self.max_offset:
+            raise BadPaginationError("Pagination offset too large")
+        if offset < 0:
+            raise BadPaginationError("Pagination offset cannot be negative")
+
+        # Get the queryset
+        queryset = self.queryset
+
+        # Compute the results
+        results = {}
+        queryset = queryset.annotate(
+            row_number=Window(
+                expression=RowNumber(),
+                partition_by=[F(self.group_by_field_name)],
+                order_by=F(self.group_by_field_name).asc(),
+            )
+        )
+
+        results = queryset.filter(row_number__gte=offset, row_number__lt=stop)
+
+        # Adjust cursors based on the grouped results for pagination
+        next_cursor = Cursor(
+            limit,
+            page + 1,
+            False,
+            queryset.filter(row_number__gte=stop).exists(),
+        )
+        prev_cursor = Cursor(
+            limit,
+            page - 1,
+            True,
+            page > 0,
+        )
+
+        # Optionally, calculate the total count and max_hits if needed
+        # This might require adjustments based on specific use cases
+        max_hits = math.ceil(
+            self.queryset.values(self.group_by_field_name)
+            .annotate(
+                count=Count(
+                    self.group_by_field_name,
+                )
+            )
+            .order_by("-count")[0]["count"]
+            / limit
+        )
+
+        return CursorResult(
+            results=results,
+            next=next_cursor,
+            prev=prev_cursor,
+            hits=None,
+            max_hits=max_hits,
+        )
+
+
 class BasePaginator:
     """BasePaginator class can be inherited by any View to return a paginated view"""
 
@@ -184,11 +275,12 @@ class BasePaginator:
         cursor_cls=Cursor,
         extra_stats=None,
         controller=None,
+        group_by_fields=None,
+        group_by_field_name=None,
         **paginator_kwargs,
     ):
         """Paginate the request"""
         per_page = self.get_per_page(request, default_per_page, max_per_page)
-        layout = self.get_layout(request=request)
 
         # Convert the cursor value to integer and float from string
         input_cursor = None
@@ -200,6 +292,8 @@ class BasePaginator:
             raise ParseError(detail="Invalid cursor parameter.")
 
         if not paginator:
+            paginator_kwargs["group_by_fields"] = group_by_fields
+            paginator_kwargs["group_by_field_name"] = group_by_field_name
             paginator = paginator_cls(**paginator_kwargs)
 
         try:
@@ -209,12 +303,20 @@ class BasePaginator:
         except BadPaginationError as e:
             raise ParseError(detail="Error in parsing")
 
-        # Serialize result according to the on_result function
         if on_results:
             results = on_results(cursor_result.results)
-        else:
-            results = cursor_result.results
 
+        processed_results = {}
+        if group_by_field_name and group_by_fields:
+            for result in results:
+                group_value = str(result.get(group_by_field_name))
+                if group_value not in processed_results:
+                    processed_results[str(group_value)] = {
+                        "results": [],
+                    }
+                processed_results[str(group_value)]["results"].append(result)
+
+        results = processed_results
         # Add Manipulation functions to the response
         if controller is not None:
             results = controller(results)
@@ -224,6 +326,7 @@ class BasePaginator:
         # Return the response
         response = Response(
             {
+                "grouped_by": group_by_field_name,
                 "next_cursor": str(cursor_result.next),
                 "prev_cursor": str(cursor_result.prev),
                 "next_page_results": cursor_result.next.has_results,

@@ -1,3 +1,6 @@
+from plane.db.models import State, Label, ProjectMember, Cycle, Module
+
+
 def resolve_keys(group_keys, value):
     """resolve keys to a key which will be used for
     grouping
@@ -238,3 +241,45 @@ def group_results(results_data, group_by, sub_group_by=False):
                     response_dict[str(group_attribute)].append(value)
 
         return response_dict
+
+
+def issue_grouper(field, slug, project_id):
+    if field == "state":
+        return list(
+            State.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values_list("id", flat=True)
+        )
+    if field == "labels":
+        return list(
+            Label.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values_list("id", flat=True)
+        )
+    if field == "assignees":
+        return list(
+            ProjectMember.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values_list("member_id", flat=True)
+        )
+    if field == "priority":
+        return ["urgent", "high", "medium", "low", "none"]
+
+    if field == "created_by":
+        return list(
+            ProjectMember.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values_list("member_id", flat=True)
+        )
+    if field == "cycle":
+        return list(
+            Cycle.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values_list("id", flat=True)
+        )
+    if field == "module":
+        return list(
+            Module.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values_list("id", flat=True)
+        )

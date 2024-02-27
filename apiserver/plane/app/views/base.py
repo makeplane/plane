@@ -1,6 +1,6 @@
 # Python imports
 import zoneinfo
-import json
+import traceback
 
 # Django imports
 from django.urls import resolve
@@ -104,7 +104,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             response = super().handle_exception(exc)
             return response
         except Exception as e:
-            print(e) if settings.DEBUG else print("Server Error")
+            print(e, traceback.format_exc()) if settings.DEBUG else print("Server Error")
             if isinstance(e, IntegrityError):
                 return Response(
                     {"error": "The payload is not valid"},
