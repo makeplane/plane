@@ -9,6 +9,7 @@ type Props = {
    * The children of the avatar group.
    * These should ideally should be `Avatar` components
    */
+  
   children: React.ReactNode;
   /**
    * The maximum number of avatars to display.
