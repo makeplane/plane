@@ -2310,7 +2310,7 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
