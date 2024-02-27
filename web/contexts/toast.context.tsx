@@ -73,17 +73,16 @@ export const ToastContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const setToastAlert = useCallback(
     (data: { title: string; type?: "success" | "error" | "warning" | "info"; message?: string }) => {
-      const id = uuid();
-      const { title, type, message } = data;
-      dispatch({
-        type: "SET_TOAST_ALERT",
-        payload: { id, title, message, type: type ?? "success" },
-      });
-
-      const timer = setTimeout(() => {
-        removeAlert(id);
-        clearTimeout(timer);
-      }, 3000);
+      // const id = uuid();
+      // const { title, type, message } = data;
+      // dispatch({
+      //   type: "SET_TOAST_ALERT",
+      //   payload: { id, title, message, type: type ?? "success" },
+      // });
+      // const timer = setTimeout(() => {
+      //   removeAlert(id);
+      //   clearTimeout(timer);
+      // }, 3000);
     },
     [removeAlert]
   );

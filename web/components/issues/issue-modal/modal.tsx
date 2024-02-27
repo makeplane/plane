@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+import { toast } from "sonner";
 // hooks
 import { useApplication, useEventTracker, useCycle, useIssues, useModule, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -14,6 +15,7 @@ import type { TIssue } from "@plane/types";
 // constants
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
+import { TOAST_TYPE, setToast } from "components/toast";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
@@ -152,7 +154,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         await addIssueToCycle(response, payload.cycle_id);
       if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
         await addIssueToModule(response, payload.module_ids);
-
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Issue created successfully." });
       setToastAlert({
         type: "success",
         title: "Success!",
