@@ -7,6 +7,7 @@ import { useProject, useInboxIssues } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { InboxLayoutLoader } from "components/ui";
 import { PageHead } from "components/core";
 import { ProjectInboxHeader } from "components/headers";
 import { InboxSidebarRoot, InboxContentRoot } from "components/inbox";
@@ -23,7 +24,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     issues: { fetchInboxIssues },
   } = useInboxIssues();
   // fetching the Inbox filters and issues
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view
       ? `INBOX_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}`
       : null,
@@ -37,7 +38,12 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
 
-  if (!workspaceSlug || !projectId || !inboxId || !currentProjectDetails?.inbox_view) return <></>;
+  if (!workspaceSlug || !projectId || !inboxId || !currentProjectDetails?.inbox_view || isLoading)
+    return (
+      <div className="flex h-full flex-col">
+        <InboxLayoutLoader />
+      </div>
+    );
 
   return (
     <>
