@@ -14,6 +14,7 @@ from django.db.models import (
     F,
     Func,
     Subquery,
+    Count,
 )
 from django.core.validators import validate_email
 from django.conf import settings
@@ -47,6 +48,7 @@ from plane.app.permissions import (
 )
 
 from plane.db.models import (
+    Issue,
     Project,
     ProjectMember,
     Workspace,
@@ -134,6 +136,12 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(
                 total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                total_issues=Issue.issue_objects.filter(project_id=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

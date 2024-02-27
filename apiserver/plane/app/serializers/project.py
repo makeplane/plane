@@ -103,6 +103,7 @@ class ProjectLiteSerializer(BaseSerializer):
 
 
 class ProjectListSerializer(DynamicBaseSerializer):
+    total_issues = serializers.IntegerField(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
