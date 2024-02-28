@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import { Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
 import Link from "next/link";
 // hooks
 import { useProject } from "hooks/store";
@@ -13,6 +13,7 @@ import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import type { IProject } from "@plane/types";
 // constants
@@ -103,9 +104,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
         }}
         className="flex cursor-pointer flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
-        <div className="relative h-[118px] w-full rounded-t ">
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
-
+        <div className="relative h-16 w-full rounded-t ">
           <img
             src={
               project.cover_image ??
@@ -115,27 +114,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
-          <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
-            <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="item-center flex h-9 w-9 flex-shrink-0 justify-center rounded bg-white/90">
-                <span className="flex items-center justify-center">
-                  {project.emoji
-                    ? renderEmoji(project.emoji)
-                    : project.icon_prop
-                    ? renderEmoji(project.icon_prop)
-                    : null}
-                </span>
-              </div>
-
-              <div className="flex w-full flex-col justify-between gap-0.5 truncate">
-                <h3 className="truncate font-semibold text-white">{project.name}</h3>
-                <span className="flex items-center gap-1.5">
-                  <p className="text-xs font-medium text-white">{project.identifier} </p>
-                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
-                </span>
-              </div>
-            </div>
-
+          <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-end gap-3 px-4">
             <div className="flex h-full flex-shrink-0 items-center gap-2">
               <button
                 className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
@@ -167,11 +146,30 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               </button>
             </div>
           </div>
+
+          <div className="absolute left-4 -bottom-5 item-center flex h-9 w-9 flex-shrink-0 justify-center rounded bg-amber-50">
+            <span className="flex items-center justify-center">
+              {project.emoji ? renderEmoji(project.emoji) : project.icon_prop ? renderEmoji(project.icon_prop) : null}
+            </span>
+          </div>
         </div>
 
-        <div className="flex h-[104px] w-full flex-col justify-between rounded-b p-4">
-          <p className="line-clamp-2 break-words text-sm text-custom-text-300">{project.description}</p>
-          <div className="item-center flex justify-between">
+        <div className="flex h-44 w-full flex-col justify-between rounded-b">
+          <div className="flex flex-col flex-grow gap-3 text-custom-text-200 px-4 pt-10">
+            <div className="flex flex-col gap-1 5">
+              <h3 className="truncate font-semibold">{project.name}</h3>
+              <span className="flex items-center gap-1.5 text-custom-text-400 text-sm">
+                {project.network === 0 ? <Lock className="h-2.5 w-2.5 " /> : <Globe2 className="h-2.5 w-2.5" />}
+                {project.network === 0 ? "Private" : "Public"}
+                {/* <p className="text-xs font-medium">{project.identifier} </p> */}
+              </span>
+            </div>
+            <p className="line-clamp-2 break-words text-sm text-custom-text-300">
+              {project.description ? project.description : `Created on ${renderFormattedDate(project.created_at)}`}
+            </p>
+          </div>
+
+          <div className="flex px-4 py-2.5 item-center justify-between border-t-[0.5px] border-custom-border-200">
             <Tooltip
               tooltipHeading="Members"
               tooltipContent={
