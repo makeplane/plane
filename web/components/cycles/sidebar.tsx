@@ -220,8 +220,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-      ? "0 Issue"
-      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+        ? "0 Issue"
+        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 

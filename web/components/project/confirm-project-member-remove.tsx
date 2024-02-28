@@ -94,8 +94,8 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
                         ? "Leaving..."
                         : "Leave"
                       : isDeleteLoading
-                      ? "Removing..."
-                      : "Remove"}
+                        ? "Removing..."
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

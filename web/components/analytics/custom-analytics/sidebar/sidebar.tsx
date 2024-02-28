@@ -1,4 +1,4 @@
-import { useEffect, } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
@@ -163,8 +163,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
               (cycleId
                 ? cycleDetails?.created_at
                 : moduleId
-                ? moduleDetails?.created_at
-                : projectDetails?.created_at) ?? ""
+                  ? moduleDetails?.created_at
+                  : projectDetails?.created_at) ?? ""
             )}
           </div>
         )}

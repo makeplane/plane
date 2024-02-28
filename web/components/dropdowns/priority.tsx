@@ -342,8 +342,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-    ? BackgroundButton
-    : TransparentButton;
+      ? BackgroundButton
+      : TransparentButton;
 
   useEffect(() => {
     if (isOpen && inputRef.current) {

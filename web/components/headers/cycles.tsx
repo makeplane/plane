@@ -73,7 +73,9 @@ export const CyclesHeader: FC = observer(() => {
               />
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={<BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />}
+                link={
+                  <BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
           </div>

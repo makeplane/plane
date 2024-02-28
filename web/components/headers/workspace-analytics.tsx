@@ -47,11 +47,21 @@ export const WorkspaceAnalyticsHeader = observer(() => {
                 }
               />
             </Breadcrumbs>
-            {analytics_tab === 'custom' &&
-              <button className="block md:hidden" onClick={() => { themeStore.toggleWorkspaceAnalyticsSidebar() }}>
-                <PanelRight className={cn("w-4 h-4 block md:hidden", !themeStore.workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200")} />
+            {analytics_tab === "custom" && (
+              <button
+                className="block md:hidden"
+                onClick={() => {
+                  themeStore.toggleWorkspaceAnalyticsSidebar();
+                }}
+              >
+                <PanelRight
+                  className={cn(
+                    "w-4 h-4 block md:hidden",
+                    !themeStore.workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200"
+                  )}
+                />
               </button>
-            }
+            )}
           </div>
         </div>
       </div>

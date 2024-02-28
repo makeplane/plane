@@ -22,8 +22,8 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const filteredOptions = memberIds?.filter((memberId) =>
-    getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = memberIds?.filter(
+    (memberId) => getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 

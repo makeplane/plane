@@ -36,7 +36,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
   // store hooks
-  const {webhookSecretKey } = useWebhook();
+  const { webhookSecretKey } = useWebhook();
   // use form
   const {
     handleSubmit,

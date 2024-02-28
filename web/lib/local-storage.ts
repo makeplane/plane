@@ -7,8 +7,8 @@ export const storage = {
       ? ["string", "boolean"].includes(typeof value)
         ? value.toString()
         : isEmpty(value)
-        ? undefined
-        : JSON.stringify(value)
+          ? undefined
+          : JSON.stringify(value)
       : undefined;
     if (!tempValue) return undefined;
     window.localStorage.setItem(key, tempValue);

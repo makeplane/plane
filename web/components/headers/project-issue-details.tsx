@@ -91,7 +91,9 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
         </div>
       </div>
       <button className="block md:hidden" onClick={() => themeStore.toggleIssueDetailSidebar()}>
-        <PanelRight className={cn("w-4 h-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")} />
+        <PanelRight
+          className={cn("w-4 h-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")}
+        />
       </button>
     </div>
   );

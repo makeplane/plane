@@ -29,8 +29,8 @@ const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {
     currentWorkspace?.name && defaultView?.label
       ? `${currentWorkspace?.name} - ${defaultView?.label}`
       : currentWorkspace?.name && globalViewDetails?.name
-      ? `${currentWorkspace?.name} - ${globalViewDetails?.name}`
-      : undefined;
+        ? `${currentWorkspace?.name} - ${globalViewDetails?.name}`
+        : undefined;
 
   return (
     <>

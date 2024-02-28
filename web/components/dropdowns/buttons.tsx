@@ -31,8 +31,8 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
   const ButtonToRender: React.FC<ButtonProps> = BORDER_BUTTON_VARIANTS.includes(variant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(variant)
-    ? BackgroundButton
-    : TransparentButton;
+      ? BackgroundButton
+      : TransparentButton;
 
   return (
     <ButtonToRender

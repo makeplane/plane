@@ -27,7 +27,6 @@ export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props
     >
       <>
         {activity.old_value === "" ? `added a new assignee ` : `removed the assignee `}
-
         <a
           href={`/${activity.workspace_detail?.slug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
           target="_blank"
@@ -36,7 +35,6 @@ export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props
         >
           {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
         </a>
-
         {showIssue && (activity.old_value === "" ? ` to ` : ` from `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>

@@ -178,8 +178,8 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 {snoozed
                   ? "Snoozed Notifications"
                   : readNotification
-                  ? "Unread Notifications"
-                  : "Archived Notifications"}
+                    ? "Unread Notifications"
+                    : "Archived Notifications"}
               </span>
             </h4>
           </button>

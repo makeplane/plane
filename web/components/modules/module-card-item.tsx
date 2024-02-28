@@ -148,8 +148,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (

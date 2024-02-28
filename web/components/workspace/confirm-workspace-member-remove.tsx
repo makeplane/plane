@@ -102,8 +102,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving"
                         : "Leave"
                       : isRemoving
-                      ? "Removing"
-                      : "Remove"}
+                        ? "Removing"
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

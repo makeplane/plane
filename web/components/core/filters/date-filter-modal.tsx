@@ -37,7 +37,8 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
   const handleFormSubmit = (formData: TFormValues) => {
     const { filterType, date1, date2 } = formData;
 
-    if (filterType === "range") onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
+    if (filterType === "range")
+      onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
     else onSelect([`${renderFormattedPayloadDate(date1)};${filterType}`]);
 
     handleClose();
@@ -92,9 +93,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           defaultMonth={value ? new Date(value) : undefined}
                           onSelect={(date) => onChange(date)}
                           mode="single"
-                          disabled={[
-                            { after: new Date(watch("date2")) }
-                          ]}
+                          disabled={[{ after: new Date(watch("date2")) }]}
                           className="border border-custom-border-200 p-3 rounded-md"
                         />
                       )}
@@ -109,9 +108,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                             defaultMonth={value ? new Date(value) : undefined}
                             onSelect={(date) => onChange(date)}
                             mode="single"
-                            disabled={[
-                              { before: new Date(watch("date1")) }
-                            ]}
+                            disabled={[{ before: new Date(watch("date1")) }]}
                             className="border border-custom-border-200 p-3 rounded-md"
                           />
                         )}

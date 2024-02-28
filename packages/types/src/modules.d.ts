@@ -10,7 +10,13 @@ import type {
   ILinkDetails,
 } from "@plane/types";
 
-export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
+export type TModuleStatus =
+  | "backlog"
+  | "planned"
+  | "in-progress"
+  | "paused"
+  | "completed"
+  | "cancelled";
 
 export interface IModule {
   backlog_issues: number;
@@ -68,6 +74,10 @@ export type ModuleLink = {
   url: string;
 };
 
-export type SelectModuleType = (IModule & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
+export type SelectModuleType =
+  | (IModule & { actionType: "edit" | "delete" | "create-issue" })
+  | undefined;
 
-export type SelectIssue = (TIssue & { actionType: "edit" | "delete" | "create" }) | undefined;
+export type SelectIssue =
+  | (TIssue & { actionType: "edit" | "delete" | "create" })
+  | undefined;

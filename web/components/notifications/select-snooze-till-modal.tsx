@@ -214,10 +214,11 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "AM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "AM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
+                                  watch("period") === "AM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                  }`}
+                                }`}
                               >
                                 AM
                               </div>
@@ -225,10 +226,11 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "PM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "PM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
+                                  watch("period") === "PM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                  }`}
+                                }`}
                               >
                                 PM
                               </div>

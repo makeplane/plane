@@ -224,8 +224,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-              ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
+                ? "cursor-pointer"
+                : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={handleOnClick}
         >

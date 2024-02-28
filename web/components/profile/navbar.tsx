@@ -27,10 +27,11 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <span
-              className={`flex whitespace-nowrap border-b-2 p-4 text-sm font-medium outline-none ${router.pathname === tab.selected
-                ? "border-custom-primary-100 text-custom-primary-100"
-                : "border-transparent"
-                }`}
+              className={`flex whitespace-nowrap border-b-2 p-4 text-sm font-medium outline-none ${
+                router.pathname === tab.selected
+                  ? "border-custom-primary-100 text-custom-primary-100"
+                  : "border-transparent"
+              }`}
             >
               {tab.label}
             </span>

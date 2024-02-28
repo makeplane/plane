@@ -189,7 +189,6 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             updatedDisplayFilters.group_by = "state";
           }
 
-
           runInAction(() => {
             Object.keys(updatedDisplayFilters).forEach((_key) => {
               set(

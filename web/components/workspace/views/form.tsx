@@ -200,8 +200,8 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
+              ? "Creating View..."
+              : "Create View"}
         </Button>
       </div>
     </form>

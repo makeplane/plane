@@ -71,14 +71,16 @@ export const ModulesListHeader: React.FC = observer(() => {
               <Tooltip key={layout.key} tooltipContent={layout.title}>
                 <button
                   type="button"
-                  className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${modulesView == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                    }`}
+                  className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
+                    modulesView == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                  }`}
                   onClick={() => setModulesView(layout.key)}
                 >
                   <layout.icon
                     strokeWidth={2}
-                    className={`h-3.5 w-3.5 ${modulesView == layout.key ? "text-custom-text-100" : "text-custom-text-200"
-                      }`}
+                    className={`h-3.5 w-3.5 ${
+                      modulesView == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                    }`}
                   />
                 </button>
               </Tooltip>
@@ -106,7 +108,13 @@ export const ModulesListHeader: React.FC = observer(() => {
           // placement="bottom-start"
           customButton={
             <span className="flex items-center gap-2">
-              {modulesView === 'gantt_chart' ? <GanttChartSquare className="w-3 h-3" /> : modulesView === 'grid' ? <LayoutGrid className="w-3 h-3" /> : <List className="w-3 h-3" />}
+              {modulesView === "gantt_chart" ? (
+                <GanttChartSquare className="w-3 h-3" />
+              ) : modulesView === "grid" ? (
+                <LayoutGrid className="w-3 h-3" />
+              ) : (
+                <List className="w-3 h-3" />
+              )}
               <span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>
             </span>
           }
@@ -114,10 +122,7 @@ export const ModulesListHeader: React.FC = observer(() => {
           closeOnSelect
         >
           {MODULE_VIEW_LAYOUTS.map((layout) => (
-            <CustomMenu.MenuItem
-              onClick={() => setModulesView(layout.key)}
-              className="flex items-center gap-2"
-            >
+            <CustomMenu.MenuItem onClick={() => setModulesView(layout.key)} className="flex items-center gap-2">
               <layout.icon className="w-3 h-3" />
               <div className="text-custom-text-300">{layout.title}</div>
             </CustomMenu.MenuItem>
@@ -127,5 +132,3 @@ export const ModulesListHeader: React.FC = observer(() => {
     </div>
   );
 });
-
-

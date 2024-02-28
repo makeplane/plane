@@ -81,8 +81,8 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             {projectDetails?.emoji
               ? renderEmoji(projectDetails?.emoji)
               : projectDetails?.icon_prop
-              ? renderEmoji(projectDetails?.icon_prop)
-              : null}
+                ? renderEmoji(projectDetails?.icon_prop)
+                : null}
           </span>
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
@@ -174,8 +174,8 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
                   {selectedProject?.emoji
                     ? renderEmoji(selectedProject?.emoji)
                     : selectedProject?.icon_prop
-                    ? renderEmoji(selectedProject?.icon_prop)
-                    : null}
+                      ? renderEmoji(selectedProject?.icon_prop)
+                      : null}
                 </span>
               )}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (

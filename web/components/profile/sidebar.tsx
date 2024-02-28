@@ -162,12 +162,13 @@ export const ProfileSidebar = observer(() => {
                             {project.assigned_issues > 0 && (
                               <Tooltip tooltipContent="Completion percentage" position="left">
                                 <div
-                                  className={`rounded px-1 py-0.5 text-xs font-medium ${completedIssuePercentage <= 35
-                                    ? "bg-red-500/10 text-red-500"
-                                    : completedIssuePercentage <= 70
-                                      ? "bg-yellow-500/10 text-yellow-500"
-                                      : "bg-green-500/10 text-green-500"
-                                    }`}
+                                  className={`rounded px-1 py-0.5 text-xs font-medium ${
+                                    completedIssuePercentage <= 35
+                                      ? "bg-red-500/10 text-red-500"
+                                      : completedIssuePercentage <= 70
+                                        ? "bg-yellow-500/10 text-yellow-500"
+                                        : "bg-green-500/10 text-green-500"
+                                  }`}
                                 >
                                   {completedIssuePercentage}%
                                 </div>

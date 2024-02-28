@@ -122,8 +122,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   {project.emoji
                     ? renderEmoji(project.emoji)
                     : project.icon_prop
-                    ? renderEmoji(project.icon_prop)
-                    : null}
+                      ? renderEmoji(project.icon_prop)
+                      : null}
                 </span>
               </div>
 

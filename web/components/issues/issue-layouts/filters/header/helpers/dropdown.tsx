@@ -34,22 +34,26 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
         return (
           <>
             <Popover.Button as={React.Fragment}>
-              {menuButton ? <button role="button" ref={setReferenceElement}>
-                {menuButton}
-              </button> : <Button
-                disabled={disabled}
-                ref={setReferenceElement}
-                variant="neutral-primary"
-                size="sm"
-                appendIcon={
-                  <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
-                }
-                tabIndex={tabIndex}
-              >
-                <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
-                  <span>{title}</span>
-                </div>
-              </Button>}
+              {menuButton ? (
+                <button role="button" ref={setReferenceElement}>
+                  {menuButton}
+                </button>
+              ) : (
+                <Button
+                  disabled={disabled}
+                  ref={setReferenceElement}
+                  variant="neutral-primary"
+                  size="sm"
+                  appendIcon={
+                    <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
+                  }
+                  tabIndex={tabIndex}
+                >
+                  <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+                    <span>{title}</span>
+                  </div>
+                </Button>
+              )}
             </Popover.Button>
             <Transition
               as={Fragment}

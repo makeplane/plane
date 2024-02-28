@@ -28,11 +28,5 @@ export const GlobalViewsList: React.FC<Props> = observer((props) => {
 
   const filteredViewsList = getSearchedViews(searchQuery);
 
-  return (
-    <>
-      {filteredViewsList?.map((viewId) => (
-        <GlobalViewListItem key={viewId} viewId={viewId} />
-      ))}
-    </>
-  );
+  return <>{filteredViewsList?.map((viewId) => <GlobalViewListItem key={viewId} viewId={viewId} />)}</>;
 });

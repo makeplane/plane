@@ -124,9 +124,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
       <g>
         {bars
           ?.filter((b: any) => b?.value === 1) // render only bars with value 1
-          .map((bar: any) => (
-            <CustomBar key={bar?.key} bar={bar} workspaceSlug={workspaceSlug} />
-          ))}
+          .map((bar: any) => <CustomBar key={bar?.key} bar={bar} workspaceSlug={workspaceSlug} />)}
       </g>
     );
   };

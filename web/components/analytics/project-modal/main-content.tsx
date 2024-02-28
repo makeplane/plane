@@ -25,10 +25,13 @@ export const ProjectAnalyticsModalMainContent: React.FC<Props> = observer((props
           <Tab
             key={tab.key}
             className={({ selected }) =>
-              `rounded-0 w-full md:w-max md:rounded-3xl border-b md:border border-custom-border-200 focus:outline-none px-0 md:px-4 py-2 text-xs hover:bg-custom-background-80 ${selected ? "border-custom-primary-100 text-custom-primary-100 md:bg-custom-background-80 md:text-custom-text-200 md:border-custom-border-200" : "border-transparent"
+              `rounded-0 w-full md:w-max md:rounded-3xl border-b md:border border-custom-border-200 focus:outline-none px-0 md:px-4 py-2 text-xs hover:bg-custom-background-80 ${
+                selected
+                  ? "border-custom-primary-100 text-custom-primary-100 md:bg-custom-background-80 md:text-custom-text-200 md:border-custom-border-200"
+                  : "border-transparent"
               }`
             }
-            onClick={() => { }}
+            onClick={() => {}}
           >
             {tab.title}
           </Tab>

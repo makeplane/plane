@@ -24,8 +24,8 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = memberIds?.filter((memberId) =>
-    getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = memberIds?.filter(
+    (memberId) => getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleViewToggle = () => {

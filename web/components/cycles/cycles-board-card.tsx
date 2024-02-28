@@ -71,8 +71,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
