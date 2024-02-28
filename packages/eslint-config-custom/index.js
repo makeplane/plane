@@ -22,8 +22,6 @@ module.exports = {
     "react/jsx-no-duplicate-props": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-useless-empty-export": "error",
-    // "@typescript-eslint/no-array-delete": "error",
-    // "@typescript-eslint/no-unnecessary-condition": "error",
     "@typescript-eslint/prefer-ts-expect-error": "error",
     "@typescript-eslint/require-array-sort-compare": "error",
     "@typescript-eslint/naming-convention": [
@@ -33,33 +31,68 @@ module.exports = {
         format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
       },
     ],
-    // import rules
-    // "sort-imports": [
-    //   "error",
-    //   {
-    //     ignoreCase: true,
-    //     ignoreDeclarationSort: true,
-    //   },
-    // ],
-    // "import/order": [
-    //   "error",
-    //   {
-    //     groups: [["external", "builtin"], "internal", "parent", ["sibling"]],
-    //     "newlines-between": "always",
-    //     pathGroups: [
-    //       {
-    //         pattern: "react",
-    //         group: "external",
-    //         position: "before",
-    //       },
-    //       { pattern: "", group: "internal" },
-    //     ],
-    //     pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
-    //     alphabetize: {
-    //       order: "asc",
-    //       caseInsensitive: true,
-    //     },
-    //   },
-    // ],
+    "import/order": [
+      "error",
+      {
+        groups: [["external", "builtin"], "internal", "parent", ["sibling"]],
+        pathGroups: [
+          {
+            pattern: "react",
+            group: "external",
+            position: "before",
+          },
+          {
+            pattern: "lucide-react",
+            group: "external",
+            position: "after",
+          },
+          {
+            pattern: "@plane/**",
+            group: "internal",
+          },
+          {
+            pattern: "components/**",
+            group: "internal",
+          },
+          {
+            pattern: "constants/**",
+            group: "internal",
+          },
+          {
+            pattern: "contexts/**",
+            group: "internal",
+          },
+          {
+            pattern: "helpers/**",
+            group: "internal",
+          },
+          {
+            pattern: "hooks/**",
+            group: "internal",
+          },
+          {
+            pattern: "layouts/**",
+            group: "internal",
+          },
+          {
+            pattern: "lib/**",
+            group: "internal",
+          },
+          {
+            pattern: "services/**",
+            group: "internal",
+          },
+          {
+            pattern: "store/**",
+            group: "internal",
+          },
+        ],
+        pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
+        alphabetize: {
+          order: "asc",
+          caseInsensitive: true,
+        },
+      },
+    ],
   },
 };
