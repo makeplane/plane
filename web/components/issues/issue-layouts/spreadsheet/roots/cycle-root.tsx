@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
@@ -43,7 +43,7 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
 
-  const canEditIssueProperties = () => !isCompletedCycle;
+  const canEditIssueProperties = useCallback(() => !isCompletedCycle, [isCompletedCycle]);
 
   return (
     <BaseSpreadsheetRoot

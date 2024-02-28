@@ -69,15 +69,16 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
       })
     );
 
+  const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
+
   const duplicateIssuePayload = omit(
     {
       ...issue,
       name: `${issue.name} (copy)`,
+      is_draft: isDraftIssue ? false : issue.is_draft,
     },
     ["id"]
   );
-
-  const isDraftIssue = router?.asPath?.includes("draft-issues") || false;
 
   return (
     <>

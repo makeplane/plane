@@ -773,7 +773,10 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
     def get(self, request, slug):
         issues = (
             Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
         )
         serializer = IssueSerializer(issues, many=True)
@@ -796,6 +799,7 @@ class IssueActivityEndpoint(BaseAPIView):
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
@@ -805,6 +809,7 @@ class IssueActivityEndpoint(BaseAPIView):
             IssueComment.objects.filter(issue_id=issue_id)
             .filter(
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
@@ -856,7 +861,10 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
@@ -1018,7 +1026,10 @@ class LabelViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
@@ -1231,7 +1242,10 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1722,7 +1736,10 @@ class IssueSubscriberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1806,7 +1823,10 @@ class IssueReactionViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1875,7 +1895,10 @@ class CommentReactionViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(comment_id=self.kwargs.get("comment_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1945,7 +1968,10 @@ class IssueRelationViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
@@ -2340,17 +2366,10 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
 
         if serializer.is_valid():
-            if request.data.get(
-                "is_draft"
-            ) is not None and not request.data.get("is_draft"):
-                serializer.save(
-                    created_at=timezone.now(), updated_at=timezone.now()
-                )
-            else:
-                serializer.save()
+            serializer.save()
             issue_activity.delay(
                 type="issue_draft.activity.updated",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
