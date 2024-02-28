@@ -72,7 +72,7 @@ from plane.db.models import (
     IssueRelation,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.grouper import issue_grouper
+from plane.utils.grouper import issue_grouper, issue_queryset_grouper
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator
@@ -264,32 +264,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
         ).distinct()
 
     @method_decorator(gzip_page)
@@ -307,12 +281,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         )
 
         def on_results(issues):
-            if self.expand or self.fields:
-                return IssueSerializer(
-                    issues, many=True, expand=self.expand, fields=self.fields
-                ).data
-
-            return issues.values(
+            required_fields = [
                 "id",
                 "name",
                 "state_id",
@@ -326,9 +295,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 "project_id",
                 "parent_id",
                 "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
                 "sub_issues_count",
                 "created_at",
                 "updated_at",
@@ -338,7 +304,20 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 "link_count",
                 "is_draft",
                 "archived_at",
-            )
+            ]
+            if group_by == "assignees__id":
+                required_fields.extend(
+                    ["label_ids", "module_ids", "assignees__id"]
+                )
+            if group_by == "labels__id":
+                required_fields.extend(
+                    ["assignee_ids", "module_ids", "labels__id"]
+                )
+            if group_by == "modules__id":
+                required_fields.extend(
+                    ["assignee_ids", "label_ids", "modules__id"]
+                )
+            return issues.values(*required_fields)
 
         # Group by
         group_by = request.GET.get("group_by", False)
@@ -349,6 +328,9 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 request=request, queryset=issue_queryset, on_results=on_results
             )
 
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, field=group_by
+        )
         # Group paginate
         return self.paginate(
             request=request,
@@ -358,6 +340,14 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             group_by_field_name=group_by,
             group_by_fields=issue_grouper(
                 field=group_by, slug=slug, project_id=project_id
+            ),
+            count_filter=Q(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True),
+                archived_at__isnull=False,
+                is_draft=True,
             ),
         )
 

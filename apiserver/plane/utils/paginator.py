@@ -1,6 +1,7 @@
 # Python imports
 import math
 from collections.abc import Sequence
+from collections import defaultdict
 
 # Django imports
 from django.db.models import Window, F, Count, Q
@@ -154,12 +155,26 @@ class OffsetPaginator:
 
 
 class GroupedOffsetPaginator(OffsetPaginator):
+
+    FIELD_MAPPER = {
+        "labels__id": "label_ids",
+        "assignees__id": "assignee_ids",
+        "modules__id": "module_ids",
+    }
+
     def __init__(
-        self, queryset, group_by_field_name, group_by_fields, *args, **kwargs
+        self,
+        queryset,
+        group_by_field_name,
+        group_by_fields,
+        count_filter,
+        *args,
+        **kwargs,
     ):
         super().__init__(queryset, *args, **kwargs)
         self.group_by_field_name = group_by_field_name
         self.group_by_fields = group_by_fields
+        self.count_filter = count_filter
 
     def get_result(self, limit=100, cursor=None):
         # offset is page #
@@ -189,10 +204,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Compute the results
         results = {}
         queryset = queryset.annotate(
-            # group_rank=Window(
-            #     expression=DenseRank(),
-            #     order_by=F(self.group_by_field_name).asc()
-            # ),
             row_number=Window(
                 expression=RowNumber(),
                 partition_by=[F(self.group_by_field_name)],
@@ -237,15 +248,89 @@ class GroupedOffsetPaginator(OffsetPaginator):
             max_hits=max_hits,
         )
 
-    def process_results(self, results):
+    def __get_total_queryset(self):
+        return self.queryset.values(self.group_by_field_name).annotate(
+            count=Count(
+                self.group_by_field_name,
+                filter=self.count_filter,
+            )
+        )
+
+    def __get_total_dict(self):
+        total_group_dict = {}
+        for group in self.__get_total_queryset():
+            total_group_dict[str(group.get(self.group_by_field_name))] = (
+                total_group_dict.get(
+                    str(group.get(self.group_by_field_name)), 0
+                )
+                + (1 if group.get("count") == 0 else group.get("count"))
+            )
+
+        return total_group_dict
+
+    def __query_multi_grouper(self, results):
+
+        total_group_dict = self.__get_total_dict()
+
+        # Preparing a dict to keep track of group IDs associated with each label ID
+        result_group_mapping = defaultdict(set)
+        # Preparing a dict to group result by group ID
+        grouped_by_field_name = defaultdict(list)
+
+        # Iterate over results to fill the above dictionaries
+        for result in results:
+            result_id = result["id"]
+            group_id = result[self.group_by_field_name]
+            result_group_mapping[str(result_id)].add(str(group_id))
+
+        def result_already_added(result, group):
+            for existing_issue in group:
+                if existing_issue["id"] == result["id"]:
+                    return True
+            return False
+
+        # Adding group_ids key to each issue and grouping by group_name
+        for result in results:
+            result_id = result["id"]
+            group_ids = list(result_group_mapping[str(result_id)])
+            result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
+                [] if "None" in group_ids else group_ids
+            )
+            # If a result belongs to multiple groups, add it to each group
+            for group_id in group_ids:
+                if not result_already_added(
+                    result, grouped_by_field_name[group_id]
+                ):
+                    grouped_by_field_name[group_id].append(result)
+
+        # Convert grouped_by_field_name back to a list for each group
+        processed_results = {
+            str(group_id): {
+                "results": issues,
+                "total_results": total_group_dict.get(str(group_id)),
+            }
+            for group_id, issues in grouped_by_field_name.items()
+        }
+        return processed_results
+
+    def __query_grouper(self, results):
+        total_group_dict = self.__get_total_dict()
         processed_results = {}
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
             if group_value not in processed_results:
                 processed_results[str(group_value)] = {
                     "results": [],
+                    "total_results": total_group_dict.get(group_value),
                 }
             processed_results[str(group_value)]["results"].append(result)
+        return processed_results
+
+    def process_results(self, results):
+        if self.group_by_field_name in self.FIELD_MAPPER:
+            processed_results = self.__query_multi_grouper(results=results)
+        else:
+            processed_results = self.__query_grouper(results=results)
         return processed_results
 
 
@@ -283,6 +368,7 @@ class BasePaginator:
         controller=None,
         group_by_fields=None,
         group_by_field_name=None,
+        count_filter=None,
         **paginator_kwargs,
     ):
         """Paginate the request"""
@@ -301,6 +387,7 @@ class BasePaginator:
             if group_by_fields and group_by_field_name:
                 paginator_kwargs["group_by_fields"] = group_by_fields
                 paginator_kwargs["group_by_field_name"] = group_by_field_name
+                paginator_kwargs["count_filter"] = count_filter
             paginator = paginator_cls(**paginator_kwargs)
 
         try:

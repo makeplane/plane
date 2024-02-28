@@ -1,5 +1,9 @@
 # Django imports
-from django.db.models import Q
+from django.db.models import Q, F
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Module imports
 from plane.db.models import State, Label, ProjectMember, Cycle, Module
@@ -256,13 +260,13 @@ def issue_grouper(field, slug, project_id):
                 project_id=project_id,
             ).values_list("id", flat=True)
         )
-    if field == "label_ids":
+    if field == "labels__id":
         return list(
             Label.objects.filter(
                 workspace__slug=slug, project_id=project_id
             ).values_list("id", flat=True)
         )
-    if field == "assignee_ids":
+    if field == "assignees__id":
         return list(
             ProjectMember.objects.filter(
                 workspace__slug=slug, project_id=project_id
@@ -283,9 +287,72 @@ def issue_grouper(field, slug, project_id):
                 workspace__slug=slug, project_id=project_id
             ).values_list("id", flat=True)
         )
-    if field == "module_ids":
+    if field == "modules__id":
         return list(
             Module.objects.filter(
                 workspace__slug=slug, project_id=project_id
             ).values_list("id", flat=True)
         )
+
+
+def issue_queryset_grouper(field, queryset):
+    if field == "assignees__id":
+        return queryset.annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+
+    if field == "labels__id":
+       return queryset.annotate(
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+    
+    if field == "modules__id":
+        return queryset.annotate(modules__id=F("issue_module__module_id")).annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+    return queryset
