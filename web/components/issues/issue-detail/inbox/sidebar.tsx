@@ -154,6 +154,10 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   projectId={projectId}
                   issueId={issueId}
                   disabled={!is_editable}
+                  isInboxIssue
+                  onLabelUpdate={(val: string[]) =>
+                    issueOperations.update(workspaceSlug, projectId, issueId, { label_ids: val })
+                  }
                 />
               </div>
             </div>
