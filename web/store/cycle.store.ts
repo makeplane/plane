@@ -28,6 +28,7 @@ export interface ICycleStore {
   currentProjectActiveCycleId: string | null;
   // computed actions
   getCycleById: (cycleId: string) => ICycle | null;
+  getCycleNameById: (cycleId: string) => string | undefined;
   getActiveCycleById: (cycleId: string) => ICycle | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   // actions
@@ -188,6 +189,13 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   getCycleById = computedFn((cycleId: string): ICycle | null => this.cycleMap?.[cycleId] ?? null);
+
+  /**
+   * @description returns cycle name by cycle id
+   * @param cycleId
+   * @returns
+   */
+  getCycleNameById = computedFn((cycleId: string): string => this.cycleMap?.[cycleId]?.name);
 
   /**
    * @description returns active cycle details by cycle id

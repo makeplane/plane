@@ -14,6 +14,8 @@ import { FileService } from "services/file.service";
 // types
 import { TIssueComment } from "@plane/types";
 import { TActivityOperations } from "../root";
+// helpers
+import { isEmptyHtmlString } from "helpers/string.helper";
 
 const fileService = new FileService();
 
@@ -67,6 +69,12 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
     isEditing && setFocus("comment_html");
   }, [isEditing, setFocus]);
 
+  const isEmpty =
+    watch("comment_html") === "" ||
+    watch("comment_html")?.trim() === "" ||
+    watch("comment_html") === "<p></p>" ||
+    isEmptyHtmlString(watch("comment_html") ?? "");
+
   if (!comment || !currentUser) return <></>;
   return (
     <IssueCommentBlock
@@ -115,9 +123,14 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
     >
       <>
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
-          <div>
+          <div
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && !isEmpty) {
+                handleSubmit(onEnter)(e);
+              }
+            }}
+          >
             <LiteTextEditorWithRef
-              onEnterKeyPress={handleSubmit(onEnter)}
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(comment?.workspace_detail?.slug as string)}
               deleteFile={fileService.getDeleteImageFunction(workspaceId)}
@@ -135,7 +148,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
             <button
               type="button"
               onClick={handleSubmit(onEnter)}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isEmpty}
               className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
             >
               <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />

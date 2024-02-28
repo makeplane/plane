@@ -23,7 +23,7 @@ import {
   ModuleDropdown,
   PriorityDropdown,
   ProjectDropdown,
-  ProjectMemberDropdown,
+  MemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
 // ui
@@ -510,7 +510,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   name="assignee_ids"
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
-                      <ProjectMemberDropdown
+                      <MemberDropdown
                         projectId={projectId}
                         value={value}
                         onChange={(assigneeIds) => {

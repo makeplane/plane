@@ -1089,6 +1089,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .annotate(state_group=F("state__group"))
@@ -1104,6 +1105,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .values("priority")
@@ -1126,6 +1128,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
                 created_by_id=user_id,
             )
             .filter(**filters)
@@ -1137,6 +1140,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -1148,6 +1152,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -1159,6 +1164,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 assignees__in=[user_id],
                 state__group="completed",
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .count()
@@ -1169,6 +1175,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 subscriber_id=user_id,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .count()
@@ -1218,6 +1225,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             actor=user_id,
         ).select_related("actor", "workspace", "issue", "project")
 
@@ -1358,6 +1366,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 | Q(issue_subscribers__subscriber_id=user_id),
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
@@ -1489,6 +1498,7 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         labels = Label.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True
         )
         serializer = LabelSerializer(labels, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
@@ -1503,6 +1513,7 @@ class WorkspaceStatesEndpoint(BaseAPIView):
         states = State.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True
         )
         serializer = StateSerializer(states, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
