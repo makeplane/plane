@@ -2,10 +2,10 @@ name: Create Sync Action
 
 on:
   workflow_dispatch:
-  push: 
+  push:
     branches:
       - preview
-      
+
 env:
   SOURCE_BRANCH_NAME: ${{ github.ref_name }}
 
@@ -17,11 +17,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.1.1 
+        uses: actions/checkout@v4.1.1
         with:
           persist-credentials: false
           fetch-depth: 0
-          
+
       - name: Setup GH CLI
         run: |
           type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
@@ -36,7 +36,7 @@ jobs:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           TARGET_REPO="${{ secrets.TARGET_REPO_A }}"
-          TARGET_BRANCH="${{ secrets.SYNC_TARGET_BRANCH_NAME }}"
+          TARGET_BRANCH="${{ secrets.TARGET_REPO_A_BRANCH_NAME }}"
           SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
 
           git checkout $SOURCE_BRANCH
@@ -48,9 +48,8 @@ jobs:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           TARGET_REPO="${{ secrets.TARGET_REPO_B }}"
-          TARGET_BRANCH="${{ secrets.SYNC_TARGET_BRANCH_NAME }}"
+          TARGET_BRANCH="${{ secrets.TARGET_REPO_B_BRANCH_NAME }}"
           SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
 
           git remote add target-origin-b "https://$GH_TOKEN@github.com/$TARGET_REPO.git"
           git push target-origin-b $SOURCE_BRANCH:$TARGET_BRANCH
-
