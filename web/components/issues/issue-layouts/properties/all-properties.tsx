@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Layers, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 import xor from "lodash/xor";
 // hooks
 import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
@@ -286,6 +286,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleStartDate}
             maxDate={maxDate ?? undefined}
             placeholder="Start date"
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}
             showTooltip
@@ -301,6 +302,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleTargetDate}
             minDate={minDate ?? undefined}
             placeholder="Due date"
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
             clearIconClassName="!text-custom-text-100"
