@@ -1,5 +1,6 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -18,7 +19,7 @@ export interface IArchivedIssues {
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  removeIssueFromArchived: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  restoreIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: undefined;
 }
 
@@ -48,7 +49,7 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
       // action
       fetchIssues: action,
       removeIssue: action,
-      removeIssueFromArchived: action,
+      restoreIssue: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -70,7 +71,7 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
     const archivedIssueIds = this.issues[projectId];
     if (!archivedIssueIds) return undefined;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(archivedIssueIds);
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(archivedIssueIds, "archived");
     if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
@@ -113,25 +114,24 @@ export class ArchivedIssues extends IssueHelperStore implements IArchivedIssues 
     try {
       await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[projectId].splice(issueIndex, 1);
-        });
+      runInAction(() => {
+        pull(this.issues[projectId], issueId);
+      });
     } catch (error) {
       throw error;
     }
   };
 
-  removeIssueFromArchived = async (workspaceSlug: string, projectId: string, issueId: string) => {
+  restoreIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const response = await this.archivedIssueService.unarchiveIssue(workspaceSlug, projectId, issueId);
+      const response = await this.archivedIssueService.restoreIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[projectId]?.findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex && issueIndex >= 0)
-        runInAction(() => {
-          this.issues[projectId].splice(issueIndex, 1);
+      runInAction(() => {
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: null,
         });
+        pull(this.issues[projectId], issueId);
+      });
 
       return response;
     } catch (error) {

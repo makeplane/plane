@@ -263,7 +263,17 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
   archived_issues: {
     list: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
+      filters: [
+        "priority",
+        "state",
+        "cycle",
+        "module",
+        "assignees",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+      ],
       display_properties: true,
       display_filters: {
         group_by: ["state", "state_detail.group", "priority", "labels", "assignees", "created_by", null],
@@ -278,7 +288,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
   draft_issues: {
     list: {
-      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels", null],
@@ -291,7 +301,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     kanban: {
-      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels"],
@@ -350,7 +360,18 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
   issues: {
     list: {
-      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      filters: [
+        "priority",
+        "state",
+        "cycle",
+        "module",
+        "assignees",
+        "mentions",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+      ],
       display_properties: true,
       display_filters: {
         group_by: ["state", "priority", "labels", "assignees", "created_by", null],
@@ -363,7 +384,18 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     kanban: {
-      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      filters: [
+        "priority",
+        "state",
+        "cycle",
+        "module",
+        "assignees",
+        "mentions",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+      ],
       display_properties: true,
       display_filters: {
         group_by: ["state", "priority", "labels", "assignees", "created_by"],
@@ -377,7 +409,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     calendar: {
-      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date"],
+      filters: ["priority", "state", "cycle", "module", "assignees", "mentions", "created_by", "labels", "start_date"],
       display_properties: true,
       display_filters: {
         type: [null, "active", "backlog"],
@@ -388,7 +420,18 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     spreadsheet: {
-      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      filters: [
+        "priority",
+        "state",
+        "cycle",
+        "module",
+        "assignees",
+        "mentions",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+      ],
       display_properties: true,
       display_filters: {
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
@@ -400,7 +443,18 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     gantt_chart: {
-      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      filters: [
+        "priority",
+        "state",
+        "cycle",
+        "module",
+        "assignees",
+        "mentions",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+      ],
       display_properties: false,
       display_filters: {
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],

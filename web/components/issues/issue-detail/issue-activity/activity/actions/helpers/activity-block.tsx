@@ -14,10 +14,11 @@ type TIssueActivityBlockComponent = {
   activityId: string;
   ends: "top" | "bottom" | undefined;
   children: ReactNode;
+  customUserName?: string;
 };
 
 export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (props) => {
-  const { icon, activityId, ends, children } = props;
+  const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {
     activity: { getActivityById },
@@ -37,7 +38,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
       <div className="w-full text-custom-text-200">
-        <IssueUser activityId={activityId} />
+        <IssueUser activityId={activityId} customUserName={customUserName} />
         <span> {children} </span>
         <span>
           <Tooltip

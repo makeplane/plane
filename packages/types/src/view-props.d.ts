@@ -60,6 +60,8 @@ export type TIssueParams =
   | "created_by"
   | "subscriber"
   | "labels"
+  | "cycle"
+  | "module"
   | "start_date"
   | "target_date"
   | "project"
@@ -79,6 +81,8 @@ export interface IIssueFilterOptions {
   labels?: string[] | null;
   priority?: string[] | null;
   project?: string[] | null;
+  cycle?: string[] | null;
+  module?: string[] | null;
   start_date?: string[] | null;
   state?: string[] | null;
   state_group?: string[] | null;

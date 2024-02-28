@@ -1,6 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { Signal, Tag, Triangle, LayoutPanelTop, CircleDot, CopyPlus, XCircle, CalendarDays } from "lucide-react";
+import {
+  Signal,
+  Tag,
+  Triangle,
+  LayoutPanelTop,
+  CircleDot,
+  CopyPlus,
+  XCircle,
+  CalendarClock,
+  CalendarCheck2,
+} from "lucide-react";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui icons
@@ -14,13 +24,7 @@ import {
   TIssueOperations,
   IssueRelationSelect,
 } from "components/issues";
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  ProjectMemberDropdown,
-  StateDropdown,
-} from "components/dropdowns";
+import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // helpers
@@ -87,7 +91,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
             <span>Assignees</span>
           </div>
-          <ProjectMemberDropdown
+          <MemberDropdown
             value={issue?.assignee_ids ?? undefined}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
             disabled={disabled}
@@ -124,7 +128,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarDays className="h-4 w-4 flex-shrink-0" />
+            <CalendarClock className="h-4 w-4 flex-shrink-0" />
             <span>Start date</span>
           </div>
           <DateDropdown
@@ -151,7 +155,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* due date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarDays className="h-4 w-4 flex-shrink-0" />
+            <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <DateDropdown

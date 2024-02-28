@@ -30,7 +30,6 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
 
   const handleCycle = useCallback(
     async (cycleId: string | null) => {
-      console.log("cycleId", cycleId);
       if (!workspaceSlug || !issue || issue.cycle_id === cycleId) return;
       if (cycleId) await addIssueToCycle(workspaceSlug.toString(), issue.project_id, cycleId, [issue.id]);
       else await removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, issue.cycle_id ?? "", issue.id);

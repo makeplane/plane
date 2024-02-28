@@ -35,6 +35,11 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
 
         await issues.removeIssue(workspaceSlug, issue.project_id, issue.id, userId);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !userId) return;
+
+        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, userId);
+      },
     }),
     [issues, workspaceSlug, userId]
   );
