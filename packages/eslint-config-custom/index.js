@@ -1,7 +1,7 @@
 module.exports = {
   extends: ["next", "turbo", "prettier"],
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint", "import"],
   settings: {
     next: {
       rootDir: ["web/", "space/", "packages/*/"],
@@ -33,5 +33,33 @@ module.exports = {
         format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
       },
     ],
+    // import rules
+    // "sort-imports": [
+    //   "error",
+    //   {
+    //     ignoreCase: true,
+    //     ignoreDeclarationSort: true,
+    //   },
+    // ],
+    // "import/order": [
+    //   "error",
+    //   {
+    //     groups: [["external", "builtin"], "internal", "parent", ["sibling"]],
+    //     "newlines-between": "always",
+    //     pathGroups: [
+    //       {
+    //         pattern: "react",
+    //         group: "external",
+    //         position: "before",
+    //       },
+    //       { pattern: "", group: "internal" },
+    //     ],
+    //     pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
+    //     alphabetize: {
+    //       order: "asc",
+    //       caseInsensitive: true,
+    //     },
+    //   },
+    // ],
   },
 };
