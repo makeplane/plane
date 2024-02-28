@@ -1647,6 +1647,36 @@ class IssueArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def archive(self, request, slug, project_id, pk=None):
+        issue = Issue.issue_objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+        )
+        if issue.state.group not in ["completed", "cancelled"]:
+            return Response(
+                {"error": "Can only archive completed or cancelled state group issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        issue.archived_at = timezone.now().date()
+        issue.save()
+
+        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
+    
+
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,
@@ -1670,7 +1700,7 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = None
         issue.save()
 
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueSubscriberViewSet(BaseViewSet):

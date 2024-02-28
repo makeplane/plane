@@ -177,17 +177,18 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
 };
 
 const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
-  const { children, onClick, className = "" } = props;
+  const { children, disabled = false, onClick, className } = props;
 
   return (
-    <Menu.Item as="div">
+    <Menu.Item as="div" disabled={disabled}>
       {({ active, close }) => (
         <button
           type="button"
           className={cn(
             "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200",
             {
-              "bg-custom-background-80": active,
+              "bg-custom-background-80": active && !disabled,
+              "text-custom-text-400": disabled,
             },
             className
           )}
@@ -195,6 +196,7 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
             close();
             onClick && onClick(e);
           }}
+          disabled={disabled}
         >
           {children}
         </button>

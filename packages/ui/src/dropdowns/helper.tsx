@@ -64,6 +64,7 @@ export type ICustomSearchSelectProps = IDropdownProps &
 
 export interface ICustomMenuItemProps {
   children: React.ReactNode;
+  disabled?: boolean;
   onClick?: (args?: any) => void;
   className?: string;
 }

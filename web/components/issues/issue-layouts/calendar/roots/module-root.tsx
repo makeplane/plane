@@ -34,6 +34,10 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
         if (!workspaceSlug || !moduleId) return;
         await issues.removeIssueFromModule(workspaceSlug, issue.project_id, moduleId, issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !moduleId) return;
+        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
+      },
     }),
     [issues, workspaceSlug, moduleId]
   );
