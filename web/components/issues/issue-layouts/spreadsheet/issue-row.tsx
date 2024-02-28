@@ -216,11 +216,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
               </span>
 
-              {canEditProperties(issueDetail.project_id) && (
-                <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
-                  {quickActions(issueDetail, customActionButton, portalElement.current)}
-                </div>
-              )}
+              <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+                {quickActions(issueDetail, customActionButton, portalElement.current)}
+              </div>
             </div>
 
             {issueDetail.sub_issues_count > 0 && (

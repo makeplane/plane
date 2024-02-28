@@ -10,13 +10,13 @@ import useToast from "hooks/use-toast";
 import { useIssueDetail } from "hooks/store";
 // components
 import {
-  DeleteArchivedIssueModal,
   DeleteIssueModal,
   IssuePeekOverviewHeader,
   TPeekModes,
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
   TIssueOperations,
+  ArchiveIssueModal,
 } from "components/issues";
 import { IssueActivity } from "../issue-detail/issue-activity";
 // ui
@@ -44,7 +44,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     setPeekIssue,
     isAnyModalOpen,
     isDeleteIssueModalOpen,
+    isArchiveIssueModalOpen,
     toggleDeleteIssueModal,
+    toggleArchiveIssueModal,
     issue: { getIssueById },
   } = useIssueDetail();
   const issue = getIssueById(issueId);
@@ -69,8 +71,26 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   };
   useKeypress("Escape", handleKeyDown);
 
+  const handleRestore = async () => {
+    if (!issueOperations.restore) return;
+    await issueOperations.restore(workspaceSlug, projectId, issueId);
+    removeRoutePeekId();
+  };
+
   return (
     <>
+      {issue && !is_archived && (
+        <ArchiveIssueModal
+          isOpen={isArchiveIssueModalOpen}
+          handleClose={() => toggleArchiveIssueModal(false)}
+          data={issue}
+          onSubmit={async () => {
+            if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
+            removeRoutePeekId();
+          }}
+        />
+      )}
+
       {issue && !is_archived && (
         <DeleteIssueModal
           isOpen={isDeleteIssueModalOpen}
@@ -84,7 +104,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       )}
 
       {issue && is_archived && (
-        <DeleteArchivedIssueModal
+        <DeleteIssueModal
           data={issue}
           isOpen={isDeleteIssueModalOpen}
           handleClose={() => toggleDeleteIssueModal(false)}
@@ -109,11 +129,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             {/* header */}
             <IssuePeekOverviewHeader
               peekMode={peekMode}
-              setPeekMode={(value: TPeekModes) => {
-                setPeekMode(value);
-              }}
+              setPeekMode={(value) => setPeekMode(value)}
               removeRoutePeekId={removeRoutePeekId}
               toggleDeleteIssueModal={toggleDeleteIssueModal}
+              toggleArchiveIssueModal={toggleArchiveIssueModal}
+              handleRestoreIssue={handleRestore}
               isArchived={is_archived}
               issueId={issueId}
               workspaceSlug={workspaceSlug}
@@ -137,7 +157,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
@@ -147,7 +167,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                         />
 
                         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
@@ -161,7 +181,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               projectId={projectId}
                               issueId={issueId}
                               issueOperations={issueOperations}
-                              disabled={disabled}
+                              disabled={disabled || is_archived}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
@@ -179,7 +199,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled}
+                            disabled={disabled || is_archived}
                           />
                         </div>
                       </div>

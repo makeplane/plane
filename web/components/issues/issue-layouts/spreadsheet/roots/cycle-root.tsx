@@ -32,6 +32,10 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
         if (!workspaceSlug || !cycleId) return;
         issues.removeIssueFromCycle(workspaceSlug, issue.project_id, cycleId, issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+        issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, cycleId);
+      },
     }),
     [issues, workspaceSlug, cycleId]
   );

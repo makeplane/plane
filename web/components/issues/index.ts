@@ -15,4 +15,4 @@ export * from "./issue-detail";
 export * from "./peek-overview";
 
 // archived issue
-export * from "./delete-archived-issue-modal";
+export * from "./archive-issue-modal";
