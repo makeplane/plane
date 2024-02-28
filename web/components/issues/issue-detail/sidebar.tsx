@@ -11,7 +11,8 @@ import {
   XCircle,
   CircleDot,
   CopyPlus,
-  CalendarDays,
+  CalendarClock,
+  CalendarCheck2,
 } from "lucide-react";
 // hooks
 import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
@@ -236,7 +237,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                <CalendarDays className="h-4 w-4 flex-shrink-0" />
+                <CalendarClock className="h-4 w-4 flex-shrink-0" />
                 <span>Start date</span>
               </div>
               <DateDropdown
@@ -262,7 +263,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="flex items-center gap-2 h-8">
               <div className="flex items-center gap-1 w-2/5 flex-shrink-0 text-sm text-custom-text-300">
-                <CalendarDays className="h-4 w-4 flex-shrink-0" />
+                <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
               <DateDropdown
