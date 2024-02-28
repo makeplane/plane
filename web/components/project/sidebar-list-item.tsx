@@ -144,7 +144,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
-      themeStore.toggleMobileSidebar();
+      themeStore.toggleSidebar();
     }
   };
 

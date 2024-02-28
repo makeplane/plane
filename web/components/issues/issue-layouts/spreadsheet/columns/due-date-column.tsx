@@ -1,5 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { CalendarCheck2 } from "lucide-react";
 // hooks
 import { useProjectState } from "hooks/store";
 // components
@@ -43,6 +44,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         }}
         disabled={disabled}
         placeholder="Due date"
+        icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn("rounded-none text-left", {
