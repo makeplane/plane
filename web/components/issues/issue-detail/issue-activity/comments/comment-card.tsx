@@ -149,9 +149,13 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               type="button"
               onClick={handleSubmit(onEnter)}
               disabled={isSubmitting || isEmpty}
-              className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
+              className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
+                isEmpty ? "bg-gray-200 cursor-not-allowed" : "hover:bg-green-500"
+              }`}
             >
-              <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
+              <Check
+                className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
+              />
             </button>
             <button
               type="button"
