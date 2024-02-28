@@ -142,7 +142,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   //hooks
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -212,7 +212,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                   isMenuActive ? "opacity-0" : "opacity-100"
                 }`}
               >
-                {getProjectById(issueDetail.project_id)?.identifier}-{issueDetail.sequence_id}
+                {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
               </span>
 
               {canEditProperties(issueDetail.project_id) && (

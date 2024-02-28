@@ -66,7 +66,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { issueId } = props;
   // store hooks
   const { getStateById } = useProjectState();
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
   } = useApplication();
@@ -76,7 +76,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   // derived values
   const issueDetails = getIssueById(issueId);
-  const projectDetails = issueDetails && getProjectById(issueDetails?.project_id);
+  const projectIdentifier = issueDetails && getProjectIdentifierById(issueDetails?.project_id);
   const stateDetails = issueDetails && getStateById(issueDetails?.state_id);
 
   const handleIssuePeekOverview = () =>
@@ -95,7 +95,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
         {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />}
         <div className="flex-shrink-0 text-xs text-custom-text-300">
-          {projectDetails?.identifier} {issueDetails?.sequence_id}
+          {projectIdentifier} {issueDetails?.sequence_id}
         </div>
         <Tooltip tooltipHeading="Title" tooltipContent={issueDetails?.name}>
           <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
