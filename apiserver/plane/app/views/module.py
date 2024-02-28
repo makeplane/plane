@@ -45,7 +45,9 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
-
+from plane.utils.grouper import issue_queryset_grouper, issue_on_results
+from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.paginator import GroupedOffsetPaginator
 
 class ModuleViewSet(WebhookMixin, BaseViewSet):
     model = Module
@@ -473,86 +475,55 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
         ).distinct()
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id, module_id):
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = self.get_queryset().filter(**filters)
-        def on_results(issues):
-            if self.expand or self.fields:
-                return IssueSerializer(
-                    issues, many=True, expand=self.expand, fields=self.fields
-                ).data
-            return issues.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-            )
+        order_by_param = request.GET.get("order_by", "created_at")
 
-        if request.GET.get("layout", "spreadsheet") in [
-            "layout",
-            "spreadsheet",
-        ]:
+        # Issue queryset
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
+
+        # Group by
+        group_by = request.GET.get("group_by", False)
+
+        # List Paginate
+        if not group_by:
             return self.paginate(
                 request=request,
                 queryset=issue_queryset,
-                on_results=on_results
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues
+                ),
             )
-        return on_results(issues=issue_queryset)
+
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, field=group_by
+        )
+        # Group paginate
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: issue_on_results(
+                group_by=group_by, issues=issues
+            ),
+            paginator_cls=GroupedOffsetPaginator,
+            group_by_field_name=group_by,
+            count_filter=Q(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True),
+                archived_at__isnull=False,
+                is_draft=True,
+            ),
+        )
+
 
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):

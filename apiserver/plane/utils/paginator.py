@@ -166,14 +166,12 @@ class GroupedOffsetPaginator(OffsetPaginator):
         self,
         queryset,
         group_by_field_name,
-        group_by_fields,
         count_filter,
         *args,
         **kwargs,
     ):
         super().__init__(queryset, *args, **kwargs)
         self.group_by_field_name = group_by_field_name
-        self.group_by_fields = group_by_fields
         self.count_filter = count_filter
 
     def get_result(self, limit=100, cursor=None):
@@ -366,7 +364,6 @@ class BasePaginator:
         cursor_cls=Cursor,
         extra_stats=None,
         controller=None,
-        group_by_fields=None,
         group_by_field_name=None,
         count_filter=None,
         **paginator_kwargs,
@@ -384,8 +381,7 @@ class BasePaginator:
             raise ParseError(detail="Invalid cursor parameter.")
 
         if not paginator:
-            if group_by_fields and group_by_field_name:
-                paginator_kwargs["group_by_fields"] = group_by_fields
+            if group_by_field_name:
                 paginator_kwargs["group_by_field_name"] = group_by_field_name
                 paginator_kwargs["count_filter"] = count_filter
             paginator = paginator_cls(**paginator_kwargs)
@@ -400,7 +396,7 @@ class BasePaginator:
         if on_results:
             results = on_results(cursor_result.results)
 
-        if group_by_field_name and group_by_fields:
+        if group_by_field_name:
             results = paginator.process_results(results=results)
 
         # Add Manipulation functions to the response

@@ -72,7 +72,10 @@ from plane.db.models import (
     IssueRelation,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.grouper import issue_grouper, issue_queryset_grouper
+from plane.utils.grouper import (
+    issue_queryset_grouper,
+    issue_on_results,
+)
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator
@@ -127,86 +130,52 @@ class IssueListEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
         ).distinct()
 
         filters = issue_filters(request.query_params, "GET")
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = queryset.filter(**filters)
-
         # Issue queryset
         issue_queryset = order_issue_queryset(
             issue_queryset=issue_queryset,
             order_by_param=order_by_param,
         )
 
-        def on_results(issues):
-            if self.expand or self.fields:
-                return IssueSerializer(
-                    issues, many=True, expand=self.expand, fields=self.fields
-                ).data
-            return issues.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
+        # Group by
+        group_by = request.GET.get("group_by", False)
+
+        # List Paginate
+        if not group_by:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues
+                ),
             )
 
-        if request.GET.get("layout", "spreadsheet") in [
-            "layout",
-            "spreadsheet",
-        ]:
-            return self.paginate(
-                request=request, queryset=issue_queryset, on_results=on_results
-            )
-        return on_results(issues=issue_queryset)
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, field=group_by
+        )
+        # Group paginate
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: issue_on_results(
+                group_by=group_by, issues=issues
+            ),
+            paginator_cls=GroupedOffsetPaginator,
+            group_by_field_name=group_by,
+            count_filter=Q(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True),
+                archived_at__isnull=False,
+                is_draft=True,
+            ),
+        )
 
 
 class IssueViewSet(WebhookMixin, BaseViewSet):
@@ -280,52 +249,17 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             order_by_param=order_by_param,
         )
 
-        def on_results(issues):
-            required_fields = [
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-            ]
-            if group_by == "assignees__id":
-                required_fields.extend(
-                    ["label_ids", "module_ids", "assignees__id"]
-                )
-            if group_by == "labels__id":
-                required_fields.extend(
-                    ["assignee_ids", "module_ids", "labels__id"]
-                )
-            if group_by == "modules__id":
-                required_fields.extend(
-                    ["assignee_ids", "label_ids", "modules__id"]
-                )
-            return issues.values(*required_fields)
-
         # Group by
         group_by = request.GET.get("group_by", False)
 
         # List Paginate
         if not group_by:
             return self.paginate(
-                request=request, queryset=issue_queryset, on_results=on_results
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues
+                ),
             )
 
         issue_queryset = issue_queryset_grouper(
@@ -335,12 +269,11 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         return self.paginate(
             request=request,
             queryset=issue_queryset,
-            on_results=on_results,
+            on_results=lambda issues: issue_on_results(
+                group_by=group_by, issues=issues
+            ),
             paginator_cls=GroupedOffsetPaginator,
             group_by_field_name=group_by,
-            group_by_fields=issue_grouper(
-                field=group_by, slug=slug, project_id=project_id
-            ),
             count_filter=Q(
                 Q(issue_inbox__status=1)
                 | Q(issue_inbox__status=-1)
@@ -1279,32 +1212,6 @@ class IssueArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
         )
 
     @method_decorator(gzip_page)
@@ -1316,57 +1223,51 @@ class IssueArchiveViewSet(BaseViewSet):
 
         issue_queryset = self.get_queryset().filter(**filters)
 
-        issue_queryset = order_issue_queryset(
-            issue_queryset=issue_queryset, order_by_param=order_by_param
-        )
-
         issue_queryset = (
             issue_queryset
             if show_sub_issues == "true"
             else issue_queryset.filter(parent__isnull=True)
         )
+        # Issue queryset
+        issue_queryset = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
 
-        def on_results(issues):
-            if self.expand or self.fields:
-                return IssueSerializer(
-                    issues, many=True, expand=self.expand, fields=self.fields
-                ).data
-            return issues.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-            )
+        # Group by
+        group_by = request.GET.get("group_by", False)
 
-        if request.GET.get("layout", "spreadsheet") in [
-            "layout",
-            "spreadsheet",
-        ]:
+        # List Paginate
+        if not group_by:
             return self.paginate(
-                request=request, queryset=issue_queryset, on_results=on_results
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues
+                ),
             )
-        return on_results(issues=issue_queryset)
+
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, field=group_by
+        )
+        # Group paginate
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: issue_on_results(
+                group_by=group_by, issues=issues
+            ),
+            paginator_cls=GroupedOffsetPaginator,
+            group_by_field_name=group_by,
+            count_filter=Q(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True),
+                archived_at__isnull=False,
+                is_draft=True,
+            ),
+        )
 
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
@@ -1419,12 +1320,19 @@ class IssueArchiveViewSet(BaseViewSet):
         )
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
-                {"error": "Can only archive completed or cancelled state group issue"},
+                {
+                    "error": "Can only archive completed or cancelled state group issue"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_activity.delay(
             type="issue.activity.updated",
-            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
+            requested_data=json.dumps(
+                {
+                    "archived_at": str(timezone.now().date()),
+                    "automation": False,
+                }
+            ),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
@@ -1438,8 +1346,9 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = timezone.now().date()
         issue.save()
 
-        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
-    
+        return Response(
+            {"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK
+        )
 
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1935,32 +1844,6 @@ class IssueDraftViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
         ).distinct()
 
     @method_decorator(gzip_page)
@@ -1975,51 +1858,47 @@ class IssueDraftViewSet(BaseViewSet):
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = self.get_queryset().filter(**filters)
+
+        # Issue queryset
         issue_queryset = order_issue_queryset(
-            issue_queryset=issue_queryset, order_by_param=order_by_param
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
         )
 
-        def on_results(issues):
-            if self.expand or self.fields:
-                return IssueSerializer(
-                    issues, many=True, expand=self.expand, fields=self.fields
-                ).data
-            return issues.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
+        # Group by
+        group_by = request.GET.get("group_by", False)
+
+        # List Paginate
+        if not group_by:
+            return self.paginate(
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues
+                ),
             )
 
-        if request.GET.get("layout", "spreadsheet") in [
-            "layout",
-            "spreadsheet",
-        ]:
-            return self.paginate(
-                request=request, queryset=issue_queryset, on_results=on_results
-            )
-        return on_results(issues=issue_queryset)
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, field=group_by
+        )
+        # Group paginate
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: issue_on_results(
+                group_by=group_by, issues=issues
+            ),
+            paginator_cls=GroupedOffsetPaginator,
+            group_by_field_name=group_by,
+            count_filter=Q(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True),
+                archived_at__isnull=False,
+                is_draft=True,
+            ),
+        )
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
