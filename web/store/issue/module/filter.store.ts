@@ -84,6 +84,8 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
     if (!filteredParams) return undefined;
 
+    if (filteredParams.includes("module")) filteredParams.splice(filteredParams.indexOf("module"), 1);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
