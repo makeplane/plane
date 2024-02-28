@@ -1,22 +1,24 @@
 import { Fragment, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { Menu, Transition } from "@headlessui/react";
-import { mutate } from "swr";
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { usePopper } from "react-popper";
-// hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
-// hooks
-import useToast from "hooks/use-toast";
+import { mutate } from "swr";
+// ui components
+import { Menu, Transition } from "@headlessui/react";
+// icons
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 // ui
 import { Avatar, Loader } from "@plane/ui";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // types
 import { IWorkspace } from "@plane/types";
+
 // Static Data
-const userLinks = (workspaceSlug: string, userId: string) => [
+const USER_LINKS = (workspaceSlug: string, userId: string) => [
   {
     key: "workspace_invites",
     name: "Workspace invites",
@@ -36,7 +38,8 @@ const userLinks = (workspaceSlug: string, userId: string) => [
     icon: Settings,
   },
 ];
-const profileLinks = (workspaceSlug: string, userId: string) => [
+
+const PROFILE_LINKS = (workspaceSlug: string, userId: string) => [
   {
     name: "View profile",
     icon: UserCircle2,
@@ -48,6 +51,7 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
     link: "/profile",
   },
 ];
+
 export const WorkspaceSidebarDropdown = observer(() => {
   // router
   const router = useRouter();
@@ -228,7 +232,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                    {USER_LINKS(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                       <Link
                         key={link.key}
                         href={link.href}
@@ -293,7 +297,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                {PROFILE_LINKS(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                   <Link
                     key={index}
                     href={link.link}

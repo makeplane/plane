@@ -1,25 +1,27 @@
 import { useEffect, useState, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+// icons
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
-// services
-import { FileService } from "services/file.service";
-// hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { DeleteWorkspaceModal } from "components/workspace";
-import { WorkspaceImageUploadModal } from "components/core";
-// ui
+// plane ui
 import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-// types
-import { IWorkspace } from "@plane/types";
+// components
+import { WorkspaceImageUploadModal } from "components/core";
+import { DeleteWorkspaceModal } from "components/workspace";
 // constants
 import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 import { WORKSPACE_UPDATED } from "constants/event-tracker";
+// helpers
+import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
+// services
+import { FileService } from "services/file.service";
+// types
+import { IWorkspace } from "@plane/types";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
