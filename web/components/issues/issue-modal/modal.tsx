@@ -155,7 +155,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const handleClose = (saveDraftIssueInLocalStorage?: boolean) => {
-    console.log("has to come here man");
     if (changesMade && saveDraftIssueInLocalStorage) {
       // updating the current edited issue data in the local storage
       let draftIssues = localStorageDraftIssues ? localStorageDraftIssues : {};
