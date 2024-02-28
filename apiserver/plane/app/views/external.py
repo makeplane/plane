@@ -3,7 +3,8 @@ import requests
 import os
 
 # Third party imports
-from openai import OpenAI
+import litellm
+from litellm import completion
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -60,11 +61,9 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         final_text = task + "\n" + prompt
 
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-        )
+        litellm.api_key = OPENAI_API_KEY
 
-        response = client.chat.completions.create(
+        response = completion(
             model=GPT_ENGINE,
             messages=[{"role": "user", "content": final_text}],
         )
