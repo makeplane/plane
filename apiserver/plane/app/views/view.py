@@ -164,6 +164,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             self.get_queryset()
             .filter(**filters)
             .filter(project__project_projectmember__member=self.request.user)
+            .filter(project__project_projectmember__is_active=True)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
 
@@ -285,6 +286,7 @@ class IssueViewViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .filter(project__project_projectmember__is_active=True)
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))

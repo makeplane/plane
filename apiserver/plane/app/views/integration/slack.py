@@ -37,6 +37,7 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 project_id=self.kwargs.get("project_id"),
             )
             .filter(project__project_projectmember__member=self.request.user)
+            .filter(project__project_projectmember__is_active=True)
         )
 
     def create(self, request, slug, project_id, workspace_integration_id):

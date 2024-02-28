@@ -32,6 +32,7 @@ class StateViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .filter(project__project_projectmember__is_active=True)
             .filter(~Q(name="Triage"))
             .select_related("project")
             .select_related("workspace")

@@ -274,6 +274,7 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(module_id=self.kwargs.get("module_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .filter(project__project_projectmember__is_active=True)
             .select_related("project")
             .select_related("workspace")
             .select_related("module")
