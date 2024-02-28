@@ -1,22 +1,22 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react";
 // hooks
+import { EmptyState } from "components/common";
+import { PageHead } from "components/core";
+import { ModuleIssuesHeader } from "components/headers";
+import { ModuleLayoutRoot } from "components/issues";
+import { ModuleDetailsSidebar } from "components/modules";
 import { useModule, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { ModuleDetailsSidebar } from "components/modules";
-import { ModuleLayoutRoot } from "components/issues";
-import { ModuleIssuesHeader } from "components/headers";
-import { PageHead } from "components/core";
-import { EmptyState } from "components/common";
 // assets
+import { NextPageWithLayout } from "lib/types";
 import emptyModule from "public/empty-state/module.svg";
 // types
-import { NextPageWithLayout } from "lib/types";
 
 const ModuleIssuesPage: NextPageWithLayout = observer(() => {
   // router

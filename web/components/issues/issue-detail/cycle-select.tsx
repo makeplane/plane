@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail } from "hooks/store";
 // components
+import { Spinner } from "@plane/ui";
 import { CycleDropdown } from "components/dropdowns";
 // ui
-import { Spinner } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
+import { useIssueDetail } from "hooks/store";
 // types
 import type { TIssueOperations } from "./root";
 

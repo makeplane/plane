@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
 // hooks
+import { UserCircle2 } from "lucide-react";
+import { Button } from "@plane/ui";
+import { MAX_FILE_SIZE } from "constants/common";
 import { useApplication, useWorkspace } from "hooks/store";
 // services
+import useToast from "hooks/use-toast";
 import { FileService } from "services/file.service";
 // hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
 // icons
-import { UserCircle2 } from "lucide-react";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
 
 type Props = {
   handleRemove?: () => void;

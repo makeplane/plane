@@ -3,20 +3,20 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
+import { Button, Input } from "@plane/ui";
+import { CODE_VERIFIED } from "constants/event-tracker";
+import { checkEmailValidity } from "helpers/string.helper";
+import { useEventTracker } from "hooks/store";
+import useTimer from "hooks/use-timer";
+import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 import { UserService } from "services/user.service";
 // hooks
-import useToast from "hooks/use-toast";
-import useTimer from "hooks/use-timer";
-import { useEventTracker } from "hooks/store";
 // ui
-import { Button, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
 // constants
-import { CODE_VERIFIED } from "constants/event-tracker";
 
 type Props = {
   email: string;

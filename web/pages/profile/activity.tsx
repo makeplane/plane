@@ -1,27 +1,27 @@
 import { ReactElement } from "react";
-import useSWR from "swr";
-import Link from "next/link";
-import { observer } from "mobx-react";
-//hooks
-import { useApplication, useUser } from "hooks/store";
-// services
-import { UserService } from "services/user.service";
-// layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
-// components
-import { ActivityIcon, ActivityMessage, IssueLink, PageHead } from "components/core";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
-// icons
+import { observer } from "mobx-react";
+import Link from "next/link";
+import useSWR from "swr";
+//hooks
 import { History, MessageSquare } from "lucide-react";
-// ui
+import { ActivityIcon, ActivityMessage, IssueLink, PageHead } from "components/core";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { ActivitySettingsLoader } from "components/ui";
+// services
+// layouts
+// components
+// icons
+// ui
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { calculateTimeAgo } from "helpers/date-time.helper";
+import { useApplication, useUser } from "hooks/store";
+import { ProfileSettingsLayout } from "layouts/settings-layout";
 // type
 import { NextPageWithLayout } from "lib/types";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { UserService } from "services/user.service";
 
 const userService = new UserService();
 

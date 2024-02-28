@@ -1,18 +1,18 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
 // hooks
+import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
+import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
+import { ROLE } from "constants/workspace";
 import { useEventTracker, useMember, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // constants
-import { ROLE } from "constants/workspace";
-import { EUserProjectRoles } from "constants/project";
-import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;

@@ -1,17 +1,17 @@
 import { Fragment, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { Button } from "@plane/ui";
+import { CYCLE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useCycle } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { Button } from "@plane/ui";
 // types
 import { ICycle } from "@plane/types";
 // constants
-import { CYCLE_DELETED } from "constants/event-tracker";
 
 interface ICycleDelete {
   cycle: ICycle;

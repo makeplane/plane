@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
-import isEmpty from "lodash/isEmpty";
 // services
-import { CycleService } from "services/cycle.service";
-// hooks
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
+import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
+import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
-// ui
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
-// icons
-import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { DateRangeDropdown } from "components/dropdowns";
+import { CYCLE_STATUS } from "constants/cycle";
+import { CYCLE_UPDATED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+import useToast from "hooks/use-toast";
+import { CycleService } from "services/cycle.service";
+// hooks
+// components
+// ui
+// icons
+// helpers
 // types
 import { ICycle } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { CYCLE_UPDATED } from "constants/event-tracker";
 // fetch-keys
-import { CYCLE_STATUS } from "constants/cycle";
-import { DateRangeDropdown } from "components/dropdowns";
 
 type Props = {
   cycleId: string;

@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
 import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // hooks
+import { THEME_OPTIONS } from "constants/themes";
 import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // constants
-import { THEME_OPTIONS } from "constants/themes";
 
 type Props = {
   closePalette: () => void;

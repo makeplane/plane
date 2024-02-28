@@ -2,9 +2,9 @@ import { FC, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // hooks
+import { Input, Button } from "@plane/ui";
 import { useUser } from "hooks/store";
 // ui
-import { Input, Button } from "@plane/ui";
 // services
 import { AuthService } from "services/auth.service";
 const authService = new AuthService();

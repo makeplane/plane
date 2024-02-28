@@ -1,24 +1,24 @@
 import { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
+import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useEventTracker, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
-import EmojiIconPicker from "components/emoji-icon-picker";
 import { MemberDropdown } from "components/dropdowns";
+import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
+import { PROJECT_CREATED } from "constants/event-tracker";
+import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // constants
-import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { PROJECT_CREATED } from "constants/event-tracker";
+import { useEventTracker, useProject, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 
 type Props = {
   isOpen: boolean;

@@ -1,29 +1,29 @@
 import { ReactElement } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
-import { useTheme } from "next-themes";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+import useSWR from "swr";
 // hooks
+import { PageHead } from "components/core";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { ProjectSettingHeader } from "components/headers";
+import { IntegrationCard } from "components/project";
+import { IntegrationsSettingsLoader } from "components/ui";
+import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 import { useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // services
+import { NextPageWithLayout } from "lib/types";
 import { IntegrationService } from "services/integrations";
 import { ProjectService } from "services/project";
 // components
-import { PageHead } from "components/core";
-import { IntegrationCard } from "components/project";
-import { ProjectSettingHeader } from "components/headers";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { IntegrationsSettingsLoader } from "components/ui";
 // types
 import { IProject } from "@plane/types";
-import { NextPageWithLayout } from "lib/types";
 // fetch-keys
-import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
-import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();

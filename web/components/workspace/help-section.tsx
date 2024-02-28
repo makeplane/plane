@@ -1,18 +1,20 @@
 import React, { useRef, useState } from "react";
-import Link from "next/link";
-import { Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+// headless ui
+import { Transition } from "@headlessui/react";
+// icons
+import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
+// ui
+import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// icons
-import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
-// assets
-import packageJson from "package.json";
 import useSize from "hooks/use-window-size";
+// package
+import packageJson from "package.json";
 
-const helpOptions = [
+const HELP_OPTIONS = [
   {
     name: "Documentation",
     href: "https://docs.plane.so/",
@@ -28,12 +30,6 @@ const helpOptions = [
     href: "https://github.com/makeplane/plane/issues/new/choose",
     Icon: GithubIcon,
   },
-  {
-    name: "Chat with us",
-    href: null,
-    onClick: () => (window as any).$crisp.push(["do", "chat:show"]),
-    Icon: MessagesSquare,
-  },
 ];
 
 export interface WorkspaceHelpSectionProps {
@@ -46,12 +42,18 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
     theme: { sidebarCollapsed, toggleSidebar, toggleMobileSidebar },
     commandPalette: { toggleShortcutModal },
   } = useApplication();
-
+  // hooks
   const [windowWidth] = useSize();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
+
+  const handleCrispWindowShow = () => {
+    if (window) {
+      window.$crisp.push(["do", "chat:show"]);
+    }
+  };
 
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
 
@@ -60,8 +62,9 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   return (
     <>
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${isCollapsed ? "flex-col" : ""
-          }`}
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 py-2 ${
+          isCollapsed ? "flex-col" : ""
+        }`}
       >
         {!isCollapsed && (
           <div className="w-1/2 cursor-default rounded-md bg-green-500/10 px-2.5 py-1.5 text-center text-sm font-medium text-green-500 outline-none">
@@ -72,8 +75,9 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent="Shortcuts">
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${isCollapsed ? "w-full" : ""
-                }`}
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+                isCollapsed ? "w-full" : ""
+              }`}
               onClick={() => toggleShortcutModal(true)}
             >
               <Zap className="h-3.5 w-3.5" />
@@ -82,8 +86,9 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent="Help">
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${isCollapsed ? "w-full" : ""
-                }`}
+              className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+                isCollapsed ? "w-full" : ""
+              }`}
               onClick={() => setIsNeedHelpOpen((prev) => !prev)}
             >
               <HelpCircle className="h-3.5 w-3.5" />
@@ -93,7 +98,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
-            onClick={() => windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar()}
+            onClick={() => (windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar())}
           >
             <MoveLeft className="h-3.5 w-3.5" />
           </button>
@@ -101,9 +106,10 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`}>
             <button
               type="button"
-              className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${isCollapsed ? "w-full" : ""
-                }`}
-              onClick={() => windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar()}
+              className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
+                isCollapsed ? "w-full" : ""
+              }`}
+              onClick={() => (windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar())}
             >
               <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
             </button>
@@ -121,38 +127,32 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             leaveTo="transform opacity-0 scale-95"
           >
             <div
-              className={`absolute bottom-2 min-w-[10rem] ${isCollapsed ? "left-full" : "-left-[75px]"
-                } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
+              className={`absolute bottom-2 min-w-[10rem] ${
+                isCollapsed ? "left-full" : "-left-[75px]"
+              } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
               ref={helpOptionsRef}
             >
               <div className="space-y-1 pb-2">
-                {helpOptions.map(({ name, Icon, href, onClick }) => {
-                  if (href)
-                    return (
-                      <Link href={href} key={name} target="_blank">
-                        <span className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
-                          <div className="grid flex-shrink-0 place-items-center">
-                            <Icon className="h-3.5 w-3.5 text-custom-text-200" size={14} />
-                          </div>
-                          <span className="text-xs">{name}</span>
-                        </span>
-                      </Link>
-                    );
-                  else
-                    return (
-                      <button
-                        key={name}
-                        type="button"
-                        onClick={onClick ?? undefined}
-                        className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
-                      >
-                        <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-custom-text-200" />
-                        </div>
-                        <span className="text-xs">{name}</span>
-                      </button>
-                    );
-                })}
+                {HELP_OPTIONS.map(({ name, Icon, href }) => (
+                  <Link href={href} key={name} target="_blank">
+                    <span className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
+                      <div className="grid flex-shrink-0 place-items-center">
+                        <Icon className="h-3.5 w-3.5 text-custom-text-200" size={14} />
+                      </div>
+                      <span className="text-xs">{name}</span>
+                    </span>
+                  </Link>
+                ))}
+                <button
+                  type="button"
+                  onClick={handleCrispWindowShow}
+                  className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
+                >
+                  <div className="grid flex-shrink-0 place-items-center">
+                    <MessagesSquare className="h-3.5 w-3.5 text-custom-text-200" />
+                  </div>
+                  <span className="text-xs">Chat with us</span>
+                </button>
               </div>
               <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{packageJson.version}</div>
             </div>

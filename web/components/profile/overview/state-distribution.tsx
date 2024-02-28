@@ -1,11 +1,11 @@
 // ui
 import { ProfileEmptyState, PieGraph } from "components/ui";
 // image
+import { STATE_GROUPS } from "constants/state";
 import stateGraph from "public/empty-state/state_graph.svg";
 // types
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 // constants
-import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];

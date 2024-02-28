@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
-import { mutate } from "swr";
 // hooks
+import { Button } from "@plane/ui";
 import { useUser } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 

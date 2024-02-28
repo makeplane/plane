@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 // hooks
-import { useDashboard } from "hooks/store";
 // components
-import { MarimekkoGraph } from "components/ui";
+// ui
+import { PriorityIcon } from "@plane/ui";
 import {
   DurationFilterDropdown,
   IssuesByPriorityEmptyState,
   WidgetLoader,
   WidgetProps,
 } from "components/dashboard/widgets";
-// ui
-import { PriorityIcon } from "@plane/ui";
+import { MarimekkoGraph } from "components/ui";
 // helpers
-import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
 import { ISSUE_PRIORITIES } from "constants/issue";
+import { getCustomDates } from "helpers/dashboard.helper";
+import { useDashboard } from "hooks/store";
+import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 
 const TEXT_COLORS = {
   urgent: "#F4A9AA",

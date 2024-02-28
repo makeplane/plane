@@ -4,10 +4,10 @@ import { Plus } from "lucide-react";
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
+import { TIssueLink } from "@plane/types";
 import { IssueLinkCreateUpdateModal } from "./create-update-link-modal";
 import { IssueLinkList } from "./links";
 // types
-import { TIssueLink } from "@plane/types";
 
 export type TLinkOperations = {
   create: (data: Partial<TIssueLink>) => Promise<void>;

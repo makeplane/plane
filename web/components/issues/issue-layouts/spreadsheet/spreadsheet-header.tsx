@@ -1,9 +1,9 @@
 // ui
 import { LayersIcon } from "@plane/ui";
 // types
+import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // constants
-import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";

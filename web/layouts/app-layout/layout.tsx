@@ -1,15 +1,15 @@
 import { FC, ReactNode } from "react";
 // layouts
+import { observer } from "mobx-react-lite";
+import useSWR from "swr";
+import { CommandPalette } from "components/command-palette";
+import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store/use-issues";
 import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "layouts/auth-layout";
 // components
-import { CommandPalette } from "components/command-palette";
 import { AppSidebar } from "./sidebar";
-import { observer } from "mobx-react-lite";
 
 //  FIXME: remove this later
-import { useIssues } from "hooks/store/use-issues";
-import { EIssuesStoreType } from "constants/issue";
-import useSWR from "swr";
 
 export interface IAppLayout {
   children: ReactNode;

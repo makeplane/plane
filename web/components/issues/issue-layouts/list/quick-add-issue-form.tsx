@@ -1,19 +1,19 @@
 import { FC, useEffect, useState, useRef } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // hooks
+import { ISSUE_CREATED } from "constants/event-tracker";
+import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useToast from "hooks/use-toast";
 // constants
 import { TIssue, IProject } from "@plane/types";
 // types
-import { createIssuePayload } from "helpers/issue.helper";
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
 
 interface IInputProps {
   formKey: string;

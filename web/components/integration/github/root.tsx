@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
 // services
-import { IntegrationService, GithubIntegrationService } from "services/integrations";
-// hooks
-import useToast from "hooks/use-toast";
-// components
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { UserGroupIcon } from "@plane/ui";
 import {
   GithubImportConfigure,
   GithubImportData,
@@ -20,15 +18,17 @@ import {
   GithubImportUsers,
   GithubImportConfirm,
 } from "components/integration";
-// icons
-import { UserGroupIcon } from "@plane/ui";
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
-// images
+import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import useToast from "hooks/use-toast";
 import GithubLogo from "public/services/github.png";
+import { IntegrationService, GithubIntegrationService } from "services/integrations";
+// hooks
+// components
+// icons
+// images
 // types
 import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // fetch-keys
-import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 export type TIntegrationSteps = "import-configure" | "import-data" | "repo-details" | "import-users" | "import-confirm";
 export interface IIntegrationData {

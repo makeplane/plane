@@ -1,13 +1,13 @@
 import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // hooks
+import { Tooltip } from "@plane/ui";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 import { useIssueDetail } from "hooks/store";
 // ui
-import { Tooltip } from "@plane/ui";
 // components
 import { IssueUser } from "../";
 // helpers
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 
 type TIssueActivityBlockComponent = {
   icon?: ReactNode;

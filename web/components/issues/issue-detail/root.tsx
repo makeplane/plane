@@ -1,23 +1,23 @@
 import { FC, useMemo } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // components
+import { EmptyState } from "components/common";
 import { IssuePeekOverview } from "components/issues";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
+import emptyIssue from "public/empty-state/issue.svg";
+import { TIssue } from "@plane/types";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 // ui
-import { EmptyState } from "components/common";
 // images
-import emptyIssue from "public/empty-state/issue.svg";
 // hooks
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // types
-import { TIssue } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
-import { observer } from "mobx-react";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;

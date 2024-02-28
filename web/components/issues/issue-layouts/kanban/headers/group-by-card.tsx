@@ -1,19 +1,19 @@
 import React, { FC } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // components
+import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal } from "components/issues";
 // lucide icons
-import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
-import useToast from "hooks/use-toast";
+import { TCreateModalStoreTypes } from "constants/issue";
 import { useEventTracker } from "hooks/store";
+import useToast from "hooks/use-toast";
 // mobx
-import { observer } from "mobx-react-lite";
 // types
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
-import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;

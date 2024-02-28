@@ -1,8 +1,8 @@
 import { useRef } from "react";
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
-import { HeaderGroupByCard } from "./headers/group-by-card";
 // hooks
+import { TCreateModalStoreTypes } from "constants/issue";
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
 import {
@@ -16,8 +16,8 @@ import {
 } from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
-import { TCreateModalStoreTypes } from "constants/issue";
 import { getGroupByColumns } from "../utils";
+import { HeaderGroupByCard } from "./headers/group-by-card";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;

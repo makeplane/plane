@@ -1,14 +1,14 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
+import { cloneDeep, update } from "lodash";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // types
-import { RootStore } from "../root.store";
-import { IProject } from "@plane/types";
-// services
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
-import { cloneDeep, update } from "lodash";
+import { IProject } from "@plane/types";
+import { RootStore } from "../root.store";
+// services
 export interface IProjectStore {
   // observables
   searchQuery: string;

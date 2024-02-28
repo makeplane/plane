@@ -1,25 +1,25 @@
 import { FC, MouseEvent, useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react";
 // hooks
+import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
+import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar } from "@plane/ui";
+import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
+import { CYCLE_STATUS } from "constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
-import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar } from "@plane/ui";
 // icons
-import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
 // constants
-import { CYCLE_STATUS } from "constants/cycle";
-import { EUserWorkspaceRoles } from "constants/workspace";
 // types
 import { TCycleGroups } from "@plane/types";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 
 type TCyclesListItem = {
   cycleId: string;

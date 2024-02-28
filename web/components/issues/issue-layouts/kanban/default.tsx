@@ -1,9 +1,9 @@
+import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { TCreateModalStoreTypes } from "constants/issue";
 import { useIssueDetail, useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // components
-import { HeaderGroupByCard } from "./headers/group-by-card";
-import { KanbanGroup } from "./kanban-group";
 // types
 import {
   GroupByColumnTypes,
@@ -19,8 +19,8 @@ import {
 // constants
 import { EIssueActions } from "../types";
 import { getGroupByColumns } from "../utils";
-import { TCreateModalStoreTypes } from "constants/issue";
-import { MutableRefObject } from "react";
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import { KanbanGroup } from "./kanban-group";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;

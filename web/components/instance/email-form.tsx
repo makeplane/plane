@@ -1,13 +1,13 @@
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, Input, ToggleSwitch } from "@plane/ui";
 import { Eye, EyeOff } from "lucide-react";
+import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
-import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
+import { IFormattedInstanceConfiguration } from "@plane/types";
 
 export interface IInstanceEmailForm {
   config: IFormattedInstanceConfiguration;

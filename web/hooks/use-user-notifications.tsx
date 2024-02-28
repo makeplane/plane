@@ -4,13 +4,13 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 // services
+import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 import { NotificationService } from "services/notification.service";
 // hooks
+import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 import useToast from "./use-toast";
 // fetch-keys
-import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 // type
-import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 
 const PER_PAGE = 30;
 

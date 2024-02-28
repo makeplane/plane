@@ -1,13 +1,13 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { ReactionSelector } from "./reaction-selector";
-// hooks
+import { renderEmoji } from "helpers/emoji.helper";
 import { useIssueDetail } from "hooks/store";
+// hooks
 import useToast from "hooks/use-toast";
 // types
 import { IUser } from "@plane/types";
-import { renderEmoji } from "helpers/emoji.helper";
+import { ReactionSelector } from "./reaction-selector";
 
 export type TIssueReaction = {
   workspaceSlug: string;

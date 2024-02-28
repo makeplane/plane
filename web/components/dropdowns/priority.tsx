@@ -1,21 +1,21 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
-import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search } from "lucide-react";
 import { useTheme } from "next-themes";
+import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
+import { PriorityIcon, Tooltip } from "@plane/ui";
+import { ISSUE_PRIORITIES } from "constants/issue";
+import { cn } from "helpers/common.helper";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
-import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
 import { TIssuePriorities } from "@plane/types";
+import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;

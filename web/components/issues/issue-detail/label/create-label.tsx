@@ -1,16 +1,16 @@
 import { FC, useState, Fragment, useEffect } from "react";
-import { Plus, X, Loader } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
+import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
+import { Plus, X, Loader } from "lucide-react";
 // hooks
+import { Input } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Input } from "@plane/ui";
 // types
-import { TLabelOperations } from "./root";
 import { IIssueLabel } from "@plane/types";
+import { TLabelOperations } from "./root";
 
 type ILabelCreate = {
   workspaceSlug: string;

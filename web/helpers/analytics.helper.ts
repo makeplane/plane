@@ -1,13 +1,13 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // helpers
+import { DATE_KEYS } from "constants/analytics";
+import { MONTHS_LIST } from "constants/calendar";
+import { STATE_GROUPS } from "constants/state";
 import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
 // types
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUPS } from "constants/state";
-import { MONTHS_LIST } from "constants/calendar";
-import { DATE_KEYS } from "constants/analytics";
 
 export const convertResponseToBarGraphData = (
   response: IAnalyticsData | undefined,

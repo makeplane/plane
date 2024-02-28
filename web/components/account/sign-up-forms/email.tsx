@@ -1,15 +1,15 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // services
+import { Button, Input } from "@plane/ui";
+import { checkEmailValidity } from "helpers/string.helper";
+import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 // hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData } from "@plane/types";
 

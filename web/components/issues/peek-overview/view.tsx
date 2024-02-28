@@ -3,12 +3,7 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useKeypress from "hooks/use-keypress";
-import useToast from "hooks/use-toast";
-// store hooks
-import { useIssueDetail } from "hooks/store";
-// components
+import { Spinner } from "@plane/ui";
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -18,9 +13,14 @@ import {
   TIssueOperations,
   ArchiveIssueModal,
 } from "components/issues";
+import { useIssueDetail } from "hooks/store";
+import useKeypress from "hooks/use-keypress";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useToast from "hooks/use-toast";
+// store hooks
+// components
 import { IssueActivity } from "../issue-detail/issue-activity";
 // ui
-import { Spinner } from "@plane/ui";
 
 interface IIssueView {
   workspaceSlug: string;

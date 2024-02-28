@@ -1,18 +1,18 @@
 import { FC, useRef } from "react";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 import { useForm, Controller } from "react-hook-form";
 // components
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { Globe2, Lock } from "lucide-react";
 import { Button } from "@plane/ui";
 // services
+import { isEmptyHtmlString } from "helpers/string.helper";
+import { useMention, useWorkspace } from "hooks/store";
 import { FileService } from "services/file.service";
 // types
-import { TActivityOperations } from "../root";
 import { TIssueComment } from "@plane/types";
+import { TActivityOperations } from "../root";
 // icons
-import { Globe2, Lock } from "lucide-react";
-import { useMention, useWorkspace } from "hooks/store";
 // helpers
-import { isEmptyHtmlString } from "helpers/string.helper";
 
 const fileService = new FileService();
 

@@ -1,22 +1,22 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // hooks
+import { CustomMenu } from "@plane/ui";
+import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
+import { EUserProjectRoles } from "constants/project";
+import { calculateTotalFilters } from "helpers/filter.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 import { useProjectView, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
-import { CustomMenu } from "@plane/ui";
 // helpers
-import { calculateTotalFilters } from "helpers/filter.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IProjectView } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   view: IProjectView;

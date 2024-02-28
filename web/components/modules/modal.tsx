@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
+// components
+import { ModuleForm } from "components/modules";
+// constants
+import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useModule, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
-// components
-import { ModuleForm } from "components/modules";
 // types
 import type { IModule } from "@plane/types";
-// constants
-import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -78,7 +78,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: any) => {
+  const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: unknown) => {
     if (!workspaceSlug || !projectId || !data) return;
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
@@ -93,7 +93,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         });
         captureModuleEvent({
           eventName: MODULE_UPDATED,
-          payload: { ...res, changed_properties: Object.keys(dirtyFields), state: "SUCCESS" },
+          payload: { ...res, changed_properties: Object.keys(dirtyFields || {}), state: "SUCCESS" },
         });
       })
       .catch((err) => {
@@ -109,7 +109,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleFormSubmit = async (formData: Partial<IModule>, dirtyFields: any) => {
+  const handleFormSubmit = async (formData: Partial<IModule>, dirtyFields: unknown) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<IModule> = {

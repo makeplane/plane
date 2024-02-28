@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // computed
+import { useIssueDetail, useUser } from "hooks/store";
 import { IssueLinkDetail } from "./link-detail";
 // hooks
-import { useIssueDetail, useUser } from "hooks/store";
 import { TLinkOperations } from "./root";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;

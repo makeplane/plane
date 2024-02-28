@@ -1,16 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // mobx store
-import { useInboxIssues } from "hooks/store";
 // icons
 import { X } from "lucide-react";
 import { PriorityIcon } from "@plane/ui";
 // helpers
+import { INBOX_STATUS } from "constants/inbox";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
+import { useInboxIssues } from "hooks/store";
 import { TInboxIssueFilterOptions, TIssuePriorities } from "@plane/types";
 // constants
-import { INBOX_STATUS } from "constants/inbox";
 
 type TInboxIssueAppliedFilter = { workspaceSlug: string; projectId: string; inboxId: string };
 

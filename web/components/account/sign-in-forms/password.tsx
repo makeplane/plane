@@ -1,23 +1,23 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // services
+import { Button, Input } from "@plane/ui";
+import { ESignInSteps, ForgotPasswordPopover } from "components/account";
+import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
+import { checkEmailValidity } from "helpers/string.helper";
+import { useApplication, useEventTracker } from "hooks/store";
+import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 // hooks
-import useToast from "hooks/use-toast";
-import { useApplication, useEventTracker } from "hooks/store";
 // components
-import { ESignInSteps, ForgotPasswordPopover } from "components/account";
 // ui
-import { Button, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "@plane/types";
 // constants
-import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
 
 type Props = {
   email: string;

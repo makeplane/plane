@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { CustomMenu } from "@plane/ui";
 import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
+import { CustomMenu } from "@plane/ui";
 // hooks
-import useToast from "hooks/use-toast";
-import { useEventTracker, useIssues, useUser } from "hooks/store";
-// components
 import { DeleteIssueModal } from "components/issues";
-// helpers
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 import { copyUrlToClipboard } from "helpers/string.helper";
+import { useEventTracker, useIssues, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
+// components
+// helpers
 // types
 import { IQuickActionProps } from "../list/list-view-types";
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleRestore, customActionButton, portalElement, readOnly = false } = props;

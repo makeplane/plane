@@ -11,8 +11,8 @@ import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
 import { WorkspaceImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
 // constants
-import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 import { WORKSPACE_UPDATED } from "constants/event-tracker";
+import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks

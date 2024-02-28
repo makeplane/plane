@@ -1,21 +1,21 @@
 import { FC, useEffect, useRef, useState } from "react";
+import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // hooks
+import { CustomMenu } from "@plane/ui";
+import { isEmptyHtmlString } from "helpers/string.helper";
 import { useIssueDetail, useMention, useUser, useWorkspace } from "hooks/store";
 // components
-import { IssueCommentBlock } from "./comment-block";
-import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
-import { IssueCommentReaction } from "../../reactions/issue-comment";
 // ui
-import { CustomMenu } from "@plane/ui";
 // services
 import { FileService } from "services/file.service";
 // types
 import { TIssueComment } from "@plane/types";
+import { IssueCommentReaction } from "../../reactions/issue-comment";
 import { TActivityOperations } from "../root";
+import { IssueCommentBlock } from "./comment-block";
 // helpers
-import { isEmptyHtmlString } from "helpers/string.helper";
 
 const fileService = new FileService();
 

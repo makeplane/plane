@@ -1,18 +1,18 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
+import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
+import debounce from "lodash/debounce";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-import debounce from "lodash/debounce";
-// components
 import { Loader, TextArea } from "@plane/ui";
-import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
+import { useMention, useWorkspace } from "hooks/store";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
+// components
 // types
+import { FileService } from "services/file.service";
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
 // services
-import { FileService } from "services/file.service";
-import { useMention, useWorkspace } from "hooks/store";
-import { observer } from "mobx-react";
 
 export interface IssueDescriptionFormValues {
   name: string;

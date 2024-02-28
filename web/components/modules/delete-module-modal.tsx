@@ -1,18 +1,18 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 // hooks
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@plane/ui";
+import { MODULE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useModule } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
 // icons
-import { AlertTriangle } from "lucide-react";
 // types
 import type { IModule } from "@plane/types";
 // constants
-import { MODULE_DELETED } from "constants/event-tracker";
 
 type Props = {
   data: IModule;

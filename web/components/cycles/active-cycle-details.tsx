@@ -1,13 +1,10 @@
 import { MouseEvent } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
+import Link from "next/link";
 import { useTheme } from "next-themes";
+import useSWR from "swr";
 // hooks
-import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { SingleProgressStats } from "components/core";
+import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 import {
   AvatarGroup,
   Loader,
@@ -19,23 +16,26 @@ import {
   Avatar,
   CycleGroupIcon,
 } from "@plane/ui";
+import { SingleProgressStats } from "components/core";
+// ui
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
 import { StateDropdown } from "components/dropdowns";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // icons
-import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 // helpers
-import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
-import { truncateText } from "helpers/string.helper";
 // types
-import { ICycle, TCycleGroups } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
 import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import { EIssuesStoreType } from "constants/issue";
+import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
+import { truncateText } from "helpers/string.helper";
+import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
+import { ICycle, TCycleGroups } from "@plane/types";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;

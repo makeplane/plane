@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
+import { Controller, useForm } from "react-hook-form";
 import { Dialog, Popover, Transition } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 // hooks
+import { Button, Input } from "@plane/ui";
+import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 import { useLabel } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // constants
-import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 
 // types
 type Props = {

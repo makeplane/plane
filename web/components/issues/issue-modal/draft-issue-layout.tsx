@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import useToast from "hooks/use-toast";
+import { ConfirmIssueDiscard } from "components/issues";
+import { IssueFormRoot } from "components/issues/issue-modal/form";
 import { useEventTracker } from "hooks/store";
+import useToast from "hooks/use-toast";
 // services
 import { IssueDraftService } from "services/issue";
 // components
-import { IssueFormRoot } from "components/issues/issue-modal/form";
-import { ConfirmIssueDiscard } from "components/issues";
 // types
 import type { TIssue } from "@plane/types";
 

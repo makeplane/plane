@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import {
   BarChart2,
@@ -20,9 +20,9 @@ import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // hooks
 import { useUser, useWorkspace } from "hooks/store";
 // types
+import projectEmoji from "public/emoji/project-emoji.svg";
 import { IWorkspace } from "@plane/types";
 // assets
-import projectEmoji from "public/emoji/project-emoji.svg";
 
 const workspaceLinks = [
   {

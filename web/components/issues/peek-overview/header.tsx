@@ -1,20 +1,20 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
 import { ArchiveIcon, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Tooltip } from "@plane/ui";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-// hooks
-import useToast from "hooks/use-toast";
-// store hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
-// helpers
-import { cn } from "helpers/common.helper";
-// components
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
 import { STATE_GROUPS } from "constants/state";
+import { cn } from "helpers/common.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
+// store hooks
+// helpers
+// components
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 

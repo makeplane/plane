@@ -5,9 +5,9 @@ import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
 import { useIssueDetail, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
+import { TIssueComment } from "@plane/types";
 import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
 // types
-import { TIssueComment } from "@plane/types";
 
 type TIssueActivity = {
   workspaceSlug: string;

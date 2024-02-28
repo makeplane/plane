@@ -7,17 +7,17 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
+import { AlertTriangle } from "lucide-react";
+import { Button, Input } from "@plane/ui";
+import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+import useToast from "hooks/use-toast";
 import { IntegrationService } from "services/integrations/integration.service";
 // hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // icons
-import { AlertTriangle } from "lucide-react";
 // types
 import { IUser, IImporterService } from "@plane/types";
 // fetch-keys
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;

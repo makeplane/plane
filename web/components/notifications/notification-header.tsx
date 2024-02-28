@@ -1,22 +1,22 @@
 import React from "react";
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
 // components
+import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // ui
-import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 // hooks
-import { useEventTracker } from "hooks/store";
-// helpers
-import { getNumberCount } from "helpers/string.helper";
-// type
-import type { NotificationType, NotificationCount } from "@plane/types";
-// constants
 import {
   ARCHIVED_NOTIFICATIONS,
   NOTIFICATIONS_READ,
   SNOOZED_NOTIFICATIONS,
   UNREAD_NOTIFICATIONS,
 } from "constants/event-tracker";
+import { getNumberCount } from "helpers/string.helper";
+import { useEventTracker } from "hooks/store";
+// helpers
+// type
+import type { NotificationType, NotificationCount } from "@plane/types";
+// constants
 
 type NotificationHeaderProps = {
   notificationCount?: NotificationCount | null;

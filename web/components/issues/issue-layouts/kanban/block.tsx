@@ -2,18 +2,18 @@ import { MutableRefObject, memo } from "react";
 import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // hooks
+import { Tooltip, ControlLink } from "@plane/ui";
+import RenderIfVisible from "components/core/render-if-visible-HOC";
+import { cn } from "helpers/common.helper";
 import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // components
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { IssueProperties } from "../properties/all-properties";
-// ui
-import { Tooltip, ControlLink } from "@plane/ui";
-// types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import { IssueProperties } from "../properties/all-properties";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// ui
+// types
 import { EIssueActions } from "../types";
 // helper
-import { cn } from "helpers/common.helper";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
 
 interface IssueBlockProps {
   peekIssueId?: string;

@@ -2,16 +2,16 @@ import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
+import { Spinner } from "@plane/ui";
+import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
+import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
 // components
-import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
 // ui
-import { Spinner } from "@plane/ui";
 // constants
-import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 // type
 import { NextPageWithLayout } from "lib/types";
 

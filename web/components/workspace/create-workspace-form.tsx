@@ -1,19 +1,19 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-// services
-import { WorkspaceService } from "services/workspace.service";
+// ui
+import { Button, CustomSelect, Input } from "@plane/ui";
+// constants
+import { WORKSPACE_CREATED } from "constants/event-tracker";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 // hooks
 import { useEventTracker, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomSelect, Input } from "@plane/ui";
+// services
+import { WorkspaceService } from "services/workspace.service";
 // types
 import { IWorkspace } from "@plane/types";
-// constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
-import { WORKSPACE_CREATED } from "constants/event-tracker";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -22,7 +22,7 @@ type Props = {
     slug: string;
     organization_size: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<any>>;
+  setDefaultValues: Dispatch<SetStateAction<IWorkspace>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;

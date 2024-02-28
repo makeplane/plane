@@ -1,29 +1,28 @@
 import React, { useEffect, useState, ReactElement } from "react";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
-// services
-import { FileService } from "services/file.service";
-// hooks
-import { useApplication, useUser } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
-import useToast from "hooks/use-toast";
-// layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
-// components
-import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
-import { DeactivateAccountModal } from "components/account";
-// ui
-import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
 // icons
 import { ChevronDown, User2 } from "lucide-react";
+import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
+// components
+import { DeactivateAccountModal } from "components/account";
+import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+// constants
+import { TIME_ZONES } from "constants/timezones";
+import { USER_ROLES } from "constants/workspace";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
+// layouts
+import { ProfileSettingsLayout } from "layouts/settings-layout";
+// services
+import { FileService } from "services/file.service";
 // types
 import type { IUser } from "@plane/types";
 import type { NextPageWithLayout } from "lib/types";
-// constants
-import { USER_ROLES } from "constants/workspace";
-import { TIME_ZONES } from "constants/timezones";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",

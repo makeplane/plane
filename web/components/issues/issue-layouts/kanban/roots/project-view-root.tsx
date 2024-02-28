@@ -2,15 +2,15 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // constant
-import { EIssuesStoreType } from "constants/issue";
 // types
 import { TIssue } from "@plane/types";
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 
 export interface IViewKanBanLayout {
   issueActions: {

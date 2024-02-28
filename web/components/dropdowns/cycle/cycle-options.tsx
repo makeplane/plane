@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
 //components
+import { Check, Search } from "lucide-react";
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 //store
 import { useApplication, useCycle } from "hooks/store";
 //hooks
-import { usePopper } from "react-popper";
 //icon
-import { Check, Search } from "lucide-react";
 //types
-import { Placement } from "@popperjs/core";
 import { TCycleGroups } from "@plane/types";
 
 type DropdownOptions =

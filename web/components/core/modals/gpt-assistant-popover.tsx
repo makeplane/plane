@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef, Fragment } from "react";
+import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { Placement } from "@popperjs/core";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
-import { AIService } from "services/ai.service";
 // hooks
-import useToast from "hooks/use-toast";
 import { usePopper } from "react-popper";
 // ui
+import { Popover, Transition } from "@headlessui/react";
 import { Button, Input } from "@plane/ui";
 // components
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
-import { Popover, Transition } from "@headlessui/react";
+import useToast from "hooks/use-toast";
+import { AIService } from "services/ai.service";
 // types
-import { Placement } from "@popperjs/core";
 
 type Props = {
   isOpen: boolean;

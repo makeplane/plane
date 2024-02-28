@@ -3,15 +3,15 @@ import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue 
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
-// hooks
+import { WORKSPACE_CREATED } from "constants/event-tracker";
+import { RESTRICTED_URLS } from "constants/workspace";
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
+// hooks
 import useToast from "hooks/use-toast";
 // services
 import { WorkspaceService } from "services/workspace.service";
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
-import { RESTRICTED_URLS } from "constants/workspace";
-import { WORKSPACE_CREATED } from "constants/event-tracker";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;

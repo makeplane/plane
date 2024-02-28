@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // components
+import { csvDownload } from "helpers/download.helper";
+import useToast from "hooks/use-toast";
+import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // hooks
-import useToast from "hooks/use-toast";
 // helpers
-import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
 // types
-import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 
 interface ICreateWebhookModal {
   currentWorkspace: IWorkspace | null;

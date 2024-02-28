@@ -9,8 +9,8 @@ import { CustomSelect, Tooltip } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";

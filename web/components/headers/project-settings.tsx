@@ -1,17 +1,17 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // ui
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 // helper
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
 import { renderEmoji } from "helpers/emoji.helper";
 // hooks
 import { useProject, useUser } from "hooks/store";
 // constants
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
 
 export interface IProjectSettingHeader {
   title: string;

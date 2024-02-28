@@ -1,16 +1,16 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
-import { useUser } from "hooks/store";
 // components
-import { ProjectSettingsSidebar } from "./sidebar";
+import { Button, LayersIcon } from "@plane/ui";
 import { NotAuthorizedView } from "components/auth-screens";
 // ui
-import { Button, LayersIcon } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useUser } from "hooks/store";
+import { ProjectSettingsSidebar } from "./sidebar";
 
 export interface IProjectSettingLayout {
   children: ReactNode;

@@ -3,9 +3,9 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // components
+import { TActivityOperations } from "../root";
 import { IssueCommentCard } from "./comment-card";
 // types
-import { TActivityOperations } from "../root";
 
 type TIssueCommentRoot = {
   workspaceSlug: string;

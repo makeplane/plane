@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from "react";
 // components
-import { Loader } from "@plane/ui";
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
+import { Loader } from "@plane/ui";
 // store hooks
 import { useMention, useWorkspace } from "hooks/store";
 // services

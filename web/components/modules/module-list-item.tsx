@@ -1,22 +1,22 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // hooks
+import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
+import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { MODULE_STATUS } from "constants/module";
+import { EUserProjectRoles } from "constants/project";
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
-import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   moduleId: string;

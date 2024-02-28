@@ -1,19 +1,19 @@
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
 // components
-import { CreateUpdateIssueModal } from "components/issues";
-import { ExistingIssuesListModal } from "components/core";
 import { CustomMenu } from "@plane/ui";
+import { ExistingIssuesListModal } from "components/core";
+import { CreateUpdateIssueModal } from "components/issues";
 // mobx
-import { observer } from "mobx-react-lite";
 // hooks
+import { TCreateModalStoreTypes } from "constants/issue";
 import { useEventTracker } from "hooks/store";
 // types
-import { TIssue, ISearchIssueResponse } from "@plane/types";
 import useToast from "hooks/use-toast";
-import { useState } from "react";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;

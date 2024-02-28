@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
+import { ChevronDown, Dot, XCircle } from "lucide-react";
+import { CustomSelect, Tooltip } from "@plane/ui";
+import { ConfirmProjectMemberRemove } from "components/project";
+import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
+import { ROLE } from "constants/workspace";
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
-import { ConfirmProjectMemberRemove } from "components/project";
 // ui
-import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
-import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants
-import { ROLE } from "constants/workspace";
-import { EUserProjectRoles } from "constants/project";
-import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 
 type Props = {
   userId: string;

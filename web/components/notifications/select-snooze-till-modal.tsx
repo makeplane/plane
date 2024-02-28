@@ -1,15 +1,15 @@
 import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
-import { DateDropdown } from "components/dropdowns";
 import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
+import { Button, CustomSelect } from "@plane/ui";
+import { DateDropdown } from "components/dropdowns";
 // constants
 import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect } from "@plane/ui";
 // types
 import type { IUserNotification } from "@plane/types";
 

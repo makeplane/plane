@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { Avatar, Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "components/issues";
 import { useMember } from "hooks/store";
 // components
-import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Avatar, Loader } from "@plane/ui";
 
 type Props = {
   appliedFilters: string[] | null;

@@ -1,23 +1,22 @@
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Menu } from "@headlessui/react";
-import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
-import { useEventTracker } from "hooks/store";
 // icons
+import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 // constants
+import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 import { snoozeOptions } from "constants/notification";
 // helper
-import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
+// hooks
+import { useEventTracker } from "hooks/store";
+import useToast from "hooks/use-toast";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
-// constants
-import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 
 type NotificationCardProps = {
   selectedTab: NotificationType;

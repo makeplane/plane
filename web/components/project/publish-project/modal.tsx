@@ -1,18 +1,18 @@
 import { Fragment, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { Check, CircleDot, Globe2 } from "lucide-react";
 // hooks
+import { Button, Loader, ToggleSwitch } from "@plane/ui";
 import { useProjectPublish } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Loader, ToggleSwitch } from "@plane/ui";
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
+import { IProject } from "@plane/types";
 import { CustomPopover } from "./popover";
 // types
-import { IProject } from "@plane/types";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
 
 type Props = {
   isOpen: boolean;

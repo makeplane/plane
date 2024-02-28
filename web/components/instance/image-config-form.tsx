@@ -4,10 +4,10 @@ import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
+import { IFormattedInstanceConfiguration } from "@plane/types";
 
 export interface IInstanceImageConfigForm {
   config: IFormattedInstanceConfiguration;

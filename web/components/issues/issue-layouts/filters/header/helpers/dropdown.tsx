@@ -1,11 +1,11 @@
 import React, { Fragment, useState } from "react";
+import { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
-import { Placement } from "@popperjs/core";
 // ui
+import { ChevronUp } from "lucide-react";
 import { Button } from "@plane/ui";
 // icons
-import { ChevronUp } from "lucide-react";
 
 type Props = {
   children: React.ReactNode;

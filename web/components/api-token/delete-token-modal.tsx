@@ -3,15 +3,15 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
+import { Button } from "@plane/ui";
+import { API_TOKENS_LIST } from "constants/fetch-keys";
+import useToast from "hooks/use-toast";
 import { APITokenService } from "services/api_token.service";
 // hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
 // types
 import { IApiToken } from "@plane/types";
 // fetch-keys
-import { API_TOKENS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;

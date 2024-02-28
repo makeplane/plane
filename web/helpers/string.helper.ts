@@ -1,10 +1,10 @@
+import * as DOMPurify from 'dompurify';
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
-import * as DOMPurify from 'dompurify';
 
 export const addSpaceIfCamelCase = (str: string) => {
   if (str === undefined || str === null) return "";

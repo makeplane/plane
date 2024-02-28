@@ -1,31 +1,31 @@
 import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { Spinner } from "@plane/ui";
+import { DeleteIssueModal } from "components/issues";
+import { ISSUE_DELETED } from "constants/event-tracker";
+import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useUser } from "hooks/store";
+import { useIssues } from "hooks/store/use-issues";
 import useToast from "hooks/use-toast";
 // ui
-import { Spinner } from "@plane/ui";
 // types
-import { TIssue } from "@plane/types";
-import { EIssueActions } from "../types";
-import { IQuickActionProps } from "../list/list-view-types";
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { TIssue } from "@plane/types";
+import { IQuickActionProps } from "../list/list-view-types";
+import { EIssueActions } from "../types";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { DeleteIssueModal } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
-import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
-import { ISSUE_DELETED } from "constants/event-tracker";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;

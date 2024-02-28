@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
+import { UserGroupIcon } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // icons
-import { UserGroupIcon } from "@plane/ui";
 
 type TIssueAssigneeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 

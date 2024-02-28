@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
+import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 import {
   useApplication,
   useEventTracker,
@@ -12,16 +14,14 @@ import {
   useProject,
   useIssueDetail,
 } from "hooks/store";
-import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
+import useToast from "hooks/use-toast";
 // components
+import type { TIssue } from "@plane/types";
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
 // types
-import type { TIssue } from "@plane/types";
 // constants
-import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
-import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;

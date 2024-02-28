@@ -1,16 +1,16 @@
 import { useEffect } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { History } from "lucide-react";
 // hooks
-import { useDashboard, useUser } from "hooks/store";
 // components
+import { Avatar } from "@plane/ui";
 import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
-import { Avatar } from "@plane/ui";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
+import { useDashboard, useUser } from "hooks/store";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
 

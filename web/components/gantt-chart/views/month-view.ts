@@ -1,7 +1,7 @@
 // types
+import { weeks, months } from "../data";
 import { ChartDataType, IGanttBlock } from "../types";
 // data
-import { weeks, months } from "../data";
 // helpers
 import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from "./helpers";
 

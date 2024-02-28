@@ -4,16 +4,16 @@ import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 
 // hooks
-import useToast from "hooks/use-toast";
 // services
-import { IssueService } from "services/issue";
 // ui
+import { Search } from "lucide-react";
 import { Button, LayersIcon } from "@plane/ui";
 // icons
-import { Search } from "lucide-react";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { useProject, useProjectState } from "hooks/store";
+import useToast from "hooks/use-toast";
+import { IssueService } from "services/issue";
 
 type Props = {
   isOpen: boolean;

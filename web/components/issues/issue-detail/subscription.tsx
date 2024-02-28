@@ -1,12 +1,12 @@
-import { Bell, BellOff } from "lucide-react";
-import { observer } from "mobx-react-lite";
 import { FC, useState } from "react";
+import isNil from "lodash/isNil";
+import { observer } from "mobx-react-lite";
+import { Bell, BellOff } from "lucide-react";
 // UI
 import { Button, Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
-import isNil from "lodash/isNil";
 
 export type TIssueSubscription = {
   workspaceSlug: string;

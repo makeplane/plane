@@ -4,14 +4,14 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { Button, Input } from "@plane/ui";
+import { PROJECT_DELETED } from "constants/event-tracker";
 import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // types
 import type { IProject } from "@plane/types";
 // constants
-import { PROJECT_DELETED } from "constants/event-tracker";
 
 type DeleteProjectModal = {
   isOpen: boolean;

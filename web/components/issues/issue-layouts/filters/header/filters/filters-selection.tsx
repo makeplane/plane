@@ -2,8 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
-// components
 import {
   FilterAssignees,
   FilterMentions,
@@ -18,10 +16,12 @@ import {
   FilterCycle,
   FilterModule,
 } from "components/issues";
+import { ILayoutDisplayFiltersOptions } from "constants/issue";
+import { useApplication } from "hooks/store";
+// components
 // types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
-import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
 type Props = {
   filters: IIssueFilterOptions;

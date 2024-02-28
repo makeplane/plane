@@ -1,26 +1,26 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
 // hooks
-import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+import { Button } from "@plane/ui";
 import {
   AcceptIssueModal,
   DeclineIssueModal,
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
+import { ISSUE_DELETED } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
+import useToast from "hooks/use-toast";
+// components
 // ui
-import { Button } from "@plane/ui";
 // icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 // types
 import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
-import { ISSUE_DELETED } from "constants/event-tracker";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;

@@ -1,10 +1,8 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { KanBan } from "./default";
-import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
-import { HeaderGroupByCard } from "./headers/group-by-card";
-// types
+import { TCreateModalStoreTypes } from "constants/issue";
+import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -16,11 +14,13 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
 } from "@plane/types";
-// constants
 import { EIssueActions } from "../types";
-import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { KanBan } from "./default";
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
+// types
+// constants
 
 interface ISubGroupSwimlaneHeader {
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;

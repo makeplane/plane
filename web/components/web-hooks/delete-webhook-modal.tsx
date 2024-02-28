@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { Button } from "@plane/ui";
 import { useWebhook } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
 
 interface IDeleteWebhook {
   isOpen: boolean;

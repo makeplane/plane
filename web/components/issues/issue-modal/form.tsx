@@ -1,21 +1,13 @@
 import React, { FC, useState, useRef, useEffect, Fragment } from "react";
-import { useRouter } from "next/router";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // editor
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // hooks
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-// services
-import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
-// components
+import { Button, CustomMenu, Input, Loader, ToggleSwitch } from "@plane/ui";
 import { GptAssistantPopover } from "components/core";
-import { ParentIssuesListModal } from "components/issues";
-import { IssueLabelSelect } from "components/issues/select";
-import { CreateLabelModal } from "components/labels";
 import {
   CycleDropdown,
   DateDropdown,
@@ -26,10 +18,18 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
-// ui
-import { Button, CustomMenu, Input, Loader, ToggleSwitch } from "@plane/ui";
-// helpers
+import { ParentIssuesListModal } from "components/issues";
+import { IssueLabelSelect } from "components/issues/select";
+import { CreateLabelModal } from "components/labels";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
+// services
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
+// components
+// ui
+// helpers
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 

@@ -1,18 +1,18 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 // hooks
+import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { EIssuesStoreType } from "constants/issue";
+import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useUser, useIssues } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { TIssue } from "@plane/types";
-import { EIssuesStoreType } from "constants/issue";
 
 type Props = {
   closePalette: () => void;

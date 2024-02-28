@@ -1,10 +1,10 @@
 // helpers
+import { Tooltip } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
+import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
 import { TButtonVariants } from "./types";
 // constants
-import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
-import { Tooltip } from "@plane/ui";
 
 export type DropdownButtonProps = {
   children: React.ReactNode;

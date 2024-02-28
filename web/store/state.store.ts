@@ -1,15 +1,15 @@
-import { makeObservable, observable, computed, action, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 import groupBy from "lodash/groupBy";
 import set from "lodash/set";
+import { makeObservable, observable, computed, action, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // store
+import { sortStates } from "helpers/state.helper";
+import { ProjectStateService } from "services/project";
+import { IState } from "@plane/types";
 import { RootStore } from "./root.store";
 // types
-import { IState } from "@plane/types";
 // services
-import { ProjectStateService } from "services/project";
 // helpers
-import { sortStates } from "helpers/state.helper";
 
 export interface IStateStore {
   //Loaders

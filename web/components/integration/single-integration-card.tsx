@@ -1,25 +1,25 @@
 import { useState } from "react";
 
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
 // services
-import { IntegrationService } from "services/integrations";
-// hooks
-import { useApplication, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-import useIntegrationPopup from "hooks/use-integration-popup";
-// ui
+import { CheckCircle } from "lucide-react";
 import { Button, Loader, Tooltip } from "@plane/ui";
+import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { useApplication, useUser } from "hooks/store";
+// hooks
+import useIntegrationPopup from "hooks/use-integration-popup";
+import useToast from "hooks/use-toast";
+// ui
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
-import { CheckCircle } from "lucide-react";
+import { IntegrationService } from "services/integrations";
 // types
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // fetch-keys
-import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 type Props = {
   integration: IAppIntegration;

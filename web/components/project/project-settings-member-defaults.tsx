@@ -1,21 +1,21 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { Controller, useForm } from "react-hook-form";
+import useSWR from "swr";
 // hooks
+import { Loader } from "@plane/ui";
+import { MemberSelect } from "components/project";
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { EUserProjectRoles } from "constants/project";
 import { useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
-import { Controller, useForm } from "react-hook-form";
 
-import { MemberSelect } from "components/project";
 // ui
-import { Loader } from "@plane/ui";
 // types
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,

@@ -1,12 +1,12 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
 // hooks
 import { useIssueDetail, useLabel } from "hooks/store";
 // types
-import { IIssueLabel, TIssue } from "@plane/types";
 import useToast from "hooks/use-toast";
+import { IIssueLabel, TIssue } from "@plane/types";
+import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
 
 export type TIssueLabel = {
   workspaceSlug: string;

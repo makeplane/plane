@@ -1,16 +1,16 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 // components
+import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { TIssue } from "@plane/types";
 import { TSubIssueOperations } from "./root";
 // import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
-import { observer } from "mobx-react-lite";
 
 export interface ISubIssues {
   workspaceSlug: string;

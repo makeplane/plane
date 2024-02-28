@@ -1,16 +1,16 @@
 // ui
+import { FC } from "react";
+import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { ChevronDown, PanelRight } from "lucide-react";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 import { BreadcrumbLink } from "components/common";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { cn } from "helpers/common.helper";
-import { FC } from "react";
-import { useApplication, useUser } from "hooks/store";
-import { ChevronDown, PanelRight } from "lucide-react";
-import { observer } from "mobx-react-lite";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "constants/profile";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { cn } from "helpers/common.helper";
+import { useApplication, useUser } from "hooks/store";
 
 type TUserProfileHeader = {
   type?: string | undefined

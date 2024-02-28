@@ -2,9 +2,9 @@ import { ChevronDown } from "lucide-react";
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
+import { DURATION_FILTER_OPTIONS } from "constants/dashboard";
 import { TDurationFilterOptions } from "@plane/types";
 // constants
-import { DURATION_FILTER_OPTIONS } from "constants/dashboard";
 
 type Props = {
   onChange: (value: TDurationFilterOptions) => void;

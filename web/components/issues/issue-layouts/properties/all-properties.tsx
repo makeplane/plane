@@ -1,14 +1,10 @@
 import { useCallback, useMemo } from "react";
+import xor from "lodash/xor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
-import xor from "lodash/xor";
 // hooks
-import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
-// components
-import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import {
   DateDropdown,
   EstimateDropdown,
@@ -18,15 +14,19 @@ import {
   CycleDropdown,
   StateDropdown,
 } from "components/dropdowns";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { cn } from "helpers/common.helper";
-// types
-import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
-// constants
 import { ISSUE_UPDATED } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
+import { cn } from "helpers/common.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
+// components
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
+import { IssuePropertyLabels } from "../properties/labels";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// helpers
+// types
+// constants
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -338,7 +338,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               disabled={isReadOnly}
               multiple
               buttonVariant="border-with-text"
-              showCount={true}
+              showCount
               showTooltip
             />
           </div>

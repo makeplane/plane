@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { Button } from "@plane/ui";
 import { useUser } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
 // types
 import { IUserLite } from "@plane/types";
 

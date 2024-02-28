@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 import {
@@ -14,25 +14,25 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
-// hooks
-import { useModule, useUser, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import { DeleteModuleModal } from "components/modules";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
 // ui
 import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
+// components
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
+import ProgressChart from "components/core/sidebar/progress-chart";
+import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
+import { DeleteModuleModal } from "components/modules";
+// constant
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
+import { MODULE_STATUS } from "constants/module";
+import { EUserProjectRoles } from "constants/project";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useModule, useUser, useEventTracker } from "hooks/store";
+import useToast from "hooks/use-toast";
 // types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
-// constant
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",

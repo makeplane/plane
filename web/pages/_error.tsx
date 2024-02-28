@@ -3,13 +3,13 @@ import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
 
 // services
+import { Button } from "@plane/ui";
+import useToast from "hooks/use-toast";
+import DefaultLayout from "layouts/default-layout";
 import { AuthService } from "services/auth.service";
 // hooks
-import useToast from "hooks/use-toast";
 // layouts
-import DefaultLayout from "layouts/default-layout";
 // ui
-import { Button } from "@plane/ui";
 
 // services
 const authService = new AuthService();

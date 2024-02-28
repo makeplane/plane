@@ -1,12 +1,11 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
-import set from "lodash/set";
 import concat from "lodash/concat";
-import update from "lodash/update";
 import pull from "lodash/pull";
+import set from "lodash/set";
+import update from "lodash/update";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { IssueService } from "services/issue";
 // types
-import { IIssueDetail } from "./root.store";
 import {
   TIssue,
   TIssueSubIssues,
@@ -14,6 +13,7 @@ import {
   TIssueSubIssuesIdMap,
   TSubIssuesStateDistribution,
 } from "@plane/types";
+import { IIssueDetail } from "./root.store";
 
 export interface IIssueSubIssuesStoreActions {
   fetchSubIssues: (workspaceSlug: string, projectId: string, parentIssueId: string) => Promise<TIssueSubIssues>;

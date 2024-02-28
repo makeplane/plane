@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 // services
-import { AuthService } from "services/auth.service";
-// hooks
+import { GitHubSignInButton, GoogleSignInButton } from "components/account";
 import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
+import { AuthService } from "services/auth.service";
+// hooks
 // components
-import { GitHubSignInButton, GoogleSignInButton } from "components/account";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;

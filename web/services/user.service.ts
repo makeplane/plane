@@ -1,4 +1,5 @@
 // services
+import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 // types
 import type {
@@ -13,7 +14,6 @@ import type {
   IUserEmailNotificationSettings,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
 
 export class UserService extends APIService {
   constructor() {

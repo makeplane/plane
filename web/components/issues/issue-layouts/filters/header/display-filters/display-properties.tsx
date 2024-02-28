@@ -2,11 +2,11 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // components
+import { ISSUE_DISPLAY_PROPERTIES } from "constants/issue";
+import { IIssueDisplayProperties } from "@plane/types";
 import { FilterHeader } from "../helpers/filter-header";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
 // constants
-import { ISSUE_DISPLAY_PROPERTIES } from "constants/issue";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;

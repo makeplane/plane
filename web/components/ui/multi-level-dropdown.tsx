@@ -3,9 +3,9 @@ import { Fragment, useState } from "react";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // ui
+import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { Loader } from "@plane/ui";
 // icons
-import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 type MultiLevelDropdownProps = {
   label: string;
@@ -71,10 +71,10 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                   <div className="relative p-1" key={option.id}>
                     <Menu.Item
                       as="button"
-                      onClick={(e: any) => {
+                      onClick={(e: unknown) => {
                         if (option.hasChildren) {
-                          e.stopPropagation();
-                          e.preventDefault();
+                          e?.stopPropagation();
+                          e?.preventDefault();
 
                           if (option.onClick) option.onClick();
 
@@ -108,12 +108,12 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                           height === "sm"
                             ? "max-h-28"
                             : height === "md"
-                              ? "max-h-44"
-                              : height === "rg"
-                                ? "max-h-56"
-                                : height === "lg"
-                                  ? "max-h-80"
-                                  : ""
+                            ? "max-h-44"
+                            : height === "rg"
+                            ? "max-h-56"
+                            : height === "lg"
+                            ? "max-h-80"
+                            : ""
                         }`}
                       >
                         {option.children ? (

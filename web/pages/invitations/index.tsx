@@ -1,38 +1,38 @@
 import React, { useState, ReactElement } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
-import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
+import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // services
-import { WorkspaceService } from "services/workspace.service";
-import { UserService } from "services/user.service";
-// hooks
-import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-import { UserAuthWrapper } from "layouts/auth-layout";
-// ui
 import { Button } from "@plane/ui";
-// images
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import emptyInvitation from "public/empty-state/invitation.svg";
-// helpers
-import { truncateText } from "helpers/string.helper";
-import { getUserRole } from "helpers/user.helper";
-// types
-import { NextPageWithLayout } from "lib/types";
-import type { IWorkspaceMemberInvitation } from "@plane/types";
-// constants
-import { ROLE } from "constants/workspace";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
-// components
 import { EmptyState } from "components/common";
 import { PageHead } from "components/core";
+import { MEMBER_ACCEPTED } from "constants/event-tracker";
+import { ROLE } from "constants/workspace";
+import { truncateText } from "helpers/string.helper";
+import { getUserRole } from "helpers/user.helper";
+import { useEventTracker, useUser } from "hooks/store";
+// hooks
+import useToast from "hooks/use-toast";
+// layouts
+import { UserAuthWrapper } from "layouts/auth-layout";
+import DefaultLayout from "layouts/default-layout";
+// ui
+// images
+import { NextPageWithLayout } from "lib/types";
+import emptyInvitation from "public/empty-state/invitation.svg";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+// helpers
+// types
+import { UserService } from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
+// constants
+// components
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();

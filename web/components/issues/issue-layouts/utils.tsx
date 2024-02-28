@@ -1,12 +1,12 @@
 import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { ISSUE_PRIORITIES } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
 import { renderEmoji } from "helpers/emoji.helper";
+import { ILabelStore } from "store/label.store";
 import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
 import { GroupByColumnTypes, IGroupByColumn } from "@plane/types";
-import { STATE_GROUPS } from "constants/state";
-import { ILabelStore } from "store/label.store";
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,

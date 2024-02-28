@@ -2,16 +2,16 @@ import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
-import { InboxIssueMainContent } from "./main-content";
-import { InboxIssueDetailsSidebar } from "./sidebar";
-// hooks
+import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "hooks/store";
+// hooks
 import useToast from "hooks/use-toast";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "../root";
+import { InboxIssueMainContent } from "./main-content";
+import { InboxIssueDetailsSidebar } from "./sidebar";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 export type TInboxIssueDetailRoot = {
   workspaceSlug: string;
