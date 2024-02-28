@@ -1,12 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
+import { useRouter } from "next/router";
 // hooks
-import { useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 // components
 import {
+  AppliedCycleFilters,
   AppliedDateFilters,
   AppliedLabelsFilters,
   AppliedMembersFilters,
+  AppliedModuleFilters,
   AppliedPriorityFilters,
   AppliedProjectFilters,
   AppliedStateFilters,
@@ -34,6 +37,9 @@ const dateFilters = ["start_date", "target_date"];
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states, alwaysAllowEditing } = props;
   // store hooks
+  const {
+    router: { moduleId, cycleId },
+  } = useApplication();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -101,6 +107,20 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedProjectFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("project", val)}
+                  values={value}
+                />
+              )}
+              {filterKey === "cycle" && !cycleId && (
+                <AppliedCycleFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("cycle", val)}
+                  values={value}
+                />
+              )}
+              {filterKey === "module" && !moduleId && (
+                <AppliedModuleFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("module", val)}
                   values={value}
                 />
               )}
