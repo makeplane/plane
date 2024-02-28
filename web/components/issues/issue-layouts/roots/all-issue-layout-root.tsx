@@ -88,11 +88,15 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     }
   };
 
-  useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
-    if (workspaceSlug) {
-      await fetchAllGlobalViews(workspaceSlug.toString());
-    }
-  });
+  useSWR(
+    workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
+    async () => {
+      if (workspaceSlug) {
+        await fetchAllGlobalViews(workspaceSlug.toString());
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   useSWR(
     workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
@@ -103,7 +107,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const canEditProperties = useCallback(

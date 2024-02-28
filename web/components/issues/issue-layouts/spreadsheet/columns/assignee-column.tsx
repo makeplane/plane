@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { ProjectMemberDropdown } from "components/dropdowns";
+import { MemberDropdown } from "components/dropdowns";
 // types
 import { TIssue } from "@plane/types";
 
@@ -17,7 +17,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
 
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
-      <ProjectMemberDropdown
+      <MemberDropdown
         value={issue?.assignee_ids ?? []}
         onChange={(data) => {
           onChange(
