@@ -37,6 +37,7 @@ type Props = {
   snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
   shortContextMenu?: boolean;
+  disableDrag?: boolean;
 };
 
 const navigation = (workspaceSlug: string, projectId: string) => [
@@ -79,11 +80,11 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
+  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false, disableDrag } = props;
   // store hooks
   const { theme: themeStore } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { currentProjectDetails, addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
+  const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { getInboxesByProjectId, getInboxById } = useInbox();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -163,7 +164,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 snapshot?.isDragging ? "opacity-60" : ""
               } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
             >
-              {provided && (
+              {provided && !disableDrag && (
                 <Tooltip
                   tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
                   position="top-right"
@@ -270,13 +271,12 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-
-                  {project.archive_in > 0 && (
+                  {!isViewerOrGuest && (
                     <CustomMenu.MenuItem>
                       <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
                         <div className="flex items-center justify-start gap-2">
                           <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Archived Issues</span>
+                          <span>Archived issues</span>
                         </div>
                       </Link>
                     </CustomMenu.MenuItem>
@@ -285,7 +285,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                       <div className="flex items-center justify-start gap-2">
                         <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                        <span>Draft Issues</span>
+                        <span>Draft issues</span>
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>

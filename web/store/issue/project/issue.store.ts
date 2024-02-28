@@ -6,7 +6,7 @@ import concat from "lodash/concat";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
-import { IssueService } from "services/issue/issue.service";
+import { IssueService, IssueArchiveService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
 import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
@@ -23,6 +23,7 @@ export interface IProjectIssues {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
 }
@@ -40,6 +41,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
   rootIssueStore: IIssueRootStore;
   // services
   issueService;
+  issueArchiveService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
@@ -54,6 +56,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
+      archiveIssue: action,
       removeBulkIssues: action,
       quickAddIssue: action,
     });
@@ -61,6 +64,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     this.rootIssueStore = _rootStore;
     // services
     this.issueService = new IssueService();
+    this.issueArchiveService = new IssueArchiveService();
   }
 
   get groupedIssueIds() {
@@ -78,7 +82,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     const projectIssueIds = this.issues[projectId];
     if (!projectIssueIds) return;
 
-    const _issues = this.rootStore.issues.getIssuesByIds(projectIssueIds);
+    const _issues = this.rootStore.issues.getIssuesByIds(projectIssueIds, "un-archived");
     if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
@@ -160,6 +164,21 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       });
 
       this.rootStore.issues.removeIssue(issueId);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: response.archived_at,
+        });
+        pull(this.issues[projectId], issueId);
+      });
     } catch (error) {
       throw error;
     }

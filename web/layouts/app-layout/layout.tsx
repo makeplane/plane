@@ -33,7 +33,7 @@ export const AppLayout: FC<IAppLayout> = observer((props) => {
         // await issues?.fetchIssues(workspaceSlug, projectId, issues?.groupedIssueIds ? "mutation" : "init-loader");
       }
     },
-    { revalidateOnFocus: false, refreshInterval: 600000, revalidateOnMount: true }
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   return (

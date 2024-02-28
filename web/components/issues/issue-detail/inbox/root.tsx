@@ -30,6 +30,8 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   } = useInboxIssues();
   const {
     issue: { getIssueById },
+    fetchActivities,
+    fetchComments,
   } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
   const { setToastAlert } = useToast();
@@ -54,7 +56,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
         showToast: boolean = true
       ) => {
         try {
-          const response = await updateInboxIssue(workspaceSlug, projectId, inboxId, issueId, data);
+          await updateInboxIssue(workspaceSlug, projectId, inboxId, issueId, data);
           if (showToast) {
             setToastAlert({
               title: "Issue updated successfully",
@@ -64,7 +66,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
           }
           captureIssueEvent({
             eventName: "Inbox issue updated",
-            payload: { ...response, state: "SUCCESS", element: "Inbox" },
+            payload: { ...data, state: "SUCCESS", element: "Inbox" },
             updates: {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
@@ -125,6 +127,8 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
     async () => {
       if (workspaceSlug && projectId && inboxId && issueId) {
         await issueOperations.fetch(workspaceSlug, projectId, issueId);
+        await fetchActivities(workspaceSlug, projectId, issueId);
+        await fetchComments(workspaceSlug, projectId, issueId);
       }
     }
   );

@@ -5,7 +5,7 @@ import { CalendarCheck2, Signal, Tag } from "lucide-react";
 import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 // components
 import { IssueLabel, TIssueOperations } from "components/issues";
-import { DateDropdown, PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
+import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // icons
 import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // helper
@@ -80,7 +80,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
-              <ProjectMemberDropdown
+              <MemberDropdown
                 value={issue?.assignee_ids ?? undefined}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
                 disabled={!is_editable}
@@ -154,6 +154,10 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   projectId={projectId}
                   issueId={issueId}
                   disabled={!is_editable}
+                  isInboxIssue
+                  onLabelUpdate={(val: string[]) =>
+                    issueOperations.update(workspaceSlug, projectId, issueId, { label_ids: val })
+                  }
                 />
               </div>
             </div>

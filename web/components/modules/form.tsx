@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // components
 import { ModuleStatusSelect } from "components/modules";
-import { DateRangeDropdown, ProjectDropdown, ProjectMemberDropdown } from "components/dropdowns";
+import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "components/dropdowns";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
@@ -175,7 +175,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
               name="lead_id"
               render={({ field: { value, onChange } }) => (
                 <div className="h-7">
-                  <ProjectMemberDropdown
+                  <MemberDropdown
                     value={value}
                     onChange={onChange}
                     projectId={projectId}
@@ -192,7 +192,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
               name="member_ids"
               render={({ field: { value, onChange } }) => (
                 <div className="h-7">
-                  <ProjectMemberDropdown
+                  <MemberDropdown
                     value={value}
                     onChange={onChange}
                     projectId={projectId}

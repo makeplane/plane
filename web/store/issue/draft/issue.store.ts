@@ -81,7 +81,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     const draftIssueIds = this.issues[projectId];
     if (!draftIssueIds) return undefined;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds);
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds, "un-archived");
     if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
@@ -141,7 +141,9 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
-      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+      await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
+
+      this.rootStore.issues.updateIssue(issueId, data);
 
       if (data.hasOwnProperty("is_draft") && data?.is_draft === false) {
         runInAction(() => {

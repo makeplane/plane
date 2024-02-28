@@ -352,7 +352,10 @@ class LabelAPIEndpoint(BaseAPIView):
         return (
             Label.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
@@ -481,7 +484,10 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             IssueLink.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
@@ -607,11 +613,11 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
             )
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .select_related("actor")
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .select_related("workspace", "project", "issue", "actor")
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -784,6 +790,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
             )
             .select_related("actor", "workspace", "issue", "project")
         ).order_by(request.GET.get("order_by", "created_at"))

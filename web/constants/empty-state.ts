@@ -244,9 +244,9 @@ export const EMPTY_ISSUE_STATE_DETAILS = {
     key: "archived",
     title: "No archived issues yet",
     description:
-      "Archived issues help you remove issues you completed or cancelled from focus. You can set automation to auto archive issues and find them here.",
+      "Archived issues help you remove issues you completed or canceled from focus. You can set automation to auto archive issues and find them here.",
     primaryButton: {
-      text: "Set Automation",
+      text: "Set automation",
     },
   },
   draft: {
