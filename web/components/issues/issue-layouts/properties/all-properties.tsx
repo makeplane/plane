@@ -13,7 +13,7 @@ import {
   DateDropdown,
   EstimateDropdown,
   PriorityDropdown,
-  ProjectMemberDropdown,
+  MemberDropdown,
   ModuleDropdown,
   CycleDropdown,
   StateDropdown,
@@ -313,7 +313,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         <div className="h-5">
-          <ProjectMemberDropdown
+          <MemberDropdown
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
             onChange={handleAssignee}

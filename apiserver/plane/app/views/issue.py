@@ -596,7 +596,10 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
     def get(self, request, slug):
         issues = (
             Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
         )
         serializer = IssueSerializer(issues, many=True)
@@ -619,6 +622,7 @@ class IssueActivityEndpoint(BaseAPIView):
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
@@ -628,6 +632,7 @@ class IssueActivityEndpoint(BaseAPIView):
             IssueComment.objects.filter(issue_id=issue_id)
             .filter(
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
@@ -679,7 +684,10 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
@@ -841,7 +849,10 @@ class LabelViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
@@ -1054,7 +1065,10 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1397,6 +1411,36 @@ class IssueArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def archive(self, request, slug, project_id, pk=None):
+        issue = Issue.issue_objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+        )
+        if issue.state.group not in ["completed", "cancelled"]:
+            return Response(
+                {"error": "Can only archive completed or cancelled state group issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        issue.archived_at = timezone.now().date()
+        issue.save()
+
+        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
+    
+
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,
@@ -1420,7 +1464,7 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = None
         issue.save()
 
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -1456,7 +1500,10 @@ class IssueSubscriberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1540,7 +1587,10 @@ class IssueReactionViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1609,7 +1659,10 @@ class CommentReactionViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(comment_id=self.kwargs.get("comment_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1679,7 +1732,10 @@ class IssueRelationViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")

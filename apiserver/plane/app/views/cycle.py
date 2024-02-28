@@ -85,7 +85,10 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project", "workspace", "owned_by")
             .prefetch_related(
                 Prefetch(
@@ -689,7 +692,10 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .filter(cycle_id=self.kwargs.get("cycle_id"))
             .select_related("project")
             .select_related("workspace")

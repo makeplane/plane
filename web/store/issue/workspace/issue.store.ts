@@ -1,10 +1,11 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 import { WorkspaceService } from "services/workspace.service";
-import { IssueService } from "services/issue";
+import { IssueService, IssueArchiveService } from "services/issue";
 // types
 import { IIssueRootStore } from "../root.store";
 import { TIssue, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
@@ -37,6 +38,12 @@ export interface IWorkspaceIssues {
     issueId: string,
     viewId?: string | undefined
   ) => Promise<void>;
+  archiveIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    viewId?: string | undefined
+  ) => Promise<void>;
 }
 
 export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssues {
@@ -52,6 +59,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   // service
   workspaceService;
   issueService;
+  issueArchiveService;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
@@ -67,12 +75,14 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
+      archiveIssue: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
     // services
     this.workspaceService = new WorkspaceService();
     this.issueService = new IssueService();
+    this.issueArchiveService = new IssueArchiveService();
   }
 
   get groupedIssueIds() {
@@ -91,7 +101,7 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
     if (!viewIssueIds) return { dataViewId: viewId, issueIds: undefined };
 
-    const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds);
+    const _issues = this.rootStore.issues.getIssuesByIds(viewIssueIds, "un-archived");
     if (!_issues) return { dataViewId: viewId, issueIds: [] };
 
     let issueIds: TIssue | TUnGroupedIssues | undefined = undefined;
@@ -192,6 +202,30 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
         });
 
       this.rootStore.issues.removeIssue(issueId);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  archiveIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    viewId: string | undefined = undefined
+  ) => {
+    try {
+      if (!viewId) throw new Error("View id is required");
+
+      const uniqueViewId = `${workspaceSlug}_${viewId}`;
+
+      const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.rootStore.issues.updateIssue(issueId, {
+          archived_at: response.archived_at,
+        });
+        pull(this.issues[uniqueViewId], issueId);
+      });
     } catch (error) {
       throw error;
     }
