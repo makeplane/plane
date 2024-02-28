@@ -60,7 +60,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       removeRoutePeekId();
     }
   });
-  const handleKeyDown = () => !isAnyModalOpen && removeRoutePeekId();
+  const handleKeyDown = () => {
+    if (!isAnyModalOpen) {
+      removeRoutePeekId();
+      const issueElement = document.getElementById(`issue-${issueId}`);
+      if (issueElement) issueElement?.focus();
+    }
+  };
   useKeypress("Escape", handleKeyDown);
 
   return (

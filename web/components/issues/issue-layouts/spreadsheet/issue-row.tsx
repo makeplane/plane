@@ -187,6 +187,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   return (
     <>
       <td
+        id={`issue-${issueDetail.id}`}
         className={cn(
           "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-[1] border-custom-border-200",
           {
@@ -244,7 +245,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           <div className="w-full overflow-hidden">
             <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
               <div
-                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
+                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
                 tabIndex={-1}
               >
                 {issueDetail.name}
