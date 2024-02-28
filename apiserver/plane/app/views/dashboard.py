@@ -56,10 +56,9 @@ def dashboard_overview_stats(self, request, slug):
         assignees__in=[request.user],
     ).count()
 
-    today = timezone.now().date()
     pending_issues_count = Issue.issue_objects.filter(
         ~Q(state__group__in=["completed", "cancelled"]),
-        Q(target_date__isnull=True) | Q(target_date__lt=today),
+        Q(target_date__lt=timezone.now().date()),
         project__project_projectmember__is_active=True,
         project__project_projectmember__member=request.user,
         workspace__slug=slug,
