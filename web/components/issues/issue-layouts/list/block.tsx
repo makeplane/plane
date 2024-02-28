@@ -24,9 +24,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // hooks
   const {
-    router: { workspaceSlug, projectId },
+    router: { workspaceSlug },
   } = useApplication();
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
 
   const updateIssue = async (issueToUpdate: TIssue) => {
@@ -45,7 +45,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
-  const projectDetails = getProjectById(issue.project_id);
+  const projectIdentifier = getProjectIdentifierById(issue.project_id);
 
   return (
     <div
@@ -56,7 +56,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     >
       {displayProperties && displayProperties?.key && (
         <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-          {projectDetails?.identifier}-{issue.sequence_id}
+          {projectIdentifier}-{issue.sequence_id}
         </div>
       )}
 

@@ -21,7 +21,7 @@ import useToast from "hooks/use-toast";
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { DateRangeDropdown, ProjectMemberDropdown } from "components/dropdowns";
+import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
 // ui
 import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
 // helpers
@@ -385,7 +385,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               name="lead_id"
               render={({ field: { value } }) => (
                 <div className="w-3/5 h-7">
-                  <ProjectMemberDropdown
+                  <MemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
                       submitChanges({ lead_id: val });
@@ -409,7 +409,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               name="member_ids"
               render={({ field: { value } }) => (
                 <div className="w-3/5 h-7">
-                  <ProjectMemberDropdown
+                  <MemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
                       submitChanges({ member_ids: val });
