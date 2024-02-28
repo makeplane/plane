@@ -4,10 +4,10 @@ import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // mobx store provider
 import { IUser } from "@plane/types";
-// helpers
-import { getUserRole } from "helpers/user.helper";
 // constants
 import { GROUP_WORKSPACE } from "constants/event-tracker";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 
 export interface IPosthogWrapper {
   children: ReactNode;

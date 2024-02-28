@@ -4,8 +4,8 @@ import { IUser } from "@plane/types";
 
 declare global {
   interface Window {
-    $crisp: any;
-    CRISP_WEBSITE_ID: any;
+    $crisp: unknown[];
+    CRISP_WEBSITE_ID: unknown;
   }
 }
 
