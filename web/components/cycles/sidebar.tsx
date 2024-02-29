@@ -59,7 +59,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by) : undefined;
+  const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
   // toast alert
   const { setToastAlert } = useToast();
   // form info

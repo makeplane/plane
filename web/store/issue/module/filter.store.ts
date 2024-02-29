@@ -84,13 +84,13 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
     if (!filteredParams) return undefined;
 
+    if (filteredParams.includes("module")) filteredParams.splice(filteredParams.indexOf("module"), 1);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
       filteredParams
     );
-
-    if (userFilters?.displayFilters?.layout === "spreadsheet") filteredRouteParams.sub_issue = false;
 
     return filteredRouteParams;
   }
@@ -192,12 +192,6 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
             _filters.displayFilters.group_by = "state";
             updatedDisplayFilters.group_by = "state";
-          }
-
-          // set sub_issue to false if layout is switched to spreadsheet and sub_issue is true
-          if (_filters.displayFilters.layout === "spreadsheet" && _filters.displayFilters.sub_issue === true) {
-            _filters.displayFilters.sub_issue = false;
-            updatedDisplayFilters.sub_issue = false;
           }
 
           runInAction(() => {

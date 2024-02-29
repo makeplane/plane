@@ -1,6 +1,15 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail, useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import {
+  useCycle,
+  useIssueDetail,
+  useKanbanView,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+} from "hooks/store";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -79,14 +88,16 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const member = useMember();
   const project = useProject();
   const label = useLabel();
+  const cycle = useCycle();
+  const _module = useModule();
   const projectState = useProjectState();
   const { peekIssue } = useIssueDetail();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, cycle, _module, label, projectState, member);
 
   if (!list) return null;
 
-  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)[_list.id]?.length > 0);
+  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)?.[_list.id]?.length > 0);
 
   const groupList = showEmptyGroup ? list : groupWithIssues;
 
@@ -96,14 +107,14 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className={`relative w-full flex gap-3 ${sub_group_by ? "h-full" : "h-full"}`}>
+    <div className={`relative w-full flex gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
       {groupList &&
         groupList.length > 0 &&
         groupList.map((_list: IGroupByColumn) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[340px]`}`}>
+            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[350px]`}`}>
               {sub_group_by === null && (
                 <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
                   <HeaderGroupByCard

@@ -1,16 +1,25 @@
-import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
-import { EIssueListRow, ISSUE_PRIORITIES } from "constants/issue";
-import { renderEmoji } from "helpers/emoji.helper";
+import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+// stores
 import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
-import { GroupByColumnTypes, IGroupByColumn, IIssueListRow, TGroupedIssues, TUnGroupedIssues } from "@plane/types";
-import { STATE_GROUPS } from "constants/state";
 import { ILabelStore } from "store/label.store";
+import { ICycleStore } from "store/cycle.store";
+import { IModuleStore } from "store/module.store";
+// helpers
+import { renderEmoji } from "helpers/emoji.helper";
+// constants
+import { STATE_GROUPS } from "constants/state";
+import { ISSUE_PRIORITIES } from "constants/issue";
+// types
+import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
+import { ContrastIcon } from "lucide-react";
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,
   project: IProjectStore,
+  cycle: ICycleStore,
+  module: IModuleStore,
   label: ILabelStore,
   projectState: IStateStore,
   member: IMemberRootStore,
@@ -19,6 +28,10 @@ export const getGroupByColumns = (
   switch (groupBy) {
     case "project":
       return getProjectColumns(project);
+    case "cycle":
+      return getCycleColumns(project, cycle);
+    case "module":
+      return getModuleColumns(project, module);
     case "state":
       return getStateColumns(projectState);
     case "state_detail.group":
@@ -53,6 +66,68 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
         payload: { project_id: project.id },
       };
     }) as any;
+};
+
+const getCycleColumns = (projectStore: IProjectStore, cycleStore: ICycleStore): IGroupByColumn[] | undefined => {
+  const { currentProjectDetails } = projectStore;
+  const { getProjectCycleIds, getCycleById } = cycleStore;
+
+  if (!currentProjectDetails || !currentProjectDetails?.id) return;
+
+  const cycleIds = currentProjectDetails?.id ? getProjectCycleIds(currentProjectDetails?.id) : undefined;
+  if (!cycleIds) return;
+
+  const cycles = [];
+
+  cycleIds.map((cycleId) => {
+    const cycle = getCycleById(cycleId);
+    if (cycle) {
+      const cycleStatus = cycle.status ? (cycle.status.toLocaleLowerCase() as TCycleGroups) : "draft";
+      cycles.push({
+        id: cycle.id,
+        name: cycle.name,
+        icon: <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />,
+        payload: { cycle_id: cycle.id },
+      });
+    }
+  });
+  cycles.push({
+    id: "None",
+    name: "None",
+    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+  });
+
+  return cycles as any;
+};
+
+const getModuleColumns = (projectStore: IProjectStore, moduleStore: IModuleStore): IGroupByColumn[] | undefined => {
+  const { currentProjectDetails } = projectStore;
+  const { getProjectModuleIds, getModuleById } = moduleStore;
+
+  if (!currentProjectDetails || !currentProjectDetails?.id) return;
+
+  const moduleIds = currentProjectDetails?.id ? getProjectModuleIds(currentProjectDetails?.id) : undefined;
+  if (!moduleIds) return;
+
+  const modules = [];
+
+  moduleIds.map((moduleId) => {
+    const _module = getModuleById(moduleId);
+    if (_module)
+      modules.push({
+        id: _module.id,
+        name: _module.name,
+        icon: <DiceIcon className="w-3.5 h-3.5" />,
+        payload: { module_ids: [_module.id] },
+      });
+  }) as any;
+  modules.push({
+    id: "None",
+    name: "None",
+    icon: <DiceIcon className="w-3.5 h-3.5" />,
+  });
+
+  return modules as any;
 };
 
 const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefined => {

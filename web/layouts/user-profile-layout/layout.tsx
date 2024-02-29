@@ -28,9 +28,10 @@ export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
   const isAuthorizedPath = router.pathname.includes("assigned" || "created" || "subscribed");
 
   return (
-    <div className="h-full w-full flex flex-row">
-      <div className="w-full flex flex-col">
-        <ProfileNavbar isAuthorized={Boolean(isAuthorized)} showProfileIssuesFilter={showProfileIssuesFilter} />
+    <div className="h-full w-full md:flex md:flex-row-reverse md:overflow-hidden">
+      <ProfileSidebar />
+      <div className="flex w-full flex-col md:h-full md:overflow-hidden">
+        <ProfileNavbar isAuthorized={!!isAuthorized} showProfileIssuesFilter={showProfileIssuesFilter} />
         {isAuthorized || !isAuthorizedPath ? (
           <div className={`w-full overflow-hidden md:h-full ${className}`}>{children}</div>
         ) : (
@@ -39,8 +40,6 @@ export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
           </div>
         )}
       </div>
-
-      <ProfileSidebar />
     </div>
   );
 });

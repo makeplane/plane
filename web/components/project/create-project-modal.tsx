@@ -11,7 +11,7 @@ import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
-import { WorkspaceMemberDropdown } from "components/dropdowns";
+import { MemberDropdown } from "components/dropdowns";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // constants
@@ -383,7 +383,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <div className="h-7 flex-shrink-0" tabIndex={5}>
-                            <WorkspaceMemberDropdown
+                            <MemberDropdown
                               value={value}
                               onChange={onChange}
                               placeholder="Lead"

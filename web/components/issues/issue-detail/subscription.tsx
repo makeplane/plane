@@ -67,7 +67,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       >
         {loading ? (
           <span>
-            <span className="hidden sm:block">Loading</span>...
+            <span className="hidden sm:block">Loading...</span>
           </span>
         ) : isSubscribed ? (
           <div className="hidden sm:block">Unsubscribe</div>

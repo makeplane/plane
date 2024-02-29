@@ -1,6 +1,7 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 // hooks
-import { useChart } from "components/gantt-chart";
+import { useGanttChart } from "components/gantt-chart/hooks/use-gantt-chart";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
@@ -8,15 +9,15 @@ import { IMonthBlock } from "../../views";
 // constants
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "components/gantt-chart/constants";
 
-export const MonthChartView: FC<any> = () => {
+export const MonthChartView: FC<any> = observer(() => {
   // chart hook
-  const { currentViewData, renderView } = useChart();
+  const { currentViewData, renderView } = useGanttChart();
   const monthBlocks: IMonthBlock[] = renderView;
 
   return (
-    <div className="absolute top-0 left-0 h-full w-max flex divide-x divide-custom-border-100/50">
+    <div className="absolute top-0 left-0 min-h-full h-max w-max flex divide-x divide-custom-border-100/50">
       {monthBlocks?.map((block, rootIndex) => (
-        <div key={`month-${block?.month}-${block?.year}`} className="relative">
+        <div key={`month-${block?.month}-${block?.year}`} className="relative flex flex-col">
           <div
             className="w-full sticky top-0 z-[5] bg-custom-background-100"
             style={{
@@ -71,4 +72,4 @@ export const MonthChartView: FC<any> = () => {
       ))}
     </div>
   );
-};
+});

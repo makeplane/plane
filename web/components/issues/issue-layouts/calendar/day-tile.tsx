@@ -91,7 +91,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
                     ? "bg-custom-background-90"
                     : "bg-custom-background-100"
-                } ${calendarLayout === "month" ? "min-h-[9rem]" : ""}`}
+                } ${calendarLayout === "month" ? "min-h-[5rem]" : ""}`}
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >

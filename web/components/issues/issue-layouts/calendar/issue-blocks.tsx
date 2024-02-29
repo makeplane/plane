@@ -26,7 +26,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const {
     router: { workspaceSlug, projectId },
   } = useApplication();
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const { getProjectStates } = useProjectState();
   const { peekIssue, setPeekIssue } = useIssueDetail();
   // states
@@ -79,6 +79,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                   target="_blank"
                   onClick={() => handleIssuePeekOverview(issue)}
                   className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+                  disabled={!!issue?.tempId}
                 >
                   <>
                     {issue?.tempId !== undefined && (
@@ -107,7 +108,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                           }}
                         />
                         <div className="flex-shrink-0 text-xs text-custom-text-300">
-                          {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                          {getProjectIdentifierById(issue?.project_id)}-{issue.sequence_id}
                         </div>
                         <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
                           <div className="truncate text-xs">{issue.name}</div>
