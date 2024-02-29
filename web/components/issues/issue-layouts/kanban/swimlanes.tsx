@@ -30,6 +30,15 @@ interface ISubGroupSwimlaneHeader {
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
 }
+
+const getSubGroupHeaderIssuesCount = (issueIds: TSubGroupedIssues, groupById: string) => {
+  let headerCount = 0;
+  Object.keys(issueIds).map((groupState) => {
+    headerCount = headerCount + (issueIds?.[groupState]?.[groupById]?.length || 0);
+  });
+  return headerCount;
+};
+
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   issueIds,
   sub_group_by,
@@ -49,7 +58,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
             column_id={_list.id}
             icon={_list.icon}
             title={_list.name}
-            count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
+            count={getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, _list?.id)}
             kanbanFilters={kanbanFilters}
             handleKanbanFilters={handleKanbanFilters}
             issuePayload={_list.payload}
