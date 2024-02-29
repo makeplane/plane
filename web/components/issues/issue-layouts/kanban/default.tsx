@@ -102,7 +102,13 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const groupList = showEmptyGroup ? list : groupWithIssues;
 
   const visibilityGroupBy = (_list: IGroupByColumn) =>
-    sub_group_by ? false : kanbanFilters?.group_by.includes(_list.id) ? true : false;
+    sub_group_by
+      ? kanbanFilters?.sub_group_by.includes(_list.id)
+        ? true
+        : false
+      : kanbanFilters?.group_by.includes(_list.id)
+      ? true
+      : false;
 
   const isGroupByCreatedBy = group_by === "created_by";
 
