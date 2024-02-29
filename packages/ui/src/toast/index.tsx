@@ -44,29 +44,35 @@ type ToastContentProps = {
   toastId: string | number;
   icon?: React.ReactNode;
   textColorClassName: string;
+  backgroundColorClassName: string;
   borderColorClassName: string;
 };
 
-export const Toast = () => <Toaster visibleToasts={5} gap={28} />;
+export const Toast = () => <Toaster visibleToasts={5} gap={28} position="top-right" />;
 
-// TODO: Update colors as per theme.
 export const setToast = (props: ToastProps) => {
-  const renderToastContent = ({ toastId, icon, textColorClassName, borderColorClassName }: ToastContentProps) =>
+  const renderToastContent = ({
+    toastId,
+    icon,
+    textColorClassName,
+    backgroundColorClassName,
+    borderColorClassName,
+  }: ToastContentProps) =>
     props.type === TOAST_TYPE.LOADING ? (
       <div
         onMouseDown={(e) => {
           e.stopPropagation();
           e.preventDefault();
         }}
-        className={cn("w-[350px] bg-white rounded-lg border shadow-sm p-2", borderColorClassName)}
+        className={cn("w-[350px] rounded-lg border shadow-sm p-2", backgroundColorClassName, borderColorClassName)}
       >
         <div className="w-full flex items-center px-4 py-2">
           {icon && <div className="flex items-center justify-center">{icon}</div>}
-          <div className={`w-full flex items-center gap-0.5 pr-1 ${icon ? "pl-4" : "pl-1"}`}>
-            <div className={`grow ${textColorClassName} text-sm font-semibold`}>{props.title ?? "Loading..."}</div>
+          <div className={cn("w-full flex items-center gap-0.5 pr-1", icon ? "pl-4" : "pl-1")}>
+            <div className={cn("grow text-sm font-semibold", textColorClassName)}>{props.title ?? "Loading..."}</div>
             <div className="flex-shrink-0">
               <X
-                className="text-gray-500 cursor-pointer"
+                className="text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
                 strokeWidth={1.5}
                 width={14}
                 height={14}
@@ -82,10 +88,14 @@ export const setToast = (props: ToastProps) => {
           e.stopPropagation();
           e.preventDefault();
         }}
-        className={`relative flex flex-col w-[350px] bg-white rounded-lg border ${borderColorClassName} shadow-sm p-2`}
+        className={cn(
+          "relative flex flex-col w-[350px] rounded-lg border shadow-sm p-2",
+          backgroundColorClassName,
+          borderColorClassName
+        )}
       >
         <X
-          className="fixed top-2 right-2.5 text-gray-500 cursor-pointer"
+          className="fixed top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
           strokeWidth={1.5}
           width={14}
           height={14}
@@ -93,9 +103,9 @@ export const setToast = (props: ToastProps) => {
         />
         <div className="w-full flex items-center px-4 py-2">
           {icon && <div className="flex items-center justify-center">{icon}</div>}
-          <div className={`flex flex-col gap-0.5 pr-1 ${icon ? "pl-6" : "pl-1"}`}>
-            <div className={`${textColorClassName} text-sm font-semibold`}>{props.title}</div>
-            {props.message && <div className="text-gray-500 text-xs font-medium">{props.message}</div>}
+          <div className={cn("flex flex-col gap-0.5 pr-1", icon ? "pl-6" : "pl-1")}>
+            <div className={cn("text-sm font-semibold", textColorClassName)}>{props.title}</div>
+            {props.message && <div className="text-toast-text-secondary text-xs font-medium">{props.message}</div>}
           </div>
         </div>
       </div>
@@ -107,9 +117,10 @@ export const setToast = (props: ToastProps) => {
         (toastId) =>
           renderToastContent({
             toastId,
-            icon: <CheckCircle2 width={28} height={28} strokeWidth={1.5} className="text-green-600" />,
-            textColorClassName: "text-green-600",
-            borderColorClassName: "border-green-100",
+            icon: <CheckCircle2 width={28} height={28} strokeWidth={1.5} className="text-toast-text-success" />,
+            textColorClassName: "text-toast-text-success",
+            backgroundColorClassName: "bg-toast-background-success",
+            borderColorClassName: "border-toast-border-success",
           }),
         props.id ? { id: props.id } : {}
       );
@@ -118,9 +129,10 @@ export const setToast = (props: ToastProps) => {
         (toastId) =>
           renderToastContent({
             toastId,
-            icon: <XCircle width={28} height={28} strokeWidth={1.5} className="text-red-500" />,
-            textColorClassName: "text-red-500",
-            borderColorClassName: "border-red-100",
+            icon: <XCircle width={28} height={28} strokeWidth={1.5} className="text-toast-text-error" />,
+            textColorClassName: "text-toast-text-error",
+            backgroundColorClassName: "bg-toast-background-error",
+            borderColorClassName: "border-toast-border-error",
           }),
         props.id ? { id: props.id } : {}
       );
@@ -129,9 +141,10 @@ export const setToast = (props: ToastProps) => {
         (toastId) =>
           renderToastContent({
             toastId,
-            icon: <AlertTriangle width={28} height={28} strokeWidth={1.5} className="text-yellow-400" />,
-            textColorClassName: "text-yellow-400",
-            borderColorClassName: "border-yellow-100",
+            icon: <AlertTriangle width={28} height={28} strokeWidth={1.5} className="text-toast-text-warning" />,
+            textColorClassName: "text-toast-text-warning",
+            backgroundColorClassName: "bg-toast-background-warning",
+            borderColorClassName: "border-toast-border-warning",
           }),
         props.id ? { id: props.id } : {}
       );
@@ -140,20 +153,21 @@ export const setToast = (props: ToastProps) => {
         (toastId) =>
           renderToastContent({
             toastId,
-            textColorClassName: "text-indigo-600",
-            borderColorClassName: "border-indigo-100",
+            textColorClassName: "text-toast-text-info",
+            backgroundColorClassName: "bg-toast-background-info",
+            borderColorClassName: "border-toast-border-info",
           }),
         props.id ? { id: props.id } : {}
       );
 
     case TOAST_TYPE.LOADING:
       return toast.custom((toastId) =>
-        // TODO: Add loader
         renderToastContent({
           toastId,
-          icon: <CircularBarSpinner className="text-gray-500" />,
-          textColorClassName: "text-black",
-          borderColorClassName: "border-gray-200 ",
+          icon: <CircularBarSpinner className="text-toast-text-tertiary" />,
+          textColorClassName: "text-toast-text-loading",
+          backgroundColorClassName: "bg-toast-background-loading",
+          borderColorClassName: "border-toast-border-loading",
         })
       );
   }
