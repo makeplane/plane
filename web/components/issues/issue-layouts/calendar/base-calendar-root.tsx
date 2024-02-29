@@ -34,6 +34,8 @@ interface IBaseCalendarRoot {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   updateFilters: (
     workspaceSlug: string,
@@ -135,6 +137,16 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 handleRemoveFromView={
                   issueActions[EIssueActions.REMOVE]
                     ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
+                    : undefined
+                }
+                handleArchive={
+                  issueActions[EIssueActions.ARCHIVE]
+                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.ARCHIVE)
+                    : undefined
+                }
+                handleRestore={
+                  issueActions[EIssueActions.RESTORE]
+                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.RESTORE)
                     : undefined
                 }
                 readOnly={!isEditingAllowed || isCompletedCycle}

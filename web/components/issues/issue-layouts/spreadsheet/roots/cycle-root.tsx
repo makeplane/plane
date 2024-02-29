@@ -38,6 +38,10 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
         if (!workspaceSlug || !cycleId) return;
         issues.removeIssueFromCycle(workspaceSlug, issue.project_id, cycleId, issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+        issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, cycleId);
+      },
     }),
     [issues, workspaceSlug, cycleId]
   );
@@ -57,7 +61,7 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
 
-  const canEditIssueProperties = () => !isCompletedCycle;
+  const canEditIssueProperties = useCallback(() => !isCompletedCycle, [isCompletedCycle]);
 
   return (
     <BaseSpreadsheetRoot

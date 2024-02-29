@@ -69,13 +69,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   // toast alert
   const { setToastAlert } = useToast();
   // local storage
-  const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
+  const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
+    Record<string, Partial<TIssue>>
+  >("draftedIssue", {});
   // current store details
   const { fetchIssues, createIssue, updateIssue } = useIssuesActions(storeType);
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
-    if (!workspaceSlug || !projectId) return;
-    if (issueId === undefined) {
+    if (!workspaceSlug) return;
+    if (!projectId || issueId === undefined) {
       setDescription("<p></p>");
       return;
     }
@@ -130,9 +132,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
   const handleClose = (saveDraftIssueInLocalStorage?: boolean) => {
     if (changesMade && saveDraftIssueInLocalStorage) {
-      const draftIssue = JSON.stringify(changesMade);
-      setLocalStorageDraftIssue(draftIssue);
+      // updating the current edited issue data in the local storage
+      let draftIssues = localStorageDraftIssues ? localStorageDraftIssues : {};
+      if (workspaceSlug) {
+        draftIssues = { ...draftIssues, [workspaceSlug]: changesMade };
+        setLocalStorageDraftIssue(draftIssues);
+      }
     }
+
     setActiveProjectId(null);
     onClose();
   };

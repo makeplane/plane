@@ -292,6 +292,7 @@ def issue_export_task(
                     workspace__id=workspace_id,
                     project_id__in=project_ids,
                     project__project_projectmember__member=exporter_instance.initiated_by_id,
+                    project__project_projectmember__is_active=True
                 )
                 .select_related(
                     "project", "workspace", "state", "parent", "created_by"
