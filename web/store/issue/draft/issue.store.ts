@@ -1,5 +1,9 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import update from "lodash/update";
+import uniq from "lodash/uniq";
+import concat from "lodash/concat";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -18,8 +22,8 @@ export interface IDraftIssues {
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: undefined;
 }
 
@@ -29,7 +33,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
   viewFlags = {
     enableQuickAdd: false,
     enableIssueCreation: true,
-    enableInlineEditing: false,
+    enableInlineEditing: true,
   };
   // root store
   rootIssueStore: IIssueRootStore;
@@ -74,10 +78,11 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const draftIssueIds = this.issues[projectId] ?? [];
+    const draftIssueIds = this.issues[projectId];
+    if (!draftIssueIds) return undefined;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds);
-    if (!_issues) return undefined;
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds, "un-archived");
+    if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
@@ -123,7 +128,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
       const response = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
-        this.issues[projectId].push(response.id);
+        update(this.issues, [projectId], (issueIds = []) => uniq(concat(issueIds, response.id)));
       });
 
       this.rootStore.issues.addIssue([response]);
@@ -136,9 +141,18 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
+      await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
+
       this.rootStore.issues.updateIssue(issueId, data);
-      const response = await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
-      return response;
+
+      if (data.hasOwnProperty("is_draft") && data?.is_draft === false) {
+        runInAction(() => {
+          update(this.issues, [projectId], (issueIds = []) => {
+            if (issueIds.includes(issueId)) pull(issueIds, issueId);
+            return issueIds;
+          });
+        });
+      }
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
@@ -147,17 +161,14 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const response = await this.issueDraftService.deleteDraftIssue(workspaceSlug, projectId, issueId);
+      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[projectId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[projectId].splice(issueIndex, 1);
+      runInAction(() => {
+        update(this.issues, [projectId], (issueIds = []) => {
+          if (issueIds.includes(issueId)) pull(issueIds, issueId);
+          return issueIds;
         });
-
-      this.rootStore.issues.removeIssue(issueId);
-
-      return response;
+      });
     } catch (error) {
       throw error;
     }

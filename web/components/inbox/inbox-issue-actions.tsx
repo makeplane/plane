@@ -1,10 +1,10 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import DatePicker from "react-datepicker";
+import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
 // hooks
-import { useApplication, useUser, useInboxIssues, useIssueDetail, useWorkspace } from "hooks/store";
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -20,6 +20,7 @@ import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle
 // types
 import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
+import { ISSUE_DELETED } from "constants/event-tracker";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -38,9 +39,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   // router
   const router = useRouter();
   // hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureIssueEvent } = useEventTracker();
   const { currentWorkspace } = useWorkspace();
   const {
     issues: { getInboxIssuesByInboxId, getInboxIssueByIssueId, updateInboxIssueStatus, removeInboxIssue },
@@ -87,17 +86,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !currentWorkspace)
             throw new Error("Missing required parameters");
           await removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
-          postHogEventTracker(
-            "ISSUE_DELETED",
-            {
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: {
+              id: inboxIssueId,
               state: "SUCCESS",
+              element: "Inbox page",
             },
-            {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            }
-          );
+          });
           router.push({
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
           });
@@ -107,17 +103,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             title: "Error!",
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
-          postHogEventTracker(
-            "ISSUE_DELETED",
-            {
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: {
+              id: inboxIssueId,
               state: "FAILED",
+              element: "Inbox page",
             },
-            {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            }
-          );
+          });
         }
       },
     }),
@@ -130,7 +123,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       updateInboxIssueStatus,
       removeInboxIssue,
       setToastAlert,
-      postHogEventTracker,
+      captureIssueEvent,
       router,
     ]
   );
@@ -273,15 +266,20 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   <Popover.Panel className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-custom-background-100 p-2 shadow-lg">
                     {({ close }) => (
                       <div className="flex h-full w-full flex-col gap-y-1">
-                        <DatePicker
-                          selected={date ? new Date(date) : null}
-                          onChange={(val) => {
-                            if (!val) return;
-                            setDate(val);
+                        <DayPicker
+                          selected={date ? new Date(date) : undefined}
+                          defaultMonth={date ? new Date(date) : undefined}
+                          onSelect={(date) => {
+                            if (!date) return;
+                            setDate(date);
                           }}
-                          dateFormat="dd-MM-yyyy"
-                          minDate={tomorrow}
-                          inline
+                          mode="single"
+                          className="border border-custom-border-200 rounded-md p-3"
+                          disabled={[
+                            {
+                              before: tomorrow,
+                            },
+                          ]}
                         />
                         <Button
                           variant="primary"

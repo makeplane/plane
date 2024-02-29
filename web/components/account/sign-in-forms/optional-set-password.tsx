@@ -4,10 +4,14 @@ import { Controller, useForm } from "react-hook-form";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
+// icons
+import { Eye, EyeOff } from "lucide-react";
+import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
 
 type Props = {
   email: string;
@@ -31,6 +35,9 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
   const { email, handleSignInRedirection } = props;
   // states
   const [isGoingToWorkspace, setIsGoingToWorkspace] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  // store hooks
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -60,21 +67,34 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Password created successfully.",
         });
+        captureEvent(PASSWORD_CREATE_SELECTED, {
+          state: "SUCCESS",
+          first_time: false,
+        });
         await handleSignInRedirection();
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureEvent(PASSWORD_CREATE_SELECTED, {
+          state: "FAILED",
+          first_time: false,
+        });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+      });
   };
 
   const handleGoToWorkspace = async () => {
     setIsGoingToWorkspace(true);
-
-    await handleSignInRedirection().finally(() => setIsGoingToWorkspace(false));
+    await handleSignInRedirection().finally(() => {
+      captureEvent(PASSWORD_CREATE_SKIPPED, {
+        state: "SUCCESS",
+        first_time: false,
+      });
+      setIsGoingToWorkspace(false);
+    });
   };
 
   return (
@@ -114,17 +134,30 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
               required: "Password is required",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                type="password"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.password)}
-                placeholder="Enter password"
-                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
-                minLength={8}
-                autoFocus
-              />
+              <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.password)}
+                  placeholder="Enter password"
+                  className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                  minLength={8}
+                  autoFocus
+                />
+                {showPassword ? (
+                  <EyeOff
+                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    onClick={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <Eye
+                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    onClick={() => setShowPassword(true)}
+                  />
+                )}
+              </div>
             )}
           />
           <p className="text-onboarding-text-200 text-xs mt-2 pb-3">

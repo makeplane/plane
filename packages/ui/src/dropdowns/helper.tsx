@@ -3,6 +3,7 @@ import { Placement } from "@blueprintjs/popover2";
 
 export interface IDropdownProps {
   customButtonClassName?: string;
+  customButtonTabIndex?: number;
   buttonClassName?: string;
   className?: string;
   customButton?: JSX.Element;
@@ -23,6 +24,7 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   noBorder?: boolean;
   verticalEllipsis?: boolean;
   menuButtonOnClick?: (...args: any) => void;
+  onMenuClose?: () => void;
   closeOnSelect?: boolean;
   portalElement?: Element | null;
 }
@@ -62,6 +64,7 @@ export type ICustomSearchSelectProps = IDropdownProps &
 
 export interface ICustomMenuItemProps {
   children: React.ReactNode;
+  disabled?: boolean;
   onClick?: (args?: any) => void;
   className?: string;
 }

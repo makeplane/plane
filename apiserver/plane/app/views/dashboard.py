@@ -15,6 +15,10 @@ from django.db.models import (
     Func,
     Prefetch,
 )
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 # Third Party imports
@@ -100,7 +104,7 @@ def dashboard_assigned_issues(self, request, slug):
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
-        .prefetch_related("assignees", "labels")
+        .prefetch_related("assignees", "labels", "issue_module__module")
         .prefetch_related(
             Prefetch(
                 "issue_relation",
@@ -110,7 +114,6 @@ def dashboard_assigned_issues(self, request, slug):
             )
         )
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
-        .annotate(module_id=F("issue_module__module_id"))
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -131,7 +134,32 @@ def dashboard_assigned_issues(self, request, slug):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-        .order_by("created_at")
+        .annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
     )
 
     # Priority Ordering
@@ -145,6 +173,23 @@ def dashboard_assigned_issues(self, request, slug):
             output_field=CharField(),
         )
     ).order_by("priority_order")
+
+    if issue_type == "pending":
+        pending_issues_count = assigned_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        ).count()
+        pending_issues = assigned_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        )[:5]
+        return Response(
+            {
+                "issues": IssueSerializer(
+                    pending_issues, many=True, expand=self.expand
+                ).data,
+                "count": pending_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     if issue_type == "completed":
         completed_issues_count = assigned_issues.filter(
@@ -221,9 +266,8 @@ def dashboard_created_issues(self, request, slug):
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
-        .prefetch_related("assignees", "labels")
+        .prefetch_related("assignees", "labels", "issue_module__module")
         .annotate(cycle_id=F("issue_cycle__cycle_id"))
-        .annotate(module_id=F("issue_module__module_id"))
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -244,6 +288,32 @@ def dashboard_created_issues(self, request, slug):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
+        .annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
         .order_by("created_at")
     )
 
@@ -258,6 +328,23 @@ def dashboard_created_issues(self, request, slug):
             output_field=CharField(),
         )
     ).order_by("priority_order")
+
+    if issue_type == "pending":
+        pending_issues_count = created_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        ).count()
+        pending_issues = created_issues.filter(
+            state__group__in=["backlog", "started", "unstarted"]
+        )[:5]
+        return Response(
+            {
+                "issues": IssueSerializer(
+                    pending_issues, many=True, expand=self.expand
+                ).data,
+                "count": pending_issues_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     if issue_type == "completed":
         completed_issues_count = created_issues.filter(

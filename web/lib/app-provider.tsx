@@ -5,7 +5,7 @@ import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // constants
 import { THEMES } from "constants/themes";
 // layouts
@@ -17,7 +17,7 @@ import { SWRConfig } from "swr";
 import { SWR_CONFIG } from "constants/swr-config";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
-const PosthogWrapper = dynamic(() => import("lib/wrappers/posthog-wrapper"), { ssr: false });
+const PostHogProvider = dynamic(() => import("lib/posthog-provider"), { ssr: false });
 const CrispWrapper = dynamic(() => import("lib/wrappers/crisp-wrapper"), { ssr: false });
 
 // nprogress
@@ -37,6 +37,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
     currentUser,
     membership: { currentProjectRole, currentWorkspaceRole },
   } = useUser();
+  const { currentWorkspace } = useWorkspace();
   const {
     config: { envConfig },
   } = useApplication();
@@ -47,15 +48,16 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
         <InstanceLayout>
           <StoreWrapper>
             <CrispWrapper user={currentUser}>
-              <PosthogWrapper
+              <PostHogProvider
                 user={currentUser}
+                currentWorkspaceId={currentWorkspace?.id}
                 workspaceRole={currentWorkspaceRole}
                 projectRole={currentProjectRole}
                 posthogAPIKey={envConfig?.posthog_api_key || null}
                 posthogHost={envConfig?.posthog_host || null}
               >
                 <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-              </PosthogWrapper>
+              </PostHogProvider>
             </CrispWrapper>
           </StoreWrapper>
         </InstanceLayout>

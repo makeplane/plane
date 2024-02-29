@@ -1,7 +1,7 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 // ui
 import { DiceIcon, PhotoFilterIcon } from "@plane/ui";
 
@@ -14,8 +14,8 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
 
   const {
     commandPalette: { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
 
   return (
     <>
@@ -23,7 +23,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            setTrackElement("COMMAND_PALETTE");
+            setTrackElement("Command palette");
             toggleCreateCycleModal(true);
           }}
           className="focus:outline-none"
@@ -39,6 +39,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreateModuleModal(true);
           }}
           className="focus:outline-none"
@@ -54,6 +55,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreateViewModal(true);
           }}
           className="focus:outline-none"
@@ -69,6 +71,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("Command palette");
             toggleCreatePageModal(true);
           }}
           className="focus:outline-none"

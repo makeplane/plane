@@ -10,14 +10,15 @@ import { TActivityOperations } from "../root";
 import { TIssueComment } from "@plane/types";
 // icons
 import { Globe2, Lock } from "lucide-react";
-import { useWorkspace } from "hooks/store";
+import { useMention, useWorkspace } from "hooks/store";
+// helpers
+import { isEmptyHtmlString } from "helpers/string.helper";
 
 const fileService = new FileService();
 
 type TIssueCommentCreate = {
   workspaceSlug: string;
   activityOperations: TActivityOperations;
-  disabled: boolean;
   showAccessSpecifier?: boolean;
 };
 
@@ -40,9 +41,11 @@ const commentAccess: commentAccessType[] = [
 ];
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
-  const { workspaceSlug, activityOperations, disabled, showAccessSpecifier = false } = props;
+  const { workspaceSlug, activityOperations, showAccessSpecifier = false } = props;
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
+  const { mentionHighlights, mentionSuggestions } = useMention();
 
   // refs
   const editorRef = useRef<any>(null);
@@ -50,6 +53,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const {
     handleSubmit,
     control,
+    watch,
     formState: { isSubmitting },
     reset,
   } = useForm<Partial<TIssueComment>>({ defaultValues: { comment_html: "<p></p>" } });
@@ -61,8 +65,20 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     });
   };
 
+  const isEmpty =
+    watch("comment_html") === "" ||
+    watch("comment_html")?.trim() === "" ||
+    watch("comment_html") === "<p></p>" ||
+    isEmptyHtmlString(watch("comment_html") ?? "");
+
   return (
-    <div>
+    <div
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey && !isEmpty) {
+          handleSubmit(onSubmit)(e);
+        }
+      }}
+    >
       <Controller
         name="access"
         control={control}
@@ -72,9 +88,6 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditorWithRef
-                onEnterKeyPress={(e) => {
-                  handleSubmit(onSubmit)(e);
-                }}
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.getDeleteImageFunction(workspaceId)}
@@ -87,6 +100,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 onChange={(comment_json: Object, comment_html: string) => {
                   onChange(comment_html);
                 }}
+                mentionSuggestions={mentionSuggestions}
+                mentionHighlights={mentionHighlights}
                 commentAccessSpecifier={
                   showAccessSpecifier
                     ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
@@ -94,7 +109,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 }
                 submitButton={
                   <Button
-                    disabled={isSubmitting || disabled}
+                    disabled={isSubmitting || isEmpty}
                     variant="primary"
                     type="submit"
                     className="!px-2.5 !py-1.5 !text-xs"

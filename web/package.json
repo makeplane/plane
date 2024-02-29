@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
@@ -34,6 +34,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
+    "dompurify": "^3.0.9",
     "dotenv": "^16.0.3",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
@@ -45,10 +46,10 @@
     "next-pwa": "^5.6.0",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
-    "posthog-js": "^1.88.4",
+    "posthog-js": "^1.105.0",
     "react": "18.2.0",
     "react-color": "^2.19.3",
-    "react-datepicker": "^4.8.0",
+    "react-day-picker": "^8.10.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.38.0",
@@ -61,13 +62,13 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.202",
     "@types/node": "18.0.6",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.2.42",
     "@types/react-color": "^3.0.6",
-    "@types/react-datepicker": "^4.8.0",
     "@types/react-dom": "^18.2.17",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",

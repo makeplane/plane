@@ -45,6 +45,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
     theme: { sidebarCollapsed, toggleSidebar },
     commandPalette: { toggleShortcutModal },
   } = useApplication();
+
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
+import { useEventTracker } from "hooks/store";
 // services
 import { IssueDraftService } from "services/issue";
 // components
@@ -20,6 +21,7 @@ export interface DraftIssueProps {
   onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
   onSubmit: (formData: Partial<TIssue>) => Promise<void>;
   projectId: string;
+  isDraft: boolean;
 }
 
 const issueDraftService = new IssueDraftService();
@@ -34,6 +36,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     projectId,
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
+    isDraft,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -42,6 +45,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { workspaceSlug } = router.query;
   // toast alert
   const { setToastAlert } = useToast();
+  // store hooks
+  const { captureIssueEvent } = useEventTracker();
 
   const handleClose = () => {
     if (changesMade) setIssueDiscardModal(true);
@@ -55,24 +60,33 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
 
     await issueDraftService
       .createDraftIssue(workspaceSlug.toString(), projectId.toString(), payload)
-      .then(() => {
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Draft Issue created successfully.",
         });
-
+        captureIssueEvent({
+          eventName: "Draft issue created",
+          payload: { ...res, state: "SUCCESS" },
+          path: router.asPath,
+        });
         onChange(null);
         setIssueDiscardModal(false);
         onClose(false);
       })
-      .catch(() =>
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Issue could not be created. Please try again.",
-        })
-      );
+        });
+        captureIssueEvent({
+          eventName: "Draft issue created",
+          payload: { ...payload, state: "FAILED" },
+          path: router.asPath,
+        });
+      });
   };
 
   return (
@@ -95,6 +109,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onClose={handleClose}
         onSubmit={onSubmit}
         projectId={projectId}
+        isDraft={isDraft}
       />
     </>
   );

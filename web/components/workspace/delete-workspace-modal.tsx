@@ -5,12 +5,14 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
+import { useEventTracker, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
 import type { IWorkspace } from "@plane/types";
+// constants
+import { WORKSPACE_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -28,9 +30,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
   // toast alert
   const { setToastAlert } = useToast();
@@ -61,9 +61,13 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         handleClose();
         router.push("/");
-        postHogEventTracker("WORKSPACE_DELETED", {
-          res,
-          state: "SUCCESS",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "SUCCESS",
+            element: "Workspace general settings page",
+          },
         });
         setToastAlert({
           type: "success",
@@ -77,8 +81,13 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         });
-        postHogEventTracker("WORKSPACE_DELETED", {
-          state: "FAILED",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "FAILED",
+            element: "Workspace general settings page",
+          },
         });
       });
   };

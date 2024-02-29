@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
-import { useApplication, useWorkspace } from "hooks/store";
+import { useEventTracker, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
@@ -13,6 +13,7 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 import { IWorkspace } from "@plane/types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+import { WORKSPACE_CREATED } from "constants/event-tracker";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -48,9 +49,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();
   // toast alert
   const { setToastAlert } = useToast();
@@ -72,9 +71,13 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
           await createWorkspace(formData)
             .then(async (res) => {
-              postHogEventTracker("WORKSPACE_CREATED", {
-                ...res,
-                state: "SUCCESS",
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  ...res,
+                  state: "SUCCESS",
+                  element: "Create workspace page",
+                },
               });
               setToastAlert({
                 type: "success",
@@ -85,13 +88,17 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() => {
+              captureWorkspaceEvent({
+                eventName: WORKSPACE_CREATED,
+                payload: {
+                  state: "FAILED",
+                  element: "Create workspace page",
+                },
+              });
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
-              });
-              postHogEventTracker("WORKSPACE_CREATED", {
-                state: "FAILED",
               });
             });
         } else setSlugError(true);
@@ -101,9 +108,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           type: "error",
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
-        });
-        postHogEventTracker("WORKSPACE_CREATED", {
-          state: "FAILED",
         });
       });
   };

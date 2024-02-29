@@ -21,7 +21,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
-          cache: "yarn"
 
       - name: Get changed files
         id: changed-files

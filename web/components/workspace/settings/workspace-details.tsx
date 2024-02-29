@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -19,6 +19,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { IWorkspace } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
+import { WORKSPACE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -32,13 +33,12 @@ const fileService = new FileService();
 
 export const WorkspaceDetails: FC = observer(() => {
   // states
+  const [isLoading, setIsLoading] = useState(false);
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureWorkspaceEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -51,13 +51,15 @@ export const WorkspaceDetails: FC = observer(() => {
     control,
     reset,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...currentWorkspace },
   });
 
   const onSubmit = async (formData: IWorkspace) => {
     if (!currentWorkspace) return;
+
+    setIsLoading(true);
 
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
@@ -67,9 +69,13 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        postHogEventTracker("WORKSPACE_UPDATED", {
-          ...res,
-          state: "SUCCESS",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_UPDATED,
+          payload: {
+            ...res,
+            state: "SUCCESS",
+            element: "Workspace general settings page",
+          },
         });
         setToastAlert({
           title: "Success",
@@ -78,11 +84,18 @@ export const WorkspaceDetails: FC = observer(() => {
         });
       })
       .catch((err) => {
-        postHogEventTracker("WORKSPACE_UPDATED", {
-          state: "FAILED",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_UPDATED,
+          payload: {
+            state: "FAILED",
+            element: "Workspace general settings page",
+          },
         });
         console.error(err);
       });
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
   };
 
   const handleRemoveLogo = () => {
@@ -289,8 +302,8 @@ export const WorkspaceDetails: FC = observer(() => {
 
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
-              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-                {isSubmitting ? "Updating..." : "Update Workspace"}
+              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isLoading}>
+                {isLoading ? "Updating..." : "Update Workspace"}
               </Button>
             </div>
           )}

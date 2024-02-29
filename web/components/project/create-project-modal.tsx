@@ -4,20 +4,21 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
-import { WorkspaceMemberDropdown } from "components/dropdowns";
+import { MemberDropdown } from "components/dropdowns";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PROJECT_CREATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -61,13 +62,10 @@ export interface ICreateProjectForm {
 export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureProjectEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { currentWorkspace } = useWorkspace();
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -135,10 +133,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           ...res,
           state: "SUCCESS",
         };
-        postHogEventTracker("PROJECT_CREATED", newPayload, {
-          isGrouping: true,
-          groupType: "Workspace_metrics",
-          groupId: res.workspace,
+        captureProjectEvent({
+          eventName: PROJECT_CREATED,
+          payload: newPayload,
         });
         setToastAlert({
           type: "success",
@@ -157,17 +154,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             title: "Error!",
             message: err.data[key],
           });
-          postHogEventTracker(
-            "PROJECT_CREATED",
-            {
+          captureProjectEvent({
+            eventName: PROJECT_CREATED,
+            payload: {
+              ...payload,
               state: "FAILED",
             },
-            {
-              isGrouping: true,
-              groupType: "Workspace_metrics",
-              groupId: currentWorkspace?.id!,
-            }
-          );
+          });
         });
       });
   };
@@ -205,7 +198,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -371,13 +364,14 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               tabIndex={4}
                             >
                               {NETWORK_CHOICES.map((network) => (
-                                <CustomSelect.Option
-                                  key={network.key}
-                                  value={network.key}
-                                  className="flex items-center gap-1"
-                                >
-                                  <network.icon className="h-4 w-4" />
-                                  {network.label}
+                                <CustomSelect.Option key={network.key} value={network.key}>
+                                  <div className="flex items-start gap-2">
+                                    <network.icon className="h-3.5 w-3.5" />
+                                    <div className="-mt-1">
+                                      <p>{network.label}</p>
+                                      <p className="text-xs text-custom-text-400">{network.description}</p>
+                                    </div>
+                                  </div>
                                 </CustomSelect.Option>
                               ))}
                             </CustomSelect>
@@ -389,7 +383,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <div className="h-7 flex-shrink-0" tabIndex={5}>
-                            <WorkspaceMemberDropdown
+                            <MemberDropdown
                               value={value}
                               onChange={onChange}
                               placeholder="Lead"

@@ -1,22 +1,21 @@
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
-import { Loader } from "@plane/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { ProjectsLoader } from "components/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const ProjectCardList = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
     currentUser,
@@ -28,22 +27,12 @@ export const ProjectCardList = observer(() => {
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-  if (!workspaceProjectIds)
-    return (
-      <Loader className="grid grid-cols-3 gap-4">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-      </Loader>
-    );
+  if (!workspaceProjectIds) return <ProjectsLoader />;
 
   return (
     <>
       {workspaceProjectIds.length > 0 ? (
-        <div className="h-full w-full overflow-y-auto p-8">
+        <div className="h-full w-full overflow-y-auto p-8 vertical-scrollbar scrollbar-lg">
           {searchedProjects.length == 0 ? (
             <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
           ) : (
@@ -61,18 +50,18 @@ export const ProjectCardList = observer(() => {
       ) : (
         <EmptyState
           image={emptyStateImage}
-          title="Start a Project"
-          description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
+          title={WORKSPACE_EMPTY_STATE_DETAILS["projects"].title}
+          description={WORKSPACE_EMPTY_STATE_DETAILS["projects"].description}
           primaryButton={{
-            text: "Start your first project",
+            text: WORKSPACE_EMPTY_STATE_DETAILS["projects"].primaryButton.text,
             onClick: () => {
-              setTrackElement("PROJECTS_EMPTY_STATE");
+              setTrackElement("Project empty state");
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}
           comicBox={{
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+            title: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.title,
+            description: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.description,
           }}
           size="lg"
           disabled={!isEditingAllowed}

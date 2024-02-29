@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import xor from "lodash/xor";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // components
@@ -32,58 +33,48 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
   const issue = getIssueById(issueId);
   const disableSelect = disabled || isUpdating;
 
-  const handleIssueModuleChange = async (moduleId: string | null) => {
-    if (!issue || issue.module_id === moduleId) return;
+  const handleIssueModuleChange = async (moduleIds: string[]) => {
+    if (!issue || !issue.module_ids) return;
+
     setIsUpdating(true);
-    if (moduleId) await issueOperations.addIssueToModule?.(workspaceSlug, projectId, moduleId, [issueId]);
-    else await issueOperations.removeIssueFromModule?.(workspaceSlug, projectId, issue.module_id ?? "", issueId);
+    const updatedModuleIds = xor(issue.module_ids, moduleIds);
+    const modulesToAdd: string[] = [];
+    const modulesToRemove: string[] = [];
+
+    for (const moduleId of updatedModuleIds) {
+      if (issue.module_ids.includes(moduleId)) {
+        modulesToRemove.push(moduleId);
+      } else {
+        modulesToAdd.push(moduleId);
+      }
+    }
+    if (modulesToRemove.length > 0)
+      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, modulesToRemove);
+
+    if (modulesToAdd.length > 0)
+      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, modulesToAdd);
+
     setIsUpdating(false);
   };
 
   return (
-    <div className={cn("flex items-center gap-1 h-full", className)}>
+    <div className={cn(`flex items-center gap-1 h-full`, className)}>
       <ModuleDropdown
-        value={issue?.module_id ?? null}
-        onChange={handleIssueModuleChange}
-        buttonVariant="transparent-with-text"
         projectId={projectId}
-        disabled={disableSelect}
-        className="w-full group"
-        buttonContainerClassName="w-full text-left"
-        buttonClassName={`text-sm ${issue?.module_id ? "" : "text-custom-text-400"}`}
+        value={issue?.module_ids ?? []}
+        onChange={handleIssueModuleChange}
         placeholder="No module"
+        disabled={disableSelect}
+        className="w-full h-full group"
+        buttonContainerClassName="w-full"
+        buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
+        buttonVariant="transparent-with-text"
         hideIcon
         dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+        showTooltip
+        multiple
       />
-      {/* <CustomSearchSelect
-        value={issue?.module_id}
-        onChange={(value: any) => handleIssueModuleChange(value)}
-        options={options}
-        customButton={
-          <div>
-            <Tooltip position="left" tooltipContent={`${issueModule?.name ?? "No module"}`}>
-              <button
-                type="button"
-                className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
-                  disableSelect ? "cursor-not-allowed" : ""
-                } max-w-[10rem]`}
-              >
-                <span
-                  className={`flex items-center gap-1.5 truncate ${
-                    issueModule ? "text-custom-text-100" : "text-custom-text-200"
-                  }`}
-                >
-                  <span className="flex-shrink-0">{issueModule && <DiceIcon className="h-3.5 w-3.5" />}</span>
-                  <span className="truncate">{issueModule?.name ?? "No module"}</span>
-                </span>
-              </button>
-            </Tooltip>
-          </div>
-        }
-        noChevron
-        disabled={disableSelect}
-      /> */}
       {isUpdating && <Spinner className="h-4 w-4" />}
     </div>
   );

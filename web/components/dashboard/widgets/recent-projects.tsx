@@ -3,7 +3,7 @@ import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
 import { WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
@@ -72,6 +72,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const {
     commandPalette: { toggleCreateProjectModal },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -95,7 +96,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
         href={`/${workspaceSlug}/projects`}
         className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline"
       >
-        Your projects
+        Recent projects
       </Link>
       <div className="space-y-8 mt-4 mx-7">
         {canCreateProject && (
@@ -105,6 +106,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

@@ -1,5 +1,6 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -9,9 +10,7 @@ import { IIssueRootStore } from "../root.store";
 import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 interface IProfileIssueTabTypes {
-  assigned: string[];
-  created: string[];
-  subscribed: string[];
+  [key: string]: string[];
 }
 
 export interface IProfileIssues {
@@ -23,6 +22,7 @@ export interface IProfileIssues {
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   viewFlags: ViewFlags;
   // actions
+  setViewId: (viewId: "assigned" | "created" | "subscribed") => void;
   fetchIssues: (
     workspaceSlug: string,
     projectId: string | undefined,
@@ -42,13 +42,19 @@ export interface IProfileIssues {
     issueId: string,
     data: Partial<TIssue>,
     userId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     userId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
+  archiveIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    userId?: string | undefined
+  ) => Promise<void>;
   quickAddIssue: undefined;
 }
 
@@ -73,10 +79,12 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       groupedIssueIds: computed,
       viewFlags: computed,
       // action
+      setViewId: action.bound,
       fetchIssues: action,
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
+      archiveIssue: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -86,8 +94,11 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
   get groupedIssueIds() {
     const userId = this.rootIssueStore.userId;
+    const workspaceSlug = this.rootIssueStore.workspaceSlug;
     const currentView = this.currentView;
-    if (!userId || !currentView) return undefined;
+    if (!userId || !currentView || !workspaceSlug) return undefined;
+
+    const uniqueViewId = `${workspaceSlug}_${currentView}`;
 
     const displayFilters = this.rootIssueStore?.profileIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
@@ -97,12 +108,12 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    const userIssueIds = this.issues[userId]?.[currentView];
+    const userIssueIds = this.issues[userId]?.[uniqueViewId];
 
     if (!userIssueIds) return;
 
-    const _issues = this.rootStore.issues.getIssuesByIds(userIssueIds);
-    if (!_issues) return undefined;
+    const _issues = this.rootStore.issues.getIssuesByIds(userIssueIds, "un-archived");
+    if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
@@ -131,6 +142,10 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     };
   }
 
+  setViewId(viewId: "assigned" | "created" | "subscribed") {
+    this.currentView = viewId;
+  }
+
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string | undefined,
@@ -144,6 +159,8 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
       this.loader = loadType;
       this.currentView = view;
+
+      const uniqueViewId = `${workspaceSlug}_${view}`;
 
       let params: any = this.rootIssueStore?.profileIssuesFilter?.appliedFilters;
       params = {
@@ -161,7 +178,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       runInAction(() => {
         set(
           this.issues,
-          [userId, view],
+          [userId, uniqueViewId],
           response.map((issue) => issue.id)
         );
         this.loader = undefined;
@@ -187,8 +204,10 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
       const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
 
+      const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
+
       runInAction(() => {
-        this.issues[userId][this.currentView].push(response.id);
+        this.issues[userId][uniqueViewId].push(response.id);
       });
 
       this.rootStore.issues.addIssue([response]);
@@ -210,14 +229,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       if (!userId) throw new Error("user id is required");
 
       this.rootStore.issues.updateIssue(issueId, data);
-      const response = await this.rootIssueStore.projectIssues.updateIssue(
-        workspaceSlug,
-        projectId,
-        data.id as keyof TIssue,
-        data
-      );
-
-      return response;
+      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, data.id as keyof TIssue, data);
     } catch (error) {
       if (this.currentView) this.fetchIssues(workspaceSlug, undefined, "mutation", userId, this.currentView);
       throw error;
@@ -232,15 +244,35 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
   ) => {
     if (!userId) return;
     try {
-      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
-      const issueIndex = this.issues[userId][this.currentView].findIndex((_issueId) => _issueId === issueId);
+      const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
+
+      const issueIndex = this.issues[userId][uniqueViewId].findIndex((_issueId) => _issueId === issueId);
       if (issueIndex >= 0)
         runInAction(() => {
-          this.issues[userId][this.currentView].splice(issueIndex, 1);
+          this.issues[userId][uniqueViewId].splice(issueIndex, 1);
         });
+    } catch (error) {
+      throw error;
+    }
+  };
 
-      return response;
+  archiveIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    userId: string | undefined = undefined
+  ) => {
+    if (!userId) return;
+    try {
+      await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
+
+      const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
+
+      runInAction(() => {
+        pull(this.issues[userId][uniqueViewId], issueId);
+      });
     } catch (error) {
       throw error;
     }

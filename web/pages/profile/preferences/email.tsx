@@ -2,8 +2,11 @@ import { ReactElement } from "react";
 import useSWR from "swr";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
+// ui
+import { EmailSettingsLoader } from "components/ui";
 // components
 import { EmailNotificationForm } from "components/profile/preferences";
+import { PageHead } from "components/core";
 // services
 import { UserService } from "services/user.service";
 // type
@@ -14,18 +17,21 @@ const userService = new UserService();
 
 const ProfilePreferencesThemePage: NextPageWithLayout = () => {
   // fetching user email notification settings
-  const { data } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
+  const { data, isLoading } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
     userService.currentUserEmailNotificationSettings()
   );
 
-  if (!data) {
-    return null;
+  if (!data || isLoading) {
+    return <EmailSettingsLoader />;
   }
 
   return (
-    <div className="mx-auto mt-8 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
-      <EmailNotificationForm data={data} />
-    </div>
+    <>
+      <PageHead title="Profile - Email Preference" />
+      <div className="mx-auto mt-8 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
+        <EmailNotificationForm data={data} />
+      </div>
+    </>
   );
 };
 

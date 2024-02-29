@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mutate } from "swr";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,6 +12,7 @@ import useToast from "hooks/use-toast";
 import { Tooltip } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "constants/profile";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -52,6 +53,35 @@ export const ProfileLayoutSidebar = observer(() => {
     currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useOutsideClickDetector(ref, () => {
+    if (sidebarCollapsed === false) {
+      if (window.innerWidth < 768) {
+        toggleSidebar();
+      }
+    }
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        toggleSidebar(true);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [toggleSidebar]);
+
+  const handleItemClick = () => {
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
+
   const handleSignOut = async () => {
     setIsSigningOut(true);
 
@@ -73,12 +103,15 @@ export const ProfileLayoutSidebar = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative ${
-        sidebarCollapsed ? "" : "md:w-[280px]"
-      } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative 
+        ${sidebarCollapsed ? "-ml-[280px]" : ""}
+        sm:${sidebarCollapsed ? "-ml-[280px]" : ""}
+        md:ml-0 ${sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+        lg:ml-0 ${sidebarCollapsed ? "w-[80px]" : "w-[280px]"}
+      `}
     >
-      <div className="flex h-full w-full flex-col gap-y-4">
-        <Link href={`/${redirectWorkspaceSlug}`}>
+      <div ref={ref} className="flex h-full w-full flex-col gap-y-4">
+        <Link href={`/${redirectWorkspaceSlug}`} onClick={handleItemClick}>
           <div
             className={`flex flex-shrink-0 items-center gap-2 truncate px-4 pt-4 ${
               sidebarCollapsed ? "justify-center" : ""
@@ -101,7 +134,7 @@ export const ProfileLayoutSidebar = observer(() => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
               return (
-                <Link key={link.key} href={link.href} className="block w-full">
+                <Link key={link.key} href={link.href} className="block w-full" onClick={handleItemClick}>
                   <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
@@ -132,6 +165,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${
                     sidebarCollapsed ? "justify-center" : `justify-between`
                   }`}
+                  onClick={handleItemClick}
                 >
                   <span
                     className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-custom-sidebar-background-80 ${
@@ -163,7 +197,7 @@ export const ProfileLayoutSidebar = observer(() => {
           )}
           <div className="mt-1.5">
             {WORKSPACE_ACTION_LINKS.map((link) => (
-              <Link className="block w-full" key={link.key} href={link.href}>
+              <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
                 <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${

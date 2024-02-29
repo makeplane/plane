@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useProject } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -12,6 +12,8 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { createIssuePayload } from "helpers/issue.helper";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 const Inputs = (props: any) => {
   const { register, setFocus, projectDetail } = props;
@@ -54,12 +56,13 @@ const defaultValues: Partial<TIssue> = {
 };
 
 export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = observer((props) => {
-  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
+  const { captureIssueEvent } = useEventTracker();
 
   const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
 
@@ -103,13 +106,24 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
             ...payload,
           },
           viewId
-        ));
+        ).then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Kanban quick add" },
+            path: router.asPath,
+          });
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
     } catch (err: any) {
+      captureIssueEvent({
+        eventName: ISSUE_CREATED,
+        payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
+        path: router.asPath,
+      });
       console.error(err);
       setToastAlert({
         type: "error",

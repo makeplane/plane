@@ -1,18 +1,20 @@
 import React, { useRef, useState } from "react";
 import { Combobox } from "@headlessui/react";
-import DatePicker from "react-datepicker";
+import { DayPicker, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
-import { Calendar, CalendarDays, X } from "lucide-react";
+import { CalendarDays, X } from "lucide-react";
 // hooks
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// ui
-import { Tooltip } from "@plane/ui";
+// components
+import { DropdownButton } from "./buttons";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
 import { TDropdownProps } from "./types";
+// constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
@@ -21,159 +23,9 @@ type Props = TDropdownProps & {
   minDate?: Date;
   maxDate?: Date;
   onChange: (val: Date | null) => void;
+  onClose?: () => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
-  showPlaceholderIcon?: boolean;
-};
-
-type ButtonProps = {
-  className?: string;
-  clearIconClassName: string;
-  date: string | Date | null;
-  icon: React.ReactNode;
-  isClearable: boolean;
-  hideIcon?: boolean;
-  hideText?: boolean;
-  isActive?: boolean;
-  onClear: () => void;
-  placeholder: string;
-  tooltip: boolean;
-  showPlaceholderIcon?: boolean;
-};
-
-const BorderButton = (props: ButtonProps) => {
-  const {
-    className,
-    clearIconClassName,
-    date,
-    icon,
-    isClearable,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    onClear,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip
-      tooltipHeading={placeholder}
-      tooltipContent={date ? renderFormattedDate(date) : "None"}
-      disabled={!tooltip}
-    >
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          { "bg-custom-background-80": isActive },
-          className
-        )}
-      >
-        {!hideIcon && icon}
-        {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
-        {isClearable && (
-          <X
-            className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClear();
-            }}
-          />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const BackgroundButton = (props: ButtonProps) => {
-  const {
-    className,
-    clearIconClassName,
-    date,
-    icon,
-    isClearable,
-    hideIcon = false,
-    hideText = false,
-    onClear,
-    placeholder,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip
-      tooltipHeading={placeholder}
-      tooltipContent={date ? renderFormattedDate(date) : "None"}
-      disabled={!tooltip}
-    >
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
-          className
-        )}
-      >
-        {!hideIcon && icon}
-        {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
-        {isClearable && (
-          <X
-            className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClear();
-            }}
-          />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const TransparentButton = (props: ButtonProps) => {
-  const {
-    className,
-    clearIconClassName,
-    date,
-    icon,
-    isClearable,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    onClear,
-    placeholder,
-    tooltip,
-    showPlaceholderIcon = false,
-  } = props;
-
-  return (
-    <Tooltip
-      tooltipHeading={placeholder}
-      tooltipContent={date ? renderFormattedDate(date) : "None"}
-      disabled={!tooltip}
-    >
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          { "bg-custom-background-80": isActive },
-          className
-        )}
-      >
-        {!hideIcon && icon}
-        {!hideText && <span className="flex-grow truncate">{date ? renderFormattedDate(date) : placeholder}</span>}
-        {showPlaceholderIcon && !date && (
-          <Calendar className="h-2.5 w-2.5 flex-shrink-0 hidden group-hover:inline text-custom-text-400" />
-        )}
-
-        {isClearable && (
-          <X
-            className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClear();
-            }}
-          />
-        )}
-      </div>
-    </Tooltip>
-  );
 };
 
 export const DateDropdown: React.FC<Props> = (props) => {
@@ -191,13 +43,14 @@ export const DateDropdown: React.FC<Props> = (props) => {
     minDate,
     maxDate,
     onChange,
+    onClose,
     placeholder = "Date",
     placement,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
-    showPlaceholderIcon = false,
     value,
   } = props;
+  // states
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -217,15 +70,43 @@ export const DateDropdown: React.FC<Props> = (props) => {
     ],
   });
 
-  const isDateSelected = value !== null && value !== undefined && value.toString().trim() !== "";
+  const isDateSelected = value && value.toString().trim() !== "";
 
-  const openDropdown = () => {
-    setIsOpen(true);
+  const onOpen = () => {
     if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (!isOpen) return;
+    setIsOpen(false);
+    if (referenceElement) referenceElement.blur();
+    onClose && onClose();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
+  };
+
+  const dropdownOnChange = (val: Date | null) => {
+    onChange(val);
+    if (closeOnSelect) handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
+
+  const disabledDays: Matcher[] = [];
+  if (minDate) disabledDays.push({ before: minDate });
+  if (maxDate) disabledDays.push({ after: maxDate });
 
   return (
     <Combobox
@@ -233,120 +114,69 @@ export const DateDropdown: React.FC<Props> = (props) => {
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full", className)}
-      onKeyDown={handleKeyDown}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          if (!isOpen) handleKeyDown(e);
+        } else handleKeyDown(e);
+      }}
+      disabled={disabled}
     >
       <Combobox.Button as={React.Fragment}>
         <button
-          ref={setReferenceElement}
           type="button"
           className={cn(
-            "block h-full max-w-full outline-none",
+            "clickable block h-full max-w-full outline-none",
             {
               "cursor-not-allowed text-custom-text-200": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
           )}
-          onClick={openDropdown}
+          ref={setReferenceElement}
+          onClick={handleOnClick}
         >
-          {buttonVariant === "border-with-text" ? (
-            <BorderButton
-              date={value}
-              className={buttonClassName}
-              clearIconClassName={clearIconClassName}
-              hideIcon={hideIcon}
-              icon={icon}
-              placeholder={placeholder}
-              isClearable={isClearable && isDateSelected}
-              onClear={() => onChange(null)}
-              isActive={isOpen}
-              tooltip={tooltip}
-            />
-          ) : buttonVariant === "border-without-text" ? (
-            <BorderButton
-              date={value}
-              className={buttonClassName}
-              clearIconClassName={clearIconClassName}
-              hideIcon={hideIcon}
-              icon={icon}
-              placeholder={placeholder}
-              isClearable={isClearable && isDateSelected}
-              onClear={() => onChange(null)}
-              isActive={isOpen}
-              tooltip={tooltip}
-              hideText
-            />
-          ) : buttonVariant === "background-with-text" ? (
-            <BackgroundButton
-              date={value}
-              className={buttonClassName}
-              clearIconClassName={clearIconClassName}
-              hideIcon={hideIcon}
-              icon={icon}
-              placeholder={placeholder}
-              isClearable={isClearable && isDateSelected}
-              onClear={() => onChange(null)}
-              tooltip={tooltip}
-            />
-          ) : buttonVariant === "background-without-text" ? (
-            <BackgroundButton
-              date={value}
-              className={buttonClassName}
-              clearIconClassName={clearIconClassName}
-              hideIcon={hideIcon}
-              icon={icon}
-              placeholder={placeholder}
-              isClearable={isClearable && isDateSelected}
-              onClear={() => onChange(null)}
-              tooltip={tooltip}
-              hideText
-            />
-          ) : buttonVariant === "transparent-with-text" ? (
-            <TransparentButton
-              date={value}
-              className={buttonClassName}
-              clearIconClassName={clearIconClassName}
-              hideIcon={hideIcon}
-              icon={icon}
-              placeholder={placeholder}
-              isClearable={isClearable && isDateSelected}
-              onClear={() => onChange(null)}
-              isActive={isOpen}
-              tooltip={tooltip}
-              showPlaceholderIcon={showPlaceholderIcon}
-            />
-          ) : buttonVariant === "transparent-without-text" ? (
-            <TransparentButton
-              date={value}
-              className={buttonClassName}
-              clearIconClassName={clearIconClassName}
-              hideIcon={hideIcon}
-              icon={icon}
-              placeholder={placeholder}
-              isClearable={isClearable && isDateSelected}
-              onClear={() => onChange(null)}
-              isActive={isOpen}
-              tooltip={tooltip}
-              hideText
-              showPlaceholderIcon={showPlaceholderIcon}
-            />
-          ) : null}
+          <DropdownButton
+            className={buttonClassName}
+            isActive={isOpen}
+            tooltipHeading={placeholder}
+            tooltipContent={value ? renderFormattedDate(value) : "None"}
+            showTooltip={showTooltip}
+            variant={buttonVariant}
+          >
+            {!hideIcon && icon}
+            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              <span className="flex-grow truncate">{value ? renderFormattedDate(value) : placeholder}</span>
+            )}
+            {isClearable && !disabled && isDateSelected && (
+              <X
+                className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange(null);
+                }}
+              />
+            )}
+          </DropdownButton>
         </button>
       </Combobox.Button>
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
-          <div className="my-1" ref={setPopperElement} style={styles.popper} {...attributes.popper}>
-            <DatePicker
-              selected={value ? new Date(value) : null}
-              onChange={(val) => {
-                onChange(val);
-                if (closeOnSelect) closeDropdown();
+          <div
+            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3"
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <DayPicker
+              selected={value ? new Date(value) : undefined}
+              defaultMonth={value ? new Date(value) : undefined}
+              onSelect={(date) => {
+                dropdownOnChange(date ?? null);
               }}
-              dateFormat="dd-MM-yyyy"
-              minDate={minDate}
-              maxDate={maxDate}
-              calendarClassName="shadow-custom-shadow-rg rounded"
-              inline
+              showOutsideDays
+              initialFocus
+              disabled={disabledDays}
+              mode="single"
             />
           </div>
         </Combobox.Options>

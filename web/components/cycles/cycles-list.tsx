@@ -9,7 +9,7 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Loader } from "@plane/ui";
 // constants
-import { CYCLE_EMPTY_STATE_DETAILS } from "constants/cycle";
+import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export interface ICyclesList {
   cycleIds: string[];
@@ -37,7 +37,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
           {cycleIds.length > 0 ? (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
-                <div className="flex h-full w-full flex-col overflow-y-auto">
+                <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
                   {cycleIds.map((cycleId) => (
                     <CyclesListItem
                       key={cycleId}

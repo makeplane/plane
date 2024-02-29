@@ -4,15 +4,18 @@ import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
-import { useProject } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { createIssuePayload } from "helpers/issue.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IProject, TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 interface IInputProps {
   formKey: string;
@@ -66,6 +69,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { getProjectById } = useProject();
+  const { captureIssueEvent } = useEventTracker();
   const { setToastAlert } = useToast();
 
   const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
@@ -108,13 +112,24 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
 
     try {
       quickAddCallback &&
-        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId));
+        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId).then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
+            path: router.asPath,
+          });
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
     } catch (err: any) {
+      captureIssueEvent({
+        eventName: ISSUE_CREATED,
+        payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
+        path: router.asPath,
+      });
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -124,10 +139,12 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
   };
   return (
     <>
-      <div
-        className={`${errors && errors?.name && errors?.name?.message ? `border border-red-500/20 bg-red-500/10` : ``}`}
-      >
-        {isOpen ? (
+      {isOpen ? (
+        <div
+          className={cn("sticky bottom-0 z-[1] bg-custom-background-100", {
+            "border border-red-500/20 bg-red-500/10": errors && errors?.name && errors?.name?.message,
+          })}
+        >
           <div className="shadow-custom-shadow-sm">
             <form
               ref={ref}
@@ -138,16 +155,17 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
             </form>
             <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
           </div>
-        ) : (
-          <div
-            className="flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100"
-            onClick={() => setIsOpen(true)}
-          >
-            <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100 bg-custom-background-100 border-custom-border-200 border-t-[1px]"
+          onClick={() => setIsOpen(true)}
+        >
+          <PlusIcon className="h-3.5 w-3.5 stroke-2" />
+          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+        </button>
+      )}
     </>
   );
 });

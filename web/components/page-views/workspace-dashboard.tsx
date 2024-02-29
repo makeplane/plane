@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useDashboard, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
@@ -13,14 +13,16 @@ import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { Spinner } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const WorkspaceDashboardView = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
+  const { captureEvent, setTrackElement } = useEventTracker();
   const {
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { postHogEventTracker },
     router: { workspaceSlug },
   } = useApplication();
   const {
@@ -37,9 +39,8 @@ export const WorkspaceDashboardView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        postHogEventTracker("USER_TOUR_COMPLETE", {
+        captureEvent(PRODUCT_TOUR_COMPLETED, {
           user_id: currentUser?.id,
-          email: currentUser?.email,
           state: "SUCCESS",
         });
       })
@@ -59,33 +60,37 @@ export const WorkspaceDashboardView = observer(() => {
 
   return (
     <>
+      {currentUser && !currentUser.is_tour_completed && (
+        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
+          <TourRoot onComplete={handleTourCompleted} />
+        </div>
+      )}
       {homeDashboardId && joinedProjectIds ? (
         <>
           {joinedProjectIds.length > 0 ? (
-            <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto">
+            <>
               <IssuePeekOverview />
-              {currentUser && <UserGreetingsView user={currentUser} />}
-              {currentUser && !currentUser.is_tour_completed && (
-                <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
-                  <TourRoot onComplete={handleTourCompleted} />
-                </div>
-              )}
-              <DashboardWidgets />
-            </div>
+              <div className="space-y-7 p-7 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+                {currentUser && <UserGreetingsView user={currentUser} />}
+
+                <DashboardWidgets />
+              </div>
+            </>
           ) : (
             <EmptyState
               image={emptyStateImage}
-              title="Overview of your projects, activity, and metrics"
-              description=" Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this
-            page will transform into a space that helps you progress. Admins will also see items which help their team
-            progress."
+              title={WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].title}
+              description={WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].description}
               primaryButton={{
-                text: "Build your first project",
-                onClick: () => toggleCreateProjectModal(true),
+                text: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].primaryButton.text,
+                onClick: () => {
+                  setTrackElement("Dashboard empty state");
+                  toggleCreateProjectModal(true);
+                },
               }}
               comicBox={{
-                title: "Everything starts with a project in Plane",
-                description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+                title: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].comicBox.title,
+                description: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].comicBox.description,
               }}
               size="lg"
               disabled={!isEditingAllowed}
@@ -93,7 +98,7 @@ export const WorkspaceDashboardView = observer(() => {
           )}
         </>
       ) : (
-        <div className="h-full w-full grid place-items-center">
+        <div className="grid h-full w-full place-items-center">
           <Spinner />
         </div>
       )}

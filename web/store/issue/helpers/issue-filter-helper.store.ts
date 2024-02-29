@@ -74,6 +74,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       mentions: filters?.mentions || undefined,
       created_by: filters?.created_by || undefined,
       labels: filters?.labels || undefined,
+      cycle: filters?.cycle || undefined,
+      module: filters?.module || undefined,
       start_date: filters?.start_date || undefined,
       target_date: filters?.target_date || undefined,
       project: filters.project || undefined,
@@ -81,7 +83,6 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       // display filters
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,
-      start_target_date: displayFilters?.start_target_date ?? true,
     };
 
     const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};
@@ -108,6 +109,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     mentions: filters?.mentions || null,
     created_by: filters?.created_by || null,
     labels: filters?.labels || null,
+    cycle: filters?.cycle || null,
+    module: filters?.module || null,
     start_date: filters?.start_date || null,
     target_date: filters?.target_date || null,
     project: filters?.project || null,
@@ -170,7 +173,6 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       type: filters?.type || null,
       sub_issue: filters?.sub_issue || false,
       show_empty_groups: filters?.show_empty_groups || false,
-      start_target_date: filters?.start_target_date || false,
     };
   };
 
@@ -193,6 +195,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     key: displayProperties?.key ?? true,
     created_on: displayProperties?.created_on ?? true,
     updated_on: displayProperties?.updated_on ?? true,
+    modules: displayProperties?.modules ?? true,
+    cycle: displayProperties?.cycle ?? true,
   });
 
   /**

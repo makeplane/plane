@@ -4,7 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import { RootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
-import { IState } from "@plane/types";
+import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
 import { IIssueStore, IssueStore } from "./issue.store";
 import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
@@ -22,6 +22,7 @@ import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedI
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
 import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
 import { ICalendarStore, CalendarStore } from "./issue_calendar_view.store";
+import { IWorkspaceMembership } from "store/member/workspace-member.store";
 
 export interface IIssueRootStore {
   currentUserId: string | undefined;
@@ -32,11 +33,16 @@ export interface IIssueRootStore {
   viewId: string | undefined;
   globalViewId: string | undefined; // all issues view id
   userId: string | undefined; // user profile detail Id
-  states: string[] | undefined;
+  stateMap: Record<string, IState> | undefined;
   stateDetails: IState[] | undefined;
-  labels: string[] | undefined;
-  members: string[] | undefined;
-  projects: string[] | undefined;
+  labelMap: Record<string, IIssueLabel> | undefined;
+  workSpaceMemberRolesMap: Record<string, IWorkspaceMembership> | undefined;
+  memberMap: Record<string, IUserLite> | undefined;
+  projectMap: Record<string, IProject> | undefined;
+  moduleMap: Record<string, IModule> | undefined;
+  cycleMap: Record<string, ICycle> | undefined;
+
+  rootStore: RootStore;
 
   issues: IIssueStore;
 
@@ -81,11 +87,16 @@ export class IssueRootStore implements IIssueRootStore {
   viewId: string | undefined = undefined;
   globalViewId: string | undefined = undefined;
   userId: string | undefined = undefined;
-  states: string[] | undefined = undefined;
+  stateMap: Record<string, IState> | undefined = undefined;
   stateDetails: IState[] | undefined = undefined;
-  labels: string[] | undefined = undefined;
-  members: string[] | undefined = undefined;
-  projects: string[] | undefined = undefined;
+  labelMap: Record<string, IIssueLabel> | undefined = undefined;
+  workSpaceMemberRolesMap: Record<string, IWorkspaceMembership> | undefined = undefined;
+  memberMap: Record<string, IUserLite> | undefined = undefined;
+  projectMap: Record<string, IProject> | undefined = undefined;
+  moduleMap: Record<string, IModule> | undefined = undefined;
+  cycleMap: Record<string, ICycle> | undefined = undefined;
+
+  rootStore: RootStore;
 
   issues: IIssueStore;
 
@@ -129,12 +140,17 @@ export class IssueRootStore implements IIssueRootStore {
       viewId: observable.ref,
       userId: observable.ref,
       globalViewId: observable.ref,
-      states: observable,
+      stateMap: observable,
       stateDetails: observable,
-      labels: observable,
-      members: observable,
-      projects: observable,
+      labelMap: observable,
+      memberMap: observable,
+      workSpaceMemberRolesMap: observable,
+      projectMap: observable,
+      moduleMap: observable,
+      cycleMap: observable,
     });
+
+    this.rootStore = rootStore;
 
     autorun(() => {
       if (rootStore.user.currentUser?.id) this.currentUserId = rootStore.user.currentUser?.id;
@@ -145,13 +161,16 @@ export class IssueRootStore implements IIssueRootStore {
       if (rootStore.app.router.viewId) this.viewId = rootStore.app.router.viewId;
       if (rootStore.app.router.globalViewId) this.globalViewId = rootStore.app.router.globalViewId;
       if (rootStore.app.router.userId) this.userId = rootStore.app.router.userId;
-      if (!isEmpty(rootStore?.state?.stateMap)) this.states = Object.keys(rootStore?.state?.stateMap);
+      if (!isEmpty(rootStore?.state?.stateMap)) this.stateMap = rootStore?.state?.stateMap;
       if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;
-      if (!isEmpty(rootStore?.label?.labelMap)) this.labels = Object.keys(rootStore?.label?.labelMap);
+      if (!isEmpty(rootStore?.label?.labelMap)) this.labelMap = rootStore?.label?.labelMap;
       if (!isEmpty(rootStore?.memberRoot?.workspace?.workspaceMemberMap))
-        this.members = Object.keys(rootStore?.memberRoot?.workspace?.workspaceMemberMap);
+        this.workSpaceMemberRolesMap = rootStore?.memberRoot?.workspace?.memberMap || undefined;
+      if (!isEmpty(rootStore?.memberRoot?.memberMap)) this.memberMap = rootStore?.memberRoot?.memberMap || undefined;
       if (!isEmpty(rootStore?.projectRoot?.project?.projectMap))
-        this.projects = Object.keys(rootStore?.projectRoot?.project?.projectMap);
+        this.projectMap = rootStore?.projectRoot?.project?.projectMap;
+      if (!isEmpty(rootStore?.module?.moduleMap)) this.moduleMap = rootStore?.module?.moduleMap;
+      if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
     });
 
     this.issues = new IssueStore();

@@ -11,7 +11,7 @@ import { PagesListItem } from "./list-item";
 import { Loader } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { PAGE_EMPTY_STATE_DETAILS } from "constants/page";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 type IPagesListView = {
   pageIds: string[];
@@ -51,7 +51,7 @@ export const PagesListView: FC<IPagesListView> = (props) => {
   return (
     <>
       {projectPageIds && workspaceSlug && projectId ? (
-        <div className="h-full space-y-4 overflow-y-auto">
+        <div className="h-full space-y-4 overflow-y-auto vertical-scrollbar scrollbar-lg">
           {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
               {projectPageIds.map((pageId: string) => (

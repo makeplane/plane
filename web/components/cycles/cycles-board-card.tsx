@@ -1,8 +1,9 @@
 import { FC, MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { observer } from "mobx-react";
 // hooks
-import { useApplication, useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
@@ -16,6 +17,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 //.types
 import { TCycleGroups } from "@plane/types";
 
@@ -25,7 +27,7 @@ export interface ICyclesBoardCard {
   cycleId: string;
 }
 
-export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
+export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -33,13 +35,12 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   // router
   const router = useRouter();
   // store
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
+  const { getUserDetails } = useMember();
   // toast alert
   const { setToastAlert } = useToast();
   // computed
@@ -92,39 +93,56 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_FAVORITED, {
+          cycle_id: cycleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_UNFAVORITED, {
+          cycle_id: cycleId,
+          element: "Grid layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page grid layout");
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page grid layout");
     setDeleteModal(true);
-    setTrackElement("CYCLE_PAGE_BOARD_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {
@@ -138,7 +156,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     });
   };
 
-  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
     <div>
@@ -159,7 +177,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       />
 
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
-        <div className="flex h-44 w-full min-w-[250px] flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
+        <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 truncate">
               <span className="flex-shrink-0">
@@ -195,13 +213,14 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
-              {cycleDetails.assignees.length > 0 && (
-                <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
+              {cycleDetails.assignee_ids.length > 0 && (
+                <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
-                      {cycleDetails.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                      ))}
+                      {cycleDetails.assignee_ids.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   </div>
                 </Tooltip>
@@ -237,7 +256,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
               ) : (
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
-              <div className="z-10 flex items-center gap-1.5">
+              <div className="z-[5] flex items-center gap-1.5">
                 {isEditingAllowed &&
                   (cycleDetails.is_favorite ? (
                     <button type="button" onClick={handleRemoveFromFavorites}>
@@ -279,4 +298,4 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       </Link>
     </div>
   );
-};
+});

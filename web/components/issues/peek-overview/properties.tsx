@@ -12,7 +12,7 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
 import {
@@ -24,15 +24,12 @@ import {
   TIssueOperations,
   IssueRelationSelect,
 } from "components/issues";
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  ProjectMemberDropdown,
-  StateDropdown,
-} from "components/dropdowns";
+import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // components
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+// helpers
+import { cn } from "helpers/common.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -49,11 +46,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { getStateById } = useProjectState();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
+  const stateDetails = getStateById(issue.state_id);
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -92,7 +91,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
             <span>Assignees</span>
           </div>
-          <ProjectMemberDropdown
+          <MemberDropdown
             value={issue?.assignee_ids ?? undefined}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
             disabled={disabled}
@@ -102,7 +101,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm justify-between ${issue?.assignee_ids.length > 0 ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -148,7 +147,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
-            showPlaceholderIcon
+            // TODO: add this logic
+            // showPlaceholderIcon
           />
         </div>
 
@@ -171,10 +171,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.target_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={cn("text-sm", {
+              "text-custom-text-400": !issue.target_date,
+              "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            })}
             hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-            showPlaceholderIcon
+            clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+            // TODO: add this logic
+            // showPlaceholderIcon
           />
         </div>
 
@@ -203,7 +207,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         )}
 
         {projectDetails?.module_view && (
-          <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <span>Module</span>

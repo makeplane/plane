@@ -5,22 +5,27 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TIssue } from "@plane/types";
+//services
+import { IssueService } from "services/issue";
 
 export type IIssueStore = {
   // observables
   issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
   // actions
-  addIssue(issues: TIssue[]): void;
+  getIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
+  addIssue(issues: TIssue[], shouldReplace?: boolean): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
   getIssueById(issueId: string): undefined | TIssue;
-  getIssuesByIds(issueIds: string[]): undefined | Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
+  getIssuesByIds(issueIds: string[], type: "archived" | "un-archived"): undefined | Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
 };
 
 export class IssueStore implements IIssueStore {
   // observables
   issuesMap: { [issue_id: string]: TIssue } = {};
+  // service
+  issueService;
 
   constructor() {
     makeObservable(this, {
@@ -31,6 +36,8 @@ export class IssueStore implements IIssueStore {
       updateIssue: action,
       removeIssue: action,
     });
+
+    this.issueService = new IssueService();
   }
 
   // actions
@@ -39,13 +46,25 @@ export class IssueStore implements IIssueStore {
    * @param {TIssue[]} issues
    * @returns {void}
    */
-  addIssue = (issues: TIssue[]) => {
+  addIssue = (issues: TIssue[], shouldReplace = false) => {
     if (issues && issues.length <= 0) return;
+    runInAction(() => {
+      issues.forEach((issue) => {
+        if (!this.issuesMap[issue.id] || shouldReplace) set(this.issuesMap, issue.id, issue);
+      });
+    });
+  };
+
+  getIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    const issues = await this.issueService.retrieveIssues(workspaceSlug, projectId, issueIds);
+
     runInAction(() => {
       issues.forEach((issue) => {
         if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
       });
     });
+
+    return issues;
   };
 
   /**
@@ -89,14 +108,17 @@ export class IssueStore implements IIssueStore {
   /**
    * @description This method will return the issues from the issuesMap
    * @param {string[]} issueIds
+   * @param {boolean} archivedIssues
    * @returns {Record<string, TIssue> | undefined}
    */
-  getIssuesByIds = computedFn((issueIds: string[]) => {
+  getIssuesByIds = computedFn((issueIds: string[], type: "archived" | "un-archived") => {
     if (!issueIds || issueIds.length <= 0 || isEmpty(this.issuesMap)) return undefined;
     const filteredIssues: { [key: string]: TIssue } = {};
     Object.values(this.issuesMap).forEach((issue) => {
-      if (issueIds.includes(issue.id)) {
-        filteredIssues[issue.id] = issue;
+      // if type is archived then check archived_at is not null
+      // if type is un-archived then check archived_at is null
+      if ((type === "archived" && issue.archived_at) || (type === "un-archived" && !issue.archived_at)) {
+        if (issueIds.includes(issue.id)) filteredIssues[issue.id] = issue;
       }
     });
     return isEmpty(filteredIssues) ? undefined : filteredIssues;

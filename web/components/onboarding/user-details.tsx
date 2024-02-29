@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { Camera, User2 } from "lucide-react";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 // components
 import { Button, Input } from "@plane/ui";
 import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
@@ -15,6 +15,7 @@ import { IUser } from "@plane/types";
 import { FileService } from "services/file.service";
 // assets
 import IssuesSvg from "public/onboarding/onboarding-issues.webp";
+import { USER_DETAILS } from "constants/event-tracker";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -48,6 +49,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   // store hooks
   const { updateCurrentUser } = useUser();
   const { workspaces } = useWorkspace();
+  const { captureEvent } = useEventTracker();
   // derived values
   const workspaceName = workspaces ? Object.values(workspaces)?.[0]?.name : "New Workspace";
   // form info
@@ -60,6 +62,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
     formState: { errors, isSubmitting, isValid },
   } = useForm<IUser>({
     defaultValues,
+    mode: "onChange",
   });
 
   const onSubmit = async (formData: IUser) => {
@@ -76,7 +79,21 @@ export const UserDetails: React.FC<Props> = observer((props) => {
       },
     };
 
-    await updateCurrentUser(payload);
+    await updateCurrentUser(payload)
+      .then(() => {
+        captureEvent(USER_DETAILS, {
+          use_case: formData.use_case,
+          state: "SUCCESS",
+          element: "Onboarding",
+        });
+      })
+      .catch(() => {
+        captureEvent(USER_DETAILS, {
+          use_case: formData.use_case,
+          state: "FAILED",
+          element: "Onboarding",
+        });
+      });
   };
   const handleDelete = (url: string | null | undefined) => {
     if (!url) return;
@@ -148,35 +165,38 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                 )}
               </button>
 
-              <div className="my-2 mr-10 flex w-full rounded-md bg-onboarding-background-200 text-sm">
-                <Controller
-                  control={control}
-                  name="first_name"
-                  rules={{
-                    required: "First name is required",
-                    maxLength: {
-                      value: 24,
-                      message: "First name cannot exceed the limit of 24 characters",
-                    },
-                  }}
-                  render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="first_name"
-                      name="first_name"
-                      type="text"
-                      value={value}
-                      autoFocus={true}
-                      onChange={(event) => {
-                        setUserName(event.target.value);
-                        onChange(event);
-                      }}
-                      ref={ref}
-                      hasError={Boolean(errors.first_name)}
-                      placeholder="Enter your full name..."
-                      className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
-                    />
-                  )}
-                />
+              <div className="flex flex-col gap-1">
+                <div className="my-2 mr-10 flex w-full rounded-md bg-onboarding-background-200 text-sm">
+                  <Controller
+                    control={control}
+                    name="first_name"
+                    rules={{
+                      required: "Name is required",
+                      maxLength: {
+                        value: 24,
+                        message: "Name must be within 24 characters.",
+                      },
+                    }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        type="text"
+                        value={value}
+                        autoFocus={true}
+                        onChange={(event) => {
+                          setUserName(event.target.value);
+                          onChange(event);
+                        }}
+                        ref={ref}
+                        hasError={Boolean(errors.first_name)}
+                        placeholder="Enter your full name..."
+                        className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
+                      />
+                    )}
+                  />
+                </div>
+                {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
               </div>
             </div>
             <div className="mb-10 mt-14">

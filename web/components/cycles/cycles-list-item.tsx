@@ -1,8 +1,9 @@
 import { FC, MouseEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react";
 // hooks
-import { useApplication, useCycle, useUser } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
@@ -18,6 +19,7 @@ import { CYCLE_STATUS } from "constants/cycle";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // types
 import { TCycleGroups } from "@plane/types";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -29,7 +31,7 @@ type TCyclesListItem = {
   projectId: string;
 };
 
-export const CyclesListItem: FC<TCyclesListItem> = (props) => {
+export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -37,13 +39,12 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement, captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
+  const { getUserDetails } = useMember();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -65,39 +66,56 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_FAVORITED, {
+          cycle_id: cycleId,
+          element: "List layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
+    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureEvent(CYCLE_UNFAVORITED, {
+          cycle_id: cycleId,
+          element: "List layout",
+          state: "SUCCESS",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
       });
-    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page list layout");
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setTrackElement("Cycles page list layout");
     setDeleteModal(true);
-    setTrackElement("CYCLE_PAGE_LIST_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {
@@ -141,7 +159,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
-  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date ?? new Date());
+  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   return (
     <>
@@ -160,10 +178,10 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}>
-        <div className="group flex h-16 w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
-          <div className="flex w-full items-center gap-3 truncate">
-            <div className="flex items-center gap-4 truncate">
-              <span className="flex-shrink-0">
+        <div className="group flex w-full flex-col items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90 md:flex-row">
+          <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+            <div className="relative flex w-full items-center gap-3 overflow-hidden">
+              <div className="flex-shrink-0">
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {isCompleted ? (
                     progress === 100 ? (
@@ -177,98 +195,101 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
                 </CircularProgressIndicator>
-              </span>
+              </div>
 
-              <div className="flex items-center gap-2.5">
-                <span className="flex-shrink-0">
-                  <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />
-                </span>
+              <div className="relative flex items-center gap-2.5 overflow-hidden">
+                <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
                 <Tooltip tooltipContent={cycleDetails.name} position="top">
-                  <span className="truncate text-base font-medium">{cycleDetails.name}</span>
+                  <span className="line-clamp-1 inline-block overflow-hidden truncate text-base font-medium">
+                    {cycleDetails.name}
+                  </span>
                 </Tooltip>
               </div>
-            </div>
-            <button onClick={openCycleOverview} className="z-10 hidden flex-shrink-0 group-hover:flex">
-              <Info className="h-4 w-4 text-custom-text-400" />
-            </button>
-          </div>
 
-          <div className="flex w-full items-center justify-end gap-2.5 md:w-auto md:flex-shrink-0 ">
-            <div className="flex items-center justify-center">
-              {currentCycle && (
-                <span
-                  className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
-                  style={{
-                    color: currentCycle.color,
-                    backgroundColor: `${currentCycle.color}20`,
-                  }}
-                >
-                  {currentCycle.value === "current"
-                    ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
-                    : `${currentCycle.label}`}
-                </span>
-              )}
+              <button onClick={openCycleOverview} className="flex-shrink-0 z-[5] invisible group-hover:visible">
+                <Info className="h-4 w-4 text-custom-text-400" />
+              </button>
             </div>
 
-            {renderDate && (
-              <span className="flex w-40 items-center justify-center gap-2 text-xs text-custom-text-300">
-                {renderFormattedDate(startDate) ?? "_ _"} - {renderFormattedDate(endDate) ?? "_ _"}
-              </span>
-            )}
-
-            <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
-              <div className="flex w-16 cursor-default items-center justify-center gap-1">
-                {cycleDetails.assignees.length > 0 ? (
-                  <AvatarGroup showTooltip={false}>
-                    {cycleDetails.assignees.map((assignee) => (
-                      <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                    ))}
-                  </AvatarGroup>
-                ) : (
-                  <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-                    <User2 className="h-4 w-4 text-custom-text-400" />
-                  </span>
-                )}
+            {currentCycle && (
+              <div
+                className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
+                style={{
+                  color: currentCycle.color,
+                  backgroundColor: `${currentCycle.color}20`,
+                }}
+              >
+                {currentCycle.value === "current"
+                  ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
+                  : `${currentCycle.label}`}
               </div>
-            </Tooltip>
-            {isEditingAllowed &&
-              (cycleDetails.is_favorite ? (
-                <button type="button" onClick={handleRemoveFromFavorites}>
-                  <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                </button>
-              ) : (
-                <button type="button" onClick={handleAddToFavorites}>
-                  <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                </button>
-              ))}
+            )}
+          </div>
+          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 overflow-hidden md:w-auto md:flex-shrink-0 md:justify-end ">
+            <div className="text-xs text-custom-text-300">
+              {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
+            </div>
 
-            <CustomMenu ellipsis>
-              {!isCompleted && isEditingAllowed && (
+            <div className="relative flex flex-shrink-0 items-center gap-3">
+              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`}>
+                <div className="flex w-10 cursor-default items-center justify-center">
+                  {cycleDetails.assignee_ids?.length > 0 ? (
+                    <AvatarGroup showTooltip={false}>
+                      {cycleDetails.assignee_ids?.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
+                    </AvatarGroup>
+                  ) : (
+                    <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
+                      <User2 className="h-4 w-4 text-custom-text-400" />
+                    </span>
+                  )}
+                </div>
+              </Tooltip>
+
+              {isEditingAllowed && (
                 <>
-                  <CustomMenu.MenuItem onClick={handleEditCycle}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Pencil className="h-3 w-3" />
-                      <span>Edit cycle</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-3 w-3" />
-                      <span>Delete cycle</span>
-                    </span>
-                  </CustomMenu.MenuItem>
+                  {cycleDetails.is_favorite ? (
+                    <button type="button" onClick={handleRemoveFromFavorites}>
+                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                    </button>
+                  ) : (
+                    <button type="button" onClick={handleAddToFavorites}>
+                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                    </button>
+                  )}
+
+                  <CustomMenu ellipsis>
+                    {!isCompleted && isEditingAllowed && (
+                      <>
+                        <CustomMenu.MenuItem onClick={handleEditCycle}>
+                          <span className="flex items-center justify-start gap-2">
+                            <Pencil className="h-3 w-3" />
+                            <span>Edit cycle</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                        <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                          <span className="flex items-center justify-start gap-2">
+                            <Trash2 className="h-3 w-3" />
+                            <span>Delete cycle</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      </>
+                    )}
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <span className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-3 w-3" />
+                        <span>Copy cycle link</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
                 </>
               )}
-              <CustomMenu.MenuItem onClick={handleCopyText}>
-                <span className="flex items-center justify-start gap-2">
-                  <LinkIcon className="h-3 w-3" />
-                  <span>Copy cycle link</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            </div>
           </div>
         </div>
       </Link>
     </>
   );
-};
+});

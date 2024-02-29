@@ -1,8 +1,9 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useEventTracker, useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
@@ -43,6 +44,8 @@ export type TSubIssueOperations = {
 
 export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   const { workspaceSlug, projectId, parentIssueId, disabled = false } = props;
+  // router
+  const router = useRouter();
   // store hooks
   const { setToastAlert } = useToast();
   const {
@@ -54,6 +57,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     removeSubIssue,
     deleteSubIssue,
   } = useIssueDetail();
+  const { setTrackElement, captureIssueEvent } = useEventTracker();
   // state
 
   type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
@@ -84,6 +88,25 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
       issue: undefined,
     },
   });
+
+  const scrollToSubIssuesView = useCallback(() => {
+    if (router.asPath.split("#")[1] === "sub-issues") {
+      setTimeout(() => {
+        const subIssueDiv = document.getElementById(`sub-issues`);
+        if (subIssueDiv)
+          subIssueDiv.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+      }, 200);
+    }
+  }, [router.asPath]);
+
+  useEffect(() => {
+    if (router.asPath) {
+      scrollToSubIssuesView();
+    }
+  }, [router.asPath, scrollToSubIssuesView]);
 
   const handleIssueCrudState = (
     key: "create" | "existing" | "update" | "delete",
@@ -151,6 +174,15 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
+          captureIssueEvent({
+            eventName: "Sub-issue updated",
+            payload: { ...oldIssue, ...issueData, state: "SUCCESS", element: "Issue detail page" },
+            updates: {
+              changed_property: Object.keys(issueData).join(","),
+              change_details: Object.values(issueData).join(","),
+            },
+            path: router.asPath,
+          });
           setToastAlert({
             type: "success",
             title: "Sub-issue updated successfully",
@@ -158,6 +190,15 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
+          captureIssueEvent({
+            eventName: "Sub-issue updated",
+            payload: { ...oldIssue, ...issueData, state: "FAILED", element: "Issue detail page" },
+            updates: {
+              changed_property: Object.keys(issueData).join(","),
+              change_details: Object.values(issueData).join(","),
+            },
+            path: router.asPath,
+          });
           setToastAlert({
             type: "error",
             title: "Error updating sub-issue",
@@ -174,8 +215,26 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
             title: "Sub-issue removed successfully",
             message: "Sub-issue removed successfully",
           });
+          captureIssueEvent({
+            eventName: "Sub-issue removed",
+            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            updates: {
+              changed_property: "parent_id",
+              change_details: parentIssueId,
+            },
+            path: router.asPath,
+          });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
+          captureIssueEvent({
+            eventName: "Sub-issue removed",
+            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            updates: {
+              changed_property: "parent_id",
+              change_details: parentIssueId,
+            },
+            path: router.asPath,
+          });
           setToastAlert({
             type: "error",
             title: "Error removing sub-issue",
@@ -192,8 +251,18 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
             title: "Issue deleted successfully",
             message: "Issue deleted successfully",
           });
+          captureIssueEvent({
+            eventName: "Sub-issue deleted",
+            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            path: router.asPath,
+          });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
+          captureIssueEvent({
+            eventName: "Sub-issue removed",
+            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            path: router.asPath,
+          });
           setToastAlert({
             type: "error",
             title: "Error deleting issue",
@@ -210,9 +279,34 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   const subIssues = subIssuesByIssueId(parentIssueId);
   const subIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
 
+  const handleFetchSubIssues = useCallback(async () => {
+    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+    }
+    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+  }, [
+    parentIssueId,
+    projectId,
+    setSubIssueHelpers,
+    subIssueHelpers.issue_visibility,
+    subIssueOperations,
+    workspaceSlug,
+  ]);
+
+  useEffect(() => {
+    handleFetchSubIssues();
+
+    return () => {
+      handleFetchSubIssues();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parentIssueId]);
+
   if (!issue) return <></>;
   return (
-    <div className="h-full w-full space-y-2">
+    <div id="sub-issues" className="h-full w-full space-y-2">
       {!subIssues ? (
         <div className="py-3 text-center text-sm  font-medium text-custom-text-300">Loading...</div>
       ) : (
@@ -222,14 +316,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               <div className="relative flex items-center gap-4 text-xs">
                 <div
                   className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
-                  onClick={async () => {
-                    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
-                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-                      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-                      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-                    }
-                    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
-                  }}
+                  onClick={handleFetchSubIssues}
                 >
                   <div className="flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center">
                     {subIssueHelpers.preview_loader.includes(parentIssueId) ? (
@@ -258,13 +345,19 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                   <div className="ml-auto flex flex-shrink-0 select-none items-center gap-2">
                     <div
                       className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
-                      onClick={() => handleIssueCrudState("create", parentIssueId, null)}
+                      onClick={() => {
+                        setTrackElement("Issue detail add sub-issue");
+                        handleIssueCrudState("create", parentIssueId, null);
+                      }}
                     >
                       Add sub-issue
                     </div>
                     <div
                       className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
-                      onClick={() => handleIssueCrudState("existing", parentIssueId, null)}
+                      onClick={() => {
+                        setTrackElement("Issue detail add sub-issue");
+                        handleIssueCrudState("existing", parentIssueId, null);
+                      }}
                     >
                       Add an existing issue
                     </div>
@@ -285,36 +378,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                   />
                 </div>
               )}
-
-              <div>
-                <CustomMenu
-                  label={
-                    <div className="flex items-center gap-1">
-                      <Plus className="h-3 w-3" />
-                      Add sub-issue
-                    </div>
-                  }
-                  buttonClassName="whitespace-nowrap"
-                  placement="bottom-end"
-                  noBorder
-                  noChevron
-                >
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      handleIssueCrudState("create", parentIssueId, null);
-                    }}
-                  >
-                    Create new
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      handleIssueCrudState("existing", parentIssueId, null);
-                    }}
-                  >
-                    Add an existing issue
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
             </>
           ) : (
             !disabled && (
@@ -335,6 +398,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                   >
                     <CustomMenu.MenuItem
                       onClick={() => {
+                        setTrackElement("Issue detail nested sub-issue");
                         handleIssueCrudState("create", parentIssueId, null);
                       }}
                     >
@@ -342,6 +406,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
                       onClick={() => {
+                        setTrackElement("Issue detail nested sub-issue");
                         handleIssueCrudState("existing", parentIssueId, null);
                       }}
                     >

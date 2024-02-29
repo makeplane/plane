@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
@@ -7,145 +7,25 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { useApplication, useProjectState } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// components
+import { DropdownButton } from "./buttons";
 // icons
-import { StateGroupIcon, Tooltip } from "@plane/ui";
+import { StateGroupIcon } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { IState } from "@plane/types";
 import { TDropdownProps } from "./types";
+// constants
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
+  onClose?: () => void;
   projectId: string;
   value: string;
-};
-
-type ButtonProps = {
-  className?: string;
-  dropdownArrow: boolean;
-  dropdownArrowClassName: string;
-  hideIcon?: boolean;
-  hideText?: boolean;
-  isActive?: boolean;
-  state: IState | undefined;
-  tooltip: boolean;
-};
-
-const BorderButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    state,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          {
-            "bg-custom-background-80": isActive,
-          },
-          className
-        )}
-      >
-        {!hideIcon && (
-          <StateGroupIcon
-            stateGroup={state?.group ?? "backlog"}
-            color={state?.color}
-            className="h-3 w-3 flex-shrink-0"
-          />
-        )}
-        {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const BackgroundButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    state,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
-          className
-        )}
-      >
-        {!hideIcon && (
-          <StateGroupIcon
-            stateGroup={state?.group ?? "backlog"}
-            color={state?.color}
-            className="h-3 w-3 flex-shrink-0"
-          />
-        )}
-        {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
-};
-
-const TransparentButton = (props: ButtonProps) => {
-  const {
-    className,
-    dropdownArrow,
-    dropdownArrowClassName,
-    hideIcon = false,
-    hideText = false,
-    isActive = false,
-    state,
-    tooltip,
-  } = props;
-
-  return (
-    <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"} disabled={!tooltip}>
-      <div
-        className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          {
-            "bg-custom-background-80": isActive,
-          },
-          className
-        )}
-      >
-        {!hideIcon && (
-          <StateGroupIcon
-            stateGroup={state?.group ?? "backlog"}
-            color={state?.color}
-            className="h-3 w-3 flex-shrink-0"
-          />
-        )}
-        {!hideText && <span className="flex-grow truncate">{state?.name ?? "State"}</span>}
-        {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </div>
-    </Tooltip>
-  );
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -160,10 +40,11 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     dropdownArrowClassName = "",
     hideIcon = false,
     onChange,
+    onClose,
     placement,
     projectId,
+    showTooltip = false,
     tabIndex,
-    tooltip = false,
     value,
   } = props;
   // states
@@ -171,6 +52,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -209,14 +91,49 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
 
   const selectedState = getStateById(value);
 
-  const openDropdown = () => {
-    setIsOpen(true);
+  const onOpen = () => {
     if (!statesList && workspaceSlug) fetchProjectStates(workspaceSlug, projectId);
-    if (referenceElement) referenceElement.focus();
   };
-  const closeDropdown = () => setIsOpen(false);
-  const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+
+  const handleClose = () => {
+    if (!isOpen) return;
+    setIsOpen(false);
+    onClose && onClose();
+  };
+
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
+  };
+
+  const dropdownOnChange = (val: string) => {
+    onChange(val);
+    handleClose();
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   return (
     <Combobox
@@ -225,7 +142,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
       tabIndex={tabIndex}
       className={cn("h-full", className)}
       value={value}
-      onChange={onChange}
+      onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
     >
@@ -234,8 +151,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           <button
             ref={setReferenceElement}
             type="button"
-            className={cn("block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={openDropdown}
+            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+            onClick={handleOnClick}
           >
             {button}
           </button>
@@ -244,77 +161,37 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             ref={setReferenceElement}
             type="button"
             className={cn(
-              "block h-full max-w-full outline-none",
+              "clickable block h-full max-w-full outline-none",
               {
                 "cursor-not-allowed text-custom-text-200": disabled,
                 "cursor-pointer": !disabled,
               },
               buttonContainerClassName
             )}
-            onClick={openDropdown}
+            onClick={handleOnClick}
           >
-            {buttonVariant === "border-with-text" ? (
-              <BorderButton
-                state={selectedState}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "border-without-text" ? (
-              <BorderButton
-                state={selectedState}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                isActive={isOpen}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : buttonVariant === "background-with-text" ? (
-              <BackgroundButton
-                state={selectedState}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "background-without-text" ? (
-              <BackgroundButton
-                state={selectedState}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : buttonVariant === "transparent-with-text" ? (
-              <TransparentButton
-                state={selectedState}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                isActive={isOpen}
-                tooltip={tooltip}
-              />
-            ) : buttonVariant === "transparent-without-text" ? (
-              <TransparentButton
-                state={selectedState}
-                className={buttonClassName}
-                dropdownArrow={dropdownArrow && !disabled}
-                dropdownArrowClassName={dropdownArrowClassName}
-                hideIcon={hideIcon}
-                isActive={isOpen}
-                tooltip={tooltip}
-                hideText
-              />
-            ) : null}
+            <DropdownButton
+              className={buttonClassName}
+              isActive={isOpen}
+              tooltipHeading="State"
+              tooltipContent={selectedState?.name ?? "State"}
+              showTooltip={showTooltip}
+              variant={buttonVariant}
+            >
+              {!hideIcon && (
+                <StateGroupIcon
+                  stateGroup={selectedState?.group ?? "backlog"}
+                  color={selectedState?.color}
+                  className="h-3 w-3 flex-shrink-0"
+                />
+              )}
+              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                <span className="flex-grow truncate">{selectedState?.name ?? "State"}</span>
+              )}
+              {dropdownArrow && (
+                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              )}
+            </DropdownButton>
           </button>
         )}
       </Combobox.Button>
@@ -329,11 +206,14 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
+                as="input"
+                ref={inputRef}
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
@@ -348,7 +228,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
-                      onClick={closeDropdown}
                     >
                       {({ selected }) => (
                         <>

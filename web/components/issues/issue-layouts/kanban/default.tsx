@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import { useIssueDetail, useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -20,6 +20,7 @@ import {
 import { EIssueActions } from "../types";
 import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
+import { MutableRefObject } from "react";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -45,6 +46,9 @@ export interface IGroupByKanBan {
   storeType?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -67,16 +71,24 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     storeType,
     addIssuesToView,
     canEditProperties,
+    scrollableContainerRef,
+    isDragStarted,
+    showEmptyGroup = true,
   } = props;
 
   const member = useMember();
   const project = useProject();
   const label = useLabel();
   const projectState = useProjectState();
+  const { peekIssue } = useIssueDetail();
 
   const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
 
   if (!list) return null;
+
+  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)[_list.id]?.length > 0);
+
+  const groupList = showEmptyGroup ? list : groupWithIssues;
 
   const visibilityGroupBy = (_list: IGroupByColumn) =>
     sub_group_by ? false : kanbanFilters?.group_by.includes(_list.id) ? true : false;
@@ -85,17 +97,13 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   return (
     <div className={`relative w-full flex gap-3 ${sub_group_by ? "h-full" : "h-full"}`}>
-      {list &&
-        list.length > 0 &&
-        list.map((_list: IGroupByColumn) => {
+      {groupList &&
+        groupList.length > 0 &&
+        groupList.map((_list: IGroupByColumn) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-            <div
-              className={`relative flex flex-shrink-0 flex-col h-full group ${
-                groupByVisibilityToggle ? `` : `w-[340px]`
-              }`}
-            >
+            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[340px]`}`}>
               {sub_group_by === null && (
                 <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
                   <HeaderGroupByCard
@@ -120,6 +128,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   groupId={_list.id}
                   issuesMap={issuesMap}
                   issueIds={issueIds}
+                  peekIssueId={peekIssue?.issueId ?? ""}
                   displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
@@ -133,6 +142,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   disableIssueCreation={disableIssueCreation}
                   canEditProperties={canEditProperties}
                   groupByVisibilityToggle={groupByVisibilityToggle}
+                  scrollableContainerRef={scrollableContainerRef}
+                  isDragStarted={isDragStarted}
                 />
               )}
             </div>
@@ -166,6 +177,8 @@ export interface IKanBan {
   storeType?: TCreateModalStoreTypes;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -187,6 +200,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     storeType,
     addIssuesToView,
     canEditProperties,
+    scrollableContainerRef,
+    isDragStarted,
+    showEmptyGroup,
   } = props;
 
   const issueKanBanView = useKanbanView();
@@ -211,6 +227,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       storeType={storeType}
       addIssuesToView={addIssuesToView}
       canEditProperties={canEditProperties}
+      scrollableContainerRef={scrollableContainerRef}
+      isDragStarted={isDragStarted}
+      showEmptyGroup={showEmptyGroup}
     />
   );
 });

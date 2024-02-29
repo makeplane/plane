@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -13,6 +13,8 @@ import { createIssuePayload } from "helpers/issue.helper";
 import { PlusIcon } from "lucide-react";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   formKey: keyof TIssue;
@@ -57,14 +59,14 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
+  const { formKey, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
-  const { getWorkspaceBySlug } = useWorkspace();
+  const { captureIssueEvent } = useEventTracker();
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // states
@@ -73,7 +75,6 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
 
   // derived values
-  const workspaceDetail = (workspaceSlug && getWorkspaceBySlug(workspaceSlug.toString())) || null;
   const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
 
   const {
@@ -128,7 +129,13 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
             ...payload,
           },
           viewId
-        ));
+        ).then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
+            path: router.asPath,
+          });
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",
@@ -136,6 +143,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       });
     } catch (err: any) {
       console.error(err);
+      captureIssueEvent({
+        eventName: ISSUE_CREATED,
+        payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
+        path: router.asPath,
+      });
       setToastAlert({
         type: "error",
         title: "Error!",

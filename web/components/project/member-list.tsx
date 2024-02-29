@@ -2,20 +2,19 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
-import { useApplication, useMember } from "hooks/store";
+import { useEventTracker, useMember } from "hooks/store";
 // components
 import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { MembersSettingsLoader } from "components/ui";
 
 export const ProjectMemberList: React.FC = observer(() => {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   // store hooks
-  const {
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
@@ -58,12 +57,7 @@ export const ProjectMemberList: React.FC = observer(() => {
         </Button>
       </div>
       {!projectMemberIds ? (
-        <Loader className="space-y-5">
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-        </Loader>
+        <MembersSettingsLoader />
       ) : (
         <div className="divide-y divide-custom-border-100">
           {projectMemberIds.length > 0

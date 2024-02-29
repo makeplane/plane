@@ -1,6 +1,7 @@
 import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
+import { DateDropdown } from "components/dropdowns";
 import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 // constants
@@ -9,7 +10,6 @@ import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification"
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect } from "@plane/ui";
-import { CustomDatePicker } from "components/ui";
 // types
 import type { IUserNotification } from "@plane/types";
 
@@ -109,7 +109,12 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   };
 
   const handleClose = () => {
-    onClose();
+    // This is a workaround to fix the issue of the Notification popover modal close on closing this modal
+    const closeTimeout = setTimeout(() => {
+      onClose();
+      clearTimeout(closeTimeout);
+    }, 50);
+
     const timeout = setTimeout(() => {
       reset({ ...defaultValues });
       clearTimeout(timeout);
@@ -142,7 +147,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all w-full sm:w-full sm:!max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex items-center justify-between">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -156,25 +161,26 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex items-center gap-3">
-                    <div className="flex-1">
+                  <div className="mt-5 flex flex-col md:!flex-row md:items-center gap-3">
+                    <div className="flex-1 pb-3 md:pb-0">
                       <h6 className="mb-2 block text-sm font-medium text-custom-text-400">Pick a date</h6>
                       <Controller
                         name="date"
                         control={control}
                         rules={{ required: "Please select a date" }}
                         render={({ field: { value, onChange } }) => (
-                          <CustomDatePicker
-                            placeholder="Select date"
+                          <DateDropdown
                             value={value}
+                            placeholder="Select date"
                             onChange={(val) => {
                               setValue("time", null);
                               onChange(val);
                             }}
-                            className="w-full rounded-md border border-custom-border-300 bg-custom-background-100 px-3 py-2 !text-sm text-custom-text-100 placeholder:!text-custom-text-400 focus:outline-none"
-                            wrapperClassName="w-full"
-                            noBorder
                             minDate={new Date()}
+                            buttonVariant="border-with-text"
+                            buttonContainerClassName="w-full text-left"
+                            buttonClassName="border-custom-border-300 px-3 py-2.5"
+                            hideIcon
                           />
                         )}
                       />
@@ -208,11 +214,10 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "AM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "AM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "AM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                }`}
+                                  }`}
                               >
                                 AM
                               </div>
@@ -220,11 +225,10 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "PM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "PM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "PM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                }`}
+                                  }`}
                               >
                                 PM
                               </div>

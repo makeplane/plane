@@ -1,4 +1,5 @@
-import { differenceInDays, format, formatDistanceToNow, isAfter, isValid, parseISO } from "date-fns";
+import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
+import { isNil } from "lodash";
 
 // Format Date Helpers
 /**
@@ -87,11 +88,11 @@ export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" |
  * @example checkIfStringIsDate("2021-01-01", "2021-01-08") // 8
  */
 export const findTotalDaysInRange = (
-  startDate: Date | string,
-  endDate: Date | string,
+  startDate: Date | string | undefined | null,
+  endDate: Date | string | undefined | null,
   inclusive: boolean = true
-): number => {
-  if (!startDate || !endDate) return 0;
+): number | undefined => {
+  if (!startDate || !endDate) return undefined;
   // Parse the dates to check if they are valid
   const parsedStartDate = new Date(startDate);
   const parsedEndDate = new Date(endDate);
@@ -110,8 +111,11 @@ export const findTotalDaysInRange = (
  * @param {boolean} inclusive (optional) // default true
  * @example findHowManyDaysLeft("2024-01-01") // 3
  */
-export const findHowManyDaysLeft = (date: string | Date, inclusive: boolean = true): number => {
-  if (!date) return 0;
+export const findHowManyDaysLeft = (
+  date: Date | string | undefined | null,
+  inclusive: boolean = true
+): number | undefined => {
+  if (!date) return undefined;
   // Pass the date to findTotalDaysInRange function to find the total number of days in range from today
   return findTotalDaysInRange(new Date(), date, inclusive);
 };
@@ -168,4 +172,24 @@ export const getWeekNumberOfDate = (date: Date): number => {
   // Adjust the calculation for weekNumber
   const weekNumber = Math.ceil((days + 1) / 7);
   return weekNumber;
+};
+
+/**
+ * @returns {boolean} boolean value depending on whether the dates are equal
+ * @description Returns boolean value depending on whether the dates are equal
+ * @param date1
+ * @param date2
+ * @example checkIfDatesAreEqual("2024-01-01", "2024-01-01") // true
+ * @example checkIfDatesAreEqual("2024-01-01", "2024-01-02") // false
+ */
+export const checkIfDatesAreEqual = (
+  date1: Date | string | null | undefined,
+  date2: Date | string | null | undefined
+): boolean => {
+  if (isNil(date1) && isNil(date2)) return true;
+  if (isNil(date1) || isNil(date2)) return false;
+
+  const parsedDate1 = new Date(date1);
+  const parsedDate2 = new Date(date2);
+  return isEqual(parsedDate1, parsedDate2);
 };

@@ -4,11 +4,11 @@ import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Pencil, Trash2 } from "lucide-react";
 // store hooks
-import { useGlobalView } from "hooks/store";
+import { useEventTracker, useGlobalView } from "hooks/store";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // ui
-import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
@@ -25,6 +25,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { getViewDetailsById } = useGlobalView();
+  const { setTrackElement } = useEventTracker();
   // derived data
   const view = getViewDetailsById(viewId);
 
@@ -38,12 +39,9 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
         <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-          <div className="relative flex w-full items-center justify-between rounded p-4">
+          <div className="relative flex h-[52px] w-full items-center justify-between rounded p-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="grid h-10 w-10 place-items-center rounded bg-custom-background-90 group-hover:bg-custom-background-100">
-                  <PhotoFilterIcon className="h-3.5 w-3.5" />
-                </div>
                 <div className="flex flex-col">
                   <p className="truncate text-sm font-medium leading-4">{truncateText(view.name, 75)}</p>
                   {view?.description && <p className="text-xs text-custom-text-200">{view.description}</p>}
@@ -59,6 +57,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        setTrackElement("List view");
                         setUpdateViewModal(true);
                       }}
                     >

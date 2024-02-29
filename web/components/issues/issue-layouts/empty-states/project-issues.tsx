@@ -3,12 +3,13 @@ import { useRouter } from "next/router";
 import size from "lodash/size";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 // components
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EMPTY_FILTER_STATE_DETAILS, EMPTY_ISSUE_STATE_DETAILS } from "constants/empty-state";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -30,10 +31,8 @@ export const ProjectEmptyState: React.FC = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    commandPalette: commandPaletteStore,
-    eventTracker: { setTrackElement },
-  } = useApplication();
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentProjectRole },
     currentUser,
@@ -49,7 +48,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
 
   const issueFilterCount = size(
     Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([key, value]) => value && Array.isArray(value) && value.length > 0)
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
     )
   );
 
@@ -69,28 +68,25 @@ export const ProjectEmptyState: React.FC = observer(() => {
   const emptyStateProps: EmptyStateProps =
     issueFilterCount > 0
       ? {
-          title: "No issues found matching the filters applied",
+          title: EMPTY_FILTER_STATE_DETAILS["project"].title,
           image: currentLayoutEmptyStateImagePath,
           secondaryButton: {
-            text: "Clear all filters",
+            text: EMPTY_FILTER_STATE_DETAILS["project"].secondaryButton.text,
             onClick: handleClearAllFilters,
           },
         }
       : {
-          title: "Create an issue and assign it to someone, even yourself",
-          description:
-            "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
+          title: EMPTY_ISSUE_STATE_DETAILS["project"].title,
+          description: EMPTY_ISSUE_STATE_DETAILS["project"].description,
           image: EmptyStateImagePath,
           comicBox: {
-            title: "Issues are building blocks in Plane.",
-            description:
-              "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
+            title: EMPTY_ISSUE_STATE_DETAILS["project"].comicBox.title,
+            description: EMPTY_ISSUE_STATE_DETAILS["project"].comicBox.description,
           },
           primaryButton: {
-            text: "Create your first issue",
-
+            text: EMPTY_ISSUE_STATE_DETAILS["project"].primaryButton.text,
             onClick: () => {
-              setTrackElement("PROJECT_EMPTY_STATE");
+              setTrackElement("Project issue empty state");
               commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             },
           },

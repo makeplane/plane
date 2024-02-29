@@ -1,18 +1,21 @@
-import { useState, FC, useRef, useEffect } from "react";
+import { useState, FC, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
+import { orderJoinedProjects } from "helpers/project.helper";
+import { cn } from "helpers/common.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { IProject } from "@plane/types";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -25,15 +28,15 @@ export const ProjectSidebarList: FC = observer(() => {
   const {
     theme: { sidebarCollapsed },
     commandPalette: { toggleCreateProjectModal },
-    eventTracker: { setTrackElement },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
   const {
+    getProjectById,
     joinedProjectIds: joinedProjects,
     favoriteProjectIds: favoriteProjects,
-    orderProjectsWithSortOrder,
     updateProjectView,
   } = useProject();
   // router
@@ -54,22 +57,27 @@ export const ProjectSidebarList: FC = observer(() => {
     });
   };
 
-  const onDragEnd = async (result: DropResult) => {
+  const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
-
     if (!destination || !workspaceSlug) return;
-
     if (source.index === destination.index) return;
 
-    const updatedSortOrder = orderProjectsWithSortOrder(source.index, destination.index, draggableId);
-
-    updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Something went wrong. Please try again.",
-      });
+    const joinedProjectsList: IProject[] = [];
+    joinedProjects.map((projectId) => {
+      const _project = getProjectById(projectId);
+      if (_project) joinedProjectsList.push(_project);
     });
+    if (joinedProjectsList.length <= 0) return;
+
+    const updatedSortOrder = orderJoinedProjects(source.index, destination.index, draggableId, joinedProjectsList);
+    if (updatedSortOrder != undefined)
+      updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      });
   };
 
   const isCollapsed = sidebarCollapsed || false;
@@ -109,9 +117,9 @@ export const ProjectSidebarList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={`h-full space-y-2 overflow-y-auto px-4 ${
-          isScrolled ? "border-t border-custom-sidebar-border-300" : ""
-        }`}
+        className={cn("h-full space-y-2 overflow-y-auto px-4 vertical-scrollbar scrollbar-md", {
+          "border-t border-custom-sidebar-border-300": isScrolled,
+        })}
       >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
@@ -175,6 +183,7 @@ export const ProjectSidebarList: FC = observer(() => {
                                       snapshot={snapshot}
                                       handleCopyText={() => handleCopyText(projectId)}
                                       shortContextMenu
+                                      disableDrag
                                     />
                                   </div>
                                 )}
@@ -217,6 +226,7 @@ export const ProjectSidebarList: FC = observer(() => {
                               <button
                                 className="opacity-0 group-hover:opacity-100"
                                 onClick={() => {
+                                  setTrackElement("Sidebar");
                                   setIsFavoriteProjectCreate(false);
                                   setIsProjectModalOpen(true);
                                 }}
@@ -267,7 +277,7 @@ export const ProjectSidebarList: FC = observer(() => {
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
-              setTrackElement("APP_SIDEBAR");
+              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

@@ -1,9 +1,9 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useUser } from "hooks/store";
+import { useEventTracker, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Spinner } from "@plane/ui";
@@ -25,6 +25,7 @@ import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
+import { ISSUE_DELETED } from "constants/event-tracker";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
@@ -40,12 +41,15 @@ export interface IBaseKanBanLayout {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   showLoader?: boolean;
   viewId?: string;
   storeType?: TCreateModalStoreTypes;
-  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  isCompletedCycle?: boolean;
 }
 
 type KanbanDragState = {
@@ -65,6 +69,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     storeType,
     addIssuesToView,
     canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
   } = props;
   // router
   const router = useRouter();
@@ -73,6 +78,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { captureIssueEvent } = useEventTracker();
   const { issueMap } = useIssues();
   // toast alert
   const { setToastAlert } = useToast();
@@ -90,6 +96,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const KanBanView = sub_group_by ? KanBanSwimLanes : KanBan;
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
+
+  const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
 
   // states
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
@@ -182,6 +190,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         handleRemoveFromView={
           issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
         }
+        handleArchive={
+          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
+        }
+        handleRestore={
+          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
+        }
+        readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -205,6 +220,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       handleIssues(issueMap[dragState.draggedIssueId!], EIssueActions.DELETE);
       setDeleteIssueModal(false);
       setDragState({});
+      captureIssueEvent({
+        eventName: ISSUE_DELETED,
+        payload: { id: dragState.draggedIssueId!, state: "FAILED", element: "Kanban layout drag & drop" },
+        path: router.asPath,
+      });
     });
   };
 
@@ -213,9 +233,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
       if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
       else _kanbanFilters.push(value);
-      issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: _kanbanFilters,
-      });
+      issuesFilter.updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.KANBAN_FILTERS,
+        {
+          [toggle]: _kanbanFilters,
+        },
+        viewId
+      );
     }
   };
 
@@ -236,8 +262,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         </div>
       )}
 
-      <div className="horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90">
-        <div className="relative h-full w-max min-w-full bg-custom-background-90 px-2">
+      <div
+        className="flex relative h-full w-full overflow-auto bg-custom-background-90 vertical-scrollbar horizontal-scrollbar scrollbar-lg"
+        ref={scrollableContainerRef}
+      >
+        <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {/* drag and delete component */}
             <div
@@ -273,13 +302,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               handleKanbanFilters={handleKanbanFilters}
               kanbanFilters={kanbanFilters}
               enableQuickIssueCreate={enableQuickAdd}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
+              showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
               quickAddCallback={issues?.quickAddIssue}
               viewId={viewId}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
               canEditProperties={canEditProperties}
               storeType={storeType}
               addIssuesToView={addIssuesToView}
+              scrollableContainerRef={scrollableContainerRef}
+              isDragStarted={isDragStarted}
             />
           </DragDropContext>
         </div>

@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 // services
 import { AnalyticsService } from "services/analytics.service";
 // hooks
-import { useCycle, useModule, useProject, useUser } from "hooks/store";
+import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
@@ -19,18 +19,18 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
+import { cn } from "helpers/common.helper";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
   params: IAnalyticsParams;
-  fullScreen: boolean;
   isProjectLevel: boolean;
 };
 
 const analyticsService = new AnalyticsService();
 
 export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
-  const { analytics, params, fullScreen, isProjectLevel = false } = props;
+  const { analytics, params, isProjectLevel = false } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -39,6 +39,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   // store hooks
   const { currentUser } = useUser();
   const { workspaceProjectIds, getProjectById } = useProject();
+  const { getWorkspaceById } = useWorkspace();
+
   const { fetchCycleDetails, getCycleById } = useCycle();
   const { fetchModuleDetails, getModuleById } = useModule();
 
@@ -70,11 +72,14 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
     if (cycleDetails || moduleDetails) {
       const details = cycleDetails || moduleDetails;
 
-      eventPayload.workspaceId = details?.workspace_detail?.id;
-      eventPayload.workspaceName = details?.workspace_detail?.name;
-      eventPayload.projectId = details?.project_detail.id;
-      eventPayload.projectIdentifier = details?.project_detail.identifier;
-      eventPayload.projectName = details?.project_detail.name;
+      const currentProjectDetails = getProjectById(details?.project_id || "");
+      const currentWorkspaceDetails = getWorkspaceById(details?.workspace_id || "");
+
+      eventPayload.workspaceId = details?.workspace_id;
+      eventPayload.workspaceName = currentWorkspaceDetails?.name;
+      eventPayload.projectId = details?.project_id;
+      eventPayload.projectIdentifier = currentProjectDetails?.identifier;
+      eventPayload.projectName = currentProjectDetails?.name;
     }
 
     if (cycleDetails) {
@@ -140,16 +145,16 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`flex items-center justify-between space-y-2 px-5 py-2.5 ${
-        fullScreen
-          ? "overflow-hidden border-l border-custom-border-200 md:h-full md:flex-col md:items-start md:space-y-4 md:border-l md:border-custom-border-200 md:py-5"
-          : ""
-      }`}
+      className={cn(
+        "relative h-full flex w-full gap-2 justify-between items-start px-5 py-4 bg-custom-sidebar-background-100",
+        !isProjectLevel ? "flex-col" : ""
+      )}
     >
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
           <LayersIcon height={14} width={14} />
-          {analytics ? analytics.total : "..."} Issues
+          {analytics ? analytics.total : "..."}
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Issues</div>
         </div>
         {isProjectLevel && (
           <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
@@ -164,30 +169,30 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
           </div>
         )}
       </div>
-      <div className="h-full w-full overflow-hidden">
-        {fullScreen ? (
-          <>
-            {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
-              <CustomAnalyticsSidebarProjectsList projectIds={selectedProjects} />
-            )}
-            <CustomAnalyticsSidebarHeader />
-          </>
-        ) : null}
+
+      <div className={cn("h-full w-full overflow-hidden", isProjectLevel ? "hidden" : "block")}>
+        <>
+          {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
+            <CustomAnalyticsSidebarProjectsList projectIds={selectedProjects} />
+          )}
+          <CustomAnalyticsSidebarHeader />
+        </>
       </div>
-      <div className="flex flex-wrap items-center gap-2 justify-self-end">
+
+      <div className="flex flex-wrap items-center gap-2 justify-end">
         <Button
           variant="neutral-primary"
-          prependIcon={<RefreshCw className="h-3.5 w-3.5" />}
+          prependIcon={<RefreshCw className="h-3 md:h-3.5 w-3 md:w-3.5" />}
           onClick={() => {
             if (!workspaceSlug) return;
 
             mutate(ANALYTICS(workspaceSlug.toString(), params));
           }}
         >
-          Refresh
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Refresh</div>
         </Button>
         <Button variant="primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
-          Export as CSV
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Export as CSV</div>
         </Button>
       </div>
     </div>

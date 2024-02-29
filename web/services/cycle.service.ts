@@ -1,13 +1,21 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { CycleDateCheckData, ICycle, TIssue, TIssueMap } from "@plane/types";
+import type { CycleDateCheckData, ICycle, TIssue } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
 export class CycleService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  async getWorkspaceCycles(workspaceSlug: string): Promise<ICycle[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/cycles/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<ICycle> {

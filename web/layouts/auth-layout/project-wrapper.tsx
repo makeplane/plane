@@ -5,6 +5,7 @@ import useSWR from "swr";
 // hooks
 import {
   useApplication,
+  useEventTracker,
   useCycle,
   useEstimate,
   useLabel,
@@ -34,6 +35,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     commandPalette: { toggleCreateProjectModal },
   } = useApplication();
+  const { setTrackElement } = useEventTracker();
   const {
     membership: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
   } = useUser();
@@ -64,37 +66,44 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project labels
   useSWR(
     workspaceSlug && projectId ? `PROJECT_LABELS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project members
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project states
   useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project cycles
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchAllCycles(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchAllCycles(workspaceSlug.toString(), projectId.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project modules
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchModules(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchModules(workspaceSlug.toString(), projectId.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project views
   useSWR(
     workspaceSlug && projectId ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project inboxes if inbox is enabled in project settings
   useSWR(
@@ -135,7 +144,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
           image={emptyProject}
           primaryButton={{
             text: "Create Project",
-            onClick: () => toggleCreateProjectModal(true),
+            onClick: () => {
+              setTrackElement("Projects page empty state");
+              toggleCreateProjectModal(true);
+            },
           }}
         />
       </div>

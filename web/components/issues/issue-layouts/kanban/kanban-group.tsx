@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 // hooks
 import { useProjectState } from "hooks/store";
@@ -17,6 +18,7 @@ import { EIssueActions } from "../types";
 interface IKanbanGroup {
   groupId: string;
   issuesMap: IIssueMap;
+  peekIssueId?: string;
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
@@ -36,6 +38,8 @@ interface IKanbanGroup {
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   groupByVisibilityToggle: boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 export const KanbanGroup = (props: IKanbanGroup) => {
@@ -47,6 +51,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     issuesMap,
     displayProperties,
     issueIds,
+    peekIssueId,
     isDragDisabled,
     handleIssues,
     quickActions,
@@ -55,6 +60,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     disableIssueCreation,
     quickAddCallback,
     viewId,
+    scrollableContainerRef,
+    isDragStarted,
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -118,12 +125,15 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               sub_group_id={sub_group_id}
               columnId={groupId}
               issuesMap={issuesMap}
+              peekIssueId={peekIssueId}
               issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
               displayProperties={displayProperties}
               isDragDisabled={isDragDisabled}
               handleIssues={handleIssues}
               quickActions={quickActions}
               canEditProperties={canEditProperties}
+              scrollableContainerRef={scrollableContainerRef}
+              isDragStarted={isDragStarted}
             />
 
             {provided.placeholder}

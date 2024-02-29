@@ -12,14 +12,8 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db.models.signals import post_save
-from django.conf import settings
 from django.dispatch import receiver
 from django.utils import timezone
-
-# Third party imports
-from sentry_sdk import capture_exception
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 
 
 def get_default_onboarding():
@@ -144,25 +138,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
 
 
-@receiver(post_save, sender=User)
-def send_welcome_slack(sender, instance, created, **kwargs):
-    try:
-        if created and not instance.is_bot:
-            # Send message on slack as well
-            if settings.SLACK_BOT_TOKEN:
-                client = WebClient(token=settings.SLACK_BOT_TOKEN)
-                try:
-                    _ = client.chat_postMessage(
-                        channel="#trackers",
-                        text=f"New user {instance.email} has signed up and begun the onboarding journey.",
-                    )
-                except SlackApiError as e:
-                    print(f"Got an error: {e.response['error']}")
-        return
-    except Exception as e:
-        capture_exception(e)
-        return
-
 
 @receiver(post_save, sender=User)
 def create_user_notification(sender, instance, created, **kwargs):
@@ -172,4 +147,9 @@ def create_user_notification(sender, instance, created, **kwargs):
         from plane.db.models import UserNotificationPreference
         UserNotificationPreference.objects.create(
             user=instance,
+            property_change=False,
+            state_change=False,
+            comment=False,
+            mention=False,
+            issue_completed=False,
         )

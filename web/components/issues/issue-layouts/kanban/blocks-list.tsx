@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { MutableRefObject, memo } from "react";
 //types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -9,12 +9,15 @@ interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
   issuesMap: IIssueMap;
+  peekIssueId?: string;
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
   handleIssues: (issue: TIssue, action: EIssueActions) => void;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
@@ -22,12 +25,15 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
     sub_group_id,
     columnId,
     issuesMap,
+    peekIssueId,
     issueIds,
     displayProperties,
     isDragDisabled,
     handleIssues,
     quickActions,
     canEditProperties,
+    scrollableContainerRef,
+    isDragStarted,
   } = props;
 
   return (
@@ -44,6 +50,7 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
             return (
               <KanbanIssueBlock
                 key={draggableId}
+                peekIssueId={peekIssueId}
                 issueId={issueId}
                 issuesMap={issuesMap}
                 displayProperties={displayProperties}
@@ -53,6 +60,9 @@ const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
                 index={index}
                 isDragDisabled={isDragDisabled}
                 canEditProperties={canEditProperties}
+                scrollableContainerRef={scrollableContainerRef}
+                isDragStarted={isDragStarted}
+                issueIds={issueIds} //passing to force render for virtualization whenever parent rerenders
               />
             );
           })}

@@ -83,7 +83,7 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
   const blockedByIssueProjectDetails =
     blockedByIssues.length === 1 ? getProjectById(blockedByIssues[0]?.project_id ?? "") : null;
 
-  const dueBy = findTotalDaysInRange(new Date(issueDetails.target_date ?? ""), new Date(), false);
+  const dueBy = findTotalDaysInRange(new Date(issueDetails.target_date ?? ""), new Date(), false) ?? 0;
 
   return (
     <ControlLink
@@ -179,7 +179,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
           : "-"}
       </div>
       <div className="text-xs flex justify-center">
-        {issue.assignee_ids.length > 0 ? (
+        {issue.assignee_ids && issue.assignee_ids?.length > 0 ? (
           <AvatarGroup>
             {issue.assignee_ids?.map((assigneeId) => {
               const userDetails = getUserDetails(assigneeId);
@@ -212,7 +212,7 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
 
   const projectDetails = getProjectById(issue.project_id);
 
-  const dueBy = findTotalDaysInRange(new Date(issue.target_date ?? ""), new Date(), false);
+  const dueBy = findTotalDaysInRange(new Date(issue.target_date ?? ""), new Date(), false) ?? 0;
 
   return (
     <ControlLink

@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { WorkspaceService } from "services/workspace.service";
@@ -17,6 +17,7 @@ import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // components
 import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "components/onboarding";
+import { PageHead } from "components/core";
 // ui
 import { Avatar, Spinner } from "@plane/ui";
 // images
@@ -24,6 +25,8 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import { IUser, TOnboardingSteps } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
+// constants
+import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
 
 // services
 const workspaceService = new WorkspaceService();
@@ -35,9 +38,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const {
-    eventTracker: { postHogEventTracker },
-  } = useApplication();
+  const { captureEvent } = useEventTracker();
   const { currentUser, currentUserLoader, updateCurrentUser, updateUserOnBoard } = useUser();
   const { workspaces, fetchWorkspaces } = useWorkspace();
   // custom hooks
@@ -81,7 +82,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     await updateUserOnBoard()
       .then(() => {
-        postHogEventTracker("USER_ONBOARDING_COMPLETE", {
+        captureEvent(USER_ONBOARDING_COMPLETED, {
           user_role: user.role,
           email: user.email,
           user_id: user.id,
@@ -142,6 +143,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title="Onboarding" />
       <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
       {user && step !== null ? (
         <div className={`fixed flex h-full w-full flex-col bg-onboarding-gradient-100`}>

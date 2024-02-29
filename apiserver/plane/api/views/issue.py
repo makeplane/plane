@@ -220,6 +220,30 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
         if serializer.is_valid():
+            if (
+                request.data.get("external_id")
+                and request.data.get("external_source")
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get("external_source"),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                issue = Issue.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    external_id=request.data.get("external_id"),
+                    external_source=request.data.get("external_source"),
+                ).first()
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists",
+                        "id": str(issue.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
             serializer.save()
 
             # Track the issue
@@ -256,6 +280,26 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             partial=True,
         )
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (issue.external_id != str(request.data.get("external_id")))
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get(
+                        "external_source", issue.external_source
+                    ),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Issue with the same external id and external source already exists",
+                        "id": str(issue.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
             serializer.save()
             issue_activity.delay(
                 type="issue.activity.updated",
@@ -263,6 +307,8 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 actor_id=str(request.user.id),
                 issue_id=str(pk),
                 project_id=str(project_id),
+                external_id__isnull=False,
+                external_source__isnull=False,
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
@@ -306,7 +352,10 @@ class LabelAPIEndpoint(BaseAPIView):
         return (
             Label.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
@@ -318,6 +367,30 @@ class LabelAPIEndpoint(BaseAPIView):
         try:
             serializer = LabelSerializer(data=request.data)
             if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Label.objects.filter(
+                        project_id=project_id,
+                        workspace__slug=slug,
+                        external_source=request.data.get("external_source"),
+                        external_id=request.data.get("external_id"),
+                    ).exists()
+                ):
+                    label = Label.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        external_id=request.data.get("external_id"),
+                        external_source=request.data.get("external_source"),
+                    ).first()
+                    return Response(
+                        {
+                            "error": "Label with the same external id and external source already exists",
+                            "id": str(label.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
+
                 serializer.save(project_id=project_id)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
@@ -326,11 +399,17 @@ class LabelAPIEndpoint(BaseAPIView):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         except IntegrityError:
+            label = Label.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                name=request.data.get("name"),
+            ).first()
             return Response(
                 {
-                    "error": "Label with the same name already exists in the project"
+                    "error": "Label with the same name already exists in the project",
+                    "id": str(label.id),
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def get(self, request, slug, project_id, pk=None):
@@ -357,6 +436,25 @@ class LabelAPIEndpoint(BaseAPIView):
         label = self.get_queryset().get(pk=pk)
         serializer = LabelSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
+            if (
+                str(request.data.get("external_id"))
+                and (label.external_id != str(request.data.get("external_id")))
+                and Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    external_source=request.data.get(
+                        "external_source", label.external_source
+                    ),
+                    external_id=request.data.get("external_id"),
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "Label with the same external id and external source already exists",
+                        "id": str(label.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -386,7 +484,10 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             IssueLink.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
@@ -512,11 +613,11 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
             )
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .select_related("actor")
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .select_related("workspace", "project", "issue", "actor")
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -552,6 +653,33 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
     def post(self, request, slug, project_id, issue_id):
+
+        # Validation check if the issue already exists
+        if (
+            request.data.get("external_id")
+            and request.data.get("external_source")
+            and IssueComment.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+            ).exists()
+        ):
+            issue_comment = IssueComment.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                external_id=request.data.get("external_id"),
+                external_source=request.data.get("external_source"),
+            ).first()
+            return Response(
+                {
+                    "error": "Issue Comment with the same external id and external source already exists",
+                    "id": str(issue_comment.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -585,6 +713,29 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
             IssueCommentSerializer(issue_comment).data,
             cls=DjangoJSONEncoder,
         )
+
+        # Validation check if the issue already exists
+        if (
+            str(request.data.get("external_id"))
+            and (issue_comment.external_id != str(request.data.get("external_id")))
+            and Issue.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get(
+                    "external_source", issue_comment.external_source
+                ),
+                external_id=request.data.get("external_id"),
+            ).exists()
+        ):
+            return Response(
+                {
+                    "error": "Issue Comment with the same external id and external source already exists",
+                    "id": str(issue_comment.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+
         serializer = IssueCommentSerializer(
             issue_comment, data=request.data, partial=True
         )
@@ -639,6 +790,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
             )
             .select_related("actor", "workspace", "issue", "project")
         ).order_by(request.GET.get("order_by", "created_at"))

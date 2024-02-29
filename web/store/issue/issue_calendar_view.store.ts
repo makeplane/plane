@@ -78,7 +78,7 @@ export class CalendarStore implements ICalendarStore {
     const { activeWeekDate } = this.calendarFilters;
 
     return this.calendarPayload[`y-${activeWeekDate.getFullYear()}`][`m-${activeWeekDate.getMonth()}`][
-      `w-${this.activeWeekNumber}`
+      `w-${this.activeWeekNumber - 1}`
     ];
   }
 

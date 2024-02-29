@@ -1,6 +1,6 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { isFuture, isPast } from "date-fns";
+import { isFuture, isPast, isToday } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // types
@@ -28,11 +28,13 @@ export interface ICycleStore {
   currentProjectActiveCycleId: string | null;
   // computed actions
   getCycleById: (cycleId: string) => ICycle | null;
+  getCycleNameById: (cycleId: string) => string | undefined;
   getActiveCycleById: (cycleId: string) => ICycle | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   // fetch
+  fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
@@ -79,6 +81,7 @@ export class CycleStore implements ICycleStore {
       currentProjectDraftCycleIds: computed,
       currentProjectActiveCycleId: computed,
       // actions
+      fetchWorkspaceCycles: action,
       fetchAllCycles: action,
       fetchActiveCycle: action,
       fetchCycleDetails: action,
@@ -102,8 +105,8 @@ export class CycleStore implements ICycleStore {
   get currentProjectCycleIds() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
-    let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project === projectId);
-    allCycles = sortBy(allCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    let allCycles = Object.values(this.cycleMap ?? {}).filter((c) => c?.project_id === projectId);
+    allCycles = sortBy(allCycles, [(c) => c.sort_order]);
     const allCycleIds = allCycles.map((c) => c.id);
     return allCycleIds;
   }
@@ -116,9 +119,10 @@ export class CycleStore implements ICycleStore {
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
-      return c.project === projectId && hasEndDatePassed;
+      const isEndDateToday = isToday(new Date(c.end_date ?? ""));
+      return c.project_id === projectId && hasEndDatePassed && !isEndDateToday;
     });
-    completedCycles = sortBy(completedCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
     const completedCycleIds = completedCycles.map((c) => c.id);
     return completedCycleIds;
   }
@@ -131,9 +135,9 @@ export class CycleStore implements ICycleStore {
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let upcomingCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const isStartDateUpcoming = isFuture(new Date(c.start_date ?? ""));
-      return c.project === projectId && isStartDateUpcoming;
+      return c.project_id === projectId && isStartDateUpcoming;
     });
-    upcomingCycles = sortBy(upcomingCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    upcomingCycles = sortBy(upcomingCycles, [(c) => c.sort_order]);
     const upcomingCycleIds = upcomingCycles.map((c) => c.id);
     return upcomingCycleIds;
   }
@@ -146,9 +150,9 @@ export class CycleStore implements ICycleStore {
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
-      return c.project === projectId && !hasEndDatePassed;
+      return c.project_id === projectId && !hasEndDatePassed;
     });
-    incompleteCycles = sortBy(incompleteCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    incompleteCycles = sortBy(incompleteCycles, [(c) => c.sort_order]);
     const incompleteCycleIds = incompleteCycles.map((c) => c.id);
     return incompleteCycleIds;
   }
@@ -160,9 +164,9 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let draftCycles = Object.values(this.cycleMap ?? {}).filter(
-      (c) => c.project === projectId && !c.start_date && !c.end_date
+      (c) => c.project_id === projectId && !c.start_date && !c.end_date
     );
-    draftCycles = sortBy(draftCycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    draftCycles = sortBy(draftCycles, [(c) => c.sort_order]);
     const draftCycleIds = draftCycles.map((c) => c.id);
     return draftCycleIds;
   }
@@ -174,7 +178,7 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return null;
     const activeCycle = Object.keys(this.activeCycleIdMap ?? {}).find(
-      (cycleId) => this.cycleMap?.[cycleId]?.project === projectId
+      (cycleId) => this.cycleMap?.[cycleId]?.project_id === projectId
     );
     return activeCycle || null;
   }
@@ -185,6 +189,13 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   getCycleById = computedFn((cycleId: string): ICycle | null => this.cycleMap?.[cycleId] ?? null);
+
+  /**
+   * @description returns cycle name by cycle id
+   * @param cycleId
+   * @returns
+   */
+  getCycleNameById = computedFn((cycleId: string): string => this.cycleMap?.[cycleId]?.name);
 
   /**
    * @description returns active cycle details by cycle id
@@ -202,8 +213,8 @@ export class CycleStore implements ICycleStore {
   getProjectCycleIds = computedFn((projectId: string): string[] | null => {
     if (!this.fetchedMap[projectId]) return null;
 
-    let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project === projectId);
-    cycles = sortBy(cycles, [(c) => !c.is_favorite, (c) => c.name.toLowerCase()]);
+    let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project_id === projectId);
+    cycles = sortBy(cycles, [(c) => c.sort_order]);
     const cycleIds = cycles.map((c) => c.id);
     return cycleIds || null;
   });
@@ -217,6 +228,22 @@ export class CycleStore implements ICycleStore {
    */
   validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) =>
     await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
+
+  /**
+   * @description fetch all cycles
+   * @param workspaceSlug
+   * @returns ICycle[]
+   */
+  fetchWorkspaceCycles = async (workspaceSlug: string) =>
+    await this.cycleService.getWorkspaceCycles(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((cycle) => {
+          set(this.cycleMap, [cycle.id], { ...this.cycleMap[cycle.id], ...cycle });
+          set(this.fetchedMap, cycle.project_id, true);
+        });
+      });
+      return response;
+    });
 
   /**
    * @description fetches all cycles for a project
@@ -304,6 +331,7 @@ export class CycleStore implements ICycleStore {
         set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
       });
       const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
+      this.fetchCycleDetails(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
       console.log("Failed to patch cycle from cycle store");
@@ -336,7 +364,6 @@ export class CycleStore implements ICycleStore {
    */
   addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
@@ -361,7 +388,6 @@ export class CycleStore implements ICycleStore {
    */
   removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);

@@ -1,4 +1,5 @@
 """Global Settings"""
+
 # Python imports
 import os
 import ssl
@@ -282,10 +283,8 @@ if REDIS_SSL:
     redis_url = os.environ.get("REDIS_URL")
     broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
     CELERY_BROKER_URL = broker_url
-    CELERY_RESULT_BACKEND = broker_url
 else:
     CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
 
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
@@ -309,7 +308,9 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
         traces_sample_rate=1,
         send_default_pii=True,
         environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
-        profiles_sample_rate=1.0,
+        profiles_sample_rate=float(
+            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0.5)
+        ),
     )
 
 

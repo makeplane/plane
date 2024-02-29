@@ -1,11 +1,12 @@
-import { FC, useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell, BellOff } from "lucide-react";
 import { observer } from "mobx-react-lite";
+import { FC, useState } from "react";
 // UI
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
 import useToast from "hooks/use-toast";
+import isNil from "lodash/isNil";
 
 export type TIssueSubscription = {
   workspaceSlug: string;
@@ -25,17 +26,17 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   // state
   const [loading, setLoading] = useState(false);
 
-  const subscription = getSubscriptionByIssueId(issueId);
+  const isSubscribed = getSubscriptionByIssueId(issueId);
 
   const handleSubscription = async () => {
     setLoading(true);
     try {
-      if (subscription?.subscribed) await removeSubscription(workspaceSlug, projectId, issueId);
+      if (isSubscribed) await removeSubscription(workspaceSlug, projectId, issueId);
       else await createSubscription(workspaceSlug, projectId, issueId);
       setToastAlert({
         type: "success",
-        title: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
-        message: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        title: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
       });
       setLoading(false);
     } catch (error) {
@@ -48,16 +49,31 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     }
   };
 
+  if (isNil(isSubscribed))
+    return (
+      <Loader>
+        <Loader.Item width="106px" height="28px" />
+      </Loader>
+    );
+
   return (
     <div>
       <Button
         size="sm"
-        prependIcon={<Bell className="h-3 w-3" />}
+        prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
       >
-        {loading ? "Loading..." : subscription?.subscribed ? "Unsubscribe" : "Subscribe"}
+        {loading ? (
+          <span>
+            <span className="hidden sm:block">Loading...</span>
+          </span>
+        ) : isSubscribed ? (
+          <div className="hidden sm:block">Unsubscribe</div>
+        ) : (
+          <div className="hidden sm:block">Subscribe</div>
+        )}
       </Button>
     </div>
   );

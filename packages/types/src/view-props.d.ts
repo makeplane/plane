@@ -30,6 +30,10 @@ export type TIssueOrderByOptions =
   | "-assignees__first_name"
   | "labels__name"
   | "-labels__name"
+  | "modules__name"
+  | "-modules__name"
+  | "cycle__name"
+  | "-cycle__name"
   | "target_date"
   | "-target_date"
   | "estimate_point"
@@ -56,6 +60,8 @@ export type TIssueParams =
   | "created_by"
   | "subscriber"
   | "labels"
+  | "cycle"
+  | "module"
   | "start_date"
   | "target_date"
   | "project"
@@ -64,8 +70,7 @@ export type TIssueParams =
   | "order_by"
   | "type"
   | "sub_issue"
-  | "show_empty_groups"
-  | "start_target_date";
+  | "show_empty_groups";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -76,6 +81,8 @@ export interface IIssueFilterOptions {
   labels?: string[] | null;
   priority?: string[] | null;
   project?: string[] | null;
+  cycle?: string[] | null;
+  module?: string[] | null;
   start_date?: string[] | null;
   state?: string[] | null;
   state_group?: string[] | null;
@@ -93,7 +100,6 @@ export interface IIssueDisplayFilterOptions {
   layout?: TIssueLayouts;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
-  start_target_date?: boolean;
   sub_issue?: boolean;
   type?: TIssueTypeFilters;
 }
@@ -111,6 +117,8 @@ export interface IIssueDisplayProperties {
   estimate?: boolean;
   created_on?: boolean;
   updated_on?: boolean;
+  modules?: boolean;
+  cycle?: boolean;
 }
 
 export type TIssueKanbanFilters = {
