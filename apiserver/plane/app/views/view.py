@@ -44,8 +44,14 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
 )
+from plane.utils.grouper import (
+    issue_queryset_grouper,
+    issue_on_results,
+    issue_group_values,
+)
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.paginator import GroupedOffsetPaginator
 
 
 class GlobalViewViewSet(BaseViewSet):
@@ -158,49 +164,44 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
-        def on_results(issues):
-            if self.expand or self.fields:
-                return IssueSerializer(
-                    issues, many=True, expand=self.expand, fields=self.fields
-                ).data
-            return issues.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-            )
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, field=group_by
+        )
 
-        if request.GET.get("layout", "spreadsheet") in [
-            "layout",
-            "spreadsheet",
-        ]:
+        # List Paginate
+        if not group_by:
             return self.paginate(
                 request=request,
                 queryset=issue_queryset,
-                on_results=on_results
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues
+                ),
             )
-        return on_results(issues=issue_queryset)
+
+        # Group paginate
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: issue_on_results(
+                group_by=group_by, issues=issues
+            ),
+            group_by_fields=issue_group_values(
+                field=group_by,
+                slug=slug,
+            ),
+            paginator_cls=GroupedOffsetPaginator,
+            group_by_field_name=group_by,
+            count_filter=Q(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True),
+                archived_at__isnull=False,
+                is_draft=True,
+            ),
+        )
 
 
 class IssueViewViewSet(BaseViewSet):

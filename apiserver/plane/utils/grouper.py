@@ -1,12 +1,19 @@
 # Django imports
-from django.db.models import Q, F, QuerySet
+from django.db.models import Q, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Value, UUIDField
 from django.db.models.functions import Coalesce
 
 # Module imports
-from plane.db.models import State, Label, ProjectMember, Cycle, Module
+from plane.db.models import (
+    State,
+    Label,
+    ProjectMember,
+    Cycle,
+    Module,
+    WorkspaceMember,
+)
 
 
 def issue_queryset_grouper(field, queryset):
@@ -136,26 +143,53 @@ def issue_on_results(issues, group_by):
     return issues.values(*required_fields)
 
 
-def issue_group_values(field, slug, project_id):
+def issue_group_values(field, slug, project_id=None):
     if field == "state_id":
-        return list(State.objects.filter( workspace__slug=slug, project_id=project_id
-        ).values_list("id", flat=True))
+        queryset = State.objects.filter(
+            ~Q(name="Triage"),
+            workspace__slug=slug,
+        ).values_list("id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_id=project_id))
+        else:
+            return list(queryset)
     if field == "labels__id":
-        return list(Label.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).values_list("id", flat=True)) + ["None"]
+        queryset = Label.objects.filter(workspace__slug=slug).values_list(
+            "id", flat=True
+        )
+        if project_id:
+            return list(queryset.filter(project_id=project_id)) + ["None"]
+        else:
+            return list(queryset) + ["None"]
     if field == "assignees__id":
-        return list(ProjectMember.objects.filter(
-            workspace__slug=slug, project_id=project_id, is_active=True,
-        ).values_list("member_id", flat=True)) + ["None"]
+        if project_id:
+            return ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                is_active=True,
+            ).values_list("member_id", flat=True)
+        else:
+            return list(
+                WorkspaceMember.objects.filter(
+                    workspace__slug=slug, is_active=True
+                ).values_list("member_id", flat=True)
+            )
     if field == "modules__id":
-        return list(Module.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).values_list("id", flat=True))  + ["None"]
+        queryset = Module.objects.filter(
+            workspace__slug=slug,
+        ).values_list("id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_id=project_id)) + ["None"]
+        else:
+            return list(queryset) + ["None"]
     if field == "cycle_id":
-        return list(Cycle.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).values_list("id", flat=True)) + ["None"]
+        queryset = Cycle.objects.filter(
+            workspace__slug=slug,
+        ).values_list("id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_id=project_id)) + ["None"]
+        else:
+            return list(queryset) + ["None"]
     if field == "priority":
-        return ["low", "medium", "high", "urgent", "none"]    
+        return ["low", "medium", "high", "urgent", "none"]
     return []
