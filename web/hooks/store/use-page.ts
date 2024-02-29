@@ -9,13 +9,13 @@ export const usePage = (pageId: string) => {
   const { projectPageMap, projectArchivedPageMap } = context.projectPages;
 
   const { projectId, workspaceSlug } = context.app.router;
-  if (!projectId || !workspaceSlug) throw new Error("usePage must be used within ProjectProvider");
-
-  if (projectPageMap[projectId] && projectPageMap[projectId][pageId]) {
-    return projectPageMap[projectId][pageId];
-  } else if (projectArchivedPageMap[projectId] && projectArchivedPageMap[projectId][pageId]) {
-    return projectArchivedPageMap[projectId][pageId];
-  } else {
+  if (!projectId || !workspaceSlug) {
+    console.log("usePage must be used within ProjectProvider");
     return;
   }
+
+  if (projectPageMap[projectId] && projectPageMap[projectId][pageId]) return projectPageMap[projectId][pageId];
+  else if (projectArchivedPageMap[projectId] && projectArchivedPageMap[projectId][pageId])
+    return projectArchivedPageMap[projectId][pageId];
+  else return;
 };

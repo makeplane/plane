@@ -49,7 +49,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // states
-  const [showSnoozeOptions, setshowSnoozeOptions] = React.useState(false);
+  const [showSnoozeOptions, setShowSnoozeOptions] = React.useState(false);
   // toast alert
   const { setToastAlert } = useToast();
   // refs
@@ -105,7 +105,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (snoozeRef.current && !snoozeRef.current?.contains(event.target)) {
-        setshowSnoozeOptions(false);
+        setShowSnoozeOptions(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside, true);
@@ -115,6 +115,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       document.removeEventListener("touchend", handleClickOutside, true);
     };
   }, []);
+
+  const notificationField = notification.data.issue_activity.field;
+  const notificationTriggeredBy = notification.triggered_by_details;
 
   if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
 
@@ -129,7 +132,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         closePopover();
       }}
       href={`/${workspaceSlug}/projects/${notification.project}/${
-        notification.data.issue_activity.field === "archived_at" ? "archived-issues" : "issues"
+        notificationField === "archived_at" ? "archived-issues" : "issues"
       }/${notification.data.issue.id}`}
       className={`group relative flex w-full cursor-pointer items-center gap-4 p-3 pl-6 ${
         notification.read_at === null ? "bg-custom-primary-70/5" : "hover:bg-custom-background-200"
@@ -139,10 +142,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         <span className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-custom-primary-100" />
       )}
       <div className="relative h-12 w-12 rounded-full">
-        {notification.triggered_by_details.avatar && notification.triggered_by_details.avatar !== "" ? (
+        {notificationTriggeredBy.avatar && notificationTriggeredBy.avatar !== "" ? (
           <div className="h-12 w-12 rounded-full">
             <Image
-              src={notification.triggered_by_details.avatar}
+              src={notificationTriggeredBy.avatar}
               alt="Profile Image"
               layout="fill"
               objectFit="cover"
@@ -152,10 +155,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         ) : (
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-custom-background-80">
             <span className="text-lg font-medium text-custom-text-100">
-              {notification.triggered_by_details.is_bot ? (
-                notification.triggered_by_details.first_name?.[0]?.toUpperCase()
-              ) : notification.triggered_by_details.display_name?.[0] ? (
-                notification.triggered_by_details.display_name?.[0]?.toUpperCase()
+              {notificationTriggeredBy.is_bot ? (
+                notificationTriggeredBy.first_name?.[0]?.toUpperCase()
+              ) : notificationTriggeredBy.display_name?.[0] ? (
+                notificationTriggeredBy.display_name?.[0]?.toUpperCase()
               ) : (
                 <User2 className="h-4 w-4" />
               )}
@@ -168,30 +171,32 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           {!notification.message ? (
             <div className="w-full break-words text-sm">
               <span className="font-semibold">
-                {notification.triggered_by_details.is_bot
-                  ? notification.triggered_by_details.first_name
-                  : notification.triggered_by_details.display_name}{" "}
+                {notificationTriggeredBy.is_bot
+                  ? notificationTriggeredBy.first_name
+                  : notificationTriggeredBy.display_name}{" "}
               </span>
-              {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.verb}{" "}
-              {notification.data.issue_activity.field === "comment"
+              {!["comment", "archived_at"].includes(notificationField) && notification.data.issue_activity.verb}{" "}
+              {notificationField === "comment"
                 ? "commented"
-                : notification.data.issue_activity.field === "None"
+                : notificationField === "archived_at"
+                ? notification.data.issue_activity.new_value === "restore"
+                  ? "restored the issue"
+                  : "archived the issue"
+                : notificationField === "None"
                 ? null
-                : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
-              {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
-                ? "to"
-                : ""}
+                : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
+              {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
               <span className="font-semibold">
                 {" "}
-                {notification.data.issue_activity.field !== "None" ? (
-                  notification.data.issue_activity.field !== "comment" ? (
-                    notification.data.issue_activity.field === "target_date" ? (
+                {notificationField !== "None" ? (
+                  notificationField !== "comment" ? (
+                    notificationField === "target_date" ? (
                       renderFormattedDate(notification.data.issue_activity.new_value)
-                    ) : notification.data.issue_activity.field === "attachment" ? (
+                    ) : notificationField === "attachment" ? (
                       "the issue"
-                    ) : notification.data.issue_activity.field === "description" ? (
+                    ) : notificationField === "description" ? (
                       stripAndTruncateHTML(notification.data.issue_activity.new_value, 55)
-                    ) : (
+                    ) : notificationField === "archived_at" ? null : (
                       notification.data.issue_activity.new_value
                     )
                   ) : (
@@ -255,7 +260,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                             onClick={(e) => {
                               e.stopPropagation();
                               e.preventDefault();
-                              setshowSnoozeOptions(true);
+                              setShowSnoozeOptions(true);
                             }}
                             className="flex gap-x-2 items-center p-1.5"
                           >
@@ -280,7 +285,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
-                      setshowSnoozeOptions(false);
+                      setShowSnoozeOptions(false);
                       snoozeOptionOnClick(item.value);
                     }}
                   >

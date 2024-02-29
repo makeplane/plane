@@ -1,6 +1,15 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail, useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import {
+  useCycle,
+  useIssueDetail,
+  useKanbanView,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+} from "hooks/store";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -79,14 +88,16 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const member = useMember();
   const project = useProject();
   const label = useLabel();
+  const cycle = useCycle();
+  const _module = useModule();
   const projectState = useProjectState();
   const { peekIssue } = useIssueDetail();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, cycle, _module, label, projectState, member);
 
   if (!list) return null;
 
-  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)[_list.id]?.length > 0);
+  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)?.[_list.id]?.length > 0);
 
   const groupList = showEmptyGroup ? list : groupWithIssues;
 

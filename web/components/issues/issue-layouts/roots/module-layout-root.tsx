@@ -49,7 +49,8 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
           moduleId.toString()
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const userFilters = issuesFilter?.issueFilters?.filters;

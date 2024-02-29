@@ -42,7 +42,7 @@ interface IssueDetailsBlockProps {
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
   const { issue, handleIssues, quickActions, isReadOnly, displayProperties } = props;
   // hooks
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
   } = useApplication();
@@ -64,7 +64,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-xs text-custom-text-300">
-            {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
+            {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
           <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
         </div>
@@ -82,6 +82,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issue?.tempId}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <span>{issue.name}</span>

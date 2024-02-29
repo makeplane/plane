@@ -159,14 +159,29 @@ export const getIssuesDisplayFilterPayload = (payload: any) => {
 };
 
 export const elementFromPath = (path?: string) => {
-  if (path?.includes("workspace-views")) return "Global view";
-  if (path?.includes("cycles")) return "Cycle";
-  if (path?.includes("modules")) return "Module";
-  if (path?.includes("views")) return "Project view";
-  if (path?.includes("inbox")) return "Inbox";
-  if (path?.includes("draft")) return "Draft";
-  if (path?.includes("archived")) return "Archive";
-  return "Project";
+  if (!path)
+    return {
+      element: "Project",
+      element_id: path?.split("/").at(-2),
+    };
+
+  let element = "Project";
+  if (path.includes("workspace-views")) element = "Global view";
+  else if (path.includes("cycles")) element = "Cycle";
+  else if (path.includes("modules")) element = "Module";
+  else if (path.includes("pages")) element = "Project page";
+  else if (path.includes("views")) element = "Project view";
+  else if (path.includes("profile")) element = "Profile";
+  else if (path.includes("inbox")) element = "Inbox";
+  else if (path.includes("draft")) element = "Draft";
+  else if (path.includes("archived")) element = "Archive";
+
+  return {
+    element: element,
+    element_id: ["Project", "Draft", "Archive"].includes(element)
+      ? path.split("/").at(-2)
+      : path.split("/").at(-1),
+  };
 };
 
 // Workspace crud Events

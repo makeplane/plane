@@ -39,7 +39,8 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {

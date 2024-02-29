@@ -86,6 +86,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
   const toggleDropdown = () => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: Date | null) => {
@@ -146,7 +147,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
               <span className="flex-grow truncate">{value ? renderFormattedDate(value) : placeholder}</span>
             )}
-            {isClearable && isDateSelected && (
+            {isClearable && !disabled && isDateSelected && (
               <X
                 className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
                 onClick={(e) => {

@@ -30,21 +30,25 @@ export const ProjectLayoutRoot: FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { captureIssuesListOpenedEvent } = useEventTracker();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-      captureIssuesListOpenedEvent({
-        path: router.asPath,
-        filters: issuesFilter?.issueFilters?.filters,
-        element_id: projectId,
-      });
-      await issues?.fetchIssues(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        issues?.groupedIssueIds ? "mutation" : "init-loader"
-      );
-    }
-  });
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        captureIssuesListOpenedEvent({
+          path: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+          element_id: projectId,
+        });
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 

@@ -37,7 +37,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
       key: "overdue",
       title: "Issues overdue",
       count: widgetStats?.pending_issues_count,
-      link: `/${workspaceSlug}/workspace-views/assigned/?target_date=${today};before`,
+      link: `/${workspaceSlug}/workspace-views/assigned/?state_group=backlog,unstarted,started&target_date=${today};before`,
     },
     {
       key: "created",

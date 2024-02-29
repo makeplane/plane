@@ -18,7 +18,7 @@ import {
 } from "@plane/types";
 // constants
 import { EIssueActions } from "../types";
-import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
 import { TCreateModalStoreTypes } from "constants/issue";
 
@@ -217,10 +217,28 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
   const member = useMember();
   const project = useProject();
   const label = useLabel();
+  const cycle = useCycle();
+  const _module = useModule();
   const projectState = useProjectState();
 
-  const groupByList = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
-  const subGroupByList = getGroupByColumns(sub_group_by as GroupByColumnTypes, project, label, projectState, member);
+  const groupByList = getGroupByColumns(
+    group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    _module,
+    label,
+    projectState,
+    member
+  );
+  const subGroupByList = getGroupByColumns(
+    sub_group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    _module,
+    label,
+    projectState,
+    member
+  );
 
   if (!groupByList || !subGroupByList) return null;
 

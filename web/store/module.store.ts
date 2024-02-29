@@ -19,6 +19,7 @@ export interface IModuleStore {
   projectModuleIds: string[] | null;
   // computed actions
   getModuleById: (moduleId: string) => IModule | null;
+  getModuleNameById: (moduleId: string) => string;
   getProjectModuleIds: (projectId: string) => string[] | null;
   // actions
   // fetch
@@ -115,6 +116,13 @@ export class ModulesStore implements IModuleStore {
   getModuleById = computedFn((moduleId: string) => this.moduleMap?.[moduleId] || null);
 
   /**
+   * @description get module by id
+   * @param moduleId
+   * @returns IModule | null
+   */
+  getModuleNameById = computedFn((moduleId: string) => this.moduleMap?.[moduleId]?.name);
+
+  /**
    * @description returns list of module ids of the project id passed as argument
    * @param projectId
    */
@@ -194,7 +202,6 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [response?.id], response);
       });
-      this.fetchModules(workspaceSlug, projectId);
       return response;
     });
 

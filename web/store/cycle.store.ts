@@ -1,6 +1,6 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { isFuture, isPast } from "date-fns";
+import { isFuture, isPast, isToday } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // types
@@ -28,6 +28,7 @@ export interface ICycleStore {
   currentProjectActiveCycleId: string | null;
   // computed actions
   getCycleById: (cycleId: string) => ICycle | null;
+  getCycleNameById: (cycleId: string) => string | undefined;
   getActiveCycleById: (cycleId: string) => ICycle | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   // actions
@@ -118,7 +119,8 @@ export class CycleStore implements ICycleStore {
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
-      return c.project_id === projectId && hasEndDatePassed;
+      const isEndDateToday = isToday(new Date(c.end_date ?? ""));
+      return c.project_id === projectId && hasEndDatePassed && !isEndDateToday;
     });
     completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
     const completedCycleIds = completedCycles.map((c) => c.id);
@@ -187,6 +189,13 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   getCycleById = computedFn((cycleId: string): ICycle | null => this.cycleMap?.[cycleId] ?? null);
+
+  /**
+   * @description returns cycle name by cycle id
+   * @param cycleId
+   * @returns
+   */
+  getCycleNameById = computedFn((cycleId: string): string => this.cycleMap?.[cycleId]?.name);
 
   /**
    * @description returns active cycle details by cycle id
