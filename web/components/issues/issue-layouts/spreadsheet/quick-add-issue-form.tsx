@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
 import { useEventTracker, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
@@ -84,7 +84,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // hooks
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   useEffect(() => {
     setFocus("name");
@@ -100,13 +100,13 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     Object.keys(errors).forEach((key) => {
       const error = errors[key as keyof TIssue];
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: error?.message?.toString() || "Some error occurred. Please try again.",
       });
     });
-  }, [errors, setToastAlert]);
+  }, [errors]);
 
   // const onSubmitHandler = async (formData: TIssue) => {
   //   if (isSubmitting || !workspaceSlug || !projectId) return;
@@ -130,8 +130,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //       payload
   //     );
 
-  //     setToastAlert({
-  //       type: "success",
+  //     setToast({
+  //       type: TOAST_TYPE.SUCCESS,
   //       title: "Success!",
   //       message: "Issue created successfully.",
   //     });
@@ -140,8 +140,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //       const error = err?.[key];
   //       const errorTitle = error ? (Array.isArray(error) ? error.join(", ") : error) : null;
 
-  //       setToastAlert({
-  //         type: "error",
+  //       setToast({
+  //         type: TOAST_TYPE.ERROR,
   //         title: "Error!",
   //         message: errorTitle || "Some error occurred. Please try again.",
   //       });
@@ -170,8 +170,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
             });
           }
         ));
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Issue created successfully.",
       });
@@ -182,8 +182,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
         path: router.asPath,
       });
       console.error(err);
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: err?.message || "Some error occurred. Please try again.",
       });

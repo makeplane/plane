@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // store hooks
 import { useEstimate, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
@@ -32,7 +32,7 @@ export const EstimatesList: React.FC = observer(() => {
   const { projectEstimates, getProjectEstimateById } = useEstimate();
   const { currentUser } = useUser();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -50,8 +50,8 @@ export const EstimatesList: React.FC = observer(() => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: errorString ?? "Estimate could not be disabled. Please try again",
       });

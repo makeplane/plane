@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 // hooks
 import { useEventTracker, useIssueDetail } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { IssueAttachmentUpload } from "./attachment-upload";
 import { IssueAttachmentsList } from "./attachments-list";
@@ -24,7 +24,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
   // hooks
   const { createAttachment, removeAttachment } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
     () => ({
@@ -32,9 +32,9 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           const res = await createAttachment(workspaceSlug, projectId, issueId, data);
-          setToastAlert({
+          setToast({
             message: "The attachment has been successfully uploaded",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             title: "Attachment uploaded",
           });
           captureIssueEvent({
@@ -50,9 +50,9 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
             eventName: "Issue attachment added",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
           });
-          setToastAlert({
+          setToast({
             message: "The attachment could not be uploaded",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             title: "Attachment not uploaded",
           });
         }
@@ -61,9 +61,9 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
-          setToastAlert({
+          setToast({
             message: "The attachment has been successfully removed",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             title: "Attachment removed",
           });
           captureIssueEvent({
@@ -83,15 +83,15 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
               change_details: "",
             },
           });
-          setToastAlert({
+          setToast({
             message: "The Attachment could not be removed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             title: "Attachment not removed",
           });
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment, setToastAlert]
+    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
   );
 
   return (

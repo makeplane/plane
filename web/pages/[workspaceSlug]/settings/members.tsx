@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -40,7 +40,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   } = useMember();
   const { currentWorkspace } = useWorkspace();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -59,8 +59,8 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
           state: "SUCCESS",
           element: "Workspace settings member page",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
         });
@@ -77,8 +77,8 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
           state: "FAILED",
           element: "Workspace settings member page",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
         });

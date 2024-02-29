@@ -8,8 +8,7 @@ import { useApplication, useUser } from "hooks/store";
 import { UserService } from "services/user.service";
 // components
 import { PageHead } from "components/core";
-// hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setPromiseToast, setToast } from "components/toast";
 // layout
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // ui
@@ -46,33 +45,28 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ defaultValues });
-  const { setToastAlert } = useToast();
 
   const handleChangePassword = async (formData: FormValues) => {
     if (formData.new_password !== formData.confirm_password) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "The new password and the confirm password don't match.",
       });
       return;
     }
-    await userService
-      .changePassword(formData)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Password changed successfully.",
-        });
-      })
-      .catch((error) => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: error?.error ?? "Something went wrong. Please try again.",
-        });
-      });
+    const changePasswordPromise = userService.changePassword(formData);
+    setPromiseToast(changePasswordPromise, {
+      loading: "Changing password...",
+      success: {
+        title: "Success!",
+        message: () => "Password changed successfully.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Something went wrong. Please try again.",
+      },
+    });
   };
 
   useEffect(() => {

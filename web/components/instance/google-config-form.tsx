@@ -7,7 +7,7 @@ import { Button, Input } from "@plane/ui";
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 
 export interface IInstanceGoogleConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -23,7 +23,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
   // store hooks
   const { instance: instanceStore } = useApplication();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -42,9 +42,9 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Google Configuration Settings updated successfully",
         })
       )
@@ -94,9 +94,9 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
             className="flex items-center justify-between py-2"
             onClick={() => {
               navigator.clipboard.writeText(originURL);
-              setToastAlert({
+              setToast({
                 message: "The Origin URL has been successfully copied to your clipboard",
-                type: "success",
+                type: TOAST_TYPE.SUCCESS,
                 title: "Copied to clipboard",
               });
             }}

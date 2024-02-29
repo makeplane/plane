@@ -9,7 +9,7 @@ import { NextPageWithLayout } from "lib/types";
 // hooks
 import { useApplication } from "hooks/store";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
@@ -25,7 +25,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -46,18 +46,18 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
 
     await updateInstanceConfigurations(payload)
       .then(() => {
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "SSO and OAuth Settings updated successfully",
         });
         setIsSubmitting(false);
       })
       .catch((err) => {
         console.error(err);
-        setToastAlert({
+        setToast({
           title: "Error",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: "Failed to update SSO and OAuth Settings",
         });
         setIsSubmitting(false);

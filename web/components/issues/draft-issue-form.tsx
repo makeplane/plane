@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Sparkle, X } from "lucide-react";
 // hooks
 import { useApplication, useEstimate, useMention, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import useLocalStorage from "hooks/use-local-storage";
 // services
 import { AIService } from "services/ai.service";
@@ -109,7 +109,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const { mentionHighlights, mentionSuggestions } = useMention();
   // hooks
   const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // refs
   const editorRef = useRef<any>(null);
   // router
@@ -218,8 +218,8 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
       })
       .then((res) => {
         if (res.response === "")
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "Issue title isn't informative enough to generate the description. Please try with a different title.",
@@ -230,14 +230,14 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
         const error = err?.data?.error;
 
         if (err.status === 429)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });

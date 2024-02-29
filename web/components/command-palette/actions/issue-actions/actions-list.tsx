@@ -4,10 +4,10 @@ import { Command } from "cmdk";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 // hooks
 import { useApplication, useUser, useIssues } from "hooks/store";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+// components
+import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -36,8 +36,6 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
   } = useApplication();
   const { currentUser } = useUser();
-
-  const { setToastAlert } = useToast();
 
   const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;
@@ -71,14 +69,14 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });

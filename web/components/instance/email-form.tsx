@@ -7,7 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 
 export interface IInstanceEmailForm {
   config: IFormattedInstanceConfiguration;
@@ -30,7 +30,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   // store hooks
   const { instance: instanceStore } = useApplication();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -55,9 +55,9 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Email Settings updated successfully",
         })
       )

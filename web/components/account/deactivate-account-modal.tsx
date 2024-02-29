@@ -8,8 +8,8 @@ import { mutate } from "swr";
 import { useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
+// components
+import { TOAST_TYPE, setToast } from "components/toast";
 
 type Props = {
   isOpen: boolean;
@@ -26,7 +26,6 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
 
   const router = useRouter();
 
-  const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
 
   const handleClose = () => {
@@ -39,8 +38,8 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
 
     await deactivateAccount()
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Account deactivated successfully.",
         });
@@ -50,8 +49,8 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
         handleClose();
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error,
         })
@@ -90,7 +89,10 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                   <div className="">
                     <div className="flex items-start gap-x-4">
                       <div className="grid place-items-center rounded-full bg-red-500/20 p-2 sm:p-2 md:p-4 lg:p-4 mt-3 sm:mt-3 md:mt-0 lg:mt-0 ">
-                        <Trash2 className="h-4 w-4 sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6 text-red-600" aria-hidden="true" />
+                        <Trash2
+                          className="h-4 w-4 sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6 text-red-600"
+                          aria-hidden="true"
+                        />
                       </div>
                       <div>
                         <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-custom-text-100">

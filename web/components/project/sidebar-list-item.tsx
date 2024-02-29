@@ -21,7 +21,7 @@ import {
 // hooks
 import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { cn } from "helpers/common.helper";
 import { getNumberCount } from "helpers/string.helper";
@@ -94,7 +94,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = router.query;
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // derived values
   const project = getProjectById(projectId);
 
@@ -113,8 +113,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !project) return;
 
     addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Couldn't remove the project from favorites. Please try again.",
       });
@@ -125,8 +125,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !project) return;
 
     removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Couldn't remove the project from favorites. Please try again.",
       });

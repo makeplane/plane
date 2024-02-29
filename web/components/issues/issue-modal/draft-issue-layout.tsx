@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker } from "hooks/store";
 // services
 import { IssueDraftService } from "services/issue";
@@ -44,7 +44,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // store hooks
   const { captureIssueEvent } = useEventTracker();
 
@@ -61,8 +61,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     await issueDraftService
       .createDraftIssue(workspaceSlug.toString(), projectId.toString(), payload)
       .then((res) => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Draft Issue created successfully.",
         });
@@ -76,8 +76,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onClose(false);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Issue could not be created. Please try again.",
         });

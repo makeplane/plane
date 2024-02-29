@@ -8,7 +8,7 @@ import isEmpty from "lodash/isEmpty";
 import { CycleService } from "services/cycle.service";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
@@ -61,7 +61,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const cycleDetails = getCycleById(cycleId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form info
   const { control, reset } = useForm({
     defaultValues,
@@ -98,15 +98,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link Copied!",
           message: "Cycle link copied to clipboard.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
@@ -147,14 +147,14 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     if (isDateValid) {
       submitChanges(payload, "date_range");
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Cycle updated successfully.",
       });
     } else {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message:
           "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",

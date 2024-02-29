@@ -10,7 +10,7 @@ import { usePopper } from "react-popper";
 // hooks
 import { useApplication, useEventTracker, useUser, useWorkspace } from "hooks/store";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Avatar, Loader } from "@plane/ui";
 // types
@@ -60,7 +60,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   // hooks
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -89,8 +89,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })

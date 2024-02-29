@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { useWebhook } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button } from "@plane/ui";
 
@@ -20,7 +20,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   // router
   const router = useRouter();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // store hooks
   const { removeWebhook } = useWebhook();
 
@@ -37,16 +37,16 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
 
     removeWebhook(workspaceSlug.toString(), webhookId.toString())
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Webhook deleted successfully.",
         });
         router.replace(`/${workspaceSlug}/settings/webhooks/`);
       })
       .catch((error) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Something went wrong. Please try again.",
         })

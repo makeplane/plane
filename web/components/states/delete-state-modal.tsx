@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { useEventTracker, useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -30,7 +30,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
   const { captureProjectStateEvent } = useEventTracker();
   const { deleteState } = useProjectState();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -55,15 +55,15 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
       })
       .catch((err) => {
         if (err.status === 400)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "This state contains some issues within it, please move them to some other state to delete this state.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });

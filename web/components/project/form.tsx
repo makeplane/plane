@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
@@ -34,7 +34,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -84,8 +84,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             element: "Project general settings",
           },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project updated successfully",
         });
@@ -95,8 +95,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Project could not be updated. Please try again.",
         });

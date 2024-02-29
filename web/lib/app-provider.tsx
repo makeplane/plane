@@ -4,18 +4,16 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // constants
 import { THEMES } from "constants/themes";
+import { SWR_CONFIG } from "constants/swr-config";
 // layouts
 import InstanceLayout from "layouts/instance-layout";
 // contexts
 import { SWRConfig } from "swr";
-// constants
-import { SWR_CONFIG } from "constants/swr-config";
-import { ToastContextProvider } from "contexts/toast.context";
+// toast
 import { Toast } from "components/toast";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
@@ -47,24 +45,22 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   return (
     <ThemeProvider themes={THEMES} defaultTheme="system">
       <Toast />
-      <ToastContextProvider>
-        <InstanceLayout>
-          <StoreWrapper>
-            <CrispWrapper user={currentUser}>
-              <PostHogProvider
-                user={currentUser}
-                currentWorkspaceId={currentWorkspace?.id}
-                workspaceRole={currentWorkspaceRole}
-                projectRole={currentProjectRole}
-                posthogAPIKey={envConfig?.posthog_api_key || null}
-                posthogHost={envConfig?.posthog_host || null}
-              >
-                <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-              </PostHogProvider>
-            </CrispWrapper>
-          </StoreWrapper>
-        </InstanceLayout>
-      </ToastContextProvider>
+      <InstanceLayout>
+        <StoreWrapper>
+          <CrispWrapper user={currentUser}>
+            <PostHogProvider
+              user={currentUser}
+              currentWorkspaceId={currentWorkspace?.id}
+              workspaceRole={currentWorkspaceRole}
+              projectRole={currentProjectRole}
+              posthogAPIKey={envConfig?.posthog_api_key || null}
+              posthogHost={envConfig?.posthog_host || null}
+            >
+              <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
+            </PostHogProvider>
+          </CrispWrapper>
+        </StoreWrapper>
+      </InstanceLayout>
     </ThemeProvider>
   );
 });

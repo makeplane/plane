@@ -5,7 +5,7 @@ import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
 // hooks
 import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // types
 import { IProject } from "@plane/types";
 // constants
@@ -59,12 +59,12 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const { currentProjectDetails, updateProject } = useProject();
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
-    setToastAlert({
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Success!",
       message: "Project feature updated successfully.",
     });

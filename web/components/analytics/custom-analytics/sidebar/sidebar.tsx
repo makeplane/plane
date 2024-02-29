@@ -1,4 +1,4 @@
-import { useEffect, } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
@@ -6,9 +6,9 @@ import { mutate } from "swr";
 import { AnalyticsService } from "services/analytics.service";
 // hooks
 import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button, LayersIcon } from "@plane/ui";
 // icons
@@ -34,8 +34,6 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const { currentUser } = useUser();
   const { workspaceProjectIds, getProjectById } = useProject();
@@ -107,8 +105,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
     analyticsService
       .exportAnalytics(workspaceSlug.toString(), data)
       .then((res) => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: res.message,
         });
@@ -116,8 +114,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
         trackExportAnalytics();
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "There was some error in exporting the analytics. Please try again.",
         })

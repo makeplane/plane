@@ -5,7 +5,7 @@ import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useWebhook, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { csvDownload } from "helpers/download.helper";
@@ -30,22 +30,22 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
   // hooks
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
 
     copyTextToClipboard(webhookSecretKey)
       .then(() =>
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Secret key copied to clipboard.",
         })
       )
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Error occurred while copying secret key.",
         })
@@ -59,8 +59,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
 
     regenerateSecretKey(workspaceSlug.toString(), data.id)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "New key regenerated successfully.",
         });
@@ -71,8 +71,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
         }
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

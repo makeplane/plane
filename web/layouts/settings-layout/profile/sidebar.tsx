@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Tooltip } from "@plane/ui";
 // constants
@@ -37,7 +37,7 @@ export const ProfileLayoutSidebar = observer(() => {
   // next themes
   const { setTheme } = useTheme();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // store hooks
   const {
     theme: { sidebarCollapsed, toggleSidebar, toggleMobileSidebar },
@@ -92,8 +92,8 @@ export const ProfileLayoutSidebar = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })

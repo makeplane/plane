@@ -6,7 +6,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 import { useLabel } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
@@ -36,7 +36,7 @@ export const CreateUpdateLabelInline = observer(
     // store hooks
     const { createLabel, updateLabel } = useLabel();
     // toast alert
-    const { setToastAlert } = useToast();
+    // const { setToastAlert } = useToast();
     // form info
     const {
       handleSubmit,
@@ -65,9 +65,9 @@ export const CreateUpdateLabelInline = observer(
           reset(defaultValues);
         })
         .catch((error) => {
-          setToastAlert({
+          setToast({
             title: "Oops!",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: error?.error ?? "Error while adding the label",
           });
           reset(formData);
@@ -83,9 +83,9 @@ export const CreateUpdateLabelInline = observer(
           handleClose();
         })
         .catch((error) => {
-          setToastAlert({
+          setToast({
             title: "Oops!",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: error?.error ?? "Error while updating the label",
           });
           reset(formData);

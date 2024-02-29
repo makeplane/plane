@@ -5,7 +5,7 @@ import { Copy, Link, Pencil, Trash2 } from "lucide-react";
 import omit from "lodash/omit";
 // hooks
 import { useEventTracker, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -37,12 +37,12 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })

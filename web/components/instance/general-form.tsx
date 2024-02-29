@@ -6,7 +6,7 @@ import { Button, Input } from "@plane/ui";
 import { IInstance, IInstanceAdmin } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 
 export interface IInstanceGeneralForm {
   instance: IInstance;
@@ -23,7 +23,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
   // store hooks
   const { instance: instanceStore } = useApplication();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -42,9 +42,9 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
     await instanceStore
       .updateInstanceInfo(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Settings updated successfully",
         })
       )

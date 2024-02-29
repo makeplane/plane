@@ -5,7 +5,7 @@ import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 import Link from "next/link";
 // hooks
 import { useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { DeleteProjectModal, JoinProjectModal } from "components/project";
 // ui
@@ -28,7 +28,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
@@ -43,8 +43,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     if (!workspaceSlug) return;
 
     addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Couldn't remove the project from favorites. Please try again.",
       });
@@ -55,8 +55,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     if (!workspaceSlug || !project) return;
 
     removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Couldn't remove the project from favorites. Please try again.",
       });
@@ -67,8 +67,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${project.id}/issues`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       });

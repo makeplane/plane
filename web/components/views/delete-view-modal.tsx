@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { useProjectView } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -27,7 +27,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { deleteView } = useProjectView();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -43,15 +43,15 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
       .then(() => {
         handleClose();
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View deleted successfully.",
         });
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be deleted. Please try again.",
         })

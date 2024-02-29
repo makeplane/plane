@@ -1,8 +1,8 @@
 import { Copy } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Button, Tooltip } from "@plane/ui";
+// components
+import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -17,12 +17,10 @@ type Props = {
 export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   const { handleClose, tokenDetails } = props;
 
-  const { setToastAlert } = useToast();
-
   const copyApiToken = (token: string) => {
     copyTextToClipboard(token).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Token copied to clipboard.",
       })

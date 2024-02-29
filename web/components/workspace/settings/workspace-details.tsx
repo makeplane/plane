@@ -7,7 +7,7 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import { FileService } from "services/file.service";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
 import { WorkspaceImageUploadModal } from "components/core";
@@ -44,7 +44,7 @@ export const WorkspaceDetails: FC = observer(() => {
   } = useUser();
   const { currentWorkspace, updateWorkspace } = useWorkspace();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -77,9 +77,9 @@ export const WorkspaceDetails: FC = observer(() => {
             element: "Workspace general settings page",
           },
         });
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Workspace updated successfully",
         });
       })
@@ -110,16 +110,16 @@ export const WorkspaceDetails: FC = observer(() => {
     fileService.deleteFile(currentWorkspace.id, url).then(() => {
       updateWorkspace(currentWorkspace.slug, { logo: "" })
         .then(() => {
-          setToastAlert({
-            type: "success",
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: "Workspace picture removed successfully.",
           });
           setIsImageUploadModalOpen(false);
         })
         .catch(() => {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "There was some error in deleting your profile picture. Please try again.",
           });
@@ -132,8 +132,8 @@ export const WorkspaceDetails: FC = observer(() => {
     if (!currentWorkspace) return;
 
     copyUrlToClipboard(`${currentWorkspace.slug}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Workspace URL copied to the clipboard.",
       });
     });

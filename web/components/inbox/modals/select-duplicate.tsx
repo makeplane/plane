@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { IssueService } from "services/issue";
 // ui
@@ -30,7 +30,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string>("");
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -62,9 +62,9 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const handleSubmit = () => {
     if (!selectedItem || selectedItem.length === 0)
-      return setToastAlert({
+      return setToast({
         title: "Error",
-        type: "error",
+        type: TOAST_TYPE.ERROR,
       });
     onSubmit(selectedItem);
     handleClose();

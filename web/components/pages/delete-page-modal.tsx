@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { useEventTracker, usePage } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -33,7 +33,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const pageStore = usePage(pageId);
 
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   if (!pageStore) return null;
 
@@ -60,8 +60,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
           },
         });
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page deleted successfully.",
         });
@@ -74,8 +74,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
             state: "FAILED",
           },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Page could not be deleted. Please try again.",
         });

@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { IssueDraftService } from "services/issue";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
@@ -30,7 +30,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // hooks
   const { getProjectById } = useProject();
 
@@ -54,19 +54,19 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
         setIsDeleteLoading(false);
         handleClose();
 
-        setToastAlert({
+        setToast({
           title: "Success",
           message: "Draft Issue deleted successfully",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
         });
       })
       .catch((error) => {
         console.error(error);
         handleClose();
-        setToastAlert({
+        setToast({
           title: "Error",
           message: "Something went wrong",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
         });
         setIsDeleteLoading(false);
       });

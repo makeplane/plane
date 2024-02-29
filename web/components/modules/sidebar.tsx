@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 // hooks
 import { useModule, useUser, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal } from "components/modules";
@@ -65,7 +65,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const { reset, control } = useForm({
     defaultValues,
@@ -99,15 +99,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link created",
           message: "Module link created successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -125,15 +125,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link updated",
           message: "Module link updated successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -149,15 +149,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link deleted",
           message: "Module link deleted successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -167,15 +167,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link copied",
           message: "Module link copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -187,8 +187,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
       target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
     });
-    setToastAlert({
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Success!",
       message: "Module updated successfully.",
     });

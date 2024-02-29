@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
 import { useEstimate } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // types
 import { IEstimate } from "@plane/types";
 // ui
@@ -27,7 +27,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { deleteEstimate } = useEstimate();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleEstimateDelete = () => {
     if (!workspaceSlug || !projectId) return;
@@ -43,8 +43,8 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
         const error = err?.error;
         const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: errorString ?? "Estimate could not be deleted. Please try again",
         });

@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import { useIssues, useProject } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
@@ -25,7 +25,7 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
 
   const {
@@ -56,9 +56,9 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
         const error = err?.detail;
         const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
+        setToast({
           title: "Error",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: errorString || "Something went wrong.",
         });
       })

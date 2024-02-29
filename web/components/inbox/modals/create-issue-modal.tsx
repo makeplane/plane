@@ -7,7 +7,7 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { FileService } from "services/file.service";
 import { AIService } from "services/ai.service";
@@ -47,7 +47,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   // refs
   const editorRef = useRef<any>(null);
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const { mentionHighlights, mentionSuggestions } = useMention();
   // router
   const router = useRouter();
@@ -138,8 +138,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
       })
       .then((res) => {
         if (res.response === "")
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "Issue title isn't informative enough to generate the description. Please try with a different title.",
@@ -150,14 +150,14 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
         const error = err?.data?.error;
 
         if (err.status === 429)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });

@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
@@ -70,7 +70,7 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
   // hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
 
@@ -119,8 +119,8 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
             path: router.asPath,
           });
         }));
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Issue created successfully.",
       });
@@ -130,8 +130,8 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
         payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
         path: router.asPath,
       });
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: err?.message || "Some error occurred. Please try again.",
       });

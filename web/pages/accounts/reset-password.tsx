@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 import { useEventTracker } from "hooks/store";
 // layouts
@@ -48,7 +48,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   // store hooks
   const { captureEvent } = useEventTracker();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // form info
@@ -82,8 +82,8 @@ const ResetPasswordPage: NextPageWithLayout = () => {
         captureEvent(NEW_PASS_CREATED, {
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

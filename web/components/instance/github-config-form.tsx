@@ -7,7 +7,7 @@ import { Button, Input } from "@plane/ui";
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 
 export interface IInstanceGithubConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -25,7 +25,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
   // store hooks
   const { instance: instanceStore } = useApplication();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -44,9 +44,9 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Github Configuration Settings updated successfully",
         })
       )
@@ -145,9 +145,9 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             className="flex items-center justify-between py-2"
             onClick={() => {
               navigator.clipboard.writeText(originURL);
-              setToastAlert({
+              setToast({
                 message: "The Origin URL has been successfully copied to your clipboard",
-                type: "success",
+                type: TOAST_TYPE.SUCCESS,
                 title: "Copied to clipboard",
               });
             }}

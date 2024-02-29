@@ -10,7 +10,7 @@ import { EmptyState } from "components/common";
 import emptyIssue from "public/empty-state/issue.svg";
 // hooks
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // types
 import { TIssue } from "@plane/types";
 // constants
@@ -73,7 +73,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { captureIssueEvent } = useEventTracker();
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -98,9 +98,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
           if (showToast) {
-            setToastAlert({
+            setToast({
               title: "Issue updated successfully",
-              type: "success",
+              type: TOAST_TYPE.SUCCESS,
               message: "Issue updated successfully",
             });
           }
@@ -123,9 +123,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
+          setToast({
             title: "Issue update failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Issue update failed",
           });
         }
@@ -135,9 +135,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           let response;
           if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
           else response = await removeIssue(workspaceSlug, projectId, issueId);
-          setToastAlert({
+          setToast({
             title: "Issue deleted successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Issue deleted successfully",
           });
           captureIssueEvent({
@@ -146,9 +146,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Issue delete failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Issue delete failed",
           });
           captureIssueEvent({
@@ -161,9 +161,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
-          setToastAlert({
+          setToast({
             title: "Cycle added to issue successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Issue added to issue successfully",
           });
           captureIssueEvent({
@@ -185,9 +185,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
+          setToast({
             title: "Cycle add to issue failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Cycle add to issue failed",
           });
         }
@@ -195,9 +195,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           const response = await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
-          setToastAlert({
+          setToast({
             title: "Cycle removed from issue successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Cycle removed from issue successfully",
           });
           captureIssueEvent({
@@ -219,9 +219,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
+          setToast({
             title: "Cycle remove from issue failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Cycle remove from issue failed",
           });
         }
@@ -229,9 +229,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
         try {
           const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setToastAlert({
+          setToast({
             title: "Module added to issue successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Module added to issue successfully",
           });
           captureIssueEvent({
@@ -253,9 +253,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
+          setToast({
             title: "Module add to issue failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Module add to issue failed",
           });
         }
@@ -263,9 +263,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
           await removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
-          setToastAlert({
+          setToast({
             title: "Module removed from issue successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Module removed from issue successfully",
           });
           captureIssueEvent({
@@ -287,9 +287,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
+          setToast({
             title: "Module remove from issue failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Module remove from issue failed",
           });
         }
@@ -302,14 +302,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       ) => {
         try {
           await removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setToastAlert({
-            type: "success",
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
             title: "Successful!",
             message: "Issue removed from module successfully.",
           });
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Issue could not be removed from module. Please try again.",
           });
@@ -327,7 +327,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       addModulesToIssue,
       removeIssueFromModule,
       removeModulesFromIssue,
-      setToastAlert,
     ]
   );
 

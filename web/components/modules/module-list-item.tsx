@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // hooks
 import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
@@ -31,7 +31,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -57,8 +57,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Couldn't add the module to favorites. Please try again.",
         });
@@ -79,8 +79,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Couldn't remove the module from favorites. Please try again.",
         });
@@ -91,8 +91,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Module link copied to clipboard.",
       });

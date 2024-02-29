@@ -5,7 +5,7 @@ import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 import { useIssueDetail } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Input } from "@plane/ui";
 // types
@@ -28,7 +28,7 @@ const defaultValues: Partial<IIssueLabel> = {
 export const LabelCreate: FC<ILabelCreate> = (props) => {
   const { workspaceSlug, projectId, issueId, labelOperations, disabled = false } = props;
   // hooks
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -63,9 +63,9 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
       reset(defaultValues);
     } catch (error) {
-      setToastAlert({
+      setToast({
         title: "Label creation failed",
-        type: "error",
+        type: TOAST_TYPE.ERROR,
         message: "Label creation failed. Please try again sometime later.",
       });
     }

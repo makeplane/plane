@@ -7,7 +7,7 @@ import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } fro
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // store hooks
 import { useUser } from "hooks/store";
 // components
@@ -64,7 +64,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   // store hooks
   const { currentUser } = useUser();
   // hooks
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // derived values
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
@@ -74,8 +74,8 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     copyUrlToClipboard(
       `${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`
     ).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });

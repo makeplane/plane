@@ -5,7 +5,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // components
 import { CalendarChart } from "components/issues";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // types
 import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
@@ -39,7 +39,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
@@ -71,9 +71,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         groupedIssueIds,
         viewId
       ).catch((err) => {
-        setToastAlert({
+        setToast({
           title: "Error",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: err.detail ?? "Failed to perform this action",
         });
       });

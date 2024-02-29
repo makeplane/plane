@@ -6,7 +6,7 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // icons
@@ -38,7 +38,7 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { createState } = useProjectState();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -71,15 +71,15 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
 
         if (typeof error === "object") {
           Object.keys(error).forEach((key) => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: Array.isArray(error[key]) ? error[key].join(", ") : error[key],
             });
           });
         } else {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               error ?? err.status === 400

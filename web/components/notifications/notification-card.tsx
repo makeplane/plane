@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu } from "@headlessui/react";
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker } from "hooks/store";
 // icons
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
@@ -51,7 +51,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   // states
   const [showSnoozeOptions, setshowSnoozeOptions] = React.useState(false);
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // refs
   const snoozeRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,9 +62,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
       onClick: () => {
         markNotificationReadStatusToggle(notification.id).then(() => {
-          setToastAlert({
+          setToast({
             title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
           });
         });
       },
@@ -79,9 +79,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       ),
       onClick: () => {
         markNotificationArchivedStatus(notification.id).then(() => {
-          setToastAlert({
+          setToast({
             title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
           });
         });
       },
@@ -94,9 +94,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       return;
     }
     markSnoozeNotification(notification.id, date).then(() => {
-      setToastAlert({
+      setToast({
         title: `Notification snoozed till ${renderFormattedDate(date)}`,
-        type: "success",
+        type: TOAST_TYPE.SUCCESS,
       });
     });
   };
@@ -325,9 +325,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
-                setToastAlert({
+                setToast({
                   title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
-                  type: "success",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
@@ -347,9 +347,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
-                setToastAlert({
+                setToast({
                   title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-                  type: "success",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
@@ -398,9 +398,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                       tab: selectedTab,
                       state: "SUCCESS",
                     });
-                    setToastAlert({
+                    setToast({
                       title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
-                      type: "success",
+                      type: TOAST_TYPE.SUCCESS,
                     });
                   });
                 }}

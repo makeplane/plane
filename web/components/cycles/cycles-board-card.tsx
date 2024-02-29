@@ -4,7 +4,7 @@ import Link from "next/link";
 import { observer } from "mobx-react";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
@@ -42,7 +42,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
   const { getUserDetails } = useMember();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // computed
   const cycleDetails = getCycleById(cycleId);
 
@@ -81,8 +81,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Cycle link copied to clipboard.",
       });
@@ -102,8 +102,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Couldn't add the cycle to favorites. Please try again.",
         });
@@ -123,8 +123,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Couldn't add the cycle to favorites. Please try again.",
         });

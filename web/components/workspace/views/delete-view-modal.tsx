@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
 import { useGlobalView, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -30,7 +30,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   const { deleteGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -53,8 +53,8 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
           view_id: data.id,
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong while deleting the view. Please try again.",
         });

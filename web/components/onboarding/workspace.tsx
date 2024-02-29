@@ -6,7 +6,7 @@ import { Button, Input } from "@plane/ui";
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // constants
@@ -36,7 +36,7 @@ export const Workspace: React.FC<Props> = (props) => {
   const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
   const { captureWorkspaceEvent } = useEventTracker();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     if (isSubmitting) return;
@@ -49,8 +49,8 @@ export const Workspace: React.FC<Props> = (props) => {
 
           await createWorkspace(formData)
             .then(async (res) => {
-              setToastAlert({
-                type: "success",
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
@@ -75,8 +75,8 @@ export const Workspace: React.FC<Props> = (props) => {
                   element: "Onboarding",
                 },
               });
-              setToastAlert({
-                type: "error",
+              setToast({
+                type: TOAST_TYPE.ERROR,
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               });
@@ -84,8 +84,8 @@ export const Workspace: React.FC<Props> = (props) => {
         } else setSlugError(true);
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         })

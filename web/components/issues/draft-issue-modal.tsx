@@ -7,7 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import useLocalStorage from "hooks/use-local-storage";
 import { useIssues, useProject, useUser } from "hooks/store";
 // components
@@ -72,7 +72,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const onClose = () => {
     handleClose();
@@ -173,8 +173,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
       .createIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(async () => {
         await draftIssues.fetchIssues(workspaceSlug as string, activeProject ?? "", "mutation");
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Issue created successfully.",
         });
@@ -183,8 +183,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
           mutate(USER_ISSUE(workspaceSlug.toString()));
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Issue could not be created. Please try again.",
         });
@@ -210,15 +210,15 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
 
         if (!createMore) onClose();
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Issue updated successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Issue could not be updated. Please try again.",
         });
@@ -250,8 +250,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
         if (payload.cycle_id && payload.cycle_id !== "") await addIssueToCycle(res.id, payload.cycle_id);
         if (payload.module_ids && payload.module_ids.length > 0) await addIssueToModule(res.id, payload.module_ids);
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Issue created successfully.",
         });
@@ -264,8 +264,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
         if (payload.parent_id && payload.parent_id !== "") mutate(SUB_ISSUES(payload.parent_id));
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Issue could not be created. Please try again.",
         });

@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { ChevronDown, XCircle } from "lucide-react";
 // hooks
 import { useMember, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
@@ -31,7 +31,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
 
@@ -40,15 +40,15 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
 
     await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success",
           message: "Invitation removed successfully.",
         });
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error",
           message: err?.error || "Something went wrong. Please try again.",
         })
@@ -116,8 +116,8 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
               updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
                 role: value,
               }).catch(() => {
-                setToastAlert({
-                  type: "error",
+                setToast({
+                  type: TOAST_TYPE.ERROR,
                   title: "Error!",
                   message: "An error occurred while updating member role. Please try again.",
                 });

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 // hooks
 import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import {
   DeleteIssueModal,
@@ -61,7 +61,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -75,8 +75,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });

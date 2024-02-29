@@ -8,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 
 import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { FileService } from "services/file.service";
 // layouts
@@ -54,7 +54,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
@@ -148,10 +148,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => {
-    setToastAlert({
+    setToast({
       title,
       message,
-      type,
+      type: type as TOAST_TYPE,
     });
   };
 

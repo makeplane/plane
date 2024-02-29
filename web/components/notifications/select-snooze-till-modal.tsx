@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 // constants
 import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button, CustomSelect } from "@plane/ui";
 // types
@@ -41,7 +41,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const {
     formState: { isSubmitting },
@@ -100,10 +100,10 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
     await handleSubmitSnooze(notification.id, dateTime).then(() => {
       handleClose();
       onSuccess();
-      setToastAlert({
+      setToast({
         title: "Notification snoozed",
         message: "Notification snoozed successfully",
-        type: "success",
+        type: TOAST_TYPE.SUCCESS,
       });
     });
   };

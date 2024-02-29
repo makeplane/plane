@@ -5,7 +5,7 @@ import { FC, useState } from "react";
 import { Button, Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import isNil from "lodash/isNil";
 
 export type TIssueSubscription = {
@@ -22,7 +22,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     createSubscription,
     removeSubscription,
   } = useIssueDetail();
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // state
   const [loading, setLoading] = useState(false);
 
@@ -33,16 +33,16 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     try {
       if (isSubscribed) await removeSubscription(workspaceSlug, projectId, issueId);
       else await createSubscription(workspaceSlug, projectId, issueId);
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
         message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
       });
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error",
         message: "Something went wrong. Please try again later.",
       });

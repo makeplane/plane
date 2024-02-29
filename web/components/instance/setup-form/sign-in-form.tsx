@@ -9,7 +9,7 @@ import { Input, Button } from "@plane/ui";
 import { AuthService } from "services/auth.service";
 const authService = new AuthService();
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 
@@ -41,7 +41,7 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
     },
   });
   // hooks
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const handleFormSubmit = async (formValues: InstanceSetupEmailFormValues) => {
     const payload = {
@@ -56,8 +56,8 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
         handleNextStep(formValues.email);
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

@@ -11,7 +11,7 @@ import { observer } from "mobx-react-lite";
 import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import { useState } from "react";
 import { TCreateModalStoreTypes } from "constants/issue";
 
@@ -38,7 +38,7 @@ export const HeaderGroupByCard = observer(
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 
-    const { setToastAlert } = useToast();
+    // const { setToastAlert } = useToast();
 
     const renderExistingIssueModal = moduleId || cycleId;
     const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
@@ -51,8 +51,8 @@ export const HeaderGroupByCard = observer(
       try {
         addIssuesToView && addIssuesToView(issues);
       } catch (error) {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Selected issues could not be added to the cycle. Please try again.",
         });

@@ -11,7 +11,6 @@ import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
@@ -33,6 +32,7 @@ import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // components
 import { EmptyState } from "components/common";
 import { PageHead } from "components/core";
+import { TOAST_TYPE, setToast } from "components/toast";
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
@@ -48,8 +48,6 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   // next-themes
   const { theme } = useTheme();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS", () => workspaceService.userWorkspaceInvitations());
 
@@ -68,8 +66,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
   const submitInvitations = () => {
     if (invitationsRespond.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one invitation.",
       });
@@ -101,8 +99,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
             router.push(`/${redirectWorkspace?.slug}`);
           })
           .catch(() => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: "Something went wrong, Please try again.",
             });
@@ -116,8 +114,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           state: "FAILED",
           element: "Workspace invitations page",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong, Please try again.",
         });

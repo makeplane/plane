@@ -7,7 +7,7 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 // hooks
 import { useLabel } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
@@ -64,7 +64,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     reset(defaultValues);
   };
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const onSubmit = async (formData: IIssueLabel) => {
     if (!workspaceSlug) return;
@@ -75,9 +75,9 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
         if (onSuccess) onSuccess(res);
       })
       .catch((error) => {
-        setToastAlert({
+        setToast({
           title: "Oops!",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: error?.error ?? "Error while adding the label",
         });
         reset(formData);

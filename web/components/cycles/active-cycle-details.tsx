@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useTheme } from "next-themes";
 // hooks
 import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -61,7 +61,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   const { currentProjectDetails } = useProject();
   const { getUserDetails } = useMember();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ACTIVE_CYCLE_${projectId}` : null,
@@ -120,8 +120,8 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     if (!workspaceSlug || !projectId) return;
 
     addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Couldn't add the cycle to favorites. Please try again.",
       });
@@ -133,8 +133,8 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     if (!workspaceSlug || !projectId) return;
 
     removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Couldn't add the cycle to favorites. Please try again.",
       });

@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 // services
 import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import {
   GithubImportConfigure,
@@ -92,7 +92,7 @@ export const GithubImporterRoot: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
 
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,
@@ -149,8 +149,8 @@ export const GithubImporterRoot: React.FC = () => {
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Import was unsuccessful. Please try again.",
         })

@@ -6,7 +6,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
 // types
@@ -40,7 +40,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const { captureProjectStateEvent, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -82,8 +82,8 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
     await createState(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "State created successfully.",
         });
@@ -98,14 +98,14 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
       })
       .catch((error) => {
         if (error.status === 400)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "State with that name already exists. Please try again with another name.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "State could not be created. Please try again.",
           });
@@ -135,22 +135,22 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
             element: "Project settings states page",
           },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "State updated successfully.",
         });
       })
       .catch((error) => {
         if (error.status === 400)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Another state exists with the same name. Please try again with another name.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "State could not be updated. Please try again.",
           });

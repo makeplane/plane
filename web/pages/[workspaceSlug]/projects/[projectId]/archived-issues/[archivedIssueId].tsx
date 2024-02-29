@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -34,7 +34,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   const {
     issues: { removeIssueFromArchived },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
 
   const { isLoading } = useSWR(
@@ -59,8 +59,8 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
 
     await removeIssueFromArchived(workspaceSlug as string, projectId as string, archivedIssueId as string)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success",
           message:
             issue &&
@@ -71,8 +71,8 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });

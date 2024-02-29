@@ -7,7 +7,7 @@ import { Button, Input } from "@plane/ui";
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 
 export interface IInstanceAIForm {
   config: IFormattedInstanceConfiguration;
@@ -25,7 +25,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
   // store
   const { instance: instanceStore } = useApplication();
   // toast
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -44,9 +44,9 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "AI Settings updated successfully",
         })
       )

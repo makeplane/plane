@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { CustomMenu } from "@plane/ui";
 import { Link, Trash2 } from "lucide-react";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker, useIssues, useUser } from "hooks/store";
 // components
 import { DeleteArchivedIssueModal } from "components/issues";
@@ -22,7 +22,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   // store hooks
   const {
@@ -38,8 +38,8 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project_id}/archived-issues/${issue.id}`).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })

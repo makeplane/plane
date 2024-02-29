@@ -4,7 +4,7 @@ import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2, XCircle } from "lucide-react";
 import omit from "lodash/omit";
 // hooks
-import useToast from "hooks/use-toast";
+import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker, useIssues, useUser } from "hooks/store";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -38,7 +38,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   // toast alert
-  const { setToastAlert } = useToast();
+  // const { setToastAlert } = useToast();
 
   // store hooks
   const {
@@ -51,8 +51,8 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })
