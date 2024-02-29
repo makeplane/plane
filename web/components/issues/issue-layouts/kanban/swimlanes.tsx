@@ -41,21 +41,27 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   <div className="relative flex h-max min-h-full w-full items-center">
     {list &&
       list.length > 0 &&
-      list.map((_list: IGroupByColumn) => (
-        <div key={`${sub_group_by}_${_list.id}`} className="flex w-[340px] flex-shrink-0 flex-col">
-          <HeaderGroupByCard
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            column_id={_list.id}
-            icon={_list.icon}
-            title={_list.name}
-            count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
-            kanbanFilters={kanbanFilters}
-            handleKanbanFilters={handleKanbanFilters}
-            issuePayload={_list.payload}
-          />
-        </div>
-      ))}
+      list.map((_list: IGroupByColumn) => {
+        let headerCount = 0;
+        Object.keys(issueIds).map((groupState) => {
+          headerCount = headerCount + ((issueIds as TSubGroupedIssues)?.[groupState]?.[_list?.id]?.length || 0);
+        });
+        return (
+          <div key={`${sub_group_by}_${_list.id}`} className="flex w-[340px] flex-shrink-0 flex-col">
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={_list.id}
+              icon={_list.icon}
+              title={_list.name}
+              count={headerCount}
+              kanbanFilters={kanbanFilters}
+              handleKanbanFilters={handleKanbanFilters}
+              issuePayload={_list.payload}
+            />
+          </div>
+        );
+      })}
   </div>
 );
 
