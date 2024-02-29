@@ -5,7 +5,6 @@ import os
 
 # Django imports
 from django.utils import timezone
-from django.conf import settings
 
 # Third Party modules
 from rest_framework.response import Response

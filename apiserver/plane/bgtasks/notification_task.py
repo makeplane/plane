@@ -131,7 +131,7 @@ def extract_mentions(issue_instance):
         mentions = [mention_tag["id"] for mention_tag in mention_tags]
 
         return list(set(mentions))
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -146,7 +146,7 @@ def extract_comment_mentions(comment_value):
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["id"])
         return list(set(mentions))
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -322,7 +322,7 @@ def notifications(
                         issue_id=issue_id,
                         subscriber_id=actor_id,
                     )
-                except Exception as e:
+                except Exception:
                     pass
 
             project = Project.objects.get(pk=project_id)

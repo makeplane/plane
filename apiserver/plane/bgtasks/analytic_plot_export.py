@@ -1,8 +1,6 @@
 # Python imports
 import csv
 import io
-import requests
-import json
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection

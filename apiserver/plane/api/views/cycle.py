@@ -2,7 +2,7 @@
 import json
 
 # Django imports
-from django.db.models import Q, Count, Sum, Prefetch, F, OuterRef, Func
+from django.db.models import Q, Count, Sum, F, OuterRef, Func
 from django.utils import timezone
 from django.core import serializers
 

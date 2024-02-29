@@ -69,7 +69,7 @@ class StateAPIEndpoint(BaseAPIView):
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
-        except IntegrityError as e:
+        except IntegrityError:
             state = State.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,

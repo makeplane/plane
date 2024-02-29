@@ -17,7 +17,7 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 
 
-from django.db.models import Q, F, Count, Case, When, IntegerField
+from django.db.models import Q, Count, Case, When, IntegerField
 
 
 class UserEndpoint(BaseViewSet):

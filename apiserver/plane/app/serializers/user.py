@@ -4,7 +4,6 @@ from rest_framework import serializers
 # Module import
 from .base import BaseSerializer
 from plane.db.models import User, Workspace, WorkspaceMemberInvite
-from plane.license.models import InstanceAdmin, Instance
 
 
 class UserSerializer(BaseSerializer):

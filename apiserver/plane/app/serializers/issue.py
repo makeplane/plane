@@ -7,7 +7,7 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer
-from .state import StateSerializer, StateLiteSerializer
+from .state import StateLiteSerializer
 from .project import ProjectLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
@@ -31,7 +31,6 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     State,
-    Project,
 )
 
 
@@ -601,15 +600,18 @@ class IssueSerializer(DynamicBaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
     module_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False,
+        child=serializers.UUIDField(),
+        required=False,
     )
 
     # Many to many
     label_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False,
+        child=serializers.UUIDField(),
+        required=False,
     )
     assignee_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False,
+        child=serializers.UUIDField(),
+        required=False,
     )
 
     # Count items

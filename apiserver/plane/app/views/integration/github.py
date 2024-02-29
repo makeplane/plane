@@ -1,7 +1,6 @@
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.app.views import BaseViewSet, BaseAPIView

@@ -138,7 +138,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
 
 
-
 @receiver(post_save, sender=User)
 def create_user_notification(sender, instance, created, **kwargs):
     # create preferences

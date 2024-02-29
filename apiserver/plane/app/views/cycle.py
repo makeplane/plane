@@ -10,7 +10,6 @@ from django.db.models import (
     OuterRef,
     Count,
     Prefetch,
-    Sum,
     Case,
     When,
     Value,

@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
-from .user import UserLiteSerializer
 from .project import ProjectLiteSerializer
 
 from plane.db.models import (

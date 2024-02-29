@@ -1,6 +1,5 @@
 # Python improts
 import uuid
-import requests
 
 # Django imports
 from django.contrib.auth.hashers import make_password
@@ -8,7 +7,6 @@ from django.contrib.auth.hashers import make_password
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.app.views import BaseViewSet

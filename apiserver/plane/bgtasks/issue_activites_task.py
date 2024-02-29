@@ -1581,7 +1581,7 @@ def issue_activity(
                 try:
                     issue.updated_at = timezone.now()
                     issue.save(update_fields=["updated_at"])
-                except Exception as e:
+                except Exception:
                     pass
 
         ACTIVITY_MAPPER = {

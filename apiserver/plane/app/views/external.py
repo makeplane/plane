@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Django imports
-from django.conf import settings
 
 # Module imports
 from .base import BaseAPIView

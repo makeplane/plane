@@ -1,17 +1,11 @@
 # Python imports
-import json
-import os
-import requests
 import uuid
-import random
-import string
 
 # Django imports
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.conf import settings
 
 # Third party imports
 from rest_framework import status
@@ -30,7 +24,7 @@ from plane.license.api.serializers import (
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
-from plane.db.models import User, WorkspaceMember, ProjectMember
+from plane.db.models import User
 from plane.license.utils.encryption import encrypt_data
 
 
@@ -201,7 +195,7 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
         email = email.strip().lower()
         try:
             validate_email(email)
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"error": "Please provide a valid email address."},
                 status=status.HTTP_400_BAD_REQUEST,

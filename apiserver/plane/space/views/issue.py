@@ -9,7 +9,6 @@ from django.db.models import (
     Func,
     F,
     Q,
-    Count,
     Case,
     Value,
     CharField,

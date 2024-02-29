@@ -1657,12 +1657,19 @@ class IssueArchiveViewSet(BaseViewSet):
         )
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
-                {"error": "Can only archive completed or cancelled state group issue"},
+                {
+                    "error": "Can only archive completed or cancelled state group issue"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_activity.delay(
             type="issue.activity.updated",
-            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
+            requested_data=json.dumps(
+                {
+                    "archived_at": str(timezone.now().date()),
+                    "automation": False,
+                }
+            ),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
@@ -1676,8 +1683,9 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = timezone.now().date()
         issue.save()
 
-        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
-    
+        return Response(
+            {"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK
+        )
 
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -2368,7 +2376,9 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(
+            issue, data=request.data, partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()

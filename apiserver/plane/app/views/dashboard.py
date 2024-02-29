@@ -9,7 +9,6 @@ from django.db.models import (
     F,
     Exists,
     OuterRef,
-    Max,
     Subquery,
     JSONField,
     Func,

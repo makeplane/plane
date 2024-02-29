@@ -1,6 +1,5 @@
 # Python imports
 import zoneinfo
-import json
 
 # Django imports
 from django.urls import resolve
@@ -8,7 +7,6 @@ from django.conf import settings
 from django.utils import timezone
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.core.serializers.json import DjangoJSONEncoder
 
 # Third part imports
 from rest_framework import status

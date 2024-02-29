@@ -31,7 +31,6 @@ from plane.app.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
     ProjectMemberSerializer,
-    ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
     ProjectDeployBoardSerializer,
@@ -64,7 +63,6 @@ from plane.db.models import (
     IssueProperty,
 )
 
-from plane.bgtasks.project_invitation_task import project_invitation
 
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
@@ -173,10 +171,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             for field in request.GET.get("fields", "").split(",")
             if field
         ]
-        projects = (
-            self.get_queryset()
-            .order_by("sort_order", "name")
-        )
+        projects = self.get_queryset().order_by("sort_order", "name")
         if request.GET.get("per_page", False) and request.GET.get(
             "cursor", False
         ):

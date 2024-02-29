@@ -2,7 +2,6 @@ import uuid
 
 # Django imports
 from django.db import models
-from django.conf import settings
 
 # Module imports
 from . import BaseModel

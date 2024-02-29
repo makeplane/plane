@@ -1,6 +1,5 @@
 # Python imports
 import json
-import requests
 import secrets
 
 # Django imports

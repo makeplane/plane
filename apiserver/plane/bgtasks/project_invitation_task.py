@@ -1,5 +1,4 @@
 # Python import
-import os
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection

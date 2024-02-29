@@ -7,7 +7,6 @@ import json
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.conf import settings
 from django.contrib.auth.hashers import make_password
 
 # Third party imports
@@ -65,7 +64,7 @@ class SignUpEndpoint(BaseAPIView):
         email = email.strip().lower()
         try:
             validate_email(email)
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"error": "Please provide a valid email address."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -151,7 +150,7 @@ class SignInEndpoint(BaseAPIView):
         email = email.strip().lower()
         try:
             validate_email(email)
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"error": "Please provide a valid email address."},
                 status=status.HTTP_400_BAD_REQUEST,
