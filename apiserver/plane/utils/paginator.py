@@ -325,6 +325,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
 
     def __query_grouper(self, results):
         processed_results = self.__get_field_dict()
+        print(results)
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
             if group_value in processed_results:

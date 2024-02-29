@@ -131,6 +131,7 @@ def issue_on_results(issues, group_by):
         "link_count",
         "is_draft",
         "archived_at",
+        "state__group",
     ]
     if group_by == "assignees__id":
         required_fields.extend(["label_ids", "module_ids", "assignees__id"])
@@ -191,5 +192,19 @@ def issue_group_values(field, slug, project_id=None):
         else:
             return list(queryset) + ["None"]
     if field == "priority":
-        return ["low", "medium", "high", "urgent", "none"]
+        return [
+            "low",
+            "medium",
+            "high",
+            "urgent",
+            "none",
+        ]
+    if field == "state__group":
+        return [
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+        ]
     return []
