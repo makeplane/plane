@@ -8,13 +8,12 @@ import isEmpty from "lodash/isEmpty";
 import { CycleService } from "services/cycle.service";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
 // ui
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
 // helpers

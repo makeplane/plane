@@ -4,10 +4,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { CycleService } from "services/cycle.service";
 // hooks
 import { useEventTracker, useCycle, useProject } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CycleForm } from "components/cycles";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
 // constants

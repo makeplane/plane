@@ -1,12 +1,16 @@
 import * as React from "react";
 
-interface IToastSpinner extends React.SVGAttributes<SVGElement> {
+interface ICircularBarSpinner extends React.SVGAttributes<SVGElement> {
   height?: string;
   width?: string;
   className?: string | undefined;
 }
 
-export const ToastSpinner: React.FC<IToastSpinner> = ({ height = "16px", width = "16px", className = "" }) => (
+export const CircularBarSpinner: React.FC<ICircularBarSpinner> = ({
+  height = "16px",
+  width = "16px",
+  className = "",
+}) => (
   <div role="status">
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24" className={className}>
       <g>

@@ -5,9 +5,8 @@ import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 import { useIssueDetail } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Input } from "@plane/ui";
+import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TLabelOperations } from "./root";
 import { IIssueLabel } from "@plane/types";

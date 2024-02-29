@@ -4,10 +4,9 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useIssues, useProject } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";

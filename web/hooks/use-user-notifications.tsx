@@ -9,8 +9,8 @@ import { NotificationService } from "services/notification.service";
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 // type
 import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 
 const PER_PAGE = 30;
 

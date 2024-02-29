@@ -4,11 +4,10 @@ import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
 // ui
-import { CustomSelect, Tooltip } from "@plane/ui";
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants

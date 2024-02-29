@@ -5,11 +5,10 @@ import { AIService } from "services/ai.service";
 // hooks
 import { usePopper } from "react-popper";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 import { Popover, Transition } from "@headlessui/react";
-import { TOAST_TYPE, setToast } from "components/toast";
 // types
 import { Placement } from "@popperjs/core";
 

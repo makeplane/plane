@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue } from "react-hook-form";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // constants

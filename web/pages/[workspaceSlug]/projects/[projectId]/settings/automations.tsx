@@ -6,8 +6,8 @@ import { useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
 import { PageHead } from "components/core";

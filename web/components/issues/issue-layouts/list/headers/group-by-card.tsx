@@ -4,14 +4,14 @@ import { CircleDashed, Plus } from "lucide-react";
 // components
 import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
 import { ExistingIssuesListModal } from "components/core";
-import { CustomMenu } from "@plane/ui";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // mobx
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useState } from "react";
 import { TCreateModalStoreTypes } from "constants/issue";
 

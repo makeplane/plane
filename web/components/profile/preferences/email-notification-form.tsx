@@ -1,9 +1,7 @@
 import React, { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, Checkbox } from "@plane/ui";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, Checkbox, TOAST_TYPE, setToast } from "@plane/ui";
 // services
 import { UserService } from "services/user.service";
 // types

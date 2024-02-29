@@ -2,11 +2,10 @@ import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Lock } from "lucide-react";
 // types

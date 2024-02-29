@@ -5,11 +5,10 @@ import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 import Link from "next/link";
 // hooks
 import { useProject } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { DeleteProjectModal, JoinProjectModal } from "components/project";
 // ui
-import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";

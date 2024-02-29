@@ -4,9 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { DateDropdown } from "components/dropdowns";
 import { Calendar } from "lucide-react";
 // ui
-import { Button, CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types

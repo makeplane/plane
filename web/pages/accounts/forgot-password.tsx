@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import useTimer from "hooks/use-timer";
 import { useEventTracker } from "hooks/store";
 // layouts
@@ -14,7 +13,7 @@ import DefaultLayout from "layouts/default-layout";
 import { LatestFeatureBlock } from "components/common";
 import { PageHead } from "components/core";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // helpers

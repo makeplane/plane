@@ -6,6 +6,8 @@ import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
+// ui
+import { Toast } from "@plane/ui";
 // constants
 import { THEMES } from "constants/themes";
 import { SWR_CONFIG } from "constants/swr-config";
@@ -13,8 +15,6 @@ import { SWR_CONFIG } from "constants/swr-config";
 import InstanceLayout from "layouts/instance-layout";
 // contexts
 import { SWRConfig } from "swr";
-// toast
-import { Toast } from "components/toast";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("lib/posthog-provider"), { ssr: false });

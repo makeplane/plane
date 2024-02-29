@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -12,7 +11,7 @@ import { IssueDetailRoot } from "components/issues";
 import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 import { PageHead } from "components/core";
 // ui
-import { ArchiveIcon, Loader } from "@plane/ui";
+import { ArchiveIcon, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { History } from "lucide-react";
 // types

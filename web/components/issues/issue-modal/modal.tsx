@@ -8,7 +8,8 @@ import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { TIssue } from "@plane/types";
 // constants

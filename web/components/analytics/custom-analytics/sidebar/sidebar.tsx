@@ -8,9 +8,8 @@ import { AnalyticsService } from "services/analytics.service";
 import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 // components
 import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, LayersIcon } from "@plane/ui";
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
 // helpers

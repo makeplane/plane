@@ -3,9 +3,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useProject } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, CustomMenu } from "@plane/ui";
+import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 //icons
 import { Pencil, Trash2 } from "lucide-react";
 // helpers

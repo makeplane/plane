@@ -7,9 +7,7 @@ import { useApplication } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // ui
-import { Button } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { UserCircle2 } from "lucide-react";
 // constants

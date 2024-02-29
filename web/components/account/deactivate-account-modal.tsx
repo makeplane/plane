@@ -7,9 +7,7 @@ import { mutate } from "swr";
 // hooks
 import { useUser } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;

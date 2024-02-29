@@ -4,12 +4,10 @@ import { Eye, EyeOff, XCircle } from "lucide-react";
 // hooks
 import { useUser } from "hooks/store";
 // ui
-import { Input, Button } from "@plane/ui";
+import { Input, Button, TOAST_TYPE, setToast } from "@plane/ui";
 // services
 import { AuthService } from "services/auth.service";
 const authService = new AuthService();
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 

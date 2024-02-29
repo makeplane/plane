@@ -3,12 +3,10 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { IssueDraftService } from "services/issue";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { TIssue } from "@plane/types";
 import { useProject } from "hooks/store";

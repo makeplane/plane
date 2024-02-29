@@ -10,8 +10,6 @@ import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
 // services
 import { IntegrationService, GithubIntegrationService } from "services/integrations";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import {
   GithubImportConfigure,
@@ -21,7 +19,7 @@ import {
   GithubImportConfirm,
 } from "components/integration";
 // icons
-import { UserGroupIcon } from "@plane/ui";
+import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";

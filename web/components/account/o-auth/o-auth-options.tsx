@@ -3,9 +3,10 @@ import { observer } from "mobx-react-lite";
 import { AuthService } from "services/auth.service";
 // hooks
 import { useApplication } from "hooks/store";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { GitHubSignInButton, GoogleSignInButton } from "components/account";
-import { TOAST_TYPE, setToast } from "components/toast";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;

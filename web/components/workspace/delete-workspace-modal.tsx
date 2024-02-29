@@ -6,9 +6,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { useEventTracker, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IWorkspace } from "@plane/types";
 // constants

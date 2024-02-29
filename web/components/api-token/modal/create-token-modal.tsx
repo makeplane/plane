@@ -4,9 +4,10 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { APITokenService } from "services/api_token.service";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateApiTokenForm, GeneratedTokenDetails } from "components/api-token";
-import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { csvDownload } from "helpers/download.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";

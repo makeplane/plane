@@ -5,13 +5,14 @@ import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { createIssuePayload } from "helpers/issue.helper";
 import { cn } from "helpers/common.helper";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IProject, TIssue } from "@plane/types";
 // constants

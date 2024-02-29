@@ -1,9 +1,8 @@
 import { FC, useState } from "react";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useIssueDetail, useMember } from "hooks/store";
 // ui
-import { ExternalLinkIcon, Tooltip } from "@plane/ui";
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // types

@@ -5,9 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { APITokenService } from "services/api_token.service";
 // ui
-import { Button } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IApiToken } from "@plane/types";
 // fetch-keys

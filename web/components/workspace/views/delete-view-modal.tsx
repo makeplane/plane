@@ -5,9 +5,8 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
 import { useGlobalView, useEventTracker } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspaceView } from "@plane/types";
 // constants

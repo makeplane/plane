@@ -5,12 +5,13 @@ import { PlusIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
-import { setPromiseToast } from "components/toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// constants
-import { TIssue, IProject } from "@plane/types";
+// ui
+import { setPromiseToast } from "@plane/ui";
 // types
+import { TIssue, IProject } from "@plane/types";
+// helper
 import { createIssuePayload } from "helpers/issue.helper";
 // constants
 import { ISSUE_CREATED } from "constants/event-tracker";

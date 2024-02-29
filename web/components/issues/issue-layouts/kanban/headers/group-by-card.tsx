@@ -1,13 +1,13 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker } from "hooks/store";
 // mobx
 import { observer } from "mobx-react-lite";

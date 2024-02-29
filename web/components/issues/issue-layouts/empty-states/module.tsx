@@ -4,7 +4,8 @@ import { PlusIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";

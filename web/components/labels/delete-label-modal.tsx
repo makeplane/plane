@@ -6,10 +6,8 @@ import { observer } from "mobx-react-lite";
 import { useLabel } from "hooks/store";
 // icons
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IIssueLabel } from "@plane/types";
 

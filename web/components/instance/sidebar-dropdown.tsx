@@ -10,10 +10,8 @@ import { Menu, Transition } from "@headlessui/react";
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 
 // Static Data
 const PROFILE_LINKS = [

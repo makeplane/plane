@@ -5,12 +5,11 @@ import { AuthService } from "services/auth.service";
 // hooks
 import { useEventTracker } from "hooks/store";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast  } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // components
 import { ESignUpSteps } from "components/account";
-import { TOAST_TYPE, setToast } from "components/toast";
 // constants
 import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "constants/event-tracker";
 // icons

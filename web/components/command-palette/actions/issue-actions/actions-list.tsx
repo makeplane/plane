@@ -5,9 +5,7 @@ import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 // hooks
 import { useApplication, useUser, useIssues } from "hooks/store";
 // ui
-import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types

@@ -12,9 +12,17 @@ import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
 import { DeactivateAccountModal } from "components/account";
-import { TOAST_TYPE, setPromiseToast, setToast } from "components/toast";
 // ui
-import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
+import {
+  Button,
+  CustomSelect,
+  CustomSearchSelect,
+  Input,
+  Spinner,
+  TOAST_TYPE,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
 // icons
 import { ChevronDown, User2 } from "lucide-react";
 // types

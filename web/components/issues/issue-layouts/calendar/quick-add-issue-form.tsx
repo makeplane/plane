@@ -4,13 +4,14 @@ import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 // constants

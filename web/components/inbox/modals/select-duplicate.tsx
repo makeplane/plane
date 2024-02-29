@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { IssueService } from "services/issue";
 // ui
-import { Button, LayersIcon } from "@plane/ui";
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // fetch-keys

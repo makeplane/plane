@@ -4,7 +4,8 @@ import { observer } from "mobx-react-lite";
 import { ReactionSelector } from "./reaction-selector";
 // hooks
 import { useIssueDetail } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IUser } from "@plane/types";
 import { renderEmoji } from "helpers/emoji.helper";

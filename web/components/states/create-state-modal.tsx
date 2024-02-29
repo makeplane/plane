@@ -6,9 +6,8 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useProjectState } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { ChevronDown } from "lucide-react";
 // types

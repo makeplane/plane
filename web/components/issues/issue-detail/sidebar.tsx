@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 // hooks
 import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import {
   DeleteIssueModal,
@@ -34,8 +33,8 @@ import {
   ProjectMemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
-// icons
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon } from "@plane/ui";
+// ui
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";

@@ -6,9 +6,7 @@ import { Eye, EyeOff, XCircle } from "lucide-react";
 // services
 import { AuthService } from "services/auth.service";
 // ui
-import { Button, Input } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types

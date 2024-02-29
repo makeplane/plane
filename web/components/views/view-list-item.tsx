@@ -5,11 +5,10 @@ import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // hooks
 import { useProjectView, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";

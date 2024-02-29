@@ -8,10 +8,9 @@ import useSWR, { mutate } from "swr";
 import { IntegrationService } from "services/integrations";
 // hooks
 import { useApplication, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { Button, Loader, Tooltip } from "@plane/ui";
+import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";

@@ -4,12 +4,11 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useProject, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 import { Controller, useForm } from "react-hook-form";
 
 import { MemberSelect } from "components/project";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // fetch-keys

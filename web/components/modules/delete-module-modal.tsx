@@ -4,9 +4,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useModule } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types

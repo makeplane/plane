@@ -9,10 +9,8 @@ import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Setting
 import { usePopper } from "react-popper";
 // hooks
 import { useApplication, useEventTracker, useUser, useWorkspace } from "hooks/store";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspace } from "@plane/types";
 // Static Data

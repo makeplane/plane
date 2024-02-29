@@ -6,7 +6,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
 // hooks
 import { useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;

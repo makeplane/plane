@@ -9,9 +9,7 @@ import { UserService } from "services/user.service";
 import useTimer from "hooks/use-timer";
 import { useEventTracker } from "hooks/store";
 // ui
-import { Button, Input } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types

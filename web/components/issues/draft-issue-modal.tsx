@@ -7,9 +7,10 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import useLocalStorage from "hooks/use-local-storage";
 import { useIssues, useProject, useUser } from "hooks/store";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DraftIssueForm } from "components/issues";
 // types

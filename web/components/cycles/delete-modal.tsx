@@ -5,9 +5,8 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { useEventTracker, useCycle } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { ICycle } from "@plane/types";
 // constants

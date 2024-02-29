@@ -2,10 +2,9 @@ import { Bell, BellOff } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { FC, useState } from "react";
 // UI
-import { Button, Loader } from "@plane/ui";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 import isNil from "lodash/isNil";
 
 export type TIssueSubscription = {

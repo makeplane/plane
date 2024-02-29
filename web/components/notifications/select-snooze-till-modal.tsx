@@ -6,10 +6,8 @@ import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 // constants
 import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, CustomSelect } from "@plane/ui";
+import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IUserNotification } from "@plane/types";
 

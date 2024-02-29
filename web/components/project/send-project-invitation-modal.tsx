@@ -6,9 +6,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
+import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 // constants

@@ -1,12 +1,11 @@
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IInstance, IInstanceAdmin } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 
 export interface IInstanceGeneralForm {
   instance: IInstance;

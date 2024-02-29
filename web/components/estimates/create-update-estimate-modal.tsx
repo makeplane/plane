@@ -5,9 +5,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // store hooks
 import { useEstimate } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, Input, TextArea } from "@plane/ui";
+import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types

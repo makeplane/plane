@@ -1,16 +1,16 @@
 import { useState, FC } from "react";
 import { useRouter } from "next/router";
-import { Button, Tooltip } from "@plane/ui";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useWebhook, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
+// ui
+import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWebhook } from "@plane/types";
 

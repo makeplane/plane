@@ -8,11 +8,10 @@ import { useApplication, useUser } from "hooks/store";
 import { UserService } from "services/user.service";
 // components
 import { PageHead } from "components/core";
-import { TOAST_TYPE, setPromiseToast, setToast } from "components/toast";
 // layout
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
+import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";

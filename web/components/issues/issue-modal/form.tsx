@@ -7,7 +7,6 @@ import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // hooks
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
@@ -27,7 +26,7 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // ui
-import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
+import { Button, CustomMenu, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types

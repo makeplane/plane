@@ -4,6 +4,8 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
@@ -13,7 +15,6 @@ import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateProjectViewModal } from "components/views";
 import { CreateUpdatePageModal } from "components/pages";
-import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // services

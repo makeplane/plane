@@ -7,14 +7,12 @@ import { useUser, useWebhook, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "components/web-hooks";
 import { PageHead } from "components/core";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWebhook } from "@plane/types";

@@ -5,8 +5,8 @@ import { Settings } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useUser } from "hooks/store";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { THEME_OPTIONS } from "constants/themes";
 

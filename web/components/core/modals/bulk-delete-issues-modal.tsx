@@ -7,7 +7,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import { IssueService } from "services/issue";
 // ui
-import { Button, LayersIcon } from "@plane/ui";
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // types
@@ -18,8 +18,6 @@ import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { useIssues, useProject } from "hooks/store";
 // components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 

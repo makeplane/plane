@@ -4,11 +4,10 @@ import Link from "next/link";
 import { observer } from "mobx-react";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
-import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } from "@plane/ui";
+import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers

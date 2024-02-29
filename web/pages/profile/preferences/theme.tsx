@@ -7,9 +7,8 @@ import { useUser } from "hooks/store";
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
 // components
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
-import { setPromiseToast } from "components/toast";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, setPromiseToast } from "@plane/ui";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 // type

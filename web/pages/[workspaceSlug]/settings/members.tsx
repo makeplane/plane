@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -13,7 +12,7 @@ import { WorkspaceSettingHeader } from "components/headers";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
 import { PageHead } from "components/core";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";

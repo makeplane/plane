@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { CustomMenu } from "@plane/ui";
 import { Link, Trash2 } from "lucide-react";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker, useIssues, useUser } from "hooks/store";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeleteArchivedIssueModal } from "components/issues";
 // helpers

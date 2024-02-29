@@ -16,14 +16,22 @@ import {
 } from "lucide-react";
 // hooks
 import { useModule, useUser, useEventTracker } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { DateRangeDropdown, ProjectMemberDropdown } from "components/dropdowns";
 // ui
-import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
+import {
+  CustomMenu,
+  Loader,
+  LayersIcon,
+  CustomSelect,
+  ModuleStatusIcon,
+  UserGroupIcon,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";

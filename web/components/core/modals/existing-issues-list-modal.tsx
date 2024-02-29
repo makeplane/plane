@@ -5,9 +5,7 @@ import { Rocket, Search, X } from "lucide-react";
 import { ProjectService } from "services/project";
 import useDebounce from "hooks/use-debounce";
 // ui
-import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 

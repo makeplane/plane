@@ -6,7 +6,8 @@ import { observer } from "mobx-react-lite";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 // helpers

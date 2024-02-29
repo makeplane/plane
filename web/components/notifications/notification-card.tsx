@@ -5,10 +5,9 @@ import Link from "next/link";
 import { Menu } from "@headlessui/react";
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker } from "hooks/store";
 // icons
-import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { snoozeOptions } from "constants/notification";
 // helper

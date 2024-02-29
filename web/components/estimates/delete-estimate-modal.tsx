@@ -5,11 +5,10 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
 import { useEstimate } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // types
 import { IEstimate } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;

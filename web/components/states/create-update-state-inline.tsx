@@ -6,9 +6,8 @@ import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useProjectState } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
+import { Button, CustomSelect, Input, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IState } from "@plane/types";
 // constants

@@ -3,11 +3,9 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react";
 import { MoveRight, MoveDiagonal, Link2, Trash2 } from "lucide-react";
 // ui
-import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
+import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, TOAST_TYPE, setToast  } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // store hooks
 import { useUser } from "hooks/store";
 // components

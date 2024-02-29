@@ -5,7 +5,6 @@ import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
 // hooks
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import {
   AcceptIssueModal,
@@ -14,7 +13,7 @@ import {
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 // types

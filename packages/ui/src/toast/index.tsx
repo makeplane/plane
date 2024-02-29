@@ -1,10 +1,11 @@
+import * as React from "react";
 import { Toaster, toast } from "sonner";
 // icons
 import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
-// components
-import { ToastSpinner } from "./spinner";
-
-export const Toast = () => <Toaster visibleToasts={5} gap={28} />;
+// spinner
+import { CircularBarSpinner } from "../spinners";
+// helper
+import { cn } from "../../helpers";
 
 export enum TOAST_TYPE {
   SUCCESS = "success",
@@ -26,12 +27,27 @@ type ToastProps =
       message?: string;
     };
 
+type PromiseToastCallback<ToastData> = (data: ToastData) => string;
+
+type PromiseToastData<ToastData> = {
+  title: string;
+  message?: PromiseToastCallback<ToastData>;
+};
+
+type PromiseToastOptions<ToastData> = {
+  loading?: string;
+  success: PromiseToastData<ToastData>;
+  error: PromiseToastData<ToastData>;
+};
+
 type ToastContentProps = {
   toastId: string | number;
   icon?: React.ReactNode;
   textColorClassName: string;
   borderColorClassName: string;
 };
+
+export const Toast = () => <Toaster visibleToasts={5} gap={28} />;
 
 // TODO: Update colors as per theme.
 export const setToast = (props: ToastProps) => {
@@ -42,7 +58,7 @@ export const setToast = (props: ToastProps) => {
           e.stopPropagation();
           e.preventDefault();
         }}
-        className={`w-[350px] bg-white rounded-lg border ${borderColorClassName} shadow-sm p-2`}
+        className={cn("w-[350px] bg-white rounded-lg border shadow-sm p-2", borderColorClassName)}
       >
         <div className="w-full flex items-center px-4 py-2">
           {icon && <div className="flex items-center justify-center">{icon}</div>}
@@ -135,25 +151,12 @@ export const setToast = (props: ToastProps) => {
         // TODO: Add loader
         renderToastContent({
           toastId,
-          icon: <ToastSpinner className="text-gray-500" />,
+          icon: <CircularBarSpinner className="text-gray-500" />,
           textColorClassName: "text-black",
           borderColorClassName: "border-gray-200 ",
         })
       );
   }
-};
-
-type PromiseToastCallback<ToastData> = (data: ToastData) => string;
-
-type PromiseToastData<ToastData> = {
-  title: string;
-  message?: PromiseToastCallback<ToastData>;
-};
-
-type PromiseToastOptions<ToastData> = {
-  loading?: string;
-  success: PromiseToastData<ToastData>;
-  error: PromiseToastData<ToastData>;
 };
 
 export const setPromiseToast = <ToastData,>(

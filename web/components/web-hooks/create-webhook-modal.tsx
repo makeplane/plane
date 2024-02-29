@@ -5,11 +5,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // helpers
 import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 

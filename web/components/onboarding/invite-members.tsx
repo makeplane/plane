@@ -17,10 +17,9 @@ import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker } from "hooks/store";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // hooks

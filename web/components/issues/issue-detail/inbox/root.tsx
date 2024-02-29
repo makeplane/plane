@@ -6,7 +6,8 @@ import { InboxIssueMainContent } from "./main-content";
 import { InboxIssueDetailsSidebar } from "./sidebar";
 // hooks
 import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "../root";

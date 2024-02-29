@@ -10,9 +10,10 @@ import { EmptyState } from "components/common";
 import emptyIssue from "public/empty-state/issue.svg";
 // hooks
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // types
 import { TIssue } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";

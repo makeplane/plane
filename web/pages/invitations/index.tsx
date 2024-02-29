@@ -15,7 +15,7 @@ import { useEventTracker, useUser } from "hooks/store";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // images
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
@@ -32,7 +32,6 @@ import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // components
 import { EmptyState } from "components/common";
 import { PageHead } from "components/core";
-import { TOAST_TYPE, setToast } from "components/toast";
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();

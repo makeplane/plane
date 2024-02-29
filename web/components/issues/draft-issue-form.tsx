@@ -5,7 +5,6 @@ import { observer } from "mobx-react-lite";
 import { Sparkle, X } from "lucide-react";
 // hooks
 import { useApplication, useEstimate, useMention, useProject, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 import useLocalStorage from "hooks/use-local-storage";
 // services
 import { AIService } from "services/ai.service";
@@ -28,7 +27,7 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // ui
-import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
+import { Button, CustomMenu, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types

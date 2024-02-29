@@ -4,14 +4,13 @@ import { observer } from "mobx-react-lite";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
 // hooks
 import { useEventTracker, useIssueDetail } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { IssueList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types

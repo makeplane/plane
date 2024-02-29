@@ -5,11 +5,10 @@ import { observer } from "mobx-react-lite";
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // hooks
 import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
-import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";

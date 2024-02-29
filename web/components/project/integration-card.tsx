@@ -8,12 +8,13 @@ import useSWR, { mutate } from "swr";
 import { ProjectService } from "services/project";
 // hooks
 import { useRouter } from "next/router";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { SelectRepository, SelectChannel } from "components/integration";
 // icons
 import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
 // fetch-keys

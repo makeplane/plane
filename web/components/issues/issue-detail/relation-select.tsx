@@ -4,11 +4,10 @@ import { observer } from "mobx-react-lite";
 import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // ui
-import { RelatedIcon, Tooltip } from "@plane/ui";
+import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types

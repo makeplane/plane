@@ -4,9 +4,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../types";

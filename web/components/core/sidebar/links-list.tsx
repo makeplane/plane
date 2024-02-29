@@ -1,7 +1,5 @@
 // ui
-import { ExternalLinkIcon, Tooltip } from "@plane/ui";
-// components
-import { TOAST_TYPE, setToast } from "components/toast";
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers

@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useCycle, useIssues } from "hooks/store";
+// ui
+import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
 //icons
-import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
 // constants
 import { EIssuesStoreType } from "constants/issue";

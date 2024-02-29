@@ -7,7 +7,6 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { FileService } from "services/file.service";
 import { AIService } from "services/ai.service";
@@ -15,7 +14,7 @@ import { AIService } from "services/ai.service";
 import { PriorityDropdown } from "components/dropdowns";
 import { GptAssistantPopover } from "components/core";
 // ui
-import { Button, Input, ToggleSwitch } from "@plane/ui";
+import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 // constants

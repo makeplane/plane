@@ -7,12 +7,11 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import { FileService } from "services/file.service";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
 import { WorkspaceImageUploadModal } from "components/core";
 // ui
-import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
+import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types

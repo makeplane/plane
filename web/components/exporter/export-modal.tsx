@@ -6,10 +6,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useProject } from "hooks/store";
 // services
 import { ProjectExportService } from "services/project";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Button, CustomSearchSelect } from "@plane/ui";
+import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IUser, IImporterService } from "@plane/types";
 

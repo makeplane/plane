@@ -2,8 +2,9 @@ import { FC, Fragment, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { IssueView } from "components/issues";
 // types

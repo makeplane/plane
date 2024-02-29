@@ -8,10 +8,8 @@ import { InstanceAdminLayout } from "layouts/admin-layout";
 import { NextPageWithLayout } from "lib/types";
 // hooks
 import { useApplication } from "hooks/store";
-// hooks
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
 import { PageHead } from "components/core";

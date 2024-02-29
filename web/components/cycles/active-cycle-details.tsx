@@ -5,7 +5,6 @@ import useSWR from "swr";
 import { useTheme } from "next-themes";
 // hooks
 import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
-import { TOAST_TYPE, setToast } from "components/toast";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -18,6 +17,8 @@ import {
   PriorityIcon,
   Avatar,
   CycleGroupIcon,
+  TOAST_TYPE,
+  setToast,
 } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";

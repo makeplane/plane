@@ -8,7 +8,6 @@ import { Controller, useForm } from "react-hook-form";
 
 import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import { TOAST_TYPE, setToast } from "components/toast";
 // services
 import { FileService } from "services/file.service";
 // layouts
@@ -18,7 +17,7 @@ import { GptAssistantPopover, PageHead } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // assets
 // helpers
 // types
