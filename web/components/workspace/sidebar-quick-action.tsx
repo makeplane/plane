@@ -58,6 +58,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
     const draftIssues = storedValue ?? {};
     if (workspaceSlug && draftIssues[workspaceSlug]) delete draftIssues[workspaceSlug];
     setValue(draftIssues);
+    return Promise.resolve();
   };
 
   return (
@@ -66,7 +67,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         isOpen={isDraftIssueModalOpen}
         onClose={() => setIsDraftIssueModalOpen(false)}
         data={workspaceDraftIssue ?? {}}
-        // storeType={storeType}
+        onSubmit={() => removeWorkspaceDraftIssue()}
         isDraft={true}
       />
 

@@ -106,13 +106,21 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
-        <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `w-full flex-row`}`}>
+        <div
+          className={`relative overflow-hidden flex items-center gap-1 ${
+            verticalAlignPosition ? `flex-col` : `w-full flex-row`
+          }`}
+        >
           <div
-            className={`line-clamp-1 font-medium text-custom-text-100 ${verticalAlignPosition ? `vertical-lr` : ``}`}
+            className={`inline-block truncate line-clamp-1 font-medium text-custom-text-100 overflow-hidden ${
+              verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
+            }`}
           >
             {title}
           </div>
-          <div className={`text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}>
+          <div
+            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}
+          >
             {count || 0}
           </div>
         </div>
