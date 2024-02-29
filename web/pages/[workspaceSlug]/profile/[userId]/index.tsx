@@ -45,7 +45,7 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
   return (
     <>
       <PageHead title="Profile - Summary" />
-      <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9">
+      <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9 vertical-scrollbar scrollbar-md">
         <ProfileStats userProfile={userProfile} />
         <ProfileWorkload stateDistribution={stateDistribution} />
         <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
