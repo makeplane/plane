@@ -65,6 +65,7 @@ MIDDLEWARE = [
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "plane.middleware.exception.Custom404Middleware",
 ]
 
 # Rest Framework settings
