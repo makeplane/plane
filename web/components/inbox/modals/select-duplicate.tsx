@@ -27,8 +27,6 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string>("");
 
-  // const { setToastAlert } = useToast();
-
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 

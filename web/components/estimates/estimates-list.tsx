@@ -30,8 +30,6 @@ export const EstimatesList: React.FC = observer(() => {
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
   const { currentUser } = useUser();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);

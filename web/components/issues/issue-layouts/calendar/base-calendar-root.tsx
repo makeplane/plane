@@ -39,7 +39,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
-  // const { setToastAlert } = useToast();
   const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },

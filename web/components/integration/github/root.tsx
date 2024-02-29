@@ -90,8 +90,6 @@ export const GithubImporterRoot: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
 
-  // const { setToastAlert } = useToast();
-
   const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,
   });

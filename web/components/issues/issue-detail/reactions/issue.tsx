@@ -25,7 +25,6 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
     createReaction,
     removeReaction,
   } = useIssueDetail();
-  // const { setToastAlert } = useToast();
 
   const reactionIds = getReactionsByIssueId(issueId);
   const userReactions = reactionsByUser(issueId, currentUser.id).map((r) => r.reaction);

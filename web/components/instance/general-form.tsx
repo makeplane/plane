@@ -21,8 +21,6 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
   const { instance, instanceAdmins } = props;
   // store hooks
   const { instance: instanceStore } = useApplication();
-  // toast
-  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,

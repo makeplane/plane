@@ -31,9 +31,6 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const { capturePageEvent } = useEventTracker();
   const pageStore = usePage(pageId);
 
-  // toast alert
-  // const { setToastAlert } = useToast();
-
   if (!pageStore) return null;
 
   const { name } = pageStore;

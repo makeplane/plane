@@ -49,8 +49,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const { workspaceSlug } = router.query;
   // states
   const [showSnoozeOptions, setshowSnoozeOptions] = React.useState(false);
-  // toast alert
-  // const { setToastAlert } = useToast();
   // refs
   const snoozeRef = useRef<HTMLDivElement | null>(null);
 

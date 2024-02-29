@@ -38,8 +38,6 @@ export const HeaderGroupByCard = observer(
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 
-    // const { setToastAlert } = useToast();
-
     const renderExistingIssueModal = moduleId || cycleId;
     const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 

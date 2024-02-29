@@ -23,8 +23,6 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   // store
   const { instance: instanceStore } = useApplication();
-  // toast
-  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,

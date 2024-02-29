@@ -39,8 +39,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { createEstimate, updateEstimate } = useEstimate();
   // form info
-  // toast alert
-  // const { setToastAlert } = useToast();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,

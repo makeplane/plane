@@ -77,8 +77,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
   const { issueMap } = useIssues();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const issueIds = issues?.groupedIssueIds || [];
 

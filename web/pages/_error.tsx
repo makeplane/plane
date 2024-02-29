@@ -15,8 +15,6 @@ const authService = new AuthService();
 const CustomErrorComponent = () => {
   const router = useRouter();
 
-  // const { setToastAlert } = useToast();
-
   const handleSignOut = async () => {
     await authService
       .signOut()

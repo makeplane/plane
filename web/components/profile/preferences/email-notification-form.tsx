@@ -16,8 +16,6 @@ const userService = new UserService();
 
 export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) => {
   const { data } = props;
-  // toast
-  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,

@@ -23,7 +23,6 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  // const { setToastAlert } = useToast();
   // hooks
   const { getProjectById } = useProject();
 

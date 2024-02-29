@@ -31,8 +31,6 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     control,

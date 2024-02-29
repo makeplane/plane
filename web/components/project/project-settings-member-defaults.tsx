@@ -32,8 +32,6 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
-  // hooks
-  // const { setToastAlert } = useToast();
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members

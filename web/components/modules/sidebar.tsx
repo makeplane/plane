@@ -73,8 +73,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
-  // const { setToastAlert } = useToast();
-
   const { reset, control } = useForm({
     defaultValues,
   });

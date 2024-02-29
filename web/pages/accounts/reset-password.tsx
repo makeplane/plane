@@ -46,8 +46,6 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast
-  // const { setToastAlert } = useToast();
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // form info

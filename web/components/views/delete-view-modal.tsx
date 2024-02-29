@@ -25,8 +25,6 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteView } = useProjectView();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();

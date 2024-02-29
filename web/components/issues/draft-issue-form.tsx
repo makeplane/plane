@@ -108,7 +108,6 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const { mentionHighlights, mentionSuggestions } = useMention();
   // hooks
   const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
-  // const { setToastAlert } = useToast();
   // refs
   const editorRef = useRef<any>(null);
   // router

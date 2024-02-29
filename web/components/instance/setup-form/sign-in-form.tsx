@@ -38,8 +38,6 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
       password: "",
     },
   });
-  // hooks
-  // const { setToastAlert } = useToast();
 
   const handleFormSubmit = async (formValues: InstanceSetupEmailFormValues) => {
     const payload = {

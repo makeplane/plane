@@ -37,8 +37,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  // const { setToastAlert } = useToast();
-
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`).then(() =>
       setToast({

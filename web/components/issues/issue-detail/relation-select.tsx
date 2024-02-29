@@ -59,8 +59,6 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
     toggleRelationModal,
   } = useIssueDetail();
   const { issueMap } = useIssues();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const relationIssueIds = getRelationByIssueIdRelationType(issueId, relationKey);
 

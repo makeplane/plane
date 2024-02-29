@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView } from "components/issues";
 // types
@@ -47,8 +47,6 @@ export type TIssuePeekOperations = {
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { is_archived = false } = props;
-  // hooks
-  // const { setToastAlert } = useToast();
   // router
   const router = useRouter();
   const {
@@ -85,35 +83,40 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         data: Partial<TIssue>,
         showToast: boolean = true
       ) => {
-        try {
-          const response = await updateIssue(workspaceSlug, projectId, issueId, data);
-          if (showToast)
-            setToast({
+        const updateIssuePromise = updateIssue(workspaceSlug, projectId, issueId, data);
+        if (showToast) {
+          setPromiseToast(updateIssuePromise, {
+            loading: "Updating issue...",
+            success: {
               title: "Issue updated successfully",
-              type: TOAST_TYPE.SUCCESS,
-              message: "Issue updated successfully",
-            });
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            updates: {
-              changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              message: () => "Issue updated successfully",
             },
-            path: router.asPath,
-          });
-        } catch (error) {
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
-          });
-          setToast({
-            title: "Issue update failed",
-            type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            error: {
+              title: "Issue update failed",
+              message: () => "Issue update failed",
+            },
           });
         }
+
+        await updateIssuePromise
+          .then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              updates: {
+                changed_property: Object.keys(data).join(","),
+                change_details: Object.values(data).join(","),
+              },
+              path: router.asPath,
+            });
+          })
+          .catch(() => {
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { state: "FAILED", element: "Issue peek-overview" },
+              path: router.asPath,
+            });
+          });
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {

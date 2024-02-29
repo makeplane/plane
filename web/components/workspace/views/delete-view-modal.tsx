@@ -28,8 +28,6 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { deleteGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();

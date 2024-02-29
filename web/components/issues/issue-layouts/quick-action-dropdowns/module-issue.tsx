@@ -37,8 +37,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   // store hooks
   const {

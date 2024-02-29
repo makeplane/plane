@@ -58,8 +58,6 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   } = useUser();
   const { currentProjectDetails, updateProject } = useProject();
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;

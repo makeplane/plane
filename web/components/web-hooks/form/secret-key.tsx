@@ -29,8 +29,6 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
-  // hooks
-  // const { setToastAlert } = useToast();
 
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;

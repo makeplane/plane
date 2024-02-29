@@ -2,7 +2,7 @@ import { FC, useMemo } from "react";
 // hooks
 import { useEventTracker, useIssueDetail } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueAttachmentUpload } from "./attachment-upload";
 import { IssueAttachmentsList } from "./attachments-list";
@@ -25,19 +25,27 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
   // hooks
   const { createAttachment, removeAttachment } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
-  // const { setToastAlert } = useToast();
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
     () => ({
       create: async (data: FormData) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-          const res = await createAttachment(workspaceSlug, projectId, issueId, data);
-          setToast({
-            message: "The attachment has been successfully uploaded",
-            type: TOAST_TYPE.SUCCESS,
-            title: "Attachment uploaded",
+
+          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, data);
+          setPromiseToast(attachmentUploadPromise, {
+            loading: "Uploading attachment...",
+            success: {
+              title: "Attachment uploaded",
+              message: () => "The attachment has been successfully uploaded",
+            },
+            error: {
+              title: "Attachment not uploaded",
+              message: () => "The attachment could not be uploaded",
+            },
           });
+
+          const res = await attachmentUploadPromise;
           captureIssueEvent({
             eventName: "Issue attachment added",
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -50,11 +58,6 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
           captureIssueEvent({
             eventName: "Issue attachment added",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-          });
-          setToast({
-            message: "The attachment could not be uploaded",
-            type: TOAST_TYPE.ERROR,
-            title: "Attachment not uploaded",
           });
         }
       },

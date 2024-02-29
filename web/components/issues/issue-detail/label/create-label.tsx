@@ -27,7 +27,6 @@ const defaultValues: Partial<IIssueLabel> = {
 export const LabelCreate: FC<ILabelCreate> = (props) => {
   const { workspaceSlug, projectId, issueId, labelOperations, disabled = false } = props;
   // hooks
-  // const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
   } = useIssueDetail();

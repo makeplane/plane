@@ -78,7 +78,6 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
 
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  // const { setToastAlert } = useToast();
 
   const {
     reset,

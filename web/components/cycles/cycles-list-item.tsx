@@ -16,6 +16,7 @@ import {
   Avatar,
   TOAST_TYPE,
   setToast,
+  setPromiseToast,
 } from "@plane/ui";
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
@@ -53,8 +54,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   } = useUser();
   const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { getUserDetails } = useMember();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -74,42 +73,56 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
+      () => {
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "List layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
-        captureEvent(CYCLE_UNFAVORITED, {
-          cycle_id: cycleId,
-          element: "List layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      cycleId
+    ).then(() => {
+      captureEvent(CYCLE_UNFAVORITED, {
+        cycle_id: cycleId,
+        element: "List layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
+    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {

@@ -26,7 +26,6 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
   // hooks
   const { updateIssue } = useIssueDetail();
   const { createLabel } = useLabel();
-  // const { setToastAlert } = useToast();
 
   const labelOperations: TLabelOperations = useMemo(
     () => ({

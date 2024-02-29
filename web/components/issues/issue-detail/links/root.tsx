@@ -38,8 +38,6 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
     [toggleIssueLinkModalStore]
   );
 
-  // const { setToastAlert } = useToast();
-
   const handleLinkOperations: TLinkOperations = useMemo(
     () => ({
       create: async (data: Partial<TIssueLink>) => {

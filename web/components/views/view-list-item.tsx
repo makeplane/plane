@@ -29,8 +29,6 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  // const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },

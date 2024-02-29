@@ -21,7 +21,6 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     createSubscription,
     removeSubscription,
   } = useIssueDetail();
-  // const { setToastAlert } = useToast();
   // state
   const [loading, setLoading] = useState(false);
 

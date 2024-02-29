@@ -21,8 +21,6 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   const { workspaceSlug } = router.query;
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   // store hooks
   const {

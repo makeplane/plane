@@ -10,7 +10,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 // constants
@@ -85,7 +85,6 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // hooks
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  // const { setToastAlert } = useToast();
 
   useEffect(() => {
     setFocus("name");
@@ -160,34 +159,41 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
       ...formData,
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(currentWorkspace.slug, currentProjectDetails.id, { ...payload } as TIssue, viewId).then(
-          (res) => {
-            captureIssueEvent({
-              eventName: ISSUE_CREATED,
-              payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
-              path: router.asPath,
-            });
-          }
-        ));
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Issue created successfully.",
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(
+        currentWorkspace.slug,
+        currentProjectDetails.id,
+        { ...payload } as TIssue,
+        viewId
+      );
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
       });
-    } catch (err: any) {
-      captureIssueEvent({
-        eventName: ISSUE_CREATED,
-        payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
-        path: router.asPath,
-      });
-      console.error(err);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+
+      await quickAddPromise
+        .then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
+            path: router.asPath,
+          });
+        })
+        .catch((err) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
+            path: router.asPath,
+          });
+          console.error(err);
+        });
     }
   };
 

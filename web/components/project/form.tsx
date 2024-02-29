@@ -32,8 +32,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,

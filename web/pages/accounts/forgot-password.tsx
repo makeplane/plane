@@ -39,8 +39,6 @@ const ForgotPasswordPage: NextPageWithLayout = () => {
   const { email } = router.query;
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast
-  // const { setToastAlert } = useToast();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
   // form info

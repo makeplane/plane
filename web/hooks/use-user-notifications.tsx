@@ -20,8 +20,6 @@ const useUserNotification = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // const { setToastAlert } = useToast();
-
   const [snoozed, setSnoozed] = useState<boolean>(false);
   const [archived, setArchived] = useState<boolean>(false);
   const [readNotification, setReadNotification] = useState<boolean>(false);

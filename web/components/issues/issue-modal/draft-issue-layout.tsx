@@ -44,8 +44,6 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  // const { setToastAlert } = useToast();
   // store hooks
   const { captureIssueEvent } = useEventTracker();
 

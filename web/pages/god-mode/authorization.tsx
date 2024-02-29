@@ -22,9 +22,6 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
 
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
-  // toast
-  // const { setToastAlert } = useToast();
-
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 

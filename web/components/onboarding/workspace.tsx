@@ -34,8 +34,6 @@ export const Workspace: React.FC<Props> = (props) => {
   const { updateCurrentUser } = useUser();
   const { createWorkspace, fetchWorkspaces, workspaces } = useWorkspace();
   const { captureWorkspaceEvent } = useEventTracker();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     if (isSubmitting) return;

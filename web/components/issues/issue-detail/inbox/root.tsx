@@ -33,7 +33,6 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
-  // const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },
   } = useUser();

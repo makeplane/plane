@@ -50,8 +50,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,

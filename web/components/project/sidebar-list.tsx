@@ -43,8 +43,6 @@ export const ProjectSidebarList: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast
-  // const { setToastAlert } = useToast();
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 

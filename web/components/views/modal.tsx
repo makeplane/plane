@@ -23,8 +23,6 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
   // store hooks
   const { createView, updateView } = useProjectView();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();

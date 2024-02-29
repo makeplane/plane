@@ -268,7 +268,6 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 
-  // const { setToastAlert } = useToast();
   const { resolvedTheme } = useTheme();
   // store hooks
   const { captureEvent } = useEventTracker();

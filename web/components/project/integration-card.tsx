@@ -42,8 +42,6 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  // const { setToastAlert } = useToast();
-
   const { data: syncedGithubRepository } = useSWR(
     projectId ? PROJECT_GITHUB_REPOSITORY(projectId as string) : null,
     () =>

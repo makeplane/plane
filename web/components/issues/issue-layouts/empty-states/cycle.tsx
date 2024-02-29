@@ -54,8 +54,6 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
     currentUser,
   } = useUser();
 
-  // const { setToastAlert } = useToast();
-
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 

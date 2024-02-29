@@ -50,7 +50,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  // const { setToastAlert } = useToast();
 
   // states
   const [date, setDate] = useState(new Date());

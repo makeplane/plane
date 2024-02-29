@@ -27,8 +27,6 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  // const { setToastAlert } = useToast();
   // hooks
   const { getProjectById } = useProject();
 

@@ -52,8 +52,6 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole: userRole },
     currentUser,
   } = useUser();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !moduleId) return;

@@ -46,7 +46,6 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
-  // const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
   // state
   const [activityTab, setActivityTab] = useState<TActivityTabs>("all");

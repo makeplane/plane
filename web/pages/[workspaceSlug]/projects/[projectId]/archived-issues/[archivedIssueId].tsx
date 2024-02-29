@@ -33,7 +33,6 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   const {
     issues: { removeIssueFromArchived },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  // const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
 
   const { isLoading } = useSWR(

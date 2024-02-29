@@ -38,8 +38,6 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureProjectStateEvent, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,

@@ -42,8 +42,6 @@ export const WorkspaceDetails: FC = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace, updateWorkspace } = useWorkspace();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,

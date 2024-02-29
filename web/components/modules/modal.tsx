@@ -37,8 +37,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const { captureModuleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     reset(defaultValues);

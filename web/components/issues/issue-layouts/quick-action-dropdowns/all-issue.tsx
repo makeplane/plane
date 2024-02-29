@@ -27,8 +27,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { workspaceSlug } = router.query;
   // hooks
   const { setTrackElement } = useEventTracker();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleCopyIssueLink = () => {
     copyUrlToClipboard(`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`).then(() =>

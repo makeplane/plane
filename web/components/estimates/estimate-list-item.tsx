@@ -25,8 +25,6 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { currentProjectDetails, updateProject } = useProject();
-  // hooks
-  // const { setToastAlert } = useToast();
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;

@@ -36,8 +36,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;

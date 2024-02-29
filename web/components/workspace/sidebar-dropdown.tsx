@@ -57,8 +57,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  // hooks
-  // const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);

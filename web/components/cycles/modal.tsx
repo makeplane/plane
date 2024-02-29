@@ -33,8 +33,6 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { captureCycleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
 

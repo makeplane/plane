@@ -36,8 +36,6 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { createState } = useProjectState();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isSubmitting },

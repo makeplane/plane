@@ -18,8 +18,6 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   const [isDeleting, setIsDeleting] = useState(false);
   // router
   const router = useRouter();
-  // toast
-  // const { setToastAlert } = useToast();
   // store hooks
   const { removeWebhook } = useWebhook();
 

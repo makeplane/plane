@@ -60,7 +60,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
-  // const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
   } = useIssueDetail();

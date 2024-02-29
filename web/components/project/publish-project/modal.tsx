@@ -70,8 +70,6 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     unPublishProject,
     fetchSettingsLoader,
   } = useProjectPublish();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     control,

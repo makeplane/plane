@@ -29,8 +29,6 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureModuleEvent } = useEventTracker();
   const { deleteModule } = useModule();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();

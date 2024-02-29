@@ -80,8 +80,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
   // router
   const router = useRouter();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // local storage
   const { setValue: setLocalStorageDraftIssue } = useLocalStorage<any>("draftedIssue", {});
   // current store details

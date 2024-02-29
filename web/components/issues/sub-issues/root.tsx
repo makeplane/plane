@@ -45,8 +45,6 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
   const { workspaceSlug, projectId, parentIssueId, disabled = false } = props;
   // router
   const router = useRouter();
-  // store hooks
-  // const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId, subIssueHelpersByIssueId, setSubIssueHelpers },

@@ -29,8 +29,6 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   } = useUser();
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
-  // toast
-  // const { setToastAlert } = useToast();
 
   // TODO: fix this error
   // useEffect(() => {

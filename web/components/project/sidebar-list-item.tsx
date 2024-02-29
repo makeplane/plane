@@ -34,8 +34,7 @@ import {
   DiceIcon,
   ContrastIcon,
   LayersIcon,
-  TOAST_TYPE,
-  setToast,
+  setPromiseToast,
 } from "@plane/ui";
 // components
 import { LeaveProjectModal, PublishProjectModal } from "components/project";
@@ -103,8 +102,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = router.query;
-  // toast alert
-  // const { setToastAlert } = useToast();
   // derived values
   const project = getProjectById(projectId);
 
@@ -122,24 +119,34 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToast({
-        type: TOAST_TYPE.ERROR,
+    const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding project to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project added to favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
-      });
+        message: () => "Couldn't add the project to favorites. Please try again.",
+      },
     });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToast({
-        type: TOAST_TYPE.ERROR,
+    const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing project from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project removed from favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
-      });
+        message: () => "Couldn't remove the project from favorites. Please try again.",
+      },
     });
   };
 

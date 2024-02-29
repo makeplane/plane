@@ -28,8 +28,6 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { instance: instanceStore } = useApplication();
-  // toast
-  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,

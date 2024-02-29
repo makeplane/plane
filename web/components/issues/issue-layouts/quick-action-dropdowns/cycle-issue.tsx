@@ -37,8 +37,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   // store hooks
   const {

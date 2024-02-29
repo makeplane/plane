@@ -52,8 +52,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },

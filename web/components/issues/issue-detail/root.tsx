@@ -13,7 +13,7 @@ import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } f
 // types
 import { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
@@ -74,7 +74,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { captureIssueEvent } = useEventTracker();
-  // const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -97,14 +96,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         showToast: boolean = true
       ) => {
         try {
-          await updateIssue(workspaceSlug, projectId, issueId, data);
+          const issueUpdatePromise = updateIssue(workspaceSlug, projectId, issueId, data);
           if (showToast) {
-            setToast({
-              title: "Issue updated successfully",
-              type: TOAST_TYPE.SUCCESS,
-              message: "Issue updated successfully",
+            setPromiseToast(issueUpdatePromise, {
+              loading: "Updating issue...",
+              success: {
+                title: "Issue updated successfully",
+                message: () => "Issue updated successfully",
+              },
+              error: {
+                title: "Issue update failed",
+                message: () => "Issue update failed",
+              },
             });
           }
+
+          await issueUpdatePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -123,11 +130,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               change_details: Object.values(data).join(","),
             },
             path: router.asPath,
-          });
-          setToast({
-            title: "Issue update failed",
-            type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
           });
         }
       },

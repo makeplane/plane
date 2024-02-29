@@ -22,8 +22,6 @@ const AutomationSettingsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  // const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },

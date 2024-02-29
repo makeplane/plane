@@ -63,8 +63,6 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     reset(defaultValues);
   };
 
-  // const { setToastAlert } = useToast();
-
   const onSubmit = async (formData: IIssueLabel) => {
     if (!workspaceSlug) return;
 

@@ -24,7 +24,6 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
 
   const {

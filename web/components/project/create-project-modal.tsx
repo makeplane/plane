@@ -31,8 +31,6 @@ interface IIsGuestCondition {
 }
 
 const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
-  // const { setToastAlert } = useToast();
-
   useEffect(() => {
     onClose();
     setToast({
@@ -68,8 +66,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
-  // toast
-  // const { setToastAlert } = useToast();
   // form info
   const cover_image = PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)];
   const {

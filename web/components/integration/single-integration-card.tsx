@@ -53,8 +53,6 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const isUserAdmin = currentWorkspaceRole === 20;
 

@@ -29,8 +29,6 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
 

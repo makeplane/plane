@@ -21,8 +21,6 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
   const { config } = props;
   // store hooks
   const { instance: instanceStore } = useApplication();
-  // toast
-  // const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,

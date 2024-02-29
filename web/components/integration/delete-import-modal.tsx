@@ -34,8 +34,6 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // const { setToastAlert } = useToast();
-
   const handleDeletion = () => {
     if (!workspaceSlug || !data) return;
 

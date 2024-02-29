@@ -35,8 +35,6 @@ export const ProfileLayoutSidebar = observer(() => {
   const router = useRouter();
   // next themes
   const { setTheme } = useTheme();
-  // toast
-  // const { setToastAlert } = useToast();
   // store hooks
   const {
     theme: { sidebarCollapsed, toggleSidebar, toggleMobileSidebar },

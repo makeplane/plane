@@ -39,8 +39,6 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const {
     membership: { leaveProject },
   } = useUser();
-  // toast
-  // const { setToastAlert } = useToast();
 
   const {
     control,

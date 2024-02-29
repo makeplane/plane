@@ -26,8 +26,6 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   const { deleteLabel } = useLabel();
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-  // hooks
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();

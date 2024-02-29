@@ -61,8 +61,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const router = useRouter();
   // store hooks
   const { currentUser } = useUser();
-  // hooks
-  // const { setToastAlert } = useToast();
   // derived values
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 

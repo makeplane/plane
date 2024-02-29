@@ -73,8 +73,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
 
-  // const { setToastAlert } = useToast();
-
   const onClose = () => {
     handleClose();
     setActiveProject(null);

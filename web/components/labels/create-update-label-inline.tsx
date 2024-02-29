@@ -34,8 +34,6 @@ export const CreateUpdateLabelInline = observer(
     const { workspaceSlug, projectId } = router.query;
     // store hooks
     const { createLabel, updateLabel } = useLabel();
-    // toast alert
-    // const { setToastAlert } = useToast();
     // form info
     const {
       handleSubmit,

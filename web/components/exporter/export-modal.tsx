@@ -32,8 +32,6 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const options = workspaceProjectIds?.map((projectId) => {
     const projectDetails = getProjectById(projectId);

@@ -26,7 +26,6 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     link: { getLinkById },
   } = useIssueDetail();
   const { getUserDetails } = useMember();
-  // const { setToastAlert } = useToast();
 
   // state
   const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);

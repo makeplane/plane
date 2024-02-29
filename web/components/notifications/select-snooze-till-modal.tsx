@@ -39,8 +39,6 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // const { setToastAlert } = useToast();
-
   const {
     formState: { isSubmitting },
     reset,

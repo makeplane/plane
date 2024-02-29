@@ -8,7 +8,16 @@ import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
-import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import {
+  Avatar,
+  AvatarGroup,
+  CircularProgressIndicator,
+  CustomMenu,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+} from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -29,8 +38,6 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  // const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -47,21 +54,27 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
+    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
+      () => {
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Couldn't add the module to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding module to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the module to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,21 +82,29 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
-        captureEvent(MODULE_UNFAVORITED, {
-          module_id: moduleId,
-          element: "Grid layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Couldn't remove the module from favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeModuleFromFavorites(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      moduleId
+    ).then(() => {
+      captureEvent(MODULE_UNFAVORITED, {
+        module_id: moduleId,
+        element: "Grid layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing module from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the module from favorites. Please try again.",
+      },
+    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {

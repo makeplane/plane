@@ -34,8 +34,6 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // derived values
   const memberDetails = getWorkspaceMemberDetails(memberId);
 

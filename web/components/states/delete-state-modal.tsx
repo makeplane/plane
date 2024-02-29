@@ -28,8 +28,6 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureProjectStateEvent } = useEventTracker();
   const { deleteState } = useProjectState();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();

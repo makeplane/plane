@@ -12,7 +12,7 @@ import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { createIssuePayload } from "helpers/issue.helper";
 import { cn } from "helpers/common.helper";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/ui";
 // types
 import { IProject, TIssue } from "@plane/types";
 // constants
@@ -71,7 +71,6 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
   // hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
-  // const { setToastAlert } = useToast();
 
   const projectDetail = (projectId && getProjectById(projectId.toString())) || undefined;
 
@@ -111,31 +110,35 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
       target_date: renderFormattedPayloadDate(targetDate),
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId).then((res) => {
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(workspaceSlug.toString(), projectId.toString(), { ...payload }, viewId);
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
+      });
+
+      await quickAddPromise
+        .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
             path: router.asPath,
           });
-        }));
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Issue created successfully.",
-      });
-    } catch (err: any) {
-      captureIssueEvent({
-        eventName: ISSUE_CREATED,
-        payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
-        path: router.asPath,
-      });
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+        })
+        .catch(() => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
+            path: router.asPath,
+          });
+        });
     }
   };
   return (

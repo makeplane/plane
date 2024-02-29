@@ -30,8 +30,6 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   // store hooks
   const { captureCycleEvent } = useEventTracker();
   const { deleteCycle } = useCycle();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const formSubmit = async () => {
     if (!cycle) return;

@@ -28,8 +28,6 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();

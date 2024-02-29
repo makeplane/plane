@@ -38,8 +38,6 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
-  // toast alert
-  // const { setToastAlert } = useToast();
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;

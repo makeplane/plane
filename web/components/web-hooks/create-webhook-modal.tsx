@@ -35,8 +35,6 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast
-  // const { setToastAlert } = useToast();
 
   const handleCreateWebhook = async (formData: IWebhook, webhookEventType: TWebhookEventTypes) => {
     if (!workspaceSlug) return;

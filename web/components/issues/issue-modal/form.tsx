@@ -124,8 +124,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  // toast alert
-  // const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting },

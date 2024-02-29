@@ -33,7 +33,6 @@ export const InstanceSidebarDropdown = observer(() => {
   } = useApplication();
   const { signOut, currentUser, currentUserSettings } = useUser();
   // hooks
-  // const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
 
   // redirect url for normal mode
