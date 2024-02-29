@@ -327,13 +327,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
         processed_results = self.__get_field_dict()
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
-            if group_value in processed_results:
-                processed_results[str(group_value)] = {
-                    "results": [],
-                    "total_results": processed_results[str(group_value)][
-                        "total_results"
-                    ],
-                }
             processed_results[str(group_value)]["results"].append(result)
         return processed_results
 
