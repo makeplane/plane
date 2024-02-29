@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
 // components
-import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
+import { CreateUpdateIssueModal } from "components/issues";
 import { ExistingIssuesListModal } from "components/core";
 import { CustomMenu } from "@plane/ui";
 // mobx

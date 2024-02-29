@@ -1,11 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { differenceInCalendarDays } from "date-fns";
-import { Layers, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 import xor from "lodash/xor";
 // hooks
-import { useEventTracker, useEstimate, useLabel, useIssues } from "hooks/store";
+import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
@@ -14,13 +13,15 @@ import {
   DateDropdown,
   EstimateDropdown,
   PriorityDropdown,
-  ProjectMemberDropdown,
+  MemberDropdown,
   ModuleDropdown,
   CycleDropdown,
   StateDropdown,
 } from "components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // constants
@@ -47,11 +48,14 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const {
     issues: { addIssueToCycle, removeIssueFromCycle },
   } = useIssues(EIssuesStoreType.CYCLE);
+  const { areEstimatesEnabledForCurrentProject } = useEstimate();
+  const { getStateById } = useProjectState();
   // router
   const router = useRouter();
   const { workspaceSlug, cycleId, moduleId } = router.query;
-  const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const currentLayout = `${activeLayout} layout`;
+  // derived values
+  const stateDetails = getStateById(issue.state_id);
 
   const issueOperations = useMemo(
     () => ({
@@ -231,8 +235,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const targetDateDistance = issue.target_date ? differenceInCalendarDays(new Date(issue.target_date), new Date()) : 1;
-
   return (
     <div className={className}>
       {/* basic properties */}
@@ -284,6 +286,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleStartDate}
             maxDate={maxDate ?? undefined}
             placeholder="Start date"
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             disabled={isReadOnly}
             showTooltip
@@ -299,8 +302,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleTargetDate}
             minDate={minDate ?? undefined}
             placeholder="Due date"
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={targetDateDistance <= 0 ? "text-red-500" : ""}
+            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
             clearIconClassName="!text-custom-text-100"
             disabled={isReadOnly}
             showTooltip
@@ -311,7 +315,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         <div className="h-5">
-          <ProjectMemberDropdown
+          <MemberDropdown
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
             onChange={handleAssignee}
@@ -344,7 +348,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* cycles */}
       {cycleId === undefined && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5">
+          <div className="h-5 truncate">
             <CycleDropdown
               projectId={issue?.project_id}
               value={issue?.cycle_id}
@@ -378,12 +382,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="sub_issue_count"
-        shouldRenderProperty={(properties) => !!properties.sub_issue_count}
+        shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
       >
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div
-            onClick={redirectToIssueDetail}
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 px-2.5 py-1 cursor-pointer"
+            onClick={issue.sub_issues_count ? redirectToIssueDetail : () => {}}
+            className={cn(
+              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+              {
+                "hover:bg-custom-background-80 cursor-pointer": issue.sub_issues_count,
+              }
+            )}
           >
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.sub_issues_count}</div>
@@ -395,7 +404,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="attachment_count"
-        shouldRenderProperty={(properties) => !!properties.attachment_count}
+        shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
@@ -409,7 +418,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="link"
-        shouldRenderProperty={(properties) => !!properties.link}
+        shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">

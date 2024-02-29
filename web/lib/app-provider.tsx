@@ -50,7 +50,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
             <CrispWrapper user={currentUser}>
               <PostHogProvider
                 user={currentUser}
-                currentWorkspaceId= {currentWorkspace?.id}
+                currentWorkspaceId={currentWorkspace?.id}
                 workspaceRole={currentWorkspaceRole}
                 projectRole={currentProjectRole}
                 posthogAPIKey={envConfig?.posthog_api_key || null}

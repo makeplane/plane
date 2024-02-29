@@ -48,8 +48,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         return (
             Project.objects.filter(
                 q,
-                Q(project_projectmember__member=self.request.user)
-                | Q(network=2),
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .distinct()
@@ -71,6 +71,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         issues = Issue.issue_objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -95,6 +96,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         cycles = Cycle.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -118,6 +120,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         modules = Module.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -141,6 +144,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         pages = Page.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -164,6 +168,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         issue_views = IssueView.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -236,6 +241,7 @@ class IssueSearchEndpoint(BaseAPIView):
         issues = Issue.issue_objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
         )
 
         if workspace_search == "false":

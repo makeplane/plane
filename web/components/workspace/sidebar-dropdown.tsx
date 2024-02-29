@@ -8,7 +8,7 @@ import { mutate } from "swr";
 import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { usePopper } from "react-popper";
 // hooks
-import { useApplication, useEventTracker, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -54,9 +54,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    theme: { sidebarCollapsed, toggleMobileSidebar },
+    theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
-  const { setTrackElement } = useEventTracker();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   // hooks
@@ -98,7 +97,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
-      toggleMobileSidebar();
+      toggleSidebar();
     }
   };
   const workspacesList = Object.values(workspaces ?? {});
@@ -157,7 +156,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               <Menu.Items as={Fragment}>
                 <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg divide-y divide-custom-border-100 outline-none">
                   <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4 vertical-scrollbar scrollbar-sm">
-                    <h6 className="sticky top-0 z-10 h-full w-full pt-3 text-sm font-medium text-custom-sidebar-text-400">
+                    <h6 className="sticky top-0 z-10 h-full w-full pt-3 pb-1 text-sm font-medium text-custom-sidebar-text-400 bg-custom-sidebar-background-100">
                       {currentUser?.email}
                     </h6>
                     {workspacesList ? (

@@ -33,6 +33,7 @@ from plane.app.serializers import (
     IssueSerializer,
     InboxSerializer,
     InboxIssueSerializer,
+    IssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -296,11 +297,7 @@ class InboxIssueViewSet(BaseViewSet):
         issue_data = request.data.pop("issue", False)
 
         if bool(issue_data):
-            issue = Issue.objects.get(
-                pk=inbox_issue.issue_id,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+            issue = self.get_queryset().filter(pk=inbox_issue.issue_id).first()
             # Only allow guests and viewers to edit name and description
             if project_member.role <= 10:
                 # viewers and guests since only viewers and guests
@@ -430,14 +427,13 @@ class InboxIssueViewSet(BaseViewSet):
                 )
             )
         ).first()
-
         if issue is None:
             return Response(
                 {"error": "Requested object was not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueSerializer(issue)
+        serializer = IssueDetailSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, inbox_id, issue_id):

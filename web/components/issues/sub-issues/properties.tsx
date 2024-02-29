@@ -2,7 +2,7 @@ import React from "react";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // components
-import { PriorityDropdown, ProjectMemberDropdown, StateDropdown } from "components/dropdowns";
+import { PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // types
 import { TSubIssueOperations } from "./root";
 
@@ -62,7 +62,7 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
       </div>
 
       <div className="h-5 flex-shrink-0">
-        <ProjectMemberDropdown
+        <MemberDropdown
           value={issue.assignee_ids}
           projectId={issue.project_id}
           onChange={(val) =>

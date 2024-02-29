@@ -33,7 +33,8 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
@@ -60,7 +61,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
             <DraftKanBanLayout />
           ) : null}
           {/* issue peek overview */}
-          <IssuePeekOverview />
+          <IssuePeekOverview is_draft />
         </div>
       )}
     </div>
