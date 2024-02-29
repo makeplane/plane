@@ -491,6 +491,9 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
 
         # Group by
         group_by = request.GET.get("group_by", False)
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, field=group_by
+        )
 
         # List Paginate
         if not group_by:
@@ -502,9 +505,6 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
                 ),
             )
 
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, field=group_by
-        )
         # Group paginate
         return self.paginate(
             request=request,
