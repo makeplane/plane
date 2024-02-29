@@ -163,7 +163,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             )}
           />
           <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-10 md:pt-16 px-8 pb-8 lg:w-3/5">
+          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-10 md:pt-16 px-8 pb-8 lg:w-3/5 vertical-scrollbar scrollbar-md">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex w-full flex-col gap-8">
                 <div className="relative h-44 w-full">

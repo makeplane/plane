@@ -40,7 +40,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
           <h3 className="text-xl font-medium">Activity</h3>
         </div>
         {userActivity ? (
-          <div className="flex h-full w-full flex-col gap-2 overflow-y-auto">
+          <div className="flex h-full w-full flex-col gap-2 overflow-y-auto vertical-scrollbar scrollbar-md">
             <ul role="list" className="-mb-4">
               {userActivity.results.map((activityItem: any) => {
                 if (activityItem.field === "comment") {
