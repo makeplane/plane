@@ -78,7 +78,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         msg.send()
 
         return
-    except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
+    except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist):
         print("Workspace or WorkspaceMember Invite Does not exists")
         return
     except Exception as e:

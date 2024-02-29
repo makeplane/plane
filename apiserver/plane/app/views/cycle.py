@@ -21,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import UUIDField
 from django.db.models.functions import Coalesce
 
 # Third party imports

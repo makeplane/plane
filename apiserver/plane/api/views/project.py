@@ -244,7 +244,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Workspace.DoesNotExist as e:
+        except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exist"},
                 status=status.HTTP_404_NOT_FOUND,

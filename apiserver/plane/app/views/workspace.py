@@ -28,7 +28,7 @@ from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import UUIDField
 from django.db.models.functions import Coalesce
 
 # Third party modules

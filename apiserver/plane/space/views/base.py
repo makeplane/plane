@@ -10,7 +10,6 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 # Third part imports
 from rest_framework import status
-from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
@@ -89,7 +88,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                     0
                 ]
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
@@ -179,7 +178,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if isinstance(e, ObjectDoesNotExist):
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
