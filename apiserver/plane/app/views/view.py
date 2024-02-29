@@ -143,11 +143,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]

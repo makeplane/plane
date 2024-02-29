@@ -1500,7 +1500,7 @@ def update_draft_issue_activity(
     )
     if (
         requested_data.get("is_draft") is not None
-        and requested_data.get("is_draft") == False
+        and requested_data.get("is_draft") is False
     ):
         issue_activities.append(
             IssueActivity(

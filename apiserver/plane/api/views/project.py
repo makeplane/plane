@@ -149,7 +149,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 serializer.save()
 
                 # Add the user as Administrator to the project
-                project_member = ProjectMember.objects.create(
+                _ = ProjectMember.objects.create(
                     project_id=serializer.data["id"],
                     member=request.user,
                     role=20,

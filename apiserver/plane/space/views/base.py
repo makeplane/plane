@@ -84,9 +84,6 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 )
 
             if isinstance(e, ObjectDoesNotExist):
-                model_name = str(exc).split(" matching query does not exist.")[
-                    0
-                ]
                 return Response(
                     {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,

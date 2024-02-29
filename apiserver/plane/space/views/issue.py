@@ -513,9 +513,13 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
+        if not ProjectDeployBoard.objects.filter(
             workspace__slug=slug, project_id=project_id
-        )
+        ).exists():
+            return Response(
+                {"error": "Project is not published"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         filters = issue_filters(request.query_params, "GET")
 

@@ -111,9 +111,7 @@ class InstanceAdminEndpoint(BaseAPIView):
 
     def delete(self, request, pk):
         instance = Instance.objects.first()
-        instance_admin = InstanceAdmin.objects.filter(
-            instance=instance, pk=pk
-        ).delete()
+        InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
