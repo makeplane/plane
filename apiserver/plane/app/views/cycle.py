@@ -327,13 +327,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 }
 
                 if data[0]["start_date"] and data[0]["end_date"]:
-                    data[0]["distribution"]["completion_chart"] = (
-                        burndown_plot(
-                            queryset=queryset.first(),
-                            slug=slug,
-                            project_id=project_id,
-                            cycle_id=data[0]["id"],
-                        )
+                    data[0]["distribution"][
+                        "completion_chart"
+                    ] = burndown_plot(
+                        queryset=queryset.first(),
+                        slug=slug,
+                        project_id=project_id,
+                        cycle_id=data[0]["id"],
                     )
 
             return Response(data, status=status.HTTP_200_OK)

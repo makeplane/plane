@@ -81,7 +81,6 @@ from collections import defaultdict
 
 
 class IssueListEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]

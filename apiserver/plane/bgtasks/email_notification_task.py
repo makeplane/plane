@@ -69,9 +69,7 @@ def stack_email_notification():
                 receiver_notification.get("entity_identifier"), {}
             ).setdefault(
                 str(receiver_notification.get("triggered_by_id")), []
-            ).append(
-                receiver_notification.get("data")
-            )
+            ).append(receiver_notification.get("data"))
             # append processed notifications
             processed_notifications.append(receiver_notification.get("id"))
             email_notification_ids.append(receiver_notification.get("id"))

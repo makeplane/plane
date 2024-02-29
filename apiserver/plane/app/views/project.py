@@ -64,7 +64,6 @@ from plane.db.models import (
 )
 
 
-
 class ProjectViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
@@ -1066,7 +1065,9 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         # Extracting file keys from the response
         if "Contents" in response:
             for content in response["Contents"]:
-                if not content["Key"].endswith(
+                if not content[
+                    "Key"
+                ].endswith(
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
                     files.append(

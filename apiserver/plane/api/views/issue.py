@@ -652,7 +652,6 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
         )
 
     def post(self, request, slug, project_id, issue_id):
-
         # Validation check if the issue already exists
         if (
             request.data.get("external_id")

@@ -444,7 +444,6 @@ class IssueLinkSerializer(BaseSerializer):
 
 
 class IssueLinkLiteSerializer(BaseSerializer):
-
     class Meta:
         model = IssueLink
         fields = [
@@ -475,7 +474,6 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
-
     class Meta:
         model = IssueAttachment
         fields = [
@@ -504,7 +502,6 @@ class IssueReactionSerializer(BaseSerializer):
 
 
 class IssueReactionLiteSerializer(DynamicBaseSerializer):
-
     class Meta:
         model = IssueReaction
         fields = [
@@ -663,7 +660,6 @@ class IssueDetailSerializer(IssueSerializer):
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):
-
     class Meta:
         model = Issue
         fields = [

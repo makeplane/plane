@@ -141,7 +141,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
-
     class Meta:
         model = ModuleLink
         fields = "__all__"
@@ -215,7 +214,6 @@ class ModuleSerializer(DynamicBaseSerializer):
 
 
 class ModuleDetailSerializer(ModuleSerializer):
-
     link_module = ModuleLinkSerializer(read_only=True, many=True)
 
     class Meta(ModuleSerializer.Meta):
