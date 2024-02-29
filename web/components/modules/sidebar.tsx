@@ -20,7 +20,7 @@ import { useModule, useUser, useEventTracker } from "hooks/store";
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { DateRangeDropdown, ProjectMemberDropdown } from "components/dropdowns";
+import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
 // ui
 import {
   CustomMenu,
@@ -374,12 +374,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
 
-        {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {moduleDetails.description}
-          </span>
-        )}
-
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
@@ -391,7 +385,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               name="lead_id"
               render={({ field: { value } }) => (
                 <div className="w-3/5 h-7">
-                  <ProjectMemberDropdown
+                  <MemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
                       submitChanges({ lead_id: val });
@@ -415,7 +409,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               name="member_ids"
               render={({ field: { value } }) => (
                 <div className="w-3/5 h-7">
-                  <ProjectMemberDropdown
+                  <MemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
                       submitChanges({ member_ids: val });

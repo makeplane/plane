@@ -40,6 +40,8 @@ export interface IBaseKanBanLayout {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   showLoader?: boolean;
   viewId?: string;
@@ -185,6 +187,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         handleRemoveFromView={
           issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
         }
+        handleArchive={
+          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
+        }
+        handleRestore={
+          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
+        }
         readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
@@ -280,27 +288,29 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               </Droppable>
             </div>
 
-            <KanBanView
-              issuesMap={issueMap}
-              issueIds={issueIds}
-              displayProperties={displayProperties}
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              handleIssues={handleIssues}
-              quickActions={renderQuickActions}
-              handleKanbanFilters={handleKanbanFilters}
-              kanbanFilters={kanbanFilters}
-              enableQuickIssueCreate={enableQuickAdd}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-              quickAddCallback={issues?.quickAddIssue}
-              viewId={viewId}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-              canEditProperties={canEditProperties}
-              storeType={storeType}
-              addIssuesToView={addIssuesToView}
-              scrollableContainerRef={scrollableContainerRef}
-              isDragStarted={isDragStarted}
-            />
+            <div className="w-max h-max">
+              <KanBanView
+                issuesMap={issueMap}
+                issueIds={issueIds}
+                displayProperties={displayProperties}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                handleIssues={handleIssues}
+                quickActions={renderQuickActions}
+                handleKanbanFilters={handleKanbanFilters}
+                kanbanFilters={kanbanFilters}
+                enableQuickIssueCreate={enableQuickAdd}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
+                quickAddCallback={issues?.quickAddIssue}
+                viewId={viewId}
+                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+                canEditProperties={canEditProperties}
+                storeType={storeType}
+                addIssuesToView={addIssuesToView}
+                scrollableContainerRef={scrollableContainerRef}
+                isDragStarted={isDragStarted}
+              />
+            </div>
           </DragDropContext>
         </div>
       </div>

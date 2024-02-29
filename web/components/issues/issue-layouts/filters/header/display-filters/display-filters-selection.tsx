@@ -11,7 +11,7 @@ import {
   FilterSubGroupBy,
 } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
 type Props = {
@@ -20,6 +20,7 @@ type Props = {
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
   handleDisplayPropertiesUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
+  ignoreGroupedFilters?: Partial<TIssueGroupByOptions>[];
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
@@ -29,6 +30,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     handleDisplayFiltersUpdate,
     handleDisplayPropertiesUpdate,
     layoutDisplayFiltersOptions,
+    ignoreGroupedFilters = [],
   } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
@@ -54,6 +56,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 group_by: val,
               })
             }
+            ignoreGroupedFilters={ignoreGroupedFilters}
           />
         </div>
       )}
@@ -71,6 +74,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 })
               }
               subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
+              ignoreGroupedFilters={ignoreGroupedFilters}
             />
           </div>
         )}

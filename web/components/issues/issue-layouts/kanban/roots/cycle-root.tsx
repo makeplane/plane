@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -39,6 +39,11 @@ export const CycleKanBanLayout: React.FC = observer(() => {
 
         await issues.removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, cycleId.toString(), issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+
+        await issues.archiveIssue(workspaceSlug.toString(), issue.project_id, issue.id, cycleId.toString());
+      },
     }),
     [issues, workspaceSlug, cycleId]
   );
@@ -46,7 +51,15 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
 
-  const canEditIssueProperties = () => !isCompletedCycle;
+  const canEditIssueProperties = useCallback(() => !isCompletedCycle, [isCompletedCycle]);
+
+  const addIssuesToView = useCallback(
+    (issueIds: string[]) => {
+      if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+      return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+    },
+    [issues?.addIssueToCycle, workspaceSlug, projectId, cycleId]
+  );
 
   return (
     <BaseKanBanRoot
@@ -57,10 +70,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId?.toString() ?? ""}
       storeType={EIssuesStoreType.CYCLE}
-      addIssuesToView={(issueIds: string[]) => {
-        if (!workspaceSlug || !projectId || !cycleId) throw new Error();
-        return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
-      }}
+      addIssuesToView={addIssuesToView}
       canEditPropertiesBasedOnProject={canEditIssueProperties}
       isCompletedCycle={isCompletedCycle}
     />

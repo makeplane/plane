@@ -21,13 +21,13 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const { issueMap } = useIssues();
 
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // hooks
   const { getProjectById } = useProject();
 
   useEffect(() => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
   }, [isOpen]);
 
   if (!dataId && !data) return null;
@@ -35,12 +35,12 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   const issue = data ? data : issueMap[dataId!];
 
   const onClose = () => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
     handleClose();
   };
 
   const handleIssueDelete = async () => {
-    setIsDeleteLoading(true);
+    setIsDeleting(true);
     if (onSubmit)
       await onSubmit()
         .then(() => {
@@ -53,7 +53,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
             message: "Failed to delete issue",
           });
         })
-        .finally(() => setIsDeleteLoading(false));
+        .finally(() => setIsDeleting(false));
   };
 
   return (
@@ -106,14 +106,8 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      tabIndex={1}
-                      onClick={handleIssueDelete}
-                      loading={isDeleteLoading}
-                    >
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                    <Button variant="danger" size="sm" tabIndex={1} onClick={handleIssueDelete} loading={isDeleting}>
+                      {isDeleting ? "Deleting" : "Delete"}
                     </Button>
                   </div>
                 </div>

@@ -14,6 +14,8 @@ export type TIssueLabel = {
   projectId: string;
   issueId: string;
   disabled: boolean;
+  isInboxIssue?: boolean;
+  onLabelUpdate?: (labelIds: string[]) => void;
 };
 
 export type TLabelOperations = {
@@ -22,7 +24,7 @@ export type TLabelOperations = {
 };
 
 export const IssueLabel: FC<TIssueLabel> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false, isInboxIssue = false, onLabelUpdate } = props;
   // hooks
   const { updateIssue } = useIssueDetail();
   const { createLabel } = useLabel();
@@ -31,12 +33,14 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
     () => ({
       updateIssue: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
-          await updateIssue(workspaceSlug, projectId, issueId, data);
-          setToast({
-            title: "Issue updated successfully",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Issue updated successfully",
-          });
+          if (onLabelUpdate) onLabelUpdate(data.label_ids || []);
+          else await updateIssue(workspaceSlug, projectId, issueId, data);
+          if (!isInboxIssue)
+            setToast({
+              title: "Issue updated successfully",
+              type: TOAST_TYPE.SUCCESS,
+              message: "Issue updated successfully",
+            });
         } catch (error) {
           setToast({
             title: "Issue update failed",
@@ -48,11 +52,12 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
       createLabel: async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
         try {
           const labelResponse = await createLabel(workspaceSlug, projectId, data);
-          setToast({
-            title: "Label created successfully",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Label created successfully",
-          });
+          if (!isInboxIssue)
+            setToast({
+              title: "Label created successfully",
+              type: TOAST_TYPE.SUCCESS,
+              message: "Label created successfully",
+            });
           return labelResponse;
         } catch (error) {
           setToast({
@@ -64,7 +69,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         }
       },
     }),
-    [updateIssue, createLabel]
+    [updateIssue, createLabel, onLabelUpdate]
   );
 
   return (
