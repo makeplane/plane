@@ -39,9 +39,9 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
   }
 
   getCanUserDragDrop = computedFn((group_by: string | null, sub_group_by: string | null) => {
-    if (group_by && ["state", "priority"].includes(group_by)) {
+    if (group_by && ["state", "priority", "cycle"].includes(group_by)) {
       if (!sub_group_by) return true;
-      if (sub_group_by && ["state", "priority"].includes(sub_group_by)) return true;
+      if (sub_group_by && ["state", "priority", "cycle"].includes(sub_group_by)) return true;
     }
     return false;
   });
