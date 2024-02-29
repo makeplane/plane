@@ -123,9 +123,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
       <Droppable droppableId={`${groupId}__${sub_group_id}`}>
         {(provided: any, snapshot: any) => (
           <div
-            className={`relative h-full w-full transition-all ${
-              snapshot.isDraggingOver ? `bg-custom-background-80` : ``
-            }`}
+            className={`relative h-full transition-all ${snapshot.isDraggingOver ? `bg-custom-background-80` : ``}`}
             {...provided.droppableProps}
             ref={provided.innerRef}
           >

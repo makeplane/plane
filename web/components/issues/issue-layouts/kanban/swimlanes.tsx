@@ -38,11 +38,11 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   kanbanFilters,
   handleKanbanFilters,
 }) => (
-  <div className="relative flex h-max min-h-full w-full items-center">
+  <div className="relative flex gap-2 h-max min-h-full w-full items-center">
     {list &&
       list.length > 0 &&
       list.map((_list: IGroupByColumn) => (
-        <div key={`${sub_group_by}_${_list.id}`} className="flex w-[340px] flex-shrink-0 flex-col">
+        <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
           <HeaderGroupByCard
             sub_group_by={sub_group_by}
             group_by={group_by}

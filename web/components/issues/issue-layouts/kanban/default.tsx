@@ -107,14 +107,14 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className={`relative w-full flex gap-3 ${sub_group_by ? "h-full" : "h-full"}`}>
+    <div className={`relative w-full flex gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
       {groupList &&
         groupList.length > 0 &&
         groupList.map((_list: IGroupByColumn) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[340px]`}`}>
+            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[350px]`}`}>
               {sub_group_by === null && (
                 <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
                   <HeaderGroupByCard
