@@ -149,7 +149,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             {projectLabels
               ?.filter((l) => value.includes(l?.id))
               .map((label) => (
-                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
+                <Tooltip key={label.id} position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
                   <div
                     key={label?.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
@@ -224,8 +224,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-                ? "cursor-pointer"
-                : "cursor-pointer hover:bg-custom-background-80"
+              ? "cursor-pointer"
+              : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={handleOnClick}
         >

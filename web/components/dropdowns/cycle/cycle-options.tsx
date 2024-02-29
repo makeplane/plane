@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
+// components
 import { Combobox } from "@headlessui/react";
-//components
+// icon
 import { Check, Search } from "lucide-react";
+// ui
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
-//store
+// store hooks
 import { useApplication, useCycle } from "hooks/store";
-//hooks
-//icon
-//types
+// types
 import { TCycleGroups } from "@plane/types";
 
 type DropdownOptions =
@@ -21,14 +21,14 @@ type DropdownOptions =
     }[]
   | undefined;
 
-interface Props {
+type CycleOptionsProps = {
   projectId: string;
   referenceElement: HTMLButtonElement | null;
   placement: Placement | undefined;
   isOpen: boolean;
-}
+};
 
-export const CycleOptions = observer((props: any) => {
+export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   const { projectId, isOpen, referenceElement, placement } = props;
 
   //state hooks

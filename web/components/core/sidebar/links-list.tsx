@@ -1,5 +1,4 @@
 // ui
-import { useMeasure } from "@nivo/core";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 import { ExternalLinkIcon, Tooltip } from "@plane/ui";

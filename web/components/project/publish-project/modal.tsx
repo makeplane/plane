@@ -362,16 +362,14 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                           : "hover:bg-custom-background-80 hover:text-custom-text-100"
                                       }`}
                                       onClick={() => {
-                                        const _views =
+                                        const changedViews =
                                           value.length > 0
                                             ? value.includes(option.key)
                                               ? value.filter((_o: string) => _o !== option.key)
                                               : [...value, option.key]
                                             : [option.key];
-
-                                        if (_views.length === 0) return;
-
-                                        onChange(_views);
+                                        if (changedViews.length === 0) return;
+                                        onChange(changedViews);
                                         checkIfUpdateIsRequired();
                                       }}
                                     >

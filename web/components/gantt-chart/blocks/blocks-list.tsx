@@ -47,6 +47,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
 
         return (
           <GanttChartBlock
+            key={block.id}
             block={block}
             blockToRender={blockToRender}
             blockUpdateHandler={blockUpdateHandler}

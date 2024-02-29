@@ -28,6 +28,7 @@ export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
     <div>
       {commentIds.map((commentId, index) => (
         <IssueCommentCard
+          key={commentId}
           workspaceSlug={workspaceSlug}
           commentId={commentId}
           ends={index === 0 ? "top" : index === commentIds.length - 1 ? "bottom" : undefined}

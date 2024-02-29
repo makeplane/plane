@@ -12,7 +12,6 @@ import useToast from "hooks/use-toast";
 import { ProjectService } from "services/project";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
-// fetch-keys
 // icons
 import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";

@@ -29,6 +29,7 @@ export const LabelList: FC<TLabelList> = (props) => {
     <>
       {issueLabels.map((labelId) => (
         <LabelListItem
+          key={labelId}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}

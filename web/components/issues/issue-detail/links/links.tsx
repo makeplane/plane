@@ -34,6 +34,7 @@ export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
         issueLinks.length > 0 &&
         issueLinks.map((linkId) => (
           <IssueLinkDetail
+            key={linkId}
             linkId={linkId}
             linkOperations={linkOperations}
             isNotAllowed={currentProjectRole === 5 || currentProjectRole === 10}

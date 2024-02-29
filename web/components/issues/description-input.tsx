@@ -2,15 +2,14 @@ import { FC, useState, useEffect } from "react";
 // components
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
 import { Loader } from "@plane/ui";
-// store hooks
+// hooks
 import { useMention, useWorkspace } from "hooks/store";
+import useDebounce from "hooks/use-debounce";
 // services
 import { FileService } from "services/file.service";
 const fileService = new FileService();
 // types
 import { TIssueOperations } from "./issue-detail";
-// hooks
-import useDebounce from "hooks/use-debounce";
 
 export type IssueDescriptionInputProps = {
   workspaceSlug: string;

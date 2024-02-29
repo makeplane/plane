@@ -230,15 +230,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug && projectId) {
-      let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
-      else _kanbanFilters.push(value);
+      let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+      if (kanbanFilters.includes(value)) kanbanFilters = kanbanFilters.filter((_value) => _value != value);
+      else kanbanFilters.push(value);
       issuesFilter.updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.KANBAN_FILTERS,
         {
-          [toggle]: _kanbanFilters,
+          [toggle]: kanbanFilters,
         },
         viewId
       );

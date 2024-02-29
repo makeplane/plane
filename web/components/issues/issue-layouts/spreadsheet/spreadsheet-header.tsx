@@ -38,6 +38,7 @@ export const SpreadsheetHeader = (props: Props) => {
 
         {SPREADSHEET_PROPERTY_LIST.map((property) => (
           <SpreadsheetHeaderColumn
+            key={property}
             property={property}
             displayProperties={displayProperties}
             displayFilters={displayFilters}

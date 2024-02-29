@@ -178,12 +178,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               {notificationField === "comment"
                 ? "commented"
                 : notificationField === "archived_at"
-                  ? notification.data.issue_activity.new_value === "restore"
-                    ? "restored the issue"
-                    : "archived the issue"
-                  : notificationField === "None"
-                    ? null
-                    : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
+                ? notification.data.issue_activity.new_value === "restore"
+                  ? "restored the issue"
+                  : "archived the issue"
+                : notificationField === "None"
+                ? null
+                : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
               {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
               <span className="font-semibold">
                 {" "}
@@ -237,7 +237,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                         }
                       >
                         {moreOptions.map((item) => (
-                          <Menu.Item as="div">
+                          <Menu.Item as="div" key={item.id}>
                             {({ close }) => (
                               <button
                                 onClick={(e) => {
@@ -280,6 +280,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               >
                 {snoozeOptions.map((item) => (
                   <p
+                    key={item.label}
                     className="p-1.5"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -359,7 +360,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             },
           },
         ].map((item) => (
-          <Tooltip tooltipContent={item.name}>
+          <Tooltip tooltipContent={item.name} key={item.id}>
             <button
               type="button"
               onClick={(e) => {

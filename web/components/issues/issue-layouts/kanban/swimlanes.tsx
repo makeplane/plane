@@ -120,7 +120,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
       {list &&
         list.length > 0 &&
         list.map((_list: any) => (
-          <div className="flex flex-shrink-0 flex-col">
+          <div key={_list.id} className="flex flex-shrink-0 flex-col">
             <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
               <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
                 <HeaderSubGroupByCard

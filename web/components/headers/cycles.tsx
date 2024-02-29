@@ -112,6 +112,7 @@ export const CyclesHeader: FC = observer(() => {
         >
           {CYCLE_VIEW_LAYOUTS.map((layout) => (
             <CustomMenu.MenuItem
+              key={layout.key}
               onClick={() => {
                 // handleLayoutChange(ISSUE_LAYOUTS[index].key);
                 handleCurrentLayout(layout.key as TCycleLayout);

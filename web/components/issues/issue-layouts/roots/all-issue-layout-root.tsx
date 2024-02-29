@@ -25,7 +25,7 @@ import { EIssueActions } from "../types";
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug, globalViewId, ...routeFilters } = router.query;
   // theme
   const { resolvedTheme } = useTheme();
   //swr hook for fetching issue properties
@@ -61,14 +61,10 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       globalViewId &&
       ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
     ) {
-      const routerQueryParams = { ...router.query };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { ["workspaceSlug"]: _workspaceSlug, ["globalViewId"]: _globalViewId, ...filters } = routerQueryParams;
-
       let issueFilters: any = {};
-      Object.keys(filters).forEach((key) => {
+      Object.keys(routeFilters).forEach((key) => {
         const filterKey: any = key;
-        const filterValue = filters[key]?.toString() || undefined;
+        const filterValue = routeFilters[key]?.toString() || undefined;
         if (
           ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey) &&
           filterKey &&
@@ -77,7 +73,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
           issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
       });
 
-      if (!isEmpty(filters))
+      if (!isEmpty(routeFilters))
         updateFilters(
           workspaceSlug.toString(),
           undefined,

@@ -103,7 +103,10 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[340px]`}`}>
+            <div
+              key={_list.id}
+              className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[340px]`}`}
+            >
               {sub_group_by === null && (
                 <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
                   <HeaderGroupByCard

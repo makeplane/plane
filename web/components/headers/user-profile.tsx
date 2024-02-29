@@ -61,7 +61,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
             >
               <></>
               {tabsList.map((tab) => (
-                <CustomMenu.MenuItem className="flex items-center gap-2">
+                <CustomMenu.MenuItem className="flex items-center gap-2" key={tab.route}>
                   <Link
                     key={tab.route}
                     href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
