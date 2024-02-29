@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services

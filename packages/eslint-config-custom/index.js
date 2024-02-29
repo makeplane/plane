@@ -20,7 +20,7 @@ module.exports = {
     "react/jsx-boolean-value": "error",
     "react/jsx-no-duplicate-props": "error",
     "@typescript-eslint/no-unused-vars": ["error"],
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "error",
     "@typescript-eslint/require-array-sort-compare": "error",
@@ -59,38 +59,47 @@ module.exports = {
           {
             pattern: "components/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "constants/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "contexts/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "helpers/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "hooks/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "layouts/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "lib/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "services/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "store/**",
             group: "internal",
+            position: "before",
           },
           {
             pattern: "@plane/types",
