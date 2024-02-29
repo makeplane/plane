@@ -38,7 +38,6 @@ export const ProjectLayoutRoot: FC = observer(() => {
         captureIssuesListOpenedEvent({
           path: router.asPath,
           filters: issuesFilter?.issueFilters?.filters,
-          element_id: projectId,
         });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
@@ -87,7 +86,7 @@ export const ProjectLayoutRoot: FC = observer(() => {
           </div>
 
           {/* peek overview */}
-          <IssuePeekOverview />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} />
         </Fragment>
       )}
     </div>

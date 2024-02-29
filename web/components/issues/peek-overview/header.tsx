@@ -9,12 +9,14 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
 import useToast from "hooks/use-toast";
 // store hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import { useEventTracker, useIssueDetail, useProjectState, useUser } from "hooks/store";
 // helpers
 import { cn } from "helpers/common.helper";
 // components
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
 import { STATE_GROUPS } from "constants/state";
+// constants
+import { ISSUE_OPENED, elementFromPath } from "constants/event-tracker";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -74,6 +76,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
+  const { captureEvent } = useEventTracker();
   // hooks
   const { setToastAlert } = useToast();
   // derived values
@@ -97,6 +100,11 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const redirectToIssueDetail = () => {
     router.push({ pathname: `/${issueLink}` });
     removeRoutePeekId();
+    captureEvent(ISSUE_OPENED, {
+      ...elementFromPath(router.asPath),
+      element: "peek",
+      mode: "detail",
+    });
   };
   // auth
   const isArchivingAllowed = !isArchived && !disabled;

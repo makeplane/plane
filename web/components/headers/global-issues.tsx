@@ -88,7 +88,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
           payload: {
             path: router.asPath,
             filters: issueFilters,
-            element_id: globalViewId,
             filter_property: value,
             filter_type: key,
           },
@@ -115,7 +114,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             property: Object.values(updatedDisplayFilter)?.[0],
             path: router.asPath,
             filters: issueFilters,
-            element_id: globalViewId,
           },
         })
       );
@@ -139,7 +137,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             display_property: Object.keys(property).join(","),
             path: router.asPath,
             filters: issueFilters,
-            element_id: globalViewId,
           },
         })
       );
@@ -212,7 +209,6 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                         path: router.asPath,
                         current_filters: issueFilters?.filters,
                         layout: issueFilters?.displayFilters?.layout,
-                        element_id: globalViewId,
                       },
                     })
                   }

@@ -31,7 +31,6 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
         captureIssuesListOpenedEvent({
           path: router.asPath,
           filters: issuesFilter?.issueFilters?.filters,
-          element_id: projectId,
         });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
@@ -67,7 +66,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
             <DraftKanBanLayout />
           ) : null}
           {/* issue peek overview */}
-          <IssuePeekOverview is_draft />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} is_draft />
         </div>
       )}
     </div>

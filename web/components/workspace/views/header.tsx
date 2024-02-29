@@ -54,21 +54,6 @@ export const GlobalViewsHeader: React.FC = observer(() => {
 
   // bring the active view to the centre of the header
   useEffect(() => {
-<<<<<<< HEAD
-    if (!globalViewId) return;
-
-    captureEvent(GLOBAL_VIEW_OPENED, {
-      view_id: globalViewId,
-      view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
-        ? "Default"
-        : "Custom",
-    });
-
-    const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
-
-    if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
-  }, [globalViewId, captureEvent]);
-=======
     if (globalViewId && currentWorkspaceViews) {
       captureEvent(GLOBAL_VIEW_OPENED, {
         view_id: globalViewId,
@@ -85,7 +70,6 @@ export const GlobalViewsHeader: React.FC = observer(() => {
       }
     }
   }, [globalViewId, currentWorkspaceViews, containerRef]);
->>>>>>> 62693abb0992a35f2cd57c7caf8b94304c2756f7
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 

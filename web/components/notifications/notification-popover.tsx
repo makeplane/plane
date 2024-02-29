@@ -132,6 +132,8 @@ export const NotificationPopover = observer(() => {
                           selectedTab={selectedTab}
                           key={notification.id}
                           isSnoozedTabOpen={snoozed}
+                          isArchivedTabOpen={archived}
+                          isUnreadTabOpen={readNotification}
                           closePopover={() => setIsActive(false)}
                           notification={notification}
                           markNotificationArchivedStatus={markNotificationArchivedStatus}

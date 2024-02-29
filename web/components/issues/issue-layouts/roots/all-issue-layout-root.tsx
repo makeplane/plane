@@ -106,7 +106,6 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
         captureIssuesListOpenedEvent({
           path: router.asPath,
-          element_id: globalViewId,
         });
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();
@@ -247,7 +246,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               viewId={globalViewId}
             />
             {/* peek overview */}
-            <IssuePeekOverview />
+            <IssuePeekOverview issuesFilter={issueFilters} />
           </Fragment>
         )}
       </div>

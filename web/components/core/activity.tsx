@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 // store hooks
-import { useEstimate, useLabel } from "hooks/store";
+import { useEstimate, useEventTracker, useLabel } from "hooks/store";
 // icons
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
@@ -25,10 +25,14 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "@plane/types";
+// constants
+import { ISSUE_OPENED, elementFromPath } from "constants/event-tracker";
 
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   return (
     <Tooltip tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
@@ -38,6 +42,13 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
           href={`${`/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
             activity.issue
           }`}`}
+          onClick={() => {
+            captureEvent(ISSUE_OPENED, {
+              ...elementFromPath(router.asPath),
+              element_id: "activity",
+              mode: "detail",
+            });
+          }}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
           className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"

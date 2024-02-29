@@ -111,8 +111,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId).then(() =>
         captureEvent(LAYOUT_CHANGED, {
           layout: layout,
-          element: elementFromPath(router.asPath),
-          element_id: cycleId,
+          ...elementFromPath(router.asPath),
         })
       );
     },
@@ -142,7 +141,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           payload: {
             path: router.asPath,
             filters: issueFilters,
-            element_id: cycleId,
             filter_property: value,
             filter_type: key,
           },
@@ -164,7 +162,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               property: Object.values(updatedDisplayFilter)?.[0],
               path: router.asPath,
               filters: issueFilters,
-              element_id: cycleId,
             },
           })
       );
@@ -182,7 +179,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             display_property: Object.keys(property).join(","),
             path: router.asPath,
             filters: issueFilters,
-            element_id: cycleId,
           },
         })
       );
@@ -293,7 +289,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                       path: router.asPath,
                       current_filters: issueFilters?.filters,
                       layout: issueFilters?.displayFilters?.layout,
-                      element_id: cycleId,
                     },
                   })
                 }

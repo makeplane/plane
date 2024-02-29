@@ -124,8 +124,7 @@ export const getProjectStateEventPayload = (payload: any) => {
 };
 
 export const getIssuesListOpenedPayload = (payload: any) => ({
-  element: elementFromPath(payload.path),
-  element_id: payload.element_id,
+  ...elementFromPath(payload?.path),
   layout: payload?.displayFilters?.layout,
   filters: payload?.filters,
   display_properties: payload?.displayProperties,
@@ -136,8 +135,7 @@ export const getIssuesFilterEventPayload = (payload: any) => ({
   filter_property: payload?.filter_property,
   layout: payload?.filters?.displayFilters?.layout,
   current_filters: payload?.filters?.filters,
-  element: elementFromPath(payload.path),
-  element_id: payload.element_id,
+  ...elementFromPath(payload?.path),
 });
 
 export const getIssuesDisplayFilterPayload = (payload: any) => {
@@ -150,8 +148,7 @@ export const getIssuesDisplayFilterPayload = (payload: any) => {
   return {
     layout: payload?.filters?.displayFilters?.layout,
     current_display_properties: payload?.filters?.displayProperties,
-    element: elementFromPath(payload.path),
-    element_id: payload.element_id,
+    ...elementFromPath(payload?.path),
     display_property: payload.display_property,
     property: property,
     property_type: payload.property_type,
@@ -159,13 +156,10 @@ export const getIssuesDisplayFilterPayload = (payload: any) => {
 };
 
 export const elementFromPath = (path?: string) => {
-  if (!path)
-    return {
-      element: "Project",
-      element_id: path?.split("/").at(-2),
-    };
+  path = path?.split("?")?.[0];
+  if (!path) return;
 
-  let element = "Project";
+  let element = "Dashboard";
   if (path.includes("workspace-views")) element = "Global view";
   else if (path.includes("cycles")) element = "Cycle";
   else if (path.includes("modules")) element = "Module";
@@ -175,12 +169,11 @@ export const elementFromPath = (path?: string) => {
   else if (path.includes("inbox")) element = "Inbox";
   else if (path.includes("draft")) element = "Draft";
   else if (path.includes("archived")) element = "Archive";
+  else if (path.includes("projects")) element = "Project";
 
   return {
     element: element,
-    element_id: ["Project", "Draft", "Archive"].includes(element)
-      ? path.split("/").at(-2)
-      : path.split("/").at(-1),
+    element_id: ["Project", "Draft", "Archive"].includes(element) ? path.split("/").at(-2) : path.split("/").at(-1),
   };
 };
 
@@ -217,6 +210,9 @@ export const VIEW_UNFAVORITED = "View unfavorited";
 export const ISSUE_CREATED = "Issue created";
 export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
+export const ISSUE_ARCHIVED = "Issue archived";
+export const ISSUE_RESTORED = "Issue restored";
+
 // Issue Checkout Events
 export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";

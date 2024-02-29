@@ -40,7 +40,6 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
         captureIssuesListOpenedEvent({
           path: router.asPath,
           filters: issuesFilter?.issueFilters?.filters,
-          element_id: moduleId,
         })
         await issues?.fetchIssues(
           workspaceSlug.toString(),
@@ -117,7 +116,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
             ) : null}
           </div>
           {/* peek overview */}
-          <IssuePeekOverview />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters}/>
         </Fragment>
       )}
     </div>

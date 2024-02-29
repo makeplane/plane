@@ -76,8 +76,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId).then(() =>
         captureEvent(LAYOUT_CHANGED, {
           layout: layout,
-          element: elementFromPath(router.asPath),
-          element_id: viewId,
+          ...elementFromPath(router.asPath),
         })
       );
     },
@@ -107,7 +106,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           payload: {
             path: router.asPath,
             filters: issueFilters,
-            element_id: viewId,
             filter_property: value,
             filter_type: key,
           },
@@ -128,7 +126,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             property: Object.values(updatedDisplayFilter)?.[0],
             path: router.asPath,
             filters: issueFilters,
-            element_id: viewId,
           },
         })
       );
@@ -146,7 +143,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             display_property: Object.keys(property).join(","),
             path: router.asPath,
             filters: issueFilters,
-            element_id: viewId,
           },
         })
       );
@@ -257,7 +253,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                   path: router.asPath,
                   current_filters: issueFilters?.filters,
                   layout: issueFilters?.displayFilters?.layout,
-                  element_id: projectId,
                 },
               })
             }
