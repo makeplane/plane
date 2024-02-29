@@ -75,6 +75,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import (
     issue_queryset_grouper,
     issue_on_results,
+    issue_group_values,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -273,6 +274,11 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 group_by=group_by, issues=issues
             ),
             paginator_cls=GroupedOffsetPaginator,
+            group_by_fields=issue_group_values(
+                field=group_by,
+                slug=slug,
+                project_id=project_id,
+            ),
             group_by_field_name=group_by,
             count_filter=Q(
                 Q(issue_inbox__status=1)
@@ -1849,11 +1855,6 @@ class IssueDraftViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
 
         order_by_param = request.GET.get("order_by", "-created_at")
 

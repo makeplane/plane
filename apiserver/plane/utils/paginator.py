@@ -166,12 +166,14 @@ class GroupedOffsetPaginator(OffsetPaginator):
         self,
         queryset,
         group_by_field_name,
+        group_by_fields,
         count_filter,
         *args,
         **kwargs,
     ):
         super().__init__(queryset, *args, **kwargs)
         self.group_by_field_name = group_by_field_name
+        self.group_by_fields = group_by_fields
         self.count_filter = count_filter
 
     def get_result(self, limit=100, cursor=None):
@@ -266,6 +268,22 @@ class GroupedOffsetPaginator(OffsetPaginator):
 
         return total_group_dict
 
+    def __get_field_dict(self):
+        total_group_dict = self.__get_total_dict()
+        return {
+            str(field): {
+                "results": [],
+                "total_results": total_group_dict.get(str(field), 0),
+            }
+            for field in self.group_by_fields
+        }
+
+    def __result_already_added(self, result, group):
+        for existing_issue in group:
+            if existing_issue["id"] == result["id"]:
+                return True
+        return False
+
     def __query_multi_grouper(self, results):
 
         total_group_dict = self.__get_total_dict()
@@ -281,12 +299,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
             group_id = result[self.group_by_field_name]
             result_group_mapping[str(result_id)].add(str(group_id))
 
-        def result_already_added(result, group):
-            for existing_issue in group:
-                if existing_issue["id"] == result["id"]:
-                    return True
-            return False
-
         # Adding group_ids key to each issue and grouping by group_name
         for result in results:
             result_id = result["id"]
@@ -296,7 +308,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
             )
             # If a result belongs to multiple groups, add it to each group
             for group_id in group_ids:
-                if not result_already_added(
+                if not self.__result_already_added(
                     result, grouped_by_field_name[group_id]
                 ):
                     grouped_by_field_name[group_id].append(result)
@@ -312,14 +324,15 @@ class GroupedOffsetPaginator(OffsetPaginator):
         return processed_results
 
     def __query_grouper(self, results):
-        total_group_dict = self.__get_total_dict()
-        processed_results = {}
+        processed_results = self.__get_field_dict()
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
-            if group_value not in processed_results:
+            if group_value in processed_results:
                 processed_results[str(group_value)] = {
                     "results": [],
-                    "total_results": total_group_dict.get(group_value),
+                    "total_results": processed_results[str(group_value)][
+                        "total_results"
+                    ],
                 }
             processed_results[str(group_value)]["results"].append(result)
         return processed_results
@@ -365,6 +378,7 @@ class BasePaginator:
         extra_stats=None,
         controller=None,
         group_by_field_name=None,
+        group_by_fields=None,
         count_filter=None,
         **paginator_kwargs,
     ):
@@ -383,6 +397,7 @@ class BasePaginator:
         if not paginator:
             if group_by_field_name:
                 paginator_kwargs["group_by_field_name"] = group_by_field_name
+                paginator_kwargs["group_by_fields"] = group_by_fields
                 paginator_kwargs["count_filter"] = count_filter
             paginator = paginator_cls(**paginator_kwargs)
 
