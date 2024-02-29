@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useApplication } from "hooks/store";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
@@ -13,14 +11,11 @@ type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   groupByOptions: TIssueGroupByOptions[];
   handleUpdate: (val: TIssueGroupByOptions) => void;
+  ignoreGroupedFilters: Partial<TIssueGroupByOptions>[];
 };
 
 export const FilterGroupBy: React.FC<Props> = observer((props) => {
-  const { displayFilters, groupByOptions, handleUpdate } = props;
-  // hooks
-  const {
-    router: { moduleId, cycleId },
-  } = useApplication();
+  const { displayFilters, groupByOptions, handleUpdate, ignoreGroupedFilters } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -39,8 +34,7 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
           {ISSUE_GROUP_BY_OPTIONS.filter((option) => groupByOptions.includes(option.key)).map((groupBy) => {
             if (displayFilters.layout === "kanban" && selectedSubGroupBy !== null && groupBy.key === selectedSubGroupBy)
               return null;
-            if (groupBy?.key === "module" && moduleId) return null;
-            if (groupBy?.key === "cycle" && cycleId) return null;
+            if (ignoreGroupedFilters.includes(groupBy?.key)) return null;
 
             return (
               <FilterOption

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useApplication } from "hooks/store";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
@@ -13,14 +11,11 @@ type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   handleUpdate: (val: TIssueGroupByOptions) => void;
   subGroupByOptions: TIssueGroupByOptions[];
+  ignoreGroupedFilters: Partial<TIssueGroupByOptions>[];
 };
 
 export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
-  const { displayFilters, handleUpdate, subGroupByOptions } = props;
-  // hooks
-  const {
-    router: { moduleId, cycleId },
-  } = useApplication();
+  const { displayFilters, handleUpdate, subGroupByOptions, ignoreGroupedFilters } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -38,8 +33,7 @@ export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
         <div>
           {ISSUE_GROUP_BY_OPTIONS.filter((option) => subGroupByOptions.includes(option.key)).map((subGroupBy) => {
             if (selectedGroupBy !== null && subGroupBy.key === selectedGroupBy) return null;
-            if (subGroupBy?.key === "module" && moduleId) return null;
-            if (subGroupBy?.key === "cycle" && cycleId) return null;
+            if (ignoreGroupedFilters.includes(subGroupBy?.key)) return null;
 
             return (
               <FilterOption
