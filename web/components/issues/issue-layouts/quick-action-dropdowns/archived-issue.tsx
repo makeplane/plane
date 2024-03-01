@@ -56,6 +56,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         onSubmit={handleDelete}
       />
       <CustomMenu
+        menuItemsClassName="z-[14]"
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}
