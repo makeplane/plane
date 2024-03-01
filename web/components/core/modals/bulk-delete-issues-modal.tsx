@@ -49,8 +49,10 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const [query, setQuery] = useState("");
   // fetching project issues.
   const { data: issues } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId && isOpen ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
+    workspaceSlug && projectId && isOpen
+      ? () => issueService.getIssues(workspaceSlug as string, projectId as string)
+      : null
   );
 
   const { setToastAlert } = useToast();

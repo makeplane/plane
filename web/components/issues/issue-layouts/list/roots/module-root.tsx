@@ -37,6 +37,11 @@ export const ModuleListLayout: React.FC = observer(() => {
 
         await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project_id, moduleId.toString(), issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !moduleId) return;
+
+        await issues.archiveIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
+      },
     }),
     [issues, workspaceSlug, moduleId]
   );

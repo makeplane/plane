@@ -36,6 +36,8 @@ export type TIssueHelperStore = {
 
 const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   project: "project_id",
+  cycle: "cycle_id",
+  module: "module_ids",
   state: "state_id",
   "state_detail.group": "state_group" as keyof TIssue, // state_detail.group is only being used for state_group display,
   priority: "priority",
@@ -157,6 +159,10 @@ export class IssueHelperStore implements TIssueHelperStore {
         return Object.keys(this.rootStore?.workSpaceMemberRolesMap || {});
       case "project":
         return Object.keys(this.rootStore?.projectMap || {});
+      case "cycle":
+        return Object.keys(this.rootStore?.cycleMap || {});
+      case "module":
+        return Object.keys(this.rootStore?.moduleMap || {});
       default:
         return [];
     }

@@ -26,6 +26,8 @@ interface IBaseSpreadsheetRoot {
     [EIssueActions.DELETE]: (issue: TIssue) => void;
     [EIssueActions.UPDATE]?: (issue: TIssue) => void;
     [EIssueActions.REMOVE]?: (issue: TIssue) => void;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => void;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
@@ -102,6 +104,12 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         }
         handleRemoveFromView={
           issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
+        }
+        handleArchive={
+          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
+        }
+        handleRestore={
+          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
         }
         portalElement={portalElement}
         readOnly={!isEditingAllowed || isCompletedCycle}

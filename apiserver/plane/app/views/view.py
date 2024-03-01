@@ -86,6 +86,10 @@ class GlobalViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
@@ -163,7 +167,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
         issue_queryset = (
             self.get_queryset()
             .filter(**filters)
-            .filter(project__project_projectmember__member=self.request.user)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
 
@@ -284,7 +287,10 @@ class IssueViewViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))

@@ -104,6 +104,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const toggleDropdown = () => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: string) => {

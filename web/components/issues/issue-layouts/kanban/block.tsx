@@ -42,9 +42,9 @@ interface IssueDetailsBlockProps {
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
   const { issue, handleIssues, quickActions, isReadOnly, displayProperties } = props;
   // hooks
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const {
-    router: { workspaceSlug, projectId },
+    router: { workspaceSlug },
   } = useApplication();
   const { setPeekIssue } = useIssueDetail();
 
@@ -64,7 +64,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-xs text-custom-text-300">
-            {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
+            {getProjectIdentifierById(issue.project_id)}-{issue.sequence_id}
           </div>
           <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">{quickActions(issue)}</div>
         </div>
@@ -141,7 +141,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
         >
           <div
             className={cn(
-              "rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+              "rounded border-[0.5px] w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
               { "hover:cursor-grab": !isDragDisabled },
               { "border-custom-primary-100": snapshot.isDragging },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }
