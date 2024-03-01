@@ -7,13 +7,20 @@
 </p>
 
 <h3 align="center"><b>Plane</b></h3>
-<p align="center"><b>Flexible, extensible open-source project management</b></p>
+<p align="center"><b>Open-source project management that unlocks customer value.</b></p>
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
 <img alt="Discord online members" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
 </a>
 <img alt="Commit activity per month" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
+</p>
+
+<p align="center">
+    <a href="http://www.plane.so"><b>Website</b></a> •
+    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
+    <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
+    <a href="https://docs.plane.so/"><b>Documentation</b></a>
 </p>
 
 <p>
@@ -37,15 +44,43 @@ Meet [Plane](https://plane.so). An open-source software development tool to mana
 
 > Plane is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.com/invite/A92xrEGCge) or GitHub issues, and we will use your feedback to improve on our upcoming releases.
 
-The easiest way to get started with Plane is by creating a [Plane Cloud](https://app.plane.so) account. Plane Cloud offers a hosted solution for Plane. If you prefer to self-host Plane, please refer to our [deployment documentation](https://docs.plane.so/docker-compose). 
+The easiest way to get started with Plane is by creating a [Plane Cloud](https://app.plane.so) account. Plane Cloud offers a hosted solution for Plane. 
+
+If you prefer to self-host Plane, please refer to our [deployment documentation](https://docs.plane.so/docker-compose).
+
+| Installation Methods	      | Documentation Link                                                                                       | 
+|-----------------|----------------------------------------------------------------------------------------------------------|
+| Docker          | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://docs.plane.so/docker-compose)                  |
+| Kubernetes      | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://docs.plane.so/kubernetes)        |
+
+`Instance admin` can configure instance settings using our  [God-mode](https://docs.plane.so/instance-admin) feature.
+
+## 🚀 Features
+
+- **Issues**: Quickly create issues and add details using a powerful, rich text editor that supports file uploads. Add sub-properties and references to problems for better organization and tracking.
+
+- **Cycles**
+  Keep up your team's momentum with Cycles. Gain insights into your project's progress with burn-down charts and other valuable features.
+
+- **Modules**: Break down your large projects into smaller, more manageable modules. Assign modules between teams to track and plan your project's progress easily.
+
+- **Views**: Create custom filters to display only the issues that matter to you. Save and share your filters in just a few clicks.
+
+- **Pages**: Plane pages, equipped with AI and a rich text editor, let you jot down your thoughts on the fly. Format your text, upload images, hyperlink, or sync your existing ideas into an actionable item or issue.
+
+- **Analytics**: Get insights into all your Plane data in real-time. Visualize issue data to spot trends, remove blockers, and progress your work.
+
+- **Drive** (*coming soon*): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
+
+
 
 ## ⚡️ Contributors Quick Start
 
-### Prerequisite
+#### Prerequisite
 
 Development system must have docker engine installed and running.
 
-### Steps
+#### Steps
 
 Setting up local environment is extremely easy and straight forward. Follow the below step and you will be ready to contribute
 
@@ -61,21 +96,22 @@ You are ready to make changes to the code. Do not forget to refresh the browser 
 
 Thats it!
 
+## ❤️ Community
+
+The Plane community can be found on GitHub Discussions, where you can ask questions, voice ideas, and share your projects.
+
+To chat with other community members you can join the [Plane Discord](https://discord.com/invite/A92xrEGCge).
+
+Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) applies to all Plane community channels.
+
+
+## Repo Activity
+![Plane Repo Activity](https://repobeats.axiom.co/api/embed/2523c6ed2f77c082b7908c33e2ab208981d76c39.svg "Repobeats analytics image")
+
 ## 🍙 Self Hosting
 
 For self hosting environment setup, visit the [Self Hosting](https://docs.plane.so/docker-compose) documentation page
 
-## 🚀 Features
-
-- **Issue Planning and Tracking**: Quickly create issues and add details using a powerful rich text editor that supports file uploads. Add sub-properties and references to issues for better organization and tracking.
-- **Issue Attachments**: Collaborate effectively by attaching files to issues, making it easy for your team to find and share important project-related documents.
-- **Layouts**: Customize your project view with your preferred layout - choose from List, Kanban, or Calendar to visualize your project in a way that makes sense to you.
-- **Cycles**: Plan sprints with Cycles to keep your team on track and productive. Gain insights into your project's progress with burn-down charts and other useful features.
-- **Modules**: Break down your large projects into smaller, more manageable modules. Assign modules between teams to easily track and plan your project's progress.
-- **Views**: Create custom filters to display only the issues that matter to you. Save and share your filters in just a few clicks.
-- **Pages**: Plane pages function as an AI-powered notepad, allowing you to easily document issues, cycle plans, and module details, and then synchronize them with your issues.
-- **Command K**: Enjoy a better user experience with the new Command + K menu. Easily manage and navigate through your projects from one convenient location.
-- **GitHub Sync**: Streamline your planning process by syncing your GitHub issues with Plane. Keep all your issues in one place for better tracking and collaboration.
 
 ## 📸 Screenshots
 
@@ -142,13 +178,7 @@ For full documentation, visit [docs.plane.so](https://docs.plane.so/)
 
 To see how to Contribute, visit [here](https://github.com/makeplane/plane/blob/master/CONTRIBUTING.md).
 
-## ❤️ Community
 
-The Plane community can be found on GitHub Discussions, where you can ask questions, voice ideas, and share your projects.
-
-To chat with other community members you can join the [Plane Discord](https://discord.com/invite/A92xrEGCge).
-
-Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) applies to all Plane community channels.
 
 ## ⛓️ Security
 
