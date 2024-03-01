@@ -118,7 +118,7 @@ The Plane community can be found on [GitHub Discussions](https://github.com/orgs
 
 Ask questions, report bugs, join discussions, voice ideas, make feature requests, or share your projects.
 
-## Repo Activity
+### Repo Activity
 ![Plane Repo Activity](https://repobeats.axiom.co/api/embed/2523c6ed2f77c082b7908c33e2ab208981d76c39.svg "Repobeats analytics image")
 
 ## 📸 Screenshots
