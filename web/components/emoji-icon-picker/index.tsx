@@ -53,7 +53,7 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
       <Popover.Button
         ref={buttonRef}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="outline-none"
+        className="outline-none flex items-center justify-center"
         disabled={disabled}
       >
         {label}

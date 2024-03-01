@@ -84,6 +84,8 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
     if (!filteredParams) return undefined;
 
+    if (filteredParams.includes("cycle")) filteredParams.splice(filteredParams.indexOf("cycle"), 1);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
