@@ -8,6 +8,7 @@ import requests
 
 # Django import
 from django.contrib.auth import login
+from django.http.response import JsonResponse
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.views import View
@@ -20,7 +21,11 @@ from plane.license.utils.instance_value import get_configuration_value
 class GoogleOauthInitiateEndpoint(View):
 
     def get(self, request):
-        request.session["name"] = uuid.uuid4().hex
+        referer = request.META.get("HTTP_REFERER")
+        if not referer:
+            return JsonResponse({"error": "Not a valid referer"}, status=400)
+
+        print(request.get_host())
         # Get all the configuration
         (GOOGLE_CLIENT_ID,) = get_configuration_value(
             [
@@ -30,9 +35,20 @@ class GoogleOauthInitiateEndpoint(View):
                 },
             ]
         )
+
+        if not GOOGLE_CLIENT_ID:
+            return JsonResponse(
+                {
+                    "error": "Google is not configured please contact the support team"
+                },
+                status=400,
+            )
+
         # Redirect to Google's OAuth 2.0 server
         scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
-        redirect_uri = "http://localhost:8000/auth/callback/google/"
+        # return redirect
+        redirect_uri = f"{request.get_host()}/auth/callback/google/"
+        # google account url
         auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={redirect_uri}&scope={scope}&access_type=offline&prompt=consent"
         return redirect(auth_url)
 
@@ -40,7 +56,6 @@ class GoogleOauthInitiateEndpoint(View):
 class GoogleCallbackEndpoint(View):
 
     def get(self, request):
-        print(request.session["name"])
         # The user is redirected here by Google with a code
         code = request.GET.get("code")
         if code:
@@ -150,7 +165,7 @@ class GoogleCallbackEndpoint(View):
                 user.token_updated_at = timezone.now()
                 user.save()
                 login(request=request, user=user)
-                return redirect("configuration")
+                return redirect(request.session["referer"])
             else:
                 if (
                     ENABLE_SIGNUP == "0"
@@ -203,5 +218,5 @@ class GoogleCallbackEndpoint(View):
                 user.token_updated_at = timezone.now()
                 user.save()
                 login(request=request, user=user)
-                return redirect("configuration")
+                return redirect(request.session["referer"])
         return redirect("login")

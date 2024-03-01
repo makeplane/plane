@@ -14,7 +14,7 @@ export const GoogleOAuthButton: FC<GoogleOAuthButtonProps> = (props) => {
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.href= "http://192.168.68.59:8000/auth/google/"
+    window.location.assign("http://localhost:8000/auth/google/");
   };
 
   return (
