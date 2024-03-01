@@ -45,7 +45,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     if (posthogAPIKey && posthogHost) {
       posthog.init(posthogAPIKey, {
         api_host: posthogHost || "https://app.posthog.com",
-        debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "true", // Debug mode based on the environment variable
+        debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
