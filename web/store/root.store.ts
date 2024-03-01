@@ -18,6 +18,8 @@ import { IMentionStore, MentionStore } from "./mention.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { ILabelStore, LabelStore } from "./label.store";
+// independent new store structure
+import { ICurrentUserStore, CurrentUserStore } from "./users/current-user.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -40,6 +42,8 @@ export class RootStore {
   mention: IMentionStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
+  // independent new store structure
+  currentUser: ICurrentUserStore;
 
   constructor() {
     this.app = new AppRootStore(this);
@@ -61,6 +65,8 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    // independent new store structure
+    this.currentUser = new CurrentUserStore(this);
   }
 
   resetOnSignout() {
@@ -80,5 +86,7 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    // independent new store structure
+    this.currentUser = new CurrentUserStore(this);
   }
 }

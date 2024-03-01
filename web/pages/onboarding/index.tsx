@@ -7,8 +7,9 @@ import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
+import { useSession } from "next-auth/react";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace, useCurrentUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { WorkspaceService } from "services/workspace.service";
@@ -140,6 +141,34 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     handleStepChange();
   }, [user, invitations, step, updateCurrentUser, workspacesList]);
+
+  const { data: session, status }: any = useSession();
+
+  // console.log("session", session);
+  // console.log("status", status);
+  const {
+    data: currentUserMe,
+    settings: currentUserSettings,
+    fetchCurrentUser,
+    fetchCurrentUserSettings,
+    profile: { data: currentUserProfile, fetchCurrentUserProfile },
+    fetchUserAccounts,
+  } = useCurrentUser();
+  useEffect(() => {
+    const init = async () => {
+      await fetchCurrentUser();
+      await fetchCurrentUserSettings();
+      await fetchCurrentUserProfile();
+      await fetchUserAccounts();
+    };
+    init();
+  }, [fetchCurrentUser, fetchCurrentUserProfile, fetchCurrentUserSettings, fetchUserAccounts]);
+
+  console.log("---");
+  console.log("currentUserMe -->", currentUserMe);
+  console.log("currentUserSettings -->", currentUserSettings);
+  console.log("currentUserProfile -->", currentUserProfile);
+  console.log("---");
 
   return (
     <>
