@@ -1,6 +1,8 @@
 # Python imports
 import os
 
+import requests
+
 # Django import
 from django.contrib.auth import login
 from django.http.response import JsonResponse
@@ -11,10 +13,10 @@ from django.views import View
 from plane.db.models import User, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
 
-from .adapter.google import GoogleAuthProvider
+from .adapter.github import GithubAuthProvider
 
 
-class GoogleOauthInitiateEndpoint(View):
+class GithubOauthInitiateEndpoint(View):
 
     def get(self, request):
         referer = request.META.get("HTTP_REFERER")
@@ -23,63 +25,63 @@ class GoogleOauthInitiateEndpoint(View):
         # set the referer as session to redirect after login
         request.session["referer"] = referer
         # Get all the configuration
-        (GOOGLE_CLIENT_ID,) = get_configuration_value(
+        (GITHUB_CLIENT_ID,) = get_configuration_value(
             [
                 {
-                    "key": "GOOGLE_CLIENT_ID",
-                    "default": os.environ.get("GOOGLE_CLIENT_ID", None),
+                    "key": "GITHUB_CLIENT_ID",
+                    "default": os.environ.get("GITHUB_CLIENT_ID", None),
                 },
             ]
         )
 
-        if not GOOGLE_CLIENT_ID:
+        if not GITHUB_CLIENT_ID:
             return JsonResponse(
                 {
-                    "error": "Google is not configured please contact the support team"
+                    "error": "Github is not configured please contact the support team"
                 },
                 status=400,
             )
 
         # Redirect to Google's OAuth 2.0 server
-        provider = GoogleAuthProvider(
-            client_id=GOOGLE_CLIENT_ID,
+        provider = GithubAuthProvider(
+            client_id=GITHUB_CLIENT_ID,
             request=request,
         )
         auth_url = provider.get_auth_url()
         return redirect(auth_url)
 
 
-class GoogleCallbackEndpoint(View):
+class GithubCallbackEndpoint(View):
 
     def get(self, request):
-        # The user is redirected here by Google with a code
         code = request.GET.get("code")
         if code:
-            (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, ENABLE_SIGNUP) = (
-                get_configuration_value(
-                    [
-                        {
-                            "key": "GOOGLE_CLIENT_ID",
-                            "default": os.environ.get(
-                                "GOOGLE_CLIENT_ID", None
-                            ),
-                        },
-                        {
-                            "key": "GOOGLE_CLIENT_SECRET",
-                            "default": os.environ.get(
-                                "GOOGLE_CLIENT_SECRET", None
-                            ),
-                        },
-                        {
-                            "key": "ENABLE_SIGNUP",
-                            "default": os.environ.get("ENABLE_SIGNUP"),
-                        },
-                    ]
-                )
+            # Get all the configuration
+            (
+                GITHUB_CLIENT_ID,
+                GITHUB_CLIENT_SECRET,
+                ENABLE_SIGNUP,
+            ) = get_configuration_value(
+                [
+                    {
+                        "key": "GITHUB_CLIENT_ID",
+                        "default": os.environ.get("GITHUB_CLIENT_ID", None),
+                    },
+                    {
+                        "key": "GITHUB_CLIENT_SECRET",
+                        "default": os.environ.get(
+                            "GITHUB_CLIENT_SECRET", None
+                        ),
+                    },
+                    {
+                        "key": "ENABLE_SIGNUP",
+                        "default": os.environ.get("ENABLE_SIGNUP"),
+                    },
+                ]
             )
-            provider = GoogleAuthProvider(
-                client_id=GOOGLE_CLIENT_ID,
-                client_secret=GOOGLE_CLIENT_SECRET,
+            provider = GithubAuthProvider(
+                client_id=GITHUB_CLIENT_ID,
+                client_secret=GITHUB_CLIENT_SECRET,
                 request=request,
             )
             provider_response = provider.get_user_response(code=code)

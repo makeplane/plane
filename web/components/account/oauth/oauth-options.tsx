@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication } from "hooks/store";
 // components
-import { GoogleOAuthButton, GithubOAuthButton } from "components/account";
+import { GithubOAuthButton, GoogleOAuthButton } from "components/account";
 
 export const OAuthOptions: React.FC = observer(() => {
   // mobx store
@@ -11,6 +11,8 @@ export const OAuthOptions: React.FC = observer(() => {
   } = useApplication();
   // derived values
   const areBothOAuthEnabled = envConfig?.google_client_id && envConfig?.github_client_id;
+
+
 
   return (
     <>
@@ -25,6 +27,7 @@ export const OAuthOptions: React.FC = observer(() => {
             <GoogleOAuthButton text="SignIn with Google" />
           </div>
         )}
+        <button onClick={() => window.location.assign("http://localhost:8000/auth/github/")}>Github</button>
         {envConfig?.github_client_id && <GithubOAuthButton text="SignIn with Github" />}
       </div>
     </>

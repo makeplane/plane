@@ -6,6 +6,10 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
+from plane.app.views.auth.github import (
+    GithubCallbackEndpoint,
+    GithubOauthInitiateEndpoint,
+)
 from plane.app.views.auth.google import (
     GoogleCallbackEndpoint,
     GoogleOauthInitiateEndpoint,
@@ -28,7 +32,16 @@ urlpatterns = [
         GoogleCallbackEndpoint.as_view(),
         name="google-callback",
     ),
-
+    path(
+        "auth/github/",
+        GithubOauthInitiateEndpoint.as_view(),
+        name="github-initiate",
+    ),
+    path(
+        "auth/callback/github/",
+        GithubCallbackEndpoint.as_view(),
+        name="github-callback",
+    ),
 ]
 
 
