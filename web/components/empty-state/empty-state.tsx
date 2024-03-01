@@ -13,7 +13,7 @@ import { EMPTY_STATE_DETAILS, EmptyStateKeys } from "constants/empty-state";
 // helpers
 import { cn } from "helpers/common.helper";
 
-type Props = {
+export type EmptyStateProps = {
   type: EmptyStateKeys;
   size?: "sm" | "md" | "lg";
   layout?: "widget-simple" | "screen-detailed" | "screen-simple";
@@ -22,7 +22,7 @@ type Props = {
   secondaryButtonOnClick?: () => void;
 };
 
-export const EmptyState: React.FC<Props> = (props) => {
+export const EmptyState: React.FC<EmptyStateProps> = (props) => {
   const {
     type,
     size = "lg",
