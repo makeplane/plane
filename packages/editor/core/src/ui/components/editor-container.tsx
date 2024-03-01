@@ -1,7 +1,6 @@
 import { Editor } from "@tiptap/react";
 import { ReactNode } from "react";
 import { findParentNodeOfType } from "../extensions/table/table/utilities/insert-line-below-table-action";
-import { TextSelection } from "prosemirror-state";
 
 interface EditorContainerProps {
   editor: Editor | null;
@@ -29,6 +28,10 @@ export const EditorContainer = ({ editor, editorClassNames, hideDragHandle, chil
               editor.commands.liftListItem("taskItem");
             } else if (editor.isActive("table")) {
               handleNodeInsertionIfLastNodeTable(editor);
+            } else if (editor.isActive("codeBlock")) {
+              editor.commands.exitCode();
+            } else if (editor.isActive("image")) {
+              editor.commands.createParagraphNear();
             } else {
               console.log("hit end case");
               editor.commands.enter();
@@ -40,7 +43,7 @@ export const EditorContainer = ({ editor, editorClassNames, hideDragHandle, chil
     onMouseLeave={() => {
       hideDragHandle?.();
     }}
-    className={`cursor-cell ${editorClassNames}`}
+    className={`cursor-text ${editorClassNames}`}
   >
     {children}
   </div>
