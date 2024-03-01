@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { Tab } from "@headlessui/react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
@@ -14,7 +13,7 @@ import useSize from "hooks/use-window-size";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 import { PagesHeader } from "components/headers";
 import { PagesLoader } from "components/ui";
 // types
@@ -22,8 +21,6 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
 import { useProjectPages } from "hooks/store/use-project-page";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 import { PageHead } from "components/core";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
@@ -52,14 +49,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    currentUser,
-    currentUserLoader,
-    membership: { currentProjectRole },
-  } = useUser();
+  const { currentUser, currentUserLoader } = useUser();
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
@@ -103,9 +94,6 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   };
 
   // derived values
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "pages", isLightMode);
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
 
@@ -216,22 +204,11 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
         </>
       ) : (
         <EmptyState
-          image={EmptyStateImagePath}
-          title={PAGE_EMPTY_STATE_DETAILS["pages"].title}
-          description={PAGE_EMPTY_STATE_DETAILS["pages"].description}
-          primaryButton={{
-            text: PAGE_EMPTY_STATE_DETAILS["pages"].primaryButton.text,
-            onClick: () => {
-              setTrackElement("Pages empty state");
-              toggleCreatePageModal(true);
-            },
+          type="project-page"
+          primaryButtonOnClick={() => {
+            setTrackElement("Pages empty state");
+            toggleCreatePageModal(true);
           }}
-          comicBox={{
-            title: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.title,
-            description: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.description,
-          }}
-          size="lg"
-          disabled={!isEditingAllowed}
         />
       )}
     </>

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // hooks
 import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
@@ -12,7 +11,7 @@ import useUserAuth from "hooks/use-user-auth";
 import { IntegrationService } from "services/integrations";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // ui
 import { Button } from "@plane/ui";
 import { ImportExportSettingsLoader } from "components/ui";
@@ -24,7 +23,6 @@ import { IImporterService } from "@plane/types";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { IMPORTERS_LIST } from "constants/workspace";
-import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();
@@ -37,8 +35,6 @@ const IntegrationGuide = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { currentUser, currentUserLoader } = useUser();
   // custom hooks
@@ -48,10 +44,6 @@ const IntegrationGuide = observer(() => {
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
     workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug as string) : null
   );
-
-  const emptyStateDetail = WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS["import"];
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("workspace-settings", "imports", isLightMode);
 
   const handleDeleteImport = (importService: IImporterService) => {
     setImportToDelete(importService);
@@ -145,12 +137,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   ) : (
                     <div className="h-full w-full flex items-center justify-center">
-                      <EmptyState
-                        title={emptyStateDetail.title}
-                        description={emptyStateDetail.description}
-                        image={emptyStateImage}
-                        size="sm"
-                      />
+                      <EmptyState type="workspace-settings-import" size="sm" />
                     </div>
                   )
                 ) : (

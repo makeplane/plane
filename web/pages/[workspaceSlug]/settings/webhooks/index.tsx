@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // hooks
 import { useUser, useWebhook, useWorkspace } from "hooks/store";
 // layouts
@@ -11,14 +10,13 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { WebhooksList, CreateWebhookModal } from "components/web-hooks";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // ui
 import { Button } from "@plane/ui";
 import { WebhookSettingsLoader } from "components/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
-import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 import { PageHead } from "components/core";
 
 const WebhooksListPage: NextPageWithLayout = observer(() => {
@@ -27,12 +25,9 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // mobx store
   const {
     membership: { currentWorkspaceRole },
-    currentUser,
   } = useUser();
   const { fetchWebhooks, webhooks, clearSecretKey, webhookSecretKey, createWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
@@ -44,10 +39,6 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
     workspaceSlug && isAdmin ? () => fetchWebhooks(workspaceSlug.toString()) : null
   );
 
-  const emptyStateDetail = WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS["webhooks"];
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("workspace-settings", "webhooks", isLightMode);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhooks` : undefined;
 
   // clear secret key when modal is closed.
@@ -99,12 +90,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
               </Button>
             </div>
             <div className="h-full w-full flex items-center justify-center">
-              <EmptyState
-                title={emptyStateDetail.title}
-                description={emptyStateDetail.description}
-                image={emptyStateImage}
-                size="lg"
-              />
+              <EmptyState type="workspace-settings-webhooks" />
             </div>
           </div>
         )}

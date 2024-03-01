@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-import { useTheme } from "next-themes";
 // store hooks
 import { useUser, useWorkspace } from "hooks/store";
 // layouts
@@ -11,7 +10,8 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // component
 import { WorkspaceSettingHeader } from "components/headers";
 import { ApiTokenListItem, CreateApiTokenModal } from "components/api-token";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
+import { PageHead } from "components/core";
 // ui
 import { Button } from "@plane/ui";
 import { APITokenSettingsLoader } from "components/ui";
@@ -22,8 +22,6 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { PageHead } from "components/core";
 
 const apiTokenService = new APITokenService();
 
@@ -33,12 +31,9 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     membership: { currentWorkspaceRole },
-    currentUser,
   } = useUser();
   const { currentWorkspace } = useWorkspace();
 
@@ -48,9 +43,6 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     workspaceSlug && isAdmin ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
   );
 
-  const emptyStateDetail = WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS["api-tokens"];
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("workspace-settings", "api-tokens", isLightMode);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - API Tokens` : undefined;
 
   if (!isAdmin)
@@ -95,12 +87,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
               </Button>
             </div>
             <div className="h-full w-full flex items-center justify-center">
-              <EmptyState
-                title={emptyStateDetail.title}
-                description={emptyStateDetail.description}
-                image={emptyStateImage}
-                size="lg"
-              />
+              <EmptyState type="workspace-settings-api-tokens" />
             </div>
           </div>
         )}

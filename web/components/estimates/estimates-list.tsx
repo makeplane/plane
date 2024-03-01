@@ -1,21 +1,18 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // store hooks
-import { useEstimate, useProject, useUser } from "hooks/store";
+import { useEstimate, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // ui
 import { Button, Loader } from "@plane/ui";
 // types
 import { IEstimate } from "@plane/types";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
-// constants
-import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const EstimatesList: React.FC = observer(() => {
   // states
@@ -25,12 +22,9 @@ export const EstimatesList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
-  const { currentUser } = useUser();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -57,10 +51,6 @@ export const EstimatesList: React.FC = observer(() => {
       });
     });
   };
-
-  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["estimate"];
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("project-settings", "estimates", isLightMode);
 
   return (
     <>
@@ -116,12 +106,7 @@ export const EstimatesList: React.FC = observer(() => {
           </section>
         ) : (
           <div className="h-full w-full py-8">
-            <EmptyState
-              title={emptyStateDetail.title}
-              description={emptyStateDetail.description}
-              image={emptyStateImage}
-              size="lg"
-            />
+            <EmptyState type="project-settings-estimate" />
           </div>
         )
       ) : (
