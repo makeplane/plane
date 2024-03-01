@@ -26,7 +26,7 @@ const nextConfig = {
         },
         {
           source: "/god-mode",
-          destination: `${process.env.NEXT_PUBLIC_GOD_MODE}/`,
+          destination: `${process.env.NEXT_PUBLIC_GOD_MODE_BASE_URL}/`,
         },
       ],
     };
