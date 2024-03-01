@@ -96,6 +96,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         storeType={EIssuesStoreType.PROJECT}
       />
       <CustomMenu
+        menuItemsClassName="z-[14]"
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}
