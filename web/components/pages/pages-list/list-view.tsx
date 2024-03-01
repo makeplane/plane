@@ -45,7 +45,6 @@ export const PagesListView: FC<IPagesListView> = (props) => {
   const isButtonVisible = currentPageTabDetails.key !== "archived" && currentPageTabDetails.key !== "favorites";
 
   // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
-
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (

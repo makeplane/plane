@@ -25,6 +25,7 @@ import { tableControls } from "src/ui/extensions/table/table/table-controls";
 import { TableView } from "src/ui/extensions/table/table/table-view";
 import { createTable } from "src/ui/extensions/table/table/utilities/create-table";
 import { deleteTableWhenAllCellsSelected } from "src/ui/extensions/table/table/utilities/delete-table-when-all-cells-selected";
+import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 
 export interface TableOptions {
   HTMLAttributes: Record<string, any>;
@@ -231,6 +232,7 @@ export const Table = Node.create({
       "Mod-Backspace": deleteTableWhenAllCellsSelected,
       Delete: deleteTableWhenAllCellsSelected,
       "Mod-Delete": deleteTableWhenAllCellsSelected,
+      ArrowDown: insertLineBelowTableAction,
     };
   },
 

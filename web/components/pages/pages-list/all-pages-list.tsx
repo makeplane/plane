@@ -20,5 +20,6 @@ export const AllPagesList: FC = observer(() => {
       </Loader>
     );
   }
+  console.log(projectPageIds);
   return <PagesListView pageIds={projectPageIds} />;
 });
