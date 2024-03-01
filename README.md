@@ -118,7 +118,7 @@ For self hosting environment setup, visit the [Self Hosting](https://docs.plane.
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_views_dark_mode.webp"
+        src="https://ik.imagekit.io/w2okwbtu2/Issues_rNZjrGgFl.png?updatedAt=1709298765880"
         alt="Plane Views"
         width="100%"
       />
@@ -127,8 +127,7 @@ For self hosting environment setup, visit the [Self Hosting](https://docs.plane.
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_issue_detail_dark_mode.webp"
-        alt="Plane Issue Details"
+        src="https://ik.imagekit.io/w2okwbtu2/Cycles_jCDhqmTl9.png?updatedAt=1709298780697"
         width="100%"
       />
     </a>
@@ -136,7 +135,7 @@ For self hosting environment setup, visit the [Self Hosting](https://docs.plane.
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_cycles_modules_dark_mode.webp"
+        src="https://ik.imagekit.io/w2okwbtu2/Modules_PSCVsbSfI.png?updatedAt=1709298796783"
         alt="Plane Cycles and Modules"
         width="100%"
       />
@@ -145,7 +144,7 @@ For self hosting environment setup, visit the [Self Hosting](https://docs.plane.
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_analytics_dark_mode.webp"
+        src="https://ik.imagekit.io/w2okwbtu2/Views_uxXsRatS4.png?updatedAt=1709298834522"
         alt="Plane Analytics"
         width="100%"
       />
@@ -154,7 +153,7 @@ For self hosting environment setup, visit the [Self Hosting](https://docs.plane.
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_pages_dark_mode.webp"
+        src="https://ik.imagekit.io/w2okwbtu2/Analytics_0o22gLRtp.png?updatedAt=1709298834389"
         alt="Plane Pages"
         width="100%"
       />
@@ -164,7 +163,7 @@ For self hosting environment setup, visit the [Self Hosting](https://docs.plane.
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_commad_k_dark_mode.webp"
+        src="https://ik.imagekit.io/w2okwbtu2/Drive_LlfeY4xn3.png?updatedAt=1709298837917"
         alt="Plane Command Menu"
         width="100%"
       />
