@@ -716,9 +716,9 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
         # Validation check if the issue already exists
         if (
-            str(request.data.get("external_id"))
+            request.data.get("external_id")
             and (issue_comment.external_id != str(request.data.get("external_id")))
-            and Issue.objects.filter(
+            and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
                 external_source=request.data.get(
