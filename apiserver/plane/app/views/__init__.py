@@ -49,6 +49,8 @@ from .workspace import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    WorkspaceModulesEndpoint,
+    WorkspaceCyclesEndpoint,
 )
 from .state import StateViewSet
 from .view import (

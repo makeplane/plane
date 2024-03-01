@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // components
-import { DateDropdown, ProjectDropdown } from "components/dropdowns";
+import { DateRangeDropdown, ProjectDropdown } from "components/dropdowns";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
@@ -32,7 +32,6 @@ export const CycleForm: React.FC<Props> = (props) => {
     formState: { errors, isSubmitting, dirtyFields },
     handleSubmit,
     control,
-    watch,
     reset,
   } = useForm<ICycle>({
     defaultValues: {
@@ -50,15 +49,6 @@ export const CycleForm: React.FC<Props> = (props) => {
       ...data,
     });
   }, [data, reset]);
-
-  const startDate = watch("start_date");
-  const endDate = watch("end_date");
-
-  const minDate = startDate ? new Date(startDate) : new Date();
-  minDate.setDate(minDate.getDate() + 1);
-
-  const maxDate = endDate ? new Date(endDate) : null;
-  maxDate?.setDate(maxDate.getDate() - 1);
 
   return (
     <form onSubmit={handleSubmit((formData) => handleFormSubmit(formData, dirtyFields))}>
@@ -132,39 +122,37 @@ export const CycleForm: React.FC<Props> = (props) => {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <div>
-                <Controller
-                  control={control}
-                  name="start_date"
-                  render={({ field: { value, onChange } }) => (
-                    <div className="h-7">
-                      <DateDropdown
-                        value={value}
-                        onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
-                        buttonVariant="border-with-text"
-                        placeholder="Start date"
-                        minDate={new Date()}
-                        maxDate={maxDate ?? undefined}
-                        tabIndex={3}
-                      />
-                    </div>
-                  )}
-                />
-              </div>
               <Controller
                 control={control}
-                name="end_date"
-                render={({ field: { value, onChange } }) => (
-                  <div className="h-7">
-                    <DateDropdown
-                      value={value}
-                      onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
-                      buttonVariant="border-with-text"
-                      placeholder="End date"
-                      minDate={minDate}
-                      tabIndex={4}
-                    />
-                  </div>
+                name="start_date"
+                render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                  <Controller
+                    control={control}
+                    name="end_date"
+                    render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                      <DateRangeDropdown
+                        buttonVariant="border-with-text"
+                        className="h-7"
+                        minDate={new Date()}
+                        value={{
+                          from: startDateValue ? new Date(startDateValue) : undefined,
+                          to: endDateValue ? new Date(endDateValue) : undefined,
+                        }}
+                        onSelect={(val) => {
+                          onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                          onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                        }}
+                        placeholder={{
+                          from: "Start date",
+                          to: "End date",
+                        }}
+                        hideIcon={{
+                          to: true,
+                        }}
+                        tabIndex={3}
+                      />
+                    )}
+                  />
                 )}
               />
             </div>
@@ -172,10 +160,10 @@ export const CycleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100 pt-5 ">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={5}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={6}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
           {data ? (isSubmitting ? "Updating" : "Update cycle") : isSubmitting ? "Creating" : "Create cycle"}
         </Button>
       </div>

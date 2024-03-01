@@ -207,7 +207,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </div>
 
             <div className="flex-shrink-0 relative flex items-center gap-3">
-              <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`}>
+              <Tooltip tooltipContent={`${moduleDetails?.member_ids?.length || 0} Members`}>
                 <div className="flex w-10 cursor-default items-center justify-center gap-1">
                   {moduleDetails.member_ids.length > 0 ? (
                     <AvatarGroup showTooltip={false}>
@@ -235,7 +235,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   </button>
                 ))}
 
-              <CustomMenu verticalEllipsis buttonClassName="z-[1]">
+              <CustomMenu verticalEllipsis buttonClassName="z-[1]" placement="bottom-end">
                 {isEditingAllowed && (
                   <>
                     <CustomMenu.MenuItem onClick={handleEditModule}>

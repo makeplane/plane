@@ -58,7 +58,7 @@ const BorderButton = (props: ButtonProps) => {
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "bg-custom-background-80 border-custom-border-300",
+    none: "hover:bg-custom-background-80 border-custom-border-300",
   };
 
   return (
@@ -197,7 +197,7 @@ const TransparentButton = (props: ButtonProps) => {
     high: "text-orange-950",
     medium: "text-yellow-950",
     low: "text-blue-950",
-    none: "",
+    none: "hover:text-custom-text-300",
   };
 
   return (
@@ -314,6 +314,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
 
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: TIssuePriorities) => {
@@ -327,6 +328,13 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     e.stopPropagation();
     e.preventDefault();
     toggleDropdown();
+  };
+
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
@@ -417,6 +425,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

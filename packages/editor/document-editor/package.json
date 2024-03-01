@@ -1,6 +1,6 @@
 {
   "name": "@plane/document-editor",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "description": "Package that powers Plane's Pages Editor",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

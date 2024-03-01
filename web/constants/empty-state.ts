@@ -288,7 +288,7 @@ const emptyStateDetails = {
       "Archived issues help you remove issues you completed or cancelled from focus. You can set automation to auto archive issues and find them here.",
     path: "/empty-state/archived/empty-issues",
     primaryButton: {
-      text: "Set Automation",
+      text: "Set automation",
     },
     accessType: "project",
     access: EUserProjectRoles.MEMBER,

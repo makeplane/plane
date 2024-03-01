@@ -6,14 +6,12 @@ import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 export interface IThemeStore {
   // observables
   theme: string | null;
-  mobileSidebarCollapsed: boolean | undefined;
   sidebarCollapsed: boolean | undefined;
   profileSidebarCollapsed: boolean | undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined;
   issueDetailSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
-  toggleMobileSidebar: (collapsed?: boolean) => void;
   setTheme: (theme: any) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
   toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
@@ -22,7 +20,6 @@ export interface IThemeStore {
 
 export class ThemeStore implements IThemeStore {
   // observables
-  mobileSidebarCollapsed: boolean | undefined = true;
   sidebarCollapsed: boolean | undefined = undefined;
   theme: string | null = null;
   profileSidebarCollapsed: boolean | undefined = undefined;
@@ -34,7 +31,6 @@ export class ThemeStore implements IThemeStore {
   constructor(_rootStore: any | null = null) {
     makeObservable(this, {
       // observable
-      mobileSidebarCollapsed: observable.ref,
       sidebarCollapsed: observable.ref,
       theme: observable.ref,
       profileSidebarCollapsed: observable.ref,
@@ -42,7 +38,6 @@ export class ThemeStore implements IThemeStore {
       issueDetailSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
-      toggleMobileSidebar: action,
       setTheme: action,
       toggleProfileSidebar: action,
       toggleWorkspaceAnalyticsSidebar: action,
@@ -64,19 +59,6 @@ export class ThemeStore implements IThemeStore {
       this.sidebarCollapsed = collapsed;
     }
     localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
-  };
-
-  /**
-   * Toggle mobile sidebar collapsed state
-   * @param collapsed
-   */
-  toggleMobileSidebar = (collapsed?: boolean) => {
-    if (collapsed === undefined) {
-      this.mobileSidebarCollapsed = !this.mobileSidebarCollapsed;
-    } else {
-      this.mobileSidebarCollapsed = collapsed;
-    }
-    localStorage.setItem("mobile_sidebar_collapsed", this.mobileSidebarCollapsed.toString());
   };
 
   /**

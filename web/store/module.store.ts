@@ -19,9 +19,11 @@ export interface IModuleStore {
   projectModuleIds: string[] | null;
   // computed actions
   getModuleById: (moduleId: string) => IModule | null;
+  getModuleNameById: (moduleId: string) => string;
   getProjectModuleIds: (projectId: string) => string[] | null;
   // actions
   // fetch
+  fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
@@ -73,6 +75,7 @@ export class ModulesStore implements IModuleStore {
       // computed
       projectModuleIds: computed,
       // actions
+      fetchWorkspaceModules: action,
       fetchModules: action,
       fetchModuleDetails: action,
       createModule: action,
@@ -113,6 +116,13 @@ export class ModulesStore implements IModuleStore {
   getModuleById = computedFn((moduleId: string) => this.moduleMap?.[moduleId] || null);
 
   /**
+   * @description get module by id
+   * @param moduleId
+   * @returns IModule | null
+   */
+  getModuleNameById = computedFn((moduleId: string) => this.moduleMap?.[moduleId]?.name);
+
+  /**
    * @description returns list of module ids of the project id passed as argument
    * @param projectId
    */
@@ -124,6 +134,21 @@ export class ModulesStore implements IModuleStore {
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
   });
+
+  /**
+   * @description fetch all modules
+   * @param workspaceSlug
+   * @returns IModule[]
+   */
+  fetchWorkspaceModules = async (workspaceSlug: string) =>
+    await this.moduleService.getWorkspaceModules(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((module) => {
+          set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+        });
+      });
+      return response;
+    });
 
   /**
    * @description fetch all modules
@@ -177,7 +202,6 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [response?.id], response);
       });
-      this.fetchModules(workspaceSlug, projectId);
       return response;
     });
 

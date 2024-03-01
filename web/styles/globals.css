@@ -524,10 +524,10 @@ div.web-view-spinner div.bar12 {
 }
 
 .vertical-scrollbar {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .horizontal-scrollbar {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 .vertical-scrollbar::-webkit-scrollbar,
 .horizontal-scrollbar::-webkit-scrollbar {

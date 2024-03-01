@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 // hooks
-import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 // types
 import {
   GroupByColumnTypes,
@@ -65,10 +65,21 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const project = useProject();
   const label = useLabel();
   const projectState = useProjectState();
+  const cycle = useCycle();
+  const _module = useModule();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const groups = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member, true);
+  const groups = getGroupByColumns(
+    group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    _module,
+    label,
+    projectState,
+    member,
+    true
+  );
 
   if (!groups) return null;
 

@@ -1,10 +1,13 @@
 import { Expand, Shrink } from "lucide-react";
 // hooks
-import { useChart } from "../hooks";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
 import { IGanttBlock, TGanttViews } from "../types";
+// constants
+import { VIEWS_LIST } from "components/gantt-chart/data";
+import { useGanttChart } from "../hooks/use-gantt-chart";
+import { observer } from "mobx-react";
 
 type Props = {
   blocks: IGanttBlock[] | null;
@@ -16,10 +19,10 @@ type Props = {
   toggleFullScreenMode: () => void;
 };
 
-export const GanttChartHeader: React.FC<Props> = (props) => {
+export const GanttChartHeader: React.FC<Props> = observer((props) => {
   const { blocks, fullScreenMode, handleChartView, handleToday, loaderTitle, title, toggleFullScreenMode } = props;
   // chart hook
-  const { currentView, allViews } = useChart();
+  const { currentView } = useGanttChart();
 
   return (
     <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2 z-10">
@@ -29,7 +32,7 @@ export const GanttChartHeader: React.FC<Props> = (props) => {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        {allViews?.map((chartView: any) => (
+        {VIEWS_LIST.map((chartView: any) => (
           <div
             key={chartView?.key}
             className={cn("cursor-pointer rounded-sm p-1 px-2 text-xs", {
@@ -56,4 +59,4 @@ export const GanttChartHeader: React.FC<Props> = (props) => {
       </button>
     </div>
   );
-};
+});

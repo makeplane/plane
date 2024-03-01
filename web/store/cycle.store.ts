@@ -1,6 +1,6 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { isFuture, isPast } from "date-fns";
+import { isFuture, isPast, isToday } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // types
@@ -28,11 +28,13 @@ export interface ICycleStore {
   currentProjectActiveCycleId: string | null;
   // computed actions
   getCycleById: (cycleId: string) => ICycle | null;
+  getCycleNameById: (cycleId: string) => string | undefined;
   getActiveCycleById: (cycleId: string) => ICycle | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   // actions
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   // fetch
+  fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchActiveCycle: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
@@ -79,6 +81,7 @@ export class CycleStore implements ICycleStore {
       currentProjectDraftCycleIds: computed,
       currentProjectActiveCycleId: computed,
       // actions
+      fetchWorkspaceCycles: action,
       fetchAllCycles: action,
       fetchActiveCycle: action,
       fetchCycleDetails: action,
@@ -116,7 +119,8 @@ export class CycleStore implements ICycleStore {
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
-      return c.project_id === projectId && hasEndDatePassed;
+      const isEndDateToday = isToday(new Date(c.end_date ?? ""));
+      return c.project_id === projectId && hasEndDatePassed && !isEndDateToday;
     });
     completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
     const completedCycleIds = completedCycles.map((c) => c.id);
@@ -187,6 +191,13 @@ export class CycleStore implements ICycleStore {
   getCycleById = computedFn((cycleId: string): ICycle | null => this.cycleMap?.[cycleId] ?? null);
 
   /**
+   * @description returns cycle name by cycle id
+   * @param cycleId
+   * @returns
+   */
+  getCycleNameById = computedFn((cycleId: string): string => this.cycleMap?.[cycleId]?.name);
+
+  /**
    * @description returns active cycle details by cycle id
    * @param cycleId
    * @returns
@@ -217,6 +228,22 @@ export class CycleStore implements ICycleStore {
    */
   validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) =>
     await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
+
+  /**
+   * @description fetch all cycles
+   * @param workspaceSlug
+   * @returns ICycle[]
+   */
+  fetchWorkspaceCycles = async (workspaceSlug: string) =>
+    await this.cycleService.getWorkspaceCycles(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((cycle) => {
+          set(this.cycleMap, [cycle.id], { ...this.cycleMap[cycle.id], ...cycle });
+          set(this.fetchedMap, cycle.project_id, true);
+        });
+      });
+      return response;
+    });
 
   /**
    * @description fetches all cycles for a project
@@ -337,7 +364,6 @@ export class CycleStore implements ICycleStore {
    */
   addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], true);
@@ -362,7 +388,6 @@ export class CycleStore implements ICycleStore {
    */
   removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const currentCycle = this.getCycleById(cycleId);
-    const currentActiveCycle = this.getActiveCycleById(cycleId);
     try {
       runInAction(() => {
         if (currentCycle) set(this.cycleMap, [cycleId, "is_favorite"], false);

@@ -34,7 +34,7 @@ export const IssueColumn = observer((props: Props) => {
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
       displayPropertyKey={property}
-      shouldRenderProperty={shouldRenderProperty}
+      shouldRenderProperty={() => shouldRenderProperty}
     >
       <td
         tabIndex={0}

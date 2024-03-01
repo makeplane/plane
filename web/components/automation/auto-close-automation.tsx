@@ -74,7 +74,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             <div className="">
               <h4 className="text-sm font-medium">Auto-close issues</h4>
               <p className="text-sm tracking-tight text-custom-text-200">
-                Plane will automatically close issue that haven{"'"}t been completed or cancelled.
+                Plane will automatically close issue that haven{"'"}t been completed or canceled.
               </p>
             </div>
           </div>
@@ -100,7 +100,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                     <CustomSelect
                       value={currentProjectDetails?.close_in}
                       label={`${currentProjectDetails?.close_in} ${
-                        currentProjectDetails?.close_in === 1 ? "Month" : "Months"
+                        currentProjectDetails?.close_in === 1 ? "month" : "months"
                       }`}
                       onChange={(val: number) => {
                         handleChange({ close_in: val });
@@ -119,7 +119,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                           className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
                           onClick={() => setmonthModal(true)}
                         >
-                          Customize Time Range
+                          Customize time range
                         </button>
                       </>
                     </CustomSelect>
