@@ -1,22 +1,23 @@
 import React, { Fragment, ReactElement } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { PageHead } from "components/core";
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 // type
 import { NextPageWithLayout } from "lib/types";
-import { useRouter } from "next/router";
-import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -33,13 +34,16 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
     currentUser,
   } = useUser();
   const { workspaceProjectIds } = useProject();
-
+  const { currentWorkspace } = useWorkspace();
+  // derived values
   const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
   const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "analytics", isLightMode);
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Analytics` : undefined;
 
   return (
     <>
+      <PageHead title={pageTitle} />
       {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
         <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
           <Tab.Group as={Fragment} defaultIndex={analytics_tab === "custom" ? 1 : 0}>

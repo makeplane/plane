@@ -5,17 +5,18 @@ import { observer } from "mobx-react-lite";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useKeypress from "hooks/use-keypress";
+import useToast from "hooks/use-toast";
 // store hooks
 import { useIssueDetail } from "hooks/store";
 // components
 import {
-  DeleteArchivedIssueModal,
   DeleteIssueModal,
   IssuePeekOverviewHeader,
   TPeekModes,
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
   TIssueOperations,
+  ArchiveIssueModal,
 } from "components/issues";
 import { IssueActivity } from "../issue-detail/issue-activity";
 // ui
@@ -43,21 +44,53 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     setPeekIssue,
     isAnyModalOpen,
     isDeleteIssueModalOpen,
+    isArchiveIssueModalOpen,
     toggleDeleteIssueModal,
+    toggleArchiveIssueModal,
     issue: { getIssueById },
   } = useIssueDetail();
   const issue = getIssueById(issueId);
+  // hooks
+  const { alerts } = useToast();
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
   };
-  // hooks
-  useOutsideClickDetector(issuePeekOverviewRef, () => !isAnyModalOpen && removeRoutePeekId());
-  const handleKeyDown = () => !isAnyModalOpen && removeRoutePeekId();
+
+  useOutsideClickDetector(issuePeekOverviewRef, () => {
+    if (!isAnyModalOpen && (!alerts || alerts.length === 0)) {
+      removeRoutePeekId();
+    }
+  });
+  const handleKeyDown = () => {
+    if (!isAnyModalOpen) {
+      removeRoutePeekId();
+      const issueElement = document.getElementById(`issue-${issueId}`);
+      if (issueElement) issueElement?.focus();
+    }
+  };
   useKeypress("Escape", handleKeyDown);
+
+  const handleRestore = async () => {
+    if (!issueOperations.restore) return;
+    await issueOperations.restore(workspaceSlug, projectId, issueId);
+    removeRoutePeekId();
+  };
 
   return (
     <>
+      {issue && !is_archived && (
+        <ArchiveIssueModal
+          isOpen={isArchiveIssueModalOpen}
+          handleClose={() => toggleArchiveIssueModal(false)}
+          data={issue}
+          onSubmit={async () => {
+            if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
+            removeRoutePeekId();
+          }}
+        />
+      )}
+
       {issue && !is_archived && (
         <DeleteIssueModal
           isOpen={isDeleteIssueModalOpen}
@@ -71,7 +104,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       )}
 
       {issue && is_archived && (
-        <DeleteArchivedIssueModal
+        <DeleteIssueModal
           data={issue}
           isOpen={isDeleteIssueModalOpen}
           handleClose={() => toggleDeleteIssueModal(false)}
@@ -96,11 +129,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             {/* header */}
             <IssuePeekOverviewHeader
               peekMode={peekMode}
-              setPeekMode={(value: TPeekModes) => {
-                setPeekMode(value);
-              }}
+              setPeekMode={(value) => setPeekMode(value)}
               removeRoutePeekId={removeRoutePeekId}
               toggleDeleteIssueModal={toggleDeleteIssueModal}
+              toggleArchiveIssueModal={toggleArchiveIssueModal}
+              handleRestoreIssue={handleRestore}
               isArchived={is_archived}
               issueId={issueId}
               workspaceSlug={workspaceSlug}
@@ -109,7 +142,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               disabled={disabled}
             />
             {/* content */}
-            <div className="relative h-full w-full overflow-hidden overflow-y-auto">
+            <div className="relative h-full w-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md">
               {isLoading && !issue ? (
                 <div className="flex h-full w-full items-center justify-center">
                   <Spinner />
@@ -124,7 +157,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
@@ -134,13 +167,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                         />
 
                         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                       </div>
                     ) : (
-                      <div className={`flex h-full w-full overflow-auto`}>
+                      <div className={`flex h-full w-full overflow-auto vertical-scrollbar`}>
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
                           <div>
                             <PeekOverviewIssueDetails
@@ -148,7 +181,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               projectId={projectId}
                               issueId={issueId}
                               issueOperations={issueOperations}
-                              disabled={disabled}
+                              disabled={disabled || is_archived}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
@@ -166,7 +199,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled}
+                            disabled={disabled || is_archived}
                           />
                         </div>
                       </div>

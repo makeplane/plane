@@ -4,14 +4,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
+import { useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
-import { WorkspaceMemberDropdown } from "components/dropdowns";
+import { MemberDropdown } from "components/dropdowns";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // constants
@@ -66,7 +66,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { currentWorkspace } = useWorkspace();
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -160,7 +159,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             payload: {
               ...payload,
               state: "FAILED",
-            }
+            },
           });
         });
       });
@@ -365,13 +364,14 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               tabIndex={4}
                             >
                               {NETWORK_CHOICES.map((network) => (
-                                <CustomSelect.Option
-                                  key={network.key}
-                                  value={network.key}
-                                  className="flex items-center gap-1"
-                                >
-                                  <network.icon className="h-4 w-4" />
-                                  {network.label}
+                                <CustomSelect.Option key={network.key} value={network.key}>
+                                  <div className="flex items-start gap-2">
+                                    <network.icon className="h-3.5 w-3.5" />
+                                    <div className="-mt-1">
+                                      <p>{network.label}</p>
+                                      <p className="text-xs text-custom-text-400">{network.description}</p>
+                                    </div>
+                                  </div>
                                 </CustomSelect.Option>
                               ))}
                             </CustomSelect>
@@ -383,7 +383,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <div className="h-7 flex-shrink-0" tabIndex={5}>
-                            <WorkspaceMemberDropdown
+                            <MemberDropdown
                               value={value}
                               onChange={onChange}
                               placeholder="Lead"

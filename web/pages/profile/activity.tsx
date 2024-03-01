@@ -7,6 +7,7 @@ import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { ProfileActivityListPage } from "components/profile";
+import { PageHead } from "components/core";
 // ui
 import { Button } from "@plane/ui";
 // type
@@ -41,22 +42,25 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
     );
 
   return (
-    <section className="mx-auto mt-5 md:mt-16 h-full w-full flex flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
-      <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
-        <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
-        <h3 className="text-xl font-medium">Activity</h3>
-      </div>
-      <div className="h-full flex flex-col overflow-y-auto">
-        {activityPages}
-        {pageCount < totalPages && resultsCount !== 0 && (
-          <div className="flex items-center justify-center text-xs w-full">
-            <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
-              Load more
-            </Button>
-          </div>
-        )}
-      </div>
-    </section>
+    <>
+      <PageHead title="Profile - Activity" />
+      <section className="mx-auto mt-5 md:mt-16 h-full w-full flex flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+        <div className="flex items-center border-b border-custom-border-100 gap-4 pb-3.5">
+          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
+          <h3 className="text-xl font-medium">Activity</h3>
+        </div>
+        <div className="h-full flex flex-col overflow-y-auto">
+          {activityPages}
+          {pageCount < totalPages && resultsCount !== 0 && (
+            <div className="flex items-center justify-center text-xs w-full">
+              <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+                Load more
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+    </>
   );
 });
 

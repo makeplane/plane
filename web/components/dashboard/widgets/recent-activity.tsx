@@ -85,17 +85,15 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
               </div>
             </div>
           ))}
-          {widgetStats.length > 0 && (
-            <Link
-              href={redirectionLink}
-              className={cn(
-                getButtonStyling("link-primary", "sm"),
-                "w-min my-3 mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
-              )}
-            >
-              View all
-            </Link>
-          )}
+          <Link
+            href={redirectionLink}
+            className={cn(
+              getButtonStyling("link-primary", "sm"),
+              "w-min mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
+            )}
+          >
+            View all
+          </Link>
         </div>
       ) : (
         <div className="h-full grid place-items-center">

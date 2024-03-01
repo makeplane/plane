@@ -45,27 +45,16 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
       {collaboratorsPages}
       {pageCount < totalPages && resultsCount !== 0 && (
         <div className="flex items-center justify-center text-xs w-full">
-          <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+          <Button
+            variant="link-primary"
+            size="sm"
+            className="my-3 hover:bg-custom-primary-100/20"
+            onClick={handleLoadMore}
+          >
             Load more
           </Button>
         </div>
       )}
-      {/* {widgetStats.length > 1 ? (
-        <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
-          {widgetStats.map((user) => (
-            <CollaboratorListItem
-              key={user.user_id}
-              issueCount={user.active_issue_count}
-              userId={user.user_id}
-              workspaceSlug={workspaceSlug}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="h-full grid place-items-center">
-          <RecentCollaboratorsEmptyState />
-        </div>
-      )} */}
     </div>
   );
 };

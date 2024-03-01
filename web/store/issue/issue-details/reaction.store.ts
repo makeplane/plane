@@ -14,6 +14,7 @@ import { groupReactions } from "helpers/emoji.helper";
 
 export interface IIssueReactionStoreActions {
   // actions
+  addReactions: (issueId: string, reactions: TIssueReaction[]) => void;
   fetchReactions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssueReaction[]>;
   createReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<any>;
   removeReaction: (
@@ -50,6 +51,7 @@ export class IssueReactionStore implements IIssueReactionStore {
       reactions: observable,
       reactionMap: observable,
       // actions
+      addReactions: action.bound,
       fetchReactions: action,
       createReaction: action,
       removeReaction: action,
@@ -82,30 +84,35 @@ export class IssueReactionStore implements IIssueReactionStore {
       if (reactions?.[reaction])
         reactions?.[reaction].map((reactionId) => {
           const currentReaction = this.getReactionById(reactionId);
-          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
+          if (currentReaction && currentReaction.actor_id === userId) _userReactions.push(currentReaction);
         });
     });
 
     return _userReactions;
   };
 
+  addReactions = (issueId: string, reactions: TIssueReaction[]) => {
+    const groupedReactions = groupReactions(reactions || [], "reaction");
+
+    const issueReactionIdsMap: { [reaction: string]: string[] } = {};
+
+    Object.keys(groupedReactions).map((reactionId) => {
+      const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
+      issueReactionIdsMap[reactionId] = reactionIds;
+    });
+
+    runInAction(() => {
+      set(this.reactions, issueId, issueReactionIdsMap);
+      reactions.forEach((reaction) => set(this.reactionMap, reaction.id, reaction));
+    });
+  };
+
   // actions
   fetchReactions = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       const response = await this.issueReactionService.listIssueReactions(workspaceSlug, projectId, issueId);
-      const groupedReactions = groupReactions(response || [], "reaction");
 
-      const issueReactionIdsMap: { [reaction: string]: string[] } = {};
-
-      Object.keys(groupedReactions).map((reactionId) => {
-        const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
-        issueReactionIdsMap[reactionId] = reactionIds;
-      });
-
-      runInAction(() => {
-        set(this.reactions, issueId, issueReactionIdsMap);
-        response.forEach((reaction) => set(this.reactionMap, reaction.id, reaction));
-      });
+      this.addReactions(issueId, response);
 
       return response;
     } catch (error) {
@@ -144,7 +151,7 @@ export class IssueReactionStore implements IIssueReactionStore {
   ) => {
     try {
       const userReactions = this.reactionsByUser(issueId, userId);
-      const currentReaction = find(userReactions, { actor: userId, reaction: reaction });
+      const currentReaction = find(userReactions, { actor_id: userId, reaction: reaction });
 
       if (currentReaction && currentReaction.id) {
         runInAction(() => {

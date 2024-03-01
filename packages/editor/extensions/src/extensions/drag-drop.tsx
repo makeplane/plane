@@ -35,7 +35,7 @@ export interface DragHandleOptions {
 }
 
 function absoluteRect(node: Element) {
-  const data = node.getBoundingClientRect();
+  const data = node?.getBoundingClientRect();
 
   return {
     top: data.top,
@@ -65,7 +65,7 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
 }
 
 function nodePosAtDOM(node: Element, view: EditorView) {
-  const boundingRect = node.getBoundingClientRect();
+  const boundingRect = node?.getBoundingClientRect();
 
   if (node.nodeName === "IMG") {
     return view.posAtCoords({

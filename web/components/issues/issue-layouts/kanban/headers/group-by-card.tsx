@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
+import { CreateUpdateIssueModal } from "components/issues";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
@@ -138,6 +138,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
                   <Plus height={14} width={14} strokeWidth={2} />
                 </span>
               }
+              placement="bottom-end"
             >
               <CustomMenu.MenuItem
                 onClick={() => {

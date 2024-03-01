@@ -41,6 +41,8 @@ export interface IBaseKanBanLayout {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   showLoader?: boolean;
   viewId?: string;
@@ -188,6 +190,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         handleRemoveFromView={
           issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
         }
+        handleArchive={
+          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
+        }
+        handleRestore={
+          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
+        }
         readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
@@ -225,9 +233,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
       if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
       else _kanbanFilters.push(value);
-      issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: _kanbanFilters,
-      });
+      issuesFilter.updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.KANBAN_FILTERS,
+        {
+          [toggle]: _kanbanFilters,
+        },
+        viewId
+      );
     }
   };
 
@@ -249,7 +263,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       )}
 
       <div
-        className="flex horizontal-scroll-enable relative h-full w-full overflow-auto bg-custom-background-90"
+        className="flex relative h-full w-full overflow-auto bg-custom-background-90 vertical-scrollbar horizontal-scrollbar scrollbar-lg"
         ref={scrollableContainerRef}
       >
         <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
@@ -277,27 +291,29 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               </Droppable>
             </div>
 
-            <KanBanView
-              issuesMap={issueMap}
-              issueIds={issueIds}
-              displayProperties={displayProperties}
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              handleIssues={handleIssues}
-              quickActions={renderQuickActions}
-              handleKanbanFilters={handleKanbanFilters}
-              kanbanFilters={kanbanFilters}
-              enableQuickIssueCreate={enableQuickAdd}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-              quickAddCallback={issues?.quickAddIssue}
-              viewId={viewId}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-              canEditProperties={canEditProperties}
-              storeType={storeType}
-              addIssuesToView={addIssuesToView}
-              scrollableContainerRef={scrollableContainerRef}
-              isDragStarted={isDragStarted}
-            />
+            <div className="w-max h-max">
+              <KanBanView
+                issuesMap={issueMap}
+                issueIds={issueIds}
+                displayProperties={displayProperties}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                handleIssues={handleIssues}
+                quickActions={renderQuickActions}
+                handleKanbanFilters={handleKanbanFilters}
+                kanbanFilters={kanbanFilters}
+                enableQuickIssueCreate={enableQuickAdd}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
+                quickAddCallback={issues?.quickAddIssue}
+                viewId={viewId}
+                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+                canEditProperties={canEditProperties}
+                storeType={storeType}
+                addIssuesToView={addIssuesToView}
+                scrollableContainerRef={scrollableContainerRef}
+                isDragStarted={isDragStarted}
+              />
+            </div>
           </DragDropContext>
         </div>
       </div>

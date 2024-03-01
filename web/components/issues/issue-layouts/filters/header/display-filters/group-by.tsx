@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
@@ -12,10 +11,11 @@ type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   groupByOptions: TIssueGroupByOptions[];
   handleUpdate: (val: TIssueGroupByOptions) => void;
+  ignoreGroupedFilters: Partial<TIssueGroupByOptions>[];
 };
 
 export const FilterGroupBy: React.FC<Props> = observer((props) => {
-  const { displayFilters, groupByOptions, handleUpdate } = props;
+  const { displayFilters, groupByOptions, handleUpdate, ignoreGroupedFilters } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -34,6 +34,7 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
           {ISSUE_GROUP_BY_OPTIONS.filter((option) => groupByOptions.includes(option.key)).map((groupBy) => {
             if (displayFilters.layout === "kanban" && selectedSubGroupBy !== null && groupBy.key === selectedSubGroupBy)
               return null;
+            if (ignoreGroupedFilters.includes(groupBy?.key)) return null;
 
             return (
               <FilterOption

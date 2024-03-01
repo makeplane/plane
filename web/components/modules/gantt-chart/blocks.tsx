@@ -29,7 +29,9 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
     <div
       className="relative flex h-full w-full items-center rounded"
       style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === moduleDetails?.status)?.color }}
-      onClick={() => router.push(`/${workspaceSlug}/projects/${moduleDetails?.project}/modules/${moduleDetails?.id}`)}
+      onClick={() =>
+        router.push(`/${workspaceSlug}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`)
+      }
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
@@ -65,7 +67,9 @@ export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <div
       className="relative flex h-full w-full items-center gap-2"
-      onClick={() => router.push(`/${workspaceSlug}/projects/${moduleDetails?.project}/modules/${moduleDetails?.id}`)}
+      onClick={() =>
+        router.push(`/${workspaceSlug}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`)
+      }
     >
       <ModuleStatusIcon status={moduleDetails?.status ?? "backlog"} height="16px" width="16px" />
       <h6 className="flex-grow truncate text-sm font-medium">{moduleDetails?.name}</h6>

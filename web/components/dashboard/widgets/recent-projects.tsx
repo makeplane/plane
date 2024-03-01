@@ -96,7 +96,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
         href={`/${workspaceSlug}/projects`}
         className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline"
       >
-        Your projects
+        Recent projects
       </Link>
       <div className="space-y-8 mt-4 mx-7">
         {canCreateProject && (

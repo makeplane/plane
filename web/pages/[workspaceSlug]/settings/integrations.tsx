@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser, useWorkspace } from "hooks/store";
 // services
 import { IntegrationService } from "services/integrations";
 // layouts
@@ -12,6 +12,7 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { SingleIntegrationCard } from "components/integration";
 import { WorkspaceSettingHeader } from "components/headers";
+import { PageHead } from "components/core";
 // ui
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "components/ui";
 // types
@@ -31,14 +32,20 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
+  // derived values
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
 
   if (!isAdmin)
     return (
-      <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-      </div>
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center p-4">
+          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        </div>
+      </>
     );
 
   const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
@@ -46,16 +53,21 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
   );
 
   return (
-    <section className="w-full overflow-y-auto py-8 pr-9">
-      <IntegrationAndImportExportBanner bannerName="Integrations" />
-      <div>
-        {appIntegrations ? (
-          appIntegrations.map((integration) => <SingleIntegrationCard key={integration.id} integration={integration} />)
-        ) : (
-          <IntegrationsSettingsLoader />
-        )}
-      </div>
-    </section>
+    <>
+      <PageHead title={pageTitle} />
+      <section className="w-full overflow-y-auto py-8 pr-9">
+        <IntegrationAndImportExportBanner bannerName="Integrations" />
+        <div>
+          {appIntegrations ? (
+            appIntegrations.map((integration) => (
+              <SingleIntegrationCard key={integration.id} integration={integration} />
+            ))
+          ) : (
+            <IntegrationsSettingsLoader />
+          )}
+        </div>
+      </section>
+    </>
   );
 });
 

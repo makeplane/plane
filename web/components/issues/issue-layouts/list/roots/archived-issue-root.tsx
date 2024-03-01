@@ -24,6 +24,11 @@ export const ArchivedIssueListLayout: FC = observer(() => {
 
         await issues.removeIssue(workspaceSlug, projectId, issue.id);
       },
+      [EIssueActions.RESTORE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !projectId) return;
+
+        await issues.restoreIssue(workspaceSlug, projectId, issue.id);
+      },
     }),
     [issues, workspaceSlug, projectId]
   );

@@ -22,8 +22,8 @@ export interface IDraftIssues {
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<TIssue[]>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   quickAddIssue: undefined;
 }
 
@@ -81,7 +81,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
     const draftIssueIds = this.issues[projectId];
     if (!draftIssueIds) return undefined;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds);
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(draftIssueIds, "un-archived");
     if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
@@ -141,7 +141,9 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     try {
-      const response = await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
+      await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
+
+      this.rootStore.issues.updateIssue(issueId, data);
 
       if (data.hasOwnProperty("is_draft") && data?.is_draft === false) {
         runInAction(() => {
@@ -151,8 +153,6 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
           });
         });
       }
-
-      return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
@@ -161,7 +161,7 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         update(this.issues, [projectId], (issueIds = []) => {
@@ -169,8 +169,6 @@ export class DraftIssues extends IssueHelperStore implements IDraftIssues {
           return issueIds;
         });
       });
-
-      return response;
     } catch (error) {
       throw error;
     }

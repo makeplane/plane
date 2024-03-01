@@ -4,7 +4,6 @@ import random
 from itertools import chain
 
 # Django imports
-from django.db import models
 from django.utils import timezone
 from django.db.models import (
     Prefetch,
@@ -12,19 +11,21 @@ from django.db.models import (
     Func,
     F,
     Q,
-    Count,
     Case,
     Value,
     CharField,
     When,
     Exists,
     Max,
-    IntegerField,
 )
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third Party imports
 from rest_framework.response import Response
@@ -67,15 +68,11 @@ from plane.db.models import (
     Label,
     IssueLink,
     IssueAttachment,
-    State,
     IssueSubscriber,
     ProjectMember,
     IssueReaction,
     CommentReaction,
-    ProjectDeployBoard,
-    IssueVote,
     IssueRelation,
-    ProjectPublicMember,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -83,44 +80,30 @@ from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
 
 
-class IssueViewSet(WebhookMixin, BaseViewSet):
-    def get_serializer_class(self):
-        return (
-            IssueCreateSerializer
-            if self.action in ["create", "update", "partial_update"]
-            else IssueSerializer
-        )
+class IssueListEndpoint(BaseAPIView):
 
-    model = Issue
-    webhook_event = "issue"
     permission_classes = [
         ProjectEntityPermission,
     ]
 
-    search_fields = [
-        "name",
-    ]
+    def get(self, request, slug, project_id):
+        issue_ids = request.GET.get("issues", False)
 
-    filterset_fields = [
-        "state__name",
-        "assignees__id",
-        "workspace__id",
-    ]
+        if not issue_ids:
+            return Response(
+                {"error": "Issues are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-    def get_queryset(self):
-        return (
+        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
+
+        queryset = (
             Issue.issue_objects.filter(
-                project_id=self.kwargs.get("project_id")
+                workspace__slug=slug, project_id=project_id, pk__in=issue_ids
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -144,10 +127,34 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         ).distinct()
 
-    @method_decorator(gzip_page)
-    def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
 
         # Custom ordering for priority and state
@@ -162,7 +169,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = queryset.filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -224,9 +231,236 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueSerializer(
-            issue_queryset, many=True, fields=self.fields, expand=self.expand
-        ).data
+        if self.fields or self.expand:
+            issues = IssueSerializer(
+                queryset, many=True, fields=self.fields, expand=self.expand
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
+        return Response(issues, status=status.HTTP_200_OK)
+
+
+class IssueViewSet(WebhookMixin, BaseViewSet):
+    def get_serializer_class(self):
+        return (
+            IssueCreateSerializer
+            if self.action in ["create", "update", "partial_update"]
+            else IssueSerializer
+        )
+
+    model = Issue
+    webhook_event = "issue"
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    search_fields = [
+        "name",
+    ]
+
+    filterset_fields = [
+        "state__name",
+        "assignees__id",
+        "workspace__id",
+    ]
+
+    def get_queryset(self):
+        return (
+            Issue.issue_objects.filter(
+                project_id=self.kwargs.get("project_id")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+        ).distinct()
+
+    @method_decorator(gzip_page)
+    def list(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = self.get_queryset().filter(**filters)
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = [
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+        ]
+
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
+                )
+            ).order_by("priority_order")
+
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
+                )
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
+                )
+            ).order_by(
+                "-max_values"
+                if order_by_param.startswith("-")
+                else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
+
+        # Only use serializer when expand or fields else return by values
+        if self.expand or self.fields:
+            issues = IssueSerializer(
+                issue_queryset,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
         return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
@@ -259,28 +493,97 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
             issue = (
-                self.get_queryset().filter(pk=serializer.data["id"]).first()
+                self.get_queryset()
+                .filter(pk=serializer.data["id"])
+                .values(
+                    "id",
+                    "name",
+                    "state_id",
+                    "sort_order",
+                    "completed_at",
+                    "estimate_point",
+                    "priority",
+                    "start_date",
+                    "target_date",
+                    "sequence_id",
+                    "project_id",
+                    "parent_id",
+                    "cycle_id",
+                    "module_ids",
+                    "label_ids",
+                    "assignee_ids",
+                    "sub_issues_count",
+                    "created_at",
+                    "updated_at",
+                    "created_by",
+                    "updated_by",
+                    "attachment_count",
+                    "link_count",
+                    "is_draft",
+                    "archived_at",
+                )
+                .first()
             )
-            serializer = IssueSerializer(issue)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = self.get_queryset().filter(pk=pk).first()
-        return Response(
-            IssueDetailSerializer(
-                issue, fields=self.fields, expand=self.expand
-            ).data,
-            status=status.HTTP_200_OK,
-        )
+        issue = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related(
+                        "issue", "actor"
+                    ),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_attachment",
+                    queryset=IssueAttachment.objects.select_related("issue"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+        ).first()
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        issue = self.get_queryset().filter(pk=pk).first()
+
+        if not issue:
+            return Response(
+                {"error": "Issue not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
             issue, data=request.data, partial=True
@@ -299,17 +602,12 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
             issue = self.get_queryset().filter(pk=pk).first()
-            return Response(
-                IssueSerializer(issue).data, status=status.HTTP_200_OK
-            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
-        )
-        current_instance = json.dumps(
-            IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
         issue.delete()
         issue_activity.delay(
@@ -318,7 +616,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(pk),
             project_id=str(project_id),
-            current_instance=current_instance,
+            current_instance={},
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
@@ -326,6 +624,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# TODO: deprecated remove once confirmed
 class UserWorkSpaceIssues(BaseAPIView):
     @method_decorator(gzip_page)
     def get(self, request, slug):
@@ -379,12 +678,6 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
             )
             .filter(**filters)
         ).distinct()
@@ -470,6 +763,7 @@ class UserWorkSpaceIssues(BaseAPIView):
         return Response(issues, status=status.HTTP_200_OK)
 
 
+# TODO: deprecated remove once confirmed
 class WorkSpaceIssuesEndpoint(BaseAPIView):
     permission_classes = [
         WorkSpaceAdminPermission,
@@ -479,7 +773,10 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
     def get(self, request, slug):
         issues = (
             Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
         )
         serializer = IssueSerializer(issues, many=True)
@@ -502,6 +799,7 @@ class IssueActivityEndpoint(BaseAPIView):
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
@@ -511,6 +809,7 @@ class IssueActivityEndpoint(BaseAPIView):
             IssueComment.objects.filter(issue_id=issue_id)
             .filter(
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
@@ -562,7 +861,10 @@ class IssueCommentViewSet(WebhookMixin, BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
@@ -724,7 +1026,10 @@ class LabelViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
@@ -772,20 +1077,9 @@ class SubIssuesEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 parent_id=issue_id, workspace__slug=slug
             )
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -800,11 +1094,39 @@ class SubIssuesEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
                 )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
             .annotate(state_group=F("state__group"))
         )
@@ -814,13 +1136,36 @@ class SubIssuesEndpoint(BaseAPIView):
         for sub_issue in sub_issues:
             result[sub_issue.state_group].append(str(sub_issue.id))
 
-        serializer = IssueSerializer(
-            sub_issues,
-            many=True,
+        sub_issues = sub_issues.values(
+            "id",
+            "name",
+            "state_id",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "module_ids",
+            "label_ids",
+            "assignee_ids",
+            "sub_issues_count",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "attachment_count",
+            "link_count",
+            "is_draft",
+            "archived_at",
         )
         return Response(
             {
-                "sub_issues": serializer.data,
+                "sub_issues": sub_issues,
                 "state_distribution": result,
             },
             status=status.HTTP_200_OK,
@@ -897,7 +1242,10 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1085,7 +1433,7 @@ class IssueArchiveViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))            
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1108,15 +1456,36 @@ class IssueArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         )
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
 
@@ -1132,10 +1501,7 @@ class IssueArchiveViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -1202,20 +1568,114 @@ class IssueArchiveViewSet(BaseViewSet):
             if show_sub_issues == "true"
             else issue_queryset.filter(parent__isnull=True)
         )
-
-        issues = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        ).data
+        if self.expand or self.fields:
+            issues = IssueSerializer(
+                issue_queryset,
+                many=True,
+                fields=self.fields,
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
         return Response(issues, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = self.get_queryset().filter(pk=pk).first()
-        return Response(
-            IssueDetailSerializer(
-                issue, fields=self.fields, expand=self.expand
-            ).data,
-            status=status.HTTP_200_OK,
+        issue = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related(
+                        "issue", "actor"
+                    ),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_attachment",
+                    queryset=IssueAttachment.objects.select_related("issue"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+        ).first()
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def archive(self, request, slug, project_id, pk=None):
+        issue = Issue.issue_objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
         )
+        if issue.state.group not in ["completed", "cancelled"]:
+            return Response(
+                {"error": "Can only archive completed or cancelled state group issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        issue.archived_at = timezone.now().date()
+        issue.save()
+
+        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
+    
 
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1240,7 +1700,7 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = None
         issue.save()
 
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -1276,7 +1736,10 @@ class IssueSubscriberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1360,7 +1823,10 @@ class IssueReactionViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1429,7 +1895,10 @@ class CommentReactionViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(comment_id=self.kwargs.get("comment_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .order_by("-created_at")
             .distinct()
         )
@@ -1499,7 +1968,10 @@ class IssueRelationViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
@@ -1580,15 +2052,17 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=issue
-                    if relation_type == "blocking"
-                    else issue_id,
-                    related_issue_id=issue_id
-                    if relation_type == "blocking"
-                    else issue,
-                    relation_type="blocked_by"
-                    if relation_type == "blocking"
-                    else relation_type,
+                    issue_id=(
+                        issue if relation_type == "blocking" else issue_id
+                    ),
+                    related_issue_id=(
+                        issue_id if relation_type == "blocking" else issue
+                    ),
+                    relation_type=(
+                        "blocked_by"
+                        if relation_type == "blocking"
+                        else relation_type
+                    ),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
@@ -1669,19 +2143,11 @@ class IssueDraftViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.filter(
-                project_id=self.kwargs.get("project_id")
-            )
+            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_draft=True)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -1704,6 +2170,32 @@ class IssueDraftViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         ).distinct()
 
@@ -1728,10 +2220,7 @@ class IssueDraftViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-        )
+        issue_queryset = self.get_queryset().filter(**filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -1793,9 +2282,42 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        ).data
+        # Only use serializer when expand else return by values
+        if self.expand or self.fields:
+            issues = IssueSerializer(
+                issue_queryset,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data
+        else:
+            issues = issue_queryset.values(
+                "id",
+                "name",
+                "state_id",
+                "sort_order",
+                "completed_at",
+                "estimate_point",
+                "priority",
+                "start_date",
+                "target_date",
+                "sequence_id",
+                "project_id",
+                "parent_id",
+                "cycle_id",
+                "module_ids",
+                "label_ids",
+                "assignee_ids",
+                "sub_issues_count",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "attachment_count",
+                "link_count",
+                "is_draft",
+                "archived_at",
+            )
         return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
@@ -1830,24 +2352,24 @@ class IssueDraftViewSet(BaseViewSet):
             issue = (
                 self.get_queryset().filter(pk=serializer.data["id"]).first()
             )
-            return Response(IssueSerializer(issue).data, status=status.HTTP_201_CREATED)
+            return Response(
+                IssueSerializer(issue).data, status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
-        serializer = IssueSerializer(issue, data=request.data, partial=True)
+        issue = self.get_queryset().filter(pk=pk).first()
+
+        if not issue:
+            return Response(
+                {"error": "Issue does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
 
         if serializer.is_valid():
-            if request.data.get(
-                "is_draft"
-            ) is not None and not request.data.get("is_draft"):
-                serializer.save(
-                    created_at=timezone.now(), updated_at=timezone.now()
-                )
-            else:
-                serializer.save()
+            serializer.save()
             issue_activity.delay(
                 type="issue_draft.activity.updated",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -1862,24 +2384,56 @@ class IssueDraftViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        issue = self.get_queryset().filter(pk=pk).first()
-        return Response(
-            IssueSerializer(
-                issue, fields=self.fields, expand=self.expand
-            ).data,
-            status=status.HTTP_200_OK,
-        )
+        issue = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related(
+                        "issue", "actor"
+                    ),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_attachment",
+                    queryset=IssueAttachment.objects.select_related("issue"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+        ).first()
+
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
-        )
-        current_instance = json.dumps(
-            IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
         issue.delete()
         issue_activity.delay(
@@ -1888,7 +2442,7 @@ class IssueDraftViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(pk),
             project_id=str(project_id),
-            current_instance=current_instance,
+            current_instance={},
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

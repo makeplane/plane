@@ -2,8 +2,6 @@ import { Theme } from "@nivo/core";
 import { ComputedDatum } from "@nivo/bar";
 // components
 import { BarGraph } from "components/ui";
-// ui
-import { PriorityIcon } from "@plane/ui";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
@@ -36,23 +34,6 @@ const PRIORITY_TEXT_COLORS = {
   none: "#60646C",
 };
 
-const CustomTick = (props: any) => {
-  const { x, y, value } = props;
-  const tickWidth = 105; // Adjust this value according to the actual width of your tick component
-  const translateX = -tickWidth / 2; // Calculate the translation amount
-
-  return (
-    <g transform={`translate(${x + translateX},${y + 8})`}>
-      <foreignObject width={tickWidth} height="50">
-        <div className="flex items-center gap-1">
-          <PriorityIcon priority={`${value}`.toLowerCase() as TIssuePriorities} withContainer />
-          <span className="text-sm font-medium">{value}</span>
-        </div>
-      </foreignObject>
-    </g>
-  );
-};
-
 export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
   const { borderRadius = 8, data, height = 300, onBarClick, padding = 0.05, theme } = props;
 
@@ -71,7 +52,8 @@ export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
       padding={padding}
       customYAxisTickValues={data.map((p) => p.priority_count)}
       axisBottom={{
-        renderTick: (props) => <CustomTick {...props} />,
+        tickPadding: 8,
+        tickSize: 0,
       }}
       tooltip={(datum) => (
         <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
@@ -101,6 +83,11 @@ export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
           domain: {
             line: {
               stroke: "transparent",
+            },
+          },
+          ticks: {
+            text: {
+              fontSize: 13,
             },
           },
         },
