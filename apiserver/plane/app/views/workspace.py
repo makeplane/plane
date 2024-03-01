@@ -1235,9 +1235,9 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         csv_buffer.seek(0)
         return csv_buffer
 
-    def get(self, request, slug, user_id):
+    def post(self, request, slug, user_id):
 
-        if not request.GET.get("date"):
+        if not request.data.get("date"):
             return Response(
                 {"error": "Date is required"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -1246,7 +1246,7 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         user_activities = IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
-            created_at__date=request.GET.get("date"),
+            created_at__date=request.data.get("date"),
             project__project_projectmember__member=request.user,
             actor_id=user_id,
         ).select_related("actor", "workspace", "issue", "project")[:10000]
