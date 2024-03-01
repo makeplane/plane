@@ -12,7 +12,6 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db.models.signals import post_save
-from django.conf import settings
 from django.dispatch import receiver
 from django.utils import timezone
 from django.db.models.signals import post_save
@@ -148,6 +147,23 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 @receiver(post_save, sender=User)
+def create_user_notification(sender, instance, created, **kwargs):
+    # create preferences
+    if created and not instance.is_bot:
+        # Module imports
+        from plane.db.models import UserNotificationPreference
+
+        UserNotificationPreference.objects.create(
+            user=instance,
+            property_change=False,
+            state_change=False,
+            comment=False,
+            mention=False,
+            issue_completed=False,
+        )
+
+
+@receiver(post_save, sender=User)
 def send_welcome_slack(sender, instance, created, **kwargs):
     try:
         if created and not instance.is_bot:
@@ -165,20 +181,3 @@ def send_welcome_slack(sender, instance, created, **kwargs):
     except Exception as e:
         capture_exception(e)
         return
-
-
-@receiver(post_save, sender=User)
-def create_user_notification(sender, instance, created, **kwargs):
-    # create preferences
-    if created and not instance.is_bot:
-        # Module imports
-        from plane.db.models import UserNotificationPreference
-
-        UserNotificationPreference.objects.create(
-            user=instance,
-            property_change=False,
-            state_change=False,
-            comment=False,
-            mention=False,
-            issue_completed=False,
-        )

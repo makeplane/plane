@@ -29,16 +29,20 @@ export const ProjectLayoutRoot: FC = observer(() => {
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await issues?.fetchIssues(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        issues?.groupedIssueIds ? "mutation" : "init-loader"
-      );
-    }
-  });
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 

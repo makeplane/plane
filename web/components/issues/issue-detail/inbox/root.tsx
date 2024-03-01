@@ -30,6 +30,8 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
   } = useInboxIssues();
   const {
     issue: { getIssueById },
+    fetchActivities,
+    fetchComments,
   } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
   const { setToastAlert } = useToast();
@@ -125,6 +127,8 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
     async () => {
       if (workspaceSlug && projectId && inboxId && issueId) {
         await issueOperations.fetch(workspaceSlug, projectId, issueId);
+        await fetchActivities(workspaceSlug, projectId, issueId);
+        await fetchComments(workspaceSlug, projectId, issueId);
       }
     }
   );
