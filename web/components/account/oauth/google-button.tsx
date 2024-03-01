@@ -1,7 +1,6 @@
-import { FC } from "react";
-import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import { FC } from "react";
 // images
 import GoogleLogo from "/public/logos/google-logo.svg";
 
@@ -15,7 +14,7 @@ export const GoogleOAuthButton: FC<GoogleOAuthButtonProps> = (props) => {
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    signIn("google");
+    window.location.href= "http://192.168.68.59:8000/auth/google/"
   };
 
   return (

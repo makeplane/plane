@@ -3,18 +3,19 @@
 # Python imports
 import os
 import ssl
-import certifi
 from urllib.parse import urlparse
 
-# Django imports
-from django.core.management.utils import get_random_secret_key
+import certifi
 
 # Third party imports
 import dj_database_url
 import sentry_sdk
+
+# Django imports
+from django.core.management.utils import get_random_secret_key
+from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
-from sentry_sdk.integrations.celery import CeleryIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -109,7 +110,7 @@ TEMPLATES = [
 SESSION_COOKIE_SECURE = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1800
-SESSION_COOKIE_NAME = "next-auth.session-token"
+SESSION_COOKIE_NAME = "session-id"
 SESSION_COOKIE_DOMAIN = None
 
 # CSRF cookies

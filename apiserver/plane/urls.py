@@ -2,11 +2,14 @@
 
 """
 
-from django.urls import path, include, re_path
+from django.conf import settings
+from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
-from django.conf import settings
-
+from plane.app.views.auth.google import (
+    GoogleCallbackEndpoint,
+    GoogleOauthInitiateEndpoint,
+)
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html")),
@@ -15,6 +18,17 @@ urlpatterns = [
     path("api/instances/", include("plane.license.urls")),
     path("api/v1/", include("plane.api.urls")),
     path("", include("plane.web.urls")),
+    path(
+        "auth/google/",
+        GoogleOauthInitiateEndpoint.as_view(),
+        name="google-initiate",
+    ),
+    path(
+        "auth/callback/google/",
+        GoogleCallbackEndpoint.as_view(),
+        name="google-callback",
+    ),
+
 ]
 
 
