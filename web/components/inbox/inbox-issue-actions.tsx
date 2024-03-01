@@ -131,6 +131,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const handleInboxIssueNavigation = useCallback(
     (direction: "next" | "prev") => {
       if (!inboxIssues || !inboxIssueId) return;
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && (activeElement.classList.contains("tiptap") || activeElement.id === "title-input")) return;
       const nextIssueIndex =
         direction === "next"
           ? (currentIssueIndex + 1) % inboxIssues.length
