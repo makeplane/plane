@@ -5,55 +5,56 @@ import pytz
 import requests
 
 # Module imports
-from .provider import Provider
+from .adapter import Adapter
 
 
-class GithubAuthProvider(Provider):
+class GithubAuthAdapter(Adapter):
+
+    token_url = "https://github.com/login/oauth/access_token"
+    userinfo_url = "https://api.github.com/user"
+    provider = "github"
+    scope = "read:user user:email"
 
     def __init__(
         self,
         client_id,
         request,
         client_secret=None,
+        code=None,
     ):
-        scope = "read:user user:email"
         redirect_uri = (
             f"{request.scheme}://{request.get_host()}/auth/callback/github/"
         )
-        provider = "github"
+        auth_url = f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope={self.scope}"
         super().__init__(
             request=request,
-            provider=provider,
+            provider=self.provider,
             client_id=client_id,
-            scope=scope,
+            scope=self.scope,
             redirect_uri=redirect_uri,
             client_secret=client_secret,
+            auth_url=auth_url,
+            token_url=self.token_url,
+            userinfo_url=self.userinfo_url,
+            code=code,
         )
 
-    def get_auth_url(self):
-        return f"https://github.com/login/oauth/authorize?client_id={self.client_id}&redirect_uri={self.redirect_uri}&scope={self.scope}"
+    def validate_user(self):
+        self.get_user_token()
+        self.get_user_response()
+        return self.user_data.get("email")
 
-    def get_token_url(self):
-        return "https://github.com/login/oauth/access_token"
-
-    def get_user_info_url(self):
-        return "https://api.github.com/user"
-
-    def complete_login(self, user, provider_response):
-        return super().complete_login(user, provider_response)
-
-    def get_user_token(self, code):
-        url = self.get_token_url()
+    def get_user_token(self):
         data = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
-            "code": code,
+            "code": self.code,
             "redirect_uri": self.redirect_uri,
         }
-        headers = {"Accept": "application/json"}
-        token_response = requests.post(url, data=data, headers=headers)
-        token_response = token_response.json()
-        return {
+        token_response = super().get_user_token(
+            data=data, headers={"Accept": "application/json"}
+        )
+        data = {
             "access_token": token_response.get("access_token"),
             "refresh_token": token_response.get("refresh_token", None),
             "access_token_expired_at": (
@@ -73,17 +74,10 @@ class GithubAuthProvider(Provider):
                 else None
             ),
         }
+        self.set_token_data(data=data)
+        return token_response
 
-    def get_user_response(self, code):
-        token_data = self.get_user_token(code=code)
-        headers = {
-            "Authorization": f"Bearer {token_data.get('access_token')}",
-            "Accept": "application/json",
-        }
-        user_info_response = requests.get(
-            self.get_user_info_url(), headers=headers
-        ).json()
-
+    def __get_email(self, headers):
         # Github does not provide email in user response
         emails_url = "https://api.github.com/user/emails"
         emails_response = requests.get(emails_url, headers=headers).json()
@@ -91,8 +85,16 @@ class GithubAuthProvider(Provider):
             (email["email"] for email in emails_response if email["primary"]),
             None,
         )
+        return email
 
-        return {
+    def get_user_response(self):
+        user_info_response = super().get_user_response()
+        headers = {
+            "Authorization": f"Bearer {self.token_data.get('access_token')}",
+            "Accept": "application/json",
+        }
+        email = self.__get_email(headers=headers)
+        data = {
             "email": email,
             "user": {
                 "provider_id": user_info_response.get("id"),
@@ -101,5 +103,12 @@ class GithubAuthProvider(Provider):
                 "first_name": user_info_response.get("name"),
                 "last_name": user_info_response.get("family_name"),
             },
-            "token": token_data,
         }
+        self.set_user_data(data=data)
+        return
+
+    def complete_login(self):
+        return super().complete_login()
+
+    def complete_signup(self):
+        return super().complete_signup()
