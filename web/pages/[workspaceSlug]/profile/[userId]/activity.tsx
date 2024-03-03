@@ -13,6 +13,8 @@ import { DownloadActivityButton, WorkspaceActivityListPage } from "components/pr
 import { Button } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const PER_PAGE = 100;
 
@@ -25,7 +27,10 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { userId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    currentUser,
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
@@ -45,11 +50,14 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
       />
     );
 
+  const canDownloadActivity =
+    currentUser?.id === userId && !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <div className="h-full w-full px-5 py-5 md:px-9 flex flex-col overflow-hidden">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-lg font-medium">Recent activity</h3>
-        {currentUser?.id === userId && <DownloadActivityButton />}
+        {canDownloadActivity && <DownloadActivityButton />}
       </div>
       <div className="h-full flex flex-col overflow-y-auto">
         {activityPages}

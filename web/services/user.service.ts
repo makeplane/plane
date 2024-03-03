@@ -167,13 +167,11 @@ export class UserService extends APIService {
   async downloadProfileActivity(
     workspaceSlug: string,
     userId: string,
-    params: {
+    data: {
       date: string;
     }
   ): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/export`, {
-      params,
-    })
+    return this.post(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/export/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
