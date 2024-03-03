@@ -36,18 +36,8 @@ export interface IProjectViewIssues {
     data: Partial<TIssue>,
     viewId: string
   ) => Promise<void>;
-  removeIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    viewId: string
-  ) => Promise<void>;
-  archiveIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    viewId?: string | undefined
-  ) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => Promise<void>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -195,22 +185,15 @@ export class ProjectViewIssues extends IssueHelperStore implements IProjectViewI
     }
   };
 
-  archiveIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    viewId: string | undefined = undefined
-  ) => {
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => {
     try {
-      if (!viewId) throw new Error("View Id is required");
-
       await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         pull(this.issues[viewId], issueId);
       });
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", viewId);
       throw error;
     }
   };

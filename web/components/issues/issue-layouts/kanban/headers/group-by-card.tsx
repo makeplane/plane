@@ -13,7 +13,7 @@ import { useEventTracker } from "hooks/store";
 import { observer } from "mobx-react-lite";
 // types
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { KanbanStoreType } from "../base-kanban-root";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -26,7 +26,7 @@ interface IHeaderGroupByCard {
   handleKanbanFilters: any;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 

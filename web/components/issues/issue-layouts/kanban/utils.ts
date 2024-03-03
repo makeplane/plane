@@ -45,8 +45,8 @@ export const handleDragDrop = async (
   groupBy: string | null,
   issueMap: IIssueMap,
   issueWithIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined,
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>,
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined,
+  removeIssue: (projectId: string, issueId: string) => Promise<void> | undefined
 ) => {
   if (!issueMap || !issueWithIds || !source || !destination || !workspaceSlug || !projectId) return;
 
@@ -85,7 +85,7 @@ export const handleDragDrop = async (
     const [removed] = sourceIssues.splice(source.index, 1);
 
     if (removed) {
-      return await removeIssue(workspaceSlug, projectId, removed);
+      return await removeIssue(projectId, removed);
     }
   } else {
     //spreading the array to stop changing the original reference
@@ -146,7 +146,7 @@ export const handleDragDrop = async (
     }
 
     if (updatedIssue && updatedIssue?.id) {
-      return await updateIssue(workspaceSlug, updatedIssue.project_id, updatedIssue.id, updatedIssue);
+      return updateIssue && (await updateIssue(updatedIssue.project_id, updatedIssue.id, updatedIssue));
     }
   }
 };

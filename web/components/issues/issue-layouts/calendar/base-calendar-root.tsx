@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
@@ -7,58 +7,29 @@ import { CalendarChart } from "components/issues";
 // hooks
 import useToast from "hooks/use-toast";
 import { useIssues, useUser } from "hooks/store";
+import { useIssuesActions } from "hooks/use-issues-actions";
 // types
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TGroupedIssues,
-  TIssue,
-  TIssueKanbanFilters,
-} from "@plane/types";
-import { EIssueFilterType } from "constants/issue";
+import { TGroupedIssues } from "@plane/types";
+import { EIssuesStoreType } from "constants/issue";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { EUserProjectRoles } from "constants/project";
 
+type CalendarStoreType =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.PROJECT_VIEW;
+
 interface IBaseCalendarRoot {
-  issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
-  };
-  updateFilters: (
-    workspaceSlug: string,
-    projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-  ) => Promise<void>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, payload: Partial<TIssue>) => Promise<void>;
+  storeType: CalendarStoreType;
   viewId?: string;
   isCompletedCycle?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const {
-    issueStore,
-    issuesFilterStore,
-    QuickActions,
-    issueActions,
-    viewId,
-    updateFilters,
-    updateIssue,
-    isCompletedCycle = false,
-  } = props;
+  const { QuickActions, storeType, viewId, isCompletedCycle = false } = props;
 
   // router
   const router = useRouter();
@@ -66,16 +37,18 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   // hooks
   const { setToastAlert } = useToast();
-  const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { issues, issuesFilter, issueMap } = useIssues(storeType);
+  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
+    useIssuesActions(storeType);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
-  const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
+  const displayFilters = issuesFilter.issueFilters?.displayFilters;
 
-  const groupedIssueIds = (issueStore.groupedIssueIds ?? {}) as TGroupedIssues;
+  const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const onDragEnd = async (result: DropResult) => {
     if (!result) return;
@@ -105,21 +78,12 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     }
   };
 
-  const handleIssues = useCallback(
-    async (date: string, issue: TIssue, action: EIssueActions) => {
-      if (issueActions[action]) {
-        await issueActions[action]!(issue);
-      }
-    },
-    [issueActions]
-  );
-
   return (
     <>
       <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <CalendarChart
-            issuesFilterStore={issuesFilterStore}
+            issuesFilterStore={issuesFilter}
             issues={issueMap}
             groupedIssueIds={groupedIssueIds}
             layout={displayFilters?.calendar?.layout}
@@ -128,31 +92,17 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               <QuickActions
                 customActionButton={customActionButton}
                 issue={issue}
-                handleDelete={async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.DELETE)}
-                handleUpdate={
-                  issueActions[EIssueActions.UPDATE]
-                    ? async (data) => handleIssues(issue.target_date ?? "", data, EIssueActions.UPDATE)
-                    : undefined
+                handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+                handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+                handleRemoveFromView={async () =>
+                  removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)
                 }
-                handleRemoveFromView={
-                  issueActions[EIssueActions.REMOVE]
-                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
-                    : undefined
-                }
-                handleArchive={
-                  issueActions[EIssueActions.ARCHIVE]
-                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.ARCHIVE)
-                    : undefined
-                }
-                handleRestore={
-                  issueActions[EIssueActions.RESTORE]
-                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.RESTORE)
-                    : undefined
-                }
+                handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+                handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
                 readOnly={!isEditingAllowed || isCompletedCycle}
               />
             )}
-            quickAddCallback={issueStore.quickAddIssue}
+            quickAddCallback={issues.quickAddIssue}
             viewId={viewId}
             readOnly={!isEditingAllowed || isCompletedCycle}
             updateFilters={updateFilters}

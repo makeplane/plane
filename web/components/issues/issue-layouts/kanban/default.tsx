@@ -17,10 +17,9 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 // constants
-import { EIssueActions } from "../types";
 import { getGroupByColumns } from "../utils";
-import { TCreateModalStoreTypes } from "constants/issue";
 import { MutableRefObject } from "react";
+import { KanbanStoreType } from "./base-kanban-root";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -30,7 +29,7 @@ export interface IGroupByKanBan {
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
@@ -43,7 +42,7 @@ export interface IGroupByKanBan {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -60,7 +59,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     group_by,
     sub_group_id = "null",
     isDragDisabled,
-    handleIssues,
+    updateIssue,
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
@@ -134,7 +133,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   group_by={group_by}
                   sub_group_id={sub_group_id}
                   isDragDisabled={isDragDisabled}
-                  handleIssues={handleIssues}
+                  updateIssue={updateIssue}
                   quickActions={quickActions}
                   enableQuickIssueCreate={enableQuickIssueCreate}
                   quickAddCallback={quickAddCallback}
@@ -160,7 +159,7 @@ export interface IKanBan {
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
@@ -174,7 +173,7 @@ export interface IKanBan {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -189,7 +188,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     sub_group_by,
     group_by,
     sub_group_id = "null",
-    handleIssues,
+    updateIssue,
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
@@ -216,7 +215,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       sub_group_by={sub_group_by}
       sub_group_id={sub_group_id}
       isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
-      handleIssues={handleIssues}
+      updateIssue={updateIssue}
       quickActions={quickActions}
       kanbanFilters={kanbanFilters}
       handleKanbanFilters={handleKanbanFilters}

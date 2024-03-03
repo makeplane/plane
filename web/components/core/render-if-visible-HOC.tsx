@@ -62,7 +62,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
         }
       };
     }
-  }, [root?.current, intersectionRef, children, changingReference]);
+  }, [root?.current, intersectionRef.current, children, changingReference]);
 
   //Set height after render
   useEffect(() => {

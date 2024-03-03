@@ -8,9 +8,9 @@ export const handleDragDrop = async (
   projectId: string | undefined,
   issueMap: IIssueMap,
   issueWithIds: TGroupedIssues,
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>
+  updateIssue?: (projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>
 ) => {
-  if (!issueMap || !issueWithIds || !workspaceSlug || !projectId) return;
+  if (!issueMap || !issueWithIds || !workspaceSlug || !projectId || !updateIssue) return;
 
   const sourceColumnId = source?.droppableId || null;
   const destinationColumnId = destination?.droppableId || null;
@@ -31,6 +31,6 @@ export const handleDragDrop = async (
       target_date: destinationColumnId,
     };
 
-    return await updateIssue(workspaceSlug, projectId, updatedIssue.id, updatedIssue);
+    return await updateIssue(projectId, updatedIssue.id, updatedIssue);
   }
 };

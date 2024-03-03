@@ -13,7 +13,7 @@ import { useEventTracker } from "hooks/store";
 import { TIssue, ISearchIssueResponse } from "@plane/types";
 import useToast from "hooks/use-toast";
 import { useState } from "react";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { EIssuesStoreType } from "constants/issue";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -21,7 +21,7 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType: TCreateModalStoreTypes;
+  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 

@@ -43,18 +43,8 @@ export interface IProfileIssues {
     data: Partial<TIssue>,
     userId: string
   ) => Promise<void>;
-  removeIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    userId: string
-  ) => Promise<void>;
-  archiveIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    userId?: string | undefined
-  ) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, userId: string) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, userId: string) => Promise<void>;
   quickAddIssue: undefined;
 }
 
@@ -248,13 +238,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     }
   };
 
-  archiveIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    userId: string | undefined = undefined
-  ) => {
-    if (!userId) return;
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, userId: string) => {
     try {
       await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
 

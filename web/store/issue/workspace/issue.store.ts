@@ -32,18 +32,14 @@ export interface IWorkspaceIssues {
     data: Partial<TIssue>,
     viewId: string
   ) => Promise<void>;
-  removeIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    viewId: string
-  ) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, viewId: string) => Promise<void>;
   archiveIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     viewId?: string | undefined
   ) => Promise<void>;
+  quickAddIssue: undefined;
 }
 
 export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssues {
@@ -60,6 +56,8 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
   workspaceService;
   issueService;
   issueArchiveService;
+
+  quickAddIssue = undefined;
 
   constructor(_rootStore: IIssueRootStore) {
     super(_rootStore);
@@ -141,7 +139,6 @@ export class WorkspaceIssues extends IssueHelperStore implements IWorkspaceIssue
 
   createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, viewId: string) => {
     try {
-
       const uniqueViewId = `${workspaceSlug}_${viewId}`;
 
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);

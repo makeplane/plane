@@ -10,7 +10,6 @@ import {
   useIssues,
   useModule,
   useProject,
-  useWorkspace,
   useIssueDetail,
 } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -31,7 +30,7 @@ export interface IssuesModalProps {
   onClose: () => void;
   onSubmit?: (res: TIssue) => Promise<void>;
   withDraftIssueWrapper?: boolean;
-  storeType?: TCreateModalStoreTypes;
+  storeType?: EIssuesStoreType;
   isDraft?: boolean;
 }
 
@@ -153,10 +152,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     try {
       const response = is_draft_issue
         ? await draftIssues.createIssue(workspaceSlug, payload.project_id, payload)
-        : await createIssue(workspaceSlug, payload.project_id, payload);
+        : createIssue && (await createIssue(payload.project_id, payload));
       if (!response) throw new Error();
 
-      fetchIssues(workspaceSlug, payload.project_id, "mutation");
+      fetchIssues(payload.project_id, "mutation");
 
       if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
@@ -195,7 +194,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     try {
       isDraft
         ? await draftIssues.updateIssue(workspaceSlug, payload.project_id, data.id, payload)
-        : await updateIssue(workspaceSlug, payload.project_id, data.id, payload);
+        : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
 
       setToastAlert({
         type: "success",

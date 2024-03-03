@@ -237,7 +237,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          const response = await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setToastAlert({
             title: "Cycle removed from issue successfully",
             type: "success",
@@ -245,7 +245,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
               change_details: "",

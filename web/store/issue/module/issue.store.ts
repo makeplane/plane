@@ -40,18 +40,8 @@ export interface IModuleIssues {
     data: Partial<TIssue>,
     moduleId: string
   ) => Promise<void>;
-  removeIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId: string
-  ) => Promise<void>;
-  archiveIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId?: string | undefined
-  ) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => Promise<void>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -231,15 +221,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     }
   };
 
-  archiveIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleId: string | undefined = undefined
-  ) => {
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => {
     try {
-      if (!moduleId) throw new Error("Module Id is required");
-
       await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 

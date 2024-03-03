@@ -27,8 +27,7 @@ import { EIssueFilterType } from "constants/issue";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  updateFilters: (
-    workspaceSlug: string,
+  updateFilters?: (
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
@@ -39,7 +38,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const { issuesFilterStore, updateFilters } = props;
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { projectId } = router.query;
 
   const issueCalendarView = useCalendarView();
 
@@ -62,14 +61,14 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
   const handleLayoutChange = (layout: TCalendarLayouts) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!projectId || !updateFilters) return;
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
-      },}
-    );
+      },
+    });
 
     issueCalendarView.updateCalendarPayload(
       layout === "month"
@@ -81,9 +80,9 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const handleToggleWeekends = () => {
     const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
-    if (!workspaceSlug || !projectId) return;
+    if (!projectId || !updateFilters) return;
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         show_weekends: !showWeekends,

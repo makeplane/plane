@@ -40,8 +40,7 @@ type Props = {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   readOnly?: boolean;
-  updateFilters: (
-    workspaceSlug: string,
+  updateFilters?: (
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters

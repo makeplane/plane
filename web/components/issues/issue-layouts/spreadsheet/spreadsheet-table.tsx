@@ -19,7 +19,7 @@ type Props = {
     customActionButton?: React.ReactElement,
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
@@ -34,7 +34,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     isEstimateEnabled,
     portalElement,
     quickActions,
-    handleIssues,
+    updateIssue,
     canEditProperties,
     containerRef,
   } = props;
@@ -95,7 +95,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             canEditProperties={canEditProperties}
             nestingLevel={0}
             isEstimateEnabled={isEstimateEnabled}
-            handleIssues={handleIssues}
+            updateIssue={updateIssue}
             portalElement={portalElement}
             containerRef={containerRef}
             isScrolled={isScrolled}

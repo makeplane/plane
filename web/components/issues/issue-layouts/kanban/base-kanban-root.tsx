@@ -4,20 +4,13 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
+import { useIssuesActions } from "hooks/use-issues-actions";
 import useToast from "hooks/use-toast";
 // ui
 import { Spinner } from "@plane/ui";
 // types
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TIssue,
-  TIssueKanbanFilters,
-} from "@plane/types";
-import { EIssueActions } from "../types";
+import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
@@ -25,45 +18,24 @@ import { DeleteIssueModal } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
-import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { ISSUE_DELETED } from "constants/event-tracker";
 
+export type KanbanStoreType =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.DRAFT
+  | EIssuesStoreType.PROFILE;
 export interface IBaseKanBanLayout {
-  issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
-  issuesFilter:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IDraftIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProfileIssuesFilter;
   QuickActions: FC<IQuickActionProps>;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
-  };
   showLoader?: boolean;
   viewId?: string;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  updateFilters: (
-    workspaceSlug: string,
-    projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-  ) => Promise<void>;
 }
 
 type KanbanDragState = {
@@ -74,19 +46,13 @@ type KanbanDragState = {
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
   const {
-    issues,
-    issuesFilter,
     QuickActions,
-    issueActions,
     showLoader,
     viewId,
     storeType,
     addIssuesToView,
     canEditPropertiesBasedOnProject,
     isCompletedCycle = false,
-    updateIssue,
-    removeIssue,
-    updateFilters,
   } = props;
   // router
   const router = useRouter();
@@ -96,7 +62,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     membership: { currentProjectRole },
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
-  const { issueMap } = useIssues();
+  const { issueMap, issuesFilter, issues } = useIssues(storeType);
+  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
+    useIssuesActions(storeType);
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -186,42 +154,25 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     }
   };
 
-  const handleIssues = useCallback(
-    async (issue: TIssue, action: EIssueActions) => {
-      if (issueActions[action]) {
-        await issueActions[action]!(issue);
-      }
-    },
-    [issueActions]
-  );
-
   const renderQuickActions = useCallback(
     (issue: TIssue, customActionButton?: React.ReactElement) => (
       <QuickActions
         customActionButton={customActionButton}
         issue={issue}
-        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-        handleUpdate={
-          issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
-        }
-        handleRemoveFromView={
-          issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
-        }
-        handleArchive={
-          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
-        }
-        handleRestore={
-          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
-        }
+        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+        handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+        handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
         readOnly={!isEditingAllowed || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [issueActions, handleIssues]
+    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const handleDeleteIssue = async () => {
-    if (!handleDragDrop) return;
+    if (!handleDragDrop || !dragState.draggedIssueId) return;
     await handleDragDrop(
       dragState.source,
       dragState.destination,
@@ -234,7 +185,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       updateIssue,
       removeIssue
     ).finally(() => {
-      handleIssues(issueMap[dragState.draggedIssueId!], EIssueActions.DELETE);
+      const draggedIssue = issueMap[dragState.draggedIssueId!];
+      removeIssue(draggedIssue.project_id, draggedIssue.id);
       setDeleteIssueModal(false);
       setDragState({});
       captureIssueEvent({
@@ -250,7 +202,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
       if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
       else _kanbanFilters.push(value);
-      updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
+      updateFilters(projectId.toString(), EIssueFilterType.KANBAN_FILTERS, {
         [toggle]: _kanbanFilters,
       });
     }
@@ -308,7 +260,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               displayProperties={displayProperties}
               sub_group_by={sub_group_by}
               group_by={group_by}
-              handleIssues={handleIssues}
+              updateIssue={updateIssue}
               quickActions={renderQuickActions}
               handleKanbanFilters={handleKanbanFilters}
               kanbanFilters={kanbanFilters}

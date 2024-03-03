@@ -42,18 +42,8 @@ export interface ICycleIssues {
     data: Partial<TIssue>,
     cycleId: string
   ) => Promise<void>;
-  removeIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    cycleId: string
-  ) => Promise<void>;
-  archiveIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    cycleId?: string | undefined
-  ) => Promise<void>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => Promise<void>;
   quickAddIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -67,7 +57,7 @@ export interface ICycleIssues {
     issueIds: string[],
     fetchAddedIssues?: boolean
   ) => Promise<void>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<TIssue>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   transferIssuesFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -226,15 +216,8 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
     }
   };
 
-  archiveIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    cycleId: string | undefined = undefined
-  ) => {
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, cycleId: string) => {
     try {
-      if (!cycleId) throw new Error("Cycle Id is required");
-
       await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
 
@@ -317,10 +300,8 @@ export class CycleIssues extends IssueHelperStore implements ICycleIssues {
 
       this.rootStore.issues.updateIssue(issueId, { cycle_id: null });
 
-      const response = await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+      await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
       this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
-
-      return response;
     } catch (error) {
       throw error;
     }

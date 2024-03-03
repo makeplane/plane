@@ -223,7 +223,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          const response = await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setToastAlert({
             title: "Cycle removed from issue successfully",
             type: "success",
@@ -231,7 +231,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
+            payload: { issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
               change_details: "",

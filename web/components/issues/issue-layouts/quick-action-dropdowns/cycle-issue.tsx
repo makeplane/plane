@@ -101,7 +101,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         }}
         data={issueToEdit ?? duplicateIssuePayload}
         onSubmit={async (data) => {
-          if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.CYCLE}
       />
