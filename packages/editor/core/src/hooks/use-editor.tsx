@@ -1,5 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useState } from "react";
 import { CoreEditorProps } from "src/ui/props";
 import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
@@ -8,6 +8,7 @@ import { DeleteImage } from "src/types/delete-image";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { UploadImage } from "src/types/upload-image";
+import { Selection } from "@tiptap/pm/state";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -70,6 +71,10 @@ export const useEditor = ({
       onCreate: async ({ editor }) => {
         onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
+      onTransaction: async ({ editor }) => {
+        console.log("inside a transaction", editor.state.selection.anchor);
+        setSavedSelection(editor.state.selection);
+      },
       onUpdate: async ({ editor }) => {
         // for instant feedback loop
         setIsSubmitting?.("submitting");
@@ -83,13 +88,36 @@ export const useEditor = ({
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
 
+  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+
+  console.log("savedSelection", savedSelection?.anchor);
+  const insertContentAtSavedSelection = (content: string) => {
+    console.log("insertingggggggg", content, savedSelection?.anchor);
+    if (editorRef.current && savedSelection) {
+      editorRef.current
+        .chain()
+        .focus()
+        .insertContentAt(savedSelection?.anchor, content)
+        .run();
+    }
+  };
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: () => {
       editorRef.current?.commands.clearContent();
     },
-    setEditorValue: (content: string) => {
-      editorRef.current?.commands.setContent(content);
-    },
+    // setEditorValue: (content: string) => {
+    //   // Check if there's a current selection or cursor position in the editor
+    //   if (editorRef.current?.state.selection.empty) {
+    //     console.log("this ran");
+    //     // If there's no selection or cursor, simply set the content as before
+    //     editorRef.current?.commands.setContent(content);
+    //   } else {
+    //     console.log("that ran");
+    //     // If there's a cursor or selection, insert content at that position
+    //     editorRef.current?.commands.insertContent(content);
+    //   }
+    // },
+    setEditorValue: insertContentAtSavedSelection,
   }));
 
   if (!editor) {

@@ -90,6 +90,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   useEffect(
     () => () => {
+      console.log("ran cleanup----------------------------");
       if (pageStore) {
         pageStore.cleanup();
       }
@@ -127,16 +128,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    await updateDescriptionAction(formData.description_html);
+    console.log("called onlyuuu");
+    updateDescriptionAction(formData.description_html);
   };
 
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    const newDescription = `${watch("description_html")}<p>${response}</p>`;
-    setValue("description_html", newDescription);
-    editorRef.current?.setEditorValue(newDescription);
-    updateDescriptionAction(newDescription);
+    editorRef.current?.setEditorValue(response);
   };
 
   const actionCompleteAlert = ({

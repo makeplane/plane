@@ -35,7 +35,7 @@ export interface IPageStore {
   addToFavorites: () => Promise<void>;
   removeFromFavorites: () => Promise<void>;
   updateName: (name: string) => Promise<void>;
-  updateDescription: (description: string) => Promise<void>;
+  updateDescription: (description: string) => void;
 
   // Reactions
   disposers: Array<() => void>;
@@ -89,7 +89,7 @@ export class PageStore implements IPageStore {
       addToFavorites: action,
       removeFromFavorites: action,
       updateName: action,
-      updateDescription: action,
+      updateDescription: action.bound,
       setIsSubmitting: action,
       cleanup: action,
     });
@@ -121,11 +121,13 @@ export class PageStore implements IPageStore {
       () => this.description_html,
       (description_html) => {
         //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
+        console.log("hooooooooooooooooooooooooooooooooooooooo 1");
         const { projectId, workspaceSlug } = this.rootStore.app.router;
         if (!projectId || !workspaceSlug) return;
         this.isSubmitting = "submitting";
         this.pageService.patchPage(workspaceSlug, projectId, this.id, { description_html }).finally(() => {
           runInAction(() => {
+            console.log("hooooooooooooooooooooooooooooooooooooooo");
             this.isSubmitting = "submitted";
           });
         });
@@ -166,7 +168,8 @@ export class PageStore implements IPageStore {
     this.name = name;
   });
 
-  updateDescription = action("updateDescription", async (description_html: string) => {
+  updateDescription = action("updateDescription", (description_html: string) => {
+    console.log("1");
     const { projectId, workspaceSlug } = this.rootStore.app.router;
     if (!projectId || !workspaceSlug) return;
 
