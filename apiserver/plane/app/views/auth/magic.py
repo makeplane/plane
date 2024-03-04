@@ -1,12 +1,11 @@
 # Python imports
-import os
+from urllib.parse import urlencode
 
 # Django imports
 from django.contrib.auth import login
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.http.response import JsonResponse
-from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 from django.views import View
 
 from plane.app.views.auth.adapter.base import AuthenticationException
@@ -23,16 +22,17 @@ class MagicGenerateEndpoint(View):
 
     def post(self, request):
         referer = request.META.get("HTTP_REFERER", "/")
-        if not referer:
-            return JsonResponse({"error": "Not a valid referer"}, status=400)
+
         # set the referer as session to redirect after login
         request.session["referer"] = referer
         email = request.POST.get("email", False)
         if not email:
-            return JsonResponse(
-                {"error": "Please provide a valid email address"},
-                status=400,
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "Please provide a valid email address"})
             )
+            return HttpResponseRedirect(url)
         try:
             # Clean up the email
             email = email.strip().lower()
@@ -41,38 +41,48 @@ class MagicGenerateEndpoint(View):
             key, token = adapter.initiate()
             # If the smtp is configured send through here
             magic_link.delay(email, key, token, referer)
-            return redirect(request.session.get("referer", "/"))
+            return HttpResponseRedirect(request.session.get("referer", "/"))
         except AuthenticationException as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            url = referer + "?" + urlencode({"error": str(e)})
+            return HttpResponseRedirect(url)
+
         except ValidationError:
-            return JsonResponse({"error": "Invalid email used"}, status=400)
+            url = referer + "?" + urlencode({"error": "Invalid email used"})
+            return HttpResponseRedirect(url)
 
 
 class MagicSignInEndpoint(View):
 
     def post(self, request):
+        referer = request.META.get("HTTP_REFERER", "/")
+        # set the referer as session to redirect after login
+        request.session["referer"] = referer
         # Check if the instance configuration is done
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            return JsonResponse(
-                {"error": "Instance is not configured"},
-                status=400,
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "Instance is not configured"})
             )
-
+            return HttpResponseRedirect(url)
         user_token = request.POST.get("token", "").strip()
         key = request.POST.get("key", "").strip().lower()
 
         if not key or user_token == "":
-            return JsonResponse(
-                {"error": "User token and key are required"},
-                status=400,
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "User token and key are required"})
             )
+            return HttpResponseRedirect(url)
         try:
             provider = MagicCodeProvider(
                 request=request, key=key, code=user_token
             )
             user = provider.authenticate()
             login(request=request, user=user)
-            return redirect(request.session.get("referer"))
+            return HttpResponseRedirect(request.session.get("referer"))
         except AuthenticationException as e:
-            return JsonResponse({"error": str(e)}, status=403)
+            url = referer + "?" + urlencode({"error": str(e)})
+            return HttpResponseRedirect(url)

@@ -1,11 +1,10 @@
 # Python imports
-import os
+from urllib.parse import urlencode
 
 # Django import
 from django.contrib.auth import login
 from django.core.exceptions import ImproperlyConfigured
-from django.http.response import JsonResponse
-from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 from django.views import View
 
 # Module imports
@@ -15,25 +14,33 @@ from plane.app.views.auth.provider.oauth.github import GitHubOAuthProvider
 class GitHubOauthInitiateEndpoint(View):
 
     def get(self, request):
-        referer = request.META.get("HTTP_REFERER")
-        if not referer:
-            return JsonResponse({"error": "Not a valid referer"}, status=400)
-
+        referer = request.META.get("HTTP_REFERER", "/")
         request.session["referer"] = referer
         try:
             provider = GitHubOAuthProvider(request=request)
             auth_url = provider.get_auth_url()
-            return redirect(auth_url)
+            return HttpResponseRedirect(auth_url)
         except ImproperlyConfigured as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            url = referer + "?" + urlencode({"error": str(e)})
+            return HttpResponseRedirect(url)
 
 
 class GitHubCallbackEndpoint(View):
 
     def get(self, request):
         code = request.GET.get("code")
+        referer = request.session.get("referer")
         if not code:
-            return redirect(request.session.get("referer"))
+            url = (
+                referer
+                + "?"
+                + urlencode(
+                    {
+                        "error": "Something went wrong while fetching data from OAuth provider. Please try again after sometime."
+                    }
+                )
+            )
+            return HttpResponseRedirect(url)
 
         try:
             provider = GitHubOAuthProvider(
@@ -42,6 +49,7 @@ class GitHubCallbackEndpoint(View):
             )
             user = provider.authenticate()
             login(request=request, user=user)
-            return redirect(request.session.get("referer"))
+            return HttpResponseRedirect(request.session.get("referer"))
         except ImproperlyConfigured as e:
-            return JsonResponse({"error": str(e)})
+            url = referer + "?" + urlencode({"error": str(e)})
+            return HttpResponseRedirect(url)
