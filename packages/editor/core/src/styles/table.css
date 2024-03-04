@@ -68,7 +68,7 @@
   top: 0;
   bottom: -2px;
   width: 4px;
-  z-index: 99;
+  z-index: 5;
   background-color: rgba(var(--color-primary-400));
   pointer-events: none;
 }
@@ -81,7 +81,7 @@
 .tableWrapper .tableControls .rowsControl {
   transition: opacity ease-in 100ms;
   position: absolute;
-  z-index: 99;
+  z-index: 5;
   display: flex;
   justify-content: center;
   align-items: center;

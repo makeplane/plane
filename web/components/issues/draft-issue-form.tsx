@@ -106,10 +106,6 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // store hooks
   const { areEstimatesEnabledForProject } = useEstimate();
-  const { mentionHighlights, mentionSuggestions } = useMention();
-  // hooks
-  const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
-  const { setToastAlert } = useToast();
   // refs
   const editorRef = useRef<any>(null);
   // router
@@ -117,6 +113,14 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const { workspaceSlug } = router.query;
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
+  // hooks
+  const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
+  const { setToastAlert } = useToast();
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
 
   // store
   const {

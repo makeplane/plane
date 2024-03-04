@@ -48,7 +48,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const editorRef = useRef<any>(null);
   // toast alert
   const { setToastAlert } = useToast();
-  const { mentionHighlights, mentionSuggestions } = useMention();
+
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
@@ -58,6 +58,13 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   };
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+
+  console.log("in  create issue modal", workspaceSlug, projectId);
+
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
 
   // store hooks
   const {

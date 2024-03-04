@@ -12,6 +12,7 @@ interface MentionListProps {
 export const MentionList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  console.log("props", props);
   const selectItem = (index: number) => {
     const item = props.items[index];
 

@@ -1,9 +1,9 @@
 import { Sparkle } from "lucide-react";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import useSWR from "swr";
 // hooks
 
 import { useApplication, useMention, usePage, useUser, useWorkspace } from "hooks/store";
@@ -26,11 +26,9 @@ import { IPage } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 // constants
+import { IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { IssuePeekOverview } from "components/issues";
-import { ProjectMemberService } from "services/project";
-import { UserService } from "services/user.service";
 
 // services
 const fileService = new FileService();
@@ -78,6 +76,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString())
       : null
   );
+
   // fetching archived pages from API
   useSWR(
     workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
@@ -86,21 +85,12 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       : null
   );
 
-  const projectMemberService = new ProjectMemberService();
-
-  const { data: projectMembers } = useSWR(["projectMembers", workspaceSlug, projectId], async () => {
-    const members = await projectMemberService.fetchProjectMembers(workspaceSlug, projectId);
-    const detailedMembers = await Promise.all(
-      members.map(async (member) => projectMemberService.getProjectMember(workspaceSlug, projectId, member.id))
-    );
-    console.log("ye toh chal", detailedMembers);
-    return detailedMembers;
-  });
-
   const pageStore = usePage(pageId as string);
 
-  // store hooks
-  const { getMentionSuggestions, mentionHighlights, mentionSuggestions } = useMention({ workspaceSlug, projectId });
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
 
   const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
 
@@ -317,7 +307,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     last_updated_at: updated_at,
                     last_updated_by: updated_by,
                   }}
-                  mentionSuggestions={getMentionSuggestions(projectMembers)}
+                  mentionSuggestions={mentionSuggestions}
                   mentionHighlights={mentionHighlights}
                   uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                   deleteFile={fileService.getDeleteImageFunction(workspaceId)}

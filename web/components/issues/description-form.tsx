@@ -48,7 +48,11 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
 
   const { setShowAlert } = useReloadConfirmations();
   // store hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
+
   // form info
   const {
     handleSubmit,

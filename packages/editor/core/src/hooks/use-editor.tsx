@@ -5,7 +5,7 @@ import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "src/lib/utils";
 import { DeleteImage } from "src/types/delete-image";
-import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { UploadImage } from "src/types/upload-image";
 
@@ -27,8 +27,8 @@ interface CustomEditorProps {
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: any;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
 }
 
 export const useEditor = ({
@@ -48,6 +48,7 @@ export const useEditor = ({
   mentionHighlights,
   mentionSuggestions,
 }: CustomEditorProps) => {
+  console.log("the mentions", mentionHighlights);
   const editor = useCustomEditor(
     {
       editorProps: {
@@ -57,8 +58,8 @@ export const useEditor = ({
       extensions: [
         ...CoreEditorExtensions(
           {
-            mentionSuggestions: mentionSuggestions ?? [],
-            mentionHighlights: mentionHighlights ?? [],
+            mentionSuggestions: mentionSuggestions,
+            mentionHighlights: mentionHighlights,
           },
           deleteFile,
           restoreFile,

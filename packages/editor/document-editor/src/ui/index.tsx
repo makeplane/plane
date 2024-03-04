@@ -126,6 +126,7 @@ const DocumentEditor = ({
     extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
   });
 
+  console.log("in document editor", mentionHighlights);
   if (!editor) {
     return null;
   }

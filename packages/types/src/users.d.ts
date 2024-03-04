@@ -15,7 +15,6 @@ export interface IUser {
   is_email_verified: boolean;
   is_managed: boolean;
   is_onboarded: boolean;
-  is_password_autoset: boolean;
   is_tour_completed: boolean;
   is_password_autoset: boolean;
   mobile_number: string | null;

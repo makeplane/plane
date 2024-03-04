@@ -7,29 +7,9 @@ import tippy from "tippy.js";
 import { v4 as uuidv4 } from "uuid";
 import { MentionList } from "src/ui/mentions/mention-list";
 
-export const getSuggestionItems =
-  (getSuggestions: () => Promise<IMentionSuggestion[]>) =>
-  async ({ query }: { query: string }) => {
-    console.log("yaa");
-    const suggestions = await getSuggestions();
-    const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
-      const transactionId = uuidv4();
-      return {
-        ...suggestion,
-        id: transactionId,
-      };
-    });
-    const filteredSuggestions = mappedSuggestions
-      .filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase()))
-      .slice(0, 5);
-
-    console.log("yoo", filteredSuggestions);
-    return filteredSuggestions;
-  };
-
 export const Mentions = (
   mentionSuggestions: () => Promise<IMentionSuggestion[]>,
-  mentionHighlights: IMentionHighlight[],
+  mentionHighlights: () => Promise<IMentionHighlight[]>,
   readonly: boolean
 ) =>
   CustomMention.configure({
@@ -39,8 +19,8 @@ export const Mentions = (
     readonly: readonly,
     mentionHighlights: mentionHighlights,
     suggestion: {
-      items: ({ query }) => {
-        const suggestions = mentionSuggestions();
+      items: async ({ query }) => {
+        const suggestions = await mentionSuggestions();
         const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
           const transactionId = uuidv4();
           return {
@@ -48,11 +28,11 @@ export const Mentions = (
             id: transactionId,
           };
         });
+
         const filteredSuggestions = mappedSuggestions
           .filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase()))
           .slice(0, 5);
 
-        console.log("yoo", filteredSuggestions);
         return filteredSuggestions;
       },
       // @ts-ignore
@@ -60,33 +40,44 @@ export const Mentions = (
         let reactRenderer: ReactRenderer | null = null;
         let popup: any | null = null;
 
+        const hidePopup = () => {
+          popup?.[0].hide();
+        };
         return {
           onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
-            props.editor.storage.mentionsOpen = true;
+            if (!props.clientRect) {
+              return;
+            }
             reactRenderer = new ReactRenderer(MentionList, {
               props,
               editor: props.editor,
             });
+            props.editor.storage.mentionsOpen = true;
             // @ts-ignore
             popup = tippy("body", {
               getReferenceClientRect: props.clientRect,
-              appendTo: () => document.querySelector("#editor-container"),
+              appendTo: () => document.body,
               content: reactRenderer.element,
               showOnCreate: true,
               interactive: true,
               trigger: "manual",
               placement: "bottom-start",
             });
+            // document.addEventListener("scroll", hidePopup, true);
           },
-
           onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
             reactRenderer?.updateProps(props);
+
+            if (!props.clientRect) {
+              return;
+            }
 
             popup &&
               popup[0].setProps({
                 getReferenceClientRect: props.clientRect,
               });
           },
+
           onKeyDown: (props: { event: KeyboardEvent }) => {
             if (props.event.key === "Escape") {
               popup?.[0].hide();
@@ -108,6 +99,8 @@ export const Mentions = (
             props.editor.storage.mentionsOpen = false;
             popup?.[0].destroy();
             reactRenderer?.destroy();
+
+            // document.removeEventListener("scroll", hidePopup, true);
           },
         };
       },

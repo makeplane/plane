@@ -5,7 +5,7 @@ import { MentionNodeView } from "src/ui/mentions/mention-node-view";
 import { IMentionHighlight } from "src/types/mention-suggestion";
 
 export interface CustomMentionOptions extends MentionOptions {
-  mentionHighlights: IMentionHighlight[];
+  mentionHighlights: () => Promise<IMentionHighlight[]>;
   readonly?: boolean;
 }
 

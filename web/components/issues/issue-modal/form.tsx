@@ -96,7 +96,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
-  const { mentionHighlights, mentionSuggestions } = useMention();
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: defaultProjectId,
+  });
+
   const {
     issue: { getIssueById },
   } = useIssueDetail();
