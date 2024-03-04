@@ -1,3 +1,7 @@
+# Python imports
+import uuid
+
+# Django imports
 from django.contrib.auth import login, logout
 from django.http.response import JsonResponse
 from django.shortcuts import redirect
@@ -7,9 +11,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.middleware.csrf import get_token
 
-import os
-import uuid
-
+# Module imports
 from plane.db.models import User, Profile
 
 class SignInAuthEndpoint(View):

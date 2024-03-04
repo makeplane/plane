@@ -21,6 +21,11 @@ from plane.app.views.auth.google import (
     GoogleOauthInitiateEndpoint,
 )
 
+from plane.app.views.auth.magic import (
+    MagicGenerateEndpoint,
+    MagicSignInEndpoint,
+)
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html")),
     path("api/", include("plane.app.urls")),
@@ -45,6 +50,16 @@ urlpatterns = [
     ),
     path(
         "get-csrf-token/", CSRFTokenEndpoint.as_view(), name="get_csrf_token"
+    ),
+    path(
+        "auth/magic-generate/",
+        MagicGenerateEndpoint.as_view(),
+        name="magic-generate",
+    ),
+    path(
+        "auth/magic-sign-in/",
+        MagicSignInEndpoint.as_view(),
+        name="magic-sign-in",
     ),
     path(
         "auth/google/",
