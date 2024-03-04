@@ -76,7 +76,7 @@ export const NotificationPopover = observer(() => {
                   : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
               } ${isSidebarCollapsed ? "justify-center" : ""}`}
               onClick={() => {
-                if (windowWidth < 768) themeStore.toggleMobileSidebar();
+                if (windowWidth < 768) themeStore.toggleSidebar();
                 if (!isActive) setFetchNotifications(true);
                 setIsActive(!isActive);
               }}

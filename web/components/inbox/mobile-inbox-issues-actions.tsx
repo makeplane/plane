@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import DatePicker from "react-datepicker";
 import { Menu, Popover } from "@headlessui/react";
+import { DayPicker } from "react-day-picker";
 import {
   CheckCircle2,
   ChevronDown,
@@ -293,7 +293,7 @@ export const MobileInboxIssuesActionHeader: React.FC<Props> = observer((props) =
                 static
               >
                 <div className="flex h-full w-full flex-col gap-y-1">
-                  <DatePicker
+                  {/* <DatePicker
                     className="bg-custom-background-100 border border-custom-border-200 rounded-md text-custom-text-200"
                     selected={date ? new Date(date) : null}
                     onChange={(val) => {
@@ -303,6 +303,21 @@ export const MobileInboxIssuesActionHeader: React.FC<Props> = observer((props) =
                     dateFormat="dd-MM-yyyy"
                     minDate={tomorrow}
                     inline
+                  /> */}
+                  <DayPicker
+                    selected={date ? new Date(date) : undefined}
+                    defaultMonth={date ? new Date(date) : undefined}
+                    onSelect={(date) => {
+                      if (!date) return;
+                      setDate(date);
+                    }}
+                    mode="single"
+                    className="border border-custom-border-200 rounded-md p-3"
+                    disabled={[
+                      {
+                        before: tomorrow,
+                      },
+                    ]}
                   />
 
                   <Button
