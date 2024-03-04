@@ -46,7 +46,7 @@ const emptyStateDetails = {
     },
 
     accessType: "workspace",
-    access: EUserWorkspaceRoles.ADMIN,
+    access: EUserWorkspaceRoles.MEMBER,
   },
   "workspace-analytics": {
     key: "workspace-analytics",
