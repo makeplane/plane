@@ -10,6 +10,12 @@ from plane.app.views.auth.github import (
     GithubCallbackEndpoint,
     GithubOauthInitiateEndpoint,
 )
+from plane.app.views.auth.email import (
+    SignInAuthEndpoint,
+    SignUpAuthEndpoint,
+    SignOutAuthEndpoint,
+    CSRFTokenEndpoint,
+)
 from plane.app.views.auth.google import (
     GoogleCallbackEndpoint,
     GoogleOauthInitiateEndpoint,
@@ -22,6 +28,24 @@ urlpatterns = [
     path("api/instances/", include("plane.license.urls")),
     path("api/v1/", include("plane.api.urls")),
     path("", include("plane.web.urls")),
+    path(
+        "auth/sign-in/",
+        SignInAuthEndpoint.as_view(),
+        name="sign-in",
+    ),
+    path(
+        "auth/sign-up/",
+        SignUpAuthEndpoint.as_view(),
+        name="sign-up",
+    ),
+    path(
+        "auth/sign-out/",
+        SignOutAuthEndpoint.as_view(),
+        name="sign-out",
+    ),
+    path(
+        "get-csrf-token/", CSRFTokenEndpoint.as_view(), name="get_csrf_token"
+    ),
     path(
         "auth/google/",
         GoogleOauthInitiateEndpoint.as_view(),
