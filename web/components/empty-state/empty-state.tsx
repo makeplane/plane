@@ -47,7 +47,7 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
   // current access type
   const currentAccessType = accessType === "workspace" ? currentWorkspaceRole : currentProjectRole;
   // permission
-  const isEditingAllowed = currentAccessType && access && access >= currentAccessType;
+  const isEditingAllowed = currentAccessType && access && currentAccessType >= access;
   const anyButton = primaryButton || secondaryButton;
 
   return (
