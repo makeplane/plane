@@ -1,4 +1,4 @@
-import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
+import { getEditorClassNames, IMentionHighlight, useReadOnlyEditor } from "@plane/editor-core";
 import { useRouter } from "next/router";
 import { useState, forwardRef, useEffect } from "react";
 import { EditorHeader } from "src/ui/components/editor-header";
@@ -22,7 +22,7 @@ interface IDocumentReadOnlyEditor {
   documentDetails: DocumentDetails;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-  mentionHighlights?: string[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
 
   pageDuplicationConfig?: IDuplicationConfig;
   onActionCompleteHandler: (action: {
@@ -71,6 +71,7 @@ const DocumentReadOnlyEditor = ({
     if (editor) {
       updateMarkings(editor.getJSON());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
   if (!editor) {

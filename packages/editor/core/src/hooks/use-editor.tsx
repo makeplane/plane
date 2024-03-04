@@ -48,7 +48,6 @@ export const useEditor = ({
   mentionHighlights,
   mentionSuggestions,
 }: CustomEditorProps) => {
-  console.log("the mentions", mentionHighlights);
   const editor = useCustomEditor(
     {
       editorProps: {

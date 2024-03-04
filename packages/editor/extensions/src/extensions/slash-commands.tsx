@@ -330,7 +330,7 @@ const renderItems = () => {
         appendTo: () => document.body,
         content: component.element,
         showOnCreate: true,
-        // interactive: true,
+        interactive: true,
         trigger: "manual",
         placement: "bottom-start",
       });

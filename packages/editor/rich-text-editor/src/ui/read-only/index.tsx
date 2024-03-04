@@ -1,5 +1,11 @@
 "use client";
-import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
+import {
+  EditorContainer,
+  EditorContentWrapper,
+  getEditorClassNames,
+  IMentionHighlight,
+  useReadOnlyEditor,
+} from "@plane/editor-core";
 import * as React from "react";
 
 interface IRichTextReadOnlyEditor {
@@ -8,7 +14,7 @@ interface IRichTextReadOnlyEditor {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
-  mentionHighlights?: string[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
 }
 
 interface RichTextReadOnlyEditorProps extends IRichTextReadOnlyEditor {

@@ -7,6 +7,7 @@ import {
   getEditorClassNames,
   useEditor,
   IMentionSuggestion,
+  IMentionHighlight,
 } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
@@ -50,16 +51,13 @@ interface IDocumentEditor {
   debouncedUpdatesEnabled?: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
 
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
 
   // embed configuration
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-}
-interface DocumentEditorProps extends IDocumentEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
 }
 
 interface EditorHandle {
@@ -126,7 +124,6 @@ const DocumentEditor = ({
     extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
   });
 
-  console.log("in document editor", mentionHighlights);
   if (!editor) {
     return null;
   }

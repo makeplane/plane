@@ -109,5 +109,9 @@ export const CoreEditorExtensions = (
   TableHeader,
   TableCell,
   TableRow,
-  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, false),
+  Mentions({
+    mentionSuggestions: mentionConfig.mentionSuggestions,
+    mentionHighlights: mentionConfig.mentionHighlights,
+    readonly: false,
+  }),
 ];

@@ -1,5 +1,11 @@
 import * as React from "react";
-import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
+import {
+  EditorContainer,
+  EditorContentWrapper,
+  getEditorClassNames,
+  IMentionHighlight,
+  useReadOnlyEditor,
+} from "@plane/editor-core";
 
 interface ICoreReadOnlyEditor {
   value: string;
@@ -7,7 +13,7 @@ interface ICoreReadOnlyEditor {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
-  mentionHighlights: string[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
 }
 
 interface EditorCoreProps extends ICoreReadOnlyEditor {

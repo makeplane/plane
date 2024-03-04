@@ -4,6 +4,7 @@ import {
   EditorContainer,
   EditorContentWrapper,
   getEditorClassNames,
+  IMentionHighlight,
   IMentionSuggestion,
   RestoreImage,
   UploadImage,
@@ -33,8 +34,8 @@ export type IRichTextEditor = {
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
 };
 
 export interface RichTextEditorProps extends IRichTextEditor {

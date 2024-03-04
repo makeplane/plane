@@ -8,6 +8,7 @@ import {
   EditorContentWrapper,
   getEditorClassNames,
   useEditor,
+  IMentionHighlight,
 } from "@plane/editor-core";
 import { FixedMenu } from "src/ui/menus/fixed-menu";
 import { LiteTextEditorExtensions } from "src/ui/extensions";
@@ -39,8 +40,8 @@ interface ILiteTextEditor {
   };
   onEnterKeyPress?: (e?: any) => void;
   cancelUploadImage?: () => any;
-  mentionHighlights?: string[];
-  mentionSuggestions?: IMentionSuggestion[];
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
   submitButton?: React.ReactNode;
 }
 

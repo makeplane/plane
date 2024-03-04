@@ -7,11 +7,15 @@ import tippy from "tippy.js";
 import { v4 as uuidv4 } from "uuid";
 import { MentionList } from "src/ui/mentions/mention-list";
 
-export const Mentions = (
-  mentionSuggestions: () => Promise<IMentionSuggestion[]>,
-  mentionHighlights: () => Promise<IMentionHighlight[]>,
-  readonly: boolean
-) =>
+export const Mentions = ({
+  mentionHighlights,
+  mentionSuggestions,
+  readonly,
+}: {
+  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
+  mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  readonly: boolean;
+}) =>
   CustomMention.configure({
     HTMLAttributes: {
       class: "mention",
@@ -20,7 +24,10 @@ export const Mentions = (
     mentionHighlights: mentionHighlights,
     suggestion: {
       items: async ({ query }) => {
-        const suggestions = await mentionSuggestions();
+        const suggestions = await mentionSuggestions?.();
+        if (!suggestions) {
+          return [];
+        }
         const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
           const transactionId = uuidv4();
           return {
@@ -37,7 +44,7 @@ export const Mentions = (
       },
       // @ts-ignore
       render: () => {
-        let reactRenderer: ReactRenderer | null = null;
+        let component: ReactRenderer | null = null;
         let popup: any | null = null;
 
         const hidePopup = () => {
@@ -48,7 +55,7 @@ export const Mentions = (
             if (!props.clientRect) {
               return;
             }
-            reactRenderer = new ReactRenderer(MentionList, {
+            component = new ReactRenderer(MentionList, {
               props,
               editor: props.editor,
             });
@@ -57,16 +64,16 @@ export const Mentions = (
             popup = tippy("body", {
               getReferenceClientRect: props.clientRect,
               appendTo: () => document.body,
-              content: reactRenderer.element,
+              content: component.element,
               showOnCreate: true,
               interactive: true,
               trigger: "manual",
               placement: "bottom-start",
             });
-            // document.addEventListener("scroll", hidePopup, true);
+            document.addEventListener("scroll", hidePopup, true);
           },
           onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
-            reactRenderer?.updateProps(props);
+            component?.updateProps(props);
 
             if (!props.clientRect) {
               return;
@@ -89,7 +96,7 @@ export const Mentions = (
 
             if (navigationKeys.includes(props.event.key)) {
               // @ts-ignore
-              reactRenderer?.ref?.onKeyDown(props);
+              component?.ref?.onKeyDown(props);
               event?.stopPropagation();
               return true;
             }
@@ -98,9 +105,9 @@ export const Mentions = (
           onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
             props.editor.storage.mentionsOpen = false;
             popup?.[0].destroy();
-            reactRenderer?.destroy();
+            component?.destroy();
 
-            // document.removeEventListener("scroll", hidePopup, true);
+            document.removeEventListener("scroll", hidePopup, true);
           },
         };
       },

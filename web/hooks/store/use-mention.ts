@@ -48,7 +48,6 @@ export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug: string
     });
 
   const mentionHighlights = async () => {
-    console.log("isme aaya highlights");
     if (!userDataLoading && userRef.current) {
       return [userRef.current.id];
     } else {
@@ -85,7 +84,6 @@ export const useMention = ({ workspaceSlug, projectId }: { workspaceSlug: string
     } else {
       // Wait for data to be available
       const members = await waitForData();
-      console.log("isme aaya", members);
       return members.map((memberDetails) => ({
         entity_name: "user_mention",
         entity_identifier: `${memberDetails?.member?.id}`,

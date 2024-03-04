@@ -9,17 +9,15 @@ import { useEffect, useState } from "react";
 // eslint-disable-next-line import/no-anonymous-default-export
 export const MentionNodeView = (props) => {
   const router = useRouter();
-  // const highlights = props.extension.options.mentionHighlights as IMentionHighlight[];
-  const [highlightsState, setHighlightsState] = useState();
+  const [highlightsState, setHighlightsState] = useState<IMentionHighlight[]>();
 
   useEffect(() => {
-    console.log("hightlights type", props.extension.options.mentionHighlights);
     const hightlights = async () => {
       const userId = await props.extension.options.mentionHighlights();
       setHighlightsState(userId);
     };
     hightlights();
-  }, []);
+  }, [props.extension.options]);
 
   const handleClick = () => {
     if (!props.extension.options.readonly) {
@@ -27,7 +25,6 @@ export const MentionNodeView = (props) => {
     }
   };
 
-  console.log("state of highlight", highlightsState);
   return (
     <NodeViewWrapper className="mention-component inline w-fit">
       <span
