@@ -15,7 +15,6 @@ interface CustomReadOnlyEditorProps {
     description_html: string;
   };
   mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
 }
 
 export const useReadOnlyEditor = ({
@@ -25,7 +24,6 @@ export const useReadOnlyEditor = ({
   editorProps = {},
   rerenderOnPropsChange,
   mentionHighlights,
-  mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor(
     {
@@ -37,7 +35,6 @@ export const useReadOnlyEditor = ({
       },
       extensions: [
         ...CoreReadOnlyEditorExtensions({
-          mentionSuggestions: mentionSuggestions,
           mentionHighlights: mentionHighlights,
         }),
         ...extensions,

@@ -28,7 +28,11 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
   // states
   const [descriptionHTML, setDescriptionHTML] = useState(value);
   // store hooks
-  const { mentionHighlights, mentionSuggestions } = useMention();
+  const { mentionHighlights, mentionSuggestions } = useMention({
+    workspaceSlug: workspaceSlug as string,
+    projectId: projectId as string,
+  });
+
   const { getWorkspaceBySlug } = useWorkspace();
   // hooks
   const debouncedValue = useDebounce(descriptionHTML, 1500);

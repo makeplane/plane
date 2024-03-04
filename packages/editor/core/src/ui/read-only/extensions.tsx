@@ -15,12 +15,11 @@ import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 import { ReadOnlyImageExtension } from "src/ui/extensions/image/read-only-image";
 import { isValidHttpUrl } from "src/lib/utils";
 import { Mentions } from "src/ui/mentions";
-import { IMentionHighlight, IMentionSuggestion } from "src/types/mention-suggestion";
+import { IMentionHighlight } from "src/types/mention-suggestion";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
 }) => [
   StarterKit.configure({
     bulletList: {
@@ -96,7 +95,6 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   TableCell,
   TableRow,
   Mentions({
-    mentionSuggestions: mentionConfig.mentionSuggestions,
     mentionHighlights: mentionConfig.mentionHighlights,
     readonly: true,
   }),

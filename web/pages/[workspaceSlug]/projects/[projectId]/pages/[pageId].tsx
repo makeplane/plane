@@ -274,6 +274,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               customClassName={"tracking-tight w-full px-0"}
               borderOnFocus={false}
               noBorder
+              mentionHighlights={mentionHighlights}
               documentDetails={{
                 title: pageTitle,
                 created_by: created_by,
@@ -314,6 +315,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     value={pageDescription}
                     setShouldShowAlert={setShowAlert}
                     cancelUploadImage={fileService.cancelUpload}
+                    mentionHighlights={mentionHighlights}
+                    mentionSuggestions={mentionSuggestions}
                     ref={editorRef}
                     debouncedUpdatesEnabled={false}
                     setIsSubmitting={setIsSubmitting}
