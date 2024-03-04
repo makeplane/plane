@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { ArrowRight, Plus, PanelRight } from "lucide-react";
 // hooks
 import {
   useApplication,
@@ -20,20 +21,18 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import { ProjectAnalyticsModal } from "components/analytics";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
+import { ProjectLogo } from "components/project";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
-// icons
-import { ArrowRight, Plus, PanelRight } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
+import { cn } from "helpers/common.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -163,13 +162,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                         label={currentProjectDetails?.name ?? "Project"}
                         href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                         icon={
-                          currentProjectDetails?.emoji ? (
-                            renderEmoji(currentProjectDetails.emoji)
-                          ) : currentProjectDetails?.icon_prop ? (
-                            renderEmoji(currentProjectDetails.icon_prop)
-                          ) : (
-                            <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                              {currentProjectDetails?.name.charAt(0)}
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
                         }

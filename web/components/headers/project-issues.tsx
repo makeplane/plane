@@ -12,22 +12,21 @@ import {
   useUser,
   useMember,
 } from "hooks/store";
+import { useIssues } from "hooks/store/use-issues";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
+import { ProjectLogo } from "components/project";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-// helper
-import { renderEmoji } from "helpers/emoji.helper";
 import { EUserProjectRoles } from "constants/project";
-import { useIssues } from "hooks/store/use-issues";
-import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   // states
@@ -123,17 +122,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                       label={currentProjectDetails?.name ?? "Project"}
                       icon={
                         currentProjectDetails ? (
-                          currentProjectDetails?.emoji ? (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                              {renderEmoji(currentProjectDetails.emoji)}
-                            </span>
-                          ) : currentProjectDetails?.icon_prop ? (
-                            <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                              {renderEmoji(currentProjectDetails.icon_prop)}
-                            </div>
-                          ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                              {currentProjectDetails?.name.charAt(0)}
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
                         ) : (

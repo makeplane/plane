@@ -1,17 +1,16 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+// components
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { BreadcrumbLink } from "components/common";
+import { ProjectLogo } from "components/project";
 // ui
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
-// helper
-import { renderEmoji } from "helpers/emoji.helper";
 // hooks
 import { useProject, useUser } from "hooks/store";
 // constants
 import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
-// components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
 
 export interface IProjectSettingHeader {
   title: string;
@@ -44,13 +43,9 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
                     href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                     label={currentProjectDetails?.name ?? "Project"}
                     icon={
-                      currentProjectDetails?.emoji ? (
-                        renderEmoji(currentProjectDetails.emoji)
-                      ) : currentProjectDetails?.icon_prop ? (
-                        renderEmoji(currentProjectDetails.icon_prop)
-                      ) : (
-                        <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                          {currentProjectDetails?.name.charAt(0)}
+                      currentProjectDetails && (
+                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                          <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                         </span>
                       )
                     }

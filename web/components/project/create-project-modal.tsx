@@ -7,16 +7,18 @@ import { X } from "lucide-react";
 import { useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomEmojiPicker, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
-import EmojiIconPicker from "components/emoji-icon-picker";
 import { MemberDropdown } from "components/dropdowns";
+import { ProjectLogo } from "components/project";
 // helpers
-import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
+import { projectIdentifierSanitizer } from "helpers/project.helper";
+import { convertHexEmojiToDecimal, getRandomEmoji } from "helpers/emoji.helper";
+// types
+import { IProject } from "@plane/types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
-// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { PROJECT_CREATED } from "constants/event-tracker";
 
@@ -30,6 +32,21 @@ type Props = {
 interface IIsGuestCondition {
   onClose: () => void;
 }
+
+const defaultValues: Partial<IProject> = {
+  cover_image: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+  description: "",
+  logo_props: {
+    in_use: "emoji",
+    emoji: {
+      value: getRandomEmoji(),
+    },
+  },
+  identifier: "",
+  name: "",
+  network: 2,
+  project_lead: null,
+};
 
 const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
   const { setToastAlert } = useToast();
@@ -46,19 +63,6 @@ const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
   return null;
 };
 
-export interface ICreateProjectForm {
-  name: string;
-  identifier: string;
-  description: string;
-  emoji_and_icon: string;
-  network: number;
-  project_lead_member: string;
-  project_lead: string;
-  cover_image: string;
-  icon_prop: any;
-  emoji: string;
-}
-
 export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
@@ -72,7 +76,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   // toast
   const { setToastAlert } = useToast();
   // form info
-  const cover_image = PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)];
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -80,20 +83,10 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     control,
     watch,
     setValue,
-  } = useForm<ICreateProjectForm>({
-    defaultValues: {
-      cover_image,
-      description: "",
-      emoji_and_icon: getRandomEmoji(),
-      identifier: "",
-      name: "",
-      network: 2,
-      project_lead: undefined,
-    },
+  } = useForm<IProject>({
+    defaultValues,
     reValidateMode: "onChange",
   });
-
-  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   if (currentWorkspaceRole && isOpen)
     if (currentWorkspaceRole < EUserWorkspaceRoles.MEMBER) return <IsGuestCondition onClose={onClose} />;
@@ -101,7 +94,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const handleClose = () => {
     onClose();
     setIsChangeInIdentifierRequired(true);
-    reset();
+    setTimeout(() => {
+      reset();
+    }, 300);
   };
 
   const handleAddToFavorites = (projectId: string) => {
@@ -116,18 +111,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     });
   };
 
-  const onSubmit = async (formData: ICreateProjectForm) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { emoji_and_icon, project_lead_member, ...payload } = formData;
-
-    if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
-    else payload.emoji = formData.emoji_and_icon;
-
-    payload.project_lead = formData.project_lead_member;
+  const onSubmit = async (formData: Partial<IProject>) => {
     // Upper case identifier
-    payload.identifier = payload.identifier.toUpperCase();
+    formData.identifier = formData.identifier?.toUpperCase();
 
-    return createProject(workspaceSlug.toString(), payload)
+    return createProject(workspaceSlug.toString(), formData)
       .then((res) => {
         const newPayload = {
           ...res,
@@ -157,7 +145,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           captureProjectEvent({
             eventName: PROJECT_CREATED,
             payload: {
-              ...payload,
+              ...formData,
               state: "FAILED",
             },
           });
@@ -171,13 +159,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       return;
     }
     if (e.target.value === "") setValue("identifier", "");
-    else setValue("identifier", e.target.value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "").substring(0, 5));
+    else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 5));
     onChange(e);
   };
 
   const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const alphanumericValue = value.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
+    const alphanumericValue = projectIdentifierSanitizer(value);
     setIsChangeInIdentifierRequired(false);
     onChange(alphanumericValue);
   };
@@ -210,11 +198,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             >
               <Dialog.Panel className="w-full transform rounded-lg bg-custom-background-100 p-3 text-left shadow-custom-shadow-md transition-all sm:w-3/5 lg:w-1/2 xl:w-2/5">
                 <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
-                  {watch("cover_image") !== null && (
+                  {watch("cover_image") && (
                     <img
                       src={watch("cover_image")!}
                       className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
-                      alt="Cover Image"
+                      alt="Cover image"
                     />
                   )}
 
@@ -224,30 +212,45 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                     </button>
                   </div>
                   <div className="absolute bottom-2 right-2">
-                    <ImagePickerPopover
-                      label="Change Cover"
-                      onChange={(image) => {
-                        setValue("cover_image", image);
-                      }}
+                    <Controller
+                      name="cover_image"
                       control={control}
-                      value={watch("cover_image")}
-                      tabIndex={9}
+                      render={({ field: { value, onChange } }) => (
+                        <ImagePickerPopover
+                          label="Change Cover"
+                          onChange={onChange}
+                          control={control}
+                          value={value}
+                          tabIndex={9}
+                        />
+                      )}
                     />
                   </div>
                   <div className="absolute -bottom-[22px] left-3">
                     <Controller
-                      name="emoji_and_icon"
+                      name="logo_props"
                       control={control}
                       render={({ field: { value, onChange } }) => (
-                        <EmojiIconPicker
+                        <CustomEmojiPicker
                           label={
-                            <div className="grid h-[44px] w-[44px] place-items-center rounded-md bg-custom-background-80 text-lg outline-none">
-                              {value ? renderEmoji(value) : "Icon"}
-                            </div>
+                            <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
+                              <ProjectLogo logo={value} className="text-xl" />
+                            </span>
                           }
-                          onChange={onChange}
-                          value={value}
-                          tabIndex={10}
+                          onChange={(val) => {
+                            let logoValue = {};
+
+                            if (val.type === "emoji")
+                              logoValue = {
+                                value: convertHexEmojiToDecimal(val.value.unified),
+                              };
+                            else if (val.type === "icon") logoValue = val.value;
+
+                            onChange({
+                              in_use: val.type,
+                              [val.type]: logoValue,
+                            });
+                          }}
                         />
                       )}
                     />
@@ -342,57 +345,65 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                       <Controller
                         name="network"
                         control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <div className="flex-shrink-0" tabIndex={4}>
-                            <CustomSelect
-                              value={value}
-                              onChange={onChange}
-                              label={
-                                <div className="flex items-center gap-1">
-                                  {currentNetwork ? (
-                                    <>
-                                      <currentNetwork.icon className="h-3 w-3" />
-                                      {currentNetwork.label}
-                                    </>
-                                  ) : (
-                                    <span className="text-custom-text-400">Select Network</span>
-                                  )}
-                                </div>
-                              }
-                              placement="bottom-start"
-                              noChevron
-                              tabIndex={4}
-                            >
-                              {NETWORK_CHOICES.map((network) => (
-                                <CustomSelect.Option key={network.key} value={network.key}>
-                                  <div className="flex items-start gap-2">
-                                    <network.icon className="h-3.5 w-3.5" />
-                                    <div className="-mt-1">
-                                      <p>{network.label}</p>
-                                      <p className="text-xs text-custom-text-400">{network.description}</p>
-                                    </div>
+                        render={({ field: { onChange, value } }) => {
+                          const currentNetwork = NETWORK_CHOICES.find((n) => n.key === value);
+
+                          return (
+                            <div className="flex-shrink-0" tabIndex={4}>
+                              <CustomSelect
+                                value={value}
+                                onChange={onChange}
+                                label={
+                                  <div className="flex items-center gap-1">
+                                    {currentNetwork ? (
+                                      <>
+                                        <currentNetwork.icon className="h-3 w-3" />
+                                        {currentNetwork.label}
+                                      </>
+                                    ) : (
+                                      <span className="text-custom-text-400">Select network</span>
+                                    )}
                                   </div>
-                                </CustomSelect.Option>
-                              ))}
-                            </CustomSelect>
-                          </div>
-                        )}
+                                }
+                                placement="bottom-start"
+                                noChevron
+                                tabIndex={4}
+                              >
+                                {NETWORK_CHOICES.map((network) => (
+                                  <CustomSelect.Option key={network.key} value={network.key}>
+                                    <div className="flex items-start gap-2">
+                                      <network.icon className="h-3.5 w-3.5" />
+                                      <div className="-mt-1">
+                                        <p>{network.label}</p>
+                                        <p className="text-xs text-custom-text-400">{network.description}</p>
+                                      </div>
+                                    </div>
+                                  </CustomSelect.Option>
+                                ))}
+                              </CustomSelect>
+                            </div>
+                          );
+                        }}
                       />
                       <Controller
-                        name="project_lead_member"
+                        name="project_lead"
                         control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <div className="h-7 flex-shrink-0" tabIndex={5}>
-                            <MemberDropdown
-                              value={value}
-                              onChange={onChange}
-                              placeholder="Lead"
-                              multiple={false}
-                              buttonVariant="border-with-text"
-                              tabIndex={5}
-                            />
-                          </div>
-                        )}
+                        render={({ field: { value, onChange } }) => {
+                          if (value === undefined || value === null || typeof value === "string")
+                            return (
+                              <div className="h-7 flex-shrink-0" tabIndex={5}>
+                                <MemberDropdown
+                                  value={value}
+                                  onChange={onChange}
+                                  placeholder="Lead"
+                                  multiple={false}
+                                  buttonVariant="border-with-text"
+                                  tabIndex={5}
+                                />
+                              </div>
+                            );
+                          else return <></>;
+                        }}
                       />
                     </div>
                   </div>
@@ -402,7 +413,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                       Cancel
                     </Button>
                     <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>
-                      {isSubmitting ? "Creating..." : "Create Project"}
+                      {isSubmitting ? "Creating" : "Create project"}
                     </Button>
                   </div>
                 </form>

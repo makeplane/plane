@@ -19,11 +19,11 @@ import {
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { ProjectLogo } from "components/project";
 // ui
 import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
@@ -119,17 +119,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
-                  currentProjectDetails?.emoji ? (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {renderEmoji(currentProjectDetails.emoji)}
-                    </span>
-                  ) : currentProjectDetails?.icon_prop ? (
-                    <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                      {renderEmoji(currentProjectDetails.icon_prop)}
-                    </div>
-                  ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
+                  currentProjectDetails && (
+                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                     </span>
                   )
                 }

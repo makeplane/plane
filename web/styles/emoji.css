@@ -3,15 +3,47 @@
   --epr-picker-border-radius: 4px !important;
   --epr-horizontal-padding: 8px !important;
   --epr-emoji-padding: 4px !important;
+  background-color: rgba(var(--color-background-100)) !important;
 }
+
+.epr-main {
+  border: none !important;
+  border-radius: 0 !important;
+}
+
 .epr-emoji-category-label {
   font-size: 14px !important;
+  color: rgba(var(--color-text-300)) !important;
+  background-color: transparent !important;
 }
+
 .epr-category-nav,
 .epr-header-overlay {
   padding: 12px 8px !important;
 }
-.epr-search {
+
+button.epr-emoji:hover > *,
+button.epr-emoji:focus > * {
+  background-color: rgba(var(--color-background-80)) !important;
+}
+
+input.epr-search {
   font-size: 14px !important;
   height: 36px !important;
+  background: transparent !important;
+  border-color: rgba(var(--color-border-200)) !important;
+}
+
+input.epr-search::placeholder {
+  color: rgba(var(--color-text-400)) !important;
+}
+
+button.epr-btn-clear-search:hover {
+  background-color: rgba(var(--color-background-80)) !important;
+  color: rgba(var(--color-text-300)) !important;
+}
+
+.epr-emoji-variation-picker {
+  background-color: rgba(var(--color-background-100)) !important;
+  border-color: rgba(var(--color-border-200)) !important;
 }

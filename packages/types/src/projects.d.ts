@@ -1,11 +1,25 @@
 import { EUserProjectRoles } from "constants/project";
 import type {
+  IProjectViewProps,
   IUser,
   IUserLite,
+  IUserMemberLite,
   IWorkspace,
   IWorkspaceLite,
   TStateGroups,
 } from ".";
+
+export type TProjectLogoProps = {
+  in_use: "emoji" | "icon";
+  emoji?: {
+    value?: string;
+    url?: string;
+  };
+  icon?: {
+    name?: string;
+    color?: string;
+  };
+};
 
 export interface IProject {
   archive_in: number;
@@ -21,24 +35,13 @@ export interface IProject {
   default_assignee: IUser | string | null;
   default_state: string | null;
   description: string;
-  emoji: string | null;
-  emoji_and_icon:
-    | string
-    | {
-        name: string;
-        color: string;
-      }
-    | null;
   estimate: string | null;
-  icon_prop: {
-    name: string;
-    color: string;
-  } | null;
   id: string;
   identifier: string;
   is_deployed: boolean;
   is_favorite: boolean;
   is_member: boolean;
+  logo_props: TProjectLogoProps;
   member_role: EUserProjectRoles | null;
   members: IProjectMemberLite[];
   name: string;
