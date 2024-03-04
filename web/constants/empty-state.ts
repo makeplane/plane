@@ -87,18 +87,33 @@ const emptyStateDetails = {
     title: "No issues in the project",
     description: "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
     path: "/empty-state/all-issues/all-issues",
+    primaryButton: {
+      text: "Create new issue",
+    },
+    accessType: "workspace",
+    access: EUserWorkspaceRoles.MEMBER,
   },
   "workspace-assigned": {
     key: "workspace-assigned",
     title: "No issues yet",
     description: "Issues assigned to you can be tracked from here.",
     path: "/empty-state/all-issues/assigned",
+    primaryButton: {
+      text: "Create new issue",
+    },
+    accessType: "workspace",
+    access: EUserWorkspaceRoles.MEMBER,
   },
   "workspace-created": {
     key: "workspace-created",
     title: "No issues yet",
     description: "All issues created by you come here, track them here directly.",
     path: "/empty-state/all-issues/created",
+    primaryButton: {
+      text: "Create new issue",
+    },
+    accessType: "workspace",
+    access: EUserWorkspaceRoles.MEMBER,
   },
   "workspace-subscribed": {
     key: "workspace-subscribed",
@@ -189,7 +204,7 @@ const emptyStateDetails = {
     key: "project-settings-estimate",
     title: "No estimates added",
     description: "Create a set of estimates to communicate the amount of work per issue.",
-    path: "/empty-state/project-settings/esitmates",
+    path: "/empty-state/project-settings/estimates",
   },
   // project cycles
   "project-cycles": {
@@ -213,7 +228,7 @@ const emptyStateDetails = {
     key: "project-cycle-no-issues",
     title: "No issues added to the cycle",
     description: "Add or create issues you wish to timebox and deliver within this cycle",
-    path: "/empty-state/cycle-issue/",
+    path: "/empty-state/cycle-issues/",
     primaryButton: {
       text: "Create new issue ",
     },
