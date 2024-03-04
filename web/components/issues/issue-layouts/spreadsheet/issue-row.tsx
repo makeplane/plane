@@ -142,7 +142,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   //hooks
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -187,8 +187,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   return (
     <>
       <td
+        id={`issue-${issueDetail.id}`}
         className={cn(
-          "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200",
+          "sticky group left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
           {
             "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
           },
@@ -212,14 +213,12 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                   isMenuActive ? "opacity-0" : "opacity-100"
                 }`}
               >
-                {getProjectById(issueDetail.project_id)?.identifier}-{issueDetail.sequence_id}
+                {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
               </span>
 
-              {canEditProperties(issueDetail.project_id) && (
-                <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
-                  {quickActions(issueDetail, customActionButton, portalElement.current)}
-                </div>
-              )}
+              <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+                {quickActions(issueDetail, customActionButton, portalElement.current)}
+              </div>
             </div>
 
             {issueDetail.sub_issues_count > 0 && (
@@ -239,10 +238,14 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issueDetail?.tempId}
         >
           <div className="w-full overflow-hidden">
             <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
-              <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100" tabIndex={-1}>
+              <div
+                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                tabIndex={-1}
+              >
                 {issueDetail.name}
               </div>
             </Tooltip>
@@ -251,15 +254,15 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       </td>
       {/* Rest of the columns */}
       {SPREADSHEET_PROPERTY_LIST.map((property) => (
-          <IssueColumn
-            displayProperties={displayProperties}
-            issueDetail={issueDetail}
-            disableUserActions={disableUserActions}
-            property={property}
-            handleIssues={handleIssues}
-            isEstimateEnabled={isEstimateEnabled}
-          />
-        ))}
+        <IssueColumn
+          displayProperties={displayProperties}
+          issueDetail={issueDetail}
+          disableUserActions={disableUserActions}
+          property={property}
+          handleIssues={handleIssues}
+          isEstimateEnabled={isEstimateEnabled}
+        />
+      ))}
     </>
   );
 });

@@ -27,16 +27,12 @@ export interface IModule {
     labels: TLabelsDistribution[];
   };
   id: string;
-  lead: string | null;
-  lead_detail: IUserLite | null;
+  lead_id: string | null;
   link_module: ILinkDetails[];
-  links_list: ModuleLink[];
-  members: string[];
-  members_detail: IUserLite[];
+  member_ids: string[];
   is_favorite: boolean;
   name: string;
-  project: string;
-  project_detail: IProjectLite;
+  project_id: string;
   sort_order: number;
   start_date: string | null;
   started_issues: number;
@@ -49,8 +45,7 @@ export interface IModule {
   view_props: {
     filters: IIssueFilterOptions;
   };
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
+  workspace_id: string;
 }
 
 export interface ModuleIssueResponse {

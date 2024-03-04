@@ -24,9 +24,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // hooks
   const {
-    router: { workspaceSlug, projectId },
+    router: { workspaceSlug },
   } = useApplication();
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
 
   const updateIssue = async (issueToUpdate: TIssue) => {
@@ -45,19 +45,18 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
-  const projectDetails = getProjectById(issue.project_id);
+  const projectIdentifier = getProjectIdentifierById(issue.project_id);
 
   return (
     <div
       className={cn("min-h-12 relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm", {
-        "border border-custom-primary-70 hover:border-custom-primary-70":
-              peekIssue && peekIssue.issueId === issue.id,
-            "last:border-b-transparent": peekIssue?.issueId !== issue.id
+        "border border-custom-primary-70 hover:border-custom-primary-70": peekIssue && peekIssue.issueId === issue.id,
+        "last:border-b-transparent": peekIssue?.issueId !== issue.id,
       })}
     >
       {displayProperties && displayProperties?.key && (
         <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-          {projectDetails?.identifier}-{issue.sequence_id}
+          {projectIdentifier}-{issue.sequence_id}
         </div>
       )}
 
@@ -71,10 +70,13 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
         </Tooltip>
       ) : (
         <ControlLink
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archived-issues" : "issues"}/${
+            issue.id
+          }`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issue?.tempId}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <span>{issue.name}</span>

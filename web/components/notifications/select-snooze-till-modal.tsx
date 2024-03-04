@@ -1,6 +1,7 @@
 import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
+import { DateDropdown } from "components/dropdowns";
 import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 // constants
@@ -9,7 +10,6 @@ import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification"
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect } from "@plane/ui";
-import { CustomDatePicker } from "components/ui";
 // types
 import type { IUserNotification } from "@plane/types";
 
@@ -169,17 +169,18 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                         control={control}
                         rules={{ required: "Please select a date" }}
                         render={({ field: { value, onChange } }) => (
-                          <CustomDatePicker
-                            placeholder="Select date"
+                          <DateDropdown
                             value={value}
+                            placeholder="Select date"
                             onChange={(val) => {
                               setValue("time", null);
                               onChange(val);
                             }}
-                            className="w-full rounded-md border border-custom-border-300 bg-custom-background-100 px-3 py-2 !text-sm text-custom-text-100 placeholder:!text-custom-text-400 focus:outline-none"
-                            wrapperClassName="w-full"
-                            noBorder
                             minDate={new Date()}
+                            buttonVariant="border-with-text"
+                            buttonContainerClassName="w-full text-left"
+                            buttonClassName="border-custom-border-300 px-3 py-2.5"
+                            hideIcon
                           />
                         )}
                       />
@@ -213,11 +214,10 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "AM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "AM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "AM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                }`}
+                                  }`}
                               >
                                 AM
                               </div>
@@ -225,11 +225,10 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "PM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "PM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "PM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                }`}
+                                  }`}
                               >
                                 PM
                               </div>

@@ -1,25 +1,27 @@
 import React, { Fragment, ReactElement } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { PageHead } from "components/core";
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 // type
 import { NextPageWithLayout } from "lib/types";
-import { useRouter } from "next/router";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
-  const router = useRouter()
-  const { analytics_tab } = router.query
+  const router = useRouter();
+  const { analytics_tab } = router.query;
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -32,27 +34,33 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
     currentUser,
   } = useUser();
   const { workspaceProjectIds } = useProject();
-
+  const { currentWorkspace } = useWorkspace();
+  // derived values
   const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
   const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "analytics", isLightMode);
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Analytics` : undefined;
 
   return (
     <>
+      <PageHead title={pageTitle} />
       {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
         <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
-          <Tab.Group as={Fragment} defaultIndex={analytics_tab === 'custom' ? 1 : 0}>
+          <Tab.Group as={Fragment} defaultIndex={analytics_tab === "custom" ? 1 : 0}>
             <Tab.List as="div" className="flex space-x-2 border-b border-custom-border-200 px-0 md:px-5 py-0 md:py-3">
               {ANALYTICS_TABS.map((tab) => (
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `rounded-0 w-full md:w-max md:rounded-3xl border-b md:border border-custom-border-200 focus:outline-none px-0 md:px-4 py-2 text-xs hover:bg-custom-background-80 ${selected ? "border-custom-primary-100 text-custom-primary-100 md:bg-custom-background-80 md:text-custom-text-200 md:border-custom-border-200" : "border-transparent"
+                    `rounded-0 w-full md:w-max md:rounded-3xl border-b md:border border-custom-border-200 focus:outline-none px-0 md:px-4 py-2 text-xs hover:bg-custom-background-80 ${
+                      selected
+                        ? "border-custom-primary-100 text-custom-primary-100 md:bg-custom-background-80 md:text-custom-text-200 md:border-custom-border-200"
+                        : "border-transparent"
                     }`
                   }
                   onClick={() => {
-                    router.query.analytics_tab = tab.key
-                    router.push(router)
+                    router.query.analytics_tab = tab.key;
+                    router.push(router);
                   }}
                 >
                   {tab.title}
@@ -72,19 +80,18 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
       ) : (
         <EmptyState
           image={EmptyStateImagePath}
-          title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster"
-          description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
+          title={WORKSPACE_EMPTY_STATE_DETAILS["analytics"].title}
+          description={WORKSPACE_EMPTY_STATE_DETAILS["analytics"].description}
           primaryButton={{
-            text: "Create Cycles and Modules first",
+            text: WORKSPACE_EMPTY_STATE_DETAILS["analytics"].primaryButton.text,
             onClick: () => {
               setTrackElement("Analytics empty state");
               toggleCreateProjectModal(true);
             },
           }}
           comicBox={{
-            title: "Analytics works best with Cycles + Modules",
-            description:
-              "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+            title: WORKSPACE_EMPTY_STATE_DETAILS["analytics"].comicBox.title,
+            description: WORKSPACE_EMPTY_STATE_DETAILS["analytics"].comicBox.description,
           }}
           size="lg"
           disabled={!isEditingAllowed}

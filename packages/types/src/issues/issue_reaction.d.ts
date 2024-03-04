@@ -1,15 +1,8 @@
 export type TIssueReaction = {
-  actor: string;
-  actor_detail: IUserLite;
-  created_at: Date;
-  created_by: string;
+  actor_id: string;
   id: string;
-  issue: string;
-  project: string;
+  issue_id: string;
   reaction: string;
-  updated_at: Date;
-  updated_by: string;
-  workspace: string;
 };
 
 export type TIssueReactionMap = {

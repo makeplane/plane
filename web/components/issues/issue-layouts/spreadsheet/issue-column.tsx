@@ -34,11 +34,11 @@ export const IssueColumn = observer((props: Props) => {
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
       displayPropertyKey={property}
-      shouldRenderProperty={shouldRenderProperty}
+      shouldRenderProperty={() => shouldRenderProperty}
     >
       <td
         tabIndex={0}
-        className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100 focus:border-custom-primary-70"
+        className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100"
         ref={tableCellRef}
       >
         <Column

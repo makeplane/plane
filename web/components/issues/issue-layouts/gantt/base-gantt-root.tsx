@@ -4,13 +4,10 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useIssues, useUser } from "hooks/store";
 // components
-import { IssueGanttBlock } from "components/issues";
-import {
-  GanttChartRoot,
-  IBlockUpdateData,
-  renderIssueBlocksStructure,
-  IssueGanttSidebar,
-} from "components/gantt-chart";
+import { GanttQuickAddIssueForm, IssueGanttBlock } from "components/issues";
+import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "components/gantt-chart";
+// helpers
+import { renderIssueBlocksStructure } from "helpers/issue.helper";
 // types
 import { TIssue, TUnGroupedIssues } from "@plane/types";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
@@ -70,21 +67,17 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           blocks={issues ? renderIssueBlocksStructure(issues as TIssue[]) : null}
           blockUpdateHandler={updateIssueBlockStructure}
           blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
-          sidebarToRender={(props) => (
-            <IssueGanttSidebar
-              {...props}
-              quickAddCallback={issueStore.quickAddIssue}
-              viewId={viewId}
-              enableQuickIssueCreate
-              disableIssueCreation={!enableIssueCreation || !isAllowed}
-              showAllBlocks
-            />
-          )}
+          sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
           enableAddBlock={isAllowed}
+          quickAdd={
+            enableIssueCreation && isAllowed ? (
+              <GanttQuickAddIssueForm quickAddCallback={issueStore.quickAddIssue} viewId={viewId} />
+            ) : undefined
+          }
           showAllBlocks
         />
       </div>

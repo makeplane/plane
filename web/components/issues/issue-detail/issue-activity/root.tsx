@@ -20,7 +20,7 @@ type TActivityTabs = "all" | "activity" | "comments";
 const activityTabs: { key: TActivityTabs; title: string; icon: LucideIcon }[] = [
   {
     key: "all",
-    title: "All Activity",
+    title: "All activity",
     icon: History,
   },
   {

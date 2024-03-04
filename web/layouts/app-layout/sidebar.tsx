@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import {
@@ -12,7 +12,7 @@ import { ProjectSidebarList } from "components/project";
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
-export interface IAppSidebar { }
+export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
@@ -26,22 +26,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
       }
     }
   });
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        themStore.toggleSidebar(true);
-      }
-      if (window.innerWidth > 768) {
-        themStore.toggleSidebar(false);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [themStore]);
 
   return (
     <div

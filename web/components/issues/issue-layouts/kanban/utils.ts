@@ -67,10 +67,13 @@ export const handleDragDrop = async (
 
   let updateIssue: any = {};
 
-  const sourceColumnId = (source?.droppableId && source?.droppableId.split("__")) || null;
-  const destinationColumnId = (destination?.droppableId && destination?.droppableId.split("__")) || null;
+  const sourceDroppableId = source?.droppableId;
+  const destinationDroppableId = destination?.droppableId;
 
-  if (!sourceColumnId || !destinationColumnId) return;
+  const sourceColumnId = (sourceDroppableId && sourceDroppableId.split("__")) || null;
+  const destinationColumnId = (destinationDroppableId && destinationDroppableId.split("__")) || null;
+
+  if (!sourceColumnId || !destinationColumnId || !sourceDroppableId || !destinationDroppableId) return;
 
   const sourceGroupByColumnId = sourceColumnId[0] || null;
   const destinationGroupByColumnId = destinationColumnId[0] || null;
@@ -101,9 +104,13 @@ export const handleDragDrop = async (
       else return await store?.removeIssue(workspaceSlug, projectId, removed);
     }
   } else {
-    const sourceIssues = subGroupBy
-      ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
-      : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId];
+    //spreading the array to stop changing the original reference
+    //since we are removing an id from array further down
+    const sourceIssues = [
+      ...(subGroupBy
+        ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][sourceGroupByColumnId]
+        : (issueWithIds as TGroupedIssues)[sourceGroupByColumnId]),
+    ];
     const destinationIssues = subGroupBy
       ? (issueWithIds as TSubGroupedIssues)[sourceSubGroupByColumnId][destinationGroupByColumnId]
       : (issueWithIds as TGroupedIssues)[destinationGroupByColumnId];
@@ -119,7 +126,11 @@ export const handleDragDrop = async (
     // for both horizontal and vertical dnd
     updateIssue = {
       ...updateIssue,
-      ...handleSortOrder(destinationIssues, destination.index, issueMap),
+      ...handleSortOrder(
+        sourceDroppableId === destinationDroppableId ? sourceIssues : destinationIssues,
+        destination.index,
+        issueMap
+      ),
     };
 
     if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {

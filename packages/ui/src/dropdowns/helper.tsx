@@ -24,6 +24,7 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   noBorder?: boolean;
   verticalEllipsis?: boolean;
   menuButtonOnClick?: (...args: any) => void;
+  menuItemsClassName?: string;
   onMenuClose?: () => void;
   closeOnSelect?: boolean;
   portalElement?: Element | null;
@@ -64,6 +65,7 @@ export type ICustomSearchSelectProps = IDropdownProps &
 
 export interface ICustomMenuItemProps {
   children: React.ReactNode;
+  disabled?: boolean;
   onClick?: (args?: any) => void;
   className?: string;
 }

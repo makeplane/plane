@@ -9,7 +9,8 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { EmptyState } from "components/common";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
-import { Loader, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
+import { NotificationsLoader } from "components/ui";
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
@@ -124,7 +125,7 @@ export const NotificationPopover = observer(() => {
 
               {notifications ? (
                 notifications.length > 0 ? (
-                  <div className="h-full overflow-y-auto">
+                  <div className="h-full overflow-y-auto vertical-scrollbar scrollbar-md">
                     <div className="divide-y divide-custom-border-100">
                       {notifications.map((notification) => (
                         <NotificationCard
@@ -188,13 +189,7 @@ export const NotificationPopover = observer(() => {
                   </div>
                 )
               ) : (
-                <Loader className="space-y-4 overflow-y-auto p-5">
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                </Loader>
+                <NotificationsLoader />
               )}
             </Popover.Panel>
           </Transition>

@@ -16,7 +16,7 @@ import { TIssue } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
-import { ISSUE_UPDATED, ISSUE_DELETED } from "constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
 import { observer } from "mobx-react";
 
 export type TIssueOperations = {
@@ -29,6 +29,8 @@ export type TIssueOperations = {
     showToast?: boolean
   ) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
@@ -63,6 +65,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     fetchIssue,
     updateIssue,
     removeIssue,
+    archiveIssue,
     addIssueToCycle,
     removeIssueFromCycle,
     addModulesToIssue,
@@ -96,7 +99,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         showToast: boolean = true
       ) => {
         try {
-          const response = await updateIssue(workspaceSlug, projectId, issueId, data);
+          await updateIssue(workspaceSlug, projectId, issueId, data);
           if (showToast) {
             setToastAlert({
               title: "Issue updated successfully",
@@ -106,7 +109,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           }
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
               change_details: Object.values(data).join(","),
@@ -158,9 +161,35 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
         }
       },
+      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await archiveIssue(workspaceSlug, projectId, issueId);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue archived successfully.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
+            path: router.asPath,
+          });
+        } catch (error) {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be archived. Please try again.",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "FAILED", element: "Issue details page" },
+            path: router.asPath,
+          });
+        }
+      },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          const response = await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           setToastAlert({
             title: "Cycle added to issue successfully",
             type: "success",
@@ -168,7 +197,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...issueIds, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,
@@ -321,6 +350,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       fetchIssue,
       updateIssue,
       removeIssue,
+      archiveIssue,
       removeArchivedIssue,
       addIssueToCycle,
       removeIssueFromCycle,
@@ -350,7 +380,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         />
       ) : (
         <div className="flex w-full h-full overflow-hidden">
-          <div className="h-full w-full max-w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
+          <div className="h-full w-full max-w-2/3 space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
               projectId={projectId}
@@ -360,7 +390,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             />
           </div>
           <div
-            className="h-full w-full sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5 fixed md:relative bg-custom-sidebar-background-100 right-0 z-[5]"
+            className="h-full w-full min-w-[300px] lg:min-w-80 xl:min-w-96 sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-200 py-5 fixed md:relative bg-custom-sidebar-background-100 right-0 z-[5]"
             style={themeStore.issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
           >
             <IssueDetailsSidebar

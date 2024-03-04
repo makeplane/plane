@@ -5,13 +5,13 @@ import { observer } from "mobx-react-lite";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import { useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
-import { ImagePickerPopover, UserImageUploadModal } from "components/core";
+import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
 import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
@@ -57,7 +57,8 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
   // custom hooks
-  const { } = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
+  const {} = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
+  const { theme: themeStore } = useApplication();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -137,9 +138,10 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title="Profile - General Settings" />
       <div className="flex flex-col h-full">
         <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
-          <SidebarHamburgerToggle />
+          <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         </div>
         <div className="overflow-hidden">
           <Controller
@@ -248,6 +250,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           hasError={Boolean(errors.first_name)}
                           placeholder="Enter your first name"
                           className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
+                          maxLength={24}
                         />
                       )}
                     />
@@ -271,6 +274,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           hasError={Boolean(errors.last_name)}
                           placeholder="Enter your last name"
                           className="w-full rounded-md"
+                          maxLength={24}
                         />
                       )}
                     />
@@ -295,8 +299,9 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           ref={ref}
                           hasError={Boolean(errors.email)}
                           placeholder="Enter your email"
-                          className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${errors.email ? "border-red-500" : ""
-                            }`}
+                          className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${
+                            errors.email ? "border-red-500" : ""
+                          }`}
                           disabled
                         />
                       )}
@@ -366,6 +371,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           hasError={Boolean(errors.display_name)}
                           placeholder="Enter your display name"
                           className={`w-full ${errors.display_name ? "border-red-500" : ""}`}
+                          maxLength={24}
                         />
                       )}
                     />
@@ -384,7 +390,9 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       render={({ field: { value, onChange } }) => (
                         <CustomSearchSelect
                           value={value}
-                          label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
+                          label={
+                            value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"
+                          }
                           options={timeZoneOptions}
                           onChange={onChange}
                           optionsClassName="w-full"
@@ -408,7 +416,11 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             <Disclosure as="div" className="border-t border-custom-border-100 px-8">
               {({ open }) => (
                 <>
-                  <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className="flex w-full items-center justify-between py-4"
+                  >
                     <span className="text-lg tracking-tight">Deactivate account</span>
                     <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
                   </Disclosure.Button>
@@ -425,8 +437,8 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                       <div className="flex flex-col gap-8">
                         <span className="text-sm tracking-tight">
                           The danger zone of the profile page is a critical area that requires careful consideration and
-                          attention. When deactivating an account, all of the data and resources within that account will be
-                          permanently removed and cannot be recovered.
+                          attention. When deactivating an account, all of the data and resources within that account
+                          will be permanently removed and cannot be recovered.
                         </span>
                         <div>
                           <Button variant="danger" onClick={() => setDeactivateAccountModal(true)}>

@@ -34,7 +34,8 @@ import { ICycle, TCycleGroups } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { CYCLE_EMPTY_STATE_DETAILS, CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
+import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
+import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -68,7 +69,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   );
 
   const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
-  const cycleOwnerDetails = activeCycle ? getUserDetails(activeCycle.owned_by) : undefined;
+  const cycleOwnerDetails = activeCycle ? getUserDetails(activeCycle.owned_by_id) : undefined;
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && currentProjectActiveCycleId
@@ -221,12 +222,13 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   <span className="text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
                 </div>
 
-                {activeCycle.assignees.length > 0 && (
+                {activeCycle.assignee_ids.length > 0 && (
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <AvatarGroup>
-                      {activeCycle.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                      ))}
+                      {activeCycle.assignee_ids.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   </div>
                 )}

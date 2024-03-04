@@ -7,7 +7,7 @@ import useToast from "hooks/use-toast";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
 // components
-import { CustomThemeSelector, ThemeSwitch } from "components/core";
+import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
@@ -47,6 +47,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title="Profile - Theme Prefrence" />
       {currentUser ? (
         <div className="mx-auto mt-10 md:mt-14 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
 // components
-import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
+import { CreateUpdateIssueModal } from "components/issues";
 import { ExistingIssuesListModal } from "components/core";
 import { CustomMenu } from "@plane/ui";
 // mobx
@@ -41,7 +41,7 @@ export const HeaderGroupByCard = observer(
     const { setToastAlert } = useToast();
 
     const renderExistingIssueModal = moduleId || cycleId;
-    const ExistingIssuesListModalPayload = moduleId ? { module: [moduleId.toString()] } : { cycle: true };
+    const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 
     const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
       if (!workspaceSlug || !projectId) return;

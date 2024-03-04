@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { Fragment, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -12,15 +12,15 @@ import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/iss
 import { SpreadsheetView } from "components/issues/issue-layouts";
 import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-// ui
-import { Spinner } from "@plane/ui";
+import { SpreadsheetLayoutLoader } from "components/ui";
 // types
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssueActions } from "../types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { ALL_ISSUES_EMPTY_STATE_DETAILS, EUserWorkspaceRoles } from "constants/workspace";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { ALL_ISSUES_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -34,7 +34,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
+    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue, archiveIssue },
   } = useIssues(EIssuesStoreType.GLOBAL);
 
   const { dataViewId, issueIds } = groupedIssueIds;
@@ -88,11 +88,15 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     }
   };
 
-  useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
-    if (workspaceSlug) {
-      await fetchAllGlobalViews(workspaceSlug.toString());
-    }
-  });
+  useSWR(
+    workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
+    async () => {
+      if (workspaceSlug) {
+        await fetchAllGlobalViews(workspaceSlug.toString());
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   useSWR(
     workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
@@ -103,7 +107,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const canEditProperties = useCallback(
@@ -133,6 +138,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
         await removeIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
+        if (!workspaceSlug || !projectId || !globalViewId) return;
+
+        await archiveIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
+      },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateIssue, removeIssue, workspaceSlug]
@@ -142,6 +153,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     async (issue: TIssue, action: EIssueActions) => {
       if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
       if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
+      if (action === EIssueActions.ARCHIVE) await issueActions[action]!(issue);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -159,7 +171,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         globalViewId.toString()
       );
     },
-    [updateFilters, workspaceSlug]
+    [updateFilters, workspaceSlug, globalViewId]
   );
 
   const renderQuickActions = useCallback(
@@ -169,74 +181,72 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         issue={issue}
         handleUpdate={async () => handleIssues({ ...issue }, EIssueActions.UPDATE)}
         handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+        handleArchive={async () => handleIssues(issue, EIssueActions.ARCHIVE)}
         portalElement={portalElement}
+        readOnly={!canEditProperties(issue.project_id)}
       />
     ),
-    [handleIssues]
+    [canEditProperties, handleIssues]
   );
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
+  if (loader === "init-loader" || !globalViewId || globalViewId !== dataViewId || !issueIds) {
+    return <SpreadsheetLayoutLoader />;
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {!globalViewId || globalViewId !== dataViewId || loader === "init-loader" || !issueIds ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
-
-          {(issueIds ?? {}).length == 0 ? (
-            <EmptyState
-              image={emptyStateImage}
-              title={(workspaceProjectIds ?? []).length > 0 ? currentViewDetails.title : "No project"}
-              description={
-                (workspaceProjectIds ?? []).length > 0
-                  ? currentViewDetails.description
-                  : "To create issues or manage your work, you need to create a project or be a part of one."
-              }
-              size="sm"
-              primaryButton={
-                (workspaceProjectIds ?? []).length > 0
-                  ? currentView !== "custom-view" && currentView !== "subscribed"
-                    ? {
-                        text: "Create new issue",
-                        onClick: () => {
-                          setTrackElement("All issues empty state");
-                          commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-                        },
-                      }
-                    : undefined
-                  : {
-                      text: "Start your first project",
+      <div className="relative h-full w-full flex flex-col">
+        <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
+        {issueIds.length === 0 ? (
+          <EmptyState
+            image={emptyStateImage}
+            title={(workspaceProjectIds ?? []).length > 0 ? currentViewDetails.title : "No project"}
+            description={
+              (workspaceProjectIds ?? []).length > 0
+                ? currentViewDetails.description
+                : "To create issues or manage your work, you need to create a project or be a part of one."
+            }
+            size="sm"
+            primaryButton={
+              (workspaceProjectIds ?? []).length > 0
+                ? currentView !== "custom-view" && currentView !== "subscribed"
+                  ? {
+                      text: "Create new issue",
                       onClick: () => {
                         setTrackElement("All issues empty state");
-                        commandPaletteStore.toggleCreateProjectModal(true);
+                        commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                       },
                     }
-              }
-              disabled={!isEditingAllowed}
+                  : undefined
+                : {
+                    text: "Start your first project",
+                    onClick: () => {
+                      setTrackElement("All issues empty state");
+                      commandPaletteStore.toggleCreateProjectModal(true);
+                    },
+                  }
+            }
+            disabled={!isEditingAllowed}
+          />
+        ) : (
+          <Fragment>
+            <SpreadsheetView
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+              issueIds={issueIds}
+              quickActions={renderQuickActions}
+              handleIssues={handleIssues}
+              canEditProperties={canEditProperties}
+              viewId={globalViewId}
             />
-          ) : (
-            <div className="relative h-full w-full overflow-auto">
-              <SpreadsheetView
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-                issueIds={issueIds}
-                quickActions={renderQuickActions}
-                handleIssues={handleIssues}
-                canEditProperties={canEditProperties}
-                viewId={globalViewId}
-              />
-            </div>
-          )}
-        </>
-      )}
-
-      {/* peek overview */}
-      <IssuePeekOverview />
+            {/* peek overview */}
+            <IssuePeekOverview />
+          </Fragment>
+        )}
+      </div>
     </div>
   );
 });

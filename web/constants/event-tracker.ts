@@ -127,20 +127,18 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
   return eventPayload;
 };
 
-export const getProjectStateEventPayload = (payload: any) => {
-  return {
-    workspace_id: payload.workspace_id,
-    project_id: payload.id,
-    state_id: payload.id,
-    created_at: payload.created_at,
-    updated_at: payload.updated_at,
-    group: payload.group,
-    color: payload.color,
-    default: payload.default,
-    state: payload.state,
-    element: payload.element,
-  };
-};
+export const getProjectStateEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.id,
+  state_id: payload.id,
+  created_at: payload.created_at,
+  updated_at: payload.updated_at,
+  group: payload.group,
+  color: payload.color,
+  default: payload.default,
+  state: payload.state,
+  element: payload.element,
+});
 
 // Workspace crud Events
 export const WORKSPACE_CREATED = "Workspace created";
@@ -169,6 +167,8 @@ export const MODULE_LINK_DELETED = "Module link deleted";
 export const ISSUE_CREATED = "Issue created";
 export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
+export const ISSUE_ARCHIVED = "Issue archived";
+export const ISSUE_RESTORED = "Issue restored";
 export const ISSUE_OPENED = "Issue opened";
 // Project State Events
 export const STATE_CREATED = "State created";
@@ -218,7 +218,7 @@ export const NOTIFICATION_SNOOZED = "Notification snoozed";
 export const NOTIFICATION_READ = "Notification marked read";
 export const UNREAD_NOTIFICATIONS = "Unread notifications viewed";
 export const NOTIFICATIONS_READ = "All notifications marked read";
-export const SNOOZED_NOTIFICATIONS= "Snoozed notifications viewed";
+export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";

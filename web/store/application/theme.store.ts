@@ -88,13 +88,13 @@ export class ThemeStore implements IThemeStore {
   };
 
   toggleIssueDetailSidebar = (collapsed?: boolean) => {
-    if(collapsed === undefined) {
+    if (collapsed === undefined) {
       this.issueDetailSidebarCollapsed = !this.issueDetailSidebarCollapsed;
     } else {
       this.issueDetailSidebarCollapsed = collapsed;
     }
     localStorage.setItem("issue_detail_sidebar_collapsed", this.issueDetailSidebarCollapsed.toString());
-  }
+  };
 
   /**
    * Sets the user theme and applies it to the platform

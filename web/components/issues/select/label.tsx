@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
@@ -36,6 +36,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
@@ -75,6 +76,12 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+
+  useEffect(() => {
+    if (isDropdownOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isDropdownOpen]);
 
   return (
     <Combobox
@@ -125,6 +132,8 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
+                as="input"
+                ref={inputRef}
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search"
@@ -145,22 +154,22 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                             className={({ active }) =>
                               `${
                                 active ? "bg-custom-background-80" : ""
-                              } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
                             }
                             value={label.id}
                           >
                             {({ selected }) => (
                               <div className="flex w-full justify-between gap-2 rounded">
-                                <div className="flex items-center justify-start gap-2">
+                                <div className="flex items-center justify-start gap-2 truncate">
                                   <span
                                     className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                                     style={{
                                       backgroundColor: label.color,
                                     }}
                                   />
-                                  <span>{label.name}</span>
+                                  <span className="truncate">{label.name}</span>
                                 </div>
-                                <div className="flex items-center justify-center rounded p-1">
+                                <div className="flex shrink-0 items-center justify-center rounded p-1">
                                   <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                 </div>
                               </div>

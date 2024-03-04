@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 // hooks
 import useToast from "hooks/use-toast";
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail, useMember } from "hooks/store";
 // ui
 import { ExternalLinkIcon, Tooltip } from "@plane/ui";
 // icons
@@ -26,6 +26,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     toggleIssueLinkModal: toggleIssueLinkModalStore,
     link: { getLinkById },
   } = useIssueDetail();
+  const { getUserDetails } = useMember();
   const { setToastAlert } = useToast();
 
   // state
@@ -37,6 +38,8 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
 
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
+
+  const createdByDetails = getUserDetails(linkDetail.created_by_id);
 
   return (
     <div key={linkId}>
@@ -110,10 +113,11 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
           <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
             Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
-            by{" "}
-            {linkDetail.created_by_detail.is_bot
-              ? linkDetail.created_by_detail.first_name + " Bot"
-              : linkDetail.created_by_detail.display_name}
+            {createdByDetails && (
+              <>
+                by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}
+              </>
+            )}
           </p>
         </div>
       </div>
