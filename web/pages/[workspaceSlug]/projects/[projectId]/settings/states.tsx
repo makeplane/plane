@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 // layout
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -11,7 +12,7 @@ import { NextPageWithLayout } from "lib/types";
 // hook
 import { useProject } from "hooks/store";
 
-const StatesSettingsPage: NextPageWithLayout = () => {
+const StatesSettingsPage: NextPageWithLayout = observer(() => {
   // store
   const { currentProjectDetails } = useProject();
   // derived values
@@ -27,7 +28,7 @@ const StatesSettingsPage: NextPageWithLayout = () => {
       </div>
     </>
   );
-};
+});
 
 StatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
