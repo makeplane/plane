@@ -250,6 +250,8 @@ export const MEMBER_INVITED = "Member invited";
 export const MEMBER_ACCEPTED = "Member accepted";
 export const PROJECT_MEMBER_ADDED = "Project member added";
 export const PROJECT_MEMBER_LEAVE = "Project member leave";
+export const PROJECT_MEMBER_REMOVED = "Project member removed";
+export const PM_ROLE_CHANGED = "Project member role changed";
 export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
 // Sign-in & Sign-up Events
 export const NAVIGATE_TO_SIGNUP = "Navigate to sign-up page";
