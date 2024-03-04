@@ -39,11 +39,12 @@ const emptyStateDetails = {
     // path: "/empty-state/onboarding/",
     primaryButton: {
       text: "Build your first project",
+      comicBox: {
+        title: "Everything starts with a project in Plane",
+        description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+      },
     },
-    comicBox: {
-      title: "Everything starts with a project in Plane",
-      description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
-    },
+
     accessType: "workspace",
     access: EUserWorkspaceRoles.ADMIN,
   },
