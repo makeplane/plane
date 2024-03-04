@@ -49,7 +49,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   };
 
   const emptyStateType = isEmptyFilters ? "project-empty-filter" : "project-module-issues";
-  const additionalPath = isEmptyFilters ? activeLayout ?? "list" : undefined;
+  const additionalPath = activeLayout ?? "list";
 
   return (
     <>

@@ -48,7 +48,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   };
 
   const emptyStateType = isEmptyFilters ? "project-empty-filter" : "project-cycle-no-issues";
-  const additionalPath = isEmptyFilters ? activeLayout ?? "list" : undefined;
+  const additionalPath = activeLayout ?? "list";
   const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
