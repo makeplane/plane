@@ -11,6 +11,8 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.views import View
 
+from plane.app.views.auth.provider.credentials.email import EmailProvider
+
 # Module imports
 from plane.db.models import Profile, User
 
@@ -38,43 +40,14 @@ class SignInAuthEndpoint(View):
         email = email.strip().lower()
         try:
             validate_email(email)
-        except ValidationError as e:
+        except ValidationError:
             return JsonResponse(
                 {"error": "Please provide a valid email address."},
                 status=400,
             )
-
-        # Get the user
-        user = User.objects.filter(email=email).first()
-
-        # Existing user
-        if not user:
-            return JsonResponse(
-                {
-                    "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                },
-                status=403,
-            )
-
-        # Check user password
-        if not user.check_password(password):
-            return JsonResponse(
-                {
-                    "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                },
-                status=403,
-            )
-
-        # settings last active for the user
-        user.is_active = True
-        user.last_active = timezone.now()
-        user.last_login_time = timezone.now()
-        user.last_login_ip = request.META.get("REMOTE_ADDR")
-        user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-        user.token_updated_at = timezone.now()
-        user.last_login_medium = "email"
-        user.save()
-
+        provider = EmailProvider(request=request, key=email, code=password)
+        user, _ = provider.authenticate()
+        provider.complete_login_or_signup(is_signup=False)
         login(request=request, user=user)
         return redirect(request.session.get("referer", "/"))
 
@@ -96,7 +69,7 @@ class SignUpAuthEndpoint(View):
         email = email.strip().lower()
         try:
             validate_email(email)
-        except ValidationError as e:
+        except ValidationError:
             return JsonResponse(
                 {"error": "Please provide a valid email address."},
                 status=400,

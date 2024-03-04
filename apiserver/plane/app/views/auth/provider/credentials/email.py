@@ -1,13 +1,12 @@
-
 # Django imports
 from django.core.exceptions import BadRequest
 
 # Module imports
-from plane.app.views.auth.adapter.base import Adapter
+from plane.app.views.auth.adapter.credential import CredentialAdapter
 from plane.db.models import User
 
 
-class EmailProvider(Adapter):
+class EmailProvider(CredentialAdapter):
 
     provider = "email"
 
@@ -25,23 +24,31 @@ class EmailProvider(Adapter):
         user = self.set_user_data()
         return user, user.email
 
-    def initiate(self):
-        self.aut
-
     def set_user_data(self):
         user = User.objects.filter(
             email=self.key,
         ).first()
-        
+        # Existing user
+        if not user:
+            raise BadRequest(
+                "Sorry, we could not find a user with the provided credentials. Please try again."
+            )
+
+        # Check user password
         if not user.check_password(self.code):
-            raise BadRequest
-        super().set_user_data({
-            "email": self.key,
-            "user": {
-                "avatar": "",
-                "first_name": "",
-                "last_name": "",
-                "provider_id": "",
-            },
-        })
+            raise BadRequest(
+                "Sorry, we could not find a user with the provided credentials. Please try again."
+            )
+
+        super().set_user_data(
+            {
+                "email": self.key,
+                "user": {
+                    "avatar": "",
+                    "first_name": "",
+                    "last_name": "",
+                    "provider_id": "",
+                },
+            }
+        )
         return user

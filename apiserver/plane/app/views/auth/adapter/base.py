@@ -1,13 +1,11 @@
 # Python imports
 import uuid
 
-import requests
-
 # Django imports
 from django.utils import timezone
 
 # Third party imports
-from plane.db.models import Account, Profile, User
+from plane.db.models import Profile, User
 
 
 class Adapter:
@@ -37,10 +35,9 @@ class Adapter:
     def authenticate(self):
         raise NotImplementedError
 
-    def complete_login_or_signup(self, is_signup=False):
+    def complete_login_or_signup(self, is_signup):
         email = self.user_data.get("email")
-        user_query = User.objects.filter(email=email)
-        user = user_query.first()
+        user = User.objects.filter(email=email).first()
 
         if is_signup or not user:
             user = User(email=email, username=uuid.uuid4().hex)
@@ -65,15 +62,3 @@ class Adapter:
 
         return user
 
-
-class CredentialAdapter(Adapter):
-    """Common interface for all credential providers"""
-
-    def __init__(self, request, provider):
-        self.request = request
-        self.provider = provider
-        self.token_data = None
-        self.user_data = None
-
-    def authenticate(self):
-        raise NotImplementedError

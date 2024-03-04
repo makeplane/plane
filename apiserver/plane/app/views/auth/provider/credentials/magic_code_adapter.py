@@ -7,12 +7,12 @@ import string
 from django.core.exceptions import BadRequest
 
 # Module imports
-from plane.app.views.auth.adapter.base import Adapter
+from plane.app.views.auth.adapter.credential import CredentialAdapter
 from plane.db.models import User
 from plane.settings.redis import redis_instance
 
 
-class MagicCodeProvider(Adapter):
+class MagicCodeProvider(CredentialAdapter):
 
     provider = "magic-code"
 
