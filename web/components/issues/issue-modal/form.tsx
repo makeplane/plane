@@ -30,6 +30,7 @@ import {
 import { Button, CustomMenu, Input, Loader, ToggleSwitch } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getChangedIssuefields } from "helpers/issue.helper";
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
@@ -129,7 +130,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { setToastAlert } = useToast();
   // form info
   const {
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitting, dirtyFields },
     handleSubmit,
     reset,
     watch,
@@ -169,7 +170,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
-    await onSubmit(formData, is_draft_issue);
+    const submitData = !data?.id
+      ? formData
+      : {
+          ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
+          project_id: getValues("project_id"),
+          id: data.id,
+          description_html: formData.description_html ?? "<p></p>",
+        };
+    await onSubmit(submitData, is_draft_issue);
 
     setGptAssistantModal(false);
 
@@ -765,3 +774,4 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     </>
   );
 });
+

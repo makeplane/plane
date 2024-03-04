@@ -61,8 +61,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { issues: cycleIssues } = useIssues(EIssuesStoreType.CYCLE);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
-  // store mapping based on current store
-  const issueStores = {};
   // router
   const router = useRouter();
   // toast alert
@@ -72,7 +70,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     Record<string, Partial<TIssue>>
   >("draftedIssue", {});
   // current store details
-  const { fetchIssues, createIssue, updateIssue } = useIssuesActions(storeType);
+  const { createIssue, updateIssue } = useIssuesActions(storeType);
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
     if (!workspaceSlug) return;
@@ -156,8 +154,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         : createIssue && (await createIssue(payload.project_id, payload));
       if (!response) throw new Error();
 
-      fetchIssues(payload.project_id, "mutation");
-
       if (payload.cycle_id && payload.cycle_id !== "" && storeType !== EIssuesStoreType.CYCLE)
         await addIssueToCycle(response, payload.cycle_id);
       if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
@@ -212,7 +208,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       setToastAlert({
         type: "error",
         title: "Error!",
-        message: "Issue could not be created. Please try again.",
+        message: "Issue could not be updated. Please try again.",
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
@@ -222,13 +218,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     }
   };
 
-  const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue: boolean = false) => {
-    if (!workspaceSlug || !formData.project_id || !storeType) return;
-
-    const payload: Partial<TIssue> = {
-      ...formData,
-      description_html: formData.description_html ?? "<p></p>",
-    };
+  const handleFormSubmit = async (payload: Partial<TIssue>, is_draft_issue: boolean = false) => {
+    if (!workspaceSlug || !payload.project_id || !storeType) return;
 
     let response: TIssue | undefined = undefined;
     if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);

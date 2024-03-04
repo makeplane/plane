@@ -171,3 +171,20 @@ export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>
     start_date: block.start_date ? new Date(block.start_date) : null,
     target_date: block.target_date ? new Date(block.target_date) : null,
   }));
+
+
+  export function getChangedIssuefields(
+    formData: Partial<TIssue>,
+    dirtyFields: { [key: string]: boolean | undefined }
+  ) {
+    const changedFields: Partial<TIssue> = {};
+
+    const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
+    for (const dirtyField of dirtyFieldKeys) {
+      if (!!dirtyFields[dirtyField]) {
+        changedFields[dirtyField] = formData[dirtyField];
+      }
+    }
+
+    return changedFields;
+  }
