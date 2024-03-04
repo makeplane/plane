@@ -6,21 +6,20 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
-from plane.app.views.auth.github import (
-    GithubCallbackEndpoint,
-    GithubOauthInitiateEndpoint,
-)
 from plane.app.views.auth.email import (
-    SignInAuthEndpoint,
-    SignUpAuthEndpoint,
-    SignOutAuthEndpoint,
     CSRFTokenEndpoint,
+    SignInAuthEndpoint,
+    SignOutAuthEndpoint,
+    SignUpAuthEndpoint,
+)
+from plane.app.views.auth.github import (
+    GitHubCallbackEndpoint,
+    GitHubOauthInitiateEndpoint,
 )
 from plane.app.views.auth.google import (
     GoogleCallbackEndpoint,
     GoogleOauthInitiateEndpoint,
 )
-
 from plane.app.views.auth.magic import (
     MagicGenerateEndpoint,
     MagicSignInEndpoint,
@@ -49,7 +48,9 @@ urlpatterns = [
         name="sign-out",
     ),
     path(
-        "get-csrf-token/", CSRFTokenEndpoint.as_view(), name="get_csrf_token"
+        "get-csrf-token/",
+        CSRFTokenEndpoint.as_view(),
+        name="get_csrf_token",
     ),
     path(
         "auth/magic-generate/",
@@ -73,12 +74,12 @@ urlpatterns = [
     ),
     path(
         "auth/github/",
-        GithubOauthInitiateEndpoint.as_view(),
+        GitHubOauthInitiateEndpoint.as_view(),
         name="github-initiate",
     ),
     path(
         "auth/callback/github/",
-        GithubCallbackEndpoint.as_view(),
+        GitHubCallbackEndpoint.as_view(),
         name="github-callback",
     ),
 ]

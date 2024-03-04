@@ -8,12 +8,12 @@ from django.shortcuts import redirect
 from django.views import View
 
 # Module imports
-from plane.app.views.auth.adapter.github_adapter import GithubAuthAdapter
+from plane.app.views.auth.provider.oauth.github import GitHubOAuthProvider
 from plane.db.models import WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
 
 
-class GithubOauthInitiateEndpoint(View):
+class GitHubOauthInitiateEndpoint(View):
 
     def get(self, request):
         referer = request.META.get("HTTP_REFERER")
@@ -33,19 +33,19 @@ class GithubOauthInitiateEndpoint(View):
         if not GITHUB_CLIENT_ID:
             return JsonResponse(
                 {
-                    "error": "Github is not configured. Please contact the support team."
+                    "error": "GitHub is not configured. Please contact the support team."
                 },
                 status=400,
             )
 
-        provider = GithubAuthAdapter(
+        provider = GitHubOAuthProvider(
             request=request, client_id=GITHUB_CLIENT_ID
         )
         auth_url = provider.get_auth_url()
         return redirect(auth_url)
 
 
-class GithubCallbackEndpoint(View):
+class GitHubCallbackEndpoint(View):
 
     def get(self, request):
         code = request.GET.get("code")
@@ -71,7 +71,7 @@ class GithubCallbackEndpoint(View):
             )
         )
 
-        provider = GithubAuthAdapter(
+        provider = GitHubOAuthProvider(
             request=request,
             client_id=GITHUB_CLIENT_ID,
             client_secret=GITHUB_CLIENT_SECRET,

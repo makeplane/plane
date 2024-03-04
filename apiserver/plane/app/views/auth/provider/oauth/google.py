@@ -2,11 +2,10 @@
 from datetime import datetime
 
 import pytz
+from plane.app.views.auth.adapter.oauth import OauthAdapter
 
-from .adapter import OauthAdapter
 
-
-class GoogleAuthAdapter(OauthAdapter):
+class GoogleOAuthProvider(OauthAdapter):
     token_url = "https://oauth2.googleapis.com/token"
     userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
     scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"

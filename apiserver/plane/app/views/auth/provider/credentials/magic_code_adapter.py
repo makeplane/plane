@@ -7,12 +7,12 @@ import string
 from django.core.exceptions import BadRequest
 
 # Module imports
-from plane.app.views.auth.adapter.adapter import Adapter
+from plane.app.views.auth.adapter.base import Adapter
 from plane.db.models import User
 from plane.settings.redis import redis_instance
 
 
-class MagicCodeAdapter(Adapter):
+class MagicCodeProvider(Adapter):
 
     provider = "magic-code"
 
@@ -78,7 +78,6 @@ class MagicCodeAdapter(Adapter):
             data = json.loads(ri.get(self.key))
             token = data["token"]
             email = data["email"]
-            print(str(token) == str(self.code))
 
             if str(token) == str(self.code):
                 super().set_user_data({

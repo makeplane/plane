@@ -1,37 +1,27 @@
 # Python imports
-import json
 import os
-import random
-import string
-import uuid
 
 # Django imports
 from django.contrib.auth import login
-from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 from django.http.response import JsonResponse
 from django.shortcuts import redirect
-from django.utils import timezone
 from django.views import View
 from rest_framework import status
 
 # Third party imports
 from rest_framework.permissions import AllowAny
 
-from plane.bgtasks.event_tracking_task import auth_events
-from plane.bgtasks.magic_link_code_task import magic_link
-
 # Module imports
+from plane.app.views.auth.provider.credentials.magic_code_adapter import (
+    MagicCodeProvider,
+)
+from plane.bgtasks.magic_link_code_task import magic_link
 from plane.db.models import (
-    Profile,
-    User,
     WorkspaceMemberInvite,
 )
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
-from plane.settings.redis import redis_instance
-
-from .adapter.magic_code_adapter import MagicCodeAdapter
 
 
 class MagicGenerateEndpoint(View):
@@ -53,7 +43,7 @@ class MagicGenerateEndpoint(View):
         email = email.strip().lower()
         validate_email(email)
 
-        adapter = MagicCodeAdapter(request=request, key=email)
+        adapter = MagicCodeProvider(request=request, key=email)
         key, token, error = adapter.initiate()
 
         if error:
@@ -97,7 +87,7 @@ class MagicSignInEndpoint(View):
             ]
         )
 
-        provider = MagicCodeAdapter(request=request, key=key, code=user_token)
+        provider = MagicCodeProvider(request=request, key=key, code=user_token)
 
         user, email = provider.authenticate()
 

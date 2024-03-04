@@ -5,10 +5,10 @@ import pytz
 import requests
 
 # Module imports
-from .adapter import OauthAdapter
+from plane.app.views.auth.adapter.oauth import OauthAdapter
 
 
-class GithubAuthAdapter(OauthAdapter):
+class GitHubOAuthProvider(OauthAdapter):
 
     token_url = "https://github.com/login/oauth/access_token"
     userinfo_url = "https://api.github.com/user"

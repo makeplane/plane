@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.views import View
 
 # Module imports
-from plane.app.views.auth.adapter.google_adapter import GoogleAuthAdapter
+from plane.app.views.auth.provider.oauth.google import GoogleOAuthProvider
 
 # Ensure this path matches your project structure
 from plane.db.models import WorkspaceMemberInvite
@@ -39,7 +39,7 @@ class GoogleOauthInitiateEndpoint(View):
                 status=400,
             )
 
-        provider = GoogleAuthAdapter(
+        provider = GoogleOAuthProvider(
             request=request, client_id=GOOGLE_CLIENT_ID
         )
         auth_url = provider.get_auth_url()
@@ -71,7 +71,7 @@ class GoogleCallbackEndpoint(View):
             )
         )
 
-        provider = GoogleAuthAdapter(
+        provider = GoogleOAuthProvider(
             request=request,
             client_id=GOOGLE_CLIENT_ID,
             client_secret=GOOGLE_CLIENT_SECRET,
