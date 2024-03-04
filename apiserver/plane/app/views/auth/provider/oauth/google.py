@@ -1,22 +1,50 @@
-# Module imports
+# Python imports
+import os
 from datetime import datetime
 
 import pytz
 
-from .adapter import OauthAdapter
+# Django imports
+from django.core.exceptions import ImproperlyConfigured
+
+# Module imports
+from plane.app.views.auth.adapter.oauth import OauthAdapter
+from plane.license.utils.instance_value import get_configuration_value
 
 
-class GoogleAuthAdapter(OauthAdapter):
+class GoogleOAuthProvider(OauthAdapter):
     token_url = "https://oauth2.googleapis.com/token"
     userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
     scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
     provider = "google"
 
-    def __init__(self, request, client_id, client_secret=None, code=None):
+    def __init__(self, request, code=None):
+        (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) = get_configuration_value(
+            [
+                {
+                    "key": "GOOGLE_CLIENT_ID",
+                    "default": os.environ.get("GOOGLE_CLIENT_ID"),
+                },
+                {
+                    "key": "GOOGLE_CLIENT_SECRET",
+                    "default": os.environ.get("GOOGLE_CLIENT_SECRET"),
+                },
+            ]
+        )
+
+        if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET):
+            return ImproperlyConfigured(
+                "Google is not configured. Please contact the support team."
+            )
+
+        client_id = GOOGLE_CLIENT_ID
+        client_secret = GOOGLE_CLIENT_SECRET
+
         redirect_uri = (
             f"{request.scheme}://{request.get_host()}/auth/callback/google/"
         )
         auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={self.scope}&access_type=offline&prompt=consent"
+
         super().__init__(
             request,
             self.provider,
@@ -71,6 +99,7 @@ class GoogleAuthAdapter(OauthAdapter):
                 "first_name": user_info_response.get("given_name"),
                 "last_name": user_info_response.get("family_name"),
                 "provider_id": user_info_response.get("id"),
+                "is_password_autoset": True,
             },
         }
         super().set_user_data(user_data)

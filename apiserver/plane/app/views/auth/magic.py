@@ -1,37 +1,22 @@
 # Python imports
-import json
 import os
-import random
-import string
-import uuid
 
 # Django imports
 from django.contrib.auth import login
-from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http.response import JsonResponse
 from django.shortcuts import redirect
-from django.utils import timezone
 from django.views import View
-from rest_framework import status
 
-# Third party imports
-from rest_framework.permissions import AllowAny
-
-from plane.bgtasks.event_tracking_task import auth_events
-from plane.bgtasks.magic_link_code_task import magic_link
+from plane.app.views.auth.adapter.base import AuthenticationException
 
 # Module imports
-from plane.db.models import (
-    Profile,
-    User,
-    WorkspaceMemberInvite,
+from plane.app.views.auth.provider.credentials.magic_code_adapter import (
+    MagicCodeProvider,
 )
+from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
-from plane.license.utils.instance_value import get_configuration_value
-from plane.settings.redis import redis_instance
-
-from .adapter.magic_code_adapter import MagicCodeAdapter
 
 
 class MagicGenerateEndpoint(View):
@@ -48,27 +33,22 @@ class MagicGenerateEndpoint(View):
                 {"error": "Please provide a valid email address"},
                 status=400,
             )
-
-        # Clean up the email
-        email = email.strip().lower()
-        validate_email(email)
-
-        adapter = MagicCodeAdapter(request=request, key=email)
-        key, token, error = adapter.initiate()
-
-        if error:
-            return JsonResponse(error, status=400)
-
-        # If the smtp is configured send through here
-        magic_link.delay(email, key, token, referer)
-
-        return JsonResponse({"key": key}, status=status.HTTP_200_OK)
+        try:
+            # Clean up the email
+            email = email.strip().lower()
+            validate_email(email)
+            adapter = MagicCodeProvider(request=request, key=email)
+            key, token = adapter.initiate()
+            # If the smtp is configured send through here
+            magic_link.delay(email, key, token, referer)
+            return redirect(request.session.get("referer", "/"))
+        except AuthenticationException as e:
+            return JsonResponse({"error": str(e)}, status=400)
+        except ValidationError:
+            return JsonResponse({"error": "Invalid email used"}, status=400)
 
 
 class MagicSignInEndpoint(View):
-    permission_classes = [
-        AllowAny,
-    ]
 
     def post(self, request):
         # Check if the instance configuration is done
@@ -87,32 +67,12 @@ class MagicSignInEndpoint(View):
                 {"error": "User token and key are required"},
                 status=400,
             )
-
-        (ENABLE_SIGNUP,) = get_configuration_value(
-            [
-                {
-                    "key": "ENABLE_SIGNUP",
-                    "default": os.environ.get("ENABLE_SIGNUP"),
-                },
-            ]
-        )
-
-        provider = MagicCodeAdapter(request=request, key=key, code=user_token)
-
-        user, email = provider.authenticate()
-
-        if user:
-            user = provider.complete_login_or_signup()
+        try:
+            provider = MagicCodeProvider(
+                request=request, key=key, code=user_token
+            )
+            user = provider.authenticate()
             login(request=request, user=user)
             return redirect(request.session.get("referer"))
-        else:
-            if (
-                ENABLE_SIGNUP == "0"
-                and not WorkspaceMemberInvite.objects.filter(
-                    email=email,
-                ).exists()
-            ):
-                return redirect(request.session.get("referer"))
-            user = provider.complete_login_or_signup(is_signup=True)
-            login(request=request, user=user)
-            return redirect(request.session.get("referer"))
+        except AuthenticationException as e:
+            return JsonResponse({"error": str(e)}, status=403)
