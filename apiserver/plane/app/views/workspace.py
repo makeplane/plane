@@ -1295,9 +1295,6 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 )
                 .values(
                     "id",
-                    "name",
-                    "identifier",
-                    "logo_props",
                     "created_issues",
                     "assigned_issues",
                     "completed_issues",
