@@ -2,13 +2,13 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
 // stores
 import { RootStore } from "../root.store";
-import { IProfileStore, ProfileStore, IAccountStore, AccountStore } from "./";
+import { IProfileStore, ProfileStore, IAccountStore, AccountStore } from ".";
 // services
-import { CurrentUserService, CurrentUserAccountsService } from "services/current-user";
+import { UserService } from "services/user.service";
 // types
-import { TCurrentUser, TCurrentUserSettings } from "@plane/types";
+import { IUser, TCurrentUser, TCurrentUserSettings } from "@plane/types";
 
-export interface ICurrentUserStore {
+export interface IUserStore {
   // store
   profile: IProfileStore;
   // observables
@@ -26,65 +26,86 @@ export interface ICurrentUserStore {
   fetchUserAccounts: () => Promise<void>;
 }
 
-export class CurrentUserStore implements ICurrentUserStore {
+export class UserStore implements IUserStore {
+  // observables flags
   isAuthenticated: boolean = false;
   isLoading: boolean = false;
-  data: TCurrentUser = {
-    id: undefined,
-    avatar: undefined,
-    cover_image: undefined,
-    date_joined: undefined,
-    display_name: undefined,
-    email: undefined,
-    first_name: undefined,
-    last_name: undefined,
-    is_active: false,
-    is_bot: false,
-    is_email_verified: false,
-    is_managed: false,
-    mobile_number: undefined,
-    user_timezone: undefined,
-    username: undefined,
-    is_password_autoset: false,
-  };
-  settings: TCurrentUserSettings = {
-    id: undefined,
-    email: undefined,
-    workspace: {
-      last_workspace_id: undefined,
-      last_workspace_slug: undefined,
-      fallback_workspace_id: undefined,
-      fallback_workspace_slug: undefined,
-      invites: undefined,
-    },
-  };
   error: any | undefined = undefined;
+  // model observables
+  avatar: string | undefined = undefined;
+  cover_image: string | undefined = undefined;
+  date_joined: string | undefined = undefined;
+  display_name: string | undefined = undefined;
+  email: string | undefined = undefined;
+  first_name: string | undefined = undefined;
+  id: string | undefined = undefined;
+  is_active: boolean = false;
+  is_bot: boolean = false;
+  is_email_verified: boolean = false;
+  last_name: string | undefined = undefined;
+  user_timezone: string | undefined = undefined;
+  // relational observables
   profile: IProfileStore;
   accounts: Record<string, IAccountStore> = {};
   // service
-  currentUserService: CurrentUserService;
-  currentUserAccountsService: CurrentUserAccountsService;
+  userService: UserService;
 
-  constructor(private store: RootStore) {
+  constructor(data: IUser) {
     makeObservable(this, {
       // observables
       isAuthenticated: observable.ref,
       isLoading: observable.ref,
-      data: observable,
-      settings: observable,
       error: observable,
+      // model observables
+      avatar: observable.ref,
+      cover_image: observable.ref,
+      date_joined: observable.ref,
+      display_name: observable.ref,
+      email: observable.ref,
+      first_name: observable.ref,
+      id: observable.ref,
+      is_active: observable.ref,
+      is_bot: observable.ref,
+      is_email_verified: observable.ref,
+      last_name: observable.ref,
+      user_timezone: observable.ref,
+      // relational observables
+      profile: observable,
       accounts: observable,
       // actions
       fetchCurrentUser: action,
       fetchCurrentUserSettings: action,
       fetchUserAccounts: action,
     });
+
     // service
-    this.currentUserService = new CurrentUserService();
-    this.currentUserAccountsService = new CurrentUserAccountsService();
+    this.userService = new UserService();
     // stores initialization
-    this.profile = new ProfileStore(store);
+    this.profile = new ProfileStore();
   }
+
+  get asJson() {
+    return {
+      avatar: this.avatar,
+      cover_image: this.cover_image,
+      date_joined: this.date_joined,
+      display_name: this.display_name,
+      email: this.email,
+      first_name: this.first_name,
+      id: this.id,
+      is_active: this.is_active,
+      is_bot: this.is_bot,
+      is_email_verified: this.is_email_verified,
+      last_name: this.last_name,
+      user_timezone: this.user_timezone,
+      profile: this.profile.asJson,
+      accounts: Object.entries(this.accounts).map(([key, value]) => value.asJson),
+    };
+  }
+
+  updateUser = (data: Partial<TCurrentUser>) => {
+    this.avatar = data?.avatar || this.avatar;
+  };
 
   // actions
   fetchCurrentUser = async () => {

@@ -111,7 +111,7 @@ SESSION_COOKIE_SECURE = True
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 1800
 SESSION_COOKIE_NAME = "session-id"
-SESSION_COOKIE_DOMAIN = "localhost:3000"
+SESSION_COOKIE_DOMAIN = None
 
 # CSRF cookies
 CSRF_COOKIE_SECURE = True

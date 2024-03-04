@@ -141,10 +141,6 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     handleStepChange();
   }, [user, invitations, step, updateCurrentUser, workspacesList]);
 
-  const { data: session, status }: any = useSession();
-
-  // console.log("session", session);
-  // console.log("status", status);
   const {
     data: currentUserMe,
     settings: currentUserSettings,

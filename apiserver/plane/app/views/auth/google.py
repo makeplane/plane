@@ -12,6 +12,7 @@ from plane.app.views.auth.provider.oauth.google import GoogleOAuthProvider
 class GoogleOauthInitiateEndpoint(View):
     def get(self, request):
         referer = request.META.get("HTTP_REFERER")
+        print(referer)
         if not referer:
             return JsonResponse({"error": "Not a valid referer"}, status=400)
 
@@ -37,6 +38,7 @@ class GoogleCallbackEndpoint(View):
             )
             user = provider.authenticate()
             login(request=request, user=user)
+            print(request.session.get("referer"))
             return redirect(request.session.get("referer"))
         except ImproperlyConfigured as e:
             return JsonResponse({"error": str(e)}, status=400)

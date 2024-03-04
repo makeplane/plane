@@ -15,13 +15,7 @@ export interface IUserAuthWrapper {
 export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
   // store hooks
-  const {
-    currentUser,
-    currentUserError,
-    fetchCurrentUser,
-    fetchCurrentUserInstanceAdminStatus,
-    fetchCurrentUserSettings,
-  } = useUser();
+  const { currentUser, currentUserError, fetchCurrentUser, fetchCurrentUserSettings } = useUser();
   const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
@@ -29,12 +23,8 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
   });
-  // fetching current user instance admin status
-  useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
-    shouldRetryOnError: false,
-  });
-  // fetching user settings
-  useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
+  // fetching user profile settings
+  useSWR("CURRENT_USER_PROFILE", () => fetchCurrentUserSettings(), {
     shouldRetryOnError: false,
   });
   // fetching all workspaces
