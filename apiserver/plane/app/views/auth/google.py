@@ -8,10 +8,9 @@ from django.shortcuts import redirect
 from django.views import View
 
 # Module imports
-from plane.db.models import User, WorkspaceMemberInvite
+from plane.app.views.auth.adapter.google_adapter import GoogleAuthAdapter
+from plane.db.models import WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
-
-from .adapter.google import GoogleAuthProvider
 
 
 class GoogleOauthInitiateEndpoint(View):
@@ -41,7 +40,7 @@ class GoogleOauthInitiateEndpoint(View):
             )
 
         # Redirect to Google's OAuth 2.0 server
-        provider = GoogleAuthProvider(
+        provider = GoogleAuthAdapter(
             client_id=GOOGLE_CLIENT_ID,
             request=request,
         )
@@ -77,35 +76,27 @@ class GoogleCallbackEndpoint(View):
                     ]
                 )
             )
-            provider = GoogleAuthProvider(
+            provider = GoogleAuthAdapter(
                 client_id=GOOGLE_CLIENT_ID,
                 client_secret=GOOGLE_CLIENT_SECRET,
                 request=request,
+                code=code,
             )
-            provider_response = provider.get_user_response(code=code)
-            # check user
-            user = User.objects.filter(
-                email=provider_response.get("email")
-            ).first()
+            user = provider.validate_user()
 
             if user:
-                user = provider.complete_login(
-                    user=user, provider_response=provider_response
-                )
+                user = provider.complete_login()
                 login(request=request, user=user)
                 return redirect(request.session["referer"])
             else:
                 if (
                     ENABLE_SIGNUP == "0"
                     and not WorkspaceMemberInvite.objects.filter(
-                        email=provider_response.get("email"),
+                        email=user.email,
                     ).exists()
                 ):
                     return redirect(request.session["referer"])
-
-                user = provider.complete_signup(
-                    provider_response=provider_response
-                )
+                user = provider.complete_signup()
                 login(request=request, user=user)
                 return redirect(request.session.get("referer"))
         return redirect(request.session.get("referer"))
