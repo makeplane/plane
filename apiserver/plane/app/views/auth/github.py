@@ -19,30 +19,27 @@ class GithubOauthInitiateEndpoint(View):
         referer = request.META.get("HTTP_REFERER")
         if not referer:
             return JsonResponse({"error": "Not a valid referer"}, status=400)
-        # set the referer as session to redirect after login
+
         request.session["referer"] = referer
-        # Get all the configuration
         (GITHUB_CLIENT_ID,) = get_configuration_value(
             [
                 {
                     "key": "GITHUB_CLIENT_ID",
-                    "default": os.environ.get("GITHUB_CLIENT_ID", None),
-                },
+                    "default": os.environ.get("GITHUB_CLIENT_ID"),
+                }
             ]
         )
 
         if not GITHUB_CLIENT_ID:
             return JsonResponse(
                 {
-                    "error": "Github is not configured please contact the support team"
+                    "error": "Github is not configured. Please contact the support team."
                 },
                 status=400,
             )
 
-        # Redirect to Google's OAuth 2.0 server
         provider = GithubAuthAdapter(
-            client_id=GITHUB_CLIENT_ID,
-            request=request,
+            request=request, client_id=GITHUB_CLIENT_ID
         )
         auth_url = provider.get_auth_url()
         return redirect(auth_url)
@@ -52,52 +49,49 @@ class GithubCallbackEndpoint(View):
 
     def get(self, request):
         code = request.GET.get("code")
-        if code:
-            # Get all the configuration
-            (
-                GITHUB_CLIENT_ID,
-                GITHUB_CLIENT_SECRET,
-                ENABLE_SIGNUP,
-            ) = get_configuration_value(
+        if not code:
+            return redirect(request.session.get("referer"))
+
+        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, ENABLE_SIGNUP = (
+            get_configuration_value(
                 [
                     {
                         "key": "GITHUB_CLIENT_ID",
-                        "default": os.environ.get("GITHUB_CLIENT_ID", None),
+                        "default": os.environ.get("GITHUB_CLIENT_ID"),
                     },
                     {
                         "key": "GITHUB_CLIENT_SECRET",
-                        "default": os.environ.get(
-                            "GITHUB_CLIENT_SECRET", None
-                        ),
+                        "default": os.environ.get("GITHUB_CLIENT_SECRET"),
                     },
                     {
                         "key": "ENABLE_SIGNUP",
-                        "default": os.environ.get("ENABLE_SIGNUP"),
+                        "default": os.environ.get("ENABLE_SIGNUP", "1"),
                     },
                 ]
             )
-            provider = GithubAuthAdapter(
-                client_id=GITHUB_CLIENT_ID,
-                client_secret=GITHUB_CLIENT_SECRET,
-                request=request,
-                code=code,
-            )
-            user = provider.validate_user()
-            # check user
-            if user:
-                user = provider.complete_login()
-                login(request=request, user=user)
-                return redirect(request.session["referer"])
-            else:
-                if (
-                    ENABLE_SIGNUP == "0"
-                    and not WorkspaceMemberInvite.objects.filter(
-                        email=user.email,
-                    ).exists()
-                ):
-                    return redirect(request.session["referer"])
+        )
 
-                user = provider.complete_signup()
-                login(request=request, user=user)
+        provider = GithubAuthAdapter(
+            request=request,
+            client_id=GITHUB_CLIENT_ID,
+            client_secret=GITHUB_CLIENT_SECRET,
+            code=code,
+        )
+
+        user = provider.authenticate()
+
+        if user:
+            user = provider.complete_login_or_signup()
+            login(request=request, user=user)
+            return redirect(request.session.get("referer"))
+        else:
+            if (
+                ENABLE_SIGNUP == "0"
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=user.email,
+                ).exists()
+            ):
                 return redirect(request.session.get("referer"))
-        return redirect(request.session.get("referer"))
+            user = provider.complete_login_or_signup(is_signup=True)
+            login(request=request, user=user)
+            return redirect(request.session.get("referer"))
