@@ -1,39 +1,47 @@
 # Python imports
-import os
-import uuid
 import json
+import os
 import random
 import string
+import uuid
 
 # Django imports
 from django.contrib.auth import login
-from django.shortcuts import redirect
-from django.views import View
-from django.utils import timezone
-from django.core.validators import validate_email
 from django.contrib.auth.hashers import make_password
+from django.core.validators import validate_email
 from django.http.response import JsonResponse
+from django.shortcuts import redirect
+from django.utils import timezone
+from django.views import View
+from rest_framework import status
 
 # Third party imports
 from rest_framework.permissions import AllowAny
-from rest_framework import status
+
+from plane.bgtasks.event_tracking_task import auth_events
+from plane.bgtasks.magic_link_code_task import magic_link
 
 # Module imports
 from plane.db.models import (
+    Profile,
     User,
     WorkspaceMemberInvite,
-    Profile,
 )
-from plane.settings.redis import redis_instance
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
-from plane.bgtasks.event_tracking_task import auth_events
-from plane.bgtasks.magic_link_code_task import magic_link
+from plane.settings.redis import redis_instance
+
+from .adapter.magic_code_adapter import MagicCodeAdapter
 
 
 class MagicGenerateEndpoint(View):
 
     def post(self, request):
+        referer = request.META.get("HTTP_REFERER", "/")
+        if not referer:
+            return JsonResponse({"error": "Not a valid referer"}, status=400)
+        # set the referer as session to redirect after login
+        request.session["referer"] = referer
         email = request.POST.get("email", False)
         if not email:
             return JsonResponse(
@@ -45,61 +53,14 @@ class MagicGenerateEndpoint(View):
         email = email.strip().lower()
         validate_email(email)
 
-        # check if the email exists not
-        if not User.objects.filter(email=email).exists():
-            # Create a user
-            _ = User.objects.create(
-                email=email,
-                username=uuid.uuid4().hex,
-                password=make_password(uuid.uuid4().hex),
-                is_password_autoset=True,
-            )
+        adapter = MagicCodeAdapter(request=request, key=email)
+        key, token, error = adapter.initiate()
 
-        ## Generate a random token
-        token = (
-            "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-        )
-
-        ri = redis_instance()
-
-        key = "magic_" + str(email)
-
-        # Check if the key already exists in python
-        if ri.exists(key):
-            data = json.loads(ri.get(key))
-
-            current_attempt = data["current_attempt"] + 1
-
-            if data["current_attempt"] > 2:
-                return JsonResponse(
-                    {
-                        "error": "Max attempts exhausted. Please try again later."
-                    },
-                    status=400,
-                )
-
-            value = {
-                "current_attempt": current_attempt,
-                "email": email,
-                "token": token,
-            }
-            expiry = 600
-
-            ri.set(key, json.dumps(value), ex=expiry)
-
-        else:
-            value = {"current_attempt": 0, "email": email, "token": token}
-            expiry = 600
-
-            ri.set(key, json.dumps(value), ex=expiry)
+        if error:
+            return JsonResponse(error, status=400)
 
         # If the smtp is configured send through here
-        current_site = request.META.get("HTTP_ORIGIN")
-        magic_link.delay(email, key, token, current_site)
+        magic_link.delay(email, key, token, referer)
 
         return JsonResponse({"key": key}, status=status.HTTP_200_OK)
 
@@ -135,91 +96,23 @@ class MagicSignInEndpoint(View):
                 },
             ]
         )
-        ri = redis_instance()
 
-        if ri.exists(key):
-            data = json.loads(ri.get(key))
+        provider = MagicCodeAdapter(request=request, key=key, code=user_token)
 
-            token = data["token"]
-            email = data["email"]
+        user, email = provider.authenticate()
 
-            if str(token) == str(user_token):
-                user = User.objects.filter(email=email).first()
-                # Signin
-                if user:
-                    # Send event
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="Sign in",
-                        medium="Magic link",
-                        first_time=False,
-                    )
-
-                    user.is_active = True
-                    user.is_email_verified = True
-                    user.last_active = timezone.now()
-                    user.last_login_time = timezone.now()
-                    user.last_login_ip = request.META.get("REMOTE_ADDR")
-                    user.last_login_uagent = request.META.get(
-                        "HTTP_USER_AGENT"
-                    )
-                    user.token_updated_at = timezone.now()
-                    user.save()
-
-                    login(request=request, user=user)
-                    return redirect(request.session.get("referer"))
-
-                # Signup
-                else:
-                    # Check if signup is enabled or not
-                    if (
-                        ENABLE_SIGNUP == "0"
-                        and not WorkspaceMemberInvite.objects.filter(
-                            email=email,
-                        ).exists()
-                    ):
-                        return JsonResponse(
-                            {
-                                "error": "New account creation is disabled. Please contact your site administrator"
-                            },
-                            status=400,
-                        )
-
-                    user = User.objects.create(
-                        email=email, username=uuid.uuid4().hex
-                    )
-                    user.set_password(uuid.uuid4().hex)
-                    # settings last actives for the user
-                    user.is_password_autoset = False
-                    user.last_active = timezone.now()
-                    user.last_login_time = timezone.now()
-                    user.last_login_ip = request.META.get("REMOTE_ADDR")
-                    user.last_login_uagent = request.META.get(
-                        "HTTP_USER_AGENT"
-                    )
-                    user.token_updated_at = timezone.now()
-                    user.last_login_medium = "email"
-                    user.save()
-
-                    # Create profile
-                    _ = Profile.objects.create(user=user)
-
-                    login(request=request, user=user)
-                    return redirect(request.session.get("referer"))
-
-            else:
-                return JsonResponse(
-                    {
-                        "error": "Your login code was incorrect. Please try again."
-                    },
-                    status=400,
-                )
-
+        if user:
+            user = provider.complete_login_or_signup()
+            login(request=request, user=user)
+            return redirect(request.session.get("referer"))
         else:
-            return JsonResponse(
-                {"error": "The magic code/link has expired please try again"},
-                status=400,
-            )
+            if (
+                ENABLE_SIGNUP == "0"
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=email,
+                ).exists()
+            ):
+                return redirect(request.session.get("referer"))
+            user = provider.complete_login_or_signup(is_signup=True)
+            login(request=request, user=user)
+            return redirect(request.session.get("referer"))

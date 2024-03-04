@@ -41,13 +41,13 @@ class Adapter:
         email = self.user_data.get("email")
         user_query = User.objects.filter(email=email)
         user = user_query.first()
-        print(self.user_data)
+
         if is_signup or not user:
             user = User(email=email, username=uuid.uuid4().hex)
             user.set_password(uuid.uuid4().hex)
-            user.avatar = self.user_data.get("avatar", user.avatar)
-            user.first_name = self.user_data.get("first_name", user.first_name)
-            user.last_name = self.user_data.get("last_name", user.last_name)
+            user.avatar = self.user_data.get("user").get("avatar", "")
+            user.first_name = self.user_data.get("user").get("first_name", "")
+            user.last_name = self.user_data.get("user").get("last_name", "")
             user.save()
             Profile.objects.create(user=user)
 
@@ -102,7 +102,9 @@ class OauthAdapter(Adapter):
     def authenticate(self):
         self.set_token_data()
         self.set_user_data()
-        return User.objects.filter(email=self.user_data.get("email")).first()
+        return User.objects.filter(
+            email=self.user_data.get("email")
+        ).first(), self.user_data.get("email")
 
     def get_user_token(self, data, headers=None):
         headers = headers or {}
@@ -144,4 +146,13 @@ class OauthAdapter(Adapter):
 
 
 class CredentialAdapter(Adapter):
-    pass
+    """Common interface for all credential providers"""
+
+    def __init__(self, request, provider):
+        self.request = request
+        self.provider = provider
+        self.token_data = None
+        self.user_data = None
+
+    def authenticate(self):
+        raise NotImplementedError

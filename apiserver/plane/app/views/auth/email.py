@@ -3,26 +3,26 @@ import uuid
 
 # Django imports
 from django.contrib.auth import login, logout
-from django.http.response import JsonResponse
-from django.shortcuts import redirect
-from django.views import View
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.utils import timezone
+from django.core.validators import validate_email
+from django.http.response import JsonResponse
 from django.middleware.csrf import get_token
+from django.shortcuts import redirect
+from django.utils import timezone
+from django.views import View
 
 # Module imports
-from plane.db.models import User, Profile
+from plane.db.models import Profile, User
+
 
 class SignInAuthEndpoint(View):
 
     def post(self, request):
-        # referer = request.META.get("HTTP_REFERER")
-        # referer = uuid.uuid4().hex
-        # if not referer:
-        #     return JsonResponse({"error": "Not a valid referer"}, status=400)
-        # # set the referer as session to redirect after login
-        # request.session["referer"] = referer
+        referer = request.META.get("HTTP_REFERER", "/")
+        if not referer:
+            return JsonResponse({"error": "Not a valid referer"}, status=400)
+        # set the referer as session to redirect after login
+        request.session["referer"] = referer
 
         email = request.POST.get("email", False)
         password = request.POST.get("password", False)
@@ -76,12 +76,13 @@ class SignInAuthEndpoint(View):
         user.save()
 
         login(request=request, user=user)
-        return redirect(request.session.get("referer"))
+        return redirect(request.session.get("referer", "/"))
 
 
 class SignUpAuthEndpoint(View):
 
     def post(self, request):
+        
         email = request.POST.get("email", False)
         password = request.POST.get("password", False)
         ## Raise exception if any of the above are missing
@@ -125,7 +126,7 @@ class SignUpAuthEndpoint(View):
         _ = Profile.objects.create(user=user)
 
         login(request=request, user=user)
-        return redirect(request.session.get("referer"))
+        return redirect(request.session.get("referer", "/"))
 
 
 class SignOutAuthEndpoint(View):

@@ -78,7 +78,7 @@ class GithubCallbackEndpoint(View):
             code=code,
         )
 
-        user = provider.authenticate()
+        user, email = provider.authenticate()
 
         if user:
             user = provider.complete_login_or_signup()
@@ -88,7 +88,7 @@ class GithubCallbackEndpoint(View):
             if (
                 ENABLE_SIGNUP == "0"
                 and not WorkspaceMemberInvite.objects.filter(
-                    email=user.email,
+                    email=email,
                 ).exists()
             ):
                 return redirect(request.session.get("referer"))
