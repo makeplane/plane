@@ -5,11 +5,11 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 import { ProjectSettingStateList } from "components/states";
 import { ProjectSettingHeader } from "components/headers";
+import { PageHead } from "components/core";
 // types
 import { NextPageWithLayout } from "lib/types";
 // hook
 import { useProject } from "hooks/store";
-import { PageHead } from "components/core";
 
 const StatesSettingsPage: NextPageWithLayout = () => {
   // store
