@@ -60,10 +60,6 @@ class MagicCodeProvider(CredentialAdapter):
             ri.set(key, json.dumps(value), ex=expiry)
         return key, token
 
-    def authenticate(self):
-        self.set_user_data()
-        return self.complete_login_or_signup()
-
     def set_user_data(self):
         ri = redis_instance()
         if ri.exists(self.key):

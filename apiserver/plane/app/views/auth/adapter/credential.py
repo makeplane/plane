@@ -8,3 +8,6 @@ class CredentialAdapter(Adapter):
         self.request = request
         self.provider = provider
 
+    def authenticate(self):
+        self.set_user_data()
+        return self.complete_login_or_signup()
