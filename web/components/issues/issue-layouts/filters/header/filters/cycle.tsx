@@ -33,7 +33,8 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
   const appliedFiltersCount = appliedFilters?.length ?? 0;
   const filteredOptions = sortBy(
     cycles?.filter((cycle) => cycle.name.toLowerCase().includes(searchQuery.toLowerCase())),
-    (cycle) => cycle.name.toLowerCase()
+    // First sort by whether the cycle is in appliedFilters, then by name
+    [(cycle) => !appliedFilters?.includes(cycle.id), (cycle) => cycle.name.toLowerCase()]
   );
 
   const handleViewToggle = () => {

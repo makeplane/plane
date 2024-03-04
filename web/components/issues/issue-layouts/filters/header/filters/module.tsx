@@ -31,7 +31,8 @@ export const FilterModule: React.FC<Props> = observer((props) => {
   const appliedFiltersCount = appliedFilters?.length ?? 0;
   const filteredOptions = sortBy(
     modules?.filter((module) => module.name.toLowerCase().includes(searchQuery.toLowerCase())),
-    (module) => module.name.toLowerCase()
+    // First sort by whether the module is in appliedFilters, then by name
+    [(module) => !appliedFilters?.includes(module.id), (module) => module.name.toLowerCase()]
   );
 
   const handleViewToggle = () => {

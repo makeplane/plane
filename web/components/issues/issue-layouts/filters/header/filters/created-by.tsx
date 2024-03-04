@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+import sortBy from "lodash/sortBy";
 // hooks
 import { useMember } from "hooks/store";
 // components
@@ -22,9 +23,17 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const filteredOptions = memberIds?.filter((memberId) =>
-    getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = sortBy(
+    (memberIds || []).filter((memberId) =>
+      getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
+    // First sort by whether the created-by is in appliedFilters, then by names
+    [
+      (memberId) => !(appliedFilters ?? []).includes(memberId),
+      (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
+    ]
   );
+
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const handleViewToggle = () => {

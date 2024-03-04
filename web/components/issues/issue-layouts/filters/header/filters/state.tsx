@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import sortBy from "lodash/sortBy";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
@@ -22,7 +23,11 @@ export const FilterState: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = states?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredOptions = sortBy(
+    (states ?? []).filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase())),
+    // First sort by whether the state is in appliedFilters, then by names
+    [(s) => !(appliedFilters ?? []).includes(s.id), (s) => s.name.toLowerCase()]
+  );
 
   const handleViewToggle = () => {
     if (!filteredOptions) return;
