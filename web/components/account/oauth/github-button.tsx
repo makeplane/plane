@@ -1,6 +1,5 @@
 import { FC } from "react";
 import Image from "next/image";
-import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 // images
 import githubLightModeImage from "/public/logos/github-black.png";
@@ -16,7 +15,7 @@ export const GithubOAuthButton: FC<GithubOAuthButtonProps> = (props) => {
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    signIn("github");
+    window.location.assign("http://localhost:8000/auth/github/");
   };
 
   return (

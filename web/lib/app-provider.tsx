@@ -4,7 +4,6 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "next-themes";
-import { SessionProvider } from "next-auth/react";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // constants
@@ -45,27 +44,25 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   } = useApplication();
 
   return (
-    <SessionProvider session={session}>
-      <ThemeProvider themes={THEMES} defaultTheme="system">
-        <ToastContextProvider>
-          <InstanceLayout>
-            <StoreWrapper>
-              <CrispWrapper user={currentUser}>
-                <PostHogProvider
-                  user={currentUser}
-                  currentWorkspaceId={currentWorkspace?.id}
-                  workspaceRole={currentWorkspaceRole}
-                  projectRole={currentProjectRole}
-                  posthogAPIKey={envConfig?.posthog_api_key || null}
-                  posthogHost={envConfig?.posthog_host || null}
-                >
-                  <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-                </PostHogProvider>
-              </CrispWrapper>
-            </StoreWrapper>
-          </InstanceLayout>
-        </ToastContextProvider>
-      </ThemeProvider>
-    </SessionProvider>
+    <ThemeProvider themes={THEMES} defaultTheme="system">
+      <ToastContextProvider>
+        <InstanceLayout>
+          <StoreWrapper>
+            <CrispWrapper user={currentUser}>
+              <PostHogProvider
+                user={currentUser}
+                currentWorkspaceId={currentWorkspace?.id}
+                workspaceRole={currentWorkspaceRole}
+                projectRole={currentProjectRole}
+                posthogAPIKey={envConfig?.posthog_api_key || null}
+                posthogHost={envConfig?.posthog_host || null}
+              >
+                <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
+              </PostHogProvider>
+            </CrispWrapper>
+          </StoreWrapper>
+        </InstanceLayout>
+      </ToastContextProvider>
+    </ThemeProvider>
   );
 });

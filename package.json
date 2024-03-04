@@ -7,7 +7,6 @@
     "web",
     "space",
     "god-mode",
-    "packages/auth",
     "packages/editor/*",
     "packages/eslint-config-custom",
     "packages/tailwind-config-custom",

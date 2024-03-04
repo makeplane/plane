@@ -12,8 +12,6 @@ export const OAuthOptions: React.FC = observer(() => {
   // derived values
   const areBothOAuthEnabled = envConfig?.google_client_id && envConfig?.github_client_id;
 
-
-
   return (
     <>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
@@ -27,7 +25,6 @@ export const OAuthOptions: React.FC = observer(() => {
             <GoogleOAuthButton text="SignIn with Google" />
           </div>
         )}
-        <button onClick={() => window.location.assign("http://localhost:8000/auth/github/")}>Github</button>
         {envConfig?.github_client_id && <GithubOAuthButton text="SignIn with Github" />}
       </div>
     </>

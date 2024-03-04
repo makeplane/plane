@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
@@ -13,8 +12,6 @@ import { Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
-import { APIService } from "services/api.service";
-
 export type AuthType = "sign-in" | "sign-up";
 
 export const SignInView = observer(() => {
@@ -23,8 +20,6 @@ export const SignInView = observer(() => {
     config: { envConfig },
   } = useApplication();
   const { currentUser } = useUser();
-  const { data: session, status }: any = useSession();
-  console.log("session", session, status);
   // sign in redirection hook
   const { isRedirecting, handleRedirection } = useSignInRedirection();
 
@@ -38,7 +33,6 @@ export const SignInView = observer(() => {
         <Spinner />
       </div>
     );
-
 
   return (
     <>

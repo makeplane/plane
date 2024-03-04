@@ -1,12 +1,13 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { tree } from "next/dist/build/templates/app-page";
 
 export abstract class APIService {
   protected baseURL: string;
   protected headers: any = {};
 
   constructor(baseURL: string) {
-    this.baseURL = "";
+    this.baseURL = baseURL;
   }
 
   setRefreshToken(token: string) {
@@ -47,6 +48,7 @@ export abstract class APIService {
       url: this.baseURL + url,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
+      withCredentials: true,
     });
   }
 

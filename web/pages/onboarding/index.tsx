@@ -7,7 +7,6 @@ import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
-import { useSession } from "next-auth/react";
 // hooks
 import { useEventTracker, useUser, useWorkspace, useCurrentUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
