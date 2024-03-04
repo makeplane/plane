@@ -178,7 +178,7 @@ export const elementFromPath = (path?: string) => {
   };
 };
 
-// Workspace crud Events
+// Workspace CRUD Events
 export const WORKSPACE_CREATED = "Workspace created";
 export const WORKSPACE_UPDATED = "Workspace updated";
 export const WORKSPACE_DELETED = "Workspace deleted";
@@ -213,7 +213,6 @@ export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
 export const ISSUE_ARCHIVED = "Issue archived";
 export const ISSUE_RESTORED = "Issue restored";
-
 // Issue Checkout Events
 export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";
@@ -231,6 +230,13 @@ export const LAYOUT_CHANGED = "Layout changed";
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
 export const STATE_DELETED = "State deleted";
+// Label Events
+export const LABEL_CREATED = "Label created";
+export const LABEL_UPDATED = "Label updated";
+export const LABEL_DELETED = "Label deleted";
+export const LABEL_GROUP_DELETED = "Label group deleted";
+export const LABEL_ADDED_G = "Label added to group";
+export const LABEL_REMOVED_G = "Label removed from group";
 // Project Page Events
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";

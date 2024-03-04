@@ -11,7 +11,7 @@ import {
 } from "@hello-pangea/dnd";
 import { useTheme } from "next-themes";
 // hooks
-import { useLabel, useUser } from "hooks/store";
+import { useEventTracker, useLabel, useUser } from "hooks/store";
 import useDraggableInPortal from "hooks/use-draggable-portal";
 // components
 import {
@@ -27,6 +27,7 @@ import { Button, Loader } from "@plane/ui";
 import { IIssueLabel } from "@plane/types";
 // constants
 import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { LABEL_ADDED_G, LABEL_REMOVED_G } from "constants/event-tracker";
 
 const LABELS_ROOT = "labels.root";
 
@@ -45,7 +46,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { currentUser } = useUser();
-  const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
+  const { projectLabels, updateLabelPosition, projectLabelsTree, getLabelById } = useLabel();
+  const { captureEvent } = useEventTracker();
   // portal
   const renderDraggable = useDraggableInPortal();
 
@@ -76,6 +78,30 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     if (destination?.droppableId === LABELS_ROOT) parentLabel = null;
 
     if (result.reason == "DROP" && childLabel != parentLabel) {
+      const childLabelData = getLabelById(childLabel);
+      if (childLabelData?.parent != parentLabel) {
+        if (childLabelData?.parent) {
+          captureEvent(LABEL_REMOVED_G, {
+            group_id: childLabelData?.parent,
+            child_id: childLabel,
+            child_count:
+              (projectLabelsTree?.find((label) => label.id === childLabelData?.parent)?.children?.length ?? 0) - 1,
+          });
+          parentLabel &&
+            captureEvent(LABEL_ADDED_G, {
+              group_id: parentLabel,
+              child_id: childLabel,
+              child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
+            });
+        } else {
+          captureEvent(LABEL_ADDED_G, {
+            group_id: parentLabel,
+            child_id: childLabel,
+            child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
+          });
+        }
+      }
+
       updateLabelPosition(
         workspaceSlug?.toString()!,
         projectId?.toString()!,

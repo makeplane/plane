@@ -5,7 +5,7 @@ import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
-import { useLabel } from "hooks/store";
+import { useEventTracker, useLabel } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -13,6 +13,8 @@ import { Button, Input } from "@plane/ui";
 import { IIssueLabel } from "@plane/types";
 // fetch-keys
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
+// constants
+import { LABEL_CREATED, LABEL_UPDATED } from "constants/event-tracker";
 
 type Props = {
   labelForm: boolean;
@@ -35,6 +37,7 @@ export const CreateUpdateLabelInline = observer(
     const { workspaceSlug, projectId } = router.query;
     // store hooks
     const { createLabel, updateLabel } = useLabel();
+    const { captureEvent } = useEventTracker();
     // toast alert
     const { setToastAlert } = useToast();
     // form info
@@ -42,7 +45,7 @@ export const CreateUpdateLabelInline = observer(
       handleSubmit,
       control,
       reset,
-      formState: { errors, isSubmitting },
+      formState: { errors, isSubmitting, dirtyFields },
       watch,
       setValue,
       setFocus,
@@ -60,7 +63,14 @@ export const CreateUpdateLabelInline = observer(
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
       await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
-        .then(() => {
+        .then((res) => {
+          captureEvent(LABEL_CREATED, {
+            label_id: res.id,
+            color: res.color,
+            parent: res.parent,
+            element: "Project settings labels page",
+            state: "SUCCESS",
+          });
           handleClose();
           reset(defaultValues);
         })
@@ -78,7 +88,15 @@ export const CreateUpdateLabelInline = observer(
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
       await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
-        .then(() => {
+        .then((res) => {
+          captureEvent(LABEL_UPDATED, {
+            label_id: res.id,
+            color: res.color,
+            parent: res.parent,
+            change_details: Object.keys(dirtyFields),
+            element: "Project settings labels page",
+            state: "SUCCESS",
+          });
           reset(defaultValues);
           handleClose();
         })
