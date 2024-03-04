@@ -9,7 +9,7 @@ from django.views import View
 
 # Module imports
 from plane.app.views.auth.adapter.github_adapter import GithubAuthAdapter
-from plane.db.models import User, WorkspaceMemberInvite
+from plane.db.models import WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -82,9 +82,8 @@ class GithubCallbackEndpoint(View):
                 request=request,
                 code=code,
             )
-            email = provider.validate_user()
+            user = provider.validate_user()
             # check user
-            user = User.objects.filter(email=email).exists()
             if user:
                 user = provider.complete_login()
                 login(request=request, user=user)
@@ -93,7 +92,7 @@ class GithubCallbackEndpoint(View):
                 if (
                     ENABLE_SIGNUP == "0"
                     and not WorkspaceMemberInvite.objects.filter(
-                        email=email,
+                        email=user.email,
                     ).exists()
                 ):
                     return redirect(request.session["referer"])

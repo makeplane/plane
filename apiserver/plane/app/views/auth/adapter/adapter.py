@@ -14,6 +14,8 @@ from plane.db.models import Account, Profile, User
 
 class Adapter:
 
+    user = None
+
     def __init__(
         self,
         request,
@@ -111,6 +113,13 @@ class Adapter:
         account.last_connected_at = timezone.now()
         account.save()
         return
+
+    def validate_user(self):
+        self.get_user_token()
+        self.get_user_response()
+        email = self.user_data.get("email")
+        self.user = User.objects.filter(email=email).first()
+        return self.user
 
     def complete_login(self):
         user = User.objects.filter(email=self.user_data.get("email")).first()

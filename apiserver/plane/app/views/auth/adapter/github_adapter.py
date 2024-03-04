@@ -40,9 +40,7 @@ class GithubAuthAdapter(Adapter):
         )
 
     def validate_user(self):
-        self.get_user_token()
-        self.get_user_response()
-        return self.user_data.get("email")
+        return super().validate_user()
 
     def get_user_token(self):
         data = {
