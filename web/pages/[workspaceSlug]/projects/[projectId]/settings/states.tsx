@@ -7,15 +7,27 @@ import { ProjectSettingStateList } from "components/states";
 import { ProjectSettingHeader } from "components/headers";
 // types
 import { NextPageWithLayout } from "lib/types";
+// hook
+import { useProject } from "hooks/store";
+import { PageHead } from "components/core";
 
-const StatesSettingsPage: NextPageWithLayout = () => (
-  <div className="w-full gap-10 overflow-y-auto py-8 pr-9">
-    <div className="flex items-center border-b border-custom-border-100 py-3.5">
-      <h3 className="text-xl font-medium">States</h3>
-    </div>
-    <ProjectSettingStateList />
-  </div>
-);
+const StatesSettingsPage: NextPageWithLayout = () => {
+  // store
+  const { currentProjectDetails } = useProject();
+  // derived values
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - States` : undefined;
+  return (
+    <>
+      <PageHead title={pageTitle} />
+      <div className="w-full gap-10 overflow-y-auto py-8 pr-9">
+        <div className="flex items-center border-b border-custom-border-100 py-3.5">
+          <h3 className="text-xl font-medium">States</h3>
+        </div>
+        <ProjectSettingStateList />
+      </div>
+    </>
+  );
+};
 
 StatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
