@@ -206,9 +206,24 @@ class AccountEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    def delete(self, request, pk):
+        account = Account.objects.get(pk=pk, user=request.user)
+        account.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ProfileEndpoint(BaseAPIView):
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(
+            profile, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
