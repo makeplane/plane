@@ -5,7 +5,7 @@ import requests
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import Account, User
+from plane.db.models import Account
 
 from .base import Adapter
 
@@ -46,9 +46,7 @@ class OauthAdapter(Adapter):
     def authenticate(self):
         self.set_token_data()
         self.set_user_data()
-        return User.objects.filter(
-            email=self.user_data.get("email")
-        ).first(), self.user_data.get("email")
+        return self.complete_login_or_signup()
 
     def get_user_token(self, data, headers=None):
         headers = headers or {}

@@ -3,12 +3,9 @@ import json
 import random
 import string
 
-# Django imports
-from django.core.exceptions import BadRequest
-
 # Module imports
+from plane.app.views.auth.adapter.base import AuthenticationException
 from plane.app.views.auth.adapter.credential import CredentialAdapter
-from plane.db.models import User
 from plane.settings.redis import redis_instance
 
 
@@ -19,7 +16,7 @@ class MagicCodeProvider(CredentialAdapter):
     def __init__(
         self,
         request,
-        key=None,
+        key,
         code=None,
     ):
         super().__init__(request, self.provider)
@@ -47,9 +44,7 @@ class MagicCodeProvider(CredentialAdapter):
             current_attempt = data["current_attempt"] + 1
 
             if data["current_attempt"] > 2:
-                return key, {
-                    "error": "Max attempts exhausted. Please try again later."
-                }
+                return key, ""
 
             value = {
                 "current_attempt": current_attempt,
@@ -63,34 +58,34 @@ class MagicCodeProvider(CredentialAdapter):
             expiry = 600
 
             ri.set(key, json.dumps(value), ex=expiry)
-        return key, token,  False
+        return key, token
 
     def authenticate(self):
         self.set_user_data()
-        return User.objects.filter(
-            email=self.user_data.get("email")
-        ).first(), self.user_data.get("email")
+        return self.complete_login_or_signup()
 
     def set_user_data(self):
         ri = redis_instance()
-        print(self.key, self.code)
         if ri.exists(self.key):
             data = json.loads(ri.get(self.key))
             token = data["token"]
             email = data["email"]
 
             if str(token) == str(self.code):
-                super().set_user_data({
-                    "email": email,
-                    "user": {
-                        "avatar": "",
-                        "first_name": "",
-                        "last_name": "",
-                        "provider_id": "",
-                    },
-                })
+                super().set_user_data(
+                    {
+                        "email": email,
+                        "user": {
+                            "avatar": "",
+                            "first_name": "",
+                            "last_name": "",
+                            "provider_id": "",
+                            "is_password_autoset": True,
+                        },
+                    }
+                )
                 return
             else:
-                raise BadRequest
+                raise AuthenticationException("The token is not valid.")
         else:
-            raise BadRequest
+            raise AuthenticationException("The token has expired. Please regenerate the token and try again.")

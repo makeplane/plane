@@ -1,11 +1,14 @@
 # Python imports
+import os
 import uuid
 
 # Django imports
+from django.core.exceptions import ImproperlyConfigured
 from django.utils import timezone
 
 # Third party imports
-from plane.db.models import Profile, User
+from plane.db.models import Profile, User, WorkspaceMemberInvite
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class Adapter:
@@ -35,13 +38,34 @@ class Adapter:
     def authenticate(self):
         raise NotImplementedError
 
-    def complete_login_or_signup(self, is_signup):
+    def complete_login_or_signup(self):
         email = self.user_data.get("email")
         user = User.objects.filter(email=email).first()
 
-        if is_signup or not user:
+        if not user:
+            ENABLE_SIGNUP = get_configuration_value(
+                [
+                    {
+                        "key": "ENABLE_SIGNUP",
+                        "default": os.environ.get("ENABLE_SIGNUP", "1"),
+                    },
+                ]
+            )
+            if (
+                ENABLE_SIGNUP == "0"
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=email,
+                ).exists()
+            ):
+                raise ImproperlyConfigured(
+                    "Account creation is disabled for this instance please contact your admin"
+                )
             user = User(email=email, username=uuid.uuid4().hex)
-            user.set_password(uuid.uuid4().hex)
+
+            if self.user_data.get("user").get("is_password_autoset"):
+                user.set_password(uuid.uuid4().hex)
+            else:
+                user.set_password(self.code)
             user.avatar = self.user_data.get("user").get("avatar", "")
             user.first_name = self.user_data.get("user").get("first_name", "")
             user.last_name = self.user_data.get("user").get("last_name", "")
@@ -62,3 +86,6 @@ class Adapter:
 
         return user
 
+
+class AuthenticationException(Exception):
+    pass

@@ -6,10 +6,9 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
+from plane.app.views.auth.common import CSRFTokenEndpoint, SignOutAuthEndpoint
 from plane.app.views.auth.email import (
-    CSRFTokenEndpoint,
     SignInAuthEndpoint,
-    SignOutAuthEndpoint,
     SignUpAuthEndpoint,
 )
 from plane.app.views.auth.github import (

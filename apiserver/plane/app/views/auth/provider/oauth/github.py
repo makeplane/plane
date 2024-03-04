@@ -1,11 +1,16 @@
 # Python imports
+import os
 from datetime import datetime
 
 import pytz
 import requests
 
+# Django imports
+from django.core.exceptions import ImproperlyConfigured
+
 # Module imports
 from plane.app.views.auth.adapter.oauth import OauthAdapter
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class GitHubOAuthProvider(OauthAdapter):
@@ -15,7 +20,31 @@ class GitHubOAuthProvider(OauthAdapter):
     provider = "github"
     scope = "read:user user:email"
 
-    def __init__(self, request, client_id, client_secret=None, code=None):
+    def __init__(self, request, code=None):
+
+        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = (
+            get_configuration_value(
+                [
+                    {
+                        "key": "GITHUB_CLIENT_ID",
+                        "default": os.environ.get("GITHUB_CLIENT_ID"),
+                    },
+                    {
+                        "key": "GITHUB_CLIENT_SECRET",
+                        "default": os.environ.get("GITHUB_CLIENT_SECRET"),
+                    },
+                ]
+            )
+        )
+
+        if not (GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET):
+            return ImproperlyConfigured(
+                "Google is not configured. Please contact the support team."
+            )
+
+        client_id = GITHUB_CLIENT_ID
+        client_secret = GITHUB_CLIENT_SECRET
+
         redirect_uri = (
             f"{request.scheme}://{request.get_host()}/auth/callback/github/"
         )
@@ -92,6 +121,7 @@ class GitHubOAuthProvider(OauthAdapter):
                     "avatar": user_info_response.get("avatar_url"),
                     "first_name": user_info_response.get("name"),
                     "last_name": user_info_response.get("family_name"),
+                    "is_password_autoset": True
                 },
             }
         )

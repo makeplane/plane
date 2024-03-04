@@ -7,8 +7,4 @@ class CredentialAdapter(Adapter):
     def __init__(self, request, provider):
         self.request = request
         self.provider = provider
-        self.token_data = None
-        self.user_data = None
 
-    def authenticate(self):
-        raise NotImplementedError
