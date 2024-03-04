@@ -1,32 +1,28 @@
 # Third party imports
-from rest_framework.response import Response
+from django.db.models import Case, Count, IntegerField, Q, When
 from rest_framework import status
-
+from rest_framework.response import Response
 
 # Module imports
 from plane.app.serializers import (
-    UserSerializer,
+    AccountSerializer,
     IssueActivitySerializer,
+    ProfileSerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
-    ProfileSerializer,
-    AccountSerializer,
+    UserSerializer,
 )
-
-from plane.app.views.base import BaseViewSet, BaseAPIView
+from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
     Account,
-    User,
     IssueActivity,
-    WorkspaceMember,
-    ProjectMember,
     Profile,
+    ProjectMember,
+    User,
+    WorkspaceMember,
 )
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
-
-
-from django.db.models import Q, F, Count, Case, When, IntegerField
 
 
 class UserEndpoint(BaseViewSet):
@@ -209,7 +205,6 @@ class AccountEndpoint(BaseAPIView):
             serializer.data,
             status=status.HTTP_200_OK,
         )
-
 
 
 class ProfileEndpoint(BaseAPIView):

@@ -2,15 +2,15 @@
 from rest_framework import serializers
 
 # Module import
-from .base import BaseSerializer
 from plane.db.models import (
+    Account,
+    Profile,
     User,
     Workspace,
     WorkspaceMemberInvite,
-    Profile,
-    Account,
 )
-from plane.license.models import InstanceAdmin, Instance
+
+from .base import BaseSerializer
 
 
 class UserSerializer(BaseSerializer):
@@ -56,8 +56,6 @@ class UserMeSerializer(BaseSerializer):
             "is_active",
             "is_bot",
             "is_email_verified",
-            "is_managed",
-            "mobile_number",
             "user_timezone",
             "username",
             "is_password_autoset",
@@ -100,13 +98,13 @@ class UserMeSettingsSerializer(BaseSerializer):
             ).first()
             return {
                 "last_workspace_id": profile.last_workspace_id,
-                "last_workspace_slug": workspace.slug
-                if workspace is not None
-                else "",
+                "last_workspace_slug": (
+                    workspace.slug if workspace is not None else ""
+                ),
                 "fallback_workspace_id": profile.last_workspace_id,
-                "fallback_workspace_slug": workspace.slug
-                if workspace is not None
-                else "",
+                "fallback_workspace_slug": (
+                    workspace.slug if workspace is not None else ""
+                ),
                 "invites": workspace_invites,
             }
         else:
@@ -121,12 +119,16 @@ class UserMeSettingsSerializer(BaseSerializer):
             return {
                 "last_workspace_id": None,
                 "last_workspace_slug": None,
-                "fallback_workspace_id": fallback_workspace.id
-                if fallback_workspace is not None
-                else None,
-                "fallback_workspace_slug": fallback_workspace.slug
-                if fallback_workspace is not None
-                else None,
+                "fallback_workspace_id": (
+                    fallback_workspace.id
+                    if fallback_workspace is not None
+                    else None
+                ),
+                "fallback_workspace_slug": (
+                    fallback_workspace.slug
+                    if fallback_workspace is not None
+                    else None
+                ),
                 "invites": workspace_invites,
             }
 
@@ -210,4 +212,3 @@ class AccountSerializer(BaseSerializer):
     class Meta:
         model = Account
         fields = "__all__"
-
