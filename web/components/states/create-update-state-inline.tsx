@@ -44,7 +44,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   // form info
   const {
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields},
     watch,
     reset,
     control,
@@ -131,6 +131,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           eventName: STATE_UPDATED,
           payload: {
             ...res,
+            change_details: Object.keys(dirtyFields),
             state: "SUCCESS",
             element: "Project settings states page",
           },

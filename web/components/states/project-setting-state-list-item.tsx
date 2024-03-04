@@ -103,7 +103,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
               state.default || groupLength === 1 ? "cursor-not-allowed" : ""
             } grid place-items-center`}
             onClick={() => {
-              setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+              setTrackElement("Project settings states page");
               handleDeleteState();
             }}
             disabled={state.default || groupLength === 1}

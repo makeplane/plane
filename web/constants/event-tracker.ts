@@ -120,6 +120,7 @@ export const getProjectStateEventPayload = (payload: any) => {
     default: payload.default,
     state: payload.state,
     element: payload.element,
+    change_details: payload.change_details,
   };
 };
 
