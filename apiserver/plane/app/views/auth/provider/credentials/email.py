@@ -21,10 +21,6 @@ class EmailProvider(CredentialAdapter):
         self.code = code
         self.is_signup = is_signup
 
-    def authenticate(self):
-        self.set_user_data()
-        return self.complete_login_or_signup()
-
     def set_user_data(self):
         if self.is_signup:
         # Check if the user already exists
