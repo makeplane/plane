@@ -1,28 +1,39 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
 // stores
-import { RootStore } from "../root.store";
 import { IProfileStore, ProfileStore, IAccountStore, AccountStore } from ".";
 // services
 import { UserService } from "services/user.service";
 // types
-import { IUser, TCurrentUser, TCurrentUserSettings } from "@plane/types";
+import { IUser, TCurrentUser } from "@plane/types";
+import { RootStore } from "store/root.store";
 
 export interface IUserStore {
   // store
-  profile: IProfileStore;
+  profile: IProfileStore | undefined;
   // observables
   isAuthenticated: boolean;
   isLoading: boolean;
-  data: TCurrentUser;
-  settings: TCurrentUserSettings;
   error: any | undefined;
+  // model observables
+  avatar: string | undefined;
+  cover_image: string | null;
+  date_joined: string | undefined;
+  display_name: string | undefined;
+  email: string | undefined;
+  first_name: string | undefined;
+  id: string | undefined;
+  is_active: boolean;
+  is_bot: boolean;
+  is_email_verified: boolean;
+  last_name: string | undefined;
+  user_timezone: string | undefined;
+  // relational observables
   accounts: Record<string, IAccountStore>;
+  // computed
+  asJson: TCurrentUser;
   // actions
-  // current user
   fetchCurrentUser: () => Promise<void>;
-  fetchCurrentUserSettings: () => Promise<void>;
-  // current user accounts
   fetchUserAccounts: () => Promise<void>;
 }
 
@@ -33,7 +44,7 @@ export class UserStore implements IUserStore {
   error: any | undefined = undefined;
   // model observables
   avatar: string | undefined = undefined;
-  cover_image: string | undefined = undefined;
+  cover_image: string | null = null;
   date_joined: string | undefined = undefined;
   display_name: string | undefined = undefined;
   email: string | undefined = undefined;
@@ -42,15 +53,18 @@ export class UserStore implements IUserStore {
   is_active: boolean = false;
   is_bot: boolean = false;
   is_email_verified: boolean = false;
+  is_password_autoset: boolean = false;
   last_name: string | undefined = undefined;
+  username: string | undefined = undefined;
   user_timezone: string | undefined = undefined;
   // relational observables
+  root: RootStore;
   profile: IProfileStore;
   accounts: Record<string, IAccountStore> = {};
   // service
   userService: UserService;
 
-  constructor(data: IUser) {
+  constructor(rootStore: RootStore) {
     makeObservable(this, {
       // observables
       isAuthenticated: observable.ref,
@@ -67,21 +81,22 @@ export class UserStore implements IUserStore {
       is_active: observable.ref,
       is_bot: observable.ref,
       is_email_verified: observable.ref,
+      is_password_autoset: observable.ref,
       last_name: observable.ref,
+      username: observable.ref,
       user_timezone: observable.ref,
       // relational observables
       profile: observable,
       accounts: observable,
       // actions
       fetchCurrentUser: action,
-      fetchCurrentUserSettings: action,
       fetchUserAccounts: action,
     });
-
+    // stores
+    this.root = rootStore;
+    this.profile = new ProfileStore();
     // service
     this.userService = new UserService();
-    // stores initialization
-    this.profile = new ProfileStore();
   }
 
   get asJson() {
@@ -96,10 +111,10 @@ export class UserStore implements IUserStore {
       is_active: this.is_active,
       is_bot: this.is_bot,
       is_email_verified: this.is_email_verified,
+      is_password_autoset: this.is_password_autoset,
       last_name: this.last_name,
+      username: this.username,
       user_timezone: this.user_timezone,
-      profile: this.profile.asJson,
-      accounts: Object.entries(this.accounts).map(([key, value]) => value.asJson),
     };
   }
 
@@ -109,51 +124,22 @@ export class UserStore implements IUserStore {
 
   // actions
   fetchCurrentUser = async () => {
-    try {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = undefined;
-      });
-
-      const user = await this.currentUserService.currentUser();
-      runInAction(() => {
-        Object.entries(user).map(([key, value]) => {
-          set(this.data, [key], value ?? undefined);
-        });
-        this.isLoading = false;
-      });
-    } catch {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = { status: "", type: "", message: "" };
-      });
-    }
-  };
-
-  fetchCurrentUserSettings = async () => {
-    try {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = undefined;
-      });
-
-      const userSettings = await this.currentUserService.currentUserSettings();
-      runInAction(() => {
-        Object.entries(userSettings).map(([key, value]) => {
-          if (typeof value === "object") {
-            Object.entries(value).map(([k, v]) => {
-              set(this.settings, [key, k], v ?? undefined);
-            });
-          } else set(this.settings, [key], value ?? undefined);
-        });
-        this.isLoading = false;
-      });
-    } catch {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = { status: "", type: "", message: "" };
-      });
-    }
+    const user = await this.userService.currentUser();
+    runInAction(() => {
+      this.avatar = user.avatar;
+      this.cover_image = user.cover_image;
+      this.date_joined = user.date_joined;
+      this.display_name = user.display_name;
+      this.email = user.email;
+      this.first_name = user.first_name;
+      this.id = user.id;
+      this.is_active = user.is_active;
+      this.is_bot = user.is_bot;
+      this.is_email_verified = user.is_email_verified;
+      this.last_name = user.last_name;
+      this.user_timezone = user.user_timezone;
+      this.isAuthenticated = true;
+    });
   };
 
   fetchUserAccounts = async () => {

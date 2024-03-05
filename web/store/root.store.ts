@@ -25,7 +25,6 @@ enableStaticRendering(typeof window === "undefined");
 export class RootStore {
   app: IAppRootStore;
   eventTracker: IEventTrackerStore;
-  user: IUserRootStore;
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
   memberRoot: IMemberRootStore;
@@ -47,7 +46,6 @@ export class RootStore {
   constructor() {
     this.app = new AppRootStore(this);
     this.eventTracker = new EventTrackerStore(this);
-    this.user = new UserRootStore(this);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this);
