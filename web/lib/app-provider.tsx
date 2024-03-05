@@ -3,18 +3,19 @@ import dynamic from "next/dynamic";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
-import { ThemeProvider } from "next-themes";
+import { useTheme } from "next-themes";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // ui
 import { Toast } from "@plane/ui";
 // constants
-import { THEMES } from "constants/themes";
 import { SWR_CONFIG } from "constants/swr-config";
 // layouts
 import InstanceLayout from "layouts/instance-layout";
 // contexts
 import { SWRConfig } from "swr";
+//helpers
+import { resolveGeneralTheme } from "helpers/theme.helper";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("lib/posthog-provider"), { ssr: false });
@@ -41,10 +42,13 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   const {
     config: { envConfig },
   } = useApplication();
+  // themes
+  const { resolvedTheme } = useTheme();
 
   return (
-    <ThemeProvider themes={THEMES} defaultTheme="system">
-      <Toast />
+    <>
+      {/* TODO: Need to handle custom themes for toast */}
+      <Toast theme={resolveGeneralTheme(resolvedTheme)} />
       <InstanceLayout>
         <StoreWrapper>
           <CrispWrapper user={currentUser}>
@@ -61,6 +65,6 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
           </CrispWrapper>
         </StoreWrapper>
       </InstanceLayout>
-    </ThemeProvider>
+    </>
   );
 });

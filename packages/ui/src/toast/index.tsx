@@ -15,7 +15,7 @@ export enum TOAST_TYPE {
   LOADING = "loading",
 }
 
-type ToastProps =
+type SetToastProps =
   | {
       type: TOAST_TYPE.LOADING;
       title?: string;
@@ -48,9 +48,16 @@ type ToastContentProps = {
   borderColorClassName: string;
 };
 
-export const Toast = () => <Toaster visibleToasts={5} gap={28} position="top-right" />;
+type ToastProps = {
+  theme: "light" | "dark" | "system";
+};
 
-export const setToast = (props: ToastProps) => {
+export const Toast = (props: ToastProps) => {
+  const { theme } = props;
+  return <Toaster visibleToasts={5} gap={20} theme={theme} />;
+};
+
+export const setToast = (props: SetToastProps) => {
   const renderToastContent = ({
     toastId,
     icon,
@@ -64,9 +71,9 @@ export const setToast = (props: ToastProps) => {
           e.stopPropagation();
           e.preventDefault();
         }}
-        className={cn("w-[350px] rounded-lg border shadow-sm p-2", backgroundColorClassName, borderColorClassName)}
+        className={cn("w-[350px] h-[67.3px] rounded-lg border shadow-sm p-2", backgroundColorClassName, borderColorClassName)}
       >
-        <div className="w-full flex items-center px-4 py-2">
+        <div className="w-full h-full flex items-center justify-center px-4 py-2">
           {icon && <div className="flex items-center justify-center">{icon}</div>}
           <div className={cn("w-full flex items-center gap-0.5 pr-1", icon ? "pl-4" : "pl-1")}>
             <div className={cn("grow text-sm font-semibold", textColorClassName)}>{props.title ?? "Loading..."}</div>
