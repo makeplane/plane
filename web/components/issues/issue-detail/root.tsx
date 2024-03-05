@@ -13,7 +13,7 @@ import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } f
 // types
 import { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
@@ -22,13 +22,7 @@ import { observer } from "mobx-react";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  update: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    showToast?: boolean
-  ) => Promise<void>;
+  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -91,30 +85,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           console.error("Error fetching the parent issue");
         }
       },
-      update: async (
-        workspaceSlug: string,
-        projectId: string,
-        issueId: string,
-        data: Partial<TIssue>,
-        showToast: boolean = true
-      ) => {
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
-          const issueUpdatePromise = updateIssue(workspaceSlug, projectId, issueId, data);
-          if (showToast) {
-            setPromiseToast(issueUpdatePromise, {
-              loading: "Updating issue...",
-              success: {
-                title: "Issue updated successfully",
-                message: () => "Issue updated successfully",
-              },
-              error: {
-                title: "Issue update failed",
-                message: () => "Issue update failed",
-              },
-            });
-          }
-
-          await issueUpdatePromise;
+          await updateIssue(workspaceSlug, projectId, issueId, data);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -133,6 +106,11 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               change_details: Object.values(data).join(","),
             },
             path: router.asPath,
+          });
+          setToast({
+            title: "Issue update failed",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue update failed",
           });
         }
       },

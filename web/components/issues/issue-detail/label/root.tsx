@@ -35,12 +35,6 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         try {
           if (onLabelUpdate) onLabelUpdate(data.label_ids || []);
           else await updateIssue(workspaceSlug, projectId, issueId, data);
-          if (!isInboxIssue)
-            setToast({
-              title: "Issue updated successfully",
-              type: TOAST_TYPE.SUCCESS,
-              message: "Issue updated successfully",
-            });
         } catch (error) {
           setToast({
             title: "Issue update failed",

@@ -41,11 +41,9 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
 
   useEffect(() => {
     if (debouncedValue && debouncedValue !== value) {
-      issueOperations
-        .update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }, false)
-        .finally(() => {
-          setIsSubmitting("submitted");
-        });
+      issueOperations.update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }).finally(() => {
+        setIsSubmitting("submitted");
+      });
     }
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -53,17 +53,9 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
         projectId: string,
         issueId: string,
         data: Partial<TIssue>,
-        showToast: boolean = true
       ) => {
         try {
           await updateInboxIssue(workspaceSlug, projectId, inboxId, issueId, data);
-          if (showToast) {
-            setToast({
-              title: "Issue updated successfully",
-              type: TOAST_TYPE.SUCCESS,
-              message: "Issue updated successfully",
-            });
-          }
           captureIssueEvent({
             eventName: "Inbox issue updated",
             payload: { ...data, state: "SUCCESS", element: "Inbox" },

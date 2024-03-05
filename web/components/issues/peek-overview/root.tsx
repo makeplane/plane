@@ -21,13 +21,7 @@ interface IIssuePeekOverview {
 
 export type TIssuePeekOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  update: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    showToast?: boolean
-  ) => Promise<void>;
+  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -85,29 +79,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           console.error("Error fetching the parent issue");
         }
       },
-      update: async (
-        workspaceSlug: string,
-        projectId: string,
-        issueId: string,
-        data: Partial<TIssue>,
-        showToast: boolean = true
-      ) => {
-        const updateIssuePromise = updateIssue(workspaceSlug, projectId, issueId, data);
-        if (showToast) {
-          setPromiseToast(updateIssuePromise, {
-            loading: "Updating issue...",
-            success: {
-              title: "Issue updated successfully",
-              message: () => "Issue updated successfully",
-            },
-            error: {
-              title: "Issue update failed",
-              message: () => "Issue update failed",
-            },
-          });
-        }
-
-        await updateIssuePromise
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+        await updateIssue(workspaceSlug, projectId, issueId, data)
           .then(() => {
             captureIssueEvent({
               eventName: ISSUE_UPDATED,
@@ -124,6 +97,11 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               eventName: ISSUE_UPDATED,
               payload: { state: "FAILED", element: "Issue peek-overview" },
               path: router.asPath,
+            });
+            setToast({
+              title: "Issue update failed",
+              type: TOAST_TYPE.ERROR,
+              message: "Issue update failed",
             });
           });
       },
