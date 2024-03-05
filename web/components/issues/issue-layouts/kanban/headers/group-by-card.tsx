@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
+import { CreateUpdateIssueModal } from "components/issues";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
@@ -106,13 +106,21 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
-        <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `w-full flex-row`}`}>
+        <div
+          className={`relative overflow-hidden flex items-center gap-1 ${
+            verticalAlignPosition ? `flex-col` : `w-full flex-row`
+          }`}
+        >
           <div
-            className={`line-clamp-1 font-medium text-custom-text-100 ${verticalAlignPosition ? `vertical-lr` : ``}`}
+            className={`inline-block truncate line-clamp-1 font-medium text-custom-text-100 overflow-hidden ${
+              verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
+            }`}
           >
             {title}
           </div>
-          <div className={`text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}>
+          <div
+            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}
+          >
             {count || 0}
           </div>
         </div>
@@ -138,6 +146,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
                   <Plus height={14} width={14} strokeWidth={2} />
                 </span>
               }
+              placement="bottom-end"
             >
               <CustomMenu.MenuItem
                 onClick={() => {

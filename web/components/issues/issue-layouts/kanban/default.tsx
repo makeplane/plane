@@ -1,6 +1,15 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail, useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import {
+  useCycle,
+  useIssueDetail,
+  useKanbanView,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+} from "hooks/store";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -48,6 +57,7 @@ export interface IGroupByKanBan {
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   isDragStarted?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -72,32 +82,46 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     canEditProperties,
     scrollableContainerRef,
     isDragStarted,
+    showEmptyGroup = true,
   } = props;
 
   const member = useMember();
   const project = useProject();
   const label = useLabel();
+  const cycle = useCycle();
+  const _module = useModule();
   const projectState = useProjectState();
   const { peekIssue } = useIssueDetail();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
+  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, cycle, _module, label, projectState, member);
 
   if (!list) return null;
 
-  const visibilityGroupBy = (_list: IGroupByColumn) =>
-    sub_group_by ? false : kanbanFilters?.group_by.includes(_list.id) ? true : false;
+  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)?.[_list.id]?.length > 0);
+
+  const groupList = showEmptyGroup ? list : groupWithIssues;
+
+  const visibilityGroupBy = (_list: IGroupByColumn) => {
+    if (sub_group_by) {
+      if (kanbanFilters?.sub_group_by.includes(_list.id)) return true;
+      return false;
+    } else {
+      if (kanbanFilters?.group_by.includes(_list.id)) return true;
+      return false;
+    }
+  };
 
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className={`relative w-full flex gap-3 ${sub_group_by ? "h-full" : "h-full"}`}>
-      {list &&
-        list.length > 0 &&
-        list.map((_list: IGroupByColumn) => {
+    <div className={`relative w-full flex gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
+      {groupList &&
+        groupList.length > 0 &&
+        groupList.map((_list: IGroupByColumn) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[340px]`}`}>
+            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[350px]`}`}>
               {sub_group_by === null && (
                 <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
                   <HeaderGroupByCard
@@ -196,6 +220,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     canEditProperties,
     scrollableContainerRef,
     isDragStarted,
+    showEmptyGroup,
   } = props;
 
   const issueKanBanView = useKanbanView();
@@ -222,6 +247,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       canEditProperties={canEditProperties}
       scrollableContainerRef={scrollableContainerRef}
       isDragStarted={isDragStarted}
+      showEmptyGroup={showEmptyGroup}
     />
   );
 });

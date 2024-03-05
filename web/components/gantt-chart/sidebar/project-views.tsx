@@ -1,17 +1,10 @@
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
-import { MoreVertical } from "lucide-react";
-// hooks
-import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { IssueGanttSidebarBlock } from "components/issues";
-// helpers
-import { findTotalDaysInRange } from "helpers/date-time.helper";
+import { IssuesSidebarBlock } from "./issues/block";
 // types
 import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
-// constants
-import { BLOCK_HEIGHT } from "../constants";
 
 type Props = {
   title: string;
@@ -23,18 +16,6 @@ type Props = {
 
 export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
   const { blockUpdateHandler, blocks, enableReorder } = props;
-  // chart hook
-  const { activeBlock, dispatch } = useChart();
-
-  // update the active block on hover
-  const updateActiveBlock = (block: IGanttBlock | null) => {
-    dispatch({
-      type: "PARTIAL_UPDATE",
-      payload: {
-        activeBlock: block,
-      },
-    });
-  };
 
   const handleOrderChange = (result: DropResult) => {
     if (!blocks) return;
@@ -89,59 +70,23 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
           >
             <>
               {blocks ? (
-                blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(block.start_date, block.target_date);
-
-                  return (
-                    <Draggable
-                      key={`sidebar-block-${block.id}`}
-                      draggableId={`sidebar-block-${block.id}`}
-                      index={index}
-                      isDragDisabled={!enableReorder}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          className={`${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
-                          style={{
-                            height: `${BLOCK_HEIGHT}px`,
-                          }}
-                          onMouseEnter={() => updateActiveBlock(block)}
-                          onMouseLeave={() => updateActiveBlock(null)}
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                        >
-                          <div
-                            id={`sidebar-block-${block.id}`}
-                            className={`group flex h-full w-full items-center gap-2 rounded-l px-2 pr-4 ${
-                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
-                            }`}
-                          >
-                            {enableReorder && (
-                              <button
-                                type="button"
-                                className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
-                                {...provided.dragHandleProps}
-                              >
-                                <MoreVertical className="h-3.5 w-3.5" />
-                                <MoreVertical className="-ml-5 h-3.5 w-3.5" />
-                              </button>
-                            )}
-                            <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
-                              <div className="flex-grow truncate">
-                                <IssueGanttSidebarBlock issueId={block.data.id} />
-                              </div>
-                              {duration !== undefined && (
-                                <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                  {duration} day{duration > 1 ? "s" : ""}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  );
-                })
+                blocks.map((block, index) => (
+                  <Draggable
+                    key={`sidebar-block-${block.id}`}
+                    draggableId={`sidebar-block-${block.id}`}
+                    index={index}
+                    isDragDisabled={!enableReorder}
+                  >
+                    {(provided, snapshot) => (
+                      <IssuesSidebarBlock
+                        block={block}
+                        enableReorder={enableReorder}
+                        provided={provided}
+                        snapshot={snapshot}
+                      />
+                    )}
+                  </Draggable>
+                ))
               ) : (
                 <Loader className="space-y-3 pr-2">
                   <Loader.Item height="34px" />

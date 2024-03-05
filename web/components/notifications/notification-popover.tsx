@@ -125,7 +125,7 @@ export const NotificationPopover = observer(() => {
 
               {notifications ? (
                 notifications.length > 0 ? (
-                  <div className="h-full overflow-y-auto">
+                  <div className="h-full overflow-y-auto vertical-scrollbar scrollbar-md">
                     <div className="divide-y divide-custom-border-100">
                       {notifications.map((notification) => (
                         <NotificationCard

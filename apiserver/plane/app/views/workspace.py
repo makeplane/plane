@@ -22,9 +22,14 @@ from django.db.models import (
     When,
     Max,
     IntegerField,
+    Sum,
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Value, UUIDField
+from django.db.models.functions import Coalesce
 
 # Third party modules
 from rest_framework import status
@@ -73,6 +78,9 @@ from plane.db.models import (
     WorkspaceUserProperties,
     Estimate,
     EstimatePoint,
+    Module,
+    ModuleLink,
+    Cycle,
 )
 from plane.app.permissions import (
     WorkSpaceBasePermission,
@@ -85,6 +93,12 @@ from plane.app.permissions import (
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.event_tracking_task import workspace_invite_event
+from plane.app.serializers.module import (
+    ModuleSerializer,
+)
+from plane.app.serializers.cycle import (
+    CycleSerializer,
+)
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -546,7 +560,6 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .get_queryset()
             .filter(
                 workspace__slug=self.kwargs.get("slug"),
-                member__is_bot=False,
                 is_active=True,
             )
             .select_related("workspace", "workspace__owner")
@@ -754,7 +767,6 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         project_ids = (
             ProjectMember.objects.filter(
                 member=request.user,
-                member__is_bot=False,
                 is_active=True,
             )
             .values_list("project_id", flat=True)
@@ -764,7 +776,6 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         # Get all the project members in which the user is involved
         project_members = ProjectMember.objects.filter(
             workspace__slug=slug,
-            member__is_bot=False,
             project_id__in=project_ids,
             is_active=True,
         ).select_related("project", "member", "workspace")
@@ -1075,6 +1086,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .annotate(state_group=F("state__group"))
@@ -1090,6 +1102,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .values("priority")
@@ -1112,6 +1125,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
                 created_by_id=user_id,
             )
             .filter(**filters)
@@ -1123,6 +1137,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -1134,6 +1149,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -1145,6 +1161,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 assignees__in=[user_id],
                 state__group="completed",
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .count()
@@ -1155,6 +1172,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 subscriber_id=user_id,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .count()
@@ -1204,6 +1222,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             actor=user_id,
         ).select_related("actor", "workspace", "issue", "project")
 
@@ -1234,6 +1253,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 Project.objects.filter(
                     workspace__slug=slug,
                     project_projectmember__member=request.user,
+                    project_projectmember__is_active=True,
                 )
                 .annotate(
                     created_issues=Count(
@@ -1343,6 +1363,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 | Q(issue_subscribers__subscriber_id=user_id),
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
@@ -1369,6 +1390,32 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
             .order_by("created_at")
         ).distinct()
@@ -1448,6 +1495,7 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         labels = Label.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True
         )
         serializer = LabelSerializer(labels, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
@@ -1462,6 +1510,7 @@ class WorkspaceStatesEndpoint(BaseAPIView):
         states = State.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True
         )
         serializer = StateSerializer(states, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
@@ -1488,6 +1537,192 @@ class WorkspaceEstimatesEndpoint(BaseAPIView):
         )
         serializer = WorkspaceEstimateSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkspaceModulesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def get(self, request, slug):
+        modules = (
+            Module.objects.filter(workspace__slug=slug)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("lead")
+            .prefetch_related("members")
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related(
+                        "module", "created_by"
+                    ),
+                )
+            )
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                ),
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        )
+
+        serializer = ModuleSerializer(modules, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
+
+
+class WorkspaceCyclesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def get(self, request, slug):
+        cycles = (
+            Cycle.objects.filter(workspace__slug=slug)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("owned_by")
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle",
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="cancelled",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="unstarted",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="backlog",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                total_estimates=Sum("issue_cycle__issue__estimate_point")
+            )
+            .annotate(
+                completed_estimates=Sum(
+                    "issue_cycle__issue__estimate_point",
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                started_estimates=Sum(
+                    "issue_cycle__issue__estimate_point",
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+        serializer = CycleSerializer(cycles, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
 
 class WorkspaceUserPropertiesEndpoint(BaseAPIView):

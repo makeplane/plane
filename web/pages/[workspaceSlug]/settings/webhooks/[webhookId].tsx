@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
-import { useUser, useWebhook } from "hooks/store";
+import { useUser, useWebhook, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -12,6 +12,7 @@ import useToast from "hooks/use-toast";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "components/web-hooks";
+import { PageHead } from "components/core";
 // ui
 import { Spinner } from "@plane/ui";
 // types
@@ -29,6 +30,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
+  const { currentWorkspace } = useWorkspace();
   // toast
   const { setToastAlert } = useToast();
 
@@ -38,6 +40,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   // }, [clearSecretKey, isCreated]);
 
   const isAdmin = currentWorkspaceRole === 20;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
 
   useSWR(
     workspaceSlug && webhookId && isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
@@ -76,9 +79,12 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-      </div>
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center p-4">
+          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        </div>
+      </>
     );
 
   if (!currentWebhook)
@@ -90,6 +96,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
       <div className="w-full space-y-8 overflow-y-auto py-8 pr-9">
         <WebhookForm onSubmit={async (data) => await handleUpdateWebhook(data)} data={currentWebhook} />

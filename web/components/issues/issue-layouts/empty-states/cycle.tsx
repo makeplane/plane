@@ -60,19 +60,13 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await issues
-      .addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds)
-      .then((res) => {
-        updateIssue(workspaceSlug, projectId, res.id, res);
-        fetchIssue(workspaceSlug, projectId, res.id);
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the cycle. Please try again.",
-        });
+    await issues.addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Selected issues could not be added to the cycle. Please try again.",
       });
+    });
   };
 
   const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["no-issues"];

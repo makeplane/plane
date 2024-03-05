@@ -69,9 +69,13 @@ from .issue import (
     RelatedIssueSerializer,
     IssuePublicSerializer,
     IssueDetailSerializer,
+    IssueReactionLiteSerializer,
+    IssueAttachmentLiteSerializer,
+    IssueLinkLiteSerializer,
 )
 
 from .module import (
+    ModuleDetailSerializer,
     ModuleWriteSerializer,
     ModuleSerializer,
     ModuleIssueSerializer,

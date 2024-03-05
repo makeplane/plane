@@ -1,5 +1,6 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 import set from "lodash/set";
+import pull from "lodash/pull";
 // base class
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
@@ -41,13 +42,19 @@ export interface IProfileIssues {
     issueId: string,
     data: Partial<TIssue>,
     userId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
   removeIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     userId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<void>;
+  archiveIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    userId?: string | undefined
+  ) => Promise<void>;
   quickAddIssue: undefined;
 }
 
@@ -77,6 +84,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
+      archiveIssue: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -104,7 +112,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
 
     if (!userIssueIds) return;
 
-    const _issues = this.rootStore.issues.getIssuesByIds(userIssueIds);
+    const _issues = this.rootStore.issues.getIssuesByIds(userIssueIds, "un-archived");
     if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
@@ -221,14 +229,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
       if (!userId) throw new Error("user id is required");
 
       this.rootStore.issues.updateIssue(issueId, data);
-      const response = await this.rootIssueStore.projectIssues.updateIssue(
-        workspaceSlug,
-        projectId,
-        data.id as keyof TIssue,
-        data
-      );
-
-      return response;
+      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, data.id as keyof TIssue, data);
     } catch (error) {
       if (this.currentView) this.fetchIssues(workspaceSlug, undefined, "mutation", userId, this.currentView);
       throw error;
@@ -243,7 +244,7 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
   ) => {
     if (!userId) return;
     try {
-      const response = await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
 
@@ -252,8 +253,26 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
         runInAction(() => {
           this.issues[userId][uniqueViewId].splice(issueIndex, 1);
         });
+    } catch (error) {
+      throw error;
+    }
+  };
 
-      return response;
+  archiveIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    userId: string | undefined = undefined
+  ) => {
+    if (!userId) return;
+    try {
+      await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
+
+      const uniqueViewId = `${workspaceSlug}_${this.currentView}`;
+
+      runInAction(() => {
+        pull(this.issues[userId][uniqueViewId], issueId);
+      });
     } catch (error) {
       throw error;
     }

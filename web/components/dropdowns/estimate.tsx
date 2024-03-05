@@ -122,6 +122,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const toggleDropdown = () => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: number | null) => {
@@ -135,6 +136,13 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
     toggleDropdown();
+  };
+
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
@@ -217,6 +225,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

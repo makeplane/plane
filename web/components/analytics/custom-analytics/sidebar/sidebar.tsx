@@ -5,7 +5,7 @@ import { mutate } from "swr";
 // services
 import { AnalyticsService } from "services/analytics.service";
 // hooks
-import { useCycle, useModule, useProject, useUser } from "hooks/store";
+import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
@@ -39,6 +39,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   // store hooks
   const { currentUser } = useUser();
   const { workspaceProjectIds, getProjectById } = useProject();
+  const { getWorkspaceById } = useWorkspace();
+
   const { fetchCycleDetails, getCycleById } = useCycle();
   const { fetchModuleDetails, getModuleById } = useModule();
 
@@ -70,11 +72,14 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
     if (cycleDetails || moduleDetails) {
       const details = cycleDetails || moduleDetails;
 
-      eventPayload.workspaceId = details?.workspace_detail?.id;
-      eventPayload.workspaceName = details?.workspace_detail?.name;
-      eventPayload.projectId = details?.project_detail.id;
-      eventPayload.projectIdentifier = details?.project_detail.identifier;
-      eventPayload.projectName = details?.project_detail.name;
+      const currentProjectDetails = getProjectById(details?.project_id || "");
+      const currentWorkspaceDetails = getWorkspaceById(details?.workspace_id || "");
+
+      eventPayload.workspaceId = details?.workspace_id;
+      eventPayload.workspaceName = currentWorkspaceDetails?.name;
+      eventPayload.projectId = details?.project_id;
+      eventPayload.projectIdentifier = currentProjectDetails?.identifier;
+      eventPayload.projectName = currentProjectDetails?.name;
     }
 
     if (cycleDetails) {
@@ -138,14 +143,18 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
   const selectedProjects = params.project && params.project.length > 0 ? params.project : workspaceProjectIds;
 
-
   return (
-    <div className={cn("relative h-full flex w-full gap-2 justify-between items-start px-5 py-4 bg-custom-sidebar-background-100", !isProjectLevel ? "flex-col" : "")}
+    <div
+      className={cn(
+        "relative h-full flex w-full gap-2 justify-between items-start px-5 py-4 bg-custom-sidebar-background-100",
+        !isProjectLevel ? "flex-col" : ""
+      )}
     >
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
           <LayersIcon height={14} width={14} />
-          {analytics ? analytics.total : "..."} <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Issues</div>
+          {analytics ? analytics.total : "..."}
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>Issues</div>
         </div>
         {isProjectLevel && (
           <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
@@ -154,8 +163,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
               (cycleId
                 ? cycleDetails?.created_at
                 : moduleId
-                  ? moduleDetails?.created_at
-                  : projectDetails?.created_at) ?? ""
+                ? moduleDetails?.created_at
+                : projectDetails?.created_at) ?? ""
             )}
           </div>
         )}

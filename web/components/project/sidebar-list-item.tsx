@@ -16,12 +16,15 @@ import {
   LogOut,
   ChevronDown,
   MoreHorizontal,
+  Inbox,
 } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useProject } from "hooks/store";
+import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
+import { cn } from "helpers/common.helper";
+import { getNumberCount } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
@@ -34,6 +37,7 @@ type Props = {
   snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
   shortContextMenu?: boolean;
+  disableDrag?: boolean;
 };
 
 const navigation = (workspaceSlug: string, projectId: string) => [
@@ -63,6 +67,11 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     Icon: FileText,
   },
   {
+    name: "Inbox",
+    href: `/${workspaceSlug}/projects/${projectId}/inbox`,
+    Icon: Inbox,
+  },
+  {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
     Icon: Settings,
@@ -71,11 +80,12 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
+  const { projectId, provided, snapshot, handleCopyText, shortContextMenu = false, disableDrag } = props;
   // store hooks
   const { theme: themeStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
+  const { getInboxesByProjectId, getInboxById } = useInbox();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
@@ -95,6 +105,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const isCollapsed = themeStore.sidebarCollapsed;
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+
+  const inboxesMap = project?.inbox_view ? getInboxesByProjectId(projectId) : undefined;
+  const inboxDetails = inboxesMap && inboxesMap.length > 0 ? getInboxById(inboxesMap[0]) : undefined;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !project) return;
@@ -131,7 +144,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
-      themeStore.toggleMobileSidebar();
+      themeStore.toggleSidebar();
     }
   };
 
@@ -147,19 +160,22 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         {({ open }) => (
           <>
             <div
-              className={`group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-10 hover:bg-custom-sidebar-background-80 ${snapshot?.isDragging ? "opacity-60" : ""
-                } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
+              className={`group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-10 hover:bg-custom-sidebar-background-80 ${
+                snapshot?.isDragging ? "opacity-60" : ""
+              } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
             >
-              {provided && (
+              {provided && !disableDrag && (
                 <Tooltip
                   tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
                   position="top-right"
                 >
                   <button
                     type="button"
-                    className={`absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-custom-sidebar-text-400 ${isCollapsed ? "" : "group-hover:!flex"
-                      } ${project.sort_order === null ? "cursor-not-allowed opacity-60" : ""} ${isMenuActive ? "!flex" : ""
-                      }`}
+                    className={`absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-custom-sidebar-text-400 ${
+                      isCollapsed ? "" : "group-hover:!flex"
+                    } ${project.sort_order === null ? "cursor-not-allowed opacity-60" : ""} ${
+                      isMenuActive ? "!flex" : ""
+                    }`}
                     {...provided?.dragHandleProps}
                   >
                     <MoreVertical className="h-3.5" />
@@ -170,12 +186,14 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               <Tooltip tooltipContent={`${project.name}`} position="right" className="ml-2" disabled={!isCollapsed}>
                 <Disclosure.Button
                   as="div"
-                  className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${isCollapsed ? "justify-center" : `justify-between`
-                    }`}
+                  className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${
+                    isCollapsed ? "justify-center" : `justify-between`
+                  }`}
                 >
                   <div
-                    className={`flex w-full flex-grow items-center gap-x-2 truncate ${isCollapsed ? "justify-center" : ""
-                      }`}
+                    className={`flex w-full flex-grow items-center gap-x-2 truncate ${
+                      isCollapsed ? "justify-center" : ""
+                    }`}
                   >
                     {project.emoji ? (
                       <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
@@ -195,8 +213,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   </div>
                   {!isCollapsed && (
                     <ChevronDown
-                      className={`hidden h-4 w-4 flex-shrink-0 ${open ? "rotate-180" : ""} ${isMenuActive ? "!block" : ""
-                        }  mb-0.5 text-custom-sidebar-text-400 duration-300 group-hover:!block`}
+                      className={`hidden h-4 w-4 flex-shrink-0 ${open ? "rotate-180" : ""} ${
+                        isMenuActive ? "!block" : ""
+                      }  mb-0.5 text-custom-sidebar-text-400 duration-300 group-hover:!block`}
                     />
                   )}
                 </Disclosure.Button>
@@ -252,13 +271,12 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-
-                  {project.archive_in > 0 && (
+                  {!isViewerOrGuest && (
                     <CustomMenu.MenuItem>
                       <Link href={`/${workspaceSlug}/projects/${project?.id}/archived-issues/`}>
                         <div className="flex items-center justify-start gap-2">
                           <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Archived Issues</span>
+                          <span>Archived issues</span>
                         </div>
                       </Link>
                     </CustomMenu.MenuItem>
@@ -267,7 +285,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                       <div className="flex items-center justify-start gap-2">
                         <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                        <span>Draft Issues</span>
+                        <span>Draft issues</span>
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
@@ -306,7 +324,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     (item.name === "Cycles" && !project.cycle_view) ||
                     (item.name === "Modules" && !project.module_view) ||
                     (item.name === "Views" && !project.issue_views_view) ||
-                    (item.name === "Pages" && !project.page_view)
+                    (item.name === "Pages" && !project.page_view) ||
+                    (item.name === "Inbox" && !project.inbox_view)
                   )
                     return;
 
@@ -320,13 +339,42 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                           disabled={!isCollapsed}
                         >
                           <div
-                            className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${router.asPath.includes(item.href)
-                              ? "bg-custom-primary-100/10 text-custom-primary-100"
-                              : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                              } ${isCollapsed ? "justify-center" : ""}`}
+                            className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
+                              router.asPath.includes(item.href)
+                                ? "bg-custom-primary-100/10 text-custom-primary-100"
+                                : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                            } ${isCollapsed ? "justify-center" : ""}`}
                           >
-                            <item.Icon className="h-4 w-4 stroke-[1.5]" />
-                            {!isCollapsed && item.name}
+                            {item.name === "Inbox" && inboxDetails ? (
+                              <>
+                                <div className="flex items-center justify-center relative">
+                                  {inboxDetails?.pending_issue_count > 0 && (
+                                    <span
+                                      className={cn(
+                                        "absolute -right-1.5 -top-1 px-0.5 h-3.5 w-3.5 flex items-center tracking-tight justify-center rounded-full text-[0.5rem] border-[0.5px] border-custom-sidebar-border-200 bg-custom-background-80 text-custom-text-100",
+                                        {
+                                          "text-[0.375rem] leading-5": inboxDetails?.pending_issue_count >= 100,
+                                        },
+                                        {
+                                          "border-none bg-custom-primary-300 text-white": router.asPath.includes(
+                                            item.href
+                                          ),
+                                        }
+                                      )}
+                                    >
+                                      {getNumberCount(inboxDetails?.pending_issue_count)}
+                                    </span>
+                                  )}
+                                  <item.Icon className="h-4 w-4 stroke-[1.5]" />
+                                </div>
+                                {!isCollapsed && item.name}
+                              </>
+                            ) : (
+                              <>
+                                <item.Icon className="h-4 w-4 stroke-[1.5]" />
+                                {!isCollapsed && item.name}
+                              </>
+                            )}
                           </div>
                         </Tooltip>
                       </span>

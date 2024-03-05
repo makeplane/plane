@@ -2,25 +2,32 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { CreateUpdateDraftIssueModal } from "components/issues";
+import { CreateUpdateIssueModal } from "components/issues";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { EIssuesStoreType } from "constants/issue";
+// types
+import { TIssue } from "@plane/types";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
-  const { theme: themeStore, commandPalette: commandPaletteStore } = useApplication();
+  const {
+    router: { workspaceSlug },
+    theme: themeStore,
+    commandPalette: commandPaletteStore,
+  } = useApplication();
   const { setTrackElement } = useEventTracker();
+  const { joinedProjectIds } = useProject();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
 
-  const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
+  const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
 
   //useState control for displaying draft issue button instead of group hover
   const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
@@ -30,6 +37,8 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   const isSidebarCollapsed = themeStore.sidebarCollapsed;
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
+  const disabled = joinedProjectIds.length === 0;
 
   const onMouseEnter = () => {
     //if renet before timout clear the timeout
@@ -42,18 +51,26 @@ export const WorkspaceSidebarQuickAction = observer(() => {
       setIsDraftButtonOpen(false);
     }, 300);
   };
+
+  const workspaceDraftIssue = workspaceSlug ? storedValue?.[workspaceSlug] ?? undefined : undefined;
+
+  const removeWorkspaceDraftIssue = () => {
+    const draftIssues = storedValue ?? {};
+    if (workspaceSlug && draftIssues[workspaceSlug]) delete draftIssues[workspaceSlug];
+    setValue(draftIssues);
+    return Promise.resolve();
+  };
+
   return (
     <>
-      <CreateUpdateDraftIssueModal
+      <CreateUpdateIssueModal
         isOpen={isDraftIssueModalOpen}
-        handleClose={() => setIsDraftIssueModalOpen(false)}
-        prePopulateData={storedValue ? JSON.parse(storedValue) : {}}
-        onSubmit={() => {
-          localStorage.removeItem("draftedIssue");
-          clearValue();
-        }}
-        fieldsToShow={["all"]}
+        onClose={() => setIsDraftIssueModalOpen(false)}
+        data={workspaceDraftIssue ?? {}}
+        onSubmit={() => removeWorkspaceDraftIssue()}
+        isDraft={true}
       />
+
       <div
         className={`mt-4 flex w-full cursor-pointer items-center justify-between px-4 ${
           isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
@@ -73,17 +90,18 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               type="button"
               className={`relative flex flex-shrink-0 flex-grow items-center gap-2 rounded py-1.5 outline-none ${
                 isSidebarCollapsed ? "justify-center" : ""
-              }`}
+              } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
               onClick={() => {
                 setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
                 commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
+              disabled={disabled}
             >
               <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
               {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
             </button>
 
-            {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
+            {!disabled && workspaceDraftIssue && (
               <>
                 <div
                   className={`h-8 w-0.5 bg-custom-sidebar-background-80 ${isSidebarCollapsed ? "hidden" : "block"}`}
