@@ -1,10 +1,7 @@
 // components
-import { IssuesByPriorityGraph } from "components/graphs";
+import { PriorityDistributionContent } from "./main-content";
 // ui
-import { ProfileEmptyState } from "components/ui";
 import { Loader } from "@plane/ui";
-// image
-import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // types
 import { IUserPriorityDistribution } from "@plane/types";
 
@@ -19,19 +16,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = (props) => {
     <div className="flex flex-col space-y-2">
       <h3 className="text-lg font-medium">Issues by priority</h3>
       {priorityDistribution ? (
-        <div className="flex-grow rounded border border-custom-border-100">
-          {priorityDistribution.length > 0 ? (
-            <IssuesByPriorityGraph data={priorityDistribution} />
-          ) : (
-            <div className="flex-grow p-7">
-              <ProfileEmptyState
-                title="No Data yet"
-                description="Create issues to view the them by priority in the graph for better analysis."
-                image={emptyBarGraph}
-              />
-            </div>
-          )}
-        </div>
+        <PriorityDistributionContent priorityDistribution={priorityDistribution} />
       ) : (
         <div className="grid place-items-center p-7">
           <Loader className="flex items-end gap-12">
