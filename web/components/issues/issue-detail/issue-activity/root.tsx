@@ -1,13 +1,16 @@
 import { FC, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
+import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
 // types
 import { TIssueComment } from "@plane/types";
+// constants
+import { COMMENT_CREATED, COMMENT_DELETED, COMMENT_UPDATED } from "constants/event-tracker";
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -43,8 +46,13 @@ export type TActivityOperations = {
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
+  // router
+  const router = useRouter();
+  const { inboxId } = router.query;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
+  const { captureEvent } = useEventTracker();
+  const { peekIssue } = useIssueDetail();
   const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
   // state
@@ -56,6 +64,11 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await createComment(workspaceSlug, projectId, issueId, data);
+          captureEvent(COMMENT_CREATED, {
+            issue_id: issueId,
+            is_public: data.access === "EXTERNAL",
+            element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
+          });
           setToastAlert({
             title: "Comment created successfully.",
             type: "success",
@@ -73,6 +86,11 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, issueId, commentId, data);
+          captureEvent(COMMENT_UPDATED, {
+            issue_id: issueId,
+            is_public: data.access === "EXTERNAL",
+            element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
+          });
           setToastAlert({
             title: "Comment updated successfully.",
             type: "success",
@@ -90,6 +108,10 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await removeComment(workspaceSlug, projectId, issueId, commentId);
+          captureEvent(COMMENT_DELETED, {
+            issue_id: issueId,
+            element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
+          });
           setToastAlert({
             title: "Comment removed successfully.",
             type: "success",

@@ -213,6 +213,10 @@ export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
 export const ISSUE_ARCHIVED = "Issue archived";
 export const ISSUE_RESTORED = "Issue restored";
+// Comment Events
+export const COMMENT_CREATED = "Comment created";
+export const COMMENT_UPDATED = "Comment updated";
+export const COMMENT_DELETED = "Comment deleted";
 // Issue Checkout Events
 export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";
