@@ -1,83 +1,84 @@
 # Python imports
 import json
 import random
+from collections import defaultdict
 from itertools import chain
 
 # Django imports
-from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-)
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
-from django.db import IntegrityError
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError
+from django.db.models import (
+    Case,
+    CharField,
+    Exists,
+    F,
+    Func,
+    Max,
+    OuterRef,
+    Prefetch,
+    Q,
+    UUIDField,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
+from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
-from . import BaseViewSet, BaseAPIView, WebhookMixin
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    ProjectLitePermission,
+    ProjectMemberPermission,
+    WorkSpaceAdminPermission,
+)
 from plane.app.serializers import (
+    CommentReactionSerializer,
     IssueActivitySerializer,
+    IssueAttachmentSerializer,
     IssueCommentSerializer,
-    IssuePropertySerializer,
-    IssueSerializer,
     IssueCreateSerializer,
-    LabelSerializer,
+    IssueDetailSerializer,
     IssueFlatSerializer,
     IssueLinkSerializer,
     IssueLiteSerializer,
-    IssueAttachmentSerializer,
-    IssueSubscriberSerializer,
-    ProjectMemberLiteSerializer,
+    IssuePropertySerializer,
     IssueReactionSerializer,
-    CommentReactionSerializer,
     IssueRelationSerializer,
+    IssueSerializer,
+    IssueSubscriberSerializer,
+    LabelSerializer,
+    ProjectMemberLiteSerializer,
     RelatedIssueSerializer,
-    IssueDetailSerializer,
-)
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    WorkSpaceAdminPermission,
-    ProjectMemberPermission,
-    ProjectLitePermission,
-)
-from plane.db.models import (
-    Project,
-    Issue,
-    IssueActivity,
-    IssueComment,
-    IssueProperty,
-    Label,
-    IssueLink,
-    IssueAttachment,
-    IssueSubscriber,
-    ProjectMember,
-    IssueReaction,
-    CommentReaction,
-    IssueRelation,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    CommentReaction,
+    Issue,
+    IssueActivity,
+    IssueAttachment,
+    IssueComment,
+    IssueLink,
+    IssueProperty,
+    IssueReaction,
+    IssueRelation,
+    IssueSubscriber,
+    Label,
+    Project,
+    ProjectMember,
+)
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
-from collections import defaultdict
+
+from . import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -95,7 +96,9 @@ class IssueListEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
+        issue_ids = [
+            issue_id for issue_id in issue_ids.split(",") if issue_id != ""
+        ]
 
         queryset = (
             Issue.issue_objects.filter(
@@ -2336,7 +2339,9 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(
+            issue, data=request.data, partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()
