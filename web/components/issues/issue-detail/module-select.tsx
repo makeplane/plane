@@ -75,7 +75,6 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         showTooltip
         multiple
       />
-      {isUpdating && <Spinner className="h-4 w-4" />}
     </div>
   );
 });
