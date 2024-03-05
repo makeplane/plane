@@ -90,7 +90,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   useEffect(
     () => () => {
-      console.log("ran cleanup----------------------------");
       if (pageStore) {
         pageStore.cleanup();
       }

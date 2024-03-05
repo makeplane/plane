@@ -121,13 +121,11 @@ export class PageStore implements IPageStore {
       () => this.description_html,
       (description_html) => {
         //TODO: Fix reaction to only run when the data is changed, not when the page is loaded
-        console.log("hooooooooooooooooooooooooooooooooooooooo 1");
         const { projectId, workspaceSlug } = this.rootStore.app.router;
         if (!projectId || !workspaceSlug) return;
         this.isSubmitting = "submitting";
         this.pageService.patchPage(workspaceSlug, projectId, this.id, { description_html }).finally(() => {
           runInAction(() => {
-            console.log("hooooooooooooooooooooooooooooooooooooooo");
             this.isSubmitting = "submitted";
           });
         });
@@ -169,7 +167,6 @@ export class PageStore implements IPageStore {
   });
 
   updateDescription = action("updateDescription", (description_html: string) => {
-    console.log("1");
     const { projectId, workspaceSlug } = this.rootStore.app.router;
     if (!projectId || !workspaceSlug) return;
 
