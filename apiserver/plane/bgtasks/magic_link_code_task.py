@@ -1,16 +1,10 @@
-# Python imports
-import os
-import requests
-import json
-
 # Django imports
+# Third party imports
+from celery import shared_task
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.conf import settings
-
-# Third party imports
-from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports

@@ -84,7 +84,6 @@ from .notification import (
     UnreadNotificationEndpoint,
     UserNotificationPreferenceEndpoint,
 )
-from .oauth import OauthEndpoint
 from .page import (
     PageFavoriteViewSet,
     PageLogEndpoint,
