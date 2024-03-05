@@ -7,3 +7,4 @@ export * from "./invitations";
 export * from "./onboarding-sidebar";
 export * from "./step-indicator";
 export * from "./switch-delete-account-modal";
+export * from "./header";

@@ -3,7 +3,7 @@ import { IIssueActivity, IIssueLite, TStateGroups } from ".";
 
 export interface IUser {
   id: string;
-  avatar: string;
+  avatar: string | null;
   cover_image: string | null;
   date_joined: string;
   display_name: string;
@@ -13,22 +13,53 @@ export interface IUser {
   is_active: boolean;
   is_bot: boolean;
   is_email_verified: boolean;
-  is_onboarded: boolean;
+  // is_onboarded: boolean;
   is_password_autoset: boolean;
-  is_tour_completed: boolean;
-  role: string | null;
-  onboarding_step: {
-    workspace_join?: boolean;
-    profile_complete?: boolean;
-    workspace_create?: boolean;
-    workspace_invite?: boolean;
-  };
-  last_workspace_id: string;
+  // is_tour_completed: boolean;
+  // role: string | null;
+  // onboarding_step: {
+  //   workspace_join?: boolean;
+  //   profile_complete?: boolean;
+  //   workspace_create?: boolean;
+  //   workspace_invite?: boolean;
+  // };
+  // last_workspace_id: string;
   user_timezone: string;
   username: string;
-  theme: IUserTheme;
-  use_case?: string;
+  // theme: IUserTheme;
+  // use_case?: string;
 }
+
+export interface IUserAccount {
+  provider_account_id: string;
+  provider: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type TUserProfile = {
+  id: string | undefined;
+  user: string | undefined;
+  role: string | undefined;
+  last_workspace_id: string | undefined;
+  theme: {
+    theme: string | undefined;
+  };
+  onboarding_step: {
+    workspace_join: boolean;
+    profile_complete: boolean;
+    workspace_create: boolean;
+    workspace_invite: boolean;
+  };
+  is_onboarded: boolean;
+  is_tour_completed: boolean;
+  use_case: string | undefined;
+  billing_address_country: string | undefined;
+  billing_address: string | undefined;
+  has_billing_address: boolean;
+  created_at: Date | string;
+  updated_at: Date | string;
+};
 
 export interface IInstanceAdminStatus {
   is_instance_admin: boolean;

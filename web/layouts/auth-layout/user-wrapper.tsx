@@ -2,11 +2,11 @@ import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-import useSWRImmutable from "swr/immutable";
 // hooks
 import { useUser, useWorkspace } from "hooks/store";
 // ui
 import { Spinner } from "@plane/ui";
+import { useUserProfile } from "hooks/store/use-user-profile";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -15,16 +15,19 @@ export interface IUserAuthWrapper {
 export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
   // store hooks
-  const { currentUser, currentUserError, fetchCurrentUser, fetchCurrentUserSettings } = useUser();
+  const { data, fetchCurrentUser, fetchUserAccounts } = useUser();
+  const { fetchUserProfile } = useUserProfile();
   const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
   // fetching user information
-  useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+  const { error } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
   });
-  // fetching user profile settings
-  useSWR("CURRENT_USER_PROFILE", () => fetchCurrentUserSettings(), {
+  // fetching user account Details
+  useSWR("USER_ACCOUNTS", () => fetchUserAccounts(), { shouldRetryOnError: false });
+  // fetching user profile
+  useSWR("CURRENT_USER_PROFILE", () => fetchUserProfile(), {
     shouldRetryOnError: false,
   });
   // fetching all workspaces
@@ -32,7 +35,9 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     shouldRetryOnError: false,
   });
 
-  if (!currentUser && !currentUserError) {
+  console.log("error", error);
+
+  if (!data && !error) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -42,7 +47,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
     );
   }
 
-  if (currentUserError) {
+  if (error) {
     const redirectTo = router.asPath;
     router.push(`/?next_path=${redirectTo}`);
     return null;

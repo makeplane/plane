@@ -1,14 +1,9 @@
 import { useEffect, useState, ReactElement } from "react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-import { ChevronDown } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
-import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useEventTracker, useUser, useWorkspace, useCurrentUser } from "hooks/store";
+import { useEventTracker, useUser, useWorkspace, useUserProfile } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { WorkspaceService } from "services/workspace.service";
@@ -16,14 +11,18 @@ import { WorkspaceService } from "services/workspace.service";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // components
-import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "components/onboarding";
+import {
+  InviteMembers,
+  JoinWorkspaces,
+  UserDetails,
+  SwitchOrDeleteAccountModal,
+  OnboardingHeader,
+} from "components/onboarding";
 import { PageHead } from "components/core";
 // ui
-import { Avatar, Spinner } from "@plane/ui";
-// images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import { Spinner } from "@plane/ui";
 // types
-import { IUser, TOnboardingSteps } from "@plane/types";
+import { TOnboardingSteps, TUserProfile } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
@@ -35,41 +34,33 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   // states
   const [step, setStep] = useState<number | null>(null);
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
+  const [fullName, setFullName] = useState<string>("");
   // router
   const router = useRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { currentUser, currentUserLoader, updateCurrentUser, updateUserOnBoard } = useUser();
+  const { data: user, isLoading: currentUserLoader, updateCurrentUser } = useUser();
+  const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
   // custom hooks
-  const {} = useUserAuth({ routeAuth: "onboarding", user: currentUser, isLoading: currentUserLoader });
-
-  const user = currentUser ?? undefined;
+  const {} = useUserAuth({ routeAuth: "onboarding", user: user || null, isLoading: currentUserLoader });
+  // computed values
   const workspacesList = Object.values(workspaces ?? {});
-
-  const { setTheme } = useTheme();
-
-  const { control, setValue } = useForm<{ full_name: string }>({
-    defaultValues: {
-      full_name: "",
-    },
-  });
-
+  // fetching workspaces list
   useSWR(`USER_WORKSPACES_LIST`, () => fetchWorkspaces(), {
     shouldRetryOnError: false,
   });
-
+  // fetching user workspace invitations
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
     workspaceService.userWorkspaceInvitations()
   );
-
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {
     if (!user) return;
 
-    const payload: Partial<IUser> = {
+    const payload: Partial<TUserProfile> = {
       onboarding_step: {
-        ...user.onboarding_step,
+        ...profile.onboarding_step,
         ...steps,
       },
     };
@@ -83,28 +74,24 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     await updateUserOnBoard()
       .then(() => {
         captureEvent(USER_ONBOARDING_COMPLETED, {
-          user_role: user.role,
+          // user_role: user.role,
           email: user.email,
           user_id: user.id,
           status: "SUCCESS",
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        console.log("Failed to update onboarding status");
       });
 
     router.replace(`/${workspacesList[0]?.slug}`);
   };
 
   useEffect(() => {
-    setTheme("system");
-  }, [setTheme]);
-
-  useEffect(() => {
     const handleStepChange = async () => {
       if (!user || !invitations) return;
 
-      const onboardingStep = user.onboarding_step;
+      const onboardingStep = profile.onboarding_step;
 
       if (
         !onboardingStep.workspace_join &&
@@ -112,9 +99,9 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         workspacesList &&
         workspacesList?.length > 0
       ) {
-        await updateCurrentUser({
+        await updateUserProfile({
           onboarding_step: {
-            ...user.onboarding_step,
+            ...profile.onboarding_step,
             workspace_join: true,
             workspace_create: true,
           },
@@ -141,110 +128,13 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     handleStepChange();
   }, [user, invitations, step, updateCurrentUser, workspacesList]);
 
-  const {
-    data: currentUserMe,
-    settings: currentUserSettings,
-    fetchCurrentUser,
-    fetchCurrentUserSettings,
-    profile: { data: currentUserProfile, fetchCurrentUserProfile },
-    fetchUserAccounts,
-  } = useCurrentUser();
-  useEffect(() => {
-    const init = async () => {
-      await fetchCurrentUser();
-      await fetchCurrentUserSettings();
-      await fetchCurrentUserProfile();
-      await fetchUserAccounts();
-    };
-    init();
-  }, [fetchCurrentUser, fetchCurrentUserProfile, fetchCurrentUserSettings, fetchUserAccounts]);
-
-  console.log("---");
-  console.log("currentUserMe -->", currentUserMe);
-  console.log("currentUserSettings -->", currentUserSettings);
-  console.log("currentUserProfile -->", currentUserProfile);
-  console.log("---");
-
   return (
     <>
       <PageHead title="Onboarding" />
       <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
       {user && step !== null ? (
         <div className={`fixed flex h-full w-full flex-col bg-onboarding-gradient-100`}>
-          <div className="flex items-center px-4 py-10 sm:px-7 sm:pb-8 sm:pt-14 md:px-14 lg:pl-28 lg:pr-24">
-            <div className="flex w-full items-center justify-between font-semibold ">
-              <div className="flex items-center gap-x-1 text-3xl">
-                <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" height={30} width={30} />
-                Plane
-              </div>
-
-              <div>
-                <Controller
-                  control={control}
-                  name="full_name"
-                  render={({ field: { value } }) => (
-                    <div className="flex items-center gap-x-2 pr-4">
-                      {step != 1 && (
-                        <Avatar
-                          name={
-                            currentUser?.first_name
-                              ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
-                              : value.length > 0
-                              ? value
-                              : currentUser?.email
-                          }
-                          src={currentUser?.avatar}
-                          size={35}
-                          shape="square"
-                          fallbackBackgroundColor="#FCBE1D"
-                          className="!text-base capitalize"
-                        />
-                      )}
-                      <div>
-                        {step != 1 && (
-                          <p className="text-sm font-medium text-custom-text-200">
-                            {currentUser?.first_name
-                              ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
-                              : value.length > 0
-                              ? value
-                              : null}
-                          </p>
-                        )}
-
-                        <Menu>
-                          <Menu.Button className={"flex items-center gap-x-2"}>
-                            <span className="text-base font-medium">{user.email}</span>
-                            <ChevronDown className="h-4 w-4 text-custom-text-300" />
-                          </Menu.Button>
-                          <Transition
-                            enter="transition duration-100 ease-out"
-                            enterFrom="transform scale-95 opacity-0"
-                            enterTo="transform scale-100 opacity-100"
-                            leave="transition duration-75 ease-out"
-                            leaveFrom="transform scale-100 opacity-100"
-                            leaveTo="transform scale-95 opacity-0"
-                          >
-                            <Menu.Items className={"absolute min-w-full"}>
-                              <Menu.Item as="div">
-                                <div
-                                  className="mr-auto mt-2 rounded-md border border-red-400 bg-onboarding-background-200 p-3 text-base font-normal text-red-400 shadow-sm hover:cursor-pointer"
-                                  onClick={() => {
-                                    setShowDeleteAccountModal(true);
-                                  }}
-                                >
-                                  Wrong e-mail address?
-                                </div>
-                              </Menu.Item>
-                            </Menu.Items>
-                          </Transition>
-                        </Menu>
-                      </div>
-                    </div>
-                  )}
-                />
-              </div>
-            </div>
-          </div>
+          <OnboardingHeader fullName={fullName} step={step} setShowDeleteAccountModal={setShowDeleteAccountModal} />
           <div className="mx-auto h-full w-full overflow-auto rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 lg:w-4/5 xl:w-3/4">
             <div className={`h-full w-full overflow-auto rounded-t-md bg-onboarding-gradient-200`}>
               {step === 1 ? (
@@ -256,7 +146,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                   stepChange={stepChange}
                 />
               ) : step === 2 ? (
-                <UserDetails setUserName={(value) => setValue("full_name", value)} user={user} />
+                <UserDetails setUserName={(value) => setFullName(value)} user={user} />
               ) : (
                 <InviteMembers
                   finishOnboarding={finishOnboarding}

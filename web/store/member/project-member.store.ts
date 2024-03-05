@@ -11,7 +11,7 @@ import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite 
 import { EUserProjectRoles } from "constants/project";
 import { IMemberRootStore } from ".";
 import { IRouterStore } from "store/application/router.store";
-import { IUserRootStore } from "store/user";
+import { IUserRootStore } from "store/user/user_legacy";
 
 interface IProjectMemberDetails {
   id: string;

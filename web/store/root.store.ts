@@ -6,7 +6,7 @@ import { IProjectRootStore, ProjectRootStore } from "./project";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IModuleStore, ModulesStore } from "./module.store";
-import { IUserRootStore, UserRootStore } from "./user";
+import { IUserRootStore, UserRootStore } from "./user/user_legacy";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { IInboxRootStore, InboxRootStore } from "./inbox/root.store";
@@ -18,7 +18,7 @@ import { IMentionStore, MentionStore } from "./mention.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { ILabelStore, LabelStore } from "./label.store";
-import { IUserStore, UserStore } from "./users";
+import { IUserStore, UserStore } from "./user";
 
 enableStaticRendering(typeof window === "undefined");
 

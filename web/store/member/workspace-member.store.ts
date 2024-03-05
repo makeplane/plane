@@ -11,7 +11,7 @@ import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitat
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { IRouterStore } from "store/application/router.store";
 import { IMemberRootStore } from ".";
-import { IUserRootStore } from "store/user";
+import { IUserRootStore } from "store/user/user_legacy";
 
 export interface IWorkspaceMembership {
   id: string;

@@ -32,7 +32,7 @@ export const Invitations: React.FC<Props> = (props) => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { currentUser, updateCurrentUser } = useUser();
+  const { data: currentUser, updateCurrentUser } = useUser();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
   const workspacesList = Object.values(workspaces);

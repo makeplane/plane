@@ -17,7 +17,7 @@ type Props = {
 export const JoinWorkspaces: React.FC<Props> = observer((props) => {
   const { stepChange, setTryDiffAccount } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const { data: user } = useUser();
   // form info
   const {
     handleSubmit,
@@ -34,7 +34,7 @@ export const JoinWorkspaces: React.FC<Props> = observer((props) => {
   });
 
   const handleNextStep = async () => {
-    if (!currentUser) return;
+    if (!user) return;
     await stepChange({ workspace_join: true, workspace_create: true });
   };
 
@@ -63,7 +63,7 @@ export const JoinWorkspaces: React.FC<Props> = observer((props) => {
           </div>
           <Workspace
             stepChange={stepChange}
-            user={currentUser ?? undefined}
+            user={user ?? undefined}
             control={control}
             handleSubmit={handleSubmit}
             setValue={setValue}

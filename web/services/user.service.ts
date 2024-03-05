@@ -61,6 +61,14 @@ export class UserService extends APIService {
       });
   }
 
+  async getCurrentUserAccounts(): Promise<any> {
+    return this.get("/api/users/me/accounts/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
     return this.get("/api/users/me/instance-admin/")
       .then((response) => response?.data)

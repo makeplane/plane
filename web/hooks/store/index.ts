@@ -14,7 +14,6 @@ export * from "./use-project-publish";
 export * from "./use-project-state";
 export * from "./use-project-view";
 export * from "./use-project";
-export * from "./use-user";
 export * from "./use-webhook";
 export * from "./use-workspace";
 export * from "./use-issues";
@@ -22,6 +21,5 @@ export * from "./use-kanban-view";
 export * from "./use-issue-detail";
 export * from "./use-inbox";
 export * from "./use-inbox-issues";
-
-// independent store hooks
-export * from "./use-current-user";
+export * from "./use-user-profile";
+export * from "./use-user";
