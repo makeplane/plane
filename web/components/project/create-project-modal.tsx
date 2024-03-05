@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 import { useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomEmojiPicker, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomEmojiIconPicker, CustomSelect, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import { MemberDropdown } from "components/dropdowns";
@@ -231,7 +231,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                       name="logo_props"
                       control={control}
                       render={({ field: { value, onChange } }) => (
-                        <CustomEmojiPicker
+                        <CustomEmojiIconPicker
                           label={
                             <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
                               <ProjectLogo logo={value} className="text-xl" />
@@ -243,6 +243,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             if (val.type === "emoji")
                               logoValue = {
                                 value: convertHexEmojiToDecimal(val.value.unified),
+                                url: val.value.imageUrl,
                               };
                             else if (val.type === "icon") logoValue = val.value;
 
@@ -251,6 +252,10 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               [val.type]: logoValue,
                             });
                           }}
+                          defaultIconColor={value.in_use === "icon" ? value.icon?.color : undefined}
+                          defaultOpen={
+                            value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
+                          }
                         />
                       )}
                     />

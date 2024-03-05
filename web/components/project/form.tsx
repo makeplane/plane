@@ -9,7 +9,7 @@ import { ProjectService } from "services/project";
 // components
 import { ImagePickerPopover } from "components/core";
 import { ProjectLogo } from "components/project";
-import { Button, CustomEmojiPicker, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomEmojiIconPicker, CustomSelect, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "helpers/emoji.helper";
@@ -137,7 +137,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 control={control}
                 name="logo_props"
                 render={({ field: { value, onChange } }) => (
-                  <CustomEmojiPicker
+                  <CustomEmojiIconPicker
                     label={
                       <span className="grid h-7 w-7 place-items-center">
                         <ProjectLogo logo={value} className="text-lg" />
@@ -149,6 +149,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                       if (val.type === "emoji")
                         logoValue = {
                           value: convertHexEmojiToDecimal(val.value.unified),
+                          url: val.value.imageUrl,
                         };
                       else if (val.type === "icon") logoValue = val.value;
 
@@ -157,6 +158,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                         [val.type]: logoValue,
                       });
                     }}
+                    defaultIconColor={value.in_use === "icon" ? value.icon?.color : undefined}
+                    defaultOpen={value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
                     disabled={!isAdmin}
                   />
                 )}

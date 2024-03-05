@@ -1,4 +1,4 @@
-export const materialIcons = [
+export const MATERIAL_ICONS_LIST = [
   {
     name: "search",
   },

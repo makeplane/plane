@@ -1,8 +1,10 @@
 .EmojiPickerReact {
-  --epr-emoji-size: 24px !important;
-  --epr-picker-border-radius: 4px !important;
-  --epr-horizontal-padding: 8px !important;
-  --epr-emoji-padding: 4px !important;
+  --epr-category-navigation-button-size: 1.25rem !important;
+  --epr-category-label-height: 1.5rem !important;
+  --epr-emoji-size: 1.25rem !important;
+  --epr-picker-border-radius: 0.25rem !important;
+  --epr-horizontal-padding: 0.5rem !important;
+  --epr-emoji-padding: 0.5rem !important;
   background-color: rgba(var(--color-background-100)) !important;
 }
 
@@ -12,14 +14,14 @@
 }
 
 .epr-emoji-category-label {
-  font-size: 14px !important;
+  font-size: 0.7875rem !important;
   color: rgba(var(--color-text-300)) !important;
-  background-color: transparent !important;
+  background-color: rgba(var(--color-background-100), 0.8) !important;
 }
 
 .epr-category-nav,
 .epr-header-overlay {
-  padding: 12px 8px !important;
+  padding: 0.5rem !important;
 }
 
 button.epr-emoji:hover > *,
@@ -28,10 +30,11 @@ button.epr-emoji:focus > * {
 }
 
 input.epr-search {
-  font-size: 14px !important;
-  height: 36px !important;
+  font-size: 0.7875rem !important;
+  height: 2rem !important;
   background: transparent !important;
   border-color: rgba(var(--color-border-200)) !important;
+  border-radius: 0.25rem !important;
 }
 
 input.epr-search::placeholder {

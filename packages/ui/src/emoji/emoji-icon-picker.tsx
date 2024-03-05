@@ -2,17 +2,24 @@ import React, { useState } from "react";
 import { usePopper } from "react-popper";
 import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import { Popover, Tab } from "@headlessui/react";
+import { Placement } from "@popperjs/core";
+// components
+import { IconsList } from "./icons-list";
 // helpers
 import { cn } from "../../helpers";
-import { materialIcons } from "./icons";
+
+export enum EmojiIconPickerTypes {
+  EMOJI = "emoji",
+  ICON = "icon",
+}
 
 type TChangeHandlerProps =
   | {
-      type: "emoji";
+      type: EmojiIconPickerTypes.EMOJI;
       value: EmojiClickData;
     }
   | {
-      type: "icon";
+      type: EmojiIconPickerTypes.ICON;
       value: {
         name: string;
         color: string;
@@ -23,45 +30,49 @@ export type TCustomEmojiPicker = {
   buttonClassName?: string;
   className?: string;
   closeOnSelect?: boolean;
+  defaultIconColor?: string;
+  defaultOpen?: EmojiIconPickerTypes;
   disabled?: boolean;
   dropdownClassName?: string;
   label: React.ReactNode;
   onChange: (value: TChangeHandlerProps) => void;
+  placement?: Placement;
   searchPlaceholder?: string;
   theme?: Theme;
 };
 
 const TABS_LIST = [
   {
-    key: "emoji",
+    key: EmojiIconPickerTypes.EMOJI,
     title: "Emojis",
   },
   {
-    key: "icon",
+    key: EmojiIconPickerTypes.ICON,
     title: "Icons",
   },
 ];
 
-export const CustomEmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
+export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
   const {
     buttonClassName,
     className,
     closeOnSelect = true,
+    defaultIconColor = "#5f5f5f",
+    defaultOpen = EmojiIconPickerTypes.EMOJI,
     disabled = false,
     dropdownClassName,
     label,
     onChange,
+    placement = "bottom-start",
     searchPlaceholder = "Search",
     theme,
   } = props;
-  // states
-  const [activeColor, setActiveColor] = useState("#000000");
   // refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "auto",
+    placement,
     modifiers: [
       {
         name: "preventOverflow",
@@ -96,18 +107,20 @@ export const CustomEmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
                 dropdownClassName
               )}
             >
-              <Tab.Group as="div" className="h-full w-full flex flex-col overflow-hidden">
+              <Tab.Group
+                as="div"
+                className="h-full w-full flex flex-col overflow-hidden"
+                defaultIndex={TABS_LIST.findIndex((tab) => tab.key === defaultOpen)}
+              >
                 <Tab.List as="div" className="grid grid-cols-2 gap-1 p-2">
                   {TABS_LIST.map((tab) => (
                     <Tab
                       key={tab.key}
                       className={({ selected }) =>
-                        cn(
-                          "py-1 text-sm rounded border border-transparent hover:border-custom-border-200 focus:border-custom-border-200",
-                          {
-                            "bg-custom-background-80 border-custom-border-200": selected,
-                          }
-                        )
+                        cn("py-1 text-sm rounded border border-custom-border-200", {
+                          "bg-custom-background-80": selected,
+                          "hover:bg-custom-background-90 focus:bg-custom-background-90": !selected,
+                        })
                       }
                     >
                       {tab.title}
@@ -119,12 +132,12 @@ export const CustomEmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
                     <EmojiPicker
                       onEmojiClick={(val) => {
                         onChange({
-                          type: "emoji",
+                          type: EmojiIconPickerTypes.EMOJI,
                           value: val,
                         });
                         if (closeOnSelect) close();
                       }}
-                      height="100%"
+                      height="20rem"
                       width="100%"
                       theme={theme}
                       searchPlaceholder={searchPlaceholder}
@@ -134,45 +147,16 @@ export const CustomEmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
                     />
                   </Tab.Panel>
                   <Tab.Panel>
-                    <div className="grid grid-cols-8 gap-2 justify-items-center px-2.5 pb-2 mt-2">
-                      {["#FF6B00", "#8CC1FF", "#FCBE1D", "#18904F", "#ADF672", "#05C3FF", "#000000"].map((curCol) => (
-                        <span
-                          key={curCol}
-                          className="h-4 w-4 cursor-pointer rounded-full"
-                          style={{ backgroundColor: curCol }}
-                          onClick={() => setActiveColor(curCol)}
-                        />
-                      ))}
-                      <button type="button" className="flex items-center gap-1">
-                        <span
-                          className="conical-gradient h-4 w-4 rounded-full"
-                          style={{ backgroundColor: activeColor }}
-                        />
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-8 gap-2 px-2.5 justify-items-center mt-2">
-                      {materialIcons.map((icon, index) => (
-                        <button
-                          key={`${icon.name}-${index}`}
-                          type="button"
-                          className="h-6 w-6 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
-                          onClick={() => {
-                            onChange({
-                              type: "icon",
-                              value: {
-                                name: icon.name,
-                                color: activeColor,
-                              },
-                            });
-                            if (closeOnSelect) close();
-                          }}
-                        >
-                          <span style={{ color: activeColor }} className="material-symbols-rounded text-base">
-                            {icon.name}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                    <IconsList
+                      defaultColor={defaultIconColor}
+                      onChange={(val) => {
+                        onChange({
+                          type: EmojiIconPickerTypes.ICON,
+                          value: val,
+                        });
+                        if (closeOnSelect) close();
+                      }}
+                    />
                   </Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>
