@@ -56,7 +56,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // toast alert
   const { setToastAlert } = useToast();
 
-  const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
+  const { handleSubmit, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
@@ -128,14 +128,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    console.log("called onlyuuu");
     updateDescriptionAction(formData.description_html);
   };
 
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    editorRef.current?.setEditorValue(response);
+    editorRef.current?.setEditorValueAtCursorPosition(response);
   };
 
   const actionCompleteAlert = ({
