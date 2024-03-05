@@ -1,4 +1,4 @@
-from plane.app.views.auth.adapter.base import Adapter
+from plane.authentication.adapter.base import Adapter
 
 
 class CredentialAdapter(Adapter):

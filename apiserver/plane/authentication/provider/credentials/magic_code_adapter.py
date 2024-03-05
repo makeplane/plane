@@ -4,8 +4,8 @@ import random
 import string
 
 # Module imports
-from plane.app.views.auth.adapter.base import AuthenticationException
-from plane.app.views.auth.adapter.credential import CredentialAdapter
+from plane.authentication.adapter.base import AuthenticationException
+from plane.authentication.adapter.credential import CredentialAdapter
 from plane.settings.redis import redis_instance
 
 
@@ -84,4 +84,6 @@ class MagicCodeProvider(CredentialAdapter):
             else:
                 raise AuthenticationException("The token is not valid.")
         else:
-            raise AuthenticationException("The token has expired. Please regenerate the token and try again.")
+            raise AuthenticationException(
+                "The token has expired. Please regenerate the token and try again."
+            )

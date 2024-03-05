@@ -8,7 +8,7 @@ import pytz
 from django.core.exceptions import ImproperlyConfigured
 
 # Module imports
-from plane.app.views.auth.adapter.oauth import OauthAdapter
+from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
 
 
