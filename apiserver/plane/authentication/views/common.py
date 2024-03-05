@@ -19,6 +19,7 @@ from django.views import View
 ## Third Party Imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 ## Module imports
 from plane.app.serializers import (
@@ -58,7 +59,7 @@ def generate_password_token(user):
     return uidb64, token
 
 
-class ForgotPasswordEndpoint(View):
+class ForgotPasswordEndpoint(APIView):
 
     def post(self, request):
         email = request.data.get("email")
@@ -91,7 +92,7 @@ class ForgotPasswordEndpoint(View):
         )
 
 
-class ResetPasswordEndpoint(View):
+class ResetPasswordEndpoint(APIView):
 
     def post(self, request, uidb64, token):
         try:
@@ -130,7 +131,7 @@ class ResetPasswordEndpoint(View):
             )
 
 
-class ChangePasswordEndpoint(View):
+class ChangePasswordEndpoint(APIView):
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
         user = User.objects.get(pk=request.user.id)
@@ -151,7 +152,7 @@ class ChangePasswordEndpoint(View):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SetUserPasswordEndpoint(View):
+class SetUserPasswordEndpoint(APIView):
     def post(self, request):
         user = User.objects.get(pk=request.user.id)
         password = request.data.get("password", False)

@@ -1,5 +1,9 @@
 from .common import (
+    ChangePasswordEndpoint,
     CSRFTokenEndpoint,
+    ForgotPasswordEndpoint,
+    ResetPasswordEndpoint,
+    SetUserPasswordEndpoint,
     SignOutAuthEndpoint,
 )
 from .email import (
