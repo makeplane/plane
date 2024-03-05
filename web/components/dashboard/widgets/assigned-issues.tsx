@@ -15,7 +15,7 @@ import {
 // helpers
 import { getCustomDates, getRedirectionFilters, getTabKey } from "helpers/dashboard.helper";
 // types
-import { TAssignedIssuesWidgetFilters, TAssignedIssuesWidgetResponse } from "@plane/types";
+import { EDurationFilters, TAssignedIssuesWidgetFilters, TAssignedIssuesWidgetResponse } from "@plane/types";
 // constants
 import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
@@ -30,7 +30,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TAssignedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
   const selectedTab = getTabKey(selectedDurationFilter, widgetDetails?.widget_filters.tab);
   const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 

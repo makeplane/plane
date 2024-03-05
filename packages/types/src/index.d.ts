@@ -4,7 +4,6 @@ export * from "./cycles";
 export * from "./dashboard";
 export * from "./projects";
 export * from "./state";
-export * from "./invitation";
 export * from "./issues";
 export * from "./modules";
 export * from "./views";
@@ -16,7 +15,6 @@ export * from "./importer";
 
 // FIXME: Remove this after development and the refactor/mobx-store-issue branch is stable
 export * from "./inbox";
-export * from "./inbox/root";
 
 export * from "./analytics";
 export * from "./calendar";

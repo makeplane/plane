@@ -14,7 +14,7 @@ import {
 // helpers
 import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
+import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { IssuesByPriorityGraph } from "components/graphs";
 
@@ -29,7 +29,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByPriorityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDuration = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDuration = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
   const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByPriorityWidgetFilters>) => {

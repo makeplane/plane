@@ -15,7 +15,12 @@ import {
 // helpers
 import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
+import {
+  EDurationFilters,
+  TIssuesByStateGroupsWidgetFilters,
+  TIssuesByStateGroupsWidgetResponse,
+  TStateGroups,
+} from "@plane/types";
 // constants
 import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 import { STATE_GROUPS } from "constants/state";
@@ -34,7 +39,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByStateGroupsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDuration = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDuration = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
   const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByStateGroupsWidgetFilters>) => {

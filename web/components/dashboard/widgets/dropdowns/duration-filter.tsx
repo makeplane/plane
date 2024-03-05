@@ -7,14 +7,14 @@ import { CustomMenu } from "@plane/ui";
 // helpers
 import { getDurationFilterDropdownLabel } from "helpers/dashboard.helper";
 // types
-import { TDurationFilterOptions } from "@plane/types";
+import { EDurationFilters } from "@plane/types";
 // constants
 import { DURATION_FILTER_OPTIONS } from "constants/dashboard";
 
 type Props = {
   customDates?: string[];
-  onChange: (value: TDurationFilterOptions, customDates?: string[]) => void;
-  value: TDurationFilterOptions;
+  onChange: (value: EDurationFilters, customDates?: string[]) => void;
+  value: EDurationFilters;
 };
 
 export const DurationFilterDropdown: React.FC<Props> = (props) => {
@@ -27,7 +27,7 @@ export const DurationFilterDropdown: React.FC<Props> = (props) => {
       <DateFilterModal
         isOpen={isDateFilterModalOpen}
         handleClose={() => setIsDateFilterModalOpen(false)}
-        onSelect={(val) => onChange("custom", val)}
+        onSelect={(val) => onChange(EDurationFilters.CUSTOM, val)}
         title="Due date"
       />
       <CustomMenu

@@ -1,7 +1,8 @@
-import { IIssueActivity, TIssuePriorities } from "./issues";
-import { TIssue } from "./issues/issue";
-import { TIssueRelationTypes } from "./issues/issue_relation";
-import { TStateGroups } from "./state";
+import { IIssueActivity, TIssuePriorities } from "../issues";
+import { TIssue } from "../issues/issue";
+import { TIssueRelationTypes } from "../issues/issue_relation";
+import { TStateGroups } from "../state";
+import { EDurationFilters } from "./enums";
 
 export type TWidgetKeys =
   | "overview_stats"
@@ -15,35 +16,27 @@ export type TWidgetKeys =
 
 export type TIssuesListTypes = "pending" | "upcoming" | "overdue" | "completed";
 
-export type TDurationFilterOptions =
-  | "none"
-  | "today"
-  | "this_week"
-  | "this_month"
-  | "this_year"
-  | "custom";
-
 // widget filters
 export type TAssignedIssuesWidgetFilters = {
   custom_dates?: string[];
-  duration?: TDurationFilterOptions;
+  duration?: EDurationFilters;
   tab?: TIssuesListTypes;
 };
 
 export type TCreatedIssuesWidgetFilters = {
   custom_dates?: string[];
-  duration?: TDurationFilterOptions;
+  duration?: EDurationFilters;
   tab?: TIssuesListTypes;
 };
 
 export type TIssuesByStateGroupsWidgetFilters = {
-  duration?: TDurationFilterOptions;
+  duration?: EDurationFilters;
   custom_dates?: string[];
 };
 
 export type TIssuesByPriorityWidgetFilters = {
   custom_dates?: string[];
-  duration?: TDurationFilterOptions;
+  duration?: EDurationFilters;
 };
 
 export type TWidgetFiltersFormData =
