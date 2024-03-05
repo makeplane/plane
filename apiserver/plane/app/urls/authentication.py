@@ -1,34 +1,26 @@
 from django.urls import path
 
-from rest_framework_simplejwt.views import TokenRefreshView
-
-
 from plane.app.views import (
+    ## End Auth Extender
+    # API Tokens
+    ApiTokenEndpoint,
+    ChangePasswordEndpoint,
+    ## End Authentication
+    # Auth Extended
+    ForgotPasswordEndpoint,
+    GithubAuthEndpoint,
+    # OauthEndpoint,
+    # EmailCheckEndpoint,
+    GoogleAuthEndpoint,
+    MagicGenerateEndpoint,
+    MagicSignInEndpoint,
+    ResetPasswordEndpoint,
+    SessionEndpoint,
     # Authentication
     SignInEndpoint,
     SignOutEndpoint,
     SignUpEndpoint,
-    MagicGenerateEndpoint,
-    MagicSignInEndpoint,
-    # OauthEndpoint,
-    # EmailCheckEndpoint,
-    GoogleAuthEndpoint,
-    GithubAuthEndpoint,
-    ## End Authentication
-    # Auth Extended
-    ForgotPasswordEndpoint,
-    ResetPasswordEndpoint,
-    ChangePasswordEndpoint,
-    SessionEndpoint,
-    ## End Auth Extender
-    # API Tokens
-    ApiTokenEndpoint,
-    ## End API Tokens
-    # UserIdentifierEndpoint,
-    # UserEmailEndpoint,
-    # UserRegisterEndpoint,
 )
-
 
 urlpatterns = [
     #  Social Auth
