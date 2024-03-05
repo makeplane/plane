@@ -237,6 +237,11 @@ export const LABEL_DELETED = "Label deleted";
 export const LABEL_GROUP_DELETED = "Label group deleted";
 export const LABEL_ADDED_G = "Label added to group";
 export const LABEL_REMOVED_G = "Label removed from group";
+// Project Automation events
+export const AUTO_ARCHIVE_TOGGLED = "Auto archive toggled";
+export const AUTO_ARCHIVE_UPDATED = "Auto archive updated";
+export const AUTO_CLOSE_Toggled = "Auto close toggled";
+export const AUTO_CLOSE_UPDATED = "Auto close updated";
 // Project Page Events
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";

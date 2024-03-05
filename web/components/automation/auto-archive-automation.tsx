@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject, useUser } from "hooks/store";
+import { useEventTracker, useProject, useUser } from "hooks/store";
 // component
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 import { SelectMonthModal } from "components/automation";
@@ -11,6 +11,7 @@ import { ArchiveRestore } from "lucide-react";
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
 // types
 import { IProject } from "@plane/types";
+import { AUTO_ARCHIVE_TOGGLED, AUTO_ARCHIVE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -27,6 +28,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
+  const { captureEvent } = useEventTracker();
 
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
 
@@ -54,11 +56,16 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
           </div>
           <ToggleSwitch
             value={currentProjectDetails?.archive_in !== 0}
-            onChange={() =>
+            onChange={() => {
               currentProjectDetails?.archive_in === 0
                 ? handleChange({ archive_in: 1 })
-                : handleChange({ archive_in: 0 })
-            }
+                : handleChange({ archive_in: 0 });
+
+              captureEvent(AUTO_ARCHIVE_TOGGLED, {
+                toggle: currentProjectDetails?.archive_in === 0 ? "true" : "false",
+                range: `${currentProjectDetails?.archive_in == 0 ? 1 : 0} month`,
+              });
+            }}
             size="sm"
             disabled={!isAdmin}
           />
@@ -76,6 +83,9 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                       currentProjectDetails?.archive_in === 1 ? "month" : "months"
                     }`}
                     onChange={(val: number) => {
+                      captureEvent(AUTO_ARCHIVE_UPDATED, {
+                        range: val === 1 ? "1 month" : `${val} months`,
+                      });
                       handleChange({ archive_in: val });
                     }}
                     input

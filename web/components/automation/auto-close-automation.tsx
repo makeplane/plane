@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject, useProjectState, useUser } from "hooks/store";
+import { useEventTracker, useProject, useProjectState, useUser } from "hooks/store";
 // component
 import { SelectMonthModal } from "components/automation";
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
@@ -11,6 +11,7 @@ import { ArchiveX } from "lucide-react";
 import { IProject } from "@plane/types";
 // constants
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
+import { AUTO_CLOSE_Toggled, AUTO_CLOSE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -26,6 +27,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   } = useUser();
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
+  const { captureEvent } = useEventTracker();
 
   // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
 
@@ -80,11 +82,17 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
           </div>
           <ToggleSwitch
             value={currentProjectDetails?.close_in !== 0}
-            onChange={() =>
+            onChange={() => {
               currentProjectDetails?.close_in === 0
                 ? handleChange({ close_in: 1, default_state: defaultState })
-                : handleChange({ close_in: 0, default_state: null })
-            }
+                : handleChange({ close_in: 0, default_state: null });
+
+              captureEvent(AUTO_CLOSE_Toggled, {
+                toggle: currentProjectDetails?.close_in === 0 ? "true" : "false",
+                range: `${currentProjectDetails?.close_in == 0 ? 1 : 0} month`,
+                state: currentProjectDetails?.close_in === 0 ? undefined : defaultState,
+              });
+            }}
             size="sm"
             disabled={!isAdmin}
           />
@@ -104,6 +112,10 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                       }`}
                       onChange={(val: number) => {
                         handleChange({ close_in: val });
+                        captureEvent(AUTO_CLOSE_UPDATED, {
+                          range: val === 1 ? "1 month" : `${val} months`,
+                          state: currentProjectDetails?.default_state,
+                        });
                       }}
                       input
                       disabled={!isAdmin}
