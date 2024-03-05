@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 // hooks
 import { useUser } from "hooks/store";
 // components
-import { Button } from "@plane/ui";
+import { Button, TButtonVariant } from "@plane/ui";
 import { ComicBoxButton } from "./comic-box-button";
 // constant
 import { EMPTY_STATE_DETAILS, EmptyStateKeys } from "constants/empty-state";
@@ -52,6 +52,56 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
   const isEditingAllowed = currentAccessType && access && currentAccessType >= access;
   const anyButton = primaryButton || secondaryButton;
 
+  // primary button
+  const renderPrimaryButton = () => {
+    if (!primaryButton) return null;
+
+    const commonProps = {
+      size: size,
+      variant: "primary" as TButtonVariant,
+      prependIcon: primaryButton.icon,
+      onClick: primaryButtonOnClick ? primaryButtonOnClick : undefined,
+      disabled: !isEditingAllowed,
+    };
+
+    if (primaryButton.comicBox) {
+      return (
+        <ComicBoxButton
+          label={primaryButton.text}
+          icon={primaryButton.icon}
+          title={primaryButton.comicBox?.title}
+          description={primaryButton.comicBox?.description}
+          onClick={primaryButtonOnClick}
+          disabled={!isEditingAllowed}
+        />
+      );
+    } else if (primaryButtonLink) {
+      return (
+        <Link href={primaryButtonLink}>
+          <Button {...commonProps}>{primaryButton.text}</Button>
+        </Link>
+      );
+    } else {
+      return <Button {...commonProps}>{primaryButton.text}</Button>;
+    }
+  };
+  // secondary button
+  const renderSecondaryButton = () => {
+    if (!secondaryButton) return null;
+
+    return (
+      <Button
+        size={size}
+        variant="neutral-primary"
+        prependIcon={secondaryButton.icon}
+        onClick={secondaryButtonOnClick}
+        disabled={!isEditingAllowed}
+      >
+        {secondaryButton.text}
+      </Button>
+    );
+  };
+
   return (
     <>
       {layout === "screen-detailed" && (
@@ -87,45 +137,8 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
             {anyButton && (
               <>
                 <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
-                  {primaryButton && (
-                    <div className="relative flex items-start justify-center">
-                      {primaryButton.comicBox ? (
-                        <ComicBoxButton
-                          label={primaryButton.text}
-                          icon={primaryButton.icon}
-                          title={primaryButton.comicBox?.title}
-                          description={primaryButton.comicBox?.description}
-                          onClick={primaryButtonOnClick}
-                          disabled={!isEditingAllowed}
-                        />
-                      ) : (
-                        <Button
-                          size={size}
-                          variant="primary"
-                          prependIcon={primaryButton.icon}
-                          onClick={primaryButtonOnClick ? primaryButtonOnClick : undefined}
-                          disabled={!isEditingAllowed}
-                        >
-                          {primaryButtonLink ? (
-                            <Link href={primaryButtonLink}>{primaryButton.text}</Link>
-                          ) : (
-                            <>{primaryButton.text}</>
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                  {secondaryButton && (
-                    <Button
-                      size={size}
-                      variant="neutral-primary"
-                      prependIcon={secondaryButton.icon}
-                      onClick={secondaryButtonOnClick}
-                      disabled={!isEditingAllowed}
-                    >
-                      {secondaryButton.text}
-                    </Button>
-                  )}
+                  {renderPrimaryButton()}
+                  {renderSecondaryButton()}
                 </div>
               </>
             )}
