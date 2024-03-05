@@ -6,81 +6,14 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
-from plane.app.views.auth.common import CSRFTokenEndpoint, SignOutAuthEndpoint
-from plane.app.views.auth.email import (
-    SignInAuthEndpoint,
-    SignUpAuthEndpoint,
-)
-from plane.app.views.auth.github import (
-    GitHubCallbackEndpoint,
-    GitHubOauthInitiateEndpoint,
-)
-from plane.app.views.auth.google import (
-    GoogleCallbackEndpoint,
-    GoogleOauthInitiateEndpoint,
-)
-from plane.app.views.auth.magic import (
-    MagicGenerateEndpoint,
-    MagicSignInEndpoint,
-)
-
 urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html")),
     path("api/", include("plane.app.urls")),
     path("api/public/", include("plane.space.urls")),
     path("api/instances/", include("plane.license.urls")),
     path("api/v1/", include("plane.api.urls")),
+    path("auth/", include("plane.auth.urls")),
     path("", include("plane.web.urls")),
-    path(
-        "auth/sign-in/",
-        SignInAuthEndpoint.as_view(),
-        name="sign-in",
-    ),
-    path(
-        "auth/sign-up/",
-        SignUpAuthEndpoint.as_view(),
-        name="sign-up",
-    ),
-    path(
-        "auth/sign-out/",
-        SignOutAuthEndpoint.as_view(),
-        name="sign-out",
-    ),
-    path(
-        "get-csrf-token/",
-        CSRFTokenEndpoint.as_view(),
-        name="get_csrf_token",
-    ),
-    path(
-        "auth/magic-generate/",
-        MagicGenerateEndpoint.as_view(),
-        name="magic-generate",
-    ),
-    path(
-        "auth/magic-sign-in/",
-        MagicSignInEndpoint.as_view(),
-        name="magic-sign-in",
-    ),
-    path(
-        "auth/google/",
-        GoogleOauthInitiateEndpoint.as_view(),
-        name="google-initiate",
-    ),
-    path(
-        "auth/callback/google/",
-        GoogleCallbackEndpoint.as_view(),
-        name="google-callback",
-    ),
-    path(
-        "auth/github/",
-        GitHubOauthInitiateEndpoint.as_view(),
-        name="github-initiate",
-    ),
-    path(
-        "auth/callback/github/",
-        GitHubCallbackEndpoint.as_view(),
-        name="github-callback",
-    ),
 ]
 
 

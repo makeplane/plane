@@ -1,0 +1,67 @@
+from django.urls import path
+
+from .views import (
+    CSRFTokenEndpoint,
+    GitHubCallbackEndpoint,
+    GitHubOauthInitiateEndpoint,
+    GoogleCallbackEndpoint,
+    GoogleOauthInitiateEndpoint,
+    MagicGenerateEndpoint,
+    MagicSignInEndpoint,
+    SignInAuthEndpoint,
+    SignOutAuthEndpoint,
+    SignUpAuthEndpoint,
+)
+
+urlpatterns = [
+    path(
+        "sign-in/",
+        SignInAuthEndpoint.as_view(),
+        name="sign-in",
+    ),
+    path(
+        "sign-up/",
+        SignUpAuthEndpoint.as_view(),
+        name="sign-up",
+    ),
+    path(
+        "sign-out/",
+        SignOutAuthEndpoint.as_view(),
+        name="sign-out",
+    ),
+    path(
+        "get-csrf-token/",
+        CSRFTokenEndpoint.as_view(),
+        name="get_csrf_token",
+    ),
+    path(
+        "magic-generate/",
+        MagicGenerateEndpoint.as_view(),
+        name="magic-generate",
+    ),
+    path(
+        "magic-sign-in/",
+        MagicSignInEndpoint.as_view(),
+        name="magic-sign-in",
+    ),
+    path(
+        "google/",
+        GoogleOauthInitiateEndpoint.as_view(),
+        name="google-initiate",
+    ),
+    path(
+        "callback/google/",
+        GoogleCallbackEndpoint.as_view(),
+        name="google-callback",
+    ),
+    path(
+        "github/",
+        GitHubOauthInitiateEndpoint.as_view(),
+        name="github-initiate",
+    ),
+    path(
+        "callback/github/",
+        GitHubCallbackEndpoint.as_view(),
+        name="github-callback",
+    ),
+]
