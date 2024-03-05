@@ -311,7 +311,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                           {currentProjectDetails?.identifier}-{issue.sequence_id}
                         </span>
                       </Tooltip>
-                      <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                      <Tooltip position="top-left" tooltipContent={issue.name}>
                         <span className="text-[0.825rem] text-custom-text-100">{truncateText(issue.name, 30)}</span>
                       </Tooltip>
                     </div>

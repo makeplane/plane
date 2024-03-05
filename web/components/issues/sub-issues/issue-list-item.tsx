@@ -117,7 +117,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
             >
-              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <Tooltip tooltipContent={issue.name}>
                 <span>{issue.name}</span>
               </Tooltip>
             </ControlLink>
