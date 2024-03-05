@@ -1,6 +1,7 @@
-name: Build Pull Request Contents
+name: Build and Lint on Pull Request
 
 on:
+  workflow_dispatch:
   pull_request:
     types: ["opened", "synchronize"]
 
@@ -22,9 +23,19 @@ jobs:
               - apiserver/**
             web:
               - web/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
             deploy:
               - space/**
-              
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
+
   lint-apiserver:
     needs: get-changed-files
     runs-on: ubuntu-latest
@@ -69,8 +80,7 @@ jobs:
       - run: yarn lint --filter=space
 
   build-web:
-    needs: [get-changed-files, lint-web]
-    if: needs.get-changed-files.outputs.web_changed == 'true'
+    needs: lint-web
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -82,8 +92,7 @@ jobs:
       - run: yarn build --filter=web
 
   build-space:
-    needs: [get-changed-files, lint-space]
-    if: needs.get-changed-files.outputs.space_changed == 'true'
+    needs: lint-space
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
