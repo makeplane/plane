@@ -104,8 +104,9 @@ export type TWidgetStatsRequestParams =
       widget_key: "issues_by_priority";
     }
   | {
-      per_page: number;
       cursor: string;
+      per_page: number;
+      search?: string;
       widget_key: "recent_collaborators";
     };
 

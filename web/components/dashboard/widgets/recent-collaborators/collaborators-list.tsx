@@ -5,7 +5,7 @@ import useSWR from "swr";
 // store hooks
 import { useDashboard, useMember, useUser } from "hooks/store";
 // components
-import { WidgetLoader } from "./loaders";
+import { WidgetLoader } from "../loaders";
 // ui
 import { Avatar } from "@plane/ui";
 // types
@@ -53,6 +53,8 @@ type CollaboratorsListProps = {
   cursor: string;
   dashboardId: string;
   perPage: number;
+  searchQuery?: string;
+  updateIsLoading?: (isLoading: boolean) => void;
   updateResultsCount: (count: number) => void;
   updateTotalPages: (count: number) => void;
   workspaceSlug: string;
@@ -61,17 +63,29 @@ type CollaboratorsListProps = {
 const WIDGET_KEY = "recent_collaborators";
 
 export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
-  const { cursor, dashboardId, perPage, updateResultsCount, updateTotalPages, workspaceSlug } = props;
+  const {
+    cursor,
+    dashboardId,
+    perPage,
+    searchQuery = "",
+    updateIsLoading,
+    updateResultsCount,
+    updateTotalPages,
+    workspaceSlug,
+  } = props;
   // store hooks
   const { fetchWidgetStats } = useDashboard();
 
   const { data: widgetStats } = useSWR(
-    workspaceSlug && dashboardId && cursor ? `WIDGET_STATS_${workspaceSlug.toString()}_${dashboardId}_${cursor}` : null,
+    workspaceSlug && dashboardId && cursor
+      ? `WIDGET_STATS_${workspaceSlug}_${dashboardId}_${cursor}_${searchQuery}`
+      : null,
     workspaceSlug && dashboardId && cursor
       ? () =>
-          fetchWidgetStats(workspaceSlug.toString(), dashboardId, {
+          fetchWidgetStats(workspaceSlug, dashboardId, {
             cursor,
             per_page: perPage,
+            search: searchQuery,
             widget_key: WIDGET_KEY,
           })
       : null
@@ -80,16 +94,19 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
   };
 
   useEffect(() => {
+    updateIsLoading?.(true);
+
     if (!widgetStats) return;
 
+    updateIsLoading?.(false);
     updateTotalPages(widgetStats.total_pages);
     updateResultsCount(widgetStats.results.length);
-  }, [updateResultsCount, updateTotalPages, widgetStats]);
+  }, [updateIsLoading, updateResultsCount, updateTotalPages, widgetStats]);
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
+    <>
       {widgetStats?.results.map((user) => (
         <CollaboratorListItem
           key={user.user_id}
@@ -98,6 +115,6 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
           workspaceSlug={workspaceSlug}
         />
       ))}
-    </div>
+    </>
   );
 };
