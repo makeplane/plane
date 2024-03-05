@@ -9,7 +9,7 @@ import requests
 from django.core.exceptions import ImproperlyConfigured
 
 # Module imports
-from plane.app.views.auth.adapter.oauth import OauthAdapter
+from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -22,19 +22,17 @@ class GitHubOAuthProvider(OauthAdapter):
 
     def __init__(self, request, code=None):
 
-        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "GITHUB_CLIENT_ID",
-                        "default": os.environ.get("GITHUB_CLIENT_ID"),
-                    },
-                    {
-                        "key": "GITHUB_CLIENT_SECRET",
-                        "default": os.environ.get("GITHUB_CLIENT_SECRET"),
-                    },
-                ]
-            )
+        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = get_configuration_value(
+            [
+                {
+                    "key": "GITHUB_CLIENT_ID",
+                    "default": os.environ.get("GITHUB_CLIENT_ID"),
+                },
+                {
+                    "key": "GITHUB_CLIENT_SECRET",
+                    "default": os.environ.get("GITHUB_CLIENT_SECRET"),
+                },
+            ]
         )
 
         if not (GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET):
@@ -121,7 +119,7 @@ class GitHubOAuthProvider(OauthAdapter):
                     "avatar": user_info_response.get("avatar_url"),
                     "first_name": user_info_response.get("name"),
                     "last_name": user_info_response.get("family_name"),
-                    "is_password_autoset": True
+                    "is_password_autoset": True,
                 },
             }
         )

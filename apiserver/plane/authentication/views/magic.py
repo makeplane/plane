@@ -8,10 +8,9 @@ from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.views import View
 
-from plane.app.views.auth.adapter.base import AuthenticationException
-
 # Module imports
-from plane.app.views.auth.provider.credentials.magic_code_adapter import (
+from plane.authentication.adapter.base import AuthenticationException
+from plane.authentication.provider.credentials.magic_code_adapter import (
     MagicCodeProvider,
 )
 from plane.bgtasks.magic_link_code_task import magic_link

@@ -8,16 +8,15 @@ from django.http import HttpResponseRedirect
 from django.views import View
 
 # Module imports
-from plane.app.views.auth.provider.oauth.github import GitHubOAuthProvider
+from plane.authentication.provider.oauth.google import GoogleOAuthProvider
 
 
-class GitHubOauthInitiateEndpoint(View):
-
+class GoogleOauthInitiateEndpoint(View):
     def get(self, request):
-        referer = request.META.get("HTTP_REFERER", "/")
+        referer = request.META.get("HTTP_REFERER")
         request.session["referer"] = referer
         try:
-            provider = GitHubOAuthProvider(request=request)
+            provider = GoogleOAuthProvider(request=request)
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except ImproperlyConfigured as e:
@@ -25,8 +24,7 @@ class GitHubOauthInitiateEndpoint(View):
             return HttpResponseRedirect(url)
 
 
-class GitHubCallbackEndpoint(View):
-
+class GoogleCallbackEndpoint(View):
     def get(self, request):
         code = request.GET.get("code")
         referer = request.session.get("referer")
@@ -43,7 +41,7 @@ class GitHubCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GitHubOAuthProvider(
+            provider = GoogleOAuthProvider(
                 request=request,
                 code=code,
             )

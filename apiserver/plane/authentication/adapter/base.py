@@ -64,8 +64,11 @@ class Adapter:
 
             if self.user_data.get("user").get("is_password_autoset"):
                 user.set_password(uuid.uuid4().hex)
+                user.is_password_autoset = True
+                user.is_email_verified = True
             else:
                 user.set_password(self.code)
+                user.is_password_autoset = False
             user.avatar = self.user_data.get("user").get("avatar", "")
             user.first_name = self.user_data.get("user").get("first_name", "")
             user.last_name = self.user_data.get("user").get("last_name", "")

@@ -8,9 +8,10 @@ from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.views import View
 
+from plane.authentication.adapter.base import AuthenticationException
+
 # Module imports
-from plane.app.views.auth.adapter.base import AuthenticationException
-from plane.app.views.auth.provider.credentials.email import EmailProvider
+from plane.authentication.provider.credentials.email import EmailProvider
 
 
 class SignInAuthEndpoint(View):

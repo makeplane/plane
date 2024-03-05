@@ -1,7 +1,6 @@
-
 # Module imports
-from plane.app.views.auth.adapter.base import AuthenticationException
-from plane.app.views.auth.adapter.credential import CredentialAdapter
+from plane.authentication.adapter.base import AuthenticationException
+from plane.authentication.adapter.credential import CredentialAdapter
 from plane.db.models import User
 
 
@@ -23,7 +22,7 @@ class EmailProvider(CredentialAdapter):
 
     def set_user_data(self):
         if self.is_signup:
-        # Check if the user already exists
+            # Check if the user already exists
             if User.objects.filter(email=self.key).exists():
                 raise AuthenticationException(
                     "User with this email already exists"
@@ -37,7 +36,7 @@ class EmailProvider(CredentialAdapter):
                         "first_name": "",
                         "last_name": "",
                         "provider_id": "",
-                        "is_password_autoset": False
+                        "is_password_autoset": False,
                     },
                 }
             )
@@ -66,7 +65,7 @@ class EmailProvider(CredentialAdapter):
                         "first_name": "",
                         "last_name": "",
                         "provider_id": "",
-                        "is_password_autoset": False
+                        "is_password_autoset": False,
                     },
                 }
             )
