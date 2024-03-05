@@ -1,4 +1,7 @@
+import { ContrastIcon } from "lucide-react";
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+// components
+import { ProjectLogo } from "components/project";
 // stores
 import { IMemberRootStore } from "store/member";
 import { IProjectStore } from "store/project/project.store";
@@ -6,14 +9,11 @@ import { IStateStore } from "store/state.store";
 import { ILabelStore } from "store/label.store";
 import { ICycleStore } from "store/cycle.store";
 import { IModuleStore } from "store/module.store";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
 // constants
 import { STATE_GROUPS } from "constants/state";
 import { ISSUE_PRIORITIES } from "constants/issue";
 // types
 import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
-import { ContrastIcon } from "lucide-react";
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,
@@ -62,7 +62,11 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
       return {
         id: project.id,
         name: project.name,
-        icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
+        icon: (
+          <div className="w-6 h-6 grid place-items-center flex-shrink-0">
+            <ProjectLogo logo={project.logo_props} />
+          </div>
+        ),
         payload: { project_id: project.id },
       };
     }) as any;
