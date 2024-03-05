@@ -62,7 +62,7 @@ const ProjectIntegrationsPage: NextPageWithLayout = observer(() => {
             <div className="h-full w-full py-8">
               <EmptyState
                 type={EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS}
-                primaryButtonOnClick={() => router.push(`/${workspaceSlug}/settings/integrations`)}
+                primaryButtonLink={`/${workspaceSlug}/settings/integrations`}
               />
             </div>
           )

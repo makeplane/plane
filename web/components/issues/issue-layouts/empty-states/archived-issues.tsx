@@ -48,10 +48,8 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
       <EmptyState
         type={emptyStateType}
         additionalPath={additionalPath}
-        primaryButtonOnClick={
-          issueFilterCount > 0
-            ? undefined
-            : () => router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`)
+        primaryButtonLink={
+          issueFilterCount > 0 ? undefined : `/${workspaceSlug}/projects/${projectId}/settings/automations`
         }
         secondaryButtonOnClick={issueFilterCount > 0 ? handleClearAllFilters : undefined}
       />

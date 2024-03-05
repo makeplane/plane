@@ -1,5 +1,5 @@
 import React from "react";
-
+import Link from "next/link";
 import Image from "next/image";
 
 import { useTheme } from "next-themes";
@@ -19,6 +19,7 @@ export type EmptyStateProps = {
   layout?: "widget-simple" | "screen-detailed" | "screen-simple";
   additionalPath?: string;
   primaryButtonOnClick?: () => void;
+  primaryButtonLink?: string;
   secondaryButtonOnClick?: () => void;
 };
 
@@ -29,6 +30,7 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
     layout = "screen-detailed",
     additionalPath = "",
     primaryButtonOnClick,
+    primaryButtonLink,
     secondaryButtonOnClick,
   } = props;
   // store
@@ -101,10 +103,14 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
                           size={size}
                           variant="primary"
                           prependIcon={primaryButton.icon}
-                          onClick={primaryButtonOnClick}
+                          onClick={primaryButtonOnClick ? primaryButtonOnClick : undefined}
                           disabled={!isEditingAllowed}
                         >
-                          {primaryButton.text}
+                          {primaryButtonLink ? (
+                            <Link href={primaryButtonLink}>{primaryButton.text}</Link>
+                          ) : (
+                            <>{primaryButton.text}</>
+                          )}
                         </Button>
                       )}
                     </div>
