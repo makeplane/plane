@@ -7,6 +7,7 @@ import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "c
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
+// types
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
@@ -27,6 +28,7 @@ type Props = {
     data: TIssue,
     viewId?: string
   ) => Promise<TIssue | undefined>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   readOnly?: boolean;
 };
@@ -41,6 +43,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     enableQuickIssueCreate,
     disableIssueCreation,
     quickAddCallback,
+    addIssuesToView,
     viewId,
     readOnly = false,
   } = props;
@@ -112,6 +115,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                         target_date: renderFormattedPayloadDate(date.date) ?? undefined,
                       }}
                       quickAddCallback={quickAddCallback}
+                      addIssuesToView={addIssuesToView}
                       viewId={viewId}
                       onOpen={() => setShowAllIssues(true)}
                     />

@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
+// components
+import { ExistingIssuesListModal } from "components/core";
+import { CustomMenu } from "@plane/ui";
 // hooks
-import { useEventTracker, useProject } from "hooks/store";
+import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -12,9 +15,11 @@ import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
 // types
-import { TIssue } from "@plane/types";
+import { ISearchIssueResponse, TIssue } from "@plane/types";
 // constants
 import { ISSUE_CREATED } from "constants/event-tracker";
+// helper
+import { cn } from "helpers/common.helper";
 
 type Props = {
   formKey: keyof TIssue;
@@ -27,6 +32,7 @@ type Props = {
     data: TIssue,
     viewId?: string
   ) => Promise<TIssue | undefined>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   onOpen?: () => void;
 };
@@ -59,23 +65,28 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
+  const { formKey, prePopulatedData, quickAddCallback, addIssuesToView, viewId, onOpen } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
   // store hooks
   const { getProjectById } = useProject();
   const { captureIssueEvent } = useEventTracker();
+  const { updateIssue } = useIssueDetail();
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // states
   const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isExistingIssueModalOpen, setIsExistingIssueModalOpen] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
-
   // derived values
   const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
+  const ExistingIssuesListModalPayload = moduleId
+    ? { module: moduleId.toString(), target_date: "none" }
+    : { cycle: true, target_date: "none" };
 
   const {
     reset,
@@ -156,13 +167,50 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     }
   };
 
-  const handleOpen = () => {
+  const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
+    if (!workspaceSlug || !projectId) return;
+
+    const issueIds = data.map((i) => i.id);
+
+    try {
+      // To handle all updates in parallel
+      await Promise.all(
+        data.map((issue) =>
+          updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, prePopulatedData ?? {})
+        )
+      );
+      if (addIssuesToView) {
+        await addIssuesToView(issueIds);
+      }
+    } catch (error) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Something went wrong. Please try again.",
+      });
+    }
+  };
+
+  const handleNewIssue = () => {
     setIsOpen(true);
     if (onOpen) onOpen();
+  };
+  const handleExistingIssue = () => {
+    setIsExistingIssueModalOpen(true);
   };
 
   return (
     <>
+      {workspaceSlug && projectId && (
+        <ExistingIssuesListModal
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          isOpen={isExistingIssueModalOpen}
+          handleClose={() => setIsExistingIssueModalOpen(false)}
+          searchParams={ExistingIssuesListModalPayload}
+          handleOnSubmit={handleAddIssuesToView}
+        />
+      )}
       {isOpen && (
         <div
           ref={ref}
@@ -180,15 +228,38 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       )}
 
       {!isOpen && (
-        <div className="hidden rounded border-[0.5px] border-custom-border-200 group-hover:block">
-          <button
-            type="button"
-            className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
-            onClick={handleOpen}
-          >
-            <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-          </button>
+        <div
+          className={cn("hidden rounded border-[0.5px] border-custom-border-200 group-hover:block", {
+            block: isMenuOpen,
+          })}
+        >
+          {addIssuesToView ? (
+            <CustomMenu
+              placement="bottom-start"
+              menuButtonOnClick={() => setIsMenuOpen(true)}
+              onMenuClose={() => setIsMenuOpen(false)}
+              className="w-full"
+              customButtonClassName="w-full"
+              customButton={
+                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100">
+                  <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
+                  <span className="text-sm font-medium flex-shrink-0 text-custom-primary-100">New Issue</span>
+                </div>
+              }
+            >
+              <CustomMenu.MenuItem onClick={handleNewIssue}>New Issue</CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>
+            </CustomMenu>
+          ) : (
+            <button
+              type="button"
+              className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
+              onClick={handleNewIssue}
+            >
+              <PlusIcon className="h-3.5 w-3.5 stroke-2" />
+              <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+            </button>
+          )}
         </div>
       )}
     </>
