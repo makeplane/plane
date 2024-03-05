@@ -1,24 +1,24 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import set from "lodash/set";
-// stores
-import { RootStore } from "store/root.store";
 // services
-import { CurrentUserProfileService } from "services/current-user";
+import { UserService } from "services/user.service";
 // types
 import { TUserProfile } from "@plane/types";
 
 export interface IProfileStore {
   // observables
   isLoading: boolean;
-  data: TUserProfile;
   error: any | undefined;
+  // model observables
+
   // computed
   // actions
-  fetchCurrentUserProfile: () => Promise<void>;
+  fetchUserProfile: () => Promise<void>;
 }
 
 export class ProfileStore implements IProfileStore {
   isLoading: boolean = false;
+  isInitialDataUpdated: boolean = false;
   data: TUserProfile = {
     id: undefined,
     user: undefined,
@@ -44,46 +44,29 @@ export class ProfileStore implements IProfileStore {
   };
   error: any | undefined = undefined;
   // service
-  currentUserProfileService: CurrentUserProfileService;
+  userService: UserService;
 
-  constructor(private store: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observables
+      isInitialDataUpdated: observable.ref,
       isLoading: observable.ref,
       data: observable,
       error: observable,
       // computed
       // actions
-      fetchCurrentUserProfile: action,
+      fetchUserProfile: action,
     });
     // service
-    this.currentUserProfileService = new CurrentUserProfileService();
+    this.userService = new UserService();
   }
 
   // actions
-  fetchCurrentUserProfile = async () => {
-    try {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = undefined;
-      });
-
-      const userProfile = await this.currentUserProfileService.currentUserProfile();
-      runInAction(() => {
-        Object.entries(userProfile).map(([key, value]) => {
-          if (typeof value === "object") {
-            Object.entries(value).map(([k, v]) => {
-              set(this.data, [key, k], v ?? undefined);
-            });
-          } else set(this.data, [key], value ?? undefined);
-        });
-        this.isLoading = false;
-      });
-    } catch {
-      runInAction(() => {
-        this.isLoading = true;
-        this.error = { status: "", type: "", message: "" };
-      });
-    }
+  fetchUserProfile = async () => {
+    const userProfile = await this.userService.getCurrentUserProfile();
+    console.log("profile", userProfile);
+    runInAction(() => {
+      this.data = userProfile;
+    });
   };
 }

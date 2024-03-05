@@ -53,7 +53,7 @@ export class UserService extends APIService {
       });
   }
 
-  async getCurrentUserProfile(): Promise<IUserProfile> {
+  async getCurrentUserProfile(): Promise<any> {
     return this.get("/api/users/me/profile/")
       .then((response) => response?.data)
       .catch((error) => {
