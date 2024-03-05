@@ -22,6 +22,7 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { EmptyStateType } from "constants/empty-state";
 
 const apiTokenService = new APITokenService();
 
@@ -87,7 +88,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
               </Button>
             </div>
             <div className="h-full w-full flex items-center justify-center">
-              <EmptyState type="workspace-settings-api-tokens" />
+              <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS} />
             </div>
           </div>
         )}

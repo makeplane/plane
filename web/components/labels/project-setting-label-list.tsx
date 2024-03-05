@@ -24,6 +24,8 @@ import { EmptyState } from "components/empty-state";
 import { Button, Loader } from "@plane/ui";
 // types
 import { IIssueLabel } from "@plane/types";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 const LABELS_ROOT = "labels.root";
 
@@ -110,7 +112,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         {projectLabels ? (
           projectLabels.length === 0 && !showLabelForm ? (
             <div className="flex items-center justify-center h-full w-full">
-              <EmptyState type="project-settings-labels" />
+              <EmptyState type={EmptyStateType.PROJECT_SETTINGS_LABELS} />
             </div>
           ) : (
             projectLabelsTree && (

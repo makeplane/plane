@@ -10,6 +10,8 @@ import { EmptyState } from "components/empty-state";
 import { Loader } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 export const RecentPagesList: FC = observer(() => {
   // store hooks
@@ -50,7 +52,7 @@ export const RecentPagesList: FC = observer(() => {
       ) : (
         <>
           <EmptyState
-            type="project-page-recent"
+            type={EmptyStateType.PROJECT_PAGE_RECENT}
             primaryButtonOnClick={() => commandPaletteStore.toggleCreatePageModal(true)}
             size="sm"
           />

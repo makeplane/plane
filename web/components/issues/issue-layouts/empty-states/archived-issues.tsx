@@ -7,6 +7,7 @@ import { useIssues } from "hooks/store";
 import { EmptyState } from "components/empty-state";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EmptyStateType } from "constants/empty-state";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -38,7 +39,8 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
     });
   };
 
-  const emptyStateType = issueFilterCount > 0 ? "project-archived-empty-filter" : "project-archived-no-issues";
+  const emptyStateType =
+    issueFilterCount > 0 ? EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER : EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES;
   const additionalPath = issueFilterCount > 0 ? activeLayout ?? "list" : undefined;
 
   return (

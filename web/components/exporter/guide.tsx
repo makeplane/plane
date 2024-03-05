@@ -22,6 +22,7 @@ import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { EXPORTERS_LIST } from "constants/workspace";
+import { EmptyStateType } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();
@@ -141,7 +142,7 @@ const IntegrationGuide = observer(() => {
                   </div>
                 ) : (
                   <div className="h-full w-full flex items-center justify-center">
-                    <EmptyState type="workspace-settings-export" size="sm" />
+                    <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_EXPORT} size="sm" />
                   </div>
                 )
               ) : (

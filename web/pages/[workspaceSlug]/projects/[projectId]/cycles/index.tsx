@@ -20,6 +20,7 @@ import { TCycleView, TCycleLayout } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
+import { EmptyStateType } from "constants/empty-state";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -77,7 +78,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
         {totalCycles === 0 ? (
           <div className="h-full place-items-center">
             <EmptyState
-              type="project-cycles"
+              type={EmptyStateType.PROJECT_CYCLES}
               primaryButtonOnClick={() => {
                 setTrackElement("Cycle empty state");
                 setCreateModal(true);

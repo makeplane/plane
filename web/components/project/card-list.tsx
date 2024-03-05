@@ -5,6 +5,8 @@ import { useApplication, useEventTracker, useProject } from "hooks/store";
 import { ProjectCard } from "components/project";
 import { EmptyState } from "components/empty-state";
 import { ProjectsLoader } from "components/ui";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 export const ProjectCardList = observer(() => {
   // store hooks
@@ -35,7 +37,7 @@ export const ProjectCardList = observer(() => {
         </div>
       ) : (
         <EmptyState
-          type="workspace-projects"
+          type={EmptyStateType.WORKSPACE_PROJECTS}
           primaryButtonOnClick={() => {
             setTrackElement("Project empty state");
             commandPaletteStore.toggleCreateProjectModal(true);

@@ -18,7 +18,7 @@ import { EIssueActions } from "../types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -184,7 +184,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     return <SpreadsheetLayoutLoader />;
   }
 
-  const emptyStateType = (workspaceProjectIds ?? []).length > 0 ? `workspace-${currentView}` : "workspace-no-projects";
+  const emptyStateType =
+    (workspaceProjectIds ?? []).length > 0 ? `workspace-${currentView}` : EmptyStateType.WORKSPACE_NO_PROJECTS;
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">

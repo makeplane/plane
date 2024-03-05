@@ -9,6 +9,7 @@ import { useApplication, useEventTracker, useUser, useProject } from "hooks/stor
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 import useSize from "hooks/use-window-size";
+import { useProjectPages } from "hooks/store/use-project-page";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -16,12 +17,12 @@ import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { EmptyState } from "components/empty-state";
 import { PagesHeader } from "components/headers";
 import { PagesLoader } from "components/ui";
+import { PageHead } from "components/core";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
-import { useProjectPages } from "hooks/store/use-project-page";
-import { PageHead } from "components/core";
+import { EmptyStateType } from "constants/empty-state";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -204,7 +205,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
         </>
       ) : (
         <EmptyState
-          type="project-page"
+          type={EmptyStateType.PROJECT_PAGE}
           primaryButtonOnClick={() => {
             setTrackElement("Pages empty state");
             toggleCreatePageModal(true);

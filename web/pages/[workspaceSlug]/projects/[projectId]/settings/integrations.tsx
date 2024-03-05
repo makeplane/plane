@@ -20,6 +20,8 @@ import { IProject } from "@plane/types";
 import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();
@@ -59,7 +61,7 @@ const ProjectIntegrationsPage: NextPageWithLayout = observer(() => {
           ) : (
             <div className="h-full w-full py-8">
               <EmptyState
-                type="project-settings-integrations"
+                type={EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS}
                 primaryButtonOnClick={() => router.push(`/${workspaceSlug}/settings/integrations`)}
               />
             </div>

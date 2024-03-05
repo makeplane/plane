@@ -18,6 +18,7 @@ import { WebhookSettingsLoader } from "components/ui";
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { PageHead } from "components/core";
+import { EmptyStateType } from "constants/empty-state";
 
 const WebhooksListPage: NextPageWithLayout = observer(() => {
   // states
@@ -90,7 +91,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
               </Button>
             </div>
             <div className="h-full w-full flex items-center justify-center">
-              <EmptyState type="workspace-settings-webhooks" />
+              <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS} />
             </div>
           </div>
         )}

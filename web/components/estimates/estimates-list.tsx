@@ -13,6 +13,8 @@ import { Button, Loader } from "@plane/ui";
 import { IEstimate } from "@plane/types";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 export const EstimatesList: React.FC = observer(() => {
   // states
@@ -106,7 +108,7 @@ export const EstimatesList: React.FC = observer(() => {
           </section>
         ) : (
           <div className="h-full w-full py-8">
-            <EmptyState type="project-settings-estimate" />
+            <EmptyState type={EmptyStateType.PROJECT_SETTINGS_ESTIMATE} />
           </div>
         )
       ) : (

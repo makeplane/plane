@@ -10,6 +10,7 @@ import { EmptyState } from "components/empty-state";
 import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { EmptyStateType } from "constants/empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -48,7 +49,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
       );
   };
 
-  const emptyStateType = isEmptyFilters ? "project-empty-filter" : "project-module-issues";
+  const emptyStateType = isEmptyFilters ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_MODULE_ISSUES;
   const additionalPath = activeLayout ?? "list";
 
   return (

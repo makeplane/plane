@@ -34,6 +34,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
+import { EmptyStateType } from "constants/empty-state";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -82,7 +83,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
       </Loader>
     );
 
-  if (!activeCycle) return <EmptyState type="project-cycle-active" size="sm" />;
+  if (!activeCycle) return <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />;
 
   const endDate = new Date(activeCycle.end_date ?? "");
   const startDate = new Date(activeCycle.start_date ?? "");

@@ -7,6 +7,7 @@ import { useIssues } from "hooks/store";
 import { EmptyState } from "components/empty-state";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EmptyStateType } from "constants/empty-state";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -37,7 +38,8 @@ export const ProjectDraftEmptyState: React.FC = observer(() => {
     });
   };
 
-  const emptyStateType = issueFilterCount > 0 ? "project-draft-empty-filter" : "project-draft-no-issues";
+  const emptyStateType =
+    issueFilterCount > 0 ? EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER : EmptyStateType.PROJECT_DRAFT_NO_ISSUES;
   const additionalPath = issueFilterCount > 0 ? activeLayout ?? "list" : undefined;
   const emptyStateSize = issueFilterCount > 0 ? "lg" : "sm";
 

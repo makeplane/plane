@@ -8,6 +8,8 @@ import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttCha
 import { EmptyState } from "components/empty-state";
 // ui
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
@@ -74,7 +76,7 @@ export const ModulesListView: React.FC = observer(() => {
         </>
       ) : (
         <EmptyState
-          type="project-module"
+          type={EmptyStateType.PROJECT_MODULE}
           primaryButtonOnClick={() => {
             setTrackElement("Module empty state");
             commandPaletteStore.toggleCreateModuleModal(true);

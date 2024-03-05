@@ -7,6 +7,7 @@ import { useApplication, useEventTracker, useIssues } from "hooks/store";
 import { EmptyState } from "components/empty-state";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EmptyStateType } from "constants/empty-state";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -40,7 +41,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
     });
   };
 
-  const emptyStateType = issueFilterCount > 0 ? "project-empty-filter" : "project-no-issues";
+  const emptyStateType = issueFilterCount > 0 ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_NO_ISSUES;
   const additionalPath = issueFilterCount > 0 ? activeLayout ?? "list" : undefined;
   const emptyStateSize = issueFilterCount > 0 ? "lg" : "sm";
 

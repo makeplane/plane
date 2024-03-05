@@ -9,6 +9,8 @@ import { EmptyState } from "components/empty-state";
 // ui
 import { Input } from "@plane/ui";
 import { ViewListLoader } from "components/ui";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 export const ProjectViewsList = observer(() => {
   // states
@@ -50,7 +52,7 @@ export const ProjectViewsList = observer(() => {
           </div>
         </div>
       ) : (
-        <EmptyState type="project-view" primaryButtonOnClick={() => toggleCreateViewModal(true)} />
+        <EmptyState type={EmptyStateType.PROJECT_VIEW} primaryButtonOnClick={() => toggleCreateViewModal(true)} />
       )}
     </>
   );

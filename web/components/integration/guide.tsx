@@ -23,6 +23,7 @@ import { IImporterService } from "@plane/types";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { IMPORTERS_LIST } from "constants/workspace";
+import { EmptyStateType } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();
@@ -137,7 +138,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   ) : (
                     <div className="h-full w-full flex items-center justify-center">
-                      <EmptyState type="workspace-settings-import" size="sm" />
+                      <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
                     </div>
                   )
                 ) : (
