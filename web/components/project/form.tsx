@@ -3,22 +3,31 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { Lock } from "lucide-react";
 // ui
-import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+import {
+  Button,
+  CustomSelect,
+  Input,
+  TextArea,
+  TOAST_TYPE,
+  setToast,
+  CustomEmojiIconPicker,
+  EmojiIconPickerTypes,
+} from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
-import EmojiIconPicker from "components/emoji-icon-picker";
 // constants
 import { PROJECT_UPDATED } from "constants/event-tracker";
 import { NETWORK_CHOICES } from "constants/project";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
 // services
 import { ProjectService } from "services/project";
 // types
 import { IProject, IWorkspace } from "@plane/types";
+import { ProjectLogo } from "./project-logo";
+import { convertHexEmojiToDecimal } from "helpers/emoji.helper";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -46,7 +55,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   } = useForm<IProject>({
     defaultValues: {
       ...project,
-      emoji_and_icon: project.emoji ?? project.icon_prop,
       workspace: (project.workspace as IWorkspace).id,
     },
   });
@@ -55,7 +63,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     if (project && projectId !== getValues("id")) {
       reset({
         ...project,
-        emoji_and_icon: project.emoji ?? project.icon_prop,
         workspace: (project.workspace as IWorkspace).id,
       });
     }
@@ -109,14 +116,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       identifier: formData.identifier,
       description: formData.description,
       cover_image: formData.cover_image,
+      logo_props: formData.logo_props,
     };
-    if (typeof formData.emoji_and_icon === "object") {
-      payload.emoji = null;
-      payload.icon_prop = formData.emoji_and_icon;
-    } else {
-      payload.emoji = formData.emoji_and_icon;
-      payload.icon_prop = null;
-    }
+
     if (project.identifier !== formData.identifier)
       await projectService
         .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
@@ -139,20 +141,37 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
-              <div className="grid h-7 w-7 place-items-center">
-                <Controller
-                  control={control}
-                  name="emoji_and_icon"
-                  render={({ field: { value, onChange } }) => (
-                    <EmojiIconPicker
-                      label={value ? renderEmoji(value) : "Icon"}
-                      value={value}
-                      onChange={onChange}
-                      disabled={!isAdmin}
-                    />
-                  )}
-                />
-              </div>
+              <Controller
+                control={control}
+                name="logo_props"
+                render={({ field: { value, onChange } }) => (
+                  <CustomEmojiIconPicker
+                    label={
+                      <span className="grid h-7 w-7 place-items-center">
+                        <ProjectLogo logo={value} className="text-lg" />
+                      </span>
+                    }
+                    onChange={(val) => {
+                      let logoValue = {};
+
+                      if (val.type === "emoji")
+                        logoValue = {
+                          value: convertHexEmojiToDecimal(val.value.unified),
+                          url: val.value.imageUrl,
+                        };
+                      else if (val.type === "icon") logoValue = val.value;
+
+                      onChange({
+                        in_use: val.type,
+                        [val.type]: logoValue,
+                      });
+                    }}
+                    defaultIconColor={value.in_use === "icon" ? value.icon?.color : undefined}
+                    defaultOpen={value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
+                    disabled={!isAdmin}
+                  />
+                )}
+              />
             </div>
             <div className="flex flex-col gap-1 truncate text-white">
               <span className="truncate text-lg font-semibold">{watch("name")}</span>

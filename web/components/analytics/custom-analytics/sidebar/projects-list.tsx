@@ -3,9 +3,9 @@ import { observer } from "mobx-react-lite";
 // icons
 import { Contrast, LayoutGrid, Users } from "lucide-react";
 // helpers
-import { renderEmoji } from "helpers/emoji.helper";
 import { truncateText } from "helpers/string.helper";
 import { useProject } from "hooks/store";
+import { ProjectLogo } from "components/project";
 
 type Props = {
   projectIds: string[];
@@ -28,15 +28,9 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
           return (
             <div key={projectId} className="w-full">
               <div className="flex items-center gap-1 text-sm">
-                {project.emoji ? (
-                  <span className="grid h-6 w-6 flex-shrink-0 place-items-center">{renderEmoji(project.emoji)}</span>
-                ) : project.icon_prop ? (
-                  <div className="grid h-6 w-6 flex-shrink-0 place-items-center">{renderEmoji(project.icon_prop)}</div>
-                ) : (
-                  <span className="mr-1 grid h-6 w-6 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                    {project?.name.charAt(0)}
-                  </span>
-                )}
+                <div className="h-6 w-6 grid place-items-center">
+                  <ProjectLogo logo={project.logo_props} />
+                </div>
                 <h5 className="flex items-center gap-1">
                   <p className="break-words">{truncateText(project.name, 20)}</p>
                   <span className="ml-1 text-xs text-custom-text-200">({project.identifier})</span>

@@ -58,7 +58,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   });
   const handleKeyDown = () => {
-    if (!isAnyModalOpen) {
+    const slashCommandDropdownElement = document.querySelector("#slash-command");
+    const dropdownElement = document.activeElement?.tagName === "INPUT";
+    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement) {
       removeRoutePeekId();
       const issueElement = document.getElementById(`issue-${issueId}`);
       if (issueElement) issueElement?.focus();

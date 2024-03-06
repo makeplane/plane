@@ -66,12 +66,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
 
     handleClose();
-
-    setToast({
-      type: TOAST_TYPE.SUCCESS,
-      title: "Success",
-      message: `Issue${selectedIssues.length > 1 ? "s" : ""} added successfully`,
-    });
   };
 
   useEffect(() => {

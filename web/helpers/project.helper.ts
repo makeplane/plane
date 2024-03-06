@@ -43,3 +43,6 @@ export const orderJoinedProjects = (
 
   return updatedSortOrder;
 };
+
+export const projectIdentifierSanitizer = (identifier: string): string =>
+  identifier.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
