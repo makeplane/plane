@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
+// hooks
+import { useApplication } from "hooks/store";
 // components
 import {
   FilterAssignees,
@@ -13,6 +15,8 @@ import {
   FilterState,
   FilterStateGroup,
   FilterTargetDate,
+  FilterCycle,
+  FilterModule,
 } from "components/issues";
 // types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
@@ -30,6 +34,10 @@ type Props = {
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, memberIds, states } = props;
+  // hooks
+  const {
+    router: { moduleId, cycleId },
+  } = useApplication();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -55,7 +63,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5">
+      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">
@@ -97,6 +105,28 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.assignees ?? null}
               handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
               memberIds={memberIds}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
+        {/* cycle */}
+        {isFilterEnabled("cycle") && !cycleId && (
+          <div className="py-2">
+            <FilterCycle
+              appliedFilters={filters.cycle ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("cycle", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
+        {/* module */}
+        {isFilterEnabled("module") && !moduleId && (
+          <div className="py-2">
+            <FilterModule
+              appliedFilters={filters.module ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("module", val)}
               searchQuery={filtersSearchQuery}
             />
           </div>

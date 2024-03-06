@@ -6,10 +6,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import { IssueService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button, LayersIcon } from "@plane/ui";
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // types
@@ -49,11 +47,11 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const [query, setQuery] = useState("");
   // fetching project issues.
   const { data: issues } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId && isOpen ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
+    workspaceSlug && projectId && isOpen
+      ? () => issueService.getIssues(workspaceSlug as string, projectId as string)
+      : null
   );
-
-  const { setToastAlert } = useToast();
 
   const {
     handleSubmit,
@@ -77,8 +75,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId) return;
 
     if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });
@@ -89,16 +87,16 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
 
     await removeBulkIssues(workspaceSlug as string, projectId as string, data.delete_issue_ids)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Issues deleted successfully!",
         });
         handleClose();
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         })

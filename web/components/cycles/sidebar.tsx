@@ -8,13 +8,12 @@ import isEmpty from "lodash/isEmpty";
 import { CycleService } from "services/cycle.service";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
 // ui
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
 // helpers
@@ -60,8 +59,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const { control, reset } = useForm({
     defaultValues,
@@ -98,15 +95,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link Copied!",
           message: "Cycle link copied to clipboard.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
@@ -147,14 +144,14 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     if (isDateValid) {
       submitChanges(payload, "date_range");
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Cycle updated successfully.",
       });
     } else {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message:
           "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",

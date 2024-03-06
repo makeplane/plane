@@ -8,11 +8,9 @@ import { mutate } from "swr";
 import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { usePopper } from "react-popper";
 // hooks
-import { useApplication, useEventTracker, useUser, useWorkspace } from "hooks/store";
-// hooks
-import useToast from "hooks/use-toast";
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // ui
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspace } from "@plane/types";
 // Static Data
@@ -54,13 +52,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    theme: { sidebarCollapsed, toggleMobileSidebar },
+    theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
-  const { setTrackElement } = useEventTracker();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  // hooks
-  const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -89,8 +84,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -98,7 +93,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
-      toggleMobileSidebar();
+      toggleSidebar();
     }
   };
   const workspacesList = Object.values(workspaces ?? {});

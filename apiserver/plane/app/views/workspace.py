@@ -1,9 +1,12 @@
 # Python imports
 import jwt
+import csv
+import io
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 # Django imports
+from django.http import HttpResponse
 from django.db import IntegrityError
 from django.conf import settings
 from django.utils import timezone
@@ -1086,6 +1089,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .annotate(state_group=F("state__group"))
@@ -1101,6 +1105,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .values("priority")
@@ -1123,6 +1128,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
                 created_by_id=user_id,
             )
             .filter(**filters)
@@ -1134,6 +1140,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -1145,6 +1152,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .count()
@@ -1156,6 +1164,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 assignees__in=[user_id],
                 state__group="completed",
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .count()
@@ -1166,6 +1175,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 subscriber_id=user_id,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .count()
@@ -1215,6 +1225,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             actor=user_id,
         ).select_related("actor", "workspace", "issue", "project")
 
@@ -1228,6 +1239,66 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
                 issue_activities, many=True
             ).data,
         )
+
+
+class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def generate_csv_from_rows(self, rows):
+        """Generate CSV buffer from rows."""
+        csv_buffer = io.StringIO()
+        writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
+        [writer.writerow(row) for row in rows]
+        csv_buffer.seek(0)
+        return csv_buffer
+
+    def post(self, request, slug, user_id):
+
+        if not request.data.get("date"):
+            return Response(
+                {"error": "Date is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        user_activities = IssueActivity.objects.filter(
+            ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+            workspace__slug=slug,
+            created_at__date=request.data.get("date"),
+            project__project_projectmember__member=request.user,
+            actor_id=user_id,
+        ).select_related("actor", "workspace", "issue", "project")[:10000]
+
+        header = [
+            "Actor name",
+            "Issue ID",
+            "Project",
+            "Created at",
+            "Updated at",
+            "Action",
+            "Field",
+            "Old value",
+            "New value",
+        ]
+        rows = [
+            (
+                activity.actor.display_name,
+                f"{activity.project.identifier} - {activity.issue.sequence_id if activity.issue else ''}",
+                activity.project.name,
+                activity.created_at,
+                activity.updated_at,
+                activity.verb,
+                activity.field,
+                activity.old_value,
+                activity.new_value,
+            )
+            for activity in user_activities
+        ]
+        csv_buffer = self.generate_csv_from_rows([header] + rows)
+        response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="workspace-user-activity.csv"'
+        return response
 
 
 class WorkspaceUserProfileEndpoint(BaseAPIView):
@@ -1351,6 +1422,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 | Q(issue_subscribers__subscriber_id=user_id),
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True
             )
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
@@ -1482,6 +1554,7 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         labels = Label.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True
         )
         serializer = LabelSerializer(labels, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
@@ -1496,6 +1569,7 @@ class WorkspaceStatesEndpoint(BaseAPIView):
         states = State.objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True
         )
         serializer = StateSerializer(states, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)

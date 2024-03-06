@@ -6,7 +6,8 @@ import { observer } from "mobx-react-lite";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 // helpers
@@ -42,15 +43,13 @@ export const ProjectSidebarList: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast
-  const { setToastAlert } = useToast();
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       });
@@ -72,8 +71,8 @@ export const ProjectSidebarList: FC = observer(() => {
     const updatedSortOrder = orderJoinedProjects(source.index, destination.index, draggableId, joinedProjectsList);
     if (updatedSortOrder != undefined)
       updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });

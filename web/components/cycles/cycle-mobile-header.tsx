@@ -152,6 +152,7 @@ export const CycleMobileHeader = () => {
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
+              ignoreGroupedFilters={["cycle"]}
             />
           </FiltersDropdown>
         </div>

@@ -15,7 +15,7 @@ import {
 // helpers
 import { getCustomDates, getRedirectionFilters, getTabKey } from "helpers/dashboard.helper";
 // types
-import { TAssignedIssuesWidgetFilters, TAssignedIssuesWidgetResponse } from "@plane/types";
+import { EDurationFilters, TAssignedIssuesWidgetFilters, TAssignedIssuesWidgetResponse } from "@plane/types";
 // constants
 import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
@@ -30,8 +30,9 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TAssignedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
   const selectedTab = getTabKey(selectedDurationFilter, widgetDetails?.widget_filters.tab);
+  const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TAssignedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -43,7 +44,10 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       filters,
     });
 
-    const filterDates = getCustomDates(filters.duration ?? selectedDurationFilter);
+    const filterDates = getCustomDates(
+      filters.duration ?? selectedDurationFilter,
+      filters.custom_dates ?? selectedCustomDates
+    );
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       issue_type: filters.tab ?? selectedTab,
@@ -53,7 +57,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(selectedDurationFilter);
+    const filterDates = getCustomDates(selectedDurationFilter, selectedCustomDates);
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
@@ -81,8 +85,17 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           Assigned to you
         </Link>
         <DurationFilterDropdown
+          customDates={selectedCustomDates}
           value={selectedDurationFilter}
-          onChange={(val) => {
+          onChange={(val, customDates) => {
+            if (val === "custom" && customDates) {
+              handleUpdateFilters({
+                duration: val,
+                custom_dates: customDates,
+              });
+              return;
+            }
+
             if (val === selectedDurationFilter) return;
 
             let newTab = selectedTab;

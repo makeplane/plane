@@ -33,16 +33,8 @@ export function pasteHandler(options: PasteHandlerOptions): Plugin {
           return false;
         }
 
-        const html = event.clipboardData?.getData("text/html");
-
-        const hrefRegex = /href="([^"]*)"/;
-
-        const existingLink = html?.match(hrefRegex);
-
-        const url = existingLink ? existingLink[1] : link.href;
-
         options.editor.commands.setMark(options.type, {
-          href: url,
+          href: link.href,
         });
 
         return true;

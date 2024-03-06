@@ -56,7 +56,7 @@ const ProjectIntegrationsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className={`h-full w-full gap-10 overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full gap-10 overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex items-center border-b border-custom-border-100 py-3.5">
           <h3 className="text-xl font-medium">Integrations</h3>
         </div>

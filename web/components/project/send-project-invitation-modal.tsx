@@ -6,9 +6,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
+import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 // constants
@@ -45,8 +44,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const { captureEvent } = useEventTracker();
   const {
@@ -84,9 +81,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       .then(() => {
         if (onSuccess) onSuccess();
         onClose();
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Members added successfully.",
         });
         captureEvent(PROJECT_MEMBER_ADDED, {

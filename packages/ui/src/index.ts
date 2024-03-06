@@ -11,3 +11,4 @@ export * from "./spinners";
 export * from "./tooltip";
 export * from "./loader";
 export * from "./control-link";
+export * from "./toast";

@@ -4,8 +4,8 @@ import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // components
 import { CalendarChart } from "components/issues";
-// hooks
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
@@ -26,6 +26,8 @@ interface IBaseCalendarRoot {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   viewId?: string;
   isCompletedCycle?: boolean;
@@ -39,7 +41,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
-  const { setToastAlert } = useToast();
   const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
@@ -71,9 +72,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         groupedIssueIds,
         viewId
       ).catch((err) => {
-        setToastAlert({
+        setToast({
           title: "Error",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: err.detail ?? "Failed to perform this action",
         });
       });
@@ -112,6 +113,16 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 handleRemoveFromView={
                   issueActions[EIssueActions.REMOVE]
                     ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
+                    : undefined
+                }
+                handleArchive={
+                  issueActions[EIssueActions.ARCHIVE]
+                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.ARCHIVE)
+                    : undefined
+                }
+                handleRestore={
+                  issueActions[EIssueActions.RESTORE]
+                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.RESTORE)
                     : undefined
                 }
                 readOnly={!isEditingAllowed || isCompletedCycle}

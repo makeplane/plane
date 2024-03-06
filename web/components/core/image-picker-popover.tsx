@@ -187,7 +187,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                   );
                 })}
               </Tab.List>
-              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
+              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md">
                 {(unsplashImages || !unsplashError) && (
                   <Tab.Panel className="mt-4 h-full w-full space-y-4">
                     <div className="flex gap-x-2">

@@ -248,6 +248,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   handleDisplayFiltersUpdate={handleDisplayFilters}
                   displayProperties={issueFilters?.displayProperties ?? {}}
                   handleDisplayPropertiesUpdate={handleDisplayProperties}
+                  ignoreGroupedFilters={["module"]}
                 />
               </FiltersDropdown>
             </div>

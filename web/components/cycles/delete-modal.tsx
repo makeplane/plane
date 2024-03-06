@@ -5,9 +5,8 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { useEventTracker, useCycle } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { ICycle } from "@plane/types";
 // constants
@@ -31,8 +30,6 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   // store hooks
   const { captureCycleEvent } = useEventTracker();
   const { deleteCycle } = useCycle();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const formSubmit = async () => {
     if (!cycle) return;
@@ -41,8 +38,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
     try {
       await deleteCycle(workspaceSlug, projectId, cycle.id)
         .then(() => {
-          setToastAlert({
-            type: "success",
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: "Cycle deleted successfully.",
           });
@@ -62,8 +59,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
 
       handleClose();
     } catch (error) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Warning!",
         message: "Something went wrong please try again later.",
       });
