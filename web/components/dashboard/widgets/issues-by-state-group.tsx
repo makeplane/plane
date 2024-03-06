@@ -10,20 +10,15 @@ import {
   WidgetProps,
 } from "components/dashboard/widgets";
 import { PieGraph } from "components/ui";
-import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 import { STATE_GROUPS } from "constants/state";
 import { getCustomDates } from "helpers/dashboard.helper";
 import { useDashboard } from "hooks/store";
 // components
 // helpers
 // types
-import {
-  EDurationFilters,
-  TIssuesByStateGroupsWidgetFilters,
-  TIssuesByStateGroupsWidgetResponse,
-  TStateGroups,
-} from "@plane/types";
+import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // constants
+import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 
 const WIDGET_KEY = "issues_by_state_groups";
 
@@ -84,14 +79,14 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
       startedCount > 0
         ? "started"
         : unStartedCount > 0
-          ? "unstarted"
-          : backlogCount > 0
-            ? "backlog"
-            : completedCount > 0
-              ? "completed"
-              : canceledCount > 0
-                ? "cancelled"
-                : null;
+        ? "unstarted"
+        : backlogCount > 0
+        ? "backlog"
+        : completedCount > 0
+        ? "completed"
+        : canceledCount > 0
+        ? "cancelled"
+        : null;
 
     setActiveStateGroup(stateGroup);
     setDefaultStateGroup(stateGroup);

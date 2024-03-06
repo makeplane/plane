@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+import { useDashboard } from "hooks/store";
 // components
 import {
   DurationFilterDropdown,
@@ -11,10 +12,12 @@ import {
   WidgetProps,
 } from "components/dashboard/widgets";
 // helpers
+import { getCustomDates } from "helpers/dashboard.helper";
 // types
+import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { IssuesByPriorityGraph } from "components/graphs";
-import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
+import { EDurationFilters } from "constants/dashboard";
 
 const WIDGET_KEY = "issues_by_priority";
 

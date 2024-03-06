@@ -10,7 +10,7 @@ import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-i
 import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
 import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
 // types
-import { EDurationFilters, TIssuesListTypes, TStateGroups } from "@plane/types";
+import { TIssuesListTypes, TStateGroups } from "@plane/types";
 import { Props } from "components/icons/types";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
@@ -116,6 +116,15 @@ export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
   completed: "#3E9B4F",
   cancelled: "#E5484D",
 };
+
+export enum EDurationFilters {
+  NONE = "none",
+  TODAY = "today",
+  THIS_WEEK = "this_week",
+  THIS_MONTH = "this_month",
+  THIS_YEAR = "this_year",
+  CUSTOM = "custom",
+}
 
 // filter duration options
 export const DURATION_FILTER_OPTIONS: {
