@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication, useEventTracker, useIssues } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState } from "components/empty-state";
@@ -32,16 +33,14 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   } = useApplication();
   const { setTrackElement } = useEventTracker();
 
-  const { setToastAlert } = useToast();
-
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
     const issueIds = data.map((i) => i.id);
 
     await issues.addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Selected issues could not be added to the cycle. Please try again.",
       });

@@ -136,7 +136,10 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       </div>
                     </Tooltip>
                   </div>
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                  <Combobox.Options
+                    static
+                    className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}

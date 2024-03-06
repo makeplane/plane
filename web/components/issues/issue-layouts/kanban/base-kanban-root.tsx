@@ -4,9 +4,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -80,8 +79,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
   const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const issueIds = issues?.groupedIssueIds || [];
 
@@ -159,9 +156,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           issueIds,
           viewId
         ).catch((err) => {
-          setToastAlert({
+          setToast({
             title: "Error",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: err.detail ?? "Failed to perform this action",
           });
         });

@@ -4,11 +4,20 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
-import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar } from "@plane/ui";
+import {
+  CustomMenu,
+  Tooltip,
+  CircularProgressIndicator,
+  CycleGroupIcon,
+  AvatarGroup,
+  Avatar,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+} from "@plane/ui";
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
@@ -45,8 +54,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   } = useUser();
   const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { getUserDetails } = useMember();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -54,8 +61,8 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Cycle link copied to clipboard.",
       });
@@ -66,42 +73,56 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
+      () => {
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "List layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
-        captureEvent(CYCLE_UNFAVORITED, {
-          cycle_id: cycleId,
-          element: "List layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      cycleId
+    ).then(() => {
+      captureEvent(CYCLE_UNFAVORITED, {
+        cycle_id: cycleId,
+        element: "List layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
+    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {

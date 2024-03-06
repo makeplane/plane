@@ -1,5 +1,7 @@
 # Django imports
 from django.utils import timezone
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 # Third Party imports
 from rest_framework import serializers
@@ -432,6 +434,20 @@ class IssueLinkSerializer(BaseSerializer):
             "issue",
         ]
 
+    def validate_url(self, value):
+        # Check URL format
+        validate_url = URLValidator()
+        try:
+            validate_url(value)
+        except ValidationError:
+            raise serializers.ValidationError("Invalid URL format.")
+
+        # Check URL scheme
+        if not value.startswith(('http://', 'https://')):
+            raise serializers.ValidationError("Invalid URL scheme.")
+
+        return value
+
     # Validation if url already exists
     def create(self, validated_data):
         if IssueLink.objects.filter(
@@ -442,6 +458,17 @@ class IssueLinkSerializer(BaseSerializer):
                 {"error": "URL already exists for this Issue"}
             )
         return IssueLink.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        if IssueLink.objects.filter(
+            url=validated_data.get("url"),
+            issue_id=instance.issue_id,
+        ).exists():
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this Issue"}
+            )
+
+        return super().update(instance, validated_data)
 
 
 class IssueLinkLiteSerializer(BaseSerializer):

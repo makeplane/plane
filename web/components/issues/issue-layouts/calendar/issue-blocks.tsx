@@ -110,7 +110,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                         <div className="flex-shrink-0 text-xs text-custom-text-300">
                           {getProjectIdentifierById(issue?.project_id)}-{issue.sequence_id}
                         </div>
-                        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                        <Tooltip tooltipContent={issue.name}>
                           <div className="truncate text-xs">{issue.name}</div>
                         </Tooltip>
                       </div>

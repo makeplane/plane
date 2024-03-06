@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication, useEventTracker, useIssues } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState } from "components/empty-state";
@@ -31,8 +32,6 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -41,8 +40,8 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     await issues
       .addIssuesToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Selected issues could not be added to the module. Please try again.",
         })

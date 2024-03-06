@@ -3,12 +3,11 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // store hooks
 import { useEstimate, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
 import { EmptyState } from "components/empty-state";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IEstimate } from "@plane/types";
 // helpers
@@ -27,8 +26,6 @@ export const EstimatesList: React.FC = observer(() => {
   // store hooks
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -46,8 +43,8 @@ export const EstimatesList: React.FC = observer(() => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: errorString ?? "Estimate could not be disabled. Please try again",
       });

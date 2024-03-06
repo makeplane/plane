@@ -5,9 +5,8 @@ import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
 import { useEventTracker, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -32,16 +31,14 @@ interface IIsGuestCondition {
 }
 
 const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
-  const { setToastAlert } = useToast();
-
   useEffect(() => {
     onClose();
-    setToastAlert({
+    setToast({
       title: "Error",
-      type: "error",
+      type: TOAST_TYPE.ERROR,
       message: "You don't have permission to create project.",
     });
-  }, [onClose, setToastAlert]);
+  }, [onClose]);
 
   return null;
 };
@@ -69,8 +66,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
-  // toast
-  const { setToastAlert } = useToast();
   // form info
   const cover_image = PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)];
   const {
@@ -108,8 +103,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     if (!workspaceSlug) return;
 
     addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Couldn't remove the project from favorites. Please try again.",
       });
@@ -137,8 +132,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           eventName: PROJECT_CREATED,
           payload: newPayload,
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project created successfully.",
         });
@@ -149,8 +144,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       })
       .catch((err) => {
         Object.keys(err.data).map((key) => {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: err.data[key],
           });

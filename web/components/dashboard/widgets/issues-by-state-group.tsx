@@ -15,7 +15,12 @@ import {
 // helpers
 import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
+import {
+  EDurationFilters,
+  TIssuesByStateGroupsWidgetFilters,
+  TIssuesByStateGroupsWidgetResponse,
+  TStateGroups,
+} from "@plane/types";
 // constants
 import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 import { STATE_GROUPS } from "constants/state";
@@ -34,7 +39,8 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByStateGroupsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDuration = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDuration = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
+  const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByStateGroupsWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -44,7 +50,10 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
       filters,
     });
 
-    const filterDates = getCustomDates(filters.duration ?? selectedDuration);
+    const filterDates = getCustomDates(
+      filters.duration ?? selectedDuration,
+      filters.custom_dates ?? selectedCustomDates
+    );
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -53,7 +62,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
 
   // fetch widget stats
   useEffect(() => {
-    const filterDates = getCustomDates(selectedDuration);
+    const filterDates = getCustomDates(selectedDuration, selectedCustomDates);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -139,10 +148,12 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           Assigned by state
         </Link>
         <DurationFilterDropdown
+          customDates={selectedCustomDates}
           value={selectedDuration}
-          onChange={(val) =>
+          onChange={(val, customDates) =>
             handleUpdateFilters({
               duration: val,
+              ...(val === "custom" ? { custom_dates: customDates } : {}),
             })
           }
         />

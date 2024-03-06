@@ -7,7 +7,7 @@ import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issue
 import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
 import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-issues.svg";
 // types
-import { TDurationFilterOptions, TIssuesListTypes, TStateGroups } from "@plane/types";
+import { EDurationFilters, TIssuesListTypes, TStateGroups } from "@plane/types";
 import { Props } from "components/icons/types";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
@@ -118,28 +118,32 @@ export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
 
 // filter duration options
 export const DURATION_FILTER_OPTIONS: {
-  key: TDurationFilterOptions;
+  key: EDurationFilters;
   label: string;
 }[] = [
   {
-    key: "none",
+    key: EDurationFilters.NONE,
     label: "None",
   },
   {
-    key: "today",
+    key: EDurationFilters.TODAY,
     label: "Due today",
   },
   {
-    key: "this_week",
-    label: " Due this week",
+    key: EDurationFilters.THIS_WEEK,
+    label: "Due this week",
   },
   {
-    key: "this_month",
+    key: EDurationFilters.THIS_MONTH,
     label: "Due this month",
   },
   {
-    key: "this_year",
+    key: EDurationFilters.THIS_YEAR,
     label: "Due this year",
+  },
+  {
+    key: EDurationFilters.CUSTOM,
+    label: "Custom",
   },
 ];
 

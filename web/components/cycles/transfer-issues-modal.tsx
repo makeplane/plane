@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
-import useToast from "hooks/use-toast";
 import { useCycle, useIssues } from "hooks/store";
+// ui
+import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
 //icons
-import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
 // constants
 import { EIssuesStoreType } from "constants/issue";
@@ -30,23 +30,21 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { setToastAlert } = useToast();
-
   const transferIssue = async (payload: any) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
     // TODO: import transferIssuesFromCycle from store
     await transferIssuesFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), payload)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Issues transferred successfully",
           message: "Issues have been transferred successfully",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Issues cannot be transfer. Please try again.",
         });
