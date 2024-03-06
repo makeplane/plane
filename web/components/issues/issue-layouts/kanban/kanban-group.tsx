@@ -3,7 +3,6 @@ import { Droppable } from "@hello-pangea/dnd";
 // hooks
 import { useProjectState } from "hooks/store";
 //components
-import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 //types
 import {
   TGroupedIssues,
@@ -13,7 +12,7 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
-import { EIssueActions } from "../types";
+import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
   groupId: string;

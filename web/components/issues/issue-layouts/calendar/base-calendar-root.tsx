@@ -1,13 +1,14 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "components/issues";
 // hooks
-import useToast from "hooks/use-toast";
 import { useIssues, useUser } from "hooks/store";
 import { useIssuesActions } from "hooks/use-issues-actions";
+// ui
 // types
 import { TGroupedIssues } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
@@ -36,7 +37,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
-  const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -69,9 +69,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         groupedIssueIds,
         updateIssue
       ).catch((err) => {
-        setToastAlert({
+        setToast({
           title: "Error",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: err.detail ?? "Failed to perform this action",
         });
       });

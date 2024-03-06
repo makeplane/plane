@@ -1,9 +1,11 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+// hooks
+import { EIssuesStoreType } from "constants/issue";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+// types
 
 export const ProjectViewGanttLayout: React.FC = observer(() => {
   // router

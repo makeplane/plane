@@ -1,13 +1,13 @@
 // ui
+import { Trash2 } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 // icons
-import { Trash2 } from "lucide-react";
 // helpers
+import { IMPORTERS_LIST } from "constants/workspace";
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IImporterService } from "@plane/types";
 // constants
-import { IMPORTERS_LIST } from "constants/workspace";
 
 type Props = {
   service: IImporterService;
@@ -29,10 +29,10 @@ export const SingleImport: React.FC<Props> = ({ service, refreshing, handleDelet
             service.status === "completed"
               ? "bg-green-500/20 text-green-500"
               : service.status === "processing"
-              ? "bg-yellow-500/20 text-yellow-500"
-              : service.status === "failed"
-              ? "bg-red-500/20 text-red-500"
-              : ""
+                ? "bg-yellow-500/20 text-yellow-500"
+                : service.status === "failed"
+                  ? "bg-red-500/20 text-red-500"
+                  : ""
           }`}
         >
           {refreshing ? "Refreshing..." : service.status}

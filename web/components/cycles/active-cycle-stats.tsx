@@ -1,11 +1,11 @@
 import React, { Fragment } from "react";
 import { Tab } from "@headlessui/react";
 // hooks
+import { Avatar } from "@plane/ui";
+import { SingleProgressStats } from "components/core";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { SingleProgressStats } from "components/core";
 // ui
-import { Avatar } from "@plane/ui";
 // types
 import { ICycle } from "@plane/types";
 

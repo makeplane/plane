@@ -1,23 +1,23 @@
 import { useCallback, useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useLabel, useMember, useUser, useIssues } from "hooks/store";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
-import { CreateUpdateWorkspaceViewModal } from "components/workspace";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-// ui
-import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
-// icons
 import { List, PlusIcon, Sheet } from "lucide-react";
+import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
+// components
+import { CreateUpdateWorkspaceViewModal } from "components/workspace";
+// ui
+// icons
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { useLabel, useMember, useUser, useIssues } from "hooks/store";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },

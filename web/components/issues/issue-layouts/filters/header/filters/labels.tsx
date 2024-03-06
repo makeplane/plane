@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // components
+import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Loader } from "@plane/ui";
 // types
 import { IIssueLabel } from "@plane/types";
 

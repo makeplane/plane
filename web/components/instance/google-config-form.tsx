@@ -2,12 +2,10 @@ import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Copy } from "lucide-react";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
 
 export interface IInstanceGoogleConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -22,8 +20,6 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
   const { config } = props;
   // store hooks
   const { instance: instanceStore } = useApplication();
-  // toast
-  const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -42,9 +38,9 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Google Configuration Settings updated successfully",
         })
       )
@@ -94,9 +90,9 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
             className="flex items-center justify-between py-2"
             onClick={() => {
               navigator.clipboard.writeText(originURL);
-              setToastAlert({
+              setToast({
                 message: "The Origin URL has been successfully copied to your clipboard",
-                type: "success",
+                type: TOAST_TYPE.SUCCESS,
                 title: "Copied to clipboard",
               });
             }}

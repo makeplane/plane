@@ -1,13 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { ProjectIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 import { useUser } from "hooks/store";
 // components
-import { ProjectIssueQuickActions } from "components/issues";
+// types
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
   const {

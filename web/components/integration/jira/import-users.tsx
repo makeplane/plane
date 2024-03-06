@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
+import useSWR from "swr";
 // services
+import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 import { WorkspaceService } from "services/workspace.service";
 // ui
-import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { IJiraImporterForm } from "@plane/types";
 // fetch keys
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 const workspaceService = new WorkspaceService();
 

@@ -94,7 +94,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
             >
               {priority && (
                 <span className="-my-1 grid place-items-center">
-                  <Icon iconName={priority?.icon!} />
+                  <Icon iconName={priority?.icon} />
                 </span>
               )}
               <span>{priority?.title ?? "None"}</span>

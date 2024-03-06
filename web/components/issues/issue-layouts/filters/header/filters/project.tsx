@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // components
+import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
 // hooks
+import { renderEmoji } from "helpers/emoji.helper";
 import { useProject } from "hooks/store";
 // ui
-import { Loader } from "@plane/ui";
 // helpers
-import { renderEmoji } from "helpers/emoji.helper";
 
 type Props = {
   appliedFilters: string[] | null;

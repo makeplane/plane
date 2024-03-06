@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useEstimate } from "hooks/store";
-import useToast from "hooks/use-toast";
 // types
 import { IEstimate } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -26,12 +25,11 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteEstimate } = useEstimate();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleEstimateDelete = () => {
     if (!workspaceSlug || !projectId) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const estimateId = data?.id!;
 
     deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
@@ -43,8 +41,8 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
         const error = err?.error;
         const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: errorString ?? "Estimate could not be deleted. Please try again",
         });

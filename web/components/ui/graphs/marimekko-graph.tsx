@@ -1,11 +1,11 @@
 // nivo
 import { ResponsiveMarimekko, SvgProps } from "@nivo/marimekko";
 // helpers
+import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 import { generateYAxisTickValues } from "helpers/graph.helper";
 // types
 import { TGraph } from "./types";
 // constants
-import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 
 type Props = {
   id: string;

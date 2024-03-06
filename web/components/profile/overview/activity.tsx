@@ -1,21 +1,21 @@
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react";
 //hooks
+import { Loader } from "@plane/ui";
+import { ActivityMessage, IssueLink } from "components/core";
+import { ProfileEmptyState } from "components/ui";
+import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 import { useUser } from "hooks/store";
 // services
+import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 import { UserService } from "services/user.service";
 // components
-import { ActivityMessage, IssueLink } from "components/core";
 // ui
-import { ProfileEmptyState } from "components/ui";
-import { Loader } from "@plane/ui";
 // image
-import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 // helpers
-import { calculateTimeAgo } from "helpers/date-time.helper";
 // fetch-keys
-import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
 
 // services
 const userService = new UserService();
@@ -27,15 +27,18 @@ export const ProfileActivity = observer(() => {
   const { currentUser } = useUser();
 
   const { data: userProfileActivity } = useSWR(
-    workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString()) : null,
+    workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString(), {}) : null,
     workspaceSlug && userId
-      ? () => userService.getUserProfileActivity(workspaceSlug.toString(), userId.toString())
+      ? () =>
+          userService.getUserProfileActivity(workspaceSlug.toString(), userId.toString(), {
+            per_page: 10,
+          })
       : null
   );
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">Recent Activity</h3>
+      <h3 className="text-lg font-medium">Recent activity</h3>
       <div className="rounded border border-custom-border-100 p-6">
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (

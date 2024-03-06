@@ -1,12 +1,12 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 //hooks
+import { CycleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useCycle } from "hooks/store";
 // components
-import { CycleIssueQuickActions } from "components/issues";
 // types
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
   const { currentProjectCompletedCycleIds } = useCycle();

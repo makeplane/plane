@@ -1,6 +1,6 @@
+import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import set from "lodash/set";
 // services
 import { DashboardService } from "services/dashboard.service";
 // types

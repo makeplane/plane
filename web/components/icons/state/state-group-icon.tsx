@@ -7,9 +7,9 @@ import {
   StateGroupUnstartedIcon,
 } from "components/icons";
 // types
+import { STATE_GROUPS } from "constants/state";
 import { TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   className?: string;

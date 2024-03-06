@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 // hooks
+import { PlusIcon } from "lucide-react";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { ISSUE_CREATED } from "constants/event-tracker";
+import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
-import { createIssuePayload } from "helpers/issue.helper";
 // icons
-import { PlusIcon } from "lucide-react";
+// ui
 // types
 import { TIssue } from "@plane/types";
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   formKey: keyof TIssue;
@@ -71,8 +72,6 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   // states
   const [isOpen, setIsOpen] = useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
 
   // derived values
   const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
@@ -102,13 +101,13 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     Object.keys(errors).forEach((key) => {
       const error = errors[key as keyof TIssue];
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: error?.message?.toString() || "Some error occurred. Please try again.",
       });
     });
-  }, [errors, setToastAlert]);
+  }, [errors]);
 
   const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
@@ -120,39 +119,42 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       ...formData,
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          {
-            ...payload,
-          },
-          viewId
-        ).then((res) => {
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        {
+          ...payload,
+        },
+        viewId
+      );
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
+      });
+
+      await quickAddPromise
+        .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
             path: router.asPath,
           });
-        }));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
-      });
-    } catch (err: any) {
-      console.error(err);
-      captureIssueEvent({
-        eventName: ISSUE_CREATED,
-        payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
-        path: router.asPath,
-      });
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+        })
+        .catch(() => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
+            path: router.asPath,
+          });
+        });
     }
   };
 

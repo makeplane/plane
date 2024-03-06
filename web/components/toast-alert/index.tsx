@@ -1,8 +1,8 @@
 import React from "react";
 // hooks
+import { AlertTriangle, CheckCircle, Info, X, XCircle } from "lucide-react";
 import useToast from "hooks/use-toast";
 // icons
-import { AlertTriangle, CheckCircle, Info, X, XCircle } from "lucide-react";
 
 const ToastAlerts = () => {
   const { alerts, removeAlert } = useToast();

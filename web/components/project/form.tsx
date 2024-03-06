@@ -1,24 +1,24 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import EmojiIconPicker from "components/emoji-icon-picker";
-import { ImagePickerPopover } from "components/core";
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // icons
 import { Lock } from "lucide-react";
-// types
-import { IProject, IWorkspace } from "@plane/types";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
+// ui
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { ImagePickerPopover } from "components/core";
+import EmojiIconPicker from "components/emoji-icon-picker";
 // constants
+import { PROJECT_UPDATED } from "constants/event-tracker";
 import { NETWORK_CHOICES } from "constants/project";
+// helpers
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderEmoji } from "helpers/emoji.helper";
+// hooks
+import { useEventTracker, useProject } from "hooks/store";
 // services
 import { ProjectService } from "services/project";
-import { PROJECT_UPDATED } from "constants/event-tracker";
+// types
+import { IProject, IWorkspace } from "@plane/types";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -33,8 +33,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -84,8 +82,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             element: "Project general settings",
           },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project updated successfully",
         });
@@ -95,8 +93,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Project could not be updated. Please try again.",
         });

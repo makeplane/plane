@@ -1,25 +1,17 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssues, useUser } from "hooks/store";
 // components
-import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
 import { Spinner } from "@plane/ui";
+import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // types
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TGroupedIssues, TIssue, TIssueKanbanFilters, TIssueMap } from "@plane/types";
 import { ICalendarWeek } from "./types";
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TGroupedIssues,
-  TIssue,
-  TIssueKanbanFilters,
-  TIssueMap,
-} from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { useCalendarView } from "hooks/store/use-calendar-view";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useIssues, useUser } from "hooks/store";
+import { useCalendarView } from "hooks/store/use-calendar-view";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";

@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 // hooks
+import { Avatar } from "@plane/ui";
+import { RecentCollaboratorsEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 import { useDashboard, useMember, useUser } from "hooks/store";
 // components
-import { RecentCollaboratorsEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
-import { Avatar } from "@plane/ui";
 // types
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 

@@ -1,9 +1,9 @@
 import { useRef } from "react";
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
-import { HeaderGroupByCard } from "./headers/group-by-card";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
+// constants
 // types
 import {
   GroupByColumnTypes,
@@ -14,9 +14,9 @@ import {
   TUnGroupedIssues,
   IGroupByColumn,
 } from "@plane/types";
-// constants
-import { EIssuesStoreType } from "constants/issue";
 import { getGroupByColumns } from "../utils";
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
@@ -65,7 +65,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const label = useLabel();
   const projectState = useProjectState();
   const cycle = useCycle();
-  const _module = useModule();
+  const projectModule = useModule();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -73,7 +73,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     group_by as GroupByColumnTypes,
     project,
     cycle,
-    _module,
+    projectModule,
     label,
     projectState,
     member,
@@ -118,7 +118,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div ref={containerRef} className="relative overflow-auto h-full w-full vertical-scrollbar scrollbar-lg">
+    <div ref={containerRef} className="vertical-scrollbar scrollbar-lg relative h-full w-full overflow-auto">
       {groups &&
         groups.length > 0 &&
         groups.map(

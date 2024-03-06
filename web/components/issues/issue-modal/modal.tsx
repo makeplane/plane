@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
+
+import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
+import { EIssuesStoreType } from "constants/issue";
 import {
   useApplication,
   useEventTracker,
@@ -12,17 +16,15 @@ import {
   useProject,
   useIssueDetail,
 } from "hooks/store";
-import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 import { useIssuesActions } from "hooks/use-issues-actions";
 // components
+import type { TIssue } from "@plane/types";
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
+// ui
 // types
-import type { TIssue } from "@plane/types";
 // constants
-import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
-import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
@@ -63,8 +65,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const { fetchIssue } = useIssueDetail();
   // router
   const router = useRouter();
-  // toast alert
-  const { setToastAlert } = useToast();
   // local storage
   const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
     Record<string, Partial<TIssue>>
@@ -158,9 +158,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         await addIssueToCycle(response, payload.cycle_id);
       if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
         await addIssueToModule(response, payload.module_ids);
-
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Issue created successfully.",
       });
@@ -172,8 +171,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       !createMore && handleClose();
       return response;
     } catch (error) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
@@ -193,8 +192,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         ? await draftIssues.updateIssue(workspaceSlug, payload.project_id, data.id, payload)
         : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
 
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Issue updated successfully.",
       });
@@ -205,8 +204,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       });
       handleClose();
     } catch (error) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Issue could not be updated. Please try again.",
       });
@@ -259,7 +258,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full mx-4 sm:max-w-4xl">
+              <Dialog.Panel className="relative mx-4 transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-4xl">
                 {withDraftIssueWrapper ? (
                   <DraftIssueLayout
                     changesMade={changesMade}

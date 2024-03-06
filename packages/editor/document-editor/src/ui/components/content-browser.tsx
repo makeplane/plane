@@ -15,7 +15,7 @@ export const ContentBrowser = (props: ContentBrowserProps) => {
   const handleOnClick = (marking: IMarking) => {
     scrollSummary(editor, marking);
     if (setSidePeekVisible) setSidePeekVisible(false);
-  }
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden">

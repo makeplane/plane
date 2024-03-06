@@ -1,9 +1,9 @@
 import { makeObservable } from "mobx";
 // services
+import { computedFn } from "mobx-utils";
 import { IssueArchiveService, IssueDraftService, IssueService } from "services/issue";
 // types
 import { TIssue } from "@plane/types";
-import { computedFn } from "mobx-utils";
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {

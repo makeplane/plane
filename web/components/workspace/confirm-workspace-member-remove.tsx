@@ -3,9 +3,9 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { Button } from "@plane/ui";
 import { useUser } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -102,8 +102,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving"
                         : "Leave"
                       : isRemoving
-                      ? "Removing"
-                      : "Remove"}
+                        ? "Removing"
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

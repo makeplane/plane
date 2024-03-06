@@ -1,17 +1,17 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 import { useIssues, useUser } from "hooks/store";
 import { useIssuesActions } from "hooks/use-issues-actions";
 // views
-import { SpreadsheetView } from "./spreadsheet-view";
 // types
+// constants
 import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
-// constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { SpreadsheetView } from "./spreadsheet-view";
 
 export type SpreadsheetStoreType =
   | EIssuesStoreType.PROJECT
@@ -30,7 +30,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { viewId, QuickActions, storeType, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { projectId } = router.query;
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -57,13 +57,13 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
+      if ( !projectId) return;
 
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
         ...updatedDisplayFilter,
       });
     },
-    [projectId, workspaceSlug, updateFilters]
+    [ projectId, updateFilters]
   );
 
   const renderQuickActions = useCallback(

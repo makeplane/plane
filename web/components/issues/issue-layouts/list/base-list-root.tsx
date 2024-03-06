@@ -1,16 +1,17 @@
-import { List } from "./default";
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 // types
-import { TIssue } from "@plane/types";
-// components
-import { IQuickActionProps } from "./list-view-types";
-// constants
-import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
-// hooks
+import { EUserProjectRoles } from "constants/project";
 import { useIssues, useUser } from "hooks/store";
+
+import { TIssue } from "@plane/types"
+// components
+import { List } from "./default";
+import { IQuickActionProps } from "./list-view-types";
 import { useIssuesActions } from "hooks/use-issues-actions";
+// constants
+// hooks
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT

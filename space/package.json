@@ -49,9 +49,7 @@
     "@types/react-dom": "^18.2.17",
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "eslint": "8.34.0",
     "eslint-config-custom": "*",
-    "eslint-config-next": "13.2.1",
     "tailwind-config-custom": "*",
     "tsconfig": "*"
   }

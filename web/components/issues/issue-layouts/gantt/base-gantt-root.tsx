@@ -1,19 +1,19 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useIssues, useUser } from "hooks/store";
-// components
-import { GanttQuickAddIssueForm, IssueGanttBlock } from "components/issues";
 import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "components/gantt-chart";
-// helpers
+import { GanttQuickAddIssueForm, IssueGanttBlock } from "components/issues";
+import { EUserProjectRoles } from "constants/project";
 import { renderIssueBlocksStructure } from "helpers/issue.helper";
+import { useIssues, useUser } from "hooks/store";
+import { useIssuesActions } from "hooks/use-issues-actions";
+// components
+// helpers
 // types
 import { TIssue, TUnGroupedIssues } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
-import { useIssuesActions } from "hooks/use-issues-actions";
 
 type GanttStoreType =
   | EIssuesStoreType.PROJECT

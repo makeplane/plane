@@ -3,12 +3,11 @@ import { observer } from "mobx-react-lite";
 // components
 import { Spinner } from "@plane/ui";
 import { SpreadsheetQuickAddIssueForm } from "components/issues";
+import { useProject } from "hooks/store";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { SpreadsheetTable } from "./spreadsheet-table";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { EIssueActions } from "../types";
 //hooks
-import { useProject } from "hooks/store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;

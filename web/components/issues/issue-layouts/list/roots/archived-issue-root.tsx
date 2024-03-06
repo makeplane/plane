@@ -1,10 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// components
+// hooks
 import { ArchivedIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
+// components
+// types
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export const ArchivedIssueListLayout: FC = observer(() => {
   const canEditPropertiesBasedOnProject = () => false;

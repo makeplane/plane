@@ -1,13 +1,14 @@
 import React, { useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { CycleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useCycle, useIssues } from "hooks/store";
 // ui
-import { CycleIssueQuickActions } from "components/issues";
+// types
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export interface ICycleKanBanLayout {}
 
@@ -34,7 +35,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
 
   return (
     <BaseKanBanRoot
-      showLoader={true}
+      showLoader
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId?.toString() ?? ""}
       storeType={EIssuesStoreType.CYCLE}

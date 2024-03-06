@@ -1,13 +1,14 @@
 import React, { useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { CycleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useCycle, useIssues } from "hooks/store";
 // components
-import { CycleIssueQuickActions } from "components/issues";
+// types
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export interface ICycleListLayout {}
 

@@ -1,11 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// components
-import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-// constants
+// mobx store
 import { EIssuesStoreType } from "constants/issue";
+// components
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
+import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
+// types
+// constants
 
 export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
   // router

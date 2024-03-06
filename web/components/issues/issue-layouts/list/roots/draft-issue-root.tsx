@@ -1,11 +1,13 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// components
+import { useRouter } from "next/router";
+// hooks
 import { ProjectIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
+// components
+// types
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export const DraftIssueListLayout: FC = observer(() => {
   const router = useRouter();

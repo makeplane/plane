@@ -2,9 +2,9 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { Ban } from "lucide-react";
 // hooks
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 import { useMember } from "hooks/store";
 // ui
-import { Avatar, CustomSearchSelect } from "@plane/ui";
 
 type Props = {
   value: any;

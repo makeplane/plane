@@ -1,24 +1,24 @@
 import { Dispatch, MutableRefObject, SetStateAction, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-// constants
-import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
-// components
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
-import { IssueColumn } from "./issue-column";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useIssueDetail, useProject } from "hooks/store";
+// components
+import RenderIfVisible from "components/core/render-if-visible-HOC";
+// constants
+import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // helper
 import { cn } from "helpers/common.helper";
+// hooks
+import { useIssueDetail, useProject } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
-import { EIssueActions } from "../types";
+// local components
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IssueColumn } from "./issue-column";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
@@ -241,9 +241,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           disabled={!!issueDetail?.tempId}
         >
           <div className="w-full overflow-hidden">
-            <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
+            <Tooltip tooltipContent={issueDetail.name}>
               <div
-                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                className="h-full w-full cursor-pointer truncate px-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
                 tabIndex={-1}
               >
                 {issueDetail.name}
@@ -255,6 +255,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       {/* Rest of the columns */}
       {SPREADSHEET_PROPERTY_LIST.map((property) => (
         <IssueColumn
+          key={property}
           displayProperties={displayProperties}
           issueDetail={issueDetail}
           disableUserActions={disableUserActions}
