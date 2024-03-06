@@ -9,7 +9,13 @@ import { Popover, Transition } from "@headlessui/react";
 import { Check, ChevronUp } from "lucide-react";
 import { ToggleSwitch } from "@plane/ui";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TCalendarLayouts, TIssueKanbanFilters } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TCalendarLayouts,
+  TIssueKanbanFilters,
+} from "@plane/types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
 import { EIssueFilterType } from "constants/issue";

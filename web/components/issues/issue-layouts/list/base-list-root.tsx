@@ -5,7 +5,7 @@ import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues, useUser } from "hooks/store";
 
-import { TIssue } from "@plane/types"
+import { TIssue } from "@plane/types";
 // components
 import { List } from "./default";
 import { IQuickActionProps } from "./list-view-types";

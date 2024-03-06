@@ -57,13 +57,13 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if ( !projectId) return;
+      if (!projectId) return;
 
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
         ...updatedDisplayFilter,
       });
     },
-    [ projectId, updateFilters]
+    [projectId, updateFilters]
   );
 
   const renderQuickActions = useCallback(

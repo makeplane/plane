@@ -31,13 +31,7 @@ interface IBaseCalendarRoot {
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const {
-    QuickActions,
-    storeType,
-    addIssuesToView,
-    viewId,
-    isCompletedCycle = false,
-  } = props;
+  const { QuickActions, storeType, addIssuesToView, viewId, isCompletedCycle = false } = props;
 
   // router
   const router = useRouter();

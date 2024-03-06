@@ -770,4 +770,3 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     </>
   );
 });
-

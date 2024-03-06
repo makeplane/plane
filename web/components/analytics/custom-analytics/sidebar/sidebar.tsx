@@ -160,8 +160,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
               (cycleId
                 ? cycleDetails?.created_at
                 : moduleId
-                ? moduleDetails?.created_at
-                : projectDetails?.created_at) ?? ""
+                  ? moduleDetails?.created_at
+                  : projectDetails?.created_at) ?? ""
             )}
           </div>
         )}

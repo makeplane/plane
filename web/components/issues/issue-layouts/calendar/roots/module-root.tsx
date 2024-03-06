@@ -12,9 +12,9 @@ import { useIssues } from "hooks/store";
 
 export const ModuleCalendarLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query ;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const {issues} = useIssues(EIssuesStoreType.MODULE)
+  const { issues } = useIssues(EIssuesStoreType.MODULE);
 
   if (!moduleId) return null;
 

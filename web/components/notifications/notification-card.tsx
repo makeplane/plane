@@ -176,12 +176,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               {notificationField === "comment"
                 ? "commented"
                 : notificationField === "archived_at"
-                ? notification.data.issue_activity.new_value === "restore"
-                  ? "restored the issue"
-                  : "archived the issue"
-                : notificationField === "None"
-                ? null
-                : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
+                  ? notification.data.issue_activity.new_value === "restore"
+                    ? "restored the issue"
+                    : "archived the issue"
+                  : notificationField === "None"
+                    ? null
+                    : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
               {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
               <span className="font-semibold">
                 {" "}

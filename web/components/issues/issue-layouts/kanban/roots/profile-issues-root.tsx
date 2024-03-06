@@ -11,8 +11,8 @@ import { BaseKanBanRoot } from "../base-kanban-root";
 
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const {
-  membership: { currentWorkspaceAllProjectsRole },
-} = useUser();
+    membership: { currentWorkspaceAllProjectsRole },
+  } = useUser();
 
   const canEditPropertiesBasedOnProject = (projectId: string) => {
     const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];

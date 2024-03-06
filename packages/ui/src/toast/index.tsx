@@ -71,7 +71,11 @@ export const setToast = (props: SetToastProps) => {
           e.stopPropagation();
           e.preventDefault();
         }}
-        className={cn("w-[350px] h-[67.3px] rounded-lg border shadow-sm p-2", backgroundColorClassName, borderColorClassName)}
+        className={cn(
+          "w-[350px] h-[67.3px] rounded-lg border shadow-sm p-2",
+          backgroundColorClassName,
+          borderColorClassName
+        )}
       >
         <div className="w-full h-full flex items-center justify-center px-4 py-2">
           {icon && <div className="flex items-center justify-center">{icon}</div>}

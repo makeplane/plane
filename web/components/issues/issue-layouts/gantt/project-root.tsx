@@ -5,4 +5,4 @@ import { EIssuesStoreType } from "constants/issue";
 // components
 import { BaseGanttRoot } from "./base-gantt-root";
 
-export const GanttLayout: React.FC = observer(() =>( <BaseGanttRoot storeType={EIssuesStoreType.PROJECT} />));
+export const GanttLayout: React.FC = observer(() => <BaseGanttRoot storeType={EIssuesStoreType.PROJECT} />);
