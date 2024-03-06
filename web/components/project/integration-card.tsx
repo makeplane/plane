@@ -13,7 +13,6 @@ import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
-// services
 import { ProjectService } from "services/project";
 
 type Props = {
