@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 // store hooks
-import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
-import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { orderArrayBy } from "helpers/array.helper";
-import { useEstimate, useProject, useUser } from "hooks/store";
+import { useEstimate, useProject } from "hooks/store";
 // components
+import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
+import { EmptyState } from "components/empty-state";
 // ui
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IEstimate } from "@plane/types";
 // helpers
+import { orderArrayBy } from "helpers/array.helper";
 // constants
+import { EmptyStateType } from "constants/empty-state";
 
 export const EstimatesList: React.FC = observer(() => {
   // states
@@ -24,12 +23,9 @@ export const EstimatesList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
-  const { currentUser } = useUser();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -54,10 +50,6 @@ export const EstimatesList: React.FC = observer(() => {
       });
     });
   };
-
-  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["estimate"];
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("project-settings", "estimates", isLightMode);
 
   return (
     <>
@@ -113,12 +105,7 @@ export const EstimatesList: React.FC = observer(() => {
           </section>
         ) : (
           <div className="h-full w-full py-8">
-            <EmptyState
-              title={emptyStateDetail.title}
-              description={emptyStateDetail.description}
-              image={emptyStateImage}
-              size="lg"
-            />
+            <EmptyState type={EmptyStateType.PROJECT_SETTINGS_ESTIMATE} />
           </div>
         )
       ) : (

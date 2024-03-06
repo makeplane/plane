@@ -8,13 +8,13 @@ on:
 
 env:
   CURRENT_BRANCH: ${{ github.ref_name }}
-  SOURCE_BRANCH: ${{ secrets.SYNC_TARGET_BRANCH_NAME }} # The sync branch such as "sync/ce"
-  TARGET_BRANCH: ${{ secrets.TARGET_BRANCH }} # The target branch that you would like to merge changes like develop
+  SOURCE_BRANCH: ${{ secrets.SYNC_SOURCE_BRANCH_NAME }} # The sync branch such as "sync/ce"
+  TARGET_BRANCH: ${{ secrets.SYNC_TARGET_BRANCH_NAME }} # The target branch that you would like to merge changes like develop
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # Personal access token required to modify contents and workflows
-  REVIEWER: ${{ secrets.REVIEWER }}
+  REVIEWER: ${{ secrets.SYNC_PR_REVIEWER }}
 
 jobs:
-  Check_Branch: 
+  Check_Branch:
     runs-on: ubuntu-latest
     outputs:
       BRANCH_MATCH: ${{ steps.check-branch.outputs.MATCH }}
@@ -27,7 +27,7 @@ jobs:
           else
             echo "MATCH=false" >> $GITHUB_OUTPUT
           fi
-      
+
   Auto_Merge:
     if: ${{ needs.Check_Branch.outputs.BRANCH_MATCH == 'true' }}
     needs: [Check_Branch]
@@ -41,6 +41,11 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
 
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
       - name: Setup GH CLI and Git Config
         run: |
           type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
@@ -49,20 +54,6 @@ jobs:
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
           sudo apt update
           sudo apt install gh -y
-
-      - id: git-author
-        name: Setup Git CLI from Github Token
-        run: |
-          VIEWER_JSON=$(gh api graphql -f query='query { viewer { name login databaseId }}' --jq '.data.viewer')
-          VIEWER_NAME=$(jq --raw-output '.name | values' <<< "${VIEWER_JSON}")
-          VIEWER_LOGIN=$(jq --raw-output '.login' <<< "${VIEWER_JSON}")
-          VIEWER_DATABASE_ID=$(jq --raw-output '.databaseId' <<< "${VIEWER_JSON}")
-
-          USER_NAME="${VIEWER_NAME:-${VIEWER_LOGIN}}"
-          USER_EMAIL="${VIEWER_DATABASE_ID}+${VIEWER_LOGIN}@users.noreply.github.com"
-
-          git config --global user.name ${USER_NAME}
-          git config --global user.email ${USER_EMAIL}
 
       - name: Check for merge conflicts
         id: conflicts
@@ -88,10 +79,6 @@ jobs:
       - name: Create PR to Target Branch
         if: env.HAS_CONFLICTS == 'true'
         run: |
-          # Use GitHub CLI to create PR and specify author and committer
-          PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH \
-            --title "sync: merge conflicts need to be resolved" \
-            --body "" \
-            --reviewer $REVIEWER )
+          # Replace 'username' with the actual GitHub username of the reviewer.
+          PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH --title "sync: merge conflicts need to be resolved" --body "" --reviewer $REVIEWER)
           echo "Pull Request created: $PR_URL"
-

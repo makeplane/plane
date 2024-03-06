@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hook
@@ -7,9 +7,7 @@ import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
 // types
-import { TIssue } from "@plane/types";
 // constants
-import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
 export interface IModuleKanBanLayout {}
@@ -19,39 +17,10 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = router.query;
 
   // store
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
-
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId.toString());
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
-      },
-      [EIssueActions.REMOVE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project_id, moduleId.toString(), issue.id);
-      },
-      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.archiveIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
-      },
-    }),
-    [issues, workspaceSlug, moduleId]
-  );
+  const { issues } = useIssues(EIssuesStoreType.MODULE);
 
   return (
     <BaseKanBanRoot
-      issueActions={issueActions}
-      issues={issues}
-      issuesFilter={issuesFilter}
       showLoader
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId?.toString()}

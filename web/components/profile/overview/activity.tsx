@@ -46,24 +46,24 @@ export const ProfileActivity = observer(() => {
               {userProfileActivity.results.map((activity) => (
                 <div key={activity.id} className="flex gap-3">
                   <div className="flex-shrink-0">
-                    {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
+                    {activity.actor_detail?.avatar && activity.actor_detail?.avatar !== "" ? (
                       <img
-                        src={activity.actor_detail.avatar}
-                        alt={activity.actor_detail.display_name}
+                        src={activity.actor_detail?.avatar}
+                        alt={activity.actor_detail?.display_name}
                         height={24}
                         width={24}
                         className="rounded"
                       />
                     ) : (
                       <div className="grid h-6 w-6 place-items-center rounded border-2 bg-gray-700 text-xs text-white">
-                        {activity.actor_detail.display_name?.charAt(0)}
+                        {activity.actor_detail?.display_name?.charAt(0)}
                       </div>
                     )}
                   </div>
                   <div className="-mt-1 w-4/5 break-words">
                     <p className="text-sm text-custom-text-200">
                       <span className="font-medium text-custom-text-100">
-                        {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
+                        {currentUser?.id === activity.actor_detail?.id ? "You" : activity.actor_detail?.display_name}{" "}
                       </span>
                       {activity.field ? (
                         <ActivityMessage activity={activity} showIssue />

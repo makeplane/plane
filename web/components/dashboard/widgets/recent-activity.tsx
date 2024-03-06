@@ -71,7 +71,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
               <div className="-mt-1 break-words">
                 <p className="text-sm text-custom-text-200">
                   <span className="font-medium text-custom-text-100">
-                    {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail.display_name}{" "}
+                    {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail?.display_name}{" "}
                   </span>
                   {activity.field ? (
                     <ActivityMessage activity={activity} showIssue />

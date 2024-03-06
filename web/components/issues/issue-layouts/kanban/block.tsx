@@ -12,7 +12,6 @@ import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // ui
 // types
-import { EIssueActions } from "../types";
 // helper
 
 interface IssueBlockProps {
@@ -23,7 +22,7 @@ interface IssueBlockProps {
   isDragDisabled: boolean;
   draggableId: string;
   index: number;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -34,23 +33,19 @@ interface IssueBlockProps {
 interface IssueDetailsBlockProps {
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   isReadOnly: boolean;
 }
 
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
-  const { issue, handleIssues, quickActions, isReadOnly, displayProperties } = props;
+  const { issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
   const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
   } = useApplication();
   const { setPeekIssue } = useIssueDetail();
-
-  const updateIssue = async (issueToUpdate: TIssue) => {
-    if (issueToUpdate) await handleIssues(issueToUpdate, EIssueActions.UPDATE);
-  };
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -95,7 +90,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"
-        handleIssues={updateIssue}
+        updateIssue={updateIssue}
         isReadOnly={isReadOnly}
       />
     </>
@@ -111,7 +106,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
     isDragDisabled,
     draggableId,
     index,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     scrollableContainerRef,
@@ -159,7 +154,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
               <KanbanIssueDetailsBlock
                 issue={issue}
                 displayProperties={displayProperties}
-                handleIssues={handleIssues}
+                updateIssue={updateIssue}
                 quickActions={quickActions}
                 isReadOnly={!canEditIssueProperties}
               />

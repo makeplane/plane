@@ -35,7 +35,7 @@ export interface ICycleIssuesFilter {
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    cycleId?: string | undefined
+    cycleId: string
   ) => Promise<void>;
 }
 
@@ -136,10 +136,9 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     projectId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    cycleId: string | undefined = undefined
+    cycleId: string
   ) => {
     try {
-      if (!cycleId) throw new Error("Cycle id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[cycleId]) || isEmpty(filters)) return;
 
       const _filters = {

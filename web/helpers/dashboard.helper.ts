@@ -49,10 +49,10 @@ export const getRedirectionFilters = (type: TIssuesListTypes): string => {
     type === "pending"
       ? "?state_group=backlog,unstarted,started"
       : type === "upcoming"
-      ? `?target_date=${today};after`
-      : type === "overdue"
-      ? `?target_date=${today};before`
-      : "?state_group=completed";
+        ? `?target_date=${today};after`
+        : type === "overdue"
+          ? `?target_date=${today};before`
+          : "?state_group=completed";
 
   return filterParams;
 };

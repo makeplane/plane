@@ -6,7 +6,6 @@ from plane.app.views import (
     ModuleIssueViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
-    BulkImportModulesEndpoint,
     ModuleUserPropertiesEndpoint,
 )
 
@@ -105,11 +104,6 @@ urlpatterns = [
             }
         ),
         name="user-favorite-module",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-modules/<str:service>/",
-        BulkImportModulesEndpoint.as_view(),
-        name="bulk-modules-create",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",

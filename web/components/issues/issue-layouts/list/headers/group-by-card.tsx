@@ -10,7 +10,7 @@ import { CreateUpdateIssueModal } from "components/issues";
 // ui
 // mobx
 // hooks
-import { TCreateModalStoreTypes } from "constants/issue";
+import { EIssuesStoreType } from "constants/issue";
 import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
@@ -21,7 +21,7 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType: TCreateModalStoreTypes;
+  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 

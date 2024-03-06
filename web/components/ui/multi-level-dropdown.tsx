@@ -108,12 +108,12 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                           height === "sm"
                             ? "max-h-28"
                             : height === "md"
-                            ? "max-h-44"
-                            : height === "rg"
-                            ? "max-h-56"
-                            : height === "lg"
-                            ? "max-h-80"
-                            : ""
+                              ? "max-h-44"
+                              : height === "rg"
+                                ? "max-h-56"
+                                : height === "lg"
+                                  ? "max-h-80"
+                                  : ""
                         }`}
                       >
                         {option.children ? (

@@ -1,4 +1,3 @@
-import os
 import redis
 from django.conf import settings
 from urllib.parse import urlparse

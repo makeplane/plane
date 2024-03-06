@@ -83,7 +83,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       avatar: formData.avatar,
       cover_image: formData.cover_image,
       role: formData.role,
-      display_name: formData.display_name,
+      display_name: formData?.display_name,
       user_timezone: formData.user_timezone,
     };
 
@@ -195,7 +195,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                                 src={watch("avatar")}
                                 className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
                                 onClick={() => setIsImageUploadModalOpen(true)}
-                                alt={myProfile.display_name}
+                                alt={myProfile?.display_name}
                                 role="button"
                               />
                             </div>
@@ -377,14 +377,14 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           value={value}
                           onChange={onChange}
                           ref={ref}
-                          hasError={Boolean(errors.display_name)}
+                          hasError={Boolean(errors?.display_name)}
                           placeholder="Enter your display name"
-                          className={`w-full ${errors.display_name ? "border-red-500" : ""}`}
+                          className={`w-full ${errors?.display_name ? "border-red-500" : ""}`}
                           maxLength={24}
                         />
                       )}
                     />
-                    {errors.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
+                    {errors?.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
                   </div>
 
                   <div className="flex flex-col gap-1">

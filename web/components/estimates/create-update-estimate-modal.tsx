@@ -312,8 +312,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
+                            ? "Creating Estimate..."
+                            : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

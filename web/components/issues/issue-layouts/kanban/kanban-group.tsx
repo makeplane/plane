@@ -12,7 +12,6 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
-import { EIssueActions } from "../types";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
 
 interface IKanbanGroup {
@@ -25,7 +24,7 @@ interface IKanbanGroup {
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
@@ -53,7 +52,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     issueIds,
     peekIssueId,
     isDragDisabled,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     enableQuickIssueCreate,
@@ -135,7 +134,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
               displayProperties={displayProperties}
               isDragDisabled={isDragDisabled}
-              handleIssues={handleIssues}
+              updateIssue={updateIssue}
               quickActions={quickActions}
               canEditProperties={canEditProperties}
               scrollableContainerRef={scrollableContainerRef}

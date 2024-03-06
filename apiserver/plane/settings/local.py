@@ -1,4 +1,7 @@
 """Development settings"""
+
+import os
+
 from .common import *  # noqa
 
 DEBUG = True
@@ -14,7 +17,11 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     }
 }
 

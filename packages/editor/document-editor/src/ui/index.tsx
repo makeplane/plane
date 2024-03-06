@@ -55,6 +55,7 @@ interface DocumentEditorProps extends IDocumentEditor {
 interface EditorHandle {
   clearEditor: () => void;
   setEditorValue: (content: string) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
 }
 
 const DocumentEditor = ({

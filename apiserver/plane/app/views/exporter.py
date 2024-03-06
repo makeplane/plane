@@ -50,7 +50,7 @@ class ExportIssuesEndpoint(BaseAPIView):
             )
             return Response(
                 {
-                    "message": f"Once the export is ready you will be able to download it"
+                    "message": "Once the export is ready you will be able to download it"
                 },
                 status=status.HTTP_200_OK,
             )

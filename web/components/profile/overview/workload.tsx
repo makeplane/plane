@@ -25,8 +25,8 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => (
                 {group.state_group === "unstarted"
                   ? "Not started"
                   : group.state_group === "started"
-                  ? "Working on"
-                  : STATE_GROUPS[group.state_group].label}
+                    ? "Working on"
+                    : STATE_GROUPS[group.state_group].label}
               </p>
               <p className="text-xl font-semibold">{group.state_count}</p>
             </div>

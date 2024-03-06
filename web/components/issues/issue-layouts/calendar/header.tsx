@@ -9,14 +9,25 @@ import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { EIssueFilterType } from "constants/issue";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssueKanbanFilters,
+} from "@plane/types";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  viewId?: string;
+  updateFilters?: (
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
 }
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore, viewId } = props;
+  const { issuesFilterStore, updateFilters } = props;
 
   const issueCalendarView = useCalendarView();
 
@@ -101,7 +112,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         >
           Today
         </button>
-        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} viewId={viewId} />
+        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
       </div>
     </div>
   );

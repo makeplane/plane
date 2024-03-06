@@ -53,7 +53,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
 
-  const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
+  const { handleSubmit, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
@@ -124,16 +124,13 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
-    await updateDescriptionAction(formData.description_html);
+    updateDescriptionAction(formData.description_html);
   };
 
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    const newDescription = `${watch("description_html")}<p>${response}</p>`;
-    setValue("description_html", newDescription);
-    editorRef.current?.setEditorValue(newDescription);
-    updateDescriptionAction(newDescription);
+    editorRef.current?.setEditorValueAtCursorPosition(response);
   };
 
   const actionCompleteAlert = ({
