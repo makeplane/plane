@@ -1,8 +1,8 @@
 import { FC, useRef, useState } from "react";
-
 import { observer } from "mobx-react-lite";
-
-// hooks
+// ui
+import { Spinner } from "@plane/ui";
+// components
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -12,15 +12,12 @@ import {
   TIssueOperations,
   ArchiveIssueModal,
 } from "components/issues";
+// hooks
 import { useIssueDetail } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // store hooks
-// components
-// store hooks
-// components
 import { IssueActivity } from "../issue-detail/issue-activity";
-// ui
 
 interface IIssueView {
   workspaceSlug: string;
