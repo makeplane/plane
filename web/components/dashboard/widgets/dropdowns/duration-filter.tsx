@@ -6,10 +6,8 @@ import { DateFilterModal } from "components/core";
 import { CustomMenu } from "@plane/ui";
 // helpers
 import { getDurationFilterDropdownLabel } from "helpers/dashboard.helper";
-// types
-import { EDurationFilters } from "@plane/types";
 // constants
-import { DURATION_FILTER_OPTIONS } from "constants/dashboard";
+import { DURATION_FILTER_OPTIONS, EDurationFilters } from "constants/dashboard";
 
 type Props = {
   customDates?: string[];
