@@ -1,22 +1,25 @@
 import React, { ReactElement } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useProject, useUser } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
+// layouts
+// ui
+// components
 import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
+import { EUserProjectRoles } from "constants/project";
+import { useProject, useUser } from "hooks/store";
+import { AppLayout } from "layouts/app-layout";
+// layouts
+import { ProjectSettingLayout } from "layouts/settings-layout";
+// hooks
+// components
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IProject } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 const AutomationSettingsPage: NextPageWithLayout = observer(() => {
   // router

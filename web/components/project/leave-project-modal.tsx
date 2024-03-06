@@ -1,17 +1,19 @@
 import { FC, Fragment } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// icons
 import { AlertTriangleIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
-// hooks
-import { useEventTracker, useUser } from "hooks/store";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// types
-import { IProject } from "@plane/types";
 // constants
 import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
+// hooks
+import { useEventTracker, useUser } from "hooks/store";
+// types
+import { IProject } from "@plane/types";
 
 type FormData = {
   projectName: string;

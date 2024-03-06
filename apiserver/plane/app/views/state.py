@@ -9,14 +9,13 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import (
     ProjectEntityPermission,
-    WorkspaceEntityPermission,
 )
 from plane.db.models import State, Issue
-
+from plane.utils.cache import invalidate_cache
 
 class StateViewSet(BaseViewSet):
     serializer_class = StateSerializer
@@ -41,6 +40,7 @@ class StateViewSet(BaseViewSet):
             .distinct()
         )
 
+    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     def create(self, request, slug, project_id):
         serializer = StateSerializer(data=request.data)
         if serializer.is_valid():
@@ -61,6 +61,7 @@ class StateViewSet(BaseViewSet):
             return Response(state_dict, status=status.HTTP_200_OK)
         return Response(states, status=status.HTTP_200_OK)
 
+    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     def mark_as_default(self, request, slug, project_id, pk):
         # Select all the states which are marked as default
         _ = State.objects.filter(
@@ -71,6 +72,7 @@ class StateViewSet(BaseViewSet):
         ).update(default=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
             ~Q(name="Triage"),

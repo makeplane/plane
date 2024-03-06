@@ -1,19 +1,19 @@
 import { linearGradientDef } from "@nivo/core";
 // assets
-import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
-import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
-import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
-import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
-import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
-import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-issues.svg";
-// types
-import { EDurationFilters, TIssuesListTypes, TStateGroups } from "@plane/types";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { ContrastIcon } from "@plane/ui";
 import { Props } from "components/icons/types";
+import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
+import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
+import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
+import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-issues.svg";
+import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
+import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
+// types
+import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
 // icons
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
-import { ContrastIcon } from "@plane/ui";
 
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
@@ -115,6 +115,15 @@ export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
   completed: "#3E9B4F",
   cancelled: "#E5484D",
 };
+
+export enum EDurationFilters {
+  NONE = "none",
+  TODAY = "today",
+  THIS_WEEK = "this_week",
+  THIS_MONTH = "this_month",
+  THIS_YEAR = "this_year",
+  CUSTOM = "custom",
+}
 
 // filter duration options
 export const DURATION_FILTER_OPTIONS: {

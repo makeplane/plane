@@ -11,6 +11,7 @@ from plane.db.models import (
     CycleUserProperties,
 )
 
+
 class CycleWriteSerializer(BaseSerializer):
     def validate(self, data):
         if (
@@ -46,7 +47,6 @@ class CycleSerializer(BaseSerializer):
 
     # active | draft | upcoming | completed
     status = serializers.CharField(read_only=True)
-
 
     class Meta:
         model = Cycle

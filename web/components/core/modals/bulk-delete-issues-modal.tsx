@@ -1,25 +1,26 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
+import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
+import { Search } from "lucide-react";
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { EIssuesStoreType } from "constants/issue";
+import { useIssues, useProject } from "hooks/store";
 import { IssueService } from "services/issue";
 // ui
-import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { Search } from "lucide-react";
 // types
 import { IUser, TIssue } from "@plane/types";
 // fetch keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // store hooks
-import { useIssues, useProject } from "hooks/store";
 // components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
 // constants
-import { EIssuesStoreType } from "constants/issue";
 
 type FormInput = {
   delete_issue_ids: string[];

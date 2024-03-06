@@ -1,15 +1,15 @@
 import { useEffect } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import useSWR from "swr";
 // store hooks
+import { Avatar } from "@plane/ui";
 import { useDashboard, useMember, useUser } from "hooks/store";
 // components
+import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 import { WidgetLoader } from "../loaders";
 // ui
-import { Avatar } from "@plane/ui";
 // types
-import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 
 type CollaboratorListItemProps = {
   issueCount: number;
@@ -100,14 +100,14 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
 
     updateIsLoading?.(false);
     updateTotalPages(widgetStats.total_pages);
-    updateResultsCount(widgetStats.results.length);
+    updateResultsCount(widgetStats.results?.length);
   }, [updateIsLoading, updateResultsCount, updateTotalPages, widgetStats]);
 
-  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
+  if (!widgetStats || !widgetStats?.results) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <>
-      {widgetStats?.results.map((user) => (
+      {widgetStats?.results?.map((user) => (
         <CollaboratorListItem
           key={user.user_id}
           issueCount={user.active_issue_count}

@@ -2,9 +2,9 @@ import { endOfMonth, endOfWeek, endOfYear, startOfMonth, startOfWeek, startOfYea
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "./date-time.helper";
 // types
-import { EDurationFilters, TIssuesListTypes } from "@plane/types";
+import { TIssuesListTypes } from "@plane/types";
 // constants
-import { DURATION_FILTER_OPTIONS } from "constants/dashboard";
+import { DURATION_FILTER_OPTIONS, EDurationFilters } from "constants/dashboard";
 
 /**
  * @description returns date range based on the duration filter
@@ -49,10 +49,10 @@ export const getRedirectionFilters = (type: TIssuesListTypes): string => {
     type === "pending"
       ? "?state_group=backlog,unstarted,started"
       : type === "upcoming"
-      ? `?target_date=${today};after`
-      : type === "overdue"
-      ? `?target_date=${today};before`
-      : "?state_group=completed";
+        ? `?target_date=${today};after`
+        : type === "overdue"
+          ? `?target_date=${today};before`
+          : "?state_group=completed";
 
   return filterParams;
 };

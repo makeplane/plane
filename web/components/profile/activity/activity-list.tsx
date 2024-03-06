@@ -1,16 +1,16 @@
-import Link from "next/link";
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { History, MessageSquare } from "lucide-react";
 // editor
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // hooks
-import { useUser } from "hooks/store";
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 // ui
 import { ActivitySettingsLoader } from "components/ui";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
+import { useUser } from "hooks/store";
 // types
 import { IUserActivityResponse } from "@plane/types";
 

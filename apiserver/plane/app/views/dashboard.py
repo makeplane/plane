@@ -9,7 +9,6 @@ from django.db.models import (
     F,
     Exists,
     OuterRef,
-    Max,
     Subquery,
     JSONField,
     Func,
@@ -18,7 +17,7 @@ from django.db.models import (
 )
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import UUIDField
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 

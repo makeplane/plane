@@ -2,11 +2,11 @@ import React from "react";
 import { useRouter } from "next/router";
 import useSWRInfinite from "swr/infinite";
 // services
-import { ProjectService } from "services/project";
 // ui
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { ProjectService } from "services/project";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
 

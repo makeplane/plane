@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 // services
-import { UserService } from "services/user.service";
 // ui
 import { Button } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { UserService } from "services/user.service";
 
 const userService = new UserService();
 

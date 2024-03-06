@@ -9,7 +9,7 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer
-from .state import StateSerializer, StateLiteSerializer
+from .state import StateLiteSerializer
 from .project import ProjectLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
@@ -33,7 +33,6 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     State,
-    Project,
 )
 
 
@@ -472,7 +471,6 @@ class IssueLinkSerializer(BaseSerializer):
 
 
 class IssueLinkLiteSerializer(BaseSerializer):
-
     class Meta:
         model = IssueLink
         fields = [
@@ -503,7 +501,6 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
-
     class Meta:
         model = IssueAttachment
         fields = [
@@ -532,7 +529,6 @@ class IssueReactionSerializer(BaseSerializer):
 
 
 class IssueReactionLiteSerializer(DynamicBaseSerializer):
-
     class Meta:
         model = IssueReaction
         fields = [
@@ -628,15 +624,18 @@ class IssueSerializer(DynamicBaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
     module_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False,
+        child=serializers.UUIDField(),
+        required=False,
     )
 
     # Many to many
     label_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False,
+        child=serializers.UUIDField(),
+        required=False,
     )
     assignee_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False,
+        child=serializers.UUIDField(),
+        required=False,
     )
 
     # Count items
@@ -676,19 +675,7 @@ class IssueSerializer(DynamicBaseSerializer):
         read_only_fields = fields
 
 
-class IssueDetailSerializer(IssueSerializer):
-    description_html = serializers.CharField()
-    is_subscribed = serializers.BooleanField(read_only=True)
-
-    class Meta(IssueSerializer.Meta):
-        fields = IssueSerializer.Meta.fields + [
-            "description_html",
-            "is_subscribed",
-        ]
-
-
 class IssueLiteSerializer(DynamicBaseSerializer):
-
     class Meta:
         model = Issue
         fields = [

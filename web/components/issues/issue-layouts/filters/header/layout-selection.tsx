@@ -3,9 +3,9 @@ import React from "react";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
+import { ISSUE_LAYOUTS } from "constants/issue";
 import { TIssueLayouts } from "@plane/types";
 // constants
-import { ISSUE_LAYOUTS } from "constants/issue";
 
 type Props = {
   layouts: TIssueLayouts[];

@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
 import {
@@ -13,15 +13,17 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
+// components
+import { IssueSubscription, IssueUpdateStatus } from "components/issues";
+import { STATE_GROUPS } from "constants/state";
 // helpers
+import { cn } from "helpers/common.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // store hooks
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // helpers
-import { cn } from "helpers/common.helper";
 // components
-import { IssueSubscription, IssueUpdateStatus } from "components/issues";
-import { STATE_GROUPS } from "constants/state";
+// helpers
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
