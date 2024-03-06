@@ -1,21 +1,21 @@
 import React, { Fragment, ReactElement } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Tab } from "@headlessui/react";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import { Tab } from "@headlessui/react";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
 // components
-import { PageHead } from "components/core";
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
-import { WorkspaceAnalyticsHeader } from "components/headers";
+import { PageHead } from "components/core";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { WorkspaceAnalyticsHeader } from "components/headers";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { useApplication, useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
+import { AppLayout } from "layouts/app-layout";
 // type
 import { NextPageWithLayout } from "lib/types";
 

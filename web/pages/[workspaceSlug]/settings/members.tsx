@@ -1,26 +1,26 @@
 import { useState, ReactElement } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Search } from "lucide-react";
 // hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { PageHead } from "components/core";
+import { WorkspaceSettingHeader } from "components/headers";
+import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
+import { MEMBER_INVITED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { getUserRole } from "helpers/user.helper";
 import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
-import { WorkspaceSettingHeader } from "components/headers";
-import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
-import { PageHead } from "components/core";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // helpers
-import { getUserRole } from "helpers/user.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { MEMBER_INVITED } from "constants/event-tracker";
 
 const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   // states
@@ -30,7 +30,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const { captureEvent, setTrackElement } = useEventTracker();
+  const { captureEvent } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();

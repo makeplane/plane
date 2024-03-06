@@ -1,14 +1,14 @@
-import { Theme } from "@nivo/core";
 import { ComputedDatum } from "@nivo/bar";
+import { Theme } from "@nivo/core";
 // components
 import { BarGraph } from "components/ui";
 // helpers
+import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
+import { ISSUE_PRIORITIES } from "constants/issue";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { TIssuePriorities } from "@plane/types";
 // constants
-import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
-import { ISSUE_PRIORITIES } from "constants/issue";
 
 type Props = {
   borderRadius?: number;

@@ -1,20 +1,20 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import useSWR from "swr";
 // components
-import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
-import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
-import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "components/issues";
-import { KanbanLayoutLoader, ListLayoutLoader } from "components/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "components/issues";
+import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
+import { KanbanLayoutLoader, ListLayoutLoader } from "components/ui";
 // hooks
+import { PROFILE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { useIssues, useUser } from "hooks/store";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { EIssuesStoreType } from "constants/issue";
-import { PROFILE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 interface IProfileIssuesPage {
   type: "assigned" | "subscribed" | "created";
@@ -41,8 +41,8 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   } = useIssues(EIssuesStoreType.PROFILE);
 
   useEffect(() => {
-    setViewId(type);
-  }, [type]);
+    if (setViewId) setViewId(type);
+  }, [type, setViewId]);
 
   useSWR(
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,

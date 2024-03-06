@@ -1,9 +1,8 @@
 import React, { Fragment, useMemo } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
-import { useIssues } from "hooks/store";
 // components
 import {
   IssuePeekOverview,
@@ -18,6 +17,7 @@ import {
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../types";

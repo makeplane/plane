@@ -1,21 +1,21 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { EIssueFilterType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 import { useUser } from "hooks/store";
 // views
-import { SpreadsheetView } from "./spreadsheet-view";
 // types
-import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
-import { EIssueActions } from "../types";
-import { IQuickActionProps } from "../list/list-view-types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 import { ICycleIssuesFilter, ICycleIssues } from "store/issue/cycle";
 import { IModuleIssuesFilter, IModuleIssues } from "store/issue/module";
 import { IProjectIssuesFilter, IProjectIssues } from "store/issue/project";
 import { IProjectViewIssuesFilter, IProjectViewIssues } from "store/issue/project-views";
-import { EIssueFilterType } from "constants/issue";
+import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
+import { IQuickActionProps } from "../list/list-view-types";
+import { EIssueActions } from "../types";
+import { SpreadsheetView } from "./spreadsheet-view";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -90,7 +90,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         viewId
       );
     },
-    [issueFiltersStore?.updateFilters, projectId, workspaceSlug, viewId]
+    [issueFiltersStore, projectId, workspaceSlug, viewId]
   );
 
   const renderQuickActions = useCallback(

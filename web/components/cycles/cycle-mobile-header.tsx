@@ -1,16 +1,16 @@
 import { useCallback, useState } from "react";
 import router from "next/router";
 //components
-import { CustomMenu } from "@plane/ui";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 // hooks
-import { useIssues, useCycle, useProjectState, useLabel, useMember } from "hooks/store";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
+import { useIssues, useCycle, useProjectState, useLabel, useMember } from "hooks/store";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 
 export const CycleMobileHeader = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -100,6 +100,7 @@ export const CycleMobileHeader = () => {
         >
           {layouts.map((layout, index) => (
             <CustomMenu.MenuItem
+              key={ISSUE_LAYOUTS[index].key}
               onClick={() => {
                 handleLayoutChange(ISSUE_LAYOUTS[index].key);
               }}

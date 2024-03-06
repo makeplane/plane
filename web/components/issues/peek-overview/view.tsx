@@ -1,12 +1,7 @@
 import { FC, useRef, useState } from "react";
-
 import { observer } from "mobx-react-lite";
-
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useKeypress from "hooks/use-keypress";
-// store hooks
-import { useIssueDetail } from "hooks/store";
+// ui
+import { Spinner } from "@plane/ui";
 // components
 import {
   DeleteIssueModal,
@@ -17,9 +12,12 @@ import {
   TIssueOperations,
   ArchiveIssueModal,
 } from "components/issues";
+// hooks
+import { useIssueDetail } from "hooks/store";
+import useKeypress from "hooks/use-keypress";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
-// ui
-import { Spinner } from "@plane/ui";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -139,7 +137,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               disabled={disabled}
             />
             {/* content */}
-            <div className="relative h-full w-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md">
+            <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
               {isLoading && !issue ? (
                 <div className="flex h-full w-full items-center justify-center">
                   <Spinner />
@@ -170,7 +168,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                       </div>
                     ) : (
-                      <div className={`flex h-full w-full overflow-auto vertical-scrollbar`}>
+                      <div className={`vertical-scrollbar flex h-full w-full overflow-auto`}>
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
                           <div>
                             <PeekOverviewIssueDetails

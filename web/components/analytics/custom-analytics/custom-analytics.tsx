@@ -1,17 +1,17 @@
-import { useRouter } from "next/router";
-import useSWR from "swr";
-import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import useSWR from "swr";
 // services
-import { AnalyticsService } from "services/analytics.service";
 // components
 import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "components/analytics";
 // types
-import { IAnalyticsParams } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 import { cn } from "helpers/common.helper";
 import { useApplication } from "hooks/store";
+import { AnalyticsService } from "services/analytics.service";
+import { IAnalyticsParams } from "@plane/types";
 
 type Props = {
   additionalParams?: Partial<IAnalyticsParams>;

@@ -1,8 +1,12 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
+// components
+import { Spinner } from "@plane/ui";
+import { JoinProject } from "components/auth-screens";
+import { EmptyState } from "components/common";
 import {
   useApplication,
   useEventTracker,
@@ -17,10 +21,6 @@ import {
   useUser,
   useInbox,
 } from "hooks/store";
-// components
-import { Spinner } from "@plane/ui";
-import { JoinProject } from "components/auth-screens";
-import { EmptyState } from "components/common";
 // images
 import emptyProject from "public/empty-state/project.svg";
 

@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
+import { Rocket, Search } from "lucide-react";
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import useDebounce from "hooks/use-debounce";
 import { ProjectService } from "services/project";
 // hooks
-import useDebounce from "hooks/use-debounce";
 // ui
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { Rocket, Search } from "lucide-react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 

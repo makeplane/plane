@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
+import { INBOX_STATUS } from "constants/inbox";
 import { useInboxIssues } from "hooks/store";
 // constants
-import { INBOX_STATUS } from "constants/inbox";
 
 type Props = {
   workspaceSlug: string;

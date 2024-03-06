@@ -1,19 +1,19 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { ArrowLeft } from "lucide-react";
 // hooks
-import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // components
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 

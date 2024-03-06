@@ -1,24 +1,24 @@
 import { FC, useMemo } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // components
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { EmptyState } from "components/common";
 import { IssuePeekOverview } from "components/issues";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+import emptyIssue from "public/empty-state/issue.svg";
+import { TIssue } from "@plane/types";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 // ui
-import { EmptyState } from "components/common";
 // images
-import emptyIssue from "public/empty-state/issue.svg";
 // hooks
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // types
-import { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
-import { observer } from "mobx-react";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -116,9 +116,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          let response;
-          if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
-          else response = await removeIssue(workspaceSlug, projectId, issueId);
+          if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
+          else await removeIssue(workspaceSlug, projectId, issueId);
           setToast({
             title: "Issue deleted successfully",
             type: TOAST_TYPE.SUCCESS,
@@ -366,8 +365,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           }}
         />
       ) : (
-        <div className="flex w-full h-full overflow-hidden">
-          <div className="h-full w-full max-w-2/3 space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
+        <div className="flex h-full w-full overflow-hidden">
+          <div className="max-w-2/3 h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
               projectId={projectId}
@@ -377,7 +376,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             />
           </div>
           <div
-            className="h-full w-full min-w-[300px] lg:min-w-80 xl:min-w-96 sm:w-1/2 md:w-1/3 space-y-5 overflow-hidden border-l border-custom-border-200 py-5 fixed md:relative bg-custom-sidebar-background-100 right-0 z-[5]"
+            className="fixed right-0 z-[5] h-full w-full min-w-[300px] space-y-5 overflow-hidden border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
             style={themeStore.issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
           >
             <IssueDetailsSidebar

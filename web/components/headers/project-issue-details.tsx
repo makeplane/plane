@@ -1,22 +1,22 @@
 import { FC } from "react";
-import useSWR from "swr";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
+import { PanelRight } from "lucide-react";
+import { Breadcrumbs, LayersIcon } from "@plane/ui";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { cn } from "helpers/common.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 import { useApplication, useProject } from "hooks/store";
 // ui
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helpers
-import { renderEmoji } from "helpers/emoji.helper";
 // services
 import { IssueService } from "services/issue";
 // constants
-import { ISSUE_DETAILS } from "constants/fetch-keys";
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-import { PanelRight } from "lucide-react";
-import { cn } from "helpers/common.helper";
 
 // services
 const issueService = new IssueService();
@@ -91,7 +91,9 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
         </div>
       </div>
       <button className="block md:hidden" onClick={() => themeStore.toggleIssueDetailSidebar()}>
-        <PanelRight className={cn("w-4 h-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")} />
+        <PanelRight
+          className={cn("w-4 h-4 ", !isSidebarCollapsed ? "text-custom-primary-100" : " text-custom-text-200")}
+        />
       </button>
     </div>
   );

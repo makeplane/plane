@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Tab } from "@headlessui/react";
 // hooks
 import { useDashboard } from "hooks/store";

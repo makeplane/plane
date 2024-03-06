@@ -3,15 +3,16 @@ import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
 // hooks
+import { UserCircle2 } from "lucide-react";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { MAX_FILE_SIZE } from "constants/common";
 import { useApplication } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { UserCircle2 } from "lucide-react";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
 
 type Props = {
   handleDelete?: () => void;

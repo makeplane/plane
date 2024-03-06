@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useGanttChart } from "../hooks/use-gantt-chart";
 // components
 import {
   BiWeekChartView,
@@ -19,6 +18,7 @@ import {
 } from "components/gantt-chart";
 // helpers
 import { cn } from "helpers/common.helper";
+import { useGanttChart } from "../hooks/use-gantt-chart";
 
 type Props = {
   blocks: IGanttBlock[] | null;

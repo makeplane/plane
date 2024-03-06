@@ -1,23 +1,23 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react";
 // hooks
+import { EmptyState } from "components/common";
+import { PageHead } from "components/core";
+import { CycleDetailsSidebar } from "components/cycles";
+import { CycleIssuesHeader } from "components/headers";
+import { CycleLayoutRoot } from "components/issues/issue-layouts";
 import { useCycle, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { PageHead } from "components/core";
-import { CycleIssuesHeader } from "components/headers";
-import { CycleDetailsSidebar } from "components/cycles";
-import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // ui
-import { EmptyState } from "components/common";
 // assets
+import { NextPageWithLayout } from "lib/types";
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
-import { NextPageWithLayout } from "lib/types";
 
 const CycleDetailPage: NextPageWithLayout = observer(() => {
   // router

@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 // store hooks
+import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+import { checkDuplicates } from "helpers/array.helper";
 import { useEstimate } from "hooks/store";
 // ui
-import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { checkDuplicates } from "helpers/array.helper";
 // types
 import { IEstimate, IEstimateFormData } from "@plane/types";
 
@@ -269,7 +269,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                         {Array(6)
                           .fill(0)
                           .map((_, i) => (
-                            <div className="flex items-center">
+                            <div className="flex items-center" key={i}>
                               <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                                 <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
                                 <span className="rounded-r-lg bg-custom-background-100">

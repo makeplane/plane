@@ -1,16 +1,16 @@
 import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
+// ui
+import { Spinner, setPromiseToast } from "@plane/ui";
+// components
+import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
+// constants
+import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 // hooks
 import { useUser } from "hooks/store";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
-// components
-import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
-// ui
-import { Spinner, setPromiseToast } from "@plane/ui";
-// constants
-import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 // type
 import { NextPageWithLayout } from "lib/types";
 
@@ -54,7 +54,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title="Profile - Theme Prefrence" />
       {currentUser ? (
-        <div className="mx-auto mt-10 md:mt-14 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
+        <div className="mx-auto mt-10 h-full w-full overflow-y-auto px-6 pb-8 md:mt-14 lg:px-20">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>
