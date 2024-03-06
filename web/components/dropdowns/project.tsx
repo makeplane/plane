@@ -5,12 +5,12 @@ import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
 import { cn } from "helpers/common.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 import { useProject } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
+import { ProjectLogo } from "components/project";
 // helpers
 // types
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
@@ -77,13 +77,11 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
       query: `${projectDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="grid place-items-center flex-shrink-0">
-            {projectDetails?.emoji
-              ? renderEmoji(projectDetails?.emoji)
-              : projectDetails?.icon_prop
-                ? renderEmoji(projectDetails?.icon_prop)
-                : null}
-          </span>
+          {projectDetails && (
+            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+              <ProjectLogo logo={projectDetails?.logo_props} className="text-sm" />
+            </span>
+          )}
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -169,13 +167,9 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
-              {!hideIcon && (
-                <span className="grid place-items-center flex-shrink-0">
-                  {selectedProject?.emoji
-                    ? renderEmoji(selectedProject?.emoji)
-                    : selectedProject?.icon_prop
-                      ? renderEmoji(selectedProject?.icon_prop)
-                      : null}
+              {!hideIcon && selectedProject && (
+                <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                  <ProjectLogo logo={selectedProject.logo_props} className="text-sm" />
                 </span>
               )}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (

@@ -13,26 +13,28 @@ import { Loader, Tooltip } from "@plane/ui";
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useProject, useUser } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // services
 import { UserService } from "services/user.service";
 // components
 import { ProfileSidebarTime } from "./time";
+import { ProjectLogo } from "components/project";
 
 // services
 const userService = new UserService();
 
 export const ProfileSidebar = observer(() => {
+  // refs
+  const ref = useRef<HTMLDivElement>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
   // store hooks
   const { currentUser } = useUser();
   const { theme: themeStore } = useApplication();
-  const ref = useRef<HTMLDivElement>(null);
+  const { getProjectById } = useProject();
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
@@ -130,6 +132,8 @@ export const ProfileSidebar = observer(() => {
             </div>
             <div className="mt-9 divide-y divide-custom-border-100">
               {userProjectsData.project_data.map((project, index) => {
+                const projectDetails = getProjectById(project.id);
+
                 const totalIssues =
                   project.created_issues + project.assigned_issues + project.pending_issues + project.completed_issues;
 
@@ -138,26 +142,18 @@ export const ProfileSidebar = observer(() => {
                     ? 0
                     : Math.round((project.completed_issues / project.assigned_issues) * 100);
 
+                if (!projectDetails) return null;
+
                 return (
                   <Disclosure key={project.id} as="div" className={`${index === 0 ? "pb-3" : "py-3"}`}>
                     {({ open }) => (
                       <div className="w-full">
                         <Disclosure.Button className="flex w-full items-center justify-between gap-2">
                           <div className="flex w-3/4 items-center gap-2">
-                            {project.emoji ? (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                                {renderEmoji(project.emoji)}
-                              </div>
-                            ) : project.icon_prop ? (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                                {renderEmoji(project.icon_prop)}
-                              </div>
-                            ) : (
-                              <div className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-custom-background-90 text-xs uppercase text-custom-text-100">
-                                {project?.name.charAt(0)}
-                              </div>
-                            )}
-                            <div className="truncate break-words text-sm font-medium">{project.name}</div>
+                            <span className="grid place-items-center flex-shrink-0 h-7 w-7">
+                              <ProjectLogo logo={projectDetails.logo_props} />
+                            </span>
+                            <div className="truncate break-words text-sm font-medium">{projectDetails.name}</div>
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (

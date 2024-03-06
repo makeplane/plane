@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import "styles/globals.css";
 import "styles/command-pallette.css";
 import "styles/nprogress.css";
+import "styles/emoji.css";
 import "styles/react-day-picker.css";
 // constants
 import { THEMES } from "constants/themes";

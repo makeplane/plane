@@ -15,7 +15,6 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 // constants
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
-import { renderEmoji } from "helpers/emoji.helper";
 import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
@@ -29,6 +28,7 @@ import {
   useUser,
 } from "hooks/store";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
@@ -119,17 +119,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
-                  currentProjectDetails?.emoji ? (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {renderEmoji(currentProjectDetails.emoji)}
-                    </span>
-                  ) : currentProjectDetails?.icon_prop ? (
-                    <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                      {renderEmoji(currentProjectDetails.icon_prop)}
-                    </div>
-                  ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
+                  currentProjectDetails && (
+                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                     </span>
                   )
                 }

@@ -8,9 +8,9 @@ import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { renderEmoji } from "helpers/emoji.helper";
 // components
 import { useApplication, usePage, useProject } from "hooks/store";
+import { ProjectLogo } from "components/project";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -42,13 +42,9 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
                       href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                       label={currentProjectDetails?.name ?? "Project"}
                       icon={
-                        currentProjectDetails?.emoji ? (
-                          renderEmoji(currentProjectDetails.emoji)
-                        ) : currentProjectDetails?.icon_prop ? (
-                          renderEmoji(currentProjectDetails.icon_prop)
-                        ) : (
-                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                            {currentProjectDetails?.name.charAt(0)}
+                        currentProjectDetails && (
+                          <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                            <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                           </span>
                         )
                       }
