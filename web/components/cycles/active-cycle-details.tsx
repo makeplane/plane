@@ -4,9 +4,6 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // hooks
-import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
-// ui
-import { SingleProgressStats } from "components/core";
 import {
   AvatarGroup,
   Loader,
@@ -19,6 +16,9 @@ import {
   CycleGroupIcon,
   setPromiseToast,
 } from "@plane/ui";
+import useToast from "hooks/use-toast";
+import { SingleProgressStats } from "components/core";
+// ui
 import { SingleProgressStats } from "components/core";
 // ui
 // components
@@ -37,7 +37,7 @@ import { EIssuesStoreType } from "constants/issue";
 import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
 import { ICycle, TCycleGroups } from "@plane/types";
 
 interface IActiveCycleDetails {

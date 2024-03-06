@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Disclosure, Transition } from "@headlessui/react";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 import { useApplication, useUser } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // services
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { UserService } from "services/user.service";
@@ -16,7 +17,6 @@ import { ProfileSidebarTime } from "./time";
 // icons
 // helpers
 // fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 
 // services
 const userService = new UserService();

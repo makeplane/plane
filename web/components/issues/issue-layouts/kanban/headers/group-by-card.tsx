@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import useToast from "hooks/use-toast";
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal } from "components/issues";
 // lucide icons
 // hooks
 import { useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
 // mobx
 // types
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";

@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
 // hooks
-import { useEventTracker } from "hooks/store";
-// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
+import useToast from "hooks/use-toast";
 import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
 import { checkEmailValidity } from "helpers/string.helper";
+import { useEventTracker } from "hooks/store";
+// ui
+// helpers
 // icons
 import { useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 
 type Props = {

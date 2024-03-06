@@ -4,11 +4,11 @@ import { useRouter } from "next/router";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 // hooks
 import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useUser, useIssues } from "hooks/store";
 // ui
-import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 // types
 import { TIssue } from "@plane/types";

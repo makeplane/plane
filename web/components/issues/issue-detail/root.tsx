@@ -2,25 +2,25 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // components
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import useToast from "hooks/use-toast";
 import { EmptyState } from "components/common";
 import { IssuePeekOverview } from "components/issues";
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 import emptyIssue from "public/empty-state/issue.svg";
+import { TIssue } from "@plane/types";
 import { TIssue } from "@plane/types";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 // ui
 // images
 // hooks
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // types
-import { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // constants
 
 export type TIssueOperations = {

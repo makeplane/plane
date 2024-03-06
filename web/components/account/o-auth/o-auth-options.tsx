@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 // services
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { GitHubSignInButton, GoogleSignInButton } from "components/account";
 import { useApplication } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 
 type Props = {

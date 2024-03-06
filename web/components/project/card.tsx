@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // hooks
 import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 import { DeleteProjectModal, JoinProjectModal } from "components/project";
 import { EUserProjectRoles } from "constants/project";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -12,7 +13,6 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { useProject } from "hooks/store";
 // components
 // ui
-import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // helpers
 // types
 import type { IProject } from "@plane/types";

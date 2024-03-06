@@ -1,15 +1,15 @@
 import { useEffect } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import useSWR from "swr";
 // store hooks
+import { Avatar } from "@plane/ui";
 import { useDashboard, useMember, useUser } from "hooks/store";
 // components
+import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 import { WidgetLoader } from "../loaders";
 // ui
-import { Avatar } from "@plane/ui";
 // types
-import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 
 type CollaboratorListItemProps = {
   issueCount: number;

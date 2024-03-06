@@ -6,13 +6,13 @@ import { Transition, Dialog } from "@headlessui/react";
 // hooks
 import { UserCircle2 } from "lucide-react";
 import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import useToast from "hooks/use-toast";
 import { MAX_FILE_SIZE } from "constants/common";
 import { useApplication, useWorkspace } from "hooks/store";
 // services
-import useToast from "hooks/use-toast";
 import { FileService } from "services/file.service";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // constants
 

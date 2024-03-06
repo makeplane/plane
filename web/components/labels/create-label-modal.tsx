@@ -7,10 +7,10 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 // hooks
 import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 import { useLabel } from "hooks/store";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // constants

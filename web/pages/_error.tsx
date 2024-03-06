@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 
 // services
 import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import useToast from "hooks/use-toast";
 import DefaultLayout from "layouts/default-layout";
 import { AuthService } from "services/auth.service";
 // layouts
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
 // services
 const authService = new AuthService();

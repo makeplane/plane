@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { Button, Input, Spinner } from "@plane/ui";
+import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { PageHead } from "components/core";
 import { PageHead } from "components/core";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { useApplication, useUser } from "hooks/store";
 // services
 // components
-import { PageHead } from "components/core";
 // layout
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { UserService } from "services/user.service";

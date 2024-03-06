@@ -4,10 +4,10 @@ import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { THEME_OPTIONS } from "constants/themes";
 import { useUser } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 
 type Props = {

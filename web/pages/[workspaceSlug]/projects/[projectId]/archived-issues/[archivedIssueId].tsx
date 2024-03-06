@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
+import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import useToast from "hooks/use-toast";
+import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 // ui
-import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // types
 import { NextPageWithLayout } from "lib/types";

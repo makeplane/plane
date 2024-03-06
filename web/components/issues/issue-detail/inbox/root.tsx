@@ -2,10 +2,10 @@ import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "../root";

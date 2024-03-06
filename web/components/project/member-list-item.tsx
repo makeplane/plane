@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 // hooks
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 import { CustomSelect, Tooltip } from "@plane/ui";
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { ConfirmProjectMemberRemove } from "components/project";
 import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
@@ -12,7 +13,6 @@ import { ROLE } from "constants/workspace";
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
 // components
 // ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // constants
 

@@ -4,9 +4,9 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IProject } from "@plane/types";
 // constants

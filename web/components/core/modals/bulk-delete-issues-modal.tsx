@@ -7,13 +7,13 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import { Search } from "lucide-react";
 import { Button, LayersIcon } from "@plane/ui";
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import useToast from "hooks/use-toast";
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
 import { useIssues, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 import { IssueService } from "services/issue";
 // ui
-import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // types
 import { IUser, TIssue } from "@plane/types";

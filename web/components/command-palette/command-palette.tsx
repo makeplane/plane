@@ -3,11 +3,11 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import useToast from "hooks/use-toast";
 import { CommandModal, ShortcutsModal } from "components/command-palette";
+// ui
+// components
 import { BulkDeleteIssuesModal } from "components/core";
 import { CycleCreateUpdateModal } from "components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -22,7 +22,7 @@ import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 import { IssueService } from "services/issue";
 
 // services

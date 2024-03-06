@@ -9,8 +9,9 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 // services
-import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // components
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import {
   GithubImportConfigure,
   GithubImportData,
@@ -19,10 +20,9 @@ import {
   GithubImportConfirm,
 } from "components/integration";
 // icons
-import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";
+import { IntegrationService, GithubIntegrationService } from "services/integrations";
 import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // hooks
 // components

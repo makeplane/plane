@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
 // hooks
-import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
-// components
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import useToast from "hooks/use-toast";
 import {
   AcceptIssueModal,
   DeclineIssueModal,
@@ -13,17 +13,17 @@ import {
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
 import { ISSUE_DELETED } from "constants/event-tracker";
+import { ISSUE_DELETED } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
 import { EUserProjectRoles } from "constants/project";
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
+// components
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 // components
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // types
 import type { TInboxDetailedStatus } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
-import { ISSUE_DELETED } from "constants/event-tracker";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;

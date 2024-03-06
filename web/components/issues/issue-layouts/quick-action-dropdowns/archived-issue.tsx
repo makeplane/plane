@@ -3,16 +3,16 @@ import { useRouter } from "next/router";
 import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { useEventTracker, useIssues, useUser } from "hooks/store";
-// ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import useToast from "hooks/use-toast";
 import { DeleteIssueModal } from "components/issues";
+// ui
+// components
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useEventTracker, useIssues, useUser } from "hooks/store";
 // components
 // helpers
 // types

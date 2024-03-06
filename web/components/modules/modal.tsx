@@ -3,15 +3,15 @@ import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ModuleForm } from "components/modules";
 // constants
+import { ModuleForm } from "components/modules";
 import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useModule, useProject } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ModuleForm } from "components/modules";
 // types
 import type { IModule } from "@plane/types";
 

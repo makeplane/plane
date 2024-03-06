@@ -5,9 +5,9 @@ import { Popover, Transition } from "@headlessui/react";
 import { Plus, X, Loader } from "lucide-react";
 // hooks
 import { Input } from "@plane/ui";
+import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
 // ui
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IIssueLabel } from "@plane/types";
 import { TLabelOperations } from "./root";

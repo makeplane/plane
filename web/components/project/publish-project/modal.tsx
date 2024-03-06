@@ -6,9 +6,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Check, CircleDot, Globe2 } from "lucide-react";
 // hooks
 import { Button, Loader, ToggleSwitch } from "@plane/ui";
+import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { useProjectPublish } from "hooks/store";
 // ui
-import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { CustomPopover } from "./popover";
 // types
 

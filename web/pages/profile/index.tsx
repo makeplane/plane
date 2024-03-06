@@ -3,16 +3,10 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import { FileService } from "services/file.service";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
-import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
-import { DeactivateAccountModal } from "components/account";
-// ui
+import { ChevronDown, User2 } from "lucide-react";
 import {
   Button,
   CustomSelect,
@@ -23,11 +17,14 @@ import {
   setPromiseToast,
   setToast,
 } from "@plane/ui";
-// icons
-import { ChevronDown, User2 } from "lucide-react";
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
-// components
+import useToast from "hooks/use-toast";
 import { DeactivateAccountModal } from "components/account";
+import { DeactivateAccountModal } from "components/account";
+import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
+// ui
+// icons
+// components
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // constants
@@ -35,12 +32,15 @@ import { TIME_ZONES } from "constants/timezones";
 import { USER_ROLES } from "constants/workspace";
 // hooks
 import { useApplication, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useApplication, useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
+import useUserAuth from "hooks/use-user-auth";
+import { ProfileSettingsLayout } from "layouts/settings-layout";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // lib types
 import type { NextPageWithLayout } from "lib/types";
+import { FileService } from "services/file.service";
 // services
 import { FileService } from "services/file.service";
 // types

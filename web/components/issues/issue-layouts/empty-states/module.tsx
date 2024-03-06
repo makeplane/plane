@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 import { PlusIcon } from "lucide-react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { EMPTY_FILTER_STATE_DETAILS, MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
@@ -10,7 +11,6 @@ import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 // types
 import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";

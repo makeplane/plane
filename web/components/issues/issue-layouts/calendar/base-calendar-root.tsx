@@ -3,9 +3,9 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "components/issues";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";

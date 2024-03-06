@@ -7,10 +7,10 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 // hooks
 import { ChevronDown } from "lucide-react";
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 import { GROUP_CHOICES } from "constants/project";
 import { useProjectState } from "hooks/store";
 // ui
-import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // types
 import type { IState } from "@plane/types";

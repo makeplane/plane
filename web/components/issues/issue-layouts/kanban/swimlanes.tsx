@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { TCreateModalStoreTypes } from "constants/issue";
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -15,7 +16,6 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { EIssueActions } from "../types";
-import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";

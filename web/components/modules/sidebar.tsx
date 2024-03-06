@@ -15,13 +15,6 @@ import {
   UserCircle2,
 } from "lucide-react";
 // hooks
-import { useModule, useUser, useEventTracker } from "hooks/store";
-// components
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import { DeleteModuleModal } from "components/modules";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
-// ui
 import {
   CustomMenu,
   Loader,
@@ -32,12 +25,19 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
+import useToast from "hooks/use-toast";
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
+// components
+import ProgressChart from "components/core/sidebar/progress-chart";
+import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
+import { DeleteModuleModal } from "components/modules";
+// ui
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
+import { useModule, useUser, useEventTracker } from "hooks/store";
 // hooks
 import { useModule, useUser, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
 // types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 

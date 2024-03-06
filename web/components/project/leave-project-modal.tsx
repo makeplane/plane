@@ -6,10 +6,10 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangleIcon } from "lucide-react";
 // hooks
 import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 import { useEventTracker, useUser } from "hooks/store";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IProject } from "@plane/types";
 // constants

@@ -5,10 +5,10 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
 // hooks
-import { useUser } from "hooks/store";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { Button } from "@plane/ui";
+import { useUser } from "hooks/store";
 
 type Props = {
   isOpen: boolean;

@@ -4,11 +4,11 @@ import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
 import { Button, Input } from "@plane/ui";
-import { checkEmailValidity } from "helpers/string.helper";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import useToast from "hooks/use-toast";
+import { checkEmailValidity } from "helpers/string.helper";
 import { AuthService } from "services/auth.service";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 // types
 import { IEmailCheckData } from "@plane/types";

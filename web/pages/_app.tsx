@@ -7,8 +7,8 @@ import "styles/command-pallette.css";
 import "styles/nprogress.css";
 import "styles/react-day-picker.css";
 // constants
-import { THEMES } from "constants/themes";
 import { SITE_TITLE } from "constants/seo-variables";
+import { THEMES } from "constants/themes";
 // mobx store provider
 import { StoreProvider } from "contexts/store-context";
 

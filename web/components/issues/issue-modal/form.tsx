@@ -6,12 +6,11 @@ import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // editor
 // hooks
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
-// services
-import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
-// components
+import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import useToast from "hooks/use-toast";
 import { GptAssistantPopover } from "components/core";
+// services
+// components
 import {
   CycleDropdown,
   DateDropdown,
@@ -23,13 +22,14 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // ui
-import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+import { AIService } from "services/ai.service";
 // services
 import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 import { FileService } from "services/file.service";
 // components
 // ui

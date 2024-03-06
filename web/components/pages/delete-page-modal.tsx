@@ -5,10 +5,10 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { PAGE_DELETED } from "constants/event-tracker";
 import { useEventTracker, usePage } from "hooks/store";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 // constants
 

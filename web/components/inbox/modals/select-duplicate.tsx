@@ -7,9 +7,9 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // fetch-keys
+import useToast from "hooks/use-toast";
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { useProject, useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
 import { IssueService } from "services/issue";
 
 type Props = {

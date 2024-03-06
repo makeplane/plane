@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
-import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // hooks
-import { useEventTracker, useProjectState } from "hooks/store";
-// ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import useToast from "hooks/use-toast";
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+// ui
+// components
 import { EIssuesStoreType } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useEventTracker, useProjectState } from "hooks/store";
 // components
 // helpers
 // types

@@ -2,10 +2,10 @@ import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useProject } from "hooks/store";
 import { useIssues } from "hooks/store/use-issues";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 

@@ -7,22 +7,12 @@ import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // services
-import { WorkspaceService } from "services/workspace.service";
-import { UserService } from "services/user.service";
 // hooks
-import { useEventTracker, useUser } from "hooks/store";
 // layouts
-import DefaultLayout from "layouts/default-layout";
-import { UserAuthWrapper } from "layouts/auth-layout";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // images
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { getUserRole } from "helpers/user.helper";
 // types
 import { NextPageWithLayout } from "lib/types";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -39,18 +29,28 @@ import { getUserRole } from "helpers/user.helper";
 import { useEventTracker, useUser } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
+import { truncateText } from "helpers/string.helper";
+import { getUserRole } from "helpers/user.helper";
+import { useEventTracker, useUser } from "hooks/store";
+import { UserAuthWrapper } from "layouts/auth-layout";
 // layouts
 import { UserAuthWrapper } from "layouts/auth-layout";
+import DefaultLayout from "layouts/default-layout";
 import DefaultLayout from "layouts/default-layout";
 // ui
 // images
 import { NextPageWithLayout } from "lib/types";
 import emptyInvitation from "public/empty-state/invitation.svg";
+import emptyInvitation from "public/empty-state/invitation.svg";
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import { UserService } from "services/user.service";
 // helpers
 // types
 import { UserService } from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
 import { WorkspaceService } from "services/workspace.service";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // constants

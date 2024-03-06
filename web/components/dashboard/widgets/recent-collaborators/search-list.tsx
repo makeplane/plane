@@ -2,12 +2,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // components
-import { CollaboratorsList } from "./collaborators-list";
 // ui
 import { Button } from "@plane/ui";
 // assets
 import DarkImage from "public/empty-state/dashboard/dark/recent-collaborators-1.svg";
 import LightImage from "public/empty-state/dashboard/light/recent-collaborators-1.svg";
+import { CollaboratorsList } from "./collaborators-list";
 
 type Props = {
   dashboardId: string;

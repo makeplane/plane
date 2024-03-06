@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
 // components
 import {
@@ -13,9 +13,9 @@ import {
 } from "components/dashboard/widgets";
 // helpers
 // types
-import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { IssuesByPriorityGraph } from "components/graphs";
+import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 
 const WIDGET_KEY = "issues_by_priority";
 

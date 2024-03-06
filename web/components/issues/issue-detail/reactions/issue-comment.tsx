@@ -1,10 +1,10 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 // components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { renderEmoji } from "helpers/emoji.helper";
 import { useIssueDetail } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IUser } from "@plane/types";
 import { ReactionSelector } from "./reaction-selector";

@@ -4,11 +4,11 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { Button } from "@plane/ui";
-import { API_TOKENS_LIST } from "constants/fetch-keys";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import useToast from "hooks/use-toast";
+import { API_TOKENS_LIST } from "constants/fetch-keys";
 import { APITokenService } from "services/api_token.service";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IApiToken } from "@plane/types";
 // fetch-keys

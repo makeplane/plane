@@ -2,21 +2,21 @@ import React, { ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { useProject, useUser } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import useToast from "hooks/use-toast";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
+// layouts
+// ui
+// components
 import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
 import { EUserProjectRoles } from "constants/project";
 import { useProject, useUser } from "hooks/store";
-// layouts
-import useToast from "hooks/use-toast";
+import { useProject, useUser } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
+// layouts
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // hooks
 // components

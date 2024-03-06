@@ -5,23 +5,23 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import { CycleService } from "services/cycle.service";
 // hooks
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-// components
+import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
+import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import useToast from "hooks/use-toast";
 import { SidebarProgressStats } from "components/core";
+// components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
 // ui
-import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+import { CycleService } from "services/cycle.service";
 import { CycleService } from "services/cycle.service";
 // hooks
 // components

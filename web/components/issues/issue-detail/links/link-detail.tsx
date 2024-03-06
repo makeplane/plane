@@ -1,17 +1,17 @@
 import { FC, useState } from "react";
 // hooks
-import { useIssueDetail, useMember } from "hooks/store";
 // ui
+import { Pencil, Trash2, LinkIcon } from "lucide-react";
 import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { Pencil, Trash2, LinkIcon } from "lucide-react";
 import { ExternalLinkIcon, Tooltip } from "@plane/ui";
 // types
 // helpers
+import useToast from "hooks/use-toast";
 import { calculateTimeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useIssueDetail, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useIssueDetail, useMember } from "hooks/store";
 import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {

@@ -3,11 +3,7 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useKeypress from "hooks/use-keypress";
-// store hooks
-import { useIssueDetail } from "hooks/store";
-// components
+import useToast from "hooks/use-toast";
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -18,9 +14,13 @@ import {
   ArchiveIssueModal,
 } from "components/issues";
 import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "hooks/store";
+import useKeypress from "hooks/use-keypress";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useToast from "hooks/use-toast";
+// store hooks
+// components
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // store hooks
 // components
 import { IssueActivity } from "../issue-detail/issue-activity";

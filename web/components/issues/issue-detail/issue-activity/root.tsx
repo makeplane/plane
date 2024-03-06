@@ -2,9 +2,9 @@ import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail, useProject } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { TIssueComment } from "@plane/types";
 import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";

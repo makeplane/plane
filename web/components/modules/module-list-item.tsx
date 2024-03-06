@@ -5,15 +5,6 @@ import { useRouter } from "next/router";
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // hooks
 import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
-import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
-// components
-// ui
 import {
   Avatar,
   AvatarGroup,
@@ -24,6 +15,15 @@ import {
   setToast,
   setPromiseToast,
 } from "@plane/ui";
+import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { MODULE_STATUS } from "constants/module";
+import { EUserProjectRoles } from "constants/project";
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
+// components
+// ui
 // helpers
 // constants
 

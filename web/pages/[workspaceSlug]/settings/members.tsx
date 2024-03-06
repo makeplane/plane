@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Search } from "lucide-react";
 // hooks
 import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { PageHead } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
@@ -16,7 +17,6 @@ import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";

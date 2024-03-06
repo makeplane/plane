@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -8,6 +9,7 @@ import { Sparkle } from "lucide-react";
 // hooks
 
 import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover, PageHead } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
 import { IssuePeekOverview } from "components/issues";
@@ -22,8 +24,6 @@ import { FileService } from "services/file.service";
 // layouts
 // components
 // ui
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // assets
 // helpers
 // types

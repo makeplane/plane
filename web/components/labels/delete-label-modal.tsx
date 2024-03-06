@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useLabel } from "hooks/store";
 // icons
-import { AlertTriangle } from "lucide-react";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IIssueLabel } from "@plane/types";
 

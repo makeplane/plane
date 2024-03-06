@@ -4,11 +4,11 @@ import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
 // hooks
-import { useEventTracker, useProject, useUser } from "hooks/store";
-// ui
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import useToast from "hooks/use-toast";
 import { ImagePickerPopover } from "components/core";
+// ui
+// components
 import { MemberDropdown } from "components/dropdowns";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
@@ -16,10 +16,10 @@ import { PROJECT_CREATED } from "constants/event-tracker";
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
+import { useEventTracker, useProject, useUser } from "hooks/store";
 // constants
 // constants
 import { useEventTracker, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 
 type Props = {
   isOpen: boolean;

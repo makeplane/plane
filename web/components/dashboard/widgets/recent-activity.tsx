@@ -5,16 +5,16 @@ import { History } from "lucide-react";
 // hooks
 // components
 import { Avatar } from "@plane/ui";
+import { Avatar, getButtonStyling } from "@plane/ui";
 import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
-import { Avatar, getButtonStyling } from "@plane/ui";
 // helpers
+import { cn } from "helpers/common.helper";
 import { calculateTimeAgo } from "helpers/date-time.helper";
 import { useDashboard, useUser } from "hooks/store";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
-import { cn } from "helpers/common.helper";
 
 const WIDGET_KEY = "recent_activity";
 

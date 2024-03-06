@@ -16,11 +16,11 @@ import { Listbox, Transition } from "@headlessui/react";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 // services
 // hooks
-import { useEventTracker } from "hooks/store";
-// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import useToast from "hooks/use-toast";
 import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
+// ui
+// components
 // hooks
 // types
 // constants
@@ -29,8 +29,8 @@ import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 import { useEventTracker } from "hooks/store";
+import { useEventTracker } from "hooks/store";
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
-import useToast from "hooks/use-toast";
 // assets
 import userDark from "public/onboarding/user-dark.svg";
 import userLight from "public/onboarding/user-light.svg";

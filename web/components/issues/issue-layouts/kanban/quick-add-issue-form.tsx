@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // hooks
+import { setPromiseToast } from "@plane/ui";
+import useToast from "hooks/use-toast";
 import { ISSUE_CREATED } from "constants/event-tracker";
+import { createIssuePayload } from "helpers/issue.helper";
 import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useToast from "hooks/use-toast";
 // helpers
-import { createIssuePayload } from "helpers/issue.helper";
 // ui
-import { setPromiseToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 // constants

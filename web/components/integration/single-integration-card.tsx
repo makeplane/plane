@@ -5,15 +5,15 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 // services
-import { IntegrationService } from "services/integrations";
 // hooks
+import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { useApplication, useUser } from "hooks/store";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
+import { IntegrationService } from "services/integrations";
 import { IntegrationService } from "services/integrations";
 // types
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";

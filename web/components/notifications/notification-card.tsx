@@ -5,18 +5,18 @@ import { useRouter } from "next/router";
 import { Menu } from "@headlessui/react";
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 // hooks
-import { useEventTracker } from "hooks/store";
-// icons
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
+import useToast from "hooks/use-toast";
 import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
+// icons
+// constants
 import { snoozeOptions } from "constants/notification";
 // helper
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
+import { useEventTracker } from "hooks/store";
 // hooks
 import { useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
 
