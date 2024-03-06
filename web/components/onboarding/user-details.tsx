@@ -11,13 +11,12 @@ import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboardin
 import { USER_DETAILS } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-// components
+// assets
+import IssuesSvg from "public/onboarding/onboarding-issues.webp";
 // services
 import { FileService } from "services/file.service";
 // types
 import { IUser } from "@plane/types";
-// assets
-import IssuesSvg from "public/onboarding/onboarding-issues.webp";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",

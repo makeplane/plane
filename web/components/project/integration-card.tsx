@@ -8,13 +8,13 @@ import { SelectRepository, SelectChannel } from "components/integration";
 import { PROJECT_GITHUB_REPOSITORY } from "constants/fetch-keys";
 // hooks
 import useToast from "hooks/use-toast";
+// icons
+import GithubLogo from "public/logos/github-square.png";
+import SlackLogo from "public/services/slack.png";
 // services
 import { ProjectService } from "services/project";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
-// icons
-import GithubLogo from "public/logos/github-square.png";
-import SlackLogo from "public/services/slack.png";
 
 type Props = {
   integration: IWorkspaceIntegration;

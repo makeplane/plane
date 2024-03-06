@@ -18,11 +18,12 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
+// lib types
+import type { NextPageWithLayout } from "lib/types";
 // services
 import { FileService } from "services/file.service";
 // types
 import type { IUser } from "@plane/types";
-import type { NextPageWithLayout } from "lib/types";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",

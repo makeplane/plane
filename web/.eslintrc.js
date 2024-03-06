@@ -83,11 +83,6 @@ module.exports = {
             group: "internal",
             position: "after",
           },
-          {
-            pattern: "public/**",
-            group: "parent",
-            position: "after",
-          },
         ],
         pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
         alphabetize: {
