@@ -29,12 +29,21 @@ interface IBaseCalendarRoot {
     [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   isCompletedCycle?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, isCompletedCycle = false } = props;
+  const {
+    issueStore,
+    issuesFilterStore,
+    QuickActions,
+    issueActions,
+    addIssuesToView,
+    viewId,
+    isCompletedCycle = false,
+  } = props;
 
   // router
   const router = useRouter();
@@ -128,6 +137,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 readOnly={!isEditingAllowed || isCompletedCycle}
               />
             )}
+            addIssuesToView={addIssuesToView}
             quickAddCallback={issueStore.quickAddIssue}
             viewId={viewId}
             readOnly={!isEditingAllowed || isCompletedCycle}
