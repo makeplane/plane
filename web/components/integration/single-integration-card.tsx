@@ -1,19 +1,21 @@
 import { useState } from "react";
-
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-// services
-// hooks
+import { CheckCircle } from "lucide-react";
+// ui
 import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+// hooks
 import { useApplication, useUser } from "hooks/store";
 import useIntegrationPopup from "hooks/use-integration-popup";
-// ui
+// services
+import { IntegrationService } from "services/integrations";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
-import { IntegrationService } from "services/integrations";
 // types
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // fetch-keys

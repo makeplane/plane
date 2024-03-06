@@ -14,8 +14,8 @@ import {
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
-import { EUserProjectRoles } from "constants/project";
 import { ISSUE_DELETED } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
 // hooks
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 // types

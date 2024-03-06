@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
-import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar } from "@plane/ui";
 import {
   CustomMenu,
   Tooltip,
@@ -228,7 +227,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                 </Tooltip>
               </div>
 
-              <button onClick={openCycleOverview} className="flex-shrink-0 z-[5] invisible group-hover:visible">
+              <button onClick={openCycleOverview} className="invisible z-[5] flex-shrink-0 group-hover:visible">
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>

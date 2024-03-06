@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 // hooks
-import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";

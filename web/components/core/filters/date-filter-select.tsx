@@ -1,7 +1,6 @@
 import React from "react";
 import { CalendarDays } from "lucide-react";
 // ui
-import { CalendarDays } from "lucide-react";
 import { CustomSelect, CalendarAfterIcon, CalendarBeforeIcon } from "@plane/ui";
 
 type Props = {

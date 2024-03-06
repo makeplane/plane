@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { Pencil, Trash2 } from "lucide-react";
-import { Button, CustomMenu } from "@plane/ui";
 import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { orderArrayBy } from "helpers/array.helper";
 import { useProject } from "hooks/store";

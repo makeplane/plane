@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// services
+// icons
+import { Search } from "lucide-react";
 // ui
 import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
-// icons
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { useProject, useProjectState } from "hooks/store";
+// services
 import { IssueService } from "services/issue";
 
 type Props = {

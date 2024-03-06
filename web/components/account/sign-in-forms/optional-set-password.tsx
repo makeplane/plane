@@ -3,14 +3,12 @@ import { Controller, useForm } from "react-hook-form";
 // services
 // hooks
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
 import { checkEmailValidity } from "helpers/string.helper";
 import { useEventTracker } from "hooks/store";
 // ui
 // helpers
 // icons
-import { useEventTracker } from "hooks/store";
 import { AuthService } from "services/auth.service";
 
 type Props = {
@@ -158,7 +156,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
+          <p className="mt-2 pb-3 text-xs text-onboarding-text-200">
             Whatever you choose now will be your account{"'"}s password until you change it.
           </p>
         </div>

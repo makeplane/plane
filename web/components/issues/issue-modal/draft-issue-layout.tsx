@@ -3,7 +3,8 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
+import { ConfirmIssueDiscard } from "components/issues";
+import { IssueFormRoot } from "components/issues/issue-modal/form";
 import { useEventTracker } from "hooks/store";
 // services
 import { IssueDraftService } from "services/issue";

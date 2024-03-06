@@ -139,7 +139,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               value={watch("comment_html") ?? ""}
               debouncedUpdatesEnabled={false}
               customClassName="min-h-[50px] p-3 shadow-sm"
-              onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
+              onChange={(comment_json: any, comment_html: string) => setValue("comment_html", comment_html)}
               mentionSuggestions={mentionSuggestions}
               mentionHighlights={mentionHighlights}
             />
@@ -150,7 +150,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
               onClick={handleSubmit(onEnter)}
               disabled={isSubmitting || isEmpty}
               className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
-                isEmpty ? "bg-gray-200 cursor-not-allowed" : "hover:bg-green-500"
+                isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
               }`}
             >
               <Check

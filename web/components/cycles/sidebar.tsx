@@ -4,34 +4,28 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
-// services
-// hooks
+// icons
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
+// ui
 import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
-import { SidebarProgressStats } from "components/core";
 // components
+import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
-// ui
-// icons
+import { DateRangeDropdown } from "components/dropdowns";
+// constants
+import { CYCLE_STATUS } from "constants/cycle";
+import { CYCLE_UPDATED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // helpers
 import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import { CycleService } from "services/cycle.service";
-import { CycleService } from "services/cycle.service";
 // hooks
-// components
-// ui
-// icons
-// helpers
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+// services
+import { CycleService } from "services/cycle.service";
 // types
 import { ICycle } from "@plane/types";
-// constants
-// fetch-keys
 
 type Props = {
   cycleId: string;
@@ -304,7 +298,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <CalendarClock className="h-4 w-4" />
               <span className="text-base">Date range</span>
             </div>
-            <div className="w-3/5 h-7">
+            <div className="h-7 w-3/5">
               <Controller
                 control={control}
                 name="start_date"

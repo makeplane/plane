@@ -2,7 +2,6 @@ import { Copy } from "lucide-react";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import useToast from "hooks/use-toast";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types

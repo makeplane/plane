@@ -5,7 +5,6 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { Button } from "@plane/ui";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { API_TOKENS_LIST } from "constants/fetch-keys";
 import { APITokenService } from "services/api_token.service";
 // ui

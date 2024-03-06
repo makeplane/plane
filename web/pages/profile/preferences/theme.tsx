@@ -2,7 +2,6 @@ import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // ui
-import { Spinner } from "@plane/ui";
 import { Spinner, setPromiseToast } from "@plane/ui";
 // components
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
@@ -55,7 +54,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title="Profile - Theme Prefrence" />
       {currentUser ? (
-        <div className="mx-auto mt-10 md:mt-14 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
+        <div className="mx-auto mt-10 h-full w-full overflow-y-auto px-6 pb-8 md:mt-14 lg:px-20">
           <div className="flex items-center border-b border-custom-border-100 pb-3.5">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>

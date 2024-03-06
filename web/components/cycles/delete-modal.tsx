@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
-import { Button } from "@plane/ui";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { CYCLE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useCycle } from "hooks/store";

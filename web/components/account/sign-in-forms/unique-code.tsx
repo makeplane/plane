@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
-import { Button, Input } from "@plane/ui";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
+
 import { CODE_VERIFIED } from "constants/event-tracker";
 import { checkEmailValidity } from "helpers/string.helper";
 import { useEventTracker } from "hooks/store";
-import { useEventTracker } from "hooks/store";
-import useTimer from "hooks/use-timer";
+
 import useTimer from "hooks/use-timer";
 import { AuthService } from "services/auth.service";
 import { UserService } from "services/user.service";

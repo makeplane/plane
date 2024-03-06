@@ -178,7 +178,7 @@ export const getMonthChartItemPositionWidthInMonth = (chartData: ChartDataType, 
   const positionDaysDifference: number = Math.abs(Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24)));
   scrollPosition = positionDaysDifference * chartData.data.width;
 
-  var diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
+  let diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
   diffMonths -= startDate.getMonth();
   diffMonths += itemStartDate.getMonth();
 

@@ -5,9 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
 // hooks
 import { UserCircle2 } from "lucide-react";
-import { Button } from "@plane/ui";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { MAX_FILE_SIZE } from "constants/common";
 import { useApplication, useWorkspace } from "hooks/store";
 // services

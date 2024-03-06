@@ -5,12 +5,9 @@ import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
 import { AlertCircle, Search, X } from "lucide-react";
-import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
 //icons
-import { ContrastIcon, TransferIcon } from "@plane/ui";
-import useToast from "hooks/use-toast";
+import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { EIssuesStoreType } from "constants/issue";
-import { useCycle, useIssues } from "hooks/store";
 import { useCycle, useIssues } from "hooks/store";
 //icons
 // constants
