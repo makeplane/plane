@@ -100,8 +100,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
     if (!workspaceSlug) return;
+
     if (!projectId || issueId === undefined) {
-      setDescription("<p></p>");
+      setDescription(data?.description_html || "<p></p>");
       return;
     }
     const response = await fetchIssue(workspaceSlug, projectId, issueId, isDraft ? "DRAFT" : "DEFAULT");
