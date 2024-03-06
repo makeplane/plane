@@ -1,18 +1,8 @@
 import { Fragment, useCallback, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import { Tab } from "@headlessui/react";
 // hooks
-import { Tooltip } from "@plane/ui";
-import { PageHead } from "components/core";
-import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-import { CyclesHeader } from "components/headers";
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
-import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
-import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { useEventTracker, useCycle, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
@@ -22,7 +12,9 @@ import { PageHead } from "components/core";
 import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 import { EmptyState } from "components/empty-state";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // ui
+import { Tooltip } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { TCycleView, TCycleLayout } from "@plane/types";

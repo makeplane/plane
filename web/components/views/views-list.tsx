@@ -4,11 +4,11 @@ import { Search } from "lucide-react";
 // hooks
 import { useApplication, useProjectView } from "hooks/store";
 // components
-import { Input } from "@plane/ui";
 import { EmptyState } from "components/empty-state";
-// ui
 import { ViewListLoader } from "components/ui";
 import { ProjectViewListItem } from "components/views";
+// ui
+import { Input } from "@plane/ui";
 // constants
 import { EmptyStateType } from "constants/empty-state";
 
