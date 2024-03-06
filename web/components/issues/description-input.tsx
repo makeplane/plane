@@ -1,59 +1,54 @@
 import { FC, useState, useEffect } from "react";
-import { observer } from "mobx-react";
 // components
-import { Loader } from "@plane/ui";
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
-// store hooks
+import { Loader } from "@plane/ui";
+// hooks
 import { useMention, useWorkspace } from "hooks/store";
+import useDebounce from "hooks/use-debounce";
 // services
 import { FileService } from "services/file.service";
 const fileService = new FileService();
 // types
 import { TIssueOperations } from "./issue-detail";
-// hooks
-import useDebounce from "hooks/use-debounce";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 export type IssueDescriptionInputProps = {
-  disabled?: boolean;
-  value: string | undefined | null;
   workspaceSlug: string;
-  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
-  issueOperations: TIssueOperations;
   projectId: string;
   issueId: string;
+  value: string | undefined;
+  initialValue: string | undefined;
+  disabled?: boolean;
+  issueOperations: TIssueOperations;
+  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 };
 
-export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
-  const { disabled, value, workspaceSlug, setIsSubmitting, issueId, issueOperations, projectId } = props;
+export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => {
+  const { workspaceSlug, projectId, issueId, value, initialValue, disabled, issueOperations, setIsSubmitting } = props;
   // states
   const [descriptionHTML, setDescriptionHTML] = useState(value);
   // store hooks
   const { mentionHighlights, mentionSuggestions } = useMention();
-  const workspaceStore = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   // hooks
-  const { setShowAlert } = useReloadConfirmations();
   const debouncedValue = useDebounce(descriptionHTML, 1500);
   // computed values
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
   useEffect(() => {
     setDescriptionHTML(value);
   }, [value]);
 
   useEffect(() => {
-    if (debouncedValue || debouncedValue === "") {
-      issueOperations
-        .update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }, false)
-        .finally(() => {
-          setIsSubmitting("saved");
-        });
+    if (debouncedValue && debouncedValue !== value) {
+      issueOperations.update(workspaceSlug, projectId, issueId, { description_html: debouncedValue }).finally(() => {
+        setIsSubmitting("submitted");
+      });
     }
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
-  if (!descriptionHTML && descriptionHTML !== "") {
+  if (!descriptionHTML) {
     return (
       <Loader>
         <Loader.Item height="150px" />
@@ -79,17 +74,15 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       deleteFile={fileService.getDeleteImageFunction(workspaceId)}
       restoreFile={fileService.getRestoreImageFunction(workspaceId)}
       value={descriptionHTML}
-      setShouldShowAlert={setShowAlert}
-      setIsSubmitting={setIsSubmitting}
+      initialValue={initialValue}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
-      onChange={(description: Object, description_html: string) => {
-        setShowAlert(true);
+      onChange={(description: any, description_html: string) => {
         setIsSubmitting("submitting");
-        setDescriptionHTML(description_html);
+        setDescriptionHTML(description_html === "" ? "<p></p>" : description_html);
       }}
       mentionSuggestions={mentionSuggestions}
       mentionHighlights={mentionHighlights}
     />
   );
-});
+};

@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import { Combobox } from "@headlessui/react";
-import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
 // hooks
+import { Check, Component, Plus, Search, Tag } from "lucide-react";
+import { IssueLabelsList } from "components/ui";
 import { useLabel } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
-import { IssueLabelsList } from "components/ui";
 // icons
-import { Check, Component, Plus, Search, Tag } from "lucide-react";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -154,22 +154,22 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                             className={({ active }) =>
                               `${
                                 active ? "bg-custom-background-80" : ""
-                              } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
                             }
                             value={label.id}
                           >
                             {({ selected }) => (
                               <div className="flex w-full justify-between gap-2 rounded">
-                                <div className="flex items-center justify-start gap-2">
+                                <div className="flex items-center justify-start gap-2 truncate">
                                   <span
                                     className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                                     style={{
                                       backgroundColor: label.color,
                                     }}
                                   />
-                                  <span>{label.name}</span>
+                                  <span className="truncate">{label.name}</span>
                                 </div>
-                                <div className="flex items-center justify-center rounded p-1">
+                                <div className="flex shrink-0 items-center justify-center rounded p-1">
                                   <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                 </div>
                               </div>

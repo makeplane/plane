@@ -2,13 +2,9 @@ import { useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { useIssues } from "hooks/store/use-issues";
 import { TIssue } from "@plane/types";
-import { useProject } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -23,14 +19,13 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const { issueMap } = useIssues();
 
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const { setToastAlert } = useToast();
   // hooks
   const { getProjectById } = useProject();
 
   useEffect(() => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
   }, [isOpen]);
 
   if (!dataId && !data) return null;
@@ -38,25 +33,25 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   const issue = data ? data : issueMap[dataId!];
 
   const onClose = () => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
     handleClose();
   };
 
   const handleIssueDelete = async () => {
-    setIsDeleteLoading(true);
+    setIsDeleting(true);
     if (onSubmit)
       await onSubmit()
         .then(() => {
           onClose();
         })
         .catch(() => {
-          setToastAlert({
+          setToast({
             title: "Error",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Failed to delete issue",
           });
         })
-        .finally(() => setIsDeleteLoading(false));
+        .finally(() => setIsDeleting(false));
   };
 
   return (
@@ -109,14 +104,8 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      tabIndex={1}
-                      onClick={handleIssueDelete}
-                      loading={isDeleteLoading}
-                    >
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                    <Button variant="danger" size="sm" tabIndex={1} onClick={handleIssueDelete} loading={isDeleting}>
+                      {isDeleting ? "Deleting" : "Delete"}
                     </Button>
                   </div>
                 </div>

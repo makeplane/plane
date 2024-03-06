@@ -1,8 +1,8 @@
 import React from "react";
 import { RefreshCw } from "lucide-react";
 // types
-import { TIssue } from "@plane/types";
 import { useProject } from "hooks/store";
+import { TIssue } from "@plane/types";
 
 type Props = {
   isSubmitting: "submitting" | "submitted" | "saved";

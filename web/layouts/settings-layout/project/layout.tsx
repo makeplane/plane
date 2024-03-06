@@ -1,16 +1,16 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
-import { useUser } from "hooks/store";
 // components
-import { ProjectSettingsSidebar } from "./sidebar";
+import { Button, LayersIcon } from "@plane/ui";
 import { NotAuthorizedView } from "components/auth-screens";
 // ui
-import { Button, LayersIcon } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useUser } from "hooks/store";
+import { ProjectSettingsSidebar } from "./sidebar";
 
 export interface IProjectSettingLayout {
   children: ReactNode;
@@ -41,11 +41,11 @@ export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) 
       }
     />
   ) : (
-    <div className="inset-y-0 z-20 flex flex-grow-0 h-full w-full gap-2 overflow-x-hidden overflow-y-scroll">
+    <div className="inset-y-0 z-20 flex flex-grow-0 h-full w-full">
       <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8 sm:hidden hidden md:block lg:block">
         <ProjectSettingsSidebar />
       </div>
-      <div className="w-full pl-10 sm:pl-10 md:pl-0 lg:pl-0">
+      <div className="w-full pl-10 sm:pl-10 md:pl-0 lg:pl-0 overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
         {children}
       </div>
     </div>

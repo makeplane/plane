@@ -1,8 +1,10 @@
 import { FC, Fragment } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
+// ui
+import { Spinner } from "@plane/ui";
 import {
   ListLayout,
   CalendarLayout,
@@ -13,14 +15,12 @@ import {
   ProjectEmptyState,
   IssuePeekOverview,
 } from "components/issues";
-// ui
-import { Spinner } from "@plane/ui";
 // hooks
-import { useIssues } from "hooks/store";
 // helpers
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
 
 export const ProjectLayoutRoot: FC = observer(() => {
   // router
@@ -29,16 +29,20 @@ export const ProjectLayoutRoot: FC = observer(() => {
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-      await issues?.fetchIssues(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        issues?.groupedIssueIds ? "mutation" : "init-loader"
-      );
-    }
-  });
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 

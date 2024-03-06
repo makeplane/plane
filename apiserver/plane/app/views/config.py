@@ -66,15 +66,15 @@ class ConfigurationEndpoint(BaseAPIView):
                 },
                 {
                     "key": "SLACK_CLIENT_ID",
-                    "default": os.environ.get("SLACK_CLIENT_ID", "1"),
+                    "default": os.environ.get("SLACK_CLIENT_ID", None),
                 },
                 {
                     "key": "POSTHOG_API_KEY",
-                    "default": os.environ.get("POSTHOG_API_KEY", "1"),
+                    "default": os.environ.get("POSTHOG_API_KEY", None),
                 },
                 {
                     "key": "POSTHOG_HOST",
-                    "default": os.environ.get("POSTHOG_HOST", "1"),
+                    "default": os.environ.get("POSTHOG_HOST", None),
                 },
                 {
                     "key": "UNSPLASH_ACCESS_KEY",
@@ -181,11 +181,11 @@ class MobileConfigurationEndpoint(BaseAPIView):
                 },
                 {
                     "key": "POSTHOG_API_KEY",
-                    "default": os.environ.get("POSTHOG_API_KEY", "1"),
+                    "default": os.environ.get("POSTHOG_API_KEY", None),
                 },
                 {
                     "key": "POSTHOG_HOST",
-                    "default": os.environ.get("POSTHOG_HOST", "1"),
+                    "default": os.environ.get("POSTHOG_HOST", None),
                 },
                 {
                     "key": "UNSPLASH_ACCESS_KEY",

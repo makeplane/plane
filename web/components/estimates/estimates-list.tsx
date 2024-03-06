@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 // store hooks
-import { useEstimate, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
+import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { orderArrayBy } from "helpers/array.helper";
+import { useEstimate, useProject, useUser } from "hooks/store";
+// components
 // ui
-import { Button, Loader } from "@plane/ui";
 // types
 import { IEstimate } from "@plane/types";
 // helpers
-import { orderArrayBy } from "helpers/array.helper";
 // constants
-import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export const EstimatesList: React.FC = observer(() => {
   // states
@@ -31,8 +30,6 @@ export const EstimatesList: React.FC = observer(() => {
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
   const { currentUser } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -50,8 +47,8 @@ export const EstimatesList: React.FC = observer(() => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: errorString ?? "Estimate could not be disabled. Please try again",
       });

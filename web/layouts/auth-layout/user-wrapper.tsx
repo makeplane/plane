@@ -1,12 +1,12 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
 // hooks
+import { Spinner } from "@plane/ui";
 import { useUser, useWorkspace } from "hooks/store";
 // ui
-import { Spinner } from "@plane/ui";
 
 export interface IUserAuthWrapper {
   children: ReactNode;

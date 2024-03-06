@@ -1,10 +1,7 @@
 import React from "react";
-
+import { CalendarDays } from "lucide-react";
 // ui
 import { CustomSelect, CalendarAfterIcon, CalendarBeforeIcon } from "@plane/ui";
-// icons
-import { CalendarDays } from "lucide-react";
-// fetch-keys
 
 type Props = {
   title: string;
@@ -22,17 +19,17 @@ const dueDateRange: DueDate[] = [
   {
     name: "before",
     value: "before",
-    icon: <CalendarBeforeIcon className="h-4 w-4 " />,
+    icon: <CalendarBeforeIcon className="h-4 w-4" />,
   },
   {
     name: "after",
     value: "after",
-    icon: <CalendarAfterIcon className="h-4 w-4 " />,
+    icon: <CalendarAfterIcon className="h-4 w-4" />,
   },
   {
     name: "range",
     value: "range",
-    icon: <CalendarDays className="h-4 w-4 " />,
+    icon: <CalendarDays className="h-4 w-4" />,
   },
 ];
 
@@ -51,10 +48,10 @@ export const DateFilterSelect: React.FC<Props> = ({ title, value, onChange }) =>
   >
     {dueDateRange.map((option, index) => (
       <CustomSelect.Option key={index} value={option.value}>
-        <>
+        <div className="flex items-center gap-2">
           <span>{option.icon}</span>
           {title} {option.name}
-        </>
+        </div>
       </CustomSelect.Option>
     ))}
   </CustomSelect>

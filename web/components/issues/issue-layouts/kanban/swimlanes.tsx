@@ -1,10 +1,8 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { KanBan } from "./default";
-import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
-import { HeaderGroupByCard } from "./headers/group-by-card";
-// types
+import { TCreateModalStoreTypes } from "constants/issue";
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -16,11 +14,13 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
 } from "@plane/types";
-// constants
 import { EIssueActions } from "../types";
-import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import { getGroupByColumns } from "../utils";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { KanBan } from "./default";
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
+// types
+// constants
 
 interface ISubGroupSwimlaneHeader {
   issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
@@ -30,6 +30,15 @@ interface ISubGroupSwimlaneHeader {
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
 }
+
+const getSubGroupHeaderIssuesCount = (issueIds: TSubGroupedIssues, groupById: string) => {
+  let headerCount = 0;
+  Object.keys(issueIds).map((groupState) => {
+    headerCount = headerCount + (issueIds?.[groupState]?.[groupById]?.length || 0);
+  });
+  return headerCount;
+};
+
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   issueIds,
   sub_group_by,
@@ -38,18 +47,18 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   kanbanFilters,
   handleKanbanFilters,
 }) => (
-  <div className="relative flex h-max min-h-full w-full items-center">
+  <div className="relative flex h-max min-h-full w-full items-center gap-2">
     {list &&
       list.length > 0 &&
       list.map((_list: IGroupByColumn) => (
-        <div key={`${sub_group_by}_${_list.id}`} className="flex w-[340px] flex-shrink-0 flex-col">
+        <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
           <HeaderGroupByCard
             sub_group_by={sub_group_by}
             group_by={group_by}
             column_id={_list.id}
             icon={_list.icon}
             title={_list.name}
-            count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
+            count={getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, _list?.id)}
             kanbanFilters={kanbanFilters}
             handleKanbanFilters={handleKanbanFilters}
             issuePayload={_list.payload}
@@ -120,7 +129,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
       {list &&
         list.length > 0 &&
         list.map((_list: any) => (
-          <div className="flex flex-shrink-0 flex-col">
+          <div key={_list.id} className="flex flex-shrink-0 flex-col">
             <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
               <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
                 <HeaderSubGroupByCard
@@ -217,10 +226,28 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
   const member = useMember();
   const project = useProject();
   const label = useLabel();
+  const cycle = useCycle();
+  const projectModule = useModule();
   const projectState = useProjectState();
 
-  const groupByList = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member);
-  const subGroupByList = getGroupByColumns(sub_group_by as GroupByColumnTypes, project, label, projectState, member);
+  const groupByList = getGroupByColumns(
+    group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    projectModule,
+    label,
+    projectState,
+    member
+  );
+  const subGroupByList = getGroupByColumns(
+    sub_group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    projectModule,
+    label,
+    projectState,
+    member
+  );
 
   if (!groupByList || !subGroupByList) return null;
 

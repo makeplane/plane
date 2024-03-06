@@ -1,23 +1,25 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
-import { useUser } from "hooks/store";
-// components
 import {
+  AppliedCycleFilters,
   AppliedDateFilters,
   AppliedLabelsFilters,
   AppliedMembersFilters,
+  AppliedModuleFilters,
   AppliedPriorityFilters,
   AppliedProjectFilters,
   AppliedStateFilters,
   AppliedStateGroupFilters,
 } from "components/issues";
-// helpers
+import { EUserProjectRoles } from "constants/project";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { useApplication, useUser } from "hooks/store";
+// components
+// helpers
 // types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -34,6 +36,9 @@ const dateFilters = ["start_date", "target_date"];
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, states, alwaysAllowEditing } = props;
   // store hooks
+  const {
+    router: { moduleId, cycleId },
+  } = useApplication();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -101,6 +106,20 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <AppliedProjectFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter("project", val)}
+                  values={value}
+                />
+              )}
+              {filterKey === "cycle" && !cycleId && (
+                <AppliedCycleFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("cycle", val)}
+                  values={value}
+                />
+              )}
+              {filterKey === "module" && !moduleId && (
+                <AppliedModuleFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("module", val)}
                   values={value}
                 />
               )}

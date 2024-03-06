@@ -1,22 +1,21 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
-// hooks
-import { useProjectView, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
-// ui
-import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
+// constants
+import { EUserProjectRoles } from "constants/project";
 // helpers
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useProjectView, useUser } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
-// constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   view: IProjectView;
@@ -30,8 +29,6 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -54,8 +51,8 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/views/${view.id}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "View link copied to clipboard.",
       });
@@ -80,12 +77,9 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
         <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-          <div className="relative flex w-full items-center justify-between rounded p-4">
+          <div className="relative flex h-[52px] w-full items-center justify-between rounded p-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4 overflow-hidden">
-                <div className="grid h-10 w-10 flex-shrink-0 place-items-center rounded bg-custom-background-90 group-hover:bg-custom-background-100">
-                  <PhotoFilterIcon className="h-3.5 w-3.5" />
-                </div>
                 <div className="flex flex-col overflow-hidden ">
                   <p className="truncate break-all text-sm font-medium  leading-4">{view.name}</p>
                   {view?.description && <p className="break-all text-xs text-custom-text-200">{view.description}</p>}

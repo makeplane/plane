@@ -1,15 +1,15 @@
-import { useRouter } from "next/router";
+import { useMemo } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hoks
+import { ModuleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
-import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
 
 export const ModuleCalendarLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
@@ -33,6 +33,10 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
       [EIssueActions.REMOVE]: async (issue: TIssue) => {
         if (!workspaceSlug || !moduleId) return;
         await issues.removeIssueFromModule(workspaceSlug, issue.project_id, moduleId, issue.id);
+      },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !moduleId) return;
+        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
       },
     }),
     [issues, workspaceSlug, moduleId]

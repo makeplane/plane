@@ -1,19 +1,20 @@
 import { linearGradientDef } from "@nivo/core";
 // assets
-import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
-import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
-import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
-import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { ContrastIcon } from "@plane/ui";
+import { Props } from "components/icons/types";
 import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
+import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
+import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
 import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-issues.svg";
+import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
+import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
 // types
-import { TDurationFilterOptions, TIssuesListTypes, TStateGroups } from "@plane/types";
+import { TIssuesListTypes, TStateGroups } from "@plane/types";
 import { Props } from "components/icons/types";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
 // icons
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
-import { ContrastIcon } from "@plane/ui";
 
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
@@ -116,30 +117,43 @@ export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
   cancelled: "#E5484D",
 };
 
+export enum EDurationFilters {
+  NONE = "none",
+  TODAY = "today",
+  THIS_WEEK = "this_week",
+  THIS_MONTH = "this_month",
+  THIS_YEAR = "this_year",
+  CUSTOM = "custom",
+}
+
 // filter duration options
 export const DURATION_FILTER_OPTIONS: {
-  key: TDurationFilterOptions;
+  key: EDurationFilters;
   label: string;
 }[] = [
   {
-    key: "none",
+    key: EDurationFilters.NONE,
     label: "None",
   },
   {
-    key: "today",
+    key: EDurationFilters.TODAY,
     label: "Due today",
   },
   {
-    key: "this_week",
-    label: " Due this week",
+    key: EDurationFilters.THIS_WEEK,
+    label: "Due this week",
   },
   {
-    key: "this_month",
+    key: EDurationFilters.THIS_MONTH,
     label: "Due this month",
   },
   {
-    key: "this_year",
+    key: EDurationFilters.THIS_YEAR,
     label: "Due this year",
+  },
+  {
+    key: EDurationFilters.CUSTOM,
+    label: "Custom",
   },
 ];
 
@@ -256,7 +270,7 @@ export const SIDEBAR_MENU_ITEMS: {
     label: "Analytics",
     href: `/analytics`,
     access: EUserWorkspaceRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/analytics`,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics`),
     Icon: BarChart2,
   },
   {

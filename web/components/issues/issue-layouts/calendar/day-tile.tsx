@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
 import { Droppable } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
 // components
 import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "components/issues";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -52,12 +52,15 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
 
   const totalIssues = issueIdList?.length ?? 0;
+
+  const isToday = date.date.toDateString() === new Date().toDateString();
+
   return (
     <>
       <div className="group relative flex h-full w-full flex-col bg-custom-background-90">
         {/* header */}
         <div
-          className={`flex-shrink-0 px-2 py-1 text-right text-xs ${
+          className={`flex items-center justify-end flex-shrink-0 px-2 py-1.5 text-right text-xs ${
             calendarLayout === "month" // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
@@ -67,10 +70,16 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             date.date.getDay() === 0 || date.date.getDay() === 6
               ? "bg-custom-background-90"
               : "bg-custom-background-100"
-          }`}
+          } `}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
-          {date.date.getDate()}
+          {isToday ? (
+            <span className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-primary-100 text-white">
+              {date.date.getDate()}
+            </span>
+          ) : (
+            <>{date.date.getDate()}</>
+          )}
         </div>
 
         {/* content */}
@@ -82,7 +91,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                   snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
                     ? "bg-custom-background-90"
                     : "bg-custom-background-100"
-                } ${calendarLayout === "month" ? "min-h-[9rem]" : ""}`}
+                } ${calendarLayout === "month" ? "min-h-[5rem]" : ""}`}
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >

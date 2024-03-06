@@ -1,3 +1,4 @@
+import * as DOMPurify from "dompurify";
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
@@ -223,4 +224,11 @@ export const checkEmailValidity = (email: string): boolean => {
     );
 
   return isEmailValid;
+};
+
+export const isEmptyHtmlString = (htmlString: string) => {
+  // Remove HTML tags using regex
+  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] });
+  // Trim the string and check if it's empty
+  return cleanText.trim() === "";
 };

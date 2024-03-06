@@ -1,28 +1,23 @@
 import { FC, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { MoveRight, MoveDiagonal, Link2, Trash2 } from "lucide-react";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useKeypress from "hooks/use-keypress";
-// store hooks
-import { useIssueDetail, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { Spinner } from "@plane/ui";
 // components
 import {
-  DeleteArchivedIssueModal,
   DeleteIssueModal,
-  IssueSubscription,
-  IssueUpdateStatus,
+  IssuePeekOverviewHeader,
+  TPeekModes,
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
   TIssueOperations,
+  ArchiveIssueModal,
 } from "components/issues";
+// hooks
+import { useIssueDetail } from "hooks/store";
+import useKeypress from "hooks/use-keypress";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
-// ui
-import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -34,77 +29,65 @@ interface IIssueView {
   issueOperations: TIssueOperations;
 }
 
-type TPeekModes = "side-peek" | "modal" | "full-screen";
-
-const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
-  {
-    key: "side-peek",
-    icon: SidePanelIcon,
-    title: "Side Peek",
-  },
-  {
-    key: "modal",
-    icon: CenterPanelIcon,
-    title: "Modal",
-  },
-  {
-    key: "full-screen",
-    icon: FullScreenPanelIcon,
-    title: "Full Screen",
-  },
-];
-
 export const IssueView: FC<IIssueView> = observer((props) => {
   const { workspaceSlug, projectId, issueId, isLoading, is_archived, disabled = false, issueOperations } = props;
-  // router
-  const router = useRouter();
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
-  const { setPeekIssue, isAnyModalOpen, isDeleteIssueModalOpen, toggleDeleteIssueModal } = useIssueDetail();
-  const { currentUser } = useUser();
   const {
+    setPeekIssue,
+    isAnyModalOpen,
+    isDeleteIssueModalOpen,
+    isArchiveIssueModalOpen,
+    toggleDeleteIssueModal,
+    toggleArchiveIssueModal,
     issue: { getIssueById },
   } = useIssueDetail();
-  const { setToastAlert } = useToast();
-  // derived values
-  const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
   const issue = getIssueById(issueId);
-
+  // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
   };
-  useOutsideClickDetector(issuePeekOverviewRef, () => !isAnyModalOpen && removeRoutePeekId());
 
-  const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${workspaceSlug}/projects/${projectId}/${is_archived ? "archived-issues" : "issues"}/${issueId}`,
-    });
+  useOutsideClickDetector(issuePeekOverviewRef, () => {
+    if (!isAnyModalOpen) {
+      removeRoutePeekId();
+    }
+  });
+  const handleKeyDown = () => {
+    const slashCommandDropdownElement = document.querySelector("#slash-command");
+    const dropdownElement = document.activeElement?.tagName === "INPUT";
+    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement) {
+      removeRoutePeekId();
+      const issueElement = document.getElementById(`issue-${issueId}`);
+      if (issueElement) issueElement?.focus();
+    }
+  };
+  useKeypress("Escape", handleKeyDown);
+
+  const handleRestore = async () => {
+    if (!issueOperations.restore) return;
+    await issueOperations.restore(workspaceSlug, projectId, issueId);
     removeRoutePeekId();
   };
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(
-      `${workspaceSlug}/projects/${projectId}/${is_archived ? "archived-issues" : "issues"}/${issueId}`
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
-
-  const handleKeyDown = () => !isAnyModalOpen && removeRoutePeekId();
-  useKeypress("Escape", handleKeyDown);
-
   return (
     <>
+      {issue && !is_archived && (
+        <ArchiveIssueModal
+          isOpen={isArchiveIssueModalOpen}
+          handleClose={() => toggleArchiveIssueModal(false)}
+          data={issue}
+          onSubmit={async () => {
+            if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
+            removeRoutePeekId();
+          }}
+        />
+      )}
+
       {issue && !is_archived && (
         <DeleteIssueModal
           isOpen={isDeleteIssueModalOpen}
@@ -118,7 +101,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       )}
 
       {issue && is_archived && (
-        <DeleteArchivedIssueModal
+        <DeleteIssueModal
           data={issue}
           isOpen={isDeleteIssueModalOpen}
           handleClose={() => toggleDeleteIssueModal(false)}
@@ -141,68 +124,22 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             }}
           >
             {/* header */}
-            <div
-              className={`relative flex items-center justify-between p-4 ${
-                currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <button onClick={removeRoutePeekId}>
-                  <MoveRight className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
-                </button>
-
-                <button onClick={redirectToIssueDetail}>
-                  <MoveDiagonal className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
-                </button>
-                {currentMode && (
-                  <div className="flex flex-shrink-0 items-center gap-2">
-                    <CustomSelect
-                      value={currentMode}
-                      onChange={(val: any) => setPeekMode(val)}
-                      customButton={
-                        <button type="button" className="">
-                          <currentMode.icon className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
-                        </button>
-                      }
-                    >
-                      {PEEK_OPTIONS.map((mode) => (
-                        <CustomSelect.Option key={mode.key} value={mode.key}>
-                          <div
-                            className={`flex items-center gap-1.5 ${
-                              currentMode.key === mode.key
-                                ? "text-custom-text-200"
-                                : "text-custom-text-400 hover:text-custom-text-200"
-                            }`}
-                          >
-                            <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
-                            {mode.title}
-                          </div>
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-x-4">
-                <IssueUpdateStatus isSubmitting={isSubmitting} />
-                <div className="flex items-center gap-4">
-                  {currentUser && !is_archived && (
-                    <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
-                  )}
-                  <button onClick={handleCopyText}>
-                    <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
-                  </button>
-                  {!disabled && (
-                    <button onClick={() => toggleDeleteIssueModal(true)}>
-                      <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-
+            <IssuePeekOverviewHeader
+              peekMode={peekMode}
+              setPeekMode={(value) => setPeekMode(value)}
+              removeRoutePeekId={removeRoutePeekId}
+              toggleDeleteIssueModal={toggleDeleteIssueModal}
+              toggleArchiveIssueModal={toggleArchiveIssueModal}
+              handleRestoreIssue={handleRestore}
+              isArchived={is_archived}
+              issueId={issueId}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              isSubmitting={isSubmitting}
+              disabled={disabled}
+            />
             {/* content */}
-            <div className="relative h-full w-full overflow-hidden overflow-y-auto">
+            <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
               {isLoading && !issue ? (
                 <div className="flex h-full w-full items-center justify-center">
                   <Spinner />
@@ -217,7 +154,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
@@ -227,13 +164,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
+                          disabled={disabled || is_archived}
                         />
 
                         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                       </div>
                     ) : (
-                      <div className={`flex h-full w-full overflow-auto`}>
+                      <div className={`vertical-scrollbar flex h-full w-full overflow-auto`}>
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
                           <div>
                             <PeekOverviewIssueDetails
@@ -241,7 +178,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               projectId={projectId}
                               issueId={issueId}
                               issueOperations={issueOperations}
-                              disabled={disabled}
+                              disabled={disabled || is_archived}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}
                             />
@@ -259,7 +196,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled}
+                            disabled={disabled || is_archived}
                           />
                         </div>
                       </div>

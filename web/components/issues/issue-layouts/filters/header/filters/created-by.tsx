@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { Avatar, Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "components/issues";
 import { useMember } from "hooks/store";
 // components
-import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Avatar, Loader } from "@plane/ui";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -22,8 +22,8 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
   // store hooks
   const { getUserDetails } = useMember();
 
-  const filteredOptions = memberIds?.filter((memberId) =>
-    getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = memberIds?.filter(
+    (memberId) => getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 

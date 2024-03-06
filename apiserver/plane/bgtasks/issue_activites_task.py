@@ -483,17 +483,23 @@ def track_archive_at(
                 )
             )
         else:
+            if requested_data.get("automation"):
+                comment = "Plane has archived the issue"
+                new_value = "archive"
+            else:
+                comment = "Actor has archived the issue"
+                new_value = "manual_archive"
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment="Plane has archived the issue",
+                    comment=comment,
                     verb="updated",
                     actor_id=actor_id,
                     field="archived_at",
                     old_value=None,
-                    new_value="archive",
+                    new_value=new_value,
                     epoch=epoch,
                 )
             )

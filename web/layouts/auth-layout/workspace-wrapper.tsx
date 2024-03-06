@@ -1,12 +1,12 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
+import { Button, Spinner } from "@plane/ui";
 import { useLabel, useMember, useProject, useUser } from "hooks/store";
 // icons
-import { Button, Spinner } from "@plane/ui";
 
 export interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -26,22 +26,26 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // fetching user workspace information
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
-    workspaceSlug ? () => membership.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
+    workspaceSlug ? () => membership.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace user projects role
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
-    workspaceSlug ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString()) : null
+    workspaceSlug ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // while data is being loaded

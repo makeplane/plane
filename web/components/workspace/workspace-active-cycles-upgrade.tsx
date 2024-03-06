@@ -1,16 +1,16 @@
 import React from "react";
-import Image from "next/image";
 import { observer } from "mobx-react";
-// hooks
-import { useUser } from "hooks/store";
-// ui
-import { getButtonStyling } from "@plane/ui";
+import Image from "next/image";
 // icons
 import { Crown } from "lucide-react";
-// helper
-import { cn } from "helpers/common.helper";
+// ui
+import { getButtonStyling } from "@plane/ui";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "constants/cycle";
+// helper
+import { cn } from "helpers/common.helper";
+// hooks
+import { useUser } from "hooks/store";
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks
@@ -19,7 +19,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const isDarkMode = currentUser?.theme.theme === "dark";
 
   return (
-    <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full">
+    <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full vertical-scrollbar scrollbar-lg">
       <div
         className={cn("flex item-center justify-between rounded-xl min-h-[25rem]", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": currentUser?.theme.theme === "dark",
@@ -75,7 +75,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-8 h-full">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
-          <div className="flex flex-col gap-2 p-4 min-h-32 w-full bg-custom-background-80 rounded-md">
+          <div key={item.title} className="flex flex-col gap-2 p-4 min-h-32 w-full bg-custom-background-80 rounded-md">
             <div className="flex items-center gap-2">
               <h3 className="font-medium">{item.title}</h3>
               <item.icon className="text-blue-500 h-4 w-4" />

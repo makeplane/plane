@@ -1,28 +1,29 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import useSWR from "swr";
 // store hooks
-import { useUser } from "hooks/store";
+import { Button } from "@plane/ui";
+import { ApiTokenListItem, CreateApiTokenModal } from "components/api-token";
+import { PageHead } from "components/core";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { WorkspaceSettingHeader } from "components/headers";
+import { APITokenSettingsLoader } from "components/ui";
+import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { API_TOKENS_LIST } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { useUser, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // component
-import { WorkspaceSettingHeader } from "components/headers";
-import { ApiTokenListItem, CreateApiTokenModal } from "components/api-token";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Button } from "@plane/ui";
-import { APITokenSettingsLoader } from "components/ui";
 // services
+import { NextPageWithLayout } from "lib/types";
 import { APITokenService } from "services/api_token.service";
 // types
-import { NextPageWithLayout } from "lib/types";
 // constants
-import { API_TOKENS_LIST } from "constants/fetch-keys";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 const apiTokenService = new APITokenService();
 
@@ -39,6 +40,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     membership: { currentWorkspaceRole },
     currentUser,
   } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
@@ -49,12 +51,16 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
   const emptyStateDetail = WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS["api-tokens"];
   const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
   const emptyStateImage = getEmptyStateImagePath("workspace-settings", "api-tokens", isLightMode);
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - API Tokens` : undefined;
 
   if (!isAdmin)
     return (
-      <div className="mt-10 flex h-full w-full justify-center p-4">
-        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-      </div>
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center p-4">
+          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        </div>
+      </>
     );
 
   if (!tokens) {
@@ -63,8 +69,9 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <PageHead title={pageTitle} />
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
-      <section className="h-full w-full overflow-y-auto py-8 pr-9">
+      <section className="w-full overflow-y-auto py-8 pr-9 ">
         {tokens.length > 0 ? (
           <>
             <div className="flex items-center justify-between border-b border-custom-border-200 py-3.5">

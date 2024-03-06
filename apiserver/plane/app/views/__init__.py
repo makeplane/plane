@@ -49,6 +49,9 @@ from .workspace import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
+    WorkspaceModulesEndpoint,
+    WorkspaceCyclesEndpoint,
 )
 from .state import StateViewSet
 from .view import (
@@ -67,6 +70,7 @@ from .cycle import (
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .issue import (
+    IssueListEndpoint,
     IssueViewSet,
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
@@ -184,3 +188,5 @@ from .dashboard import (
     DashboardEndpoint,
     WidgetsEndpoint
 )
+
+from .error_404 import custom_404_view

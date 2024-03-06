@@ -1,11 +1,12 @@
 import React, { Fragment, useState } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
+import isEmpty from "lodash/isEmpty";
 import size from "lodash/size";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
-import { useCycle, useIssues } from "hooks/store";
 // components
+import { TransferIssues, TransferIssuesModal } from "components/cycles";
 import {
   CycleAppliedFiltersRoot,
   CycleCalendarLayout,
@@ -16,10 +17,10 @@ import {
   CycleSpreadsheetLayout,
   IssuePeekOverview,
 } from "components/issues";
-import { TransferIssues, TransferIssuesModal } from "components/cycles";
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { useCycle, useIssues } from "hooks/store";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -46,7 +47,8 @@ export const CycleLayoutRoot: React.FC = observer(() => {
           cycleId.toString()
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
@@ -89,7 +91,12 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
       <div className="relative flex h-full w-full flex-col overflow-hidden">
-        {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
+        {cycleStatus === "completed" && (
+          <TransferIssues
+            handleClick={() => setTransferIssuesModal(true)}
+            disabled={!isEmpty(cycleDetails?.progress_snapshot) ?? false}
+          />
+        )}
         <CycleAppliedFiltersRoot />
 
         {issues?.groupedIssueIds?.length === 0 ? (

@@ -1,9 +1,8 @@
 import React, { Fragment } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
-import { useIssues } from "hooks/store";
 // components
 import {
   ArchivedIssueListLayout,
@@ -11,9 +10,10 @@ import {
   ProjectArchivedEmptyState,
   IssuePeekOverview,
 } from "components/issues";
+import { ListLayoutLoader } from "components/ui";
 import { EIssuesStoreType } from "constants/issue";
 // ui
-import { ListLayoutLoader } from "components/ui";
+import { useIssues } from "hooks/store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -33,7 +33,8 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
@@ -54,7 +55,7 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           <div className="relative h-full w-full overflow-auto">
             <ArchivedIssueListLayout />
           </div>
-          <IssuePeekOverview is_archived={true} />
+          <IssuePeekOverview is_archived />
         </Fragment>
       )}
     </div>

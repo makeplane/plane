@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Tab } from "@headlessui/react";
 // hooks
 import { useDashboard } from "hooks/store";
@@ -17,7 +17,7 @@ import { getCustomDates, getRedirectionFilters, getTabKey } from "helpers/dashbo
 // types
 import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
 // constants
-import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
+import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
 const WIDGET_KEY = "created_issues";
 
@@ -30,8 +30,9 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TCreatedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
   const selectedTab = getTabKey(selectedDurationFilter, widgetDetails?.widget_filters.tab);
+  const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TCreatedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -43,7 +44,10 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       filters,
     });
 
-    const filterDates = getCustomDates(filters.duration ?? selectedDurationFilter);
+    const filterDates = getCustomDates(
+      filters.duration ?? selectedDurationFilter,
+      filters.custom_dates ?? selectedCustomDates
+    );
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       issue_type: filters.tab ?? selectedTab,
@@ -52,7 +56,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(selectedDurationFilter);
+    const filterDates = getCustomDates(selectedDurationFilter, selectedCustomDates);
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
@@ -64,6 +68,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
 
   const filterParams = getRedirectionFilters(selectedTab);
   const tabsList = selectedDurationFilter === "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
+  const selectedTabIndex = tabsList.findIndex((tab) => tab.key === selectedTab);
 
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
@@ -77,34 +82,38 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           Created by you
         </Link>
         <DurationFilterDropdown
+          customDates={selectedCustomDates}
           value={selectedDurationFilter}
-          onChange={(val) => {
-            if (val === selectedDurationFilter) return;
-
-            // switch to pending tab if target date is changed to none
-            if (val === "none" && selectedTab !== "completed") {
-              handleUpdateFilters({ duration: val, tab: "pending" });
-              return;
-            }
-            // switch to upcoming tab if target date is changed to other than none
-            if (val !== "none" && selectedDurationFilter === "none" && selectedTab !== "completed") {
+          onChange={(val, customDates) => {
+            if (val === "custom" && customDates) {
               handleUpdateFilters({
                 duration: val,
-                tab: "upcoming",
+                custom_dates: customDates,
               });
               return;
             }
 
-            handleUpdateFilters({ duration: val });
+            if (val === selectedDurationFilter) return;
+
+            let newTab = selectedTab;
+            // switch to pending tab if target date is changed to none
+            if (val === "none" && selectedTab !== "completed") newTab = "pending";
+            // switch to upcoming tab if target date is changed to other than none
+            if (val !== "none" && selectedDurationFilter === "none" && selectedTab !== "completed") newTab = "upcoming";
+
+            handleUpdateFilters({
+              duration: val,
+              tab: newTab,
+            });
           }}
         />
       </div>
       <Tab.Group
         as="div"
-        selectedIndex={tabsList.findIndex((tab) => tab.key === selectedTab)}
+        selectedIndex={selectedTabIndex}
         onChange={(i) => {
-          const selectedTab = tabsList[i];
-          handleUpdateFilters({ tab: selectedTab.key ?? "pending" });
+          const newSelectedTab = tabsList[i];
+          handleUpdateFilters({ tab: newSelectedTab.key ?? "completed" });
         }}
         className="h-full flex flex-col"
       >
@@ -112,18 +121,21 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           <TabsList durationFilter={selectedDurationFilter} selectedTab={selectedTab} />
         </div>
         <Tab.Panels as="div" className="h-full">
-          {tabsList.map((tab) => (
-            <Tab.Panel key={tab.key} as="div" className="h-full flex flex-col">
-              <WidgetIssuesList
-                issues={widgetStats.issues}
-                tab={tab.key}
-                totalIssues={widgetStats.count}
-                type="created"
-                workspaceSlug={workspaceSlug}
-                isLoading={fetching}
-              />
-            </Tab.Panel>
-          ))}
+          {tabsList.map((tab) => {
+            if (tab.key !== selectedTab) return null;
+
+            return (
+              <Tab.Panel key={tab.key} as="div" className="h-full flex flex-col" static>
+                <WidgetIssuesList
+                  tab={tab.key}
+                  type="created"
+                  workspaceSlug={workspaceSlug}
+                  widgetStats={widgetStats}
+                  isLoading={fetching}
+                />
+              </Tab.Panel>
+            );
+          })}
         </Tab.Panels>
       </Tab.Group>
     </div>

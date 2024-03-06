@@ -1,14 +1,14 @@
 import { observer } from "mobx-react-lite";
 // components
-import { IssueProperties } from "../properties/all-properties";
 // hooks
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helper
 import { cn } from "helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { IssueProperties } from "../properties/all-properties";
 import { EIssueActions } from "../types";
 
 interface IssueBlockProps {
@@ -24,9 +24,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // hooks
   const {
-    router: { workspaceSlug, projectId },
+    router: { workspaceSlug },
   } = useApplication();
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
 
   const updateIssue = async (issueToUpdate: TIssue) => {
@@ -45,7 +45,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
   if (!issue) return null;
 
   const canEditIssueProperties = canEditProperties(issue.project_id);
-  const projectDetails = getProjectById(issue.project_id);
+  const projectIdentifier = getProjectIdentifierById(issue.project_id);
 
   return (
     <div
@@ -56,7 +56,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
     >
       {displayProperties && displayProperties?.key && (
         <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
-          {projectDetails?.identifier}-{issue.sequence_id}
+          {projectIdentifier}-{issue.sequence_id}
         </div>
       )}
 
@@ -65,17 +65,20 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       )}
 
       {issue?.is_draft ? (
-        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+        <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
         <ControlLink
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`}
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archived-issues" : "issues"}/${
+            issue.id
+          }`}
           target="_blank"
           onClick={() => handleIssuePeekOverview(issue)}
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issue?.tempId}
         >
-          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <Tooltip tooltipContent={issue.name}>
             <span>{issue.name}</span>
           </Tooltip>
         </ControlLink>

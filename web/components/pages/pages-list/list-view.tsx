@@ -2,16 +2,16 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 // hooks
+import { Loader } from "@plane/ui";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EUserProjectRoles } from "constants/project";
 import { useApplication, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { PagesListItem } from "./list-item";
 // ui
-import { Loader } from "@plane/ui";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 type IPagesListView = {
   pageIds: string[];
@@ -51,7 +51,7 @@ export const PagesListView: FC<IPagesListView> = (props) => {
   return (
     <>
       {projectPageIds && workspaceSlug && projectId ? (
-        <div className="h-full space-y-4 overflow-y-auto">
+        <div className="h-full space-y-4 overflow-y-auto vertical-scrollbar scrollbar-lg">
           {projectPageIds.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
               {projectPageIds.map((pageId: string) => (

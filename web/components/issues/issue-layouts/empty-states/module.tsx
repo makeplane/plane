@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { PlusIcon } from "lucide-react";
 import { useTheme } from "next-themes";
+import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EMPTY_FILTER_STATE_DETAILS, MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
+// ui
+// components
 // types
 import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
-import { EMPTY_FILTER_STATE_DETAILS, MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -51,8 +52,6 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole: userRole },
     currentUser,
   } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -60,9 +59,16 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     const issueIds = data.map((i) => i.id);
     await issues
       .addIssuesToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
+      .then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the module successfully.",
+        })
+      )
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Selected issues could not be added to the module. Please try again.",
         })
