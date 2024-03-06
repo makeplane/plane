@@ -1,10 +1,9 @@
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { Eye, EyeOff } from "lucide-react";
+import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
 

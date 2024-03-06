@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Rocket, Search, X } from "lucide-react";
 // services
-import { ProjectService } from "services/project";
-import useDebounce from "hooks/use-debounce";
-// ui
 import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+
+import useDebounce from "hooks/use-debounce";
+
+import { ProjectService } from "services/project";
+// ui
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
@@ -180,7 +182,10 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </div>
 
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md">
+                  <Combobox.Options
+                    static
+                    className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}

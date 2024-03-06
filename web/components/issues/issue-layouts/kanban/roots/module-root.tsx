@@ -1,16 +1,16 @@
 import React, { useMemo } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hook
+import { ModuleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
-import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { TIssue } from "@plane/types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export interface IModuleKanBanLayout {}
 
@@ -52,7 +52,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       issueActions={issueActions}
       issues={issues}
       issuesFilter={issuesFilter}
-      showLoader={true}
+      showLoader
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId?.toString()}
       storeType={EIssuesStoreType.MODULE}

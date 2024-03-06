@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useProject, useUser } from "hooks/store";
 // component
+import { ArchiveRestore } from "lucide-react";
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 import { SelectMonthModal } from "components/automation";
 // icon
-import { ArchiveRestore } from "lucide-react";
 // constants
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
+import { useProject, useUser } from "hooks/store";
 // types
 import { IProject } from "@plane/types";
 

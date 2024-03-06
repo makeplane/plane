@@ -1,30 +1,29 @@
 import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { DeleteIssueModal } from "components/issues";
+import { ISSUE_DELETED } from "constants/event-tracker";
+import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useUser } from "hooks/store";
 // ui
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { TIssue } from "@plane/types";
-import { EIssueActions } from "../types";
-import { IQuickActionProps } from "../list/list-view-types";
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+import { TIssue } from "@plane/types";
+import { IQuickActionProps } from "../list/list-view-types";
+import { EIssueActions } from "../types";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { DeleteIssueModal } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { useIssues } from "hooks/store/use-issues";
 import { handleDragDrop } from "./utils";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
-import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
-import { ISSUE_DELETED } from "constants/event-tracker";
 
 export interface IBaseKanBanLayout {
   issues: IProjectIssues | ICycleIssues | IDraftIssues | IModuleIssues | IProjectViewIssues | IProfileIssues;
@@ -227,15 +226,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug && projectId) {
-      let _kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (_kanbanFilters.includes(value)) _kanbanFilters = _kanbanFilters.filter((_value) => _value != value);
-      else _kanbanFilters.push(value);
+      let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+      if (kanbanFilters.includes(value)) kanbanFilters = kanbanFilters.filter((_value) => _value != value);
+      else kanbanFilters.push(value);
       issuesFilter.updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.KANBAN_FILTERS,
         {
-          [toggle]: _kanbanFilters,
+          [toggle]: kanbanFilters,
         },
         viewId
       );
@@ -260,7 +259,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       )}
 
       <div
-        className="flex relative h-full w-full overflow-auto bg-custom-background-90 vertical-scrollbar horizontal-scrollbar scrollbar-lg"
+        className="vertical-scrollbar horizontal-scrollbar scrollbar-lg relative flex h-full w-full overflow-auto bg-custom-background-90"
         ref={scrollableContainerRef}
       >
         <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
@@ -288,7 +287,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               </Droppable>
             </div>
 
-            <div className="w-max h-max">
+            <div className="h-max w-max">
               <KanBanView
                 issuesMap={issueMap}
                 issueIds={issueIds}

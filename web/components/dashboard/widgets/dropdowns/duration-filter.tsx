@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 // components
+import { CustomMenu } from "@plane/ui";
 import { DateFilterModal } from "components/core";
 // ui
-import { CustomMenu } from "@plane/ui";
 // helpers
 import { getDurationFilterDropdownLabel } from "helpers/dashboard.helper";
 // types
 import { EDurationFilters } from "@plane/types";
 // constants
-import { DURATION_FILTER_OPTIONS } from "constants/dashboard";
 
 type Props = {
   customDates?: string[];

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
+import { Popover, Transition } from "@headlessui/react";
 //hooks
-import { useCalendarView } from "hooks/store";
 // icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
+import { useCalendarView } from "hooks/store";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";

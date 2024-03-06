@@ -1,14 +1,14 @@
 import { observer } from "mobx-react-lite";
 // components
-import { IssueProperties } from "../properties/all-properties";
 // hooks
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helper
 import { cn } from "helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { IssueProperties } from "../properties/all-properties";
 import { EIssueActions } from "../types";
 
 interface IssueBlockProps {

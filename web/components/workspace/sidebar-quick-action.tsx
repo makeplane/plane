@@ -1,14 +1,14 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
-// hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateIssueModal } from "components/issues";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { EIssuesStoreType } from "constants/issue";
+import { EUserWorkspaceRoles } from "constants/workspace";
+// hooks
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
 // types
 import { TIssue } from "@plane/types";
 
@@ -27,11 +27,12 @@ export const WorkspaceSidebarQuickAction = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
 
-  const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
+  const { storedValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
 
   //useState control for displaying draft issue button instead of group hover
   const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timeoutRef = useRef<any>();
 
   const isSidebarCollapsed = themeStore.sidebarCollapsed;
@@ -41,7 +42,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   const disabled = joinedProjectIds.length === 0;
 
   const onMouseEnter = () => {
-    //if renet before timout clear the timeout
+    // if enter before time out clear the timeout
     timeoutRef?.current && clearTimeout(timeoutRef.current);
     setIsDraftButtonOpen(true);
   };
@@ -68,7 +69,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         onClose={() => setIsDraftIssueModalOpen(false)}
         data={workspaceDraftIssue ?? {}}
         onSubmit={() => removeWorkspaceDraftIssue()}
-        isDraft={true}
+        isDraft
       />
 
       <div

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
+
+import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
 import {
   useApplication,
   useEventTracker,
@@ -10,20 +14,16 @@ import {
   useIssues,
   useModule,
   useProject,
-  useWorkspace,
   useIssueDetail,
 } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
+import type { TIssue } from "@plane/types";
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import type { TIssue } from "@plane/types";
 // constants
-import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
-import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;
@@ -290,7 +290,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full mx-4 sm:max-w-4xl">
+              <Dialog.Panel className="relative mx-4 transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-4xl">
                 {withDraftIssueWrapper ? (
                   <DraftIssueLayout
                     changesMade={changesMade}

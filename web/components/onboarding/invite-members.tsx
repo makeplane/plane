@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Listbox, Transition } from "@headlessui/react";
 import {
   Control,
   Controller,
@@ -13,29 +12,30 @@ import {
   useFieldArray,
   useForm,
 } from "react-hook-form";
+import { Listbox, Transition } from "@headlessui/react";
+// icons
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// hooks
-import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
-// hooks
-import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
-// types
-import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 import { MEMBER_INVITED } from "constants/event-tracker";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // helpers
 import { getUserRole } from "helpers/user.helper";
+// hooks
+import { useEventTracker } from "hooks/store";
+import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // assets
-import user1 from "public/users/user-1.png";
-import user2 from "public/users/user-2.png";
 import userDark from "public/onboarding/user-dark.svg";
 import userLight from "public/onboarding/user-light.svg";
+import user1 from "public/users/user-1.png";
+import user2 from "public/users/user-2.png";
+// services
+import { WorkspaceService } from "services/workspace.service";
+// types
+import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -368,8 +368,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
       >
         <p className="text-base font-semibold text-onboarding-text-400">Members</p>
 
-        {Array.from({ length: 4 }).map(() => (
-          <div className="mt-6 flex items-center gap-2">
+        {Array.from({ length: 4 }).map((i) => (
+          <div key={i} className="mt-6 flex items-center gap-2">
             <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
               <Image src={resolvedTheme === "dark" ? userDark : userLight} alt="user" className="object-cover" />
             </div>

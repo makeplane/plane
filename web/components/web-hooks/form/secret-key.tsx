@@ -1,18 +1,19 @@
 import { useState, FC } from "react";
-import { useRouter } from "next/router";
-import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useWebhook, useWorkspace } from "hooks/store";
-// helpers
-import { copyTextToClipboard } from "helpers/string.helper";
-import { csvDownload } from "helpers/download.helper";
-// utils
-import { getCurrentHookAsCSV } from "../utils";
+import { useRouter } from "next/router";
+// icons
+import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { csvDownload } from "helpers/download.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
+// hooks
+import { useWebhook, useWorkspace } from "hooks/store";
 // types
 import { IWebhook } from "@plane/types";
+// utils
+import { getCurrentHookAsCSV } from "../utils";
 
 type Props = {
   data: Partial<IWebhook>;

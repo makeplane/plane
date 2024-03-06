@@ -1,27 +1,28 @@
 import React, { useCallback, useEffect, FC } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
+
 import { CommandModal, ShortcutsModal } from "components/command-palette";
+// ui
+// components
 import { BulkDeleteIssuesModal } from "components/core";
 import { CycleCreateUpdateModal } from "components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
+import { CreateUpdatePageModal } from "components/pages";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateProjectViewModal } from "components/views";
-import { CreateUpdatePageModal } from "components/pages";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
 // services
-import { IssueService } from "services/issue";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
+import { copyTextToClipboard } from "helpers/string.helper";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
+import { IssueService } from "services/issue";
 
 // services
 const issueService = new IssueService();

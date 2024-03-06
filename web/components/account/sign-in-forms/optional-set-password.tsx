@@ -157,7 +157,7 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
+          <p className="mt-2 pb-3 text-xs text-onboarding-text-200">
             Whatever you choose now will be your account{"'"}s password until you change it.
           </p>
         </div>

@@ -1,9 +1,9 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // ui
-import { CreateIcon, LayerStackIcon, Loader } from "@plane/ui";
 import { UserCircle2 } from "lucide-react";
+import { CreateIcon, LayerStackIcon, Loader } from "@plane/ui";
 // types
 import { IUserProfileData } from "@plane/types";
 

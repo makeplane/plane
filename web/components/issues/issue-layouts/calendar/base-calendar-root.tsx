@@ -1,22 +1,20 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "components/issues";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { TGroupedIssues, TIssue } from "@plane/types";
-import { IQuickActionProps } from "../list/list-view-types";
-import { EIssueActions } from "../types";
-import { handleDragDrop } from "./utils";
-import { useIssues, useUser } from "hooks/store";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { EUserProjectRoles } from "constants/project";
+import { TGroupedIssues, TIssue } from "@plane/types";
+import { IQuickActionProps } from "../list/list-view-types";
+import { EIssueActions } from "../types";
+import { handleDragDrop } from "./utils";
 
 interface IBaseCalendarRoot {
   issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;

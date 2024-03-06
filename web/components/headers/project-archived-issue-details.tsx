@@ -1,22 +1,22 @@
 import { FC } from "react";
-import useSWR from "swr";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
+import { Breadcrumbs, LayersIcon } from "@plane/ui";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { renderEmoji } from "helpers/emoji.helper";
 import { useProject } from "hooks/store";
 // ui
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // types
+import { IssueArchiveService } from "services/issue";
 import { TIssue } from "@plane/types";
 // constants
-import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
-import { IssueArchiveService } from "services/issue";
 // helpers
-import { renderEmoji } from "helpers/emoji.helper";
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
 
 const issueArchiveService = new IssueArchiveService();
 

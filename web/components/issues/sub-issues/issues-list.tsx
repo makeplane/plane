@@ -3,9 +3,9 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useIssueDetail } from "hooks/store";
 // components
+import { TIssue } from "@plane/types";
 import { IssueListItem } from "./issue-list-item";
 // types
-import { TIssue } from "@plane/types";
 import { TSubIssueOperations } from "./root";
 
 export interface IIssueList {
