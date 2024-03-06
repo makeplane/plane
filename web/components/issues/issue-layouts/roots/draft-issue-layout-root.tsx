@@ -33,7 +33,8 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;

@@ -34,7 +34,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue },
+    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue, archiveIssue },
   } = useIssues(EIssuesStoreType.GLOBAL);
 
   const { dataViewId, issueIds } = groupedIssueIds;
@@ -88,11 +88,15 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     }
   };
 
-  useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
-    if (workspaceSlug) {
-      await fetchAllGlobalViews(workspaceSlug.toString());
-    }
-  });
+  useSWR(
+    workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
+    async () => {
+      if (workspaceSlug) {
+        await fetchAllGlobalViews(workspaceSlug.toString());
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   useSWR(
     workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
@@ -103,7 +107,8 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const canEditProperties = useCallback(
@@ -133,6 +138,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
         await removeIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        const projectId = issue.project_id;
+        if (!workspaceSlug || !projectId || !globalViewId) return;
+
+        await archiveIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
+      },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateIssue, removeIssue, workspaceSlug]
@@ -142,6 +153,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     async (issue: TIssue, action: EIssueActions) => {
       if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
       if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
+      if (action === EIssueActions.ARCHIVE) await issueActions[action]!(issue);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -169,10 +181,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         issue={issue}
         handleUpdate={async () => handleIssues({ ...issue }, EIssueActions.UPDATE)}
         handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+        handleArchive={async () => handleIssues(issue, EIssueActions.ARCHIVE)}
         portalElement={portalElement}
+        readOnly={!canEditProperties(issue.project_id)}
       />
     ),
-    [handleIssues]
+    [canEditProperties, handleIssues]
   );
 
   const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;

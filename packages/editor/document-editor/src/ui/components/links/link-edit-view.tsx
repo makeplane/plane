@@ -40,9 +40,11 @@ export const LinkEditView = ({
   const [positionRef, setPositionRef] = useState({ from: from, to: to });
   const [localUrl, setLocalUrl] = useState(viewProps.url);
 
-  const linkRemoved = useRef<Boolean>();
+  const linkRemoved = useRef<boolean>();
 
   const getText = (from: number, to: number) => {
+    if (to >= editor.state.doc.content.size) return "";
+
     const text = editor.state.doc.textBetween(from, to, "\n");
     return text;
   };
@@ -72,10 +74,12 @@ export const LinkEditView = ({
 
       const url = isValidUrl(localUrl) ? localUrl : viewProps.url;
 
+      if (to >= editor.state.doc.content.size) return;
+
       editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
       editor.view.dispatch(editor.state.tr.addMark(from, to, editor.schema.marks.link.create({ href: url })));
     },
-    [localUrl]
+    [localUrl, editor, from, to, viewProps.url]
   );
 
   const handleUpdateText = (text: string) => {
