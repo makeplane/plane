@@ -22,6 +22,7 @@ from plane.db.models import (
     InboxIssue,
     Issue,
     State,
+    Workspace,
     IssueLink,
     IssueAttachment,
     ProjectMember,
@@ -64,13 +65,20 @@ class InboxViewSet(BaseViewSet):
             .select_related("workspace", "project")
         )
 
+    def list(self, request, slug, project_id):
+        inbox = self.get_queryset().first()
+        return Response(
+            InboxSerializer(inbox).data,
+            status=status.HTTP_200_OK,
+        )
+
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
     def destroy(self, request, slug, project_id, pk):
-        inbox = Inbox.objects.get(
+        inbox = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        ).first()
         # Handle default inbox delete
         if inbox.is_default:
             return Response(
@@ -98,7 +106,6 @@ class InboxIssueViewSet(BaseViewSet):
             Issue.objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
-                issue_inbox__inbox_id=self.kwargs.get("inbox_id"),
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -161,10 +168,15 @@ class InboxIssueViewSet(BaseViewSet):
             )
         ).distinct()
 
-    def list(self, request, slug, project_id, inbox_id):
+    def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
+        workspace = Workspace.objects.filter(slug=slug).first()
+        inbox_id = Inbox.objects.filter(
+            workspace_id=workspace.id, project_id=project_id
+        ).first()
         issue_queryset = (
             self.get_queryset()
+            .filter(issue_inbox__inbox_id=inbox_id)
             .filter(**filters)
             .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
         )
@@ -205,7 +217,7 @@ class InboxIssueViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    def create(self, request, slug, project_id, inbox_id):
+    def create(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"},
@@ -258,9 +270,13 @@ class InboxIssueViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
+        workspace = Workspace.objects.filter(slug=slug).first()
+        inbox_id = Inbox.objects.filter(
+            workspace_id=workspace.id, project_id=project_id
+        ).first()
         # create an inbox issue
         InboxIssue.objects.create(
-            inbox_id=inbox_id,
+            inbox_id=inbox_id.id,
             project_id=project_id,
             issue=issue,
             source=request.data.get("source", "in-app"),
@@ -270,7 +286,11 @@ class InboxIssueViewSet(BaseViewSet):
         serializer = IssueSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def partial_update(self, request, slug, project_id, inbox_id, issue_id):
+    def partial_update(self, request, slug, project_id, issue_id):
+        workspace = Workspace.objects.filter(slug=slug).first()
+        inbox_id = Inbox.objects.filter(
+            workspace_id=workspace.id, project_id=project_id
+        ).first()
         inbox_issue = InboxIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
@@ -392,7 +412,7 @@ class InboxIssueViewSet(BaseViewSet):
             serializer = IssueSerializer(issue, expand=self.expand)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def retrieve(self, request, slug, project_id, inbox_id, issue_id):
+    def retrieve(self, request, slug, project_id, issue_id):
         issue = (
             self.get_queryset()
             .filter(pk=issue_id)
@@ -433,7 +453,11 @@ class InboxIssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, slug, project_id, inbox_id, issue_id):
+    def destroy(self, request, slug, project_id, issue_id):
+        workspace = Workspace.objects.filter(slug=slug).first()
+        inbox_id = Inbox.objects.filter(
+            workspace_id=workspace.id, project_id=project_id
+        ).first()
         inbox_issue = InboxIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
