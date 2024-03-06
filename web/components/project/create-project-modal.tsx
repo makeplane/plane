@@ -4,10 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
 // hooks
-<<<<<<< HEAD
-=======
 import { useEventTracker, useProject, useUser } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // ui
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // components

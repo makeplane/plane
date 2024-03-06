@@ -6,20 +6,11 @@ import useSWRInfinite from "swr/infinite";
 // services
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 import { NotificationService } from "services/notification.service";
-<<<<<<< HEAD
-// hooks
-import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
-import useToast from "./use-toast";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // fetch-keys
 // type
-<<<<<<< HEAD
-=======
 import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 const PER_PAGE = 30;
 

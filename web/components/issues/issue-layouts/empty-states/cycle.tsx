@@ -3,13 +3,10 @@ import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 import { PlusIcon } from "lucide-react";
 // hooks
-<<<<<<< HEAD
-=======
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { CYCLE_EMPTY_STATE_DETAILS, EMPTY_FILTER_STATE_DETAILS } from "constants/empty-state";

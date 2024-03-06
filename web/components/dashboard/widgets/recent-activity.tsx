@@ -8,10 +8,7 @@ import { Avatar } from "@plane/ui";
 import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
-<<<<<<< HEAD
-=======
 import { Avatar, getButtonStyling } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
 import { useDashboard, useUser } from "hooks/store";

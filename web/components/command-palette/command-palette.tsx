@@ -3,12 +3,9 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-<<<<<<< HEAD
-=======
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";

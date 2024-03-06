@@ -7,9 +7,6 @@ import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // services
-<<<<<<< HEAD
-import { Button } from "@plane/ui";
-=======
 import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
 // hooks
@@ -33,7 +30,6 @@ import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { ROLE } from "constants/workspace";
 import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { EmptyState } from "components/common";
 import { PageHead } from "components/core";
 import { MEMBER_ACCEPTED } from "constants/event-tracker";

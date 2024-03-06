@@ -1,29 +1,3 @@
-<<<<<<< HEAD
-import { ReactElement } from "react";
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
-import { observer } from "mobx-react";
-import Link from "next/link";
-import useSWR from "swr";
-//hooks
-import { History, MessageSquare } from "lucide-react";
-import { ActivityIcon, ActivityMessage, IssueLink, PageHead } from "components/core";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { ActivitySettingsLoader } from "components/ui";
-// services
-// layouts
-// components
-// icons
-// ui
-// fetch-keys
-import { USER_ACTIVITY } from "constants/fetch-keys";
-// helper
-import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useApplication, useUser } from "hooks/store";
-import { ProfileSettingsLayout } from "layouts/settings-layout";
-// type
-import { NextPageWithLayout } from "lib/types";
-import { UserService } from "services/user.service";
-=======
 import { ReactElement, useState } from "react";
 import { observer } from "mobx-react";
 //hooks
@@ -38,7 +12,6 @@ import { PageHead } from "components/core";
 import { Button } from "@plane/ui";
 // type
 import { NextPageWithLayout } from "lib/types";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 const PER_PAGE = 100;
 

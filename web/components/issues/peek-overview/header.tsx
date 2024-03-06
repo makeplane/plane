@@ -14,15 +14,12 @@ import {
   setToast,
 } from "@plane/ui";
 // helpers
-<<<<<<< HEAD
-=======
 import { copyUrlToClipboard } from "helpers/string.helper";
 // store hooks
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // helpers
 import { cn } from "helpers/common.helper";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
 import { STATE_GROUPS } from "constants/state";
 import { cn } from "helpers/common.helper";

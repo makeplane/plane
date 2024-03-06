@@ -11,10 +11,7 @@ import {
   FilterSubGroupBy,
 } from "components/issues";
 // types
-<<<<<<< HEAD
-=======
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 

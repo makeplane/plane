@@ -4,13 +4,8 @@ import { useRouter } from "next/router";
 import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
 // hooks
-<<<<<<< HEAD
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
-import { Button } from "@plane/ui";
-=======
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import {
   AcceptIssueModal,
   DeclineIssueModal,
@@ -23,19 +18,12 @@ import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker 
 import useToast from "hooks/use-toast";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
-<<<<<<< HEAD
-import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
-=======
 import type { TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 import { ISSUE_DELETED } from "constants/event-tracker";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;

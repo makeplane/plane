@@ -2,13 +2,10 @@ import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-<<<<<<< HEAD
-=======
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { IssueView } from "components/issues";
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";

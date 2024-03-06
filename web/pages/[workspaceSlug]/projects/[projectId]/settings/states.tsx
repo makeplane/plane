@@ -6,12 +6,9 @@ import { ProjectSettingStateList } from "components/states";
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
-<<<<<<< HEAD
-=======
 import { ProjectSettingStateList } from "components/states";
 import { ProjectSettingHeader } from "components/headers";
 import { PageHead } from "components/core";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { NextPageWithLayout } from "lib/types";
 // hook

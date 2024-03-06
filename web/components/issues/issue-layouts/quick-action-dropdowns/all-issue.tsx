@@ -1,12 +1,4 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import omit from "lodash/omit";
-import { observer } from "mobx-react";
-import { useRouter } from "next/router";
-import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
-import { ArchiveIcon, CustomMenu } from "@plane/ui";
-// hooks
-=======
 import { useRouter } from "next/router";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import omit from "lodash/omit";
@@ -16,7 +8,6 @@ import { useEventTracker, useProjectState } from "hooks/store";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";

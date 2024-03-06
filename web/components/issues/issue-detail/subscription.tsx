@@ -6,11 +6,7 @@ import { Bell, BellOff } from "lucide-react";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-=======
 import isNil from "lodash/isNil";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 export type TIssueSubscription = {
   workspaceSlug: string;

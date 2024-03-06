@@ -12,14 +12,9 @@ import { InstanceAdminLayout } from "layouts/admin-layout";
 // types
 import { NextPageWithLayout } from "lib/types";
 // hooks
-<<<<<<< HEAD
-// hooks
-// ui
-=======
 import { useApplication } from "hooks/store";
 // ui
 import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 
 const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {

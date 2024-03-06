@@ -28,9 +28,6 @@ import { getNumberCount } from "helpers/string.helper";
 import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
-<<<<<<< HEAD
-// components
-=======
 import { cn } from "helpers/common.helper";
 import { getNumberCount } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -48,7 +45,6 @@ import {
 // components
 import { LeaveProjectModal, PublishProjectModal } from "components/project";
 import { EUserProjectRoles } from "constants/project";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   projectId: string;

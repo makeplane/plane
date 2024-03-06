@@ -12,10 +12,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { useProjectView, useUser } from "hooks/store";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { IProjectView } from "@plane/types";

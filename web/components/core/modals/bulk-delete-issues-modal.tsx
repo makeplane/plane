@@ -12,13 +12,8 @@ import { EIssuesStoreType } from "constants/issue";
 import { useIssues, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { IssueService } from "services/issue";
-<<<<<<< HEAD
-// hooks
-// ui
-=======
 // ui
 import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import { IUser, TIssue } from "@plane/types";

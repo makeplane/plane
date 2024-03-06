@@ -8,10 +8,7 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { checkDuplicates } from "helpers/array.helper";
 import { useEstimate } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { IEstimate, IEstimateFormData } from "@plane/types";
@@ -316,8 +313,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                            ? "Creating Estimate..."
-                            : "Create Estimate"}
+                          ? "Creating Estimate..."
+                          : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

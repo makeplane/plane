@@ -12,12 +12,9 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
 // icons
-<<<<<<< HEAD
-=======
 import { PlusIcon } from "lucide-react";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { TIssue } from "@plane/types";
 // constants

@@ -3,13 +3,8 @@ import { observer } from "mobx-react-lite";
 // components
 import { renderEmoji } from "helpers/emoji.helper";
 import { useIssueDetail } from "hooks/store";
-<<<<<<< HEAD
-// hooks
-import useToast from "hooks/use-toast";
-=======
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IUser } from "@plane/types";
 import { ReactionSelector } from "./reaction-selector";
@@ -75,15 +70,7 @@ export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) 
         else await issueCommentReactionOperations.create(reaction);
       },
     }),
-    [
-      workspaceSlug,
-      projectId,
-      commentId,
-      currentUser,
-      createCommentReaction,
-      removeCommentReaction,
-      userReactions,
-    ]
+    [workspaceSlug, projectId, commentId, currentUser, createCommentReaction, removeCommentReaction, userReactions]
   );
 
   return (

@@ -13,9 +13,6 @@ import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-=======
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
@@ -23,7 +20,6 @@ import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   memberId: string;

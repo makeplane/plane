@@ -17,11 +17,6 @@ import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-// services
-import { FileService } from "services/file.service";
-=======
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
 import { WorkspaceImageUploadModal } from "components/core";
@@ -29,7 +24,6 @@ import { WorkspaceImageUploadModal } from "components/core";
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspace } from "@plane/types";
 

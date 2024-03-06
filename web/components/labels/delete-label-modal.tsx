@@ -7,15 +7,9 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
 import { useLabel } from "hooks/store";
 // icons
-<<<<<<< HEAD
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-=======
 import { AlertTriangle } from "lucide-react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IIssueLabel } from "@plane/types";
 

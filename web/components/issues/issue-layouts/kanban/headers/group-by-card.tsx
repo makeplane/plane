@@ -4,19 +4,10 @@ import { useRouter } from "next/router";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-<<<<<<< HEAD
-import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
-import { CustomMenu } from "@plane/ui";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal } from "components/issues";
 // lucide icons
 // hooks
-<<<<<<< HEAD
-import { TCreateModalStoreTypes } from "constants/issue";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // mobx

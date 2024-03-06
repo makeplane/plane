@@ -4,11 +4,7 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // services
-<<<<<<< HEAD
-// hooks
-=======
 import { AuthService } from "services/auth.service";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers

@@ -4,15 +4,7 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 // hooks
-<<<<<<< HEAD
-import { Button, Input } from "@plane/ui";
-import { LatestFeatureBlock } from "components/common";
-import { PageHead } from "components/core";
-import { FORGOT_PASS_LINK } from "constants/event-tracker";
-import { checkEmailValidity } from "helpers/string.helper";
-=======
 import useTimer from "hooks/use-timer";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { useEventTracker } from "hooks/store";
 import useTimer from "hooks/use-timer";
 import useToast from "hooks/use-toast";
@@ -20,10 +12,7 @@ import useToast from "hooks/use-toast";
 import DefaultLayout from "layouts/default-layout";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // images
 import { NextPageWithLayout } from "lib/types";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";

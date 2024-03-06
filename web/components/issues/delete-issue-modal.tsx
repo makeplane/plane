@@ -2,15 +2,7 @@ import { useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // ui
-<<<<<<< HEAD
-import { Button } from "@plane/ui";
-// hooks
-import { useProject } from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
-import useToast from "hooks/use-toast";
-=======
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { TIssue } from "@plane/types";
 

@@ -15,10 +15,7 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { EIssueActions } from "../types";
-<<<<<<< HEAD
-=======
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { getGroupByColumns } from "../utils";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";

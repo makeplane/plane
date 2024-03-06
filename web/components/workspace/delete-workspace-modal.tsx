@@ -9,10 +9,7 @@ import { Button, Input } from "@plane/ui";
 import { WORKSPACE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useWorkspace } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IWorkspace } from "@plane/types";
 // constants

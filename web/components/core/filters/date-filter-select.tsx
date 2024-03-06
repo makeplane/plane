@@ -3,11 +3,6 @@ import { CalendarDays } from "lucide-react";
 // ui
 import { CalendarDays } from "lucide-react";
 import { CustomSelect, CalendarAfterIcon, CalendarBeforeIcon } from "@plane/ui";
-<<<<<<< HEAD
-// icons
-// fetch-keys
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   title: string;

@@ -6,10 +6,7 @@ import { useTheme } from "next-themes";
 import { mutate } from "swr";
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // hooks
-<<<<<<< HEAD
-=======
 import { useApplication, useUser, useWorkspace } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // ui
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants

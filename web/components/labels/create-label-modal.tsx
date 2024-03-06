@@ -10,10 +10,7 @@ import { Button, Input } from "@plane/ui";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 import { useLabel } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // constants

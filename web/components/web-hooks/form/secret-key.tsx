@@ -1,9 +1,6 @@
 import { useState, FC } from "react";
-<<<<<<< HEAD
-=======
 import { useRouter } from "next/router";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";

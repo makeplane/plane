@@ -9,10 +9,7 @@ import { cn } from "helpers/common.helper";
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { TIssueRelationTypes, ISearchIssueResponse } from "@plane/types";

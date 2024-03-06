@@ -3,17 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Menu } from "@headlessui/react";
-<<<<<<< HEAD
-// icons
-import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
-import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-=======
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 // hooks
 import { useEventTracker } from "hooks/store";
 // icons
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // constants
 import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 import { snoozeOptions } from "constants/notification";

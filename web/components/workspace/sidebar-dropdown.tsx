@@ -4,23 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-<<<<<<< HEAD
-import { mutate } from "swr";
-// ui components
-import { Menu, Transition } from "@headlessui/react";
-// icons
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
-// ui
-import { Avatar, Loader } from "@plane/ui";
-// hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-=======
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspace } from "@plane/types";
 

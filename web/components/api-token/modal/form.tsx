@@ -2,15 +2,8 @@ import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { Calendar } from "lucide-react";
-<<<<<<< HEAD
-// hooks
-// ui
-import { Button, CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
-import { DateDropdown } from "components/dropdowns";
-=======
 // ui
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import useToast from "hooks/use-toast";
@@ -177,8 +170,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
-                              ? selectedOption.label
-                              : "Set expiration date"}
+                            ? selectedOption.label
+                            : "Set expiration date"}
                         </div>
                       }
                       value={value}
@@ -214,8 +207,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     ? `Expires ${renderFormattedDate(customDate)}`
                     : null
                   : watch("expired_at")
-                    ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
-                    : null}
+                  ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
+                  : null}
               </span>
             )}
           </div>

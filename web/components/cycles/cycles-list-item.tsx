@@ -14,8 +14,6 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import {
   CustomMenu,
   Tooltip,
@@ -27,7 +25,6 @@ import {
   setToast,
   setPromiseToast,
 } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // helpers
 // constants

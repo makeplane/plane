@@ -16,10 +16,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 // services
 // hooks
-<<<<<<< HEAD
-=======
 import { useEventTracker } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components

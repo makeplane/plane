@@ -12,16 +12,9 @@ import { useUser, useWebhook, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
-<<<<<<< HEAD
-// hooks
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWebhook } from "@plane/types";

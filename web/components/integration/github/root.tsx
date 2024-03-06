@@ -9,13 +9,8 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 // services
-<<<<<<< HEAD
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
-import { UserGroupIcon } from "@plane/ui";
-=======
 import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import {
   GithubImportConfigure,
   GithubImportData,
@@ -23,15 +18,10 @@ import {
   GithubImportUsers,
   GithubImportConfirm,
 } from "components/integration";
-<<<<<<< HEAD
-import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
-import useToast from "hooks/use-toast";
-=======
 // icons
 import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import GithubLogo from "public/services/github.png";
 import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // hooks

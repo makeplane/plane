@@ -9,11 +9,6 @@ import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "layou
 // components
 import { AppSidebar } from "./sidebar";
 
-<<<<<<< HEAD
-//  FIXME: remove this later
-
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 export interface IAppLayout {
   children: ReactNode;
   header: ReactNode;

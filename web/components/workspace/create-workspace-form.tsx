@@ -9,14 +9,8 @@ import { WORKSPACE_CREATED } from "constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 // hooks
 import { useEventTracker, useWorkspace } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-// services
-import { WorkspaceService } from "services/workspace.service";
-=======
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspace } from "@plane/types";
 

@@ -6,14 +6,9 @@ import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import useDebounce from "hooks/use-debounce";
 import useToast from "hooks/use-toast";
 import { ProjectService } from "services/project";
-<<<<<<< HEAD
-// hooks
-// ui
-=======
 import useDebounce from "hooks/use-debounce";
 // ui
 import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
@@ -188,7 +183,10 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </div>
 
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md">
+                  <Combobox.Options
+                    static
+                    className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}

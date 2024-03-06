@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { STATE_GROUPS } from "constants/state";
-import { renderEmoji } from "helpers/emoji.helper";
-import { ILabelStore } from "store/label.store";
-import { IMemberRootStore } from "store/member";
-import { IProjectStore } from "store/project/project.store";
-import { IStateStore } from "store/state.store";
-import { GroupByColumnTypes, IGroupByColumn } from "@plane/types";
-=======
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // stores
 import { IMemberRootStore } from "store/member";
@@ -25,7 +14,6 @@ import { ISSUE_PRIORITIES } from "constants/issue";
 // types
 import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
 import { ContrastIcon } from "lucide-react";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,

@@ -9,17 +9,10 @@ import { MemberSelect } from "components/project";
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
 import { useProject, useUser } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-=======
 import { Controller, useForm } from "react-hook-form";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 // ui
-<<<<<<< HEAD
-=======
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // fetch-keys

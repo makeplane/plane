@@ -2,15 +2,9 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
 // hooks
-<<<<<<< HEAD
-// ui
-import { Eye, EyeOff } from "lucide-react";
-import { Button, Input } from "@plane/ui";
-=======
 import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
 import { checkEmailValidity } from "helpers/string.helper";

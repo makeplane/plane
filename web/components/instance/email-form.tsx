@@ -1,20 +1,12 @@
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { Eye, EyeOff } from "lucide-react";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
 // hooks
 import { useApplication } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-import { IFormattedInstanceConfiguration } from "@plane/types";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 export interface IInstanceEmailForm {
   config: IFormattedInstanceConfiguration;

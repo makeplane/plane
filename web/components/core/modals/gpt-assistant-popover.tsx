@@ -6,12 +6,7 @@ import { Controller, useForm } from "react-hook-form"; // services
 // hooks
 import { usePopper } from "react-popper";
 // ui
-<<<<<<< HEAD
-import { Popover, Transition } from "@headlessui/react";
-import { Button, Input } from "@plane/ui";
-=======
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 import useToast from "hooks/use-toast";
 import { AIService } from "services/ai.service";
@@ -177,8 +172,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-      ? "Generate response"
-      : "Generate again";
+    ? "Generate response"
+    : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>

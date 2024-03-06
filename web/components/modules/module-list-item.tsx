@@ -14,8 +14,6 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import {
   Avatar,
   AvatarGroup,
@@ -26,7 +24,6 @@ import {
   setToast,
   setPromiseToast,
 } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // constants
 

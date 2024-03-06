@@ -1,15 +1,7 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import omit from "lodash/omit";
-import { observer } from "mobx-react";
-import { useRouter } from "next/router";
-import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
-import { ArchiveIcon, CustomMenu } from "@plane/ui";
-=======
 import { useRouter } from "next/router";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // hooks
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";

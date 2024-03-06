@@ -3,13 +3,10 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-<<<<<<< HEAD
-=======
 import { useCycle, useIssues } from "hooks/store";
 // ui
 import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
 //icons
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { AlertCircle, Search, X } from "lucide-react";
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { EIssuesStoreType } from "constants/issue";

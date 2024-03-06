@@ -2,12 +2,7 @@ import { useRef } from "react";
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // hooks
-<<<<<<< HEAD
-import { TCreateModalStoreTypes } from "constants/issue";
-import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
-=======
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import {
   GroupByColumnTypes,

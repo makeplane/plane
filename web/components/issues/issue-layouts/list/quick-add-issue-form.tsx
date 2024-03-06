@@ -9,19 +9,12 @@ import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-// constants
-import { TIssue, IProject } from "@plane/types";
-// types
-=======
 // ui
 import { setPromiseToast } from "@plane/ui";
 // types
 import { TIssue, IProject } from "@plane/types";
 // helper
 import { createIssuePayload } from "helpers/issue.helper";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // constants
 
 interface IInputProps {

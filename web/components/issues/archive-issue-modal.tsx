@@ -5,10 +5,7 @@ import { Button } from "@plane/ui";
 import { useProject } from "hooks/store";
 import { useIssues } from "hooks/store/use-issues";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { TIssue } from "@plane/types";
 

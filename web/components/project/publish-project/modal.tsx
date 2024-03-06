@@ -8,12 +8,7 @@ import { Check, CircleDot, Globe2 } from "lucide-react";
 import { Button, Loader, ToggleSwitch } from "@plane/ui";
 import { useProjectPublish } from "hooks/store";
 // ui
-<<<<<<< HEAD
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
-import { IProject } from "@plane/types";
-=======
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { CustomPopover } from "./popover";
 // types
 

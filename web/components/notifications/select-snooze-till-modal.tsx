@@ -8,10 +8,7 @@ import { DateDropdown } from "components/dropdowns";
 // constants
 import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IUserNotification } from "@plane/types";
 

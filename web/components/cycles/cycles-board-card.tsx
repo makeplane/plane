@@ -3,17 +3,12 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-<<<<<<< HEAD
-=======
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } from "@plane/ui";
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
-<<<<<<< HEAD
-=======
 import {
   Avatar,
   AvatarGroup,
@@ -25,7 +20,6 @@ import {
   setToast,
   setPromiseToast,
 } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // helpers
 import { CYCLE_STATUS } from "constants/cycle";
@@ -87,8 +81,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {

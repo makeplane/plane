@@ -10,10 +10,7 @@ import { STATE_CREATED, STATE_UPDATED } from "constants/event-tracker";
 import { GROUP_CHOICES } from "constants/project";
 import { useEventTracker, useProjectState } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, CustomSelect, Input, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IState } from "@plane/types";
 // constants

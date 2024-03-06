@@ -1,8 +1,4 @@
 import { Copy } from "lucide-react";
-<<<<<<< HEAD
-// hooks
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers

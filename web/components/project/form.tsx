@@ -11,12 +11,9 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 import { useEventTracker, useProject } from "hooks/store";
 // components
-<<<<<<< HEAD
-=======
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import { ProjectService } from "services/project";

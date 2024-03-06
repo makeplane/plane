@@ -10,16 +10,12 @@ import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useMember, useUser } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-=======
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   invitationId: string;

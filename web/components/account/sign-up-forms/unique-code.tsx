@@ -12,14 +12,10 @@ import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 import { UserService } from "services/user.service";
 // hooks
-<<<<<<< HEAD
-// ui
-=======
 import useTimer from "hooks/use-timer";
 import { useEventTracker } from "hooks/store";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
@@ -209,8 +205,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
               {resendTimerCode > 0
                 ? `Request new code in ${resendTimerCode}s`
                 : isRequestingNewCode
-                  ? "Requesting new code"
-                  : "Request new code"}
+                ? "Requesting new code"
+                : "Request new code"}
             </button>
           </div>
         </div>

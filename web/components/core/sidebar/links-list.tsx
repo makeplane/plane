@@ -1,11 +1,5 @@
 // ui
-<<<<<<< HEAD
-import { observer } from "mobx-react";
-import { Pencil, Trash2, LinkIcon } from "lucide-react";
-import { ExternalLinkIcon, Tooltip } from "@plane/ui";
-=======
 import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
@@ -14,12 +8,9 @@ import { useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { ILinkDetails, UserAuth } from "@plane/types";
 // hooks
-<<<<<<< HEAD
-=======
 import { observer } from "mobx-react";
 import { useMeasure } from "@nivo/core";
 import { useMember } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   links: ILinkDetails[];

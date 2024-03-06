@@ -16,10 +16,7 @@ import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { TIssue } from "@plane/types";
 // constants

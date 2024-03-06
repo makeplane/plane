@@ -8,14 +8,10 @@ import { ModuleForm } from "components/modules";
 import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useModule, useProject } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-=======
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ModuleForm } from "components/modules";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IModule } from "@plane/types";
 

@@ -22,11 +22,8 @@ import { FileService } from "services/file.service";
 // layouts
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // assets
 // helpers
 // types

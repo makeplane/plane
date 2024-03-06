@@ -11,12 +11,8 @@ import { Button } from "@plane/ui";
 import { GLOBAL_VIEW_DELETED } from "constants/event-tracker";
 // store hooks
 import { useGlobalView, useEventTracker } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-=======
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspaceView } from "@plane/types";
 

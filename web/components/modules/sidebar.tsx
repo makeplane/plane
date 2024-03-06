@@ -14,19 +14,6 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
-<<<<<<< HEAD
-// ui
-import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
-// components
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
-import { DeleteModuleModal } from "components/modules";
-// constant
-import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-=======
 // hooks
 import { useModule, useUser, useEventTracker } from "hooks/store";
 // components
@@ -45,7 +32,6 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";

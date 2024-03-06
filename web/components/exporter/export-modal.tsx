@@ -8,13 +8,8 @@ import { useProject } from "hooks/store";
 // services
 import useToast from "hooks/use-toast";
 import { ProjectExportService } from "services/project";
-<<<<<<< HEAD
-// hooks
-// ui
-=======
 // ui
 import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IUser, IImporterService } from "@plane/types";
 

@@ -2,11 +2,6 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-<<<<<<< HEAD
-import { ConfirmIssueDiscard } from "components/issues";
-import { IssueFormRoot } from "components/issues/issue-modal/form";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // services

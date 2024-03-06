@@ -2,20 +2,6 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import Router from "next/router";
-<<<<<<< HEAD
-import { ThemeProvider } from "next-themes";
-import NProgress from "nprogress";
-import { SWRConfig } from "swr";
-// constants
-import { SWR_CONFIG } from "constants/swr-config";
-import { THEMES } from "constants/themes";
-// contexts
-import { ToastContextProvider } from "contexts/toast.context";
-// hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
-// layouts
-import InstanceLayout from "layouts/instance-layout";
-=======
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
@@ -31,7 +17,6 @@ import InstanceLayout from "layouts/instance-layout";
 import { SWRConfig } from "swr";
 //helpers
 import { resolveGeneralTheme } from "helpers/theme.helper";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("lib/posthog-provider"), { ssr: false });

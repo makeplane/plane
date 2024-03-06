@@ -5,21 +5,11 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
 // hooks
-<<<<<<< HEAD
-import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
-import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
-import { EUserProjectRoles } from "constants/project";
-import { ROLE } from "constants/workspace";
-import { useEventTracker, useMember, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-=======
 import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getUserRole } from "helpers/user.helper";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // constants
 
 type Props = {
@@ -148,8 +138,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
     return {
       value: `${memberDetails?.member.id}`,
-      query: `${memberDetails?.member.first_name} ${memberDetails?.member
-        .last_name} ${memberDetails?.member.display_name.toLowerCase()}`,
+      query: `${memberDetails?.member.first_name} ${
+        memberDetails?.member.last_name
+      } ${memberDetails?.member.display_name.toLowerCase()}`,
       content: (
         <div className="flex w-full items-center gap-2">
           <div className="flex-shrink-0 pt-0.5">

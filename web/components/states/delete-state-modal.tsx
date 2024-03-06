@@ -8,10 +8,7 @@ import { Button } from "@plane/ui";
 import { STATE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useProjectState } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IState } from "@plane/types";
 // constants

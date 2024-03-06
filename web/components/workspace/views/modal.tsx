@@ -9,14 +9,10 @@ import { WorkspaceViewForm } from "components/workspace";
 import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
 // store hooks
 import { useEventTracker, useGlobalView } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-=======
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { WorkspaceViewForm } from "components/workspace";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspaceView } from "@plane/types";
 

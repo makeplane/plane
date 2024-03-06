@@ -4,12 +4,9 @@ import { useRouter } from "next/router";
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 import { useUser } from "hooks/store";
 // components
-<<<<<<< HEAD
-=======
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   children: React.ReactNode;

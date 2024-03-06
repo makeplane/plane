@@ -1,10 +1,6 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-<<<<<<< HEAD
-import { TCreateModalStoreTypes } from "constants/issue";
-import { useIssueDetail, useKanbanView, useLabel, useMember, useProject, useProjectState } from "hooks/store";
-=======
 import {
   useCycle,
   useIssueDetail,
@@ -15,7 +11,6 @@ import {
   useProject,
   useProjectState,
 } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 // types
 import {
@@ -125,14 +120,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-<<<<<<< HEAD
-            <div
-              key={_list.id}
-              className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[340px]`}`}
-            >
-=======
             <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[350px]`}`}>
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
               {sub_group_by === null && (
                 <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
                   <HeaderGroupByCard

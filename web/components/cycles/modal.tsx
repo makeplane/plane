@@ -8,16 +8,12 @@ import useLocalStorage from "hooks/use-local-storage";
 import useToast from "hooks/use-toast";
 import { CycleService } from "services/cycle.service";
 // hooks
-<<<<<<< HEAD
-// components
-=======
 import { useEventTracker, useCycle, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CycleForm } from "components/cycles";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
 // constants

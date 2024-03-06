@@ -7,10 +7,7 @@ import { Button, CustomMenu } from "@plane/ui";
 import { orderArrayBy } from "helpers/array.helper";
 import { useProject } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 //icons
 // helpers
 // types

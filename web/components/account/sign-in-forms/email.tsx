@@ -7,13 +7,8 @@ import { Button, Input } from "@plane/ui";
 import { checkEmailValidity } from "helpers/string.helper";
 import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
-<<<<<<< HEAD
-// hooks
-// ui
-=======
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { IEmailCheckData } from "@plane/types";

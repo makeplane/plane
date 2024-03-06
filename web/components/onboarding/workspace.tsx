@@ -6,11 +6,6 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { WORKSPACE_CREATED } from "constants/event-tracker";
 import { RESTRICTED_URLS } from "constants/workspace";
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-<<<<<<< HEAD
-// hooks
-import useToast from "hooks/use-toast";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";

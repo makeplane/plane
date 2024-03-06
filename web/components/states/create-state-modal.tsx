@@ -10,10 +10,7 @@ import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 import { GROUP_CHOICES } from "constants/project";
 import { useProjectState } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import type { IState } from "@plane/types";

@@ -5,17 +5,6 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-<<<<<<< HEAD
-import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
-import { SidebarProgressStats } from "components/core";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { CycleDeleteModal } from "components/cycles/delete-modal";
-import { DateRangeDropdown } from "components/dropdowns";
-import { CYCLE_STATUS } from "constants/cycle";
-import { CYCLE_UPDATED } from "constants/event-tracker";
-import { EUserWorkspaceRoles } from "constants/workspace";
-=======
 import { CycleService } from "services/cycle.service";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
@@ -29,7 +18,6 @@ import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@p
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
@@ -234,8 +222,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-        ? "0 Issue"
-        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+      ? "0 Issue"
+      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 

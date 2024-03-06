@@ -2,19 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-<<<<<<< HEAD
-
-// hooks
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // services
 // ui
-<<<<<<< HEAD
-import { Search } from "lucide-react";
-import { Button, LayersIcon } from "@plane/ui";
-=======
 import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";

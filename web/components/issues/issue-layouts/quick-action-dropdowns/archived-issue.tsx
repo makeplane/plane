@@ -3,13 +3,10 @@ import { useRouter } from "next/router";
 import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 // hooks
-<<<<<<< HEAD
-=======
 import { useEventTracker, useIssues, useUser } from "hooks/store";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";

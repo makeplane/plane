@@ -16,15 +16,11 @@ import { IssueDetailsSidebar } from "./sidebar";
 // ui
 // images
 // hooks
-<<<<<<< HEAD
-// types
-=======
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // types
 import { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // constants
 
 export type TIssueOperations = {
@@ -123,16 +119,10 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-<<<<<<< HEAD
-          if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
-          else await removeIssue(workspaceSlug, projectId, issueId);
-          setToastAlert({
-=======
           let response;
           if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
           else response = await removeIssue(workspaceSlug, projectId, issueId);
           setToast({
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
             title: "Issue deleted successfully",
             type: TOAST_TYPE.SUCCESS,
             message: "Issue deleted successfully",
@@ -358,12 +348,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       addModulesToIssue,
       removeIssueFromModule,
       removeModulesFromIssue,
-<<<<<<< HEAD
-      setToastAlert,
-      captureIssueEvent,
-      router.asPath,
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
     ]
   );
 

@@ -1,23 +1,14 @@
 import { useEffect } from "react";
-<<<<<<< HEAD
-=======
 import { useRouter } from "next/router";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
 // hooks
-<<<<<<< HEAD
-=======
 import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
 import { Button, LayersIcon } from "@plane/ui";
@@ -173,8 +164,8 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
               (cycleId
                 ? cycleDetails?.created_at
                 : moduleId
-                  ? moduleDetails?.created_at
-                  : projectDetails?.created_at) ?? ""
+                ? moduleDetails?.created_at
+                : projectDetails?.created_at) ?? ""
             )}
           </div>
         )}

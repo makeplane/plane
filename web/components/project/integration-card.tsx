@@ -1,10 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-<<<<<<< HEAD
-import useSWR, { mutate } from "swr";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 import { SelectRepository, SelectChannel } from "components/integration";
 // constants
@@ -14,13 +10,8 @@ import useToast from "hooks/use-toast";
 // icons
 import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
-<<<<<<< HEAD
-// services
-import { ProjectService } from "services/project";
-=======
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspaceIntegration } from "@plane/types";
 

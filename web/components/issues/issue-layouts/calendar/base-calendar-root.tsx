@@ -4,15 +4,8 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // components
 import { CalendarChart } from "components/issues";
-<<<<<<< HEAD
-// hooks
-import { EUserProjectRoles } from "constants/project";
-import { useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-=======
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";

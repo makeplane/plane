@@ -10,13 +10,8 @@ import { useApplication } from "hooks/store";
 // services
 import useToast from "hooks/use-toast";
 import { FileService } from "services/file.service";
-<<<<<<< HEAD
-// hooks
-// ui
-=======
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // constants
 

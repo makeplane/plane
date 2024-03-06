@@ -7,10 +7,7 @@ import { Plus, X, Loader } from "lucide-react";
 import { Input } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Input, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IIssueLabel } from "@plane/types";
 import { TLabelOperations } from "./root";

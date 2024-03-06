@@ -9,10 +9,7 @@ import { useEstimate } from "hooks/store";
 // types
 import { IEstimate } from "@plane/types";
 // ui
-<<<<<<< HEAD
-=======
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   isOpen: boolean;

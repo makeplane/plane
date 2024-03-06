@@ -4,13 +4,9 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // hooks
-<<<<<<< HEAD
-import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
-=======
 import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
 // ui
 import { SingleProgressStats } from "components/core";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import {
   AvatarGroup,
   Loader,

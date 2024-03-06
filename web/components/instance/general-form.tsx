@@ -5,11 +5,6 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 // hooks
 import { useApplication } from "hooks/store";
-<<<<<<< HEAD
-import useToast from "hooks/use-toast";
-import { IInstance, IInstanceAdmin } from "@plane/types";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 export interface IInstanceGeneralForm {
   instance: IInstance;

@@ -13,10 +13,7 @@ import { IUser, TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
 // ui
-<<<<<<< HEAD
-=======
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 
@@ -272,21 +269,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         }
       },
     }),
-<<<<<<< HEAD
-    [
-      fetchSubIssues,
-      createSubIssues,
-      updateSubIssue,
-      removeSubIssue,
-      deleteSubIssue,
-      setToastAlert,
-      setSubIssueHelpers,
-      captureIssueEvent,
-      router.asPath,
-    ]
-=======
     [fetchSubIssues, createSubIssues, updateSubIssue, removeSubIssue, deleteSubIssue, setSubIssueHelpers]
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
   );
 
   const issue = getIssueById(parentIssueId);

@@ -3,26 +3,13 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-<<<<<<< HEAD
-import { RotateCcw } from "lucide-react";
-import { ArchiveIcon, Button, Loader } from "@plane/ui";
-import { PageHead } from "components/core";
-import { ProjectArchivedIssueDetailsHeader } from "components/headers";
-import { IssueDetailRoot } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-=======
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import { NextPageWithLayout } from "lib/types";
@@ -77,10 +64,9 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
           title: "Success",
           message:
             issue &&
-            `${getProjectById(issue.project_id)
-              ?.identifier}-${issue?.sequence_id} is restored successfully under the project ${getProjectById(
-              issue.project_id
-            )?.name}`,
+            `${getProjectById(issue.project_id)?.identifier}-${
+              issue?.sequence_id
+            } is restored successfully under the project ${getProjectById(issue.project_id)?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })

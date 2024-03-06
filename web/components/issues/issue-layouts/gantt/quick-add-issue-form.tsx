@@ -4,17 +4,6 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // hooks
-<<<<<<< HEAD
-import { ISSUE_CREATED } from "constants/event-tracker";
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { createIssuePayload } from "helpers/issue.helper";
-import { useEventTracker, useProject } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useToast from "hooks/use-toast";
-// helpers
-=======
 import { useEventTracker, useProject } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -24,7 +13,6 @@ import { createIssuePayload } from "helpers/issue.helper";
 import { cn } from "helpers/common.helper";
 // ui
 import { setPromiseToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IProject, TIssue } from "@plane/types";
 // constants

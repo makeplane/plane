@@ -10,21 +10,15 @@ import { useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 // hooks
-<<<<<<< HEAD
-// ui
-// helpers
-// constants
-=======
 import { useEventTracker } from "hooks/store";
 // ui
-import { Button, Input, TOAST_TYPE, setToast  } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // components
 import { ESignUpSteps } from "components/account";
 // constants
 import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "constants/event-tracker";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 
 type Props = {

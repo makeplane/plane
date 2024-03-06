@@ -8,10 +8,7 @@ import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useUser, useIssues } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { TIssue } from "@plane/types";

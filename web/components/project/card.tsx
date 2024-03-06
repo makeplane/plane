@@ -12,10 +12,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { useProject } from "hooks/store";
 // components
 // ui
-<<<<<<< HEAD
-=======
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import type { IProject } from "@plane/types";
@@ -133,8 +130,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   {project.emoji
                     ? renderEmoji(project.emoji)
                     : project.icon_prop
-                      ? renderEmoji(project.icon_prop)
-                      : null}
+                    ? renderEmoji(project.icon_prop)
+                    : null}
                 </span>
               </div>
 

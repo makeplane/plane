@@ -10,12 +10,8 @@ import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-i
 import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
 import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
 // types
-<<<<<<< HEAD
-import { TDurationFilterOptions, TIssuesListTypes, TStateGroups } from "@plane/types";
-=======
 import { EDurationFilters, TIssuesListTypes, TStateGroups } from "@plane/types";
 import { Props } from "components/icons/types";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
 // icons

@@ -3,15 +3,9 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 // hooks
-<<<<<<< HEAD
-import { EUserProjectRoles } from "constants/project";
-import { useEventTracker, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-=======
 import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 // ui
-import { DiceIcon, ToggleSwitch, TOAST_TYPE, setToast  } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
+import { DiceIcon, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IProject } from "@plane/types";
 // constants

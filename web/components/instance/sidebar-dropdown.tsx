@@ -12,10 +12,7 @@ import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 import { Avatar, Tooltip } from "@plane/ui";
 import { useApplication, useUser } from "hooks/store";
 // ui
-<<<<<<< HEAD
-=======
 import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
->>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 // Static Data
 const PROFILE_LINKS = [
