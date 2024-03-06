@@ -49,6 +49,7 @@ from .workspace import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
     WorkspaceModulesEndpoint,
     WorkspaceCyclesEndpoint,
 )
@@ -183,4 +184,10 @@ from .webhook import (
     WebhookSecretRegenerateEndpoint,
 )
 
-from .dashboard import DashboardEndpoint, WidgetsEndpoint
+from .dashboard import (
+    DashboardEndpoint,
+    WidgetsEndpoint
+)
+
+from .error_404 import custom_404_view
+

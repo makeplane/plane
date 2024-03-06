@@ -1,10 +1,10 @@
 import { useRef } from "react";
 //types
+import { observer } from "mobx-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 //components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { HeaderColumn } from "./columns/header-column";
-import { observer } from "mobx-react";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;

@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
 // services
-import { IntegrationService, GithubIntegrationService } from "services/integrations";
-// hooks
-import useToast from "hooks/use-toast";
 // components
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import {
   GithubImportConfigure,
   GithubImportData,
@@ -21,10 +20,13 @@ import {
   GithubImportConfirm,
 } from "components/integration";
 // icons
-import { UserGroupIcon } from "@plane/ui";
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";
+import { IntegrationService, GithubIntegrationService } from "services/integrations";
+// hooks
+// components
+// icons
+// images
 // types
 import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // fetch-keys
@@ -92,8 +94,6 @@ export const GithubImporterRoot: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
 
-  const { setToastAlert } = useToast();
-
   const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,
   });
@@ -149,8 +149,8 @@ export const GithubImporterRoot: React.FC = () => {
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Import was unsuccessful. Please try again.",
         })

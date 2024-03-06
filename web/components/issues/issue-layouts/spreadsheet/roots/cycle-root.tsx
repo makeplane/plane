@@ -2,13 +2,13 @@ import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
+import { EIssuesStoreType } from "constants/issue";
 import { useCycle, useIssues } from "hooks/store";
 // components
-import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { EIssueActions } from "../../types";
 import { TIssue } from "@plane/types";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueActions } from "../../types";
+import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
 export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();

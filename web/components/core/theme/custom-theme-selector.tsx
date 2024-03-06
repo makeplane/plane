@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
 import { useTheme } from "next-themes";
+import { Controller, useForm } from "react-hook-form";
 // hooks
+import { Button, InputColorPicker } from "@plane/ui";
 import { useUser } from "hooks/store";
 // ui
-import { Button, InputColorPicker } from "@plane/ui";
 // types
 import { IUserTheme } from "@plane/types";
 

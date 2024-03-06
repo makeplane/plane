@@ -33,13 +33,11 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
         {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
         {activity.new_value && (
           <>
-
             <span className="font-medium text-custom-text-100">
               {areEstimatesEnabledForCurrentProject
                 ? estimateValue
                 : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
             </span>
-
           </>
         )}
         {showIssue && (activity.new_value ? ` to ` : ` from `)}

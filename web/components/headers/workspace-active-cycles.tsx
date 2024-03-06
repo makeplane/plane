@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
 // ui
+import { Crown } from "lucide-react";
 import { Breadcrumbs, ContrastIcon } from "@plane/ui";
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // icons
-import { Crown } from "lucide-react";
 
 export const WorkspaceActiveCycleHeader = observer(() => (
   <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">

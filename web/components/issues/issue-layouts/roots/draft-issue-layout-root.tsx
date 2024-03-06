@@ -1,19 +1,19 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { useIssues } from "hooks/store";
-// components
-import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
-import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
-import { ProjectDraftEmptyState } from "../empty-states";
 import { IssuePeekOverview } from "components/issues/peek-overview";
 import { ActiveLoader } from "components/ui";
-// ui
-import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
-// constants
 import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
+// components
+import { ProjectDraftEmptyState } from "../empty-states";
+import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
+import { DraftKanBanLayout } from "../kanban/roots/draft-issue-root";
+import { DraftIssueListLayout } from "../list/roots/draft-issue-root";
+// ui
+// constants
 
 export const DraftIssueLayoutRoot: React.FC = observer(() => {
   // router

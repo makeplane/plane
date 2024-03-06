@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import React, { FC, createContext } from "react";
 // mobx store
 import { GanttStore } from "store/issue/issue_gantt_view.store";
 
@@ -7,13 +7,17 @@ let ganttViewStore = new GanttStore();
 export const GanttStoreContext = createContext<GanttStore>(ganttViewStore);
 
 const initializeStore = () => {
-  const _ganttStore = ganttViewStore ?? new GanttStore();
-  if (typeof window === "undefined") return _ganttStore;
-  if (!ganttViewStore) ganttViewStore = _ganttStore;
-  return _ganttStore;
+  const newGanttViewStore = ganttViewStore ?? new GanttStore();
+  if (typeof window === "undefined") return newGanttViewStore;
+  if (!ganttViewStore) ganttViewStore = newGanttViewStore;
+  return newGanttViewStore;
 };
 
-export const GanttStoreProvider = ({ children }: any) => {
+type GanttStoreProviderProps = {
+  children: React.ReactNode;
+};
+
+export const GanttStoreProvider: FC<GanttStoreProviderProps> = ({ children }) => {
   const store = initializeStore();
   return <GanttStoreContext.Provider value={store}>{children}</GanttStoreContext.Provider>;
 };

@@ -5,8 +5,8 @@ import { CheckCircle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { TIssue } from "@plane/types";
 import { useProject } from "hooks/store";
+import type { TIssue } from "@plane/types";
 
 type Props = {
   data: TIssue;
