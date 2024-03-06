@@ -1,12 +1,3 @@
-# REQUIRED SECRETS
-# 1. KUBE_CONFIG
-# 2. TS_OAUTH_CLIENT_ID
-# 3. TS_OAUTH_SECRET
-# 4. FEATURE_HELM_CHART_URL
-# 5. FEATURE_HELM_CHART_NAME
-# 6. FEATURE_NAMESPACE
-# 7. KUBE_VERSION=v1.26.11
-
 name: Feature Preview
 
 on:
@@ -34,8 +25,8 @@ jobs:
       - name: Tailscale
         uses: tailscale/github-action@v2
         with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
           tags: tag:ci
 
       - name: Kubectl Setup
@@ -54,12 +45,12 @@ jobs:
           ./get_helm.sh
 
       - name: App Deploy
-        run: |  
-          helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ secrets.FEATURE_HELM_CHART_URL }} 
+        run: |
+          helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ secrets.FEATURE_PREVIEW_HELM_CHART_URL }} 
           GIT_BRANCH=${{ github.ref_name }}
-          APP_NAMESPACE=${{ secrets.FEATURE_NAMESPACE }}
+          APP_NAMESPACE=${{ secrets.FEATURE_PREVIEW_NAMESPACE }}
 
-          METADATA=$(helm install feature-preview/${{ secrets.FEATURE_HELM_CHART_NAME }} \
+          METADATA=$(helm install feature-preview/${{ secrets.FEATURE_PREVIEW_HELM_CHART_NAME }} \
               --kube-insecure-skip-tls-verify \
               --generate-name \
               --namespace $APP_NAMESPACE \
@@ -71,7 +62,7 @@ jobs:
               --timeout 1000s)
 
           APP_NAME=$(echo $METADATA | jq -r '.name')
-         
+
           INGRESS_HOSTNAME=$(kubectl get ingress -n feature-builds --insecure-skip-tls-verify \
               -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
               jq -r '.spec.rules[0].host')
@@ -80,6 +71,3 @@ jobs:
           echo "APP NAME ::: $APP_NAME"
           echo "INGRESS HOSTNAME ::: $INGRESS_HOSTNAME"
           echo "****************************************"
-
-
-
