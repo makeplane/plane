@@ -20,13 +20,15 @@ export type TIssueHelperStore = {
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
     issues: TIssueMap,
-    isCalendarIssues?: boolean
+    isCalendarIssues?: boolean,
+    isWorkspaceLevel?: boolean
   ): { [group_id: string]: string[] };
   subGroupedIssues(
     subGroupBy: TIssueDisplayFilterOptions,
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: TIssueMap
+    issues: TIssueMap,
+    isWorkspaceLevel?: boolean
   ): { [sub_group_id: string]: { [group_id: string]: string[] } };
   unGroupedIssues(orderBy: TIssueOrderByOptions, issues: TIssueMap): string[];
   issueDisplayFiltersDefaultData(groupBy: string | null): string[];
@@ -60,7 +62,8 @@ export class IssueHelperStore implements TIssueHelperStore {
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
     issues: TIssueMap,
-    isCalendarIssues: boolean = false
+    isCalendarIssues: boolean = false,
+    isWorkspaceLevel: boolean = false
   ) => {
     const _issues: { [group_id: string]: string[] } = {};
     if (!groupBy) return _issues;
@@ -76,8 +79,10 @@ export class IssueHelperStore implements TIssueHelperStore {
       let groupArray = [];
 
       if (groupBy === "state_detail.group") {
-        const state_group =
-          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        // if groupBy state_detail.group is coming from the project level the we are using stateDetails from root store else we are looping through the stateMap
+        const state_group = isWorkspaceLevel
+          ? this.rootStore?.workspaceStateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None"
+          : this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
         groupArray = [state_group];
       } else {
         const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
@@ -97,7 +102,8 @@ export class IssueHelperStore implements TIssueHelperStore {
     subGroupBy: TIssueDisplayFilterOptions,
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: TIssueMap
+    issues: TIssueMap,
+    isWorkspaceLevel: boolean = false
   ) => {
     const _issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
     if (!subGroupBy || !groupBy) return _issues;
@@ -117,8 +123,9 @@ export class IssueHelperStore implements TIssueHelperStore {
       let subGroupArray = [];
       let groupArray = [];
       if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
-        const state_group =
-          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        const state_group = isWorkspaceLevel
+          ? this.rootStore?.workspaceStateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None"
+          : this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
@@ -233,10 +240,10 @@ export class IssueHelperStore implements TIssueHelperStore {
   }
 
   /**
-   * This Method is mainly used to filter out empty values in the begining
+   * This Method is mainly used to filter out empty values in the beginning
    * @param key key of the value that is to be checked if empty
    * @param object any object in which the key's value is to be checked
-   * @returns 1 if emoty, 0 if not empty
+   * @returns 1 if empty, 0 if not empty
    */
   getSortOrderToFilterEmptyValues(key: string, object: any) {
     const value = object?.[key];

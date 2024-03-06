@@ -78,6 +78,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     label,
     projectState,
     member,
+    true,
     true
   );
 
@@ -98,6 +99,10 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
         preloadedData = { ...preloadedData, label_ids: [value] };
       } else if (groupByKey === "assignees" && value != "None") {
         preloadedData = { ...preloadedData, assignee_ids: [value] };
+      } else if (groupByKey === "cycle" && value != "None") {
+        preloadedData = { ...preloadedData, cycle_id: value };
+      } else if (groupByKey === "modules" && value != "None") {
+        preloadedData = { ...preloadedData, module_ids: [value] };
       } else if (groupByKey === "created_by") {
         preloadedData = { ...preloadedData };
       } else {
