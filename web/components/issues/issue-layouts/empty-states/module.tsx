@@ -59,6 +59,13 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     const issueIds = data.map((i) => i.id);
     await issues
       .addIssuesToModule(workspaceSlug.toString(), projectId?.toString(), moduleId.toString(), issueIds)
+      .then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the module successfully.",
+        })
+      )
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,

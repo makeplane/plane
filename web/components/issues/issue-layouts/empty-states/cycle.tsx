@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -44,7 +44,6 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
-  const { updateIssue, fetchIssue } = useIssueDetail();
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
@@ -59,13 +58,22 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await issues.addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds).catch(() => {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Selected issues could not be added to the cycle. Please try again.",
-      });
-    });
+    await issues
+      .addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds)
+      .then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the cycle successfully.",
+        })
+      )
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Selected issues could not be added to the cycle. Please try again.",
+        })
+      );
   };
 
   const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["no-issues"];
