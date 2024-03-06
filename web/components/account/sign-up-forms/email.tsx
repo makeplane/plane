@@ -3,9 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
-import { Button, Input } from "@plane/ui";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { checkEmailValidity } from "helpers/string.helper";
 import { AuthService } from "services/auth.service";
 // ui

@@ -1,60 +1,37 @@
 import React, { useState, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
+import { useTheme } from "next-themes";
+import { observer } from "mobx-react-lite";
 import { CheckCircle2 } from "lucide-react";
 // services
+import { WorkspaceService } from "services/workspace.service";
+import { UserService } from "services/user.service";
 // hooks
+import { useEventTracker, useUser } from "hooks/store";
 // layouts
+import DefaultLayout from "layouts/default-layout";
+import { UserAuthWrapper } from "layouts/auth-layout";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // images
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
+import { truncateText } from "helpers/string.helper";
+import { getUserRole } from "helpers/user.helper";
 // types
+import { NextPageWithLayout } from "lib/types";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
 // constants
-import useToast from "hooks/use-toast";
+import { ROLE } from "constants/workspace";
+import { MEMBER_ACCEPTED } from "constants/event-tracker";
+// components
 import { EmptyState } from "components/common";
 import { PageHead } from "components/core";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
-import { ROLE } from "constants/workspace";
-// components
-import { ROLE } from "constants/workspace";
-import { truncateText } from "helpers/string.helper";
-import { truncateText } from "helpers/string.helper";
-import { getUserRole } from "helpers/user.helper";
-import { getUserRole } from "helpers/user.helper";
-import { useEventTracker, useUser } from "hooks/store";
-// hooks
-import { useEventTracker, useUser } from "hooks/store";
-import { UserAuthWrapper } from "layouts/auth-layout";
-// layouts
-import { UserAuthWrapper } from "layouts/auth-layout";
-import DefaultLayout from "layouts/default-layout";
-import DefaultLayout from "layouts/default-layout";
-import { NextPageWithLayout } from "lib/types";
-// ui
-// images
-import { NextPageWithLayout } from "lib/types";
-import emptyInvitation from "public/empty-state/invitation.svg";
-import emptyInvitation from "public/empty-state/invitation.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import { UserService } from "services/user.service";
-// helpers
-// types
-import { UserService } from "services/user.service";
-import { WorkspaceService } from "services/workspace.service";
-import { WorkspaceService } from "services/workspace.service";
-import type { IWorkspaceMemberInvitation } from "@plane/types";
-import type { IWorkspaceMemberInvitation } from "@plane/types";
-// constants
-// components
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
@@ -108,6 +85,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           role: getUserRole(invitation?.role!),
           project_id: undefined,
           accepted_from: "App",

@@ -17,32 +17,24 @@ import {
   setPromiseToast,
   setToast,
 } from "@plane/ui";
-import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
-import useToast from "hooks/use-toast";
-import { DeactivateAccountModal } from "components/account";
 import { DeactivateAccountModal } from "components/account";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
 // ui
 // icons
 // components
-import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // constants
 import { TIME_ZONES } from "constants/timezones";
 import { USER_ROLES } from "constants/workspace";
 // hooks
 import { useApplication, useUser } from "hooks/store";
-import { useApplication, useUser } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
 import useUserAuth from "hooks/use-user-auth";
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
 // lib types
 import type { NextPageWithLayout } from "lib/types";
 import { FileService } from "services/file.service";
 // services
-import { FileService } from "services/file.service";
 // types
 import type { IUser } from "@plane/types";
 
@@ -156,8 +148,8 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Profile - General Settings" />
-      <div className="flex flex-col h-full">
-        <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
+      <div className="flex h-full flex-col">
+        <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
           <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         </div>
         <div className="overflow-hidden">
@@ -180,7 +172,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             )}
           />
           <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-10 md:pt-16 px-8 pb-8 lg:w-3/5 vertical-scrollbar scrollbar-md">
+          <div className="vertical-scrollbar scrollbar-md mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto px-8 pb-8 pt-10 md:pt-16 lg:w-3/5">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex w-full flex-col gap-8">
                 <div className="relative h-44 w-full">
@@ -316,7 +308,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           ref={ref}
                           hasError={Boolean(errors.email)}
                           placeholder="Enter your email"
-                          className={`w-full rounded-md cursor-not-allowed !bg-custom-background-80 ${
+                          className={`w-full cursor-not-allowed rounded-md !bg-custom-background-80 ${
                             errors.email ? "border-red-500" : ""
                           }`}
                           disabled

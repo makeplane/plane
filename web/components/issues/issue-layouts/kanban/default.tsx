@@ -1,5 +1,7 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
+// constants
+import { TCreateModalStoreTypes } from "constants/issue";
 // hooks
 import {
   useCycle,
@@ -11,8 +13,6 @@ import {
   useProject,
   useProjectState,
 } from "hooks/store";
-// constants
-import { TCreateModalStoreTypes } from "constants/issue";
 // types
 import {
   GroupByColumnTypes,

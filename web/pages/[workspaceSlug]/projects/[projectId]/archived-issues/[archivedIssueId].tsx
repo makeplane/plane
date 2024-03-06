@@ -1,19 +1,24 @@
 import { useState, ReactElement } from "react";
-import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
-import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { IssueDetailRoot } from "components/issues";
+import { ProjectArchivedIssueDetailsHeader } from "components/headers";
+import { PageHead } from "components/core";
 // ui
+import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
+import { RotateCcw } from "lucide-react";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 
 const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   // router

@@ -1,6 +1,5 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +7,6 @@ import useSWR from "swr";
 import { Sparkle } from "lucide-react";
 // hooks
 
-import { Spinner } from "@plane/ui";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover, PageHead } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
@@ -313,7 +311,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     updatePageTitle={updatePageTitle}
                     onActionCompleteHandler={actionCompleteAlert}
                     customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
-                    onChange={(_description_json: Object, description_html: string) => {
+                    onChange={(_description_json: any, description_html: string) => {
                       setShowAlert(true);
                       onChange(description_html);
                       handleSubmit(updatePage)();

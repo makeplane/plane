@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Search } from "lucide-react";
 // hooks
-import { Button } from "@plane/ui";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { PageHead } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";

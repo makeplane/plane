@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
 // layouts
 // ui
@@ -12,11 +11,8 @@ import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
 import { EUserProjectRoles } from "constants/project";
 import { useProject, useUser } from "hooks/store";
-import { useProject, useUser } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // hooks
 // components

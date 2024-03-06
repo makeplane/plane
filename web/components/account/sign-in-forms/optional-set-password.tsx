@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
+import { AuthService } from "services/auth.service";
 // hooks
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
-import { checkEmailValidity } from "helpers/string.helper";
 import { useEventTracker } from "hooks/store";
 // ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
+import { checkEmailValidity } from "helpers/string.helper";
 // icons
-import { AuthService } from "services/auth.service";
+import { Eye, EyeOff } from "lucide-react";
+import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
 
 type Props = {
   email: string;

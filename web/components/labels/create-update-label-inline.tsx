@@ -74,6 +74,7 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
       await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
         .then(() => {
           reset(defaultValues);

@@ -3,8 +3,6 @@ import { observer } from "mobx-react";
 // layout
 import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
-import { ProjectSettingHeader } from "components/headers";
-import { ProjectSettingStateList } from "components/states";
 import { ProjectSettingStateList } from "components/states";
 import { useProject } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";

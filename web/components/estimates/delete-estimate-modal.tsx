@@ -29,6 +29,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   const handleEstimateDelete = () => {
     if (!workspaceSlug || !projectId) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const estimateId = data?.id!;
 
     deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)

@@ -3,12 +3,10 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import useSWR from "swr";
 // layouts
-import { Loader, ToggleSwitch } from "@plane/ui";
 import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
+
 import { PageHead } from "components/core";
 import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
-import { useApplication } from "hooks/store";
 import { useApplication } from "hooks/store";
 import { InstanceAdminLayout } from "layouts/admin-layout";
 // types
