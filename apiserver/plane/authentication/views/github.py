@@ -2,13 +2,16 @@
 from urllib.parse import urlencode
 
 # Django import
-from django.contrib.auth import login
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.views import View
 
 # Module imports
 from plane.authentication.provider.oauth.github import GitHubOAuthProvider
+from plane.authentication.utils.login import user_login
+from plane.authentication.utils.workspace_project_join import (
+    process_workspace_project_invitations,
+)
 
 
 class GitHubOauthInitiateEndpoint(View):
@@ -48,7 +51,8 @@ class GitHubCallbackEndpoint(View):
                 code=code,
             )
             user = provider.authenticate()
-            login(request=request, user=user)
+            user_login(request=request, user=user)
+            process_workspace_project_invitations(user=user)
             return HttpResponseRedirect(request.session.get("referer"))
         except ImproperlyConfigured as e:
             url = referer + "?" + urlencode({"error": str(e)})

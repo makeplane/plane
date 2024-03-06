@@ -109,7 +109,7 @@ TEMPLATES = [
 
 # Cookie Settings
 SESSION_COOKIE_SECURE = True
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = 1800
 SESSION_COOKIE_NAME = "session-id"
 SESSION_COOKIE_DOMAIN = None

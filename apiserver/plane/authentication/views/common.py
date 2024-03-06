@@ -2,7 +2,7 @@
 from urllib.parse import urlencode
 
 # Django imports
-from django.contrib.auth import login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -27,6 +27,10 @@ from plane.app.serializers import (
     ResetPasswordSerializer,
     UserSerializer,
 )
+from plane.authentication.utils.login import user_login
+from plane.authentication.utils.workspace_project_join import (
+    process_workspace_project_invitations,
+)
 from plane.bgtasks.forgot_password_task import forgot_password
 from plane.db.models import User
 
@@ -35,7 +39,6 @@ class SignOutAuthEndpoint(View):
 
     def post(self, request):
         logout(request)
-        request.session.flush()
         query_string = urlencode({"message": "User signed out successfully"})
         url = request.META.get("HTTP_REFERER", "/") + "?" + query_string
         return HttpResponseRedirect(url)
@@ -117,8 +120,8 @@ class ResetPasswordEndpoint(APIView):
 
                 # Log the user in
                 # Generate access token for the user
-                login(request=request, user=user)
-
+                user_login(request=request, user=user)
+                process_workspace_project_invitations(user=user)
                 return Response(status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST

@@ -1,11 +1,10 @@
 # Django imports
-from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db import models
 
 # Module imports
-from . import BaseModel
-
+from .base import BaseModel
 
 ROLE_CHOICES = (
     (20, "Owner"),

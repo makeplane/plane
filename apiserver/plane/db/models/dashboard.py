@@ -1,12 +1,15 @@
 import uuid
 
-# Django imports
-from django.db import models
 from django.conf import settings
 
-# Module imports
-from . import BaseModel
+# Django imports
+from django.db import models
+
 from ..mixins import TimeAuditModel
+
+# Module imports
+from .base import BaseModel
+
 
 class Dashboard(BaseModel):
     DASHBOARD_CHOICES = (
@@ -45,7 +48,11 @@ class Dashboard(BaseModel):
 
 class Widget(TimeAuditModel):
     id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+        db_index=True,
+        primary_key=True,
     )
     key = models.CharField(max_length=255)
     filters = models.JSONField(default=dict)

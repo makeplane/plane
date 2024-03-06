@@ -5,7 +5,7 @@ import uuid
 from django.db import models
 
 # Module imports
-from plane.db.models import ProjectBaseModel
+from plane.db.models.project import ProjectBaseModel
 
 
 class GithubRepository(ProjectBaseModel):

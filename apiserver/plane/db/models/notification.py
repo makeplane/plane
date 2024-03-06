@@ -1,9 +1,10 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Module imports
-from . import BaseModel
+from .base import BaseModel
+
 
 class Notification(BaseModel):
     workspace = models.ForeignKey(
@@ -105,10 +106,19 @@ class UserNotificationPreference(BaseModel):
         """Return the user"""
         return f"<{self.user}>"
 
+
 class EmailNotificationLog(BaseModel):
     # receiver
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="email_notifications")
-    triggered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="triggered_emails")
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="email_notifications",
+    )
+    triggered_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="triggered_emails",
+    )
     # entity - can be issues, pages, etc.
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(max_length=255)

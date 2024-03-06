@@ -2,15 +2,15 @@
 from uuid import uuid4
 
 # Django imports
-from django.db import models
 from django.conf import settings
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 # Modeule imports
 from plane.db.mixins import AuditModel
 
 # Module imports
-from . import BaseModel
+from .base import BaseModel
 
 ROLE_CHOICES = (
     (20, "Admin"),

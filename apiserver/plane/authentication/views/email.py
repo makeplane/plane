@@ -8,10 +8,13 @@ from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.views import View
 
-from plane.authentication.adapter.base import AuthenticationException
-
 # Module imports
+from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.provider.credentials.email import EmailProvider
+from plane.authentication.utils.login import user_login
+from plane.authentication.utils.workspace_project_join import (
+    process_workspace_project_invitations,
+)
 
 
 class SignInAuthEndpoint(View):
@@ -47,7 +50,8 @@ class SignInAuthEndpoint(View):
                 request=request, key=email, code=password, is_signup=False
             )
             user = provider.authenticate()
-            login(request=request, user=user)
+            user_login(request=request, user=user)
+            process_workspace_project_invitations(user=user)
             return HttpResponseRedirect(request.session.get("referer", "/"))
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})
@@ -85,7 +89,8 @@ class SignUpAuthEndpoint(View):
                 request=request, key=email, code=password, is_signup=True
             )
             user = provider.authenticate()
-            login(request=request, user=user)
+            user_login(request=request, user=user)
+            process_workspace_project_invitations(user=user)
             return HttpResponseRedirect(request.session.get("referer", "/"))
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})

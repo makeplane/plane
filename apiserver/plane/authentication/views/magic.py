@@ -2,7 +2,6 @@
 from urllib.parse import urlencode
 
 # Django imports
-from django.contrib.auth import login
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -12,6 +11,10 @@ from django.views import View
 from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.provider.credentials.magic_code_adapter import (
     MagicCodeProvider,
+)
+from plane.authentication.utils.login import user_login
+from plane.authentication.utils.workspace_project_join import (
+    process_workspace_project_invitations,
 )
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
@@ -80,7 +83,8 @@ class MagicSignInEndpoint(View):
                 request=request, key=key, code=user_token
             )
             user = provider.authenticate()
-            login(request=request, user=user)
+            user_login(request=request, user=user)
+            process_workspace_project_invitations(user=user)
             return HttpResponseRedirect(request.session.get("referer"))
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})

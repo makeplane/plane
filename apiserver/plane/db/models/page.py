@@ -1,12 +1,14 @@
 import uuid
 
-# Django imports
-from django.db import models
 from django.conf import settings
 
+# Django imports
+from django.db import models
+
 # Module imports
-from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
+
+from .project import ProjectBaseModel
 
 
 class Page(ProjectBaseModel):
@@ -116,7 +118,7 @@ class PageBlock(ProjectBaseModel):
 
         if self.completed_at and self.issue:
             try:
-                from plane.db.models import State, Issue
+                from plane.db.models import Issue, State
 
                 completed_state = State.objects.filter(
                     group="completed", project=self.project
