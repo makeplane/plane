@@ -1,23 +1,23 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useGanttChart } from "../hooks/use-gantt-chart";
 // components
 import { GanttChartHeader, GanttChartMainContent } from "components/gantt-chart";
 // views
+// helpers
+import { cn } from "helpers/common.helper";
+// types
+// data
+import { SIDEBAR_WIDTH } from "../constants";
+import { currentViewDataWithView } from "../data";
+// constants
+import { useGanttChart } from "../hooks/use-gantt-chart";
+import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 import {
   generateMonthChart,
   getNumberOfDaysBetweenTwoDatesInMonth,
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
-// helpers
-import { cn } from "helpers/common.helper";
-// types
-import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
-// data
-import { currentViewDataWithView } from "../data";
-// constants
-import { SIDEBAR_WIDTH } from "../constants";
 
 type ChartViewRootProps = {
   border: boolean;

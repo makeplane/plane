@@ -1,11 +1,9 @@
 import { MouseEvent } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import useSWR from "swr";
-import { useTheme } from "next-themes";
 // hooks
-import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useCycle, useIssues, useMember, useProject } from "hooks/store";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -18,12 +16,13 @@ import {
   PriorityIcon,
   Avatar,
   CycleGroupIcon,
+  setPromiseToast,
 } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
 import { StateDropdown } from "components/dropdowns";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // icons
 import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 // helpers
@@ -35,7 +34,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
-import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EmptyStateType } from "constants/empty-state";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -45,9 +44,6 @@ interface IActiveCycleDetails {
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
-  const { resolvedTheme } = useTheme();
-  // store hooks
-  const { currentUser } = useUser();
   const {
     issues: { fetchActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -60,8 +56,6 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   } = useCycle();
   const { currentProjectDetails } = useProject();
   const { getUserDetails } = useMember();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ACTIVE_CYCLE_${projectId}` : null,
@@ -80,11 +74,6 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
       : null
   );
 
-  const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["active"];
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("cycle", "active", isLightMode);
-
   if (!activeCycle && isLoading)
     return (
       <Loader>
@@ -92,15 +81,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
       </Loader>
     );
 
-  if (!activeCycle)
-    return (
-      <EmptyState
-        title={emptyStateDetail.title}
-        description={emptyStateDetail.description}
-        image={emptyStateImage}
-        size="sm"
-      />
-    );
+  if (!activeCycle) return <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />;
 
   const endDate = new Date(activeCycle.end_date ?? "");
   const startDate = new Date(activeCycle.start_date ?? "");
@@ -119,12 +100,18 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id);
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
     });
   };
 
@@ -132,12 +119,22 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      activeCycle.id
+    );
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
     });
   };
 
@@ -169,7 +166,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   </Tooltip>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="flex gap-1 whitespace-nowrap rounded-sm text-sm px-3 py-0.5 bg-amber-500/10 text-amber-500">
+                  <span className="flex gap-1 whitespace-nowrap rounded-sm bg-amber-500/10 px-3 py-0.5 text-sm text-amber-500">
                     {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}
                   </span>
                   {activeCycle.is_favorite ? (
@@ -289,9 +286,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
         </div>
       </div>
       <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
-        <div className="flex flex-col gap-3 p-4 max-h-60 overflow-hidden">
+        <div className="flex max-h-60 flex-col gap-3 overflow-hidden p-4">
           <div className="text-custom-primary">High Priority Issues</div>
-          <div className="flex flex-col h-full gap-2.5 overflow-y-scroll rounded-md">
+          <div className="flex h-full flex-col gap-2.5 overflow-y-scroll rounded-md">
             {activeCycleIssues ? (
               activeCycleIssues.length > 0 ? (
                 activeCycleIssues.map((issue: any) => (
@@ -311,21 +308,21 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                           {currentProjectDetails?.identifier}-{issue.sequence_id}
                         </span>
                       </Tooltip>
-                      <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                      <Tooltip position="top-left" tooltipContent={issue.name}>
                         <span className="text-[0.825rem] text-custom-text-100">{truncateText(issue.name, 30)}</span>
                       </Tooltip>
                     </div>
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <div className="flex flex-shrink-0 items-center gap-1.5">
                       <StateDropdown
                         value={issue.state_id ?? undefined}
                         onChange={() => {}}
                         projectId={projectId?.toString() ?? ""}
-                        disabled={true}
+                        disabled
                         buttonVariant="background-with-text"
                       />
                       {issue.target_date && (
                         <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
-                          <div className="h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 cursor-not-allowed">
+                          <div className="flex h-full cursor-not-allowed items-center gap-1.5 rounded bg-custom-background-80 px-2 py-0.5 text-xs">
                             <CalendarCheck className="h-3 w-3 flex-shrink-0" />
                             <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
                           </div>
@@ -335,7 +332,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                   </Link>
                 ))
               ) : (
-                <div className="flex items-center justify-center h-full text-sm text-custom-text-200">
+                <div className="flex h-full items-center justify-center text-sm text-custom-text-200">
                   There are no high priority issues present in this cycle.
                 </div>
               )
@@ -348,7 +345,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
             )}
           </div>
         </div>
-        <div className="flex flex-col  border-custom-border-200 p-4 max-h-60">
+        <div className="flex max-h-60  flex-col border-custom-border-200 p-4">
           <div className="flex items-start justify-between gap-4 py-1.5 text-xs">
             <div className="flex items-center gap-3 text-custom-text-100">
               <div className="flex items-center justify-center gap-1">

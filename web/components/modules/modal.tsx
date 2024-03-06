@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
+// components
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { ModuleForm } from "components/modules";
+import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useModule, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
 // components
-import { ModuleForm } from "components/modules";
 // types
 import type { IModule } from "@plane/types";
-// constants
-import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -36,8 +37,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const { captureModuleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     reset(defaultValues);
@@ -55,8 +54,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
     await createModule(workspaceSlug.toString(), selectedProjectId, payload)
       .then((res) => {
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Module created successfully.",
         });
@@ -66,8 +65,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Module could not be created. Please try again.",
         });
@@ -86,19 +85,19 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         handleClose();
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Module updated successfully.",
         });
         captureModuleEvent({
           eventName: MODULE_UPDATED,
-          payload: { ...res, changed_properties: Object.keys(dirtyFields), state: "SUCCESS" },
+          payload: { ...res, changed_properties: Object.keys(dirtyFields || {}), state: "SUCCESS" },
         });
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Module could not be updated. Please try again.",
         });
@@ -109,7 +108,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleFormSubmit = async (formData: Partial<IModule>, dirtyFields: any) => {
+  const handleFormSubmit = async (formData: Partial<IModule>, dirtyFields: unknown) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<IModule> = {

@@ -1,16 +1,16 @@
-import orderBy from "lodash/orderBy";
 import get from "lodash/get";
 import indexOf from "lodash/indexOf";
 import isEmpty from "lodash/isEmpty";
+import orderBy from "lodash/orderBy";
 import values from "lodash/values";
 // types
-import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
-import { IIssueRootStore } from "../root.store";
 // constants
 import { ISSUE_PRIORITIES } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
+import { IIssueRootStore } from "../root.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -36,6 +36,8 @@ export type TIssueHelperStore = {
 
 const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   project: "project_id",
+  cycle: "cycle_id",
+  module: "module_ids",
   state: "state_id",
   "state_detail.group": "state_group" as keyof TIssue, // state_detail.group is only being used for state_group display,
   priority: "priority",
@@ -157,6 +159,10 @@ export class IssueHelperStore implements TIssueHelperStore {
         return Object.keys(this.rootStore?.workSpaceMemberRolesMap || {});
       case "project":
         return Object.keys(this.rootStore?.projectMap || {});
+      case "cycle":
+        return Object.keys(this.rootStore?.cycleMap || {});
+      case "module":
+        return Object.keys(this.rootStore?.moduleMap || {});
       default:
         return [];
     }

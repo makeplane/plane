@@ -13,4 +13,3 @@ export const calculateTotalFilters = (filters: IIssueFilterOptions): number =>
         )
         .reduce((curr, prev) => curr + prev, 0)
     : 0;
-

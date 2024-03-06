@@ -26,7 +26,7 @@ from plane.license.api.permissions import (
 )
 from plane.db.models import User
 from plane.license.utils.encryption import encrypt_data
-
+from plane.utils.cache import cache_response, invalidate_cache
 
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
@@ -38,6 +38,7 @@ class InstanceEndpoint(BaseAPIView):
             AllowAny(),
         ]
 
+    @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         instance = Instance.objects.first()
         # get the instance
@@ -52,6 +53,7 @@ class InstanceEndpoint(BaseAPIView):
         data["is_activated"] = True
         return Response(data, status=status.HTTP_200_OK)
 
+    @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
         # Get the instance
         instance = Instance.objects.first()
@@ -69,6 +71,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         InstanceAdminPermission,
     ]
 
+    @invalidate_cache(path="/api/instances/", user=False)
     # Create an instance admin
     def post(self, request):
         email = request.data.get("email", False)
@@ -98,6 +101,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         serializer = InstanceAdminSerializer(instance_admin)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @cache_response(60 * 60 * 2)
     def get(self, request):
         instance = Instance.objects.first()
         if instance is None:
@@ -109,6 +113,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         serializer = InstanceAdminSerializer(instance_admins, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request, pk):
         instance = Instance.objects.first()
         InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
@@ -120,6 +125,7 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         InstanceAdminPermission,
     ]
 
+    @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         instance_configurations = InstanceConfiguration.objects.all()
         serializer = InstanceConfigurationSerializer(
@@ -127,6 +133,8 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache(path="/api/configs/", user=False)
+    @invalidate_cache(path="/api/mobile-configs/", user=False)
     def patch(self, request):
         configurations = InstanceConfiguration.objects.filter(
             key__in=request.data.keys()
@@ -162,6 +170,7 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
         # Check instance first
         instance = Instance.objects.first()
@@ -252,6 +261,7 @@ class SignUpScreenVisitedEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
         instance = Instance.objects.first()
         if instance is None:

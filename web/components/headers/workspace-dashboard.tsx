@@ -1,17 +1,17 @@
-import { LayoutGrid, Zap } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { LayoutGrid, Zap } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // hooks
-import { useEventTracker } from "hooks/store";
 // components
-import { BreadcrumbLink } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
+import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // constants
 import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "constants/event-tracker";
+import { useEventTracker } from "hooks/store";
 
 export const WorkspaceDashboardHeader = () => {
   // hooks

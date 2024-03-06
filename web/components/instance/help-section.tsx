@@ -1,11 +1,11 @@
 import { FC, useState, useRef } from "react";
-import { Transition } from "@headlessui/react";
 import Link from "next/link";
+import { Transition } from "@headlessui/react";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft } from "lucide-react";
 // hooks
+import { DiscordIcon, GithubIcon } from "@plane/ui";
 import { useApplication } from "hooks/store";
 // icons
-import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
 import packageJson from "package.json";
 

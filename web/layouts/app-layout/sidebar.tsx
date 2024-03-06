@@ -1,13 +1,13 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
+import { ProjectSidebarList } from "components/project";
 import {
   WorkspaceHelpSection,
   WorkspaceSidebarDropdown,
   WorkspaceSidebarMenu,
   WorkspaceSidebarQuickAction,
 } from "components/workspace";
-import { ProjectSidebarList } from "components/project";
 // hooks
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";

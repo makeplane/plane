@@ -1,20 +1,5 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // types
-import { IIssueRootStore } from "../root.store";
-import { IIssueStore, IssueStore, IIssueStoreActions } from "./issue.store";
-import { IIssueReactionStore, IssueReactionStore, IIssueReactionStoreActions } from "./reaction.store";
-import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
-import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
-import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
-import { IIssueSubIssuesStore, IssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
-import { IIssueRelationStore, IssueRelationStore, IIssueRelationStoreActions } from "./relation.store";
-import { IIssueActivityStore, IssueActivityStore, IIssueActivityStoreActions, TActivityLoader } from "./activity.store";
-import { IIssueCommentStore, IssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
-import {
-  IIssueCommentReactionStore,
-  IssueCommentReactionStore,
-  IIssueCommentReactionStoreActions,
-} from "./comment_reaction.store";
 import {
   TIssue,
   TIssueAttachment,
@@ -24,6 +9,21 @@ import {
   TIssueReaction,
   TIssueRelationTypes,
 } from "@plane/types";
+import { IIssueRootStore } from "../root.store";
+import { IIssueActivityStore, IssueActivityStore, IIssueActivityStoreActions, TActivityLoader } from "./activity.store";
+import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
+import { IIssueCommentStore, IssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
+import {
+  IIssueCommentReactionStore,
+  IssueCommentReactionStore,
+  IIssueCommentReactionStoreActions,
+} from "./comment_reaction.store";
+import { IIssueStore, IssueStore, IIssueStoreActions } from "./issue.store";
+import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
+import { IIssueReactionStore, IssueReactionStore, IIssueReactionStoreActions } from "./reaction.store";
+import { IIssueRelationStore, IssueRelationStore, IIssueRelationStoreActions } from "./relation.store";
+import { IIssueSubIssuesStore, IssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
+import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
 
 export type TPeekIssue = {
   workspaceSlug: string;

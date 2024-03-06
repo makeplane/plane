@@ -1,21 +1,22 @@
 # Python imports
 import json
 
+from django.core.serializers.json import DjangoJSONEncoder
+
 # Django imports
 from django.db import IntegrityError
 from django.db.models import (
-    OuterRef,
-    Func,
-    Q,
-    F,
     Case,
-    When,
-    Value,
     CharField,
-    Max,
     Exists,
+    F,
+    Func,
+    Max,
+    OuterRef,
+    Q,
+    Value,
+    When,
 )
-from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
 # Third party imports
@@ -23,30 +24,31 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView, WebhookMixin
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    ProjectMemberPermission,
-    ProjectLitePermission,
-)
-from plane.db.models import (
-    Issue,
-    IssueAttachment,
-    IssueLink,
-    Project,
-    Label,
-    ProjectMember,
-    IssueComment,
-    IssueActivity,
-)
-from plane.bgtasks.issue_activites_task import issue_activity
 from plane.api.serializers import (
+    IssueActivitySerializer,
+    IssueCommentSerializer,
+    IssueLinkSerializer,
     IssueSerializer,
     LabelSerializer,
-    IssueLinkSerializer,
-    IssueCommentSerializer,
-    IssueActivitySerializer,
 )
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    ProjectLitePermission,
+    ProjectMemberPermission,
+)
+from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    Issue,
+    IssueActivity,
+    IssueAttachment,
+    IssueComment,
+    IssueLink,
+    Label,
+    Project,
+    ProjectMember,
+)
+
+from .base import BaseAPIView, WebhookMixin
 
 
 class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
@@ -713,12 +715,12 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
         # Validation check if the issue already exists
         if (
-            str(request.data.get("external_id"))
+            request.data.get("external_id")
             and (
                 issue_comment.external_id
                 != str(request.data.get("external_id"))
             )
-            and Issue.objects.filter(
+            and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
                 external_source=request.data.get(

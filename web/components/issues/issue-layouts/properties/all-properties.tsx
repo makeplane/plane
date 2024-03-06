@@ -1,14 +1,10 @@
 import { useCallback, useMemo } from "react";
+import xor from "lodash/xor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
-import xor from "lodash/xor";
 // hooks
-import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
-// components
-import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import {
   DateDropdown,
   EstimateDropdown,
@@ -18,15 +14,19 @@ import {
   CycleDropdown,
   StateDropdown,
 } from "components/dropdowns";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { cn } from "helpers/common.helper";
-// types
-import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
-// constants
 import { ISSUE_UPDATED } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
+import { cn } from "helpers/common.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
+// components
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
+import { IssuePropertyLabels } from "../properties/labels";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// helpers
+// types
+// constants
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -52,7 +52,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { getStateById } = useProjectState();
   // router
   const router = useRouter();
-  const { workspaceSlug, cycleId, moduleId } = router.query;
+  const { workspaceSlug } = router.query;
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
@@ -240,7 +240,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5">
+        <div className="h-5 truncate">
           <StateDropdown
             value={issue.state_id}
             onChange={handleState}
@@ -328,38 +328,34 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* modules */}
-      {moduleId === undefined && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5">
-            <ModuleDropdown
-              projectId={issue?.project_id}
-              value={issue?.module_ids ?? []}
-              onChange={handleModule}
-              disabled={isReadOnly}
-              multiple
-              buttonVariant="border-with-text"
-              showCount={true}
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+        <div className="h-5">
+          <ModuleDropdown
+            projectId={issue?.project_id}
+            value={issue?.module_ids ?? []}
+            onChange={handleModule}
+            disabled={isReadOnly}
+            multiple
+            buttonVariant="border-with-text"
+            showCount
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
 
       {/* cycles */}
-      {cycleId === undefined && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5 truncate">
-            <CycleDropdown
-              projectId={issue?.project_id}
-              value={issue?.cycle_id}
-              onChange={handleCycle}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+        <div className="h-5 truncate">
+          <CycleDropdown
+            projectId={issue?.project_id}
+            value={issue?.cycle_id}
+            onChange={handleCycle}
+            disabled={isReadOnly}
+            buttonVariant="border-with-text"
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
 
       {/* estimates */}
       {areEstimatesEnabledForCurrentProject && (

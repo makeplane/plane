@@ -14,6 +14,8 @@ export type TIssueGroupByOptions =
   | "project"
   | "assignees"
   | "mentions"
+  | "cycle"
+  | "module"
   | null;
 
 export type TIssueOrderByOptions =

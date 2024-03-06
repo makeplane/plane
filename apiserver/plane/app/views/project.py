@@ -1,67 +1,68 @@
 # Python imports
-import jwt
-import boto3
 from datetime import datetime
+
+import boto3
+import jwt
+from django.conf import settings
 
 # Django imports
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import (
-    Prefetch,
-    Q,
     Exists,
-    OuterRef,
     F,
     Func,
+    OuterRef,
+    Prefetch,
+    Q,
     Subquery,
 )
-from django.core.validators import validate_email
-from django.conf import settings
 from django.utils import timezone
 
 # Third Party imports
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 # Module imports
-from .base import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    ProjectSerializer,
-    ProjectListSerializer,
-    ProjectMemberSerializer,
-    ProjectMemberInviteSerializer,
-    ProjectFavoriteSerializer,
-    ProjectDeployBoardSerializer,
-    ProjectMemberAdminSerializer,
-    ProjectMemberRoleSerializer,
-)
-
 from plane.app.permissions import (
-    WorkspaceUserPermission,
     ProjectBasePermission,
-    ProjectMemberPermission,
     ProjectLitePermission,
+    ProjectMemberPermission,
+    WorkspaceUserPermission,
 )
-
+from plane.app.serializers import (
+    ProjectDeployBoardSerializer,
+    ProjectFavoriteSerializer,
+    ProjectListSerializer,
+    ProjectMemberAdminSerializer,
+    ProjectMemberInviteSerializer,
+    ProjectMemberRoleSerializer,
+    ProjectMemberSerializer,
+    ProjectSerializer,
+)
+from plane.bgtasks.project_invitation_task import project_invitation
 from plane.db.models import (
-    Project,
-    ProjectMember,
-    Workspace,
-    ProjectMemberInvite,
-    User,
-    WorkspaceMember,
-    State,
-    TeamMember,
-    ProjectFavorite,
-    ProjectIdentifier,
-    Module,
     Cycle,
     Inbox,
-    ProjectDeployBoard,
     IssueProperty,
+    Module,
+    Project,
+    ProjectDeployBoard,
+    ProjectFavorite,
+    ProjectIdentifier,
+    ProjectMember,
+    ProjectMemberInvite,
+    State,
+    TeamMember,
+    User,
+    Workspace,
+    WorkspaceMember,
 )
+from plane.utils.cache import cache_response
+
+from .base import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
@@ -1049,6 +1050,8 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    # Cache the below api for 24 hours
+    @cache_response(60 * 60 * 24, user=False)
     def get(self, request):
         files = []
         s3 = boto3.client(
@@ -1065,9 +1068,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         # Extracting file keys from the response
         if "Contents" in response:
             for content in response["Contents"]:
-                if not content[
-                    "Key"
-                ].endswith(
+                if not content["Key"].endswith(
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
                     files.append(

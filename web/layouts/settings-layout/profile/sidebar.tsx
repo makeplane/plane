@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { mutate } from "swr";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
+import { mutate } from "swr";
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "constants/profile";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -36,8 +35,6 @@ export const ProfileLayoutSidebar = observer(() => {
   const router = useRouter();
   // next themes
   const { setTheme } = useTheme();
-  // toast
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     theme: { sidebarCollapsed, toggleSidebar },
@@ -92,8 +89,8 @@ export const ProfileLayoutSidebar = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -129,7 +126,7 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
+          <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
@@ -157,7 +154,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
-            <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
+            <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
               {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}

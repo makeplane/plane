@@ -1,14 +1,14 @@
 import { observer } from "mobx-react-lite";
 // components
-import { IssueProperties } from "../properties/all-properties";
 // hooks
-import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // ui
 import { Spinner, Tooltip, ControlLink } from "@plane/ui";
 // helper
 import { cn } from "helpers/common.helper";
+import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { IssueProperties } from "../properties/all-properties";
 import { EIssueActions } from "../types";
 
 interface IssueBlockProps {
@@ -65,7 +65,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
       )}
 
       {issue?.is_draft ? (
-        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+        <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
@@ -78,7 +78,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
           disabled={!!issue?.tempId}
         >
-          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <Tooltip tooltipContent={issue.name}>
             <span>{issue.name}</span>
           </Tooltip>
         </ControlLink>

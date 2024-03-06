@@ -1,17 +1,16 @@
 import React, { Fragment, useCallback, useMemo } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import isEmpty from "lodash/isEmpty";
-import { useTheme } from "next-themes";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
-import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
 import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
+import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
 // components
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
 import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 import { SpreadsheetLayoutLoader } from "components/ui";
 // types
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
@@ -19,15 +18,12 @@ import { EIssueActions } from "../types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { ALL_ISSUES_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
+  const { workspaceSlug, globalViewId, ...routeFilters } = router.query;
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // store
@@ -39,8 +35,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const { dataViewId, issueIds } = groupedIssueIds;
   const {
-    membership: { currentWorkspaceAllProjectsRole, currentWorkspaceRole },
-    currentUser,
+    membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const { workspaceProjectIds } = useProject();
@@ -48,10 +43,6 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
-  const currentViewDetails = ALL_ISSUES_EMPTY_STATE_DETAILS[currentView as keyof typeof ALL_ISSUES_EMPTY_STATE_DETAILS];
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("all-issues", currentView, isLightMode);
 
   // filter init from the query params
 
@@ -61,14 +52,10 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       globalViewId &&
       ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
     ) {
-      const routerQueryParams = { ...router.query };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { ["workspaceSlug"]: _workspaceSlug, ["globalViewId"]: _globalViewId, ...filters } = routerQueryParams;
-
       let issueFilters: any = {};
-      Object.keys(filters).forEach((key) => {
+      Object.keys(routeFilters).forEach((key) => {
         const filterKey: any = key;
-        const filterValue = filters[key]?.toString() || undefined;
+        const filterValue = routeFilters[key]?.toString() || undefined;
         if (
           ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey) &&
           filterKey &&
@@ -77,7 +64,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
           issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
       });
 
-      if (!isEmpty(filters))
+      if (!isEmpty(routeFilters))
         updateFilters(
           workspaceSlug.toString(),
           undefined,
@@ -189,11 +176,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     [canEditProperties, handleIssues]
   );
 
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-
   if (loader === "init-loader" || !globalViewId || globalViewId !== dataViewId || !issueIds) {
     return <SpreadsheetLayoutLoader />;
   }
+
+  const emptyStateType =
+    (workspaceProjectIds ?? []).length > 0 ? `workspace-${currentView}` : EmptyStateType.WORKSPACE_NO_PROJECTS;
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
@@ -201,34 +189,21 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
         {issueIds.length === 0 ? (
           <EmptyState
-            image={emptyStateImage}
-            title={(workspaceProjectIds ?? []).length > 0 ? currentViewDetails.title : "No project"}
-            description={
-              (workspaceProjectIds ?? []).length > 0
-                ? currentViewDetails.description
-                : "To create issues or manage your work, you need to create a project or be a part of one."
-            }
+            type={emptyStateType as keyof typeof EMPTY_STATE_DETAILS}
             size="sm"
-            primaryButton={
+            primaryButtonOnClick={
               (workspaceProjectIds ?? []).length > 0
                 ? currentView !== "custom-view" && currentView !== "subscribed"
-                  ? {
-                      text: "Create new issue",
-                      onClick: () => {
-                        setTrackElement("All issues empty state");
-                        commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-                      },
+                  ? () => {
+                      setTrackElement("All issues empty state");
+                      commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                     }
                   : undefined
-                : {
-                    text: "Start your first project",
-                    onClick: () => {
-                      setTrackElement("All issues empty state");
-                      commandPaletteStore.toggleCreateProjectModal(true);
-                    },
+                : () => {
+                    setTrackElement("All issues empty state");
+                    commandPaletteStore.toggleCreateProjectModal(true);
                   }
             }
-            disabled={!isEditingAllowed}
           />
         ) : (
           <Fragment>

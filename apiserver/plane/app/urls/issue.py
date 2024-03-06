@@ -1,29 +1,26 @@
 from django.urls import path
 
-
 from plane.app.views import (
-    IssueListEndpoint,
-    IssueViewSet,
-    LabelViewSet,
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
-    BulkImportIssuesEndpoint,
-    UserWorkSpaceIssues,
-    SubIssuesEndpoint,
-    IssueLinkViewSet,
-    IssueAttachmentEndpoint,
+    CommentReactionViewSet,
     ExportIssuesEndpoint,
     IssueActivityEndpoint,
-    IssueCommentViewSet,
-    IssueSubscriberViewSet,
-    IssueReactionViewSet,
-    CommentReactionViewSet,
-    IssueUserDisplayPropertyEndpoint,
     IssueArchiveViewSet,
-    IssueRelationViewSet,
+    IssueAttachmentEndpoint,
+    IssueCommentViewSet,
     IssueDraftViewSet,
+    IssueLinkViewSet,
+    IssueListEndpoint,
+    IssueReactionViewSet,
+    IssueRelationViewSet,
+    IssueSubscriberViewSet,
+    IssueUserDisplayPropertyEndpoint,
+    IssueViewSet,
+    LabelViewSet,
+    SubIssuesEndpoint,
+    UserWorkSpaceIssues,
 )
-
 
 urlpatterns = [
     path(
@@ -85,12 +82,6 @@ urlpatterns = [
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
-        BulkImportIssuesEndpoint.as_view(),
-        name="project-issues-bulk",
-    ),
-    # deprecated endpoint TODO: remove once confirmed
     path(
         "workspaces/<str:slug>/my-issues/",
         UserWorkSpaceIssues.as_view(),

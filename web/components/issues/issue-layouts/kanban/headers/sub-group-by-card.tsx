@@ -1,7 +1,7 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { Circle, ChevronDown, ChevronUp } from "lucide-react";
 // mobx
-import { observer } from "mobx-react-lite";
 import { TIssueKanbanFilters } from "@plane/types";
 
 interface IHeaderSubGroupByCard {
