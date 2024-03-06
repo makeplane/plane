@@ -23,6 +23,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
   // store hooks
   const { currentUser } = useUser();
 
+  // TODO: refactor this component
   return (
     <>
       {activity ? (

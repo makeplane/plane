@@ -51,6 +51,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
     updateResultsCount(userProfileActivity.results.length);
   }, [updateResultsCount, updateTotalPages, userProfileActivity]);
 
+  // TODO: refactor this component
   return (
     <>
       {userProfileActivity ? (
