@@ -1,17 +1,18 @@
 import { useState, FC } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
+// lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
-// hooks
-import { useEventTracker, useMember, useUser } from "hooks/store";
-// components
-import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+// hooks
+import { useEventTracker, useMember, useUser } from "hooks/store";
 
 type Props = {
   memberId: string;

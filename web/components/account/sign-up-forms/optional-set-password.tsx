@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
+import { Eye, EyeOff } from "lucide-react";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { ESignUpSteps } from "components/account";
+import { PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "constants/event-tracker";
+import { checkEmailValidity } from "helpers/string.helper";
+import { useEventTracker } from "hooks/store";
 import { AuthService } from "services/auth.service";
 // hooks
-import { useEventTracker } from "hooks/store";
 // ui
-import { Button, Input, TOAST_TYPE, setToast  } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // components
-import { ESignUpSteps } from "components/account";
 // constants
-import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "constants/event-tracker";
 // icons
-import { Eye, EyeOff } from "lucide-react";
 
 type Props = {
   email: string;
@@ -162,7 +162,7 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          <p className="text-onboarding-text-200 text-xs mt-2 pb-3">
+          <p className="mt-2 pb-3 text-xs text-onboarding-text-200">
             This password will continue to be your account{"'"}s password.
           </p>
         </div>

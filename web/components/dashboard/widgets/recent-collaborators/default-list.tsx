@@ -1,8 +1,8 @@
 import { useState } from "react";
 // components
+import { Button } from "@plane/ui";
 import { CollaboratorsList } from "./collaborators-list";
 // ui
-import { Button } from "@plane/ui";
 
 type Props = {
   dashboardId: string;

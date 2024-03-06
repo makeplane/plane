@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
 // components
-import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
-import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "components/issues";
+import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { KanbanLayoutLoader, ListLayoutLoader } from "components/ui";
 import { EmptyState } from "components/empty-state";
 // hooks
+import { PROFILE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { useIssues } from "hooks/store";
 // constants
 import { EIssuesStoreType } from "constants/issue";
@@ -33,8 +37,8 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   } = useIssues(EIssuesStoreType.PROFILE);
 
   useEffect(() => {
-    setViewId(type);
-  }, [type]);
+    if (setViewId) setViewId(type);
+  }, [type, setViewId]);
 
   useSWR(
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,

@@ -1,11 +1,20 @@
 import { useState, Fragment, ReactElement } from "react";
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-import { Tab } from "@headlessui/react";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { Tab } from "@headlessui/react";
 // hooks
+import { PageHead } from "components/core";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { PagesHeader } from "components/headers";
+import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
+import { PagesLoader } from "components/ui";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { PAGE_TABS_LIST } from "constants/page";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
+import { useProjectPages } from "hooks/store/use-project-page";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 import useSize from "hooks/use-window-size";

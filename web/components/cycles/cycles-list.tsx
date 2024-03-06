@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
+import { Loader } from "@plane/ui";
 import { CyclePeekOverview, CyclesListItem } from "components/cycles";
 import { EmptyState } from "components/empty-state";
 // ui
-import { Loader } from "@plane/ui";
 // constants
 import { EMPTY_STATE_DETAILS } from "constants/empty-state";
 

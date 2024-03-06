@@ -1,9 +1,22 @@
 import { useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { Plus } from "lucide-react";
 // hooks
+// components
+// ui
+import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+// helpers
+// types
+// constants
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { renderEmoji } from "helpers/emoji.helper";
+import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -15,20 +28,7 @@ import {
   useProjectView,
   useUser,
 } from "hooks/store";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-// ui
-import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
-// helpers
-import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
-// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-// constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router

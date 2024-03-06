@@ -4,9 +4,14 @@ import { observer } from "mobx-react-lite";
 import { useApplication, useEventTracker, useIssues } from "hooks/store";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState } from "components/empty-state";
+import { EMPTY_FILTER_STATE_DETAILS, MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
+// ui
+// components
 // types
 import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants

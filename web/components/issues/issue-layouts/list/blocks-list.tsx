@@ -1,10 +1,10 @@
 import { FC, MutableRefObject } from "react";
 // components
+import RenderIfVisible from "components/core/render-if-visible-HOC";
 import { IssueBlock } from "components/issues";
 // types
 import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 import { EIssueActions } from "../types";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
 
 interface Props {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;

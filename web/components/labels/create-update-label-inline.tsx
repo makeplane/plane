@@ -1,17 +1,17 @@
 import React, { forwardRef, useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
-// hooks
-import { useLabel } from "hooks/store";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
+// hooks
+import { useLabel } from "hooks/store";
 // types
 import { IIssueLabel } from "@plane/types";
-// fetch-keys
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
 
 type Props = {
   labelForm: boolean;
@@ -74,6 +74,7 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
       await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
         .then(() => {
           reset(defaultValues);

@@ -1,6 +1,6 @@
 // types
-import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
 import { Briefcase, FileText, LayoutGrid } from "lucide-react";
+import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,

@@ -1,15 +1,19 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { Loader } from "@plane/ui";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { PagesListView } from "components/pages/pages-list";
+import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EUserProjectRoles } from "constants/project";
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { useApplication } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 // components
 import { PagesListView } from "components/pages/pages-list";
 import { EmptyState } from "components/empty-state";
 // ui
-import { Loader } from "@plane/ui";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
 import { EmptyStateType } from "constants/empty-state";
 

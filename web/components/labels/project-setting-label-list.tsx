@@ -1,6 +1,4 @@
 import React, { useState, useRef } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import {
   DragDropContext,
   Draggable,
@@ -21,7 +19,6 @@ import {
 } from "components/labels";
 import { EmptyState } from "components/empty-state";
 // ui
-import { Button, Loader } from "@plane/ui";
 // types
 import { IIssueLabel } from "@plane/types";
 // constants
@@ -68,16 +65,18 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     if (destination?.droppableId === LABELS_ROOT) parentLabel = null;
 
     if (result.reason == "DROP" && childLabel != parentLabel) {
-      updateLabelPosition(
-        workspaceSlug?.toString()!,
-        projectId?.toString()!,
-        childLabel,
-        parentLabel,
-        index,
-        prevParentLabel == parentLabel,
-        prevIndex
-      );
-      return;
+      if (workspaceSlug && projectId) {
+        updateLabelPosition(
+          workspaceSlug?.toString(),
+          projectId?.toString(),
+          childLabel,
+          parentLabel,
+          index,
+          prevParentLabel == parentLabel,
+          prevIndex
+        );
+        return;
+      }
     }
   };
 
@@ -96,7 +95,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
       </div>
       <div className="h-full w-full py-8">
         {showLabelForm && (
-          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2 my-2">
+          <div className="my-2 w-full rounded border border-custom-border-200 px-3.5 py-2">
             <CreateUpdateLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}

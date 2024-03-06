@@ -1,20 +1,20 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
 // hooks
-import { useEventTracker, useIssueDetail } from "hooks/store";
-// components
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import { copyTextToClipboard } from "helpers/string.helper";
+import { useEventTracker, useIssueDetail } from "hooks/store";
+// components
+import { IUser, TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
 // ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IUser, TIssue } from "@plane/types";
 
 export interface ISubIssuesRoot {
   workspaceSlug: string;

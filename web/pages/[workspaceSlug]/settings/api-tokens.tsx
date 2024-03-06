@@ -1,8 +1,17 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // store hooks
+import { Button } from "@plane/ui";
+import { ApiTokenListItem, CreateApiTokenModal } from "components/api-token";
+import { PageHead } from "components/core";
+import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { WorkspaceSettingHeader } from "components/headers";
+import { APITokenSettingsLoader } from "components/ui";
+import { WORKSPACE_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { API_TOKENS_LIST } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { useUser, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -13,12 +22,10 @@ import { ApiTokenListItem, CreateApiTokenModal } from "components/api-token";
 import { EmptyState } from "components/empty-state";
 import { PageHead } from "components/core";
 // ui
-import { Button } from "@plane/ui";
-import { APITokenSettingsLoader } from "components/ui";
 // services
+import { NextPageWithLayout } from "lib/types";
 import { APITokenService } from "services/api_token.service";
 // types
-import { NextPageWithLayout } from "lib/types";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
 import { EUserWorkspaceRoles } from "constants/workspace";

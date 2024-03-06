@@ -1,18 +1,22 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
-import { TourRoot } from "components/onboarding";
-import { UserGreetingsView } from "components/user";
-import { IssuePeekOverview } from "components/issues";
+import { Spinner } from "@plane/ui";
 import { DashboardWidgets } from "components/dashboard";
 import { EmptyState } from "components/empty-state";
+import { IssuePeekOverview } from "components/issues";
+import { TourRoot } from "components/onboarding";
+import { UserGreetingsView } from "components/user";
 // ui
-import { Spinner } from "@plane/ui";
 // constants
 import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
 import { EmptyStateType } from "constants/empty-state";
+import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks

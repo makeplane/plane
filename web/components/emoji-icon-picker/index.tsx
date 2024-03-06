@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 // headless ui
+import { TwitterPicker } from "react-color";
 import { Tab, Transition, Popover } from "@headlessui/react";
 // react colors
-import { TwitterPicker } from "react-color";
 // hooks
+import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
-import { Props } from "./types";
 // emojis
 import emojis from "./emojis.json";
+import { getRecentEmojis, saveRecentEmoji } from "./helpers";
 import icons from "./icons.json";
 // helpers
-import { getRecentEmojis, saveRecentEmoji } from "./helpers";
-import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
+import { Props } from "./types";
 
 const tabOptions = [
   {

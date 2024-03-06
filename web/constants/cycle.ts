@@ -162,5 +162,3 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     icon: Microscope,
   },
 ];
-
-

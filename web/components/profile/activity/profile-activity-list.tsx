@@ -1,22 +1,22 @@
 import { useEffect } from "react";
-import Link from "next/link";
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
 // hooks
+import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
+import { ActivitySettingsLoader } from "components/ui";
+import { USER_ACTIVITY } from "constants/fetch-keys";
+import { calculateTimeAgo } from "helpers/date-time.helper";
 import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // editor
-import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // components
-import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 // ui
-import { ActivitySettingsLoader } from "components/ui";
 // helpers
-import { calculateTimeAgo } from "helpers/date-time.helper";
 // fetch-keys
-import { USER_ACTIVITY } from "constants/fetch-keys";
 
 // services
 const userService = new UserService();
