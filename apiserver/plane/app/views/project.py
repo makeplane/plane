@@ -141,12 +141,6 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 .values("count")
             )
             .annotate(
-                total_issues=Issue.issue_objects.filter(project_id=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
                     member_id=self.request.user.id,
@@ -181,10 +175,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             for field in request.GET.get("fields", "").split(",")
             if field
         ]
-        projects = (
-            self.get_queryset()
-            .order_by("sort_order", "name")
-        )
+        projects = self.get_queryset().order_by("sort_order", "name")
         if request.GET.get("per_page", False) and request.GET.get(
             "cursor", False
         ):
@@ -316,6 +307,73 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
+
+    def retrieve(self, request, slug, pk):
+        project = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .annotate(
+                total_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=True,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=False,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                archived_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    archived_at__isnull=False,
+                    parent__isnull=True,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                archived_sub_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    archived_at__isnull=False,
+                    parent__isnull=False,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                draft_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    is_draft=True,
+                    parent__isnull=True,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                draft_sub_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    is_draft=True,
+                    parent__isnull=False,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        ).first()
+
+        serializer = ProjectListSerializer(project)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, pk=None):
         try:
@@ -584,9 +642,11 @@ class ProjectJoinEndpoint(BaseAPIView):
                     _ = WorkspaceMember.objects.create(
                         workspace_id=project_invite.workspace_id,
                         member=user,
-                        role=15
-                        if project_invite.role >= 15
-                        else project_invite.role,
+                        role=(
+                            15
+                            if project_invite.role >= 15
+                            else project_invite.role
+                        ),
                     )
                 else:
                     # Else make him active
@@ -693,9 +753,14 @@ class ProjectMemberViewSet(BaseViewSet):
         )
 
         bulk_project_members = []
-        member_roles = {member.get("member_id"): member.get("role") for member in members}
+        member_roles = {
+            member.get("member_id"): member.get("role") for member in members
+        }
         # Update roles in the members array based on the member_roles dictionary
-        for project_member in  ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members]):
+        for project_member in ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=[member.get("member_id") for member in members],
+        ):
             project_member.role = member_roles[str(project_member.member_id)]
             project_member.is_active = True
             bulk_project_members.append(project_member)
@@ -718,9 +783,9 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 10),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=sort_order[0] - 10000
-                    if len(sort_order)
-                    else 65535,
+                    sort_order=(
+                        sort_order[0] - 10000 if len(sort_order) else 65535
+                    ),
                 )
             )
             bulk_issue_props.append(
@@ -741,7 +806,10 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_issue_props, batch_size=10, ignore_conflicts=True
         )
 
-        project_members = ProjectMember.objects.filter(project_id=project_id, member_id__in=[member.get("member_id") for member in members])
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=[member.get("member_id") for member in members],
+        )
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

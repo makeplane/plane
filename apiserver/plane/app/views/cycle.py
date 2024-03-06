@@ -108,15 +108,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(is_favorite=Exists(favorite_subquery))
             .annotate(
-                total_issues=Count(
-                    "issue_cycle",
-                    filter=Q(
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
                 completed_issues=Count(
                     "issue_cycle__issue__state__group",
                     filter=Q(
@@ -233,7 +224,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "progress_snapshot",
                 # meta fields
                 "is_favorite",
-                "total_issues",
                 "cancelled_issues",
                 "completed_issues",
                 "started_issues",
@@ -357,7 +347,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             "progress_snapshot",
             # meta fields
             "is_favorite",
-            "total_issues",
             "cancelled_issues",
             "completed_issues",
             "started_issues",
@@ -403,7 +392,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         "progress_snapshot",
                         # meta fields
                         "is_favorite",
-                        "total_issues",
                         "cancelled_issues",
                         "completed_issues",
                         "started_issues",
@@ -427,9 +415,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
 
     def partial_update(self, request, slug, project_id, pk):
-        queryset = (
-            self.get_queryset()
-            .filter(workspace__slug=slug, project_id=project_id, pk=pk)
+        queryset = self.get_queryset().filter(
+            workspace__slug=slug, project_id=project_id, pk=pk
         )
         cycle = queryset.first()
         request_data = request.data
@@ -476,7 +463,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "progress_snapshot",
                 # meta fields
                 "is_favorite",
-                "total_issues",
                 "cancelled_issues",
                 "completed_issues",
                 "started_issues",
@@ -493,6 +479,26 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         data = (
             self.get_queryset()
             .filter(pk=pk)
+            .annotate(
+                total_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=True,
+                    issue_cycle__cycle_id=pk,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=False,
+                    issue_cycle__cycle_id=pk,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .values(
                 # necessary fields
                 "id",
@@ -509,6 +515,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "external_source",
                 "external_id",
                 "progress_snapshot",
+                "total_issues",
+                "sub_issues",
                 # meta fields
                 "is_favorite",
                 "total_issues",
@@ -883,7 +891,9 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
 
         # Update the cycle issues
-        CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
+        CycleIssue.objects.bulk_update(
+            updated_records, ["cycle_id"], batch_size=100
+        )
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
