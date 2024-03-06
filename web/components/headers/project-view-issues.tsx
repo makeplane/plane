@@ -33,11 +33,7 @@ import { ProjectLogo } from "components/project";
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    viewId: string;
-  };
+  const { workspaceSlug, projectId, viewId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -61,15 +57,21 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !viewId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -81,23 +83,41 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, viewId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, viewId);
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        viewId.toString()
+      );
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );

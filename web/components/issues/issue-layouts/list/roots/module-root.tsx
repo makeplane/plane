@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
@@ -7,8 +7,6 @@ import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
 // types
-import { TIssue } from "@plane/types";
-import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 
@@ -18,40 +16,11 @@ export const ModuleListLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
-
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, issue, moduleId.toString());
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.removeIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
-      },
-      [EIssueActions.REMOVE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project_id, moduleId.toString(), issue.id);
-      },
-      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-
-        await issues.archiveIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
-      },
-    }),
-    [issues, workspaceSlug, moduleId]
-  );
+  const { issues } = useIssues(EIssuesStoreType.MODULE);
 
   return (
     <BaseListRoot
-      issuesFilter={issuesFilter}
-      issues={issues}
       QuickActions={ModuleIssueQuickActions}
-      issueActions={issueActions}
       viewId={moduleId?.toString()}
       storeType={EIssuesStoreType.MODULE}
       addIssuesToView={(issueIds: string[]) => {

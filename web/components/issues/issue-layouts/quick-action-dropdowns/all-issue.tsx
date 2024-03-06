@@ -90,7 +90,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         }}
         data={issueToEdit ?? duplicateIssuePayload}
         onSubmit={async (data) => {
-          if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.PROJECT}
       />

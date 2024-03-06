@@ -217,10 +217,10 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               message: () => "Cycle remove from issue failed",
             },
           });
-          const response = await removeFromCyclePromise;
+          await removeFromCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
+            payload: { issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
               change_details: "",

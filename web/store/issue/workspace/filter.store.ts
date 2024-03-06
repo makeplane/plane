@@ -37,7 +37,7 @@ export interface IWorkspaceIssuesFilter {
     projectId: string | undefined,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<void>;
   //helper action
   getIssueFilters: (viewId: string | undefined) => IIssueFilters | undefined;
@@ -156,10 +156,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     projectId: string | undefined,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId: string | undefined = undefined
+    viewId: string
   ) => {
     try {
-      if (!viewId) throw new Error("View id is required");
       const issueFilters = this.getIssueFilters(viewId);
 
       if (!issueFilters || isEmpty(filters)) return;

@@ -135,27 +135,36 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     }
   }, [fields, append]);
 
-  const options = uninvitedPeople?.map((userId) => {
-    const memberDetails = getWorkspaceMemberDetails(userId);
+  const options = uninvitedPeople
+    ?.map((userId) => {
+      const memberDetails = getWorkspaceMemberDetails(userId);
 
-    return {
-      value: `${memberDetails?.member.id}`,
-      query: `${memberDetails?.member.first_name} ${
-        memberDetails?.member.last_name
-      } ${memberDetails?.member.display_name.toLowerCase()}`,
-      content: (
-        <div className="flex w-full items-center gap-2">
-          <div className="flex-shrink-0 pt-0.5">
-            <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+      if (!memberDetails?.member) return;
+      return {
+        value: `${memberDetails?.member.id}`,
+        query: `${memberDetails?.member.first_name} ${
+          memberDetails?.member.last_name
+        } ${memberDetails?.member.display_name.toLowerCase()}`,
+        content: (
+          <div className="flex w-full items-center gap-2">
+            <div className="flex-shrink-0 pt-0.5">
+              <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+            </div>
+            <div className="truncate">
+              {memberDetails?.member.display_name} (
+              {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
+            </div>
           </div>
-          <div className="truncate">
-            {memberDetails?.member.display_name} (
-            {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
-          </div>
-        </div>
-      ),
-    };
-  });
+        ),
+      };
+    })
+    .filter((option) => !!option) as
+    | {
+        value: string;
+        query: string;
+        content: React.JSX.Element;
+      }[]
+    | undefined;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -203,6 +212,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
                                 const selectedMember = getWorkspaceMemberDetails(value);
+
+                                if (!selectedMember?.member) return <></>;
 
                                 return (
                                   <CustomSearchSelect

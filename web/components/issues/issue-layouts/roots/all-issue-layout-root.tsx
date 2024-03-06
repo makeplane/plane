@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useMemo } from "react";
+import React, { Fragment, useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
@@ -6,6 +6,7 @@ import useSWR from "swr";
 // hooks
 import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
 import { useApplication, useEventTracker, useGlobalView, useIssues, useProject, useUser } from "hooks/store";
+import { useIssuesActions } from "hooks/use-issues-actions";
 // components
 import { GlobalViewsAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
@@ -14,7 +15,6 @@ import { EmptyState } from "components/empty-state";
 import { SpreadsheetLayoutLoader } from "components/ui";
 // types
 import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
-import { EIssueActions } from "../types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
@@ -30,8 +30,9 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { loader, groupedIssueIds, fetchIssues, updateIssue, removeIssue, archiveIssue },
+    issues: { loader, groupedIssueIds, fetchIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
+  const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
 
   const { dataViewId, issueIds } = groupedIssueIds;
   const {
@@ -111,41 +112,6 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
 
   const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
 
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        const projectId = issue.project_id;
-        if (!workspaceSlug || !projectId || !globalViewId) return;
-
-        await updateIssue(workspaceSlug.toString(), projectId, issue.id, issue, globalViewId.toString());
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        const projectId = issue.project_id;
-        if (!workspaceSlug || !projectId || !globalViewId) return;
-
-        await removeIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
-      },
-      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
-        const projectId = issue.project_id;
-        if (!workspaceSlug || !projectId || !globalViewId) return;
-
-        await archiveIssue(workspaceSlug.toString(), projectId, issue.id, globalViewId.toString());
-      },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateIssue, removeIssue, workspaceSlug]
-  );
-
-  const handleIssues = useCallback(
-    async (issue: TIssue, action: EIssueActions) => {
-      if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
-      if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
-      if (action === EIssueActions.ARCHIVE) await issueActions[action]!(issue);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !globalViewId) return;
@@ -166,14 +132,14 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       <AllIssueQuickActions
         customActionButton={customActionButton}
         issue={issue}
-        handleUpdate={async () => handleIssues({ ...issue }, EIssueActions.UPDATE)}
-        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-        handleArchive={async () => handleIssues(issue, EIssueActions.ARCHIVE)}
+        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
         readOnly={!canEditProperties(issue.project_id)}
       />
     ),
-    [canEditProperties, handleIssues]
+    [canEditProperties, removeIssue, updateIssue, archiveIssue]
   );
 
   if (loader === "init-loader" || !globalViewId || globalViewId !== dataViewId || !issueIds) {
@@ -213,7 +179,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
               issueIds={issueIds}
               quickActions={renderQuickActions}
-              handleIssues={handleIssues}
+              updateIssue={updateIssue}
               canEditProperties={canEditProperties}
               viewId={globalViewId}
             />

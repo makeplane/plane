@@ -14,11 +14,7 @@ import { IIssueFilterOptions } from "@plane/types";
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    viewId: string;
-  };
+  const { workspaceSlug, projectId, viewId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -39,16 +35,16 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !viewId) return;
     if (!value) {
       updateFilters(
-        workspaceSlug,
-        projectId,
+        workspaceSlug.toString(),
+        projectId.toString(),
         EIssueFilterType.FILTERS,
         {
           [key]: null,
         },
-        viewId
+        viewId.toString()
       );
       return;
     }
@@ -57,23 +53,29 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     newValues = newValues.filter((val) => val !== value);
 
     updateFilters(
-      workspaceSlug,
-      projectId,
+      workspaceSlug.toString(),
+      projectId.toString(),
       EIssueFilterType.FILTERS,
       {
         [key]: newValues,
       },
-      viewId
+      viewId.toString()
     );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !viewId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { ...newFilters }, viewId);
+    updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      { ...newFilters },
+      viewId.toString()
+    );
   };
 
   const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);

@@ -35,7 +35,7 @@ export interface IProjectViewIssuesFilter {
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<void>;
 }
 
@@ -134,11 +134,9 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     projectId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId: string | undefined = undefined
+    viewId: string
   ) => {
     try {
-      if (!viewId) throw new Error("View id is required");
-
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
 
       const _filters = {

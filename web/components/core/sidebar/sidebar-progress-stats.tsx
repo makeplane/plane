@@ -137,8 +137,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={assignee.assignee_id}
                     title={
                       <div className="flex items-center gap-2">
-                        <Avatar name={assignee.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
-                        <span>{assignee.display_name}</span>
+                        <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+                        <span>{assignee?.display_name ?? ""}</span>
                       </div>
                     }
                     completed={assignee.completed_issues}

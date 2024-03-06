@@ -44,7 +44,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const handleRemove = async () => {
     if (!workspaceSlug || !projectId || !userDetails) return;
 
-    if (userDetails.member.id === currentUser?.id) {
+    if (userDetails.member?.id === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           captureEvent(PROJECT_MEMBER_LEAVE, {
@@ -62,7 +62,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           })
         );
     } else
-      await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), userDetails.member.id).catch(
+      await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), userDetails.member?.id).catch(
         (err) =>
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -84,12 +84,12 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       />
       <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
         <div className="flex items-center gap-x-4 gap-y-2">
-          {userDetails.member.avatar && userDetails.member.avatar !== "" ? (
-            <Link href={`/${workspaceSlug}/profile/${userDetails.member.id}`}>
+          {userDetails.member?.avatar && userDetails.member?.avatar !== "" ? (
+            <Link href={`/${workspaceSlug}/profile/${userDetails.member?.id}`}>
               <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
                 <img
-                  src={userDetails.member.avatar}
-                  alt={userDetails.member.display_name || userDetails.member.email}
+                  src={userDetails.member?.avatar}
+                  alt={userDetails.member?.display_name || userDetails.member?.email}
                   className="absolute left-0 top-0 h-full w-full rounded object-cover"
                 />
               </span>
@@ -97,23 +97,23 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           ) : (
             <Link href={`/${workspaceSlug}/profile/${userDetails.id}`}>
               <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
-                {(userDetails.member.display_name ?? userDetails.member.email ?? "?")[0]}
+                {(userDetails.member?.display_name ?? userDetails.member?.email ?? "?")[0]}
               </span>
             </Link>
           )}
 
           <div>
-            <Link href={`/${workspaceSlug}/profile/${userDetails.member.id}`}>
+            <Link href={`/${workspaceSlug}/profile/${userDetails.member?.id}`}>
               <span className="text-sm font-medium">
-                {userDetails.member.first_name} {userDetails.member.last_name}
+                {userDetails.member?.first_name} {userDetails.member?.last_name}
               </span>
             </Link>
             <div className="flex items-center">
-              <p className="text-xs text-custom-text-300">{userDetails.member.display_name}</p>
+              <p className="text-xs text-custom-text-300">{userDetails.member?.display_name}</p>
               {isAdmin && (
                 <>
                   <Dot height={16} width={16} className="text-custom-text-300" />
-                  <p className="text-xs text-custom-text-300">{userDetails.member.email}</p>
+                  <p className="text-xs text-custom-text-300">{userDetails.member?.email}</p>
                 </>
               )}
             </div>
@@ -126,12 +126,12 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               <div className="item-center flex gap-1 rounded px-2 py-0.5">
                 <span
                   className={`flex items-center rounded text-xs font-medium ${
-                    userDetails.member.id !== currentUser?.id ? "" : "text-custom-text-400"
+                    userDetails.member?.id !== currentUser?.id ? "" : "text-custom-text-400"
                   }`}
                 >
                   {ROLE[userDetails.role]}
                 </span>
-                {userDetails.member.id !== currentUser?.id && (
+                {userDetails.member?.id !== currentUser?.id && (
                   <span className="grid place-items-center">
                     <ChevronDown className="h-3 w-3" />
                   </span>
@@ -142,7 +142,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             onChange={(value: EUserProjectRoles) => {
               if (!workspaceSlug || !projectId) return;
 
-              updateMember(workspaceSlug.toString(), projectId.toString(), userDetails.member.id, {
+              updateMember(workspaceSlug.toString(), projectId.toString(), userDetails.member?.id, {
                 role: value,
               }).catch((err) => {
                 const error = err.error;
@@ -156,7 +156,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               });
             }}
             disabled={
-              userDetails.member.id === currentUser?.id || !currentProjectRole || currentProjectRole < userDetails.role
+              userDetails.member?.id === currentUser?.id || !currentProjectRole || currentProjectRole < userDetails.role
             }
             placement="bottom-end"
           >
@@ -170,8 +170,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               );
             })}
           </CustomSelect>
-          {(isAdmin || userDetails.member.id === currentUser?.id) && (
-            <Tooltip tooltipContent={userDetails.member.id === currentUser?.id ? "Leave project" : "Remove member"}>
+          {(isAdmin || userDetails.member?.id === currentUser?.id) && (
+            <Tooltip tooltipContent={userDetails.member?.id === currentUser?.id ? "Leave project" : "Remove member"}>
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}

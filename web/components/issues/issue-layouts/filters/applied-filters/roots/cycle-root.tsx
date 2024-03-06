@@ -11,11 +11,7 @@ import { IIssueFilterOptions } from "@plane/types";
 export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -37,13 +33,13 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId || !cycleId) return;
     if (!value) {
       updateFilters(
-        workspaceSlug,
-        projectId,
+        workspaceSlug.toString(),
+        projectId.toString(),
         EIssueFilterType.FILTERS,
         {
           [key]: null,
         },
-        cycleId
+        cycleId.toString()
       );
       return;
     }
@@ -52,13 +48,13 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
     newValues = newValues.filter((val) => val !== value);
 
     updateFilters(
-      workspaceSlug,
-      projectId,
+      workspaceSlug.toString(),
+      projectId.toString(),
       EIssueFilterType.FILTERS,
       {
         [key]: newValues,
       },
-      cycleId
+      cycleId.toString()
     );
   };
 
@@ -68,11 +64,17 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { ...newFilters }, cycleId);
+    updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      { ...newFilters },
+      cycleId.toString()
+    );
   };
 
   // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0) return null;
+  if (Object.keys(appliedFilters).length === 0 || !workspaceSlug || !projectId) return null;
 
   return (
     <div className="flex items-center justify-between p-4">
@@ -84,7 +86,11 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
         states={projectStates}
       />
 
-      <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />
+      <SaveFilterView
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+        filterParams={appliedFilters}
+      />
     </div>
   );
 });

@@ -1,47 +1,22 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { useIssues } from "hooks/store";
 // components
 import { ModuleIssueQuickActions } from "components/issues";
 import { BaseCalendarRoot } from "../base-calendar-root";
 // types
-import { TIssue } from "@plane/types";
-import { EIssueActions } from "../../types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
 
 export const ModuleCalendarLayout: React.FC = observer(() => {
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = router.query ;
 
-  const issueActions = useMemo(
-    () => ({
-      [EIssueActions.UPDATE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-        await issues.updateIssue(workspaceSlug, issue.project_id, issue.id, issue, moduleId);
-      },
-      [EIssueActions.DELETE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-        await issues.removeIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
-      },
-      [EIssueActions.REMOVE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-        await issues.removeIssueFromModule(workspaceSlug, issue.project_id, moduleId, issue.id);
-      },
-      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
-        if (!workspaceSlug || !moduleId) return;
-        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, moduleId);
-      },
-    }),
-    [issues, workspaceSlug, moduleId]
-  );
+  const {issues} = useIssues(EIssuesStoreType.MODULE)
+
+  if (!moduleId) return null;
 
   const addIssuesToView = useCallback(
     (issueIds: string[]) => {
@@ -53,12 +28,10 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
 
   return (
     <BaseCalendarRoot
-      issueStore={issues}
-      issuesFilterStore={issuesFilter}
       QuickActions={ModuleIssueQuickActions}
-      issueActions={issueActions}
+      storeType={EIssuesStoreType.MODULE}
       addIssuesToView={addIssuesToView}
-      viewId={moduleId}
+      viewId={moduleId.toString()}
     />
   );
 });
