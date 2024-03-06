@@ -100,14 +100,14 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
 
     updateIsLoading?.(false);
     updateTotalPages(widgetStats.total_pages);
-    updateResultsCount(widgetStats.results.length);
+    updateResultsCount(widgetStats.results?.length);
   }, [updateIsLoading, updateResultsCount, updateTotalPages, widgetStats]);
 
-  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
+  if (!widgetStats || !widgetStats?.results) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
     <>
-      {widgetStats?.results.map((user) => (
+      {widgetStats?.results?.map((user) => (
         <CollaboratorListItem
           key={user.user_id}
           issueCount={user.active_issue_count}
