@@ -17,7 +17,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 // types
-import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
+import type { TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 import { ISSUE_DELETED } from "constants/event-tracker";
 
@@ -29,7 +29,7 @@ type TInboxIssueActionsHeader = {
 };
 
 type TInboxIssueOperations = {
-  updateInboxIssueStatus: (data: TInboxStatus) => Promise<void>;
+  updateInboxIssueStatus: (data: TInboxDetailedStatus) => Promise<void>;
   removeInboxIssue: () => Promise<void>;
 };
 

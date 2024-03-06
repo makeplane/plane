@@ -22,6 +22,7 @@ from plane.app.views import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
     WorkspaceModulesEndpoint,
     WorkspaceCyclesEndpoint,
 )
@@ -190,6 +191,11 @@ urlpatterns = [
         "workspaces/<str:slug>/user-activity/<uuid:user_id>/",
         WorkspaceUserActivityEndpoint.as_view(),
         name="workspace-user-activity",
+    ),
+    path(
+        "workspaces/<str:slug>/user-activity/<uuid:user_id>/export/",
+        ExportWorkspaceUserActivityEndpoint.as_view(),
+        name="export-workspace-user-activity",
     ),
     path(
         "workspaces/<str:slug>/user-profile/<uuid:user_id>/",
