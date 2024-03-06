@@ -33,7 +33,8 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
         await fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
         await fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
       }
-    }
+    },
+    { revalidateOnFocus: false }
   );
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
