@@ -234,10 +234,10 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               message: () => "Cycle remove from issue failed",
             },
           });
-          const response = await removeFromCyclePromise;
+          await removeFromCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
               change_details: "",

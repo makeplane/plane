@@ -18,7 +18,6 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // local components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { EIssueActions } from "../types";
 import { IssueColumn } from "./issue-column";
 
 interface Props {
@@ -30,7 +29,7 @@ interface Props {
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -46,7 +45,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     isEstimateEnabled,
     nestingLevel,
     portalElement,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     isScrolled,
@@ -76,7 +75,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           canEditProperties={canEditProperties}
           nestingLevel={nestingLevel}
           isEstimateEnabled={isEstimateEnabled}
-          handleIssues={handleIssues}
+          updateIssue={updateIssue}
           portalElement={portalElement}
           isScrolled={isScrolled}
           isExpanded={isExpanded}
@@ -96,7 +95,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
             isEstimateEnabled={isEstimateEnabled}
-            handleIssues={handleIssues}
+            updateIssue={updateIssue}
             portalElement={portalElement}
             isScrolled={isScrolled}
             containerRef={containerRef}
@@ -116,7 +115,7 @@ interface IssueRowDetailsProps {
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -132,7 +131,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     isEstimateEnabled,
     nestingLevel,
     portalElement,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     isScrolled,
@@ -261,7 +260,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           issueDetail={issueDetail}
           disableUserActions={disableUserActions}
           property={property}
-          handleIssues={handleIssues}
+          updateIssue={updateIssue}
           isEstimateEnabled={isEstimateEnabled}
         />
       ))}

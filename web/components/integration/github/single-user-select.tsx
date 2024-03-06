@@ -44,16 +44,27 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
 
-  const options = members?.map((member) => ({
-    value: member.member.display_name,
-    query: member.member.display_name ?? "",
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+  const options = members
+    ?.map((member) => {
+      if (!member?.member) return;
+      return {
+        value: member.member?.display_name,
+        query: member.member?.display_name ?? "",
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={member?.member?.display_name} src={member?.member?.avatar} />
+            {member.member?.display_name}
+          </div>
+        ),
+      };
+    })
+    .filter((member) => !!member) as
+    | {
+        value: string;
+        query: string;
+        content: JSX.Element;
+      }[]
+    | undefined;
 
   return (
     <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-custom-background-80 px-2 py-3">

@@ -3,37 +3,19 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
 // constant
 // types
-import { TIssue } from "@plane/types";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 
-export interface IViewKanBanLayout {
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
-  };
-}
-
-export const ProjectViewKanBanLayout: React.FC<IViewKanBanLayout> = observer((props) => {
-  const { issueActions } = props;
+export const ProjectViewKanBanLayout: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { viewId } = router.query;
 
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-
   return (
     <BaseKanBanRoot
-      issueActions={issueActions}
-      issuesFilter={issuesFilter}
-      issues={issues}
       showLoader
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROJECT_VIEW}

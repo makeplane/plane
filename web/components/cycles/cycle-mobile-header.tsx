@@ -21,11 +21,7 @@ export const CycleMobileHeader = () => {
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
 
-  const { workspaceSlug, projectId, cycleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = router.query;
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   // store hooks
   const {
@@ -35,8 +31,14 @@ export const CycleMobileHeader = () => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
+      if (!workspaceSlug || !projectId || !cycleId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -49,7 +51,7 @@ export const CycleMobileHeader = () => {
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -61,23 +63,41 @@ export const CycleMobileHeader = () => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, cycleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
+      if (!workspaceSlug || !projectId || !cycleId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, cycleId);
+      if (!workspaceSlug || !projectId || !cycleId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        cycleId.toString()
+      );
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );

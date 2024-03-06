@@ -6,7 +6,6 @@ import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 import { useEventTracker } from "hooks/store";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { EIssueActions } from "../types";
 // constants
 // components
 
@@ -15,12 +14,12 @@ type Props = {
   issueDetail: TIssue;
   disableUserActions: boolean;
   property: keyof IIssueDisplayProperties;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   isEstimateEnabled: boolean;
 };
 
 export const IssueColumn = observer((props: Props) => {
-  const { displayProperties, issueDetail, disableUserActions, property, handleIssues, isEstimateEnabled } = props;
+  const { displayProperties, issueDetail, disableUserActions, property, updateIssue, isEstimateEnabled } = props;
   // router
   const router = useRouter();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
@@ -44,7 +43,8 @@ export const IssueColumn = observer((props: Props) => {
         <Column
           issue={issueDetail}
           onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
-            handleIssues({ ...issue, ...data }, EIssueActions.UPDATE).then(() => {
+            updateIssue &&
+            updateIssue(issue.project_id, issue.id, data).then(() => {
               captureIssueEvent({
                 eventName: "Issue updated",
                 payload: {

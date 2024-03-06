@@ -2,7 +2,6 @@ import { useRef } from "react";
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // hooks
-import { TCreateModalStoreTypes } from "constants/issue";
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 // constants
 // types
@@ -15,15 +14,15 @@ import {
   TUnGroupedIssues,
   IGroupByColumn,
 } from "@plane/types";
-import { EIssueActions } from "../types";
 import { getGroupByColumns } from "../utils";
 import { HeaderGroupByCard } from "./headers/group-by-card";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   group_by: string | null;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
@@ -36,7 +35,7 @@ export interface IGroupByList {
     viewId?: string
   ) => Promise<TIssue | undefined>;
   disableIssueCreation?: boolean;
-  storeType: TCreateModalStoreTypes;
+  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   viewId?: string;
   isCompletedCycle?: boolean;
@@ -47,7 +46,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     issueIds,
     issuesMap,
     group_by,
-    handleIssues,
+    updateIssue,
     quickActions,
     displayProperties,
     enableIssueQuickAdd,
@@ -142,7 +141,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                   <IssueBlocksList
                     issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
                     issuesMap={issuesMap}
-                    handleIssues={handleIssues}
+                    updateIssue={updateIssue}
                     quickActions={quickActions}
                     displayProperties={displayProperties}
                     canEditProperties={canEditProperties}
@@ -170,7 +169,7 @@ export interface IList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;
   issuesMap: TIssueMap;
   group_by: string | null;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   showEmptyGroup: boolean;
@@ -184,7 +183,7 @@ export interface IList {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType: TCreateModalStoreTypes;
+  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
 }
@@ -194,7 +193,7 @@ export const List: React.FC<IList> = (props) => {
     issueIds,
     issuesMap,
     group_by,
-    handleIssues,
+    updateIssue,
     quickActions,
     quickAddCallback,
     viewId,
@@ -214,7 +213,7 @@ export const List: React.FC<IList> = (props) => {
         issueIds={issueIds as TUnGroupedIssues}
         issuesMap={issuesMap}
         group_by={group_by}
-        handleIssues={handleIssues}
+        updateIssue={updateIssue}
         quickActions={quickActions}
         displayProperties={displayProperties}
         enableIssueQuickAdd={enableIssueQuickAdd}

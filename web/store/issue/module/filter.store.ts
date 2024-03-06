@@ -35,7 +35,7 @@ export interface IModuleIssuesFilter {
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    moduleId?: string | undefined
+    moduleId: string
   ) => Promise<void>;
 }
 
@@ -136,10 +136,9 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     projectId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    moduleId: string | undefined = undefined
+    moduleId: string
   ) => {
     try {
-      if (!moduleId) throw new Error("Module id is required");
       if (isEmpty(this.filters) || isEmpty(this.filters[moduleId]) || isEmpty(filters)) return;
 
       const _filters = {

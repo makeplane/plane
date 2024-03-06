@@ -25,6 +25,7 @@ import {
   useUser,
   useIssues,
 } from "hooks/store";
+import { useIssuesActions } from "hooks/use-issues-actions";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 // ui
@@ -67,8 +68,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = router.query;
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters },
   } = useIssues(EIssuesStoreType.MODULE);
+  const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
@@ -95,21 +97,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        moduleId?.toString()
-      );
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
-    [workspaceSlug, projectId, moduleId, updateFilters]
+    [projectId, moduleId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!projectId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -121,43 +117,25 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        moduleId?.toString()
-      );
+      updateFilters(projectId.toString(), EIssueFilterType.FILTERS, { [key]: newValues });
     },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
+    [projectId, moduleId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.DISPLAY_FILTERS,
-        updatedDisplayFilter,
-        moduleId?.toString()
-      );
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [workspaceSlug, projectId, moduleId, updateFilters]
+    [projectId, moduleId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
-        moduleId?.toString()
-      );
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
-    [workspaceSlug, projectId, moduleId, updateFilters]
+    [projectId, moduleId, updateFilters]
   );
 
   // derived values

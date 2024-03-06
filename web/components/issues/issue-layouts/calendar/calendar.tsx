@@ -5,8 +5,10 @@ import { observer } from "mobx-react-lite";
 import { Spinner } from "@plane/ui";
 import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // types
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TGroupedIssues, TIssue, TIssueKanbanFilters, TIssueMap } from "@plane/types";
+import { ICalendarWeek } from "./types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues, useUser } from "hooks/store";
 import { useCalendarView } from "hooks/store/use-calendar-view";
@@ -14,8 +16,6 @@ import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
-import { ICalendarWeek } from "./types";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -33,6 +33,11 @@ type Props = {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   readOnly?: boolean;
+  updateFilters?: (
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
@@ -46,6 +51,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     quickAddCallback,
     addIssuesToView,
     viewId,
+    updateFilters,
     readOnly = false,
   } = props;
   // store hooks
@@ -74,7 +80,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="flex h-full w-full flex-col overflow-hidden">
-        <CalendarHeader issuesFilterStore={issuesFilterStore} viewId={viewId} />
+        <CalendarHeader issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
         <div className="flex h-full w-full vertical-scrollbar scrollbar-lg flex-col">
           <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
           <div className="h-full w-full">

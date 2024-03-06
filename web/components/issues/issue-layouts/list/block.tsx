@@ -9,29 +9,24 @@ import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { IssueProperties } from "../properties/all-properties";
-import { EIssueActions } from "../types";
 
 interface IssueBlockProps {
   issueId: string;
   issuesMap: TIssueMap;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlockProps) => {
-  const { issuesMap, issueId, handleIssues, quickActions, displayProperties, canEditProperties } = props;
+  const { issuesMap, issueId, updateIssue, quickActions, displayProperties, canEditProperties } = props;
   // hooks
   const {
     router: { workspaceSlug },
   } = useApplication();
   const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
-
-  const updateIssue = async (issueToUpdate: TIssue) => {
-    await handleIssues(issueToUpdate, EIssueActions.UPDATE);
-  };
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -91,7 +86,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
               className="relative flex items-center gap-2 whitespace-nowrap"
               issue={issue}
               isReadOnly={!canEditIssueProperties}
-              handleIssues={updateIssue}
+              updateIssue={updateIssue}
               displayProperties={displayProperties}
               activeLayout="List"
             />
