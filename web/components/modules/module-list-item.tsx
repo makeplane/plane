@@ -255,7 +255,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   </button>
                 ))}
 
-              <CustomMenu verticalEllipsis buttonClassName="z-[1]" placement="bottom-end">
+              <CustomMenu verticalEllipsis buttonClassName="z-[1]" placement="left-start">
                 {isEditingAllowed && (
                   <>
                     <CustomMenu.MenuItem onClick={handleEditModule}>
