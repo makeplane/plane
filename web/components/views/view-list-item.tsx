@@ -5,11 +5,10 @@ import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // hooks
 import { useProjectView, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
@@ -30,8 +29,6 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -54,8 +51,8 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/views/${view.id}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "View link copied to clipboard.",
       });

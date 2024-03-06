@@ -4,9 +4,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useModule } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types
@@ -30,8 +29,6 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureModuleEvent } = useEventTracker();
   const { deleteModule } = useModule();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -47,8 +44,8 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
       .then(() => {
         if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project_id}/modules`);
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Module deleted successfully.",
         });
@@ -58,8 +55,8 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });

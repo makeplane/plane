@@ -4,7 +4,8 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
@@ -63,8 +64,6 @@ export const CommandPalette: FC = observer(() => {
     createIssueStoreType,
   } = commandPalette;
 
-  const { setToastAlert } = useToast();
-
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
@@ -78,18 +77,18 @@ export const CommandPalette: FC = observer(() => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
-  }, [setToastAlert, issueId]);
+  }, [issueId]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

@@ -21,12 +21,20 @@ import {
 // hooks
 import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useToast from "hooks/use-toast";
 // helpers
 import { cn } from "helpers/common.helper";
 import { getNumberCount } from "helpers/string.helper";
 // components
-import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
+import {
+  CustomMenu,
+  Tooltip,
+  ArchiveIcon,
+  PhotoFilterIcon,
+  DiceIcon,
+  ContrastIcon,
+  LayersIcon,
+  setPromiseToast,
+} from "@plane/ui";
 import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "components/project";
 // constants
 import { EUserProjectRoles } from "constants/project";
@@ -95,8 +103,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // derived values
   const project = getProjectById(projectId);
   const isCollapsed = themeStore.sidebarCollapsed;
@@ -110,24 +116,34 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding project to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project added to favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
-      });
+        message: () => "Couldn't add the project to favorites. Please try again.",
+      },
     });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing project from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project removed from favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
-      });
+        message: () => "Couldn't remove the project from favorites. Please try again.",
+      },
     });
   };
 

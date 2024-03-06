@@ -3,13 +3,21 @@ import { Controller, useForm } from "react-hook-form";
 import { Lock } from "lucide-react";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 // services
 import { ProjectService } from "services/project";
 // components
 import { ImagePickerPopover } from "components/core";
 import { ProjectLogo } from "components/project";
-import { Button, CustomEmojiIconPicker, CustomSelect, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
+import {
+  Button,
+  CustomEmojiIconPicker,
+  CustomSelect,
+  EmojiIconPickerTypes,
+  Input,
+  TOAST_TYPE,
+  TextArea,
+  setToast,
+} from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "helpers/emoji.helper";
@@ -32,8 +40,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -81,8 +87,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             element: "Project general settings",
           },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project updated successfully",
         });
@@ -92,8 +98,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Project could not be updated. Please try again.",
         });

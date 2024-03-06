@@ -1,5 +1,5 @@
-import { TIssue } from "./issues/base";
-import type { IProjectLite } from "./projects";
+import { TIssue } from "../issues/base";
+import type { IProjectLite } from "../projects";
 
 export type TInboxIssueExtended = {
   completed_at: string | null;
@@ -32,34 +32,6 @@ export interface IInbox {
   view_props: { filters: IInboxFilterOptions };
   workspace: string;
 }
-
-interface StatePending {
-  readonly status: -2;
-}
-interface StatusReject {
-  status: -1;
-}
-
-interface StatusSnoozed {
-  status: 0;
-  snoozed_till: Date;
-}
-
-interface StatusAccepted {
-  status: 1;
-}
-
-interface StatusDuplicate {
-  status: 2;
-  duplicate_to: string;
-}
-
-export type TInboxStatus =
-  | StatusReject
-  | StatusSnoozed
-  | StatusAccepted
-  | StatusDuplicate
-  | StatePending;
 
 export interface IInboxFilterOptions {
   priority?: string[] | null;
