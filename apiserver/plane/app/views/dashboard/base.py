@@ -26,7 +26,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseAPIView
+from .. import BaseAPIView
 from plane.db.models import (
     Issue,
     IssueActivity,

@@ -8,7 +8,6 @@ from plane.app.views import (
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
     BulkImportIssuesEndpoint,
-    UserWorkSpaceIssues,
     SubIssuesEndpoint,
     IssueLinkViewSet,
     IssueAttachmentEndpoint,
@@ -89,12 +88,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
         BulkImportIssuesEndpoint.as_view(),
         name="project-issues-bulk",
-    ),
-    # deprecated endpoint TODO: remove once confirmed
-    path(
-        "workspaces/<str:slug>/my-issues/",
-        UserWorkSpaceIssues.as_view(),
-        name="workspace-issues",
     ),
     ## 
     path(

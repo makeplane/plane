@@ -8,7 +8,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.db.models import Webhook, WebhookLog, Workspace
 from plane.db.models.webhook import generate_token
-from .base import BaseAPIView
+from ..base import BaseAPIView
 from plane.app.permissions import WorkspaceOwnerPermission
 from plane.app.serializers import WebhookSerializer, WebhookLogSerializer
 

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from plane.utils.paginator import BasePaginator
 
 # Module imports
-from .base import BaseViewSet, BaseAPIView
+from ..base import BaseViewSet, BaseAPIView
 from plane.db.models import (
     Notification,
     IssueAssignee,

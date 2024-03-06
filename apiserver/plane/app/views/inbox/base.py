@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseViewSet
+from ..base import BaseViewSet
 from plane.app.permissions import ProjectBasePermission, ProjectLitePermission
 from plane.db.models import (
     Inbox,
@@ -428,8 +428,11 @@ class InboxIssueViewSet(BaseViewSet):
             )
         ).first()
         if issue is None:
-            return Response({"error": "Requested object was not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+            return Response(
+                {"error": "Requested object was not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueDetailSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
