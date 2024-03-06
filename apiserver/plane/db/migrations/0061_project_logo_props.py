@@ -40,6 +40,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name="issuelink",
+            name="url",
+            field=models.TextField(),
+        ),
         migrations.AddField(
             model_name="project",
             name="logo_props",
