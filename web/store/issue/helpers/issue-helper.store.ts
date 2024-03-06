@@ -80,9 +80,8 @@ export class IssueHelperStore implements TIssueHelperStore {
 
       if (groupBy === "state_detail.group") {
         // if groupBy state_detail.group is coming from the project level the we are using stateDetails from root store else we are looping through the stateMap
-        const state_group = isWorkspaceLevel
-          ? this.rootStore?.workspaceStateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None"
-          : this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        const stateDetails = isWorkspaceLevel ? this.rootStore?.workspaceStateDetails : this.rootStore?.stateDetails;
+        const state_group = stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
         groupArray = [state_group];
       } else {
         const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
@@ -123,9 +122,8 @@ export class IssueHelperStore implements TIssueHelperStore {
       let subGroupArray = [];
       let groupArray = [];
       if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
-        const state_group = isWorkspaceLevel
-          ? this.rootStore?.workspaceStateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None"
-          : this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        const stateDetails = isWorkspaceLevel ? this.rootStore?.workspaceStateDetails : this.rootStore?.stateDetails;
+        const state_group = stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
