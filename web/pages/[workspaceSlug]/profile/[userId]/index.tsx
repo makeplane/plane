@@ -49,7 +49,7 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
         <ProfileStats userProfile={userProfile} />
         <ProfileWorkload stateDistribution={stateDistribution} />
         <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
-          <ProfilePriorityDistribution priorityDistribution={userProfile?.priority_distribution} />
+          <ProfilePriorityDistribution userProfile={userProfile} />
           <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
         </div>
         <ProfileActivity />

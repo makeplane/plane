@@ -27,7 +27,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
 
-  const { storedValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
+  const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
 
   //useState control for displaying draft issue button instead of group hover
   const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);

@@ -9,6 +9,7 @@ import { useEventTracker, useProject } from "hooks/store";
 // ui
 // types
 import type { IProject } from "@plane/types";
+import { PROJECT_DELETED } from "constants/event-tracker";
 // constants
 
 type DeleteProjectModal = {

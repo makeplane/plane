@@ -5,6 +5,8 @@ import { AlertTriangle } from "lucide-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
+// hooks
+import { useIssues, useProject } from "hooks/store";
 
 type Props = {
   isOpen: boolean;

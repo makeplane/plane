@@ -1,10 +1,12 @@
 import { observer } from "mobx-react-lite";
-// services
-import { TOAST_TYPE, setToast } from "@plane/ui";
-import { GitHubSignInButton, GoogleSignInButton } from "components/account";
-import { useApplication } from "hooks/store";
 // ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { GitHubSignInButton, GoogleSignInButton } from "components/account";
+// hooks
+import { useApplication } from "hooks/store";
+// services
+import { AuthService } from "services/auth.service";
 
 type Props = {
   handleSignInRedirection: () => Promise<void>;
@@ -74,7 +76,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
       </div>
       <div className={`mx-auto mt-7 grid gap-4 overflow-hidden sm:w-96 ${areBothOAuthEnabled ? "grid-cols-2" : ""}`}>
         {envConfig?.google_client_id && (
-          <div className="h-[42px] flex items-center !overflow-hidden">
+          <div className="flex h-[42px] items-center !overflow-hidden">
             <GoogleSignInButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} type={type} />
           </div>
         )}
