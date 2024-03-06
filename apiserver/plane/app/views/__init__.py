@@ -188,3 +188,5 @@ from .dashboard import (
     DashboardEndpoint,
     WidgetsEndpoint
 )
+
+from .error_404 import custom_404_view
