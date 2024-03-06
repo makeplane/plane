@@ -1,17 +1,15 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-// components
+// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
+// components
 import { SelectRepository, SelectChannel } from "components/integration";
 // constants
 import { PROJECT_GITHUB_REPOSITORY } from "constants/fetch-keys";
-// hooks
 // icons
 import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
-// ui
 // types
 import { IWorkspaceIntegration } from "@plane/types";
 

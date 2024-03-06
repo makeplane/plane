@@ -1,14 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+// icons
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
-// hooks
-import { DiceIcon, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
 // ui
+import { DiceIcon, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useEventTracker, useProject, useUser } from "hooks/store";
 // types
 import { IProject } from "@plane/types";
-// constants
 
 type Props = {};
 

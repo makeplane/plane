@@ -2,11 +2,19 @@ module.exports = {
   root: true,
   extends: ["custom"],
   parser: "@typescript-eslint/parser",
+  settings: {
+    "import/resolver": {
+      typescript: {},
+      node: {
+        moduleDirectory: ["node_modules", "."],
+      },
+    },
+  },
   rules: {
     "import/order": [
       "error",
       {
-        groups: [["external", "builtin"], "internal", "parent", ["sibling"]],
+        groups: ["builtin", "external", "internal", "parent", "sibling"],
         pathGroups: [
           {
             pattern: "react",
