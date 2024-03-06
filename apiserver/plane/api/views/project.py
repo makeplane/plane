@@ -11,7 +11,6 @@ from rest_framework.serializers import ValidationError
 from plane.db.models import (
     Workspace,
     Project,
-    ProjectFavorite,
     ProjectMember,
     ProjectDeployBoard,
     State,
@@ -150,7 +149,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 serializer.save()
 
                 # Add the user as Administrator to the project
-                project_member = ProjectMember.objects.create(
+                _ = ProjectMember.objects.create(
                     project_id=serializer.data["id"],
                     member=request.user,
                     role=20,
@@ -245,12 +244,12 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Workspace.DoesNotExist as e:
+        except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
@@ -307,7 +306,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 {"error": "Project does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,

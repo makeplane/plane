@@ -24,7 +24,7 @@ from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import UUIDField
 from django.db.models.functions import Coalesce
 
 # Third Party imports
@@ -82,7 +82,6 @@ from plane.utils.cache import invalidate_cache
 
 
 class IssueListEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -96,7 +95,9 @@ class IssueListEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
+        issue_ids = [
+            issue_id for issue_id in issue_ids.split(",") if issue_id != ""
+        ]
 
         queryset = (
             Issue.issue_objects.filter(
@@ -1662,12 +1663,19 @@ class IssueArchiveViewSet(BaseViewSet):
         )
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
-                {"error": "Can only archive completed or cancelled state group issue"},
+                {
+                    "error": "Can only archive completed or cancelled state group issue"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_activity.delay(
             type="issue.activity.updated",
-            requested_data=json.dumps({"archived_at": str(timezone.now().date()), "automation": False}),
+            requested_data=json.dumps(
+                {
+                    "archived_at": str(timezone.now().date()),
+                    "automation": False,
+                }
+            ),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
@@ -1681,8 +1689,9 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = timezone.now().date()
         issue.save()
 
-        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
-    
+        return Response(
+            {"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK
+        )
 
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -2209,12 +2218,6 @@ class IssueDraftViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
         state_order = [
@@ -2373,7 +2376,9 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(
+            issue, data=request.data, partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()

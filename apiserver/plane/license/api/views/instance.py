@@ -116,9 +116,7 @@ class InstanceAdminEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request, pk):
         instance = Instance.objects.first()
-        instance_admin = InstanceAdmin.objects.filter(
-            instance=instance, pk=pk
-        ).delete()
+        InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -204,7 +202,7 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
         email = email.strip().lower()
         try:
             validate_email(email)
-        except ValidationError as e:
+        except ValidationError:
             return Response(
                 {"error": "Please provide a valid email address."},
                 status=status.HTTP_400_BAD_REQUEST,

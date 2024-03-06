@@ -2,7 +2,6 @@
 import os
 
 # Django imports
-from django.conf import settings
 
 # Third party imports
 from rest_framework.permissions import AllowAny

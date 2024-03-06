@@ -213,7 +213,7 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
         # Check for valid priority
-        if not request.data.get("issue", {}).get("priority", "none") in [
+        if request.data.get("issue", {}).get("priority", "none") not in [
             "low",
             "medium",
             "high",
@@ -428,8 +428,11 @@ class InboxIssueViewSet(BaseViewSet):
             )
         ).first()
         if issue is None:
-            return Response({"error": "Requested object was not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+            return Response(
+                {"error": "Requested object was not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueDetailSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

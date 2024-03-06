@@ -4,7 +4,6 @@ from rest_framework import serializers
 # Module import
 from .base import BaseSerializer
 from plane.db.models import User, Workspace, WorkspaceMemberInvite
-from plane.license.models import InstanceAdmin, Instance
 
 
 class UserSerializer(BaseSerializer):
@@ -99,13 +98,13 @@ class UserMeSettingsSerializer(BaseSerializer):
             ).first()
             return {
                 "last_workspace_id": obj.last_workspace_id,
-                "last_workspace_slug": workspace.slug
-                if workspace is not None
-                else "",
+                "last_workspace_slug": (
+                    workspace.slug if workspace is not None else ""
+                ),
                 "fallback_workspace_id": obj.last_workspace_id,
-                "fallback_workspace_slug": workspace.slug
-                if workspace is not None
-                else "",
+                "fallback_workspace_slug": (
+                    workspace.slug if workspace is not None else ""
+                ),
                 "invites": workspace_invites,
             }
         else:
@@ -120,12 +119,16 @@ class UserMeSettingsSerializer(BaseSerializer):
             return {
                 "last_workspace_id": None,
                 "last_workspace_slug": None,
-                "fallback_workspace_id": fallback_workspace.id
-                if fallback_workspace is not None
-                else None,
-                "fallback_workspace_slug": fallback_workspace.slug
-                if fallback_workspace is not None
-                else None,
+                "fallback_workspace_id": (
+                    fallback_workspace.id
+                    if fallback_workspace is not None
+                    else None
+                ),
+                "fallback_workspace_slug": (
+                    fallback_workspace.slug
+                    if fallback_workspace is not None
+                    else None
+                ),
                 "invites": workspace_invites,
             }
 

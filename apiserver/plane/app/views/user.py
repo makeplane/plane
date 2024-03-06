@@ -1,23 +1,22 @@
 # Django imports
-from django.db.models import Q, Count, Case, When, IntegerField
+from django.db.models import Case, Count, IntegerField, Q, When
 
 # Third party imports
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
 
 # Module imports
 from plane.app.serializers import (
-    UserSerializer,
     IssueActivitySerializer,
     UserMeSerializer,
     UserMeSettingsSerializer,
+    UserSerializer,
 )
-
-from plane.app.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import User, IssueActivity, WorkspaceMember, ProjectMember
+from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.db.models import IssueActivity, ProjectMember, User, WorkspaceMember
 from plane.license.models import Instance, InstanceAdmin
-from plane.utils.paginator import BasePaginator
 from plane.utils.cache import cache_response, invalidate_cache
+from plane.utils.paginator import BasePaginator
 
 
 class UserEndpoint(BaseViewSet):

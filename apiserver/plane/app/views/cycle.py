@@ -10,7 +10,6 @@ from django.db.models import (
     OuterRef,
     Count,
     Prefetch,
-    Sum,
     Case,
     When,
     Value,
@@ -22,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import UUIDField
 from django.db.models.functions import Coalesce
 
 # Third party imports
@@ -328,13 +327,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 }
 
                 if data[0]["start_date"] and data[0]["end_date"]:
-                    data[0]["distribution"]["completion_chart"] = (
-                        burndown_plot(
-                            queryset=queryset.first(),
-                            slug=slug,
-                            project_id=project_id,
-                            cycle_id=data[0]["id"],
-                        )
+                    data[0]["distribution"][
+                        "completion_chart"
+                    ] = burndown_plot(
+                        queryset=queryset.first(),
+                        slug=slug,
+                        project_id=project_id,
+                        cycle_id=data[0]["id"],
                     )
 
             return Response(data, status=status.HTTP_200_OK)
@@ -427,9 +426,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
 
     def partial_update(self, request, slug, project_id, pk):
-        queryset = (
-            self.get_queryset()
-            .filter(workspace__slug=slug, project_id=project_id, pk=pk)
+        queryset = self.get_queryset().filter(
+            workspace__slug=slug, project_id=project_id, pk=pk
         )
         cycle = queryset.first()
         request_data = request.data
@@ -883,7 +881,9 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
 
         # Update the cycle issues
-        CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
+        CycleIssue.objects.bulk_update(
+            updated_records, ["cycle_id"], batch_size=100
+        )
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
