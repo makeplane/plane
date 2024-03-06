@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { CustomMenu } from "@plane/ui";
 import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
 // hooks
-import useToast from "hooks/use-toast";
 import { useEventTracker, useIssues, useUser } from "hooks/store";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeleteIssueModal } from "components/issues";
 // helpers
@@ -32,16 +32,14 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   // auth
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
   const isRestoringAllowed = handleRestore && isEditingAllowed;
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archived-issues/${issue.id}`;
 
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })

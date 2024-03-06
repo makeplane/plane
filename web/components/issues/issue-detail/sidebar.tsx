@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 // hooks
 import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import {
   DeleteIssueModal,
@@ -30,8 +29,18 @@ import {
 } from "components/issues";
 import { IssueSubscription } from "./subscription";
 import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
-// icons
-import { ArchiveIcon, ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, Tooltip, UserGroupIcon } from "@plane/ui";
+// ui
+import {
+  ArchiveIcon,
+  ContrastIcon,
+  DiceIcon,
+  DoubleCircleIcon,
+  RelatedIcon,
+  Tooltip,
+  UserGroupIcon,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -61,7 +70,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
-  const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -73,8 +81,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });
