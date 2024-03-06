@@ -1,17 +1,17 @@
 import { Fragment } from "react";
-import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { mutate } from "swr";
 // components
 import { Menu, Transition } from "@headlessui/react";
 // icons
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // hooks
+import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { useApplication, useUser } from "hooks/store";
 // ui
-import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 
 // Static Data
 const PROFILE_LINKS = [

@@ -1,14 +1,14 @@
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // components
-import { ProjectCard } from "components/project";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { ProjectCard } from "components/project";
 import { ProjectsLoader } from "components/ui";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 
 export const ProjectCardList = observer(() => {
   // theme

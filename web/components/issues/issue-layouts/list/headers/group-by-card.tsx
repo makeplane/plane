@@ -1,19 +1,19 @@
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
 // components
-import { CreateUpdateIssueModal } from "components/issues";
-import { ExistingIssuesListModal } from "components/core";
-// ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ExistingIssuesListModal } from "components/core";
+import { CreateUpdateIssueModal } from "components/issues";
+// ui
 // mobx
-import { observer } from "mobx-react-lite";
 // hooks
+import { TCreateModalStoreTypes } from "constants/issue";
 import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
-import { useState } from "react";
-import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -47,7 +47,13 @@ export const HeaderGroupByCard = observer(
       const issues = data.map((i) => i.id);
 
       try {
-        addIssuesToView && addIssuesToView(issues);
+        await addIssuesToView?.(issues);
+
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the cycle successfully.",
+        });
       } catch (error) {
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // hooks

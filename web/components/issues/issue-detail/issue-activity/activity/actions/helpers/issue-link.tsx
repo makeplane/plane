@@ -1,8 +1,8 @@
 import { FC } from "react";
 // hooks
+import { Tooltip } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
 // ui
-import { Tooltip } from "@plane/ui";
 
 type TIssueLink = {
   activityId: string;

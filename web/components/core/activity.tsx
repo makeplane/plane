@@ -1,10 +1,8 @@
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // store hooks
-import { useEstimate, useLabel } from "hooks/store";
 // icons
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
   TagIcon,
   CopyPlus,
@@ -20,9 +18,11 @@ import {
   MessageSquareIcon,
   UsersIcon,
 } from "lucide-react";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
+import { useEstimate, useLabel } from "hooks/store";
 // types
 import { IIssueActivity } from "@plane/types";
 

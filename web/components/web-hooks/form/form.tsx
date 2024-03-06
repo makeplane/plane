@@ -1,9 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
+import { Controller, useForm } from "react-hook-form";
 // hooks
-import { useWebhook } from "hooks/store";
-// components
+import { Button } from "@plane/ui";
 import {
   WebhookIndividualEventOptions,
   WebhookInput,
@@ -11,8 +10,9 @@ import {
   WebhookSecretKey,
   WebhookToggle,
 } from "components/web-hooks";
+import { useWebhook } from "hooks/store";
+// components
 // ui
-import { Button } from "@plane/ui";
 // types
 import { IWebhook, TWebhookEventTypes } from "@plane/types";
 
@@ -36,7 +36,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
   // store hooks
-  const {webhookSecretKey } = useWebhook();
+  const { webhookSecretKey } = useWebhook();
   // use form
   const {
     handleSubmit,

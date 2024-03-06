@@ -1,24 +1,25 @@
 import { Dispatch, MutableRefObject, SetStateAction, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-// constants
-import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
-// components
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
-import { IssueColumn } from "./issue-column";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useIssueDetail, useProject } from "hooks/store";
+// components
+import RenderIfVisible from "components/core/render-if-visible-HOC";
+// constants
+import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // helper
 import { cn } from "helpers/common.helper";
+// hooks
+import { useIssueDetail, useProject } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
+// local components
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { EIssueActions } from "../types";
+import { IssueColumn } from "./issue-column";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
@@ -255,6 +256,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       {/* Rest of the columns */}
       {SPREADSHEET_PROPERTY_LIST.map((property) => (
         <IssueColumn
+          key={property}
           displayProperties={displayProperties}
           issueDetail={issueDetail}
           disableUserActions={disableUserActions}

@@ -2,12 +2,12 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-// mobx store provider
-import { IUser } from "@plane/types";
-// helpers
-import { getUserRole } from "helpers/user.helper";
 // constants
 import { GROUP_WORKSPACE } from "constants/event-tracker";
+// helpers
+import { getUserRole } from "helpers/user.helper";
+// types
+import { IUser } from "@plane/types";
 
 export interface IPosthogWrapper {
   children: ReactNode;
@@ -59,7 +59,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
       posthog?.identify(user.email);
       posthog?.group(GROUP_WORKSPACE, currentWorkspaceId);
     }
-  }, [currentWorkspaceId, user]);
+  }, [currentWorkspaceId, lastWorkspaceId, user]);
 
   useEffect(() => {
     // Track page views

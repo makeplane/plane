@@ -11,8 +11,8 @@ import {
   FilterSubGroupBy,
 } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -37,7 +37,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
 
   return (
-    <div className="relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">

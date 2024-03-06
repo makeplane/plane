@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
 import { useIssues } from "hooks/store";
 // components

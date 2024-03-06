@@ -2,10 +2,10 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input, Tooltip } from "@plane/ui";
 // types
-import { IPage } from "@plane/types";
 // constants
 import { PAGE_ACCESS_SPECIFIERS } from "constants/page";
 import { IPageStore } from "store/page.store";
+import { IPage } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: IPage) => Promise<void>;

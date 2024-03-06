@@ -1,7 +1,7 @@
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 
-import { IIssueLabel, IPage } from "@plane/types";
 import { PageService } from "services/page.service";
+import { IIssueLabel, IPage } from "@plane/types";
 
 import { RootStore } from "./root.store";
 

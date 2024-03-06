@@ -77,7 +77,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then((res) => {
+      .then(() => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
@@ -85,6 +85,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           role: getUserRole(invitation?.role!),
           project_id: undefined,
           accepted_from: "App",

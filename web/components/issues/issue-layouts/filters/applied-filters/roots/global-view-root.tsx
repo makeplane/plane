@@ -1,18 +1,18 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import isEqual from "lodash/isEqual";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
 //ui
 import { Button } from "@plane/ui";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
-import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
+import { GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
 // constants
-import { GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
+import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
+import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 
 type Props = {
   globalViewId: string;
