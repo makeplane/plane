@@ -4,15 +4,14 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { Button, Input } from "@plane/ui";
-import { WORKSPACE_DELETED } from "constants/event-tracker";
-import { useEventTracker, useWorkspace } from "hooks/store";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { WORKSPACE_DELETED } from "constants/event-tracker";
+// hooks
+import { useEventTracker, useWorkspace } from "hooks/store";
 // types
 import type { IWorkspace } from "@plane/types";
-// constants
 
 type Props = {
   isOpen: boolean;

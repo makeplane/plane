@@ -2,11 +2,10 @@ import React, { FC, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { Button } from "@plane/ui";
-import { useWebhook } from "hooks/store";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useWebhook } from "hooks/store";
 
 interface IDeleteWebhook {
   isOpen: boolean;

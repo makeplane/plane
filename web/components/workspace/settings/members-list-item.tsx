@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // lucide icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // ui
-import { CustomSelect, Tooltip } from "@plane/ui";
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // constants
@@ -13,13 +13,6 @@ import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
-// components
-import { ConfirmWorkspaceMemberRemove } from "components/workspace";
-// ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
-import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
 
 type Props = {
   memberId: string;

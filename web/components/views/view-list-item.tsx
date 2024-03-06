@@ -3,20 +3,19 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
-// hooks
-import { CustomMenu } from "@plane/ui";
-import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
-import { EUserProjectRoles } from "constants/project";
-import { calculateTotalFilters } from "helpers/filter.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useProjectView, useUser } from "hooks/store";
-// components
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
+// constants
+import { EUserProjectRoles } from "constants/project";
 // helpers
+import { calculateTotalFilters } from "helpers/filter.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useProjectView, useUser } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
-// constants
 
 type Props = {
   view: IProjectView;

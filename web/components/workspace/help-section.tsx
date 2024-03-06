@@ -10,9 +10,6 @@ import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// icons
-import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // assets
 import packageJson from "package.json";
 

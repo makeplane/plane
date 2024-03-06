@@ -69,7 +69,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         onClose={() => setIsDraftIssueModalOpen(false)}
         data={workspaceDraftIssue ?? {}}
         onSubmit={() => removeWorkspaceDraftIssue()}
-        isDraft={true}
+        isDraft
       />
 
       <div

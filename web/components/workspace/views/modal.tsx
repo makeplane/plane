@@ -1,18 +1,15 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// ui
 import { Dialog, Transition } from "@headlessui/react";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { WorkspaceViewForm } from "components/workspace";
 // constants
 import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
 // store hooks
 import { useEventTracker, useGlobalView } from "hooks/store";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { WorkspaceViewForm } from "components/workspace";
 // types
 import { IWorkspaceView } from "@plane/types";
 

@@ -3,19 +3,13 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { ChevronDown, XCircle } from "lucide-react";
 // ui
-import { CustomSelect, Tooltip } from "@plane/ui";
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useMember, useUser } from "hooks/store";
-// components
-import { ConfirmWorkspaceMemberRemove } from "components/workspace";
-// ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
 type Props = {
   invitationId: string;

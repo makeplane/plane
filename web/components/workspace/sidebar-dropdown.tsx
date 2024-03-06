@@ -4,15 +4,19 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
+import { mutate } from "swr";
+// ui
+import { Menu, Transition } from "@headlessui/react";
+// icons
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+// plane ui
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
-// ui
-import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspace } from "@plane/types";
-
 // Static Data
-const USER_LINKS = (workspaceSlug: string, userId: string) => [
+const userLinks = (workspaceSlug: string, userId: string) => [
   {
     key: "workspace_invites",
     name: "Workspace invites",
@@ -32,8 +36,7 @@ const USER_LINKS = (workspaceSlug: string, userId: string) => [
     icon: Settings,
   },
 ];
-
-const PROFILE_LINKS = (workspaceSlug: string, userId: string) => [
+const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "View profile",
     icon: UserCircle2,
@@ -45,7 +48,6 @@ const PROFILE_LINKS = (workspaceSlug: string, userId: string) => [
     link: "/profile",
   },
 ];
-
 export const WorkspaceSidebarDropdown = observer(() => {
   // router
   const router = useRouter();
@@ -224,7 +226,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {USER_LINKS(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                    {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                       <Link
                         key={link.key}
                         href={link.href}
@@ -289,7 +291,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-                {PROFILE_LINKS(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                   <Link
                     key={index}
                     href={link.link}

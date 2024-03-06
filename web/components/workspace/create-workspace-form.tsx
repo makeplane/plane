@@ -3,14 +3,13 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, CustomSelect, Input } from "@plane/ui";
+import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_CREATED } from "constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 // hooks
 import { useEventTracker, useWorkspace } from "hooks/store";
 // ui
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspace } from "@plane/types";
 

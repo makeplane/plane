@@ -6,13 +6,12 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { GLOBAL_VIEW_DELETED } from "constants/event-tracker";
 // store hooks
 import { useGlobalView, useEventTracker } from "hooks/store";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspaceView } from "@plane/types";
 

@@ -1,12 +1,10 @@
 import { useEffect, useState, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// icons
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
-// plane ui
-import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
+// ui
+import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { WorkspaceImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -17,13 +15,8 @@ import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-// components
-import { DeleteWorkspaceModal } from "components/workspace";
-import { WorkspaceImageUploadModal } from "components/core";
-// ui
-import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
+// services
+import { FileService } from "services/file.service";
 // types
 import { IWorkspace } from "@plane/types";
 
