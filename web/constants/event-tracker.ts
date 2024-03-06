@@ -246,6 +246,12 @@ export const AUTO_ARCHIVE_TOGGLED = "Auto archive toggled";
 export const AUTO_ARCHIVE_UPDATED = "Auto archive updated";
 export const AUTO_CLOSE_Toggled = "Auto close toggled";
 export const AUTO_CLOSE_UPDATED = "Auto close updated";
+// Estimate Events
+export const ESTIMATE_CREATED = "Estimate created";
+export const ESTIMATE_UPDATED = "Estimate updated";
+export const ESTIMATE_DELETED = "Estimate deleted";
+export const ESTIMATE_USED = "Estimate used";
+export const ESTIMATE_DISABLED = "Estimate disabled";
 // Project Page Events
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";

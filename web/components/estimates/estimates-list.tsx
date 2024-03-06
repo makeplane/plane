@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // store hooks
-import { useEstimate, useProject, useUser } from "hooks/store";
+import { useEstimate, useEventTracker, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
@@ -16,6 +16,7 @@ import { IEstimate } from "@plane/types";
 import { orderArrayBy } from "helpers/array.helper";
 // constants
 import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { ESTIMATE_DISABLED } from "constants/event-tracker";
 
 export const EstimatesList: React.FC = observer(() => {
   // states
@@ -31,6 +32,7 @@ export const EstimatesList: React.FC = observer(() => {
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
   const { currentUser } = useUser();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -46,16 +48,22 @@ export const EstimatesList: React.FC = observer(() => {
   const disableEstimates = () => {
     if (!workspaceSlug || !projectId) return;
 
-    updateProject(workspaceSlug.toString(), projectId.toString(), { estimate: null }).catch((err) => {
-      const error = err?.error;
-      const errorString = Array.isArray(error) ? error[0] : error;
+    updateProject(workspaceSlug.toString(), projectId.toString(), { estimate: null })
+      .then(() => {
+        captureEvent(ESTIMATE_DISABLED, {
+          current_estimate_id : currentProjectDetails?.estimate,
+        });
+      })
+      .catch((err) => {
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: errorString ?? "Estimate could not be disabled. Please try again",
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: errorString ?? "Estimate could not be disabled. Please try again",
+        });
       });
-    });
   };
 
   const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["estimate"];

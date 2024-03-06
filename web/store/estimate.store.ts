@@ -184,7 +184,7 @@ export class EstimateStore implements IEstimateStore {
       runInAction(() => {
         set(this.estimateMap, [responseEstimate.id], responseEstimate);
       });
-      return response.estimate;
+      return responseEstimate;
     });
 
   /**

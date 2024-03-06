@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // store hooks
-import { useEstimate } from "hooks/store";
+import { useEstimate, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
@@ -12,6 +12,8 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { checkDuplicates } from "helpers/array.helper";
 // types
 import { IEstimate, IEstimateFormData } from "@plane/types";
+// constants
+import { ESTIMATE_CREATED, ESTIMATE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -39,6 +41,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { createEstimate, updateEstimate } = useEstimate();
+  const { captureEvent } = useEventTracker();
   // form info
   // toast alert
   const { setToastAlert } = useToast();
@@ -60,7 +63,15 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId) return;
 
     await createEstimate(workspaceSlug.toString(), projectId.toString(), payload)
-      .then(() => {
+      .then((res) => {
+        captureEvent(ESTIMATE_CREATED, {
+          estimate_id: res.id,
+          estimate_points: res.points.map((point) => ({
+            id: point.id,
+            value: point.value,
+            key: point.key,
+          })),
+        });
         onClose();
       })
       .catch((err) => {
@@ -83,6 +94,10 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
 
     await updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
       .then(() => {
+        captureEvent(ESTIMATE_UPDATED, {
+          estimate_id: data.id,
+          estimate_points: payload.estimate_points
+        });
         onClose();
       })
       .catch((err) => {

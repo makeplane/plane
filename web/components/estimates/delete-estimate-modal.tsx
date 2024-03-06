@@ -4,12 +4,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
-import { useEstimate } from "hooks/store";
+import { useEstimate, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { IEstimate } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
+// constants
+import { ESTIMATE_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -26,6 +28,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteEstimate } = useEstimate();
+  const { captureEvent } = useEventTracker();
   // toast alert
   const { setToastAlert } = useToast();
 
@@ -36,6 +39,9 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
 
     deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
       .then(() => {
+        captureEvent(ESTIMATE_DELETED, {
+          estimate_id: estimateId,
+        });
         setIsDeleteLoading(false);
         handleClose();
       })
