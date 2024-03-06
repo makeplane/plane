@@ -1,17 +1,17 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { X, PenSquare } from "lucide-react";
 // layouts
-import { AppLayout } from "layouts/app-layout";
 // components
-import { DraftIssueLayoutRoot } from "components/issues/issue-layouts/roots/draft-issue-layout-root";
 import { PageHead } from "components/core";
 import { ProjectDraftIssueHeader } from "components/headers";
+import { DraftIssueLayoutRoot } from "components/issues/issue-layouts/roots/draft-issue-layout-root";
 // types
-import { NextPageWithLayout } from "lib/types";
 // hooks
 import { useProject } from "hooks/store";
-import { observer } from "mobx-react";
+import { AppLayout } from "layouts/app-layout";
+import { NextPageWithLayout } from "lib/types";
 
 const ProjectDraftIssuesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -26,7 +26,7 @@ const ProjectDraftIssuesPage: NextPageWithLayout = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
-        <div className="ga-1 flex items-center border-b border-custom-border-200 px-4 py-2.5 shadow-sm">
+        <div className="gap-1 flex items-center border-b border-custom-border-200 px-4 py-2.5 shadow-sm">
           <button
             type="button"
             onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
@@ -34,8 +34,8 @@ const ProjectDraftIssuesPage: NextPageWithLayout = observer(() => {
           >
             <PenSquare className="h-4 w-4" />
             <span>Draft Issues</span>
+            <X className="h-3 w-3" />
           </button>
-          <X className="h-3 w-3" />
         </div>
         <DraftIssueLayoutRoot />
       </div>

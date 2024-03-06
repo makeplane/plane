@@ -56,8 +56,6 @@ x-app-env : &app-env
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
 
-
-
 services:
   web:
     <<: *app-env
@@ -138,7 +136,6 @@ services:
     command: postgres -c 'max_connections=1000'
     volumes:
       - pgdata:/var/lib/postgresql/data
-    
   plane-redis:
     <<: *app-env
     image: redis:6.2.7-alpine

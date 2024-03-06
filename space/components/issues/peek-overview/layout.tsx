@@ -11,9 +11,8 @@ import { FullScreenPeekView, SidePeekView } from "components/issues/peek-overvie
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 
-type Props = {};
 
-export const IssuePeekOverview: React.FC<Props> = observer(() => {
+export const IssuePeekOverview: React.FC = observer(() => {
   // states
   const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);

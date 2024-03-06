@@ -1,17 +1,17 @@
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
-import set from "lodash/set";
-import update from "lodash/update";
 import concat from "lodash/concat";
 import pull from "lodash/pull";
+import set from "lodash/set";
 import uniq from "lodash/uniq";
+import update from "lodash/update";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
-import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // types
-import { IIssueRootStore } from "../root.store";
 import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
+import { IssueHelperStore } from "../helpers/issue-helper.store";
+import { IIssueRootStore } from "../root.store";
 
 export interface IModuleIssues {
   // observable
@@ -41,6 +41,12 @@ export interface IModuleIssues {
     moduleId?: string | undefined
   ) => Promise<void>;
   removeIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    moduleId?: string | undefined
+  ) => Promise<void>;
+  archiveIssue: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
@@ -103,6 +109,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
+      archiveIssue: action,
       quickAddIssue: action,
       addIssuesToModule: action,
       removeIssuesFromModule: action,
@@ -131,7 +138,7 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     const moduleIssueIds = this.issues[moduleId];
     if (!moduleIssueIds) return;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds);
+    const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds, "un-archived");
     if (!_issues) return [];
 
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
@@ -237,6 +244,26 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
         runInAction(() => {
           this.issues[moduleId].splice(issueIndex, 1);
         });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  archiveIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    moduleId: string | undefined = undefined
+  ) => {
+    try {
+      if (!moduleId) throw new Error("Module Id is required");
+
+      await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
+      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+
+      runInAction(() => {
+        pull(this.issues[moduleId], issueId);
+      });
     } catch (error) {
       throw error;
     }

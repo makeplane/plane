@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import { useLabel, useMember } from "hooks/store";
-// components
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
-// types
-import { IWorkspaceView } from "@plane/types";
+// components
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+// hooks
+import { useLabel, useMember } from "hooks/store";
+// types
+import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -39,7 +39,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
     reset,
     setValue,
     watch,
-  } = useForm({
+  } = useForm<IWorkspaceView>({
     defaultValues,
   });
 
@@ -59,7 +59,35 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
     });
   }, [data, preLoadedData, reset]);
 
-  const selectedFilters = watch("filters");
+  const selectedFilters: IIssueFilterOptions = watch("filters");
+
+  // filters whose value not null or empty array
+  let appliedFilters: IIssueFilterOptions | undefined = undefined;
+  Object.entries(selectedFilters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+    if (Array.isArray(value) && value.length === 0) return;
+    if (!appliedFilters) appliedFilters = {};
+    appliedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
+  const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
+    // To clear all filters of any particular filter key.
+    if (!value) {
+      setValue("filters", {
+        ...selectedFilters,
+        [key]: [],
+      });
+      return;
+    }
+
+    let newValues = selectedFilters?.[key] ?? [];
+    newValues = newValues.filter((val) => val !== value);
+
+    setValue("filters", {
+      ...selectedFilters,
+      [key]: newValues,
+    });
+  };
 
   const clearAllFilters = () => {
     if (!selectedFilters) return;
@@ -151,11 +179,12 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
           {selectedFilters && Object.keys(selectedFilters).length > 0 && (
             <div>
               <AppliedFiltersList
-                appliedFilters={selectedFilters}
+                appliedFilters={appliedFilters ?? {}}
                 handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={() => {}}
+                handleRemoveFilter={handleRemoveFilter}
                 labels={workspaceLabels ?? undefined}
                 states={undefined}
+                alwaysAllowEditing
               />
             </div>
           )}
@@ -171,8 +200,8 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
+              ? "Creating View..."
+              : "Create View"}
         </Button>
       </div>
     </form>

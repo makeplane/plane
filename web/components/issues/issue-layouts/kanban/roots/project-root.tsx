@@ -1,16 +1,16 @@
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
+import { ProjectIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store/use-issues";
 // components
-import { ProjectIssueQuickActions } from "components/issues";
-import { BaseKanBanRoot } from "../base-kanban-root";
 // types
 import { TIssue } from "@plane/types";
 // constants
 import { EIssueActions } from "../../types";
-import { EIssuesStoreType } from "constants/issue";
+import { BaseKanBanRoot } from "../base-kanban-root";
 
 export interface IKanBanLayout {}
 
@@ -32,6 +32,11 @@ export const KanBanLayout: React.FC = observer(() => {
 
         await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug) return;
+
+        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id);
+      },
     }),
     [issues, workspaceSlug]
   );
@@ -41,7 +46,7 @@ export const KanBanLayout: React.FC = observer(() => {
       issueActions={issueActions}
       issues={issues}
       issuesFilter={issuesFilter}
-      showLoader={true}
+      showLoader
       QuickActions={ProjectIssueQuickActions}
       storeType={EIssuesStoreType.PROJECT}
     />

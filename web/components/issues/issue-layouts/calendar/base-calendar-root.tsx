@@ -1,21 +1,21 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "components/issues";
-// hooks
-import useToast from "hooks/use-toast";
+// ui
 // types
+import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";
 import { useIssues, useUser } from "hooks/store";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
 import { EUserProjectRoles } from "constants/project";
 
 interface IBaseCalendarRoot {
@@ -26,20 +26,30 @@ interface IBaseCalendarRoot {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   isCompletedCycle?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, isCompletedCycle = false } = props;
+  const {
+    issueStore,
+    issuesFilterStore,
+    QuickActions,
+    issueActions,
+    addIssuesToView,
+    viewId,
+    isCompletedCycle = false,
+  } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   // hooks
-  const { setToastAlert } = useToast();
   const { issueMap } = useIssues();
   const {
     membership: { currentProjectRole },
@@ -71,9 +81,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         groupedIssueIds,
         viewId
       ).catch((err) => {
-        setToastAlert({
+        setToast({
           title: "Error",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: err.detail ?? "Failed to perform this action",
         });
       });
@@ -114,9 +124,20 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                     ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
                     : undefined
                 }
+                handleArchive={
+                  issueActions[EIssueActions.ARCHIVE]
+                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.ARCHIVE)
+                    : undefined
+                }
+                handleRestore={
+                  issueActions[EIssueActions.RESTORE]
+                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.RESTORE)
+                    : undefined
+                }
                 readOnly={!isEditingAllowed || isCompletedCycle}
               />
             )}
+            addIssuesToView={addIssuesToView}
             quickAddCallback={issueStore.quickAddIssue}
             viewId={viewId}
             readOnly={!isEditingAllowed || isCompletedCycle}

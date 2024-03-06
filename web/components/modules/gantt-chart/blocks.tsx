@@ -1,13 +1,13 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 // hooks
-import { useApplication, useModule } from "hooks/store";
 // ui
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 // helpers
+import { MODULE_STATUS } from "constants/module";
 import { renderFormattedDate } from "helpers/date-time.helper";
 // constants
-import { MODULE_STATUS } from "constants/module";
+import { useApplication, useModule } from "hooks/store";
 
 type Props = {
   moduleId: string;

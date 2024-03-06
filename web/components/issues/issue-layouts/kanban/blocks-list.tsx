@@ -1,9 +1,9 @@
 import { MutableRefObject, memo } from "react";
 //types
+import { KanbanIssueBlock } from "components/issues";
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueActions } from "../types";
 // components
-import { KanbanIssueBlock } from "components/issues";
 
 interface IssueBlocksListProps {
   sub_group_id: string;

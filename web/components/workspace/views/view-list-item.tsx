@@ -1,17 +1,18 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+// icons
 import { Pencil, Trash2 } from "lucide-react";
-// store hooks
-import { useEventTracker, useGlobalView } from "hooks/store";
-// components
-import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // ui
 import { CustomMenu } from "@plane/ui";
+// components
+import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // helpers
-import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
+import { truncateText } from "helpers/string.helper";
+// store hooks
+import { useEventTracker, useGlobalView } from "hooks/store";
 
 type Props = { viewId: string };
 
@@ -39,7 +40,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
         <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-          <div className="relative flex w-full items-center justify-between rounded p-4">
+          <div className="relative flex h-[52px] w-full items-center justify-between rounded p-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">

@@ -1,23 +1,23 @@
-import { List } from "./default";
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 // types
-import { TIssue } from "@plane/types";
-import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
+import { TCreateModalStoreTypes } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useIssues, useUser } from "hooks/store";
+import { IArchivedIssuesFilter, IArchivedIssues } from "store/issue/archived";
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
+import { IDraftIssuesFilter, IDraftIssues } from "store/issue/draft";
 import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
 import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
+import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
-import { IDraftIssuesFilter, IDraftIssues } from "store/issue/draft";
-import { IArchivedIssuesFilter, IArchivedIssues } from "store/issue/archived";
+import { TIssue } from "@plane/types";
 import { EIssueActions } from "../types";
 // components
+import { List } from "./default";
 import { IQuickActionProps } from "./list-view-types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { TCreateModalStoreTypes } from "constants/issue";
 // hooks
-import { useIssues, useUser } from "hooks/store";
 
 interface IBaseListRoot {
   issuesFilter:
@@ -41,6 +41,8 @@ interface IBaseListRoot {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
   viewId?: string;
   storeType: TCreateModalStoreTypes;
@@ -108,6 +110,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         }
         handleRemoveFromView={
           issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
+        }
+        handleArchive={
+          issueActions[EIssueActions.ARCHIVE] ? async () => handleIssues(issue, EIssueActions.ARCHIVE) : undefined
+        }
+        handleRestore={
+          issueActions[EIssueActions.RESTORE] ? async () => handleIssues(issue, EIssueActions.RESTORE) : undefined
         }
         readOnly={!isEditingAllowed || isCompletedCycle}
       />

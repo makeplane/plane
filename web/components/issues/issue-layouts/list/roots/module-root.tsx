@@ -1,16 +1,16 @@
 import React, { useMemo } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
+import { ModuleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
-import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export interface IModuleListLayout {}
 
@@ -36,6 +36,11 @@ export const ModuleListLayout: React.FC = observer(() => {
         if (!workspaceSlug || !moduleId) return;
 
         await issues.removeIssueFromModule(workspaceSlug.toString(), issue.project_id, moduleId.toString(), issue.id);
+      },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !moduleId) return;
+
+        await issues.archiveIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleId.toString());
       },
     }),
     [issues, workspaceSlug, moduleId]

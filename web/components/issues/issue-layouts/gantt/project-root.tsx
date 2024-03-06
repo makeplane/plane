@@ -1,13 +1,13 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
-import { BaseGanttRoot } from "./base-gantt-root";
-import { EIssuesStoreType } from "constants/issue";
-import { EIssueActions } from "../types";
 import { TIssue } from "@plane/types";
+import { EIssueActions } from "../types";
+import { BaseGanttRoot } from "./base-gantt-root";
 
 export const GanttLayout: React.FC = observer(() => {
   // router

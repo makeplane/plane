@@ -57,11 +57,11 @@ export const MONTHS = [
 export const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export const PROJECT_AUTOMATION_MONTHS = [
-  { label: "1 Month", value: 1 },
-  { label: "3 Months", value: 3 },
-  { label: "6 Months", value: 6 },
-  { label: "9 Months", value: 9 },
-  { label: "12 Months", value: 12 },
+  { label: "1 month", value: 1 },
+  { label: "3 months", value: 3 },
+  { label: "6 months", value: 6 },
+  { label: "9 months", value: 9 },
+  { label: "12 months", value: 12 },
 ];
 
 export const PROJECT_UNSPLASH_COVERS = [

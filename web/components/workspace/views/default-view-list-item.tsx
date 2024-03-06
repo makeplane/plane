@@ -1,6 +1,6 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // helpers
 import { truncateText } from "helpers/string.helper";
 
@@ -15,7 +15,7 @@ export const GlobalDefaultViewListItem: React.FC<Props> = observer((props) => {
   return (
     <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
       <Link href={`/${workspaceSlug}/workspace-views/${view.key}`}>
-        <div className="relative flex w-full items-center justify-between rounded px-5 py-4">
+        <div className="relative flex w-full h-[52px] items-center justify-between rounded px-5 py-4">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex flex-col">

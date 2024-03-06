@@ -107,6 +107,7 @@ class Project(BaseModel):
     close_in = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
     )
+    logo_props = models.JSONField(default=dict)
     default_state = models.ForeignKey(
         "db.State",
         on_delete=models.SET_NULL,

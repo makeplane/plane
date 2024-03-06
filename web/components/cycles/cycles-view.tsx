@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useCycle } from "hooks/store";
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui components
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
+import { useCycle } from "hooks/store";
 // types
 import { TCycleLayout, TCycleView } from "@plane/types";
 
@@ -32,10 +32,10 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     filter === "completed"
       ? currentProjectCompletedCycleIds
       : filter === "draft"
-      ? currentProjectDraftCycleIds
-      : filter === "upcoming"
-      ? currentProjectUpcomingCycleIds
-      : currentProjectCycleIds;
+        ? currentProjectDraftCycleIds
+        : filter === "upcoming"
+          ? currentProjectUpcomingCycleIds
+          : currentProjectCycleIds;
 
   if (loader || !cyclesList)
     return (

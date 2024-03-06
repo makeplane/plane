@@ -1,8 +1,7 @@
-import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
-import { LayersIcon, DoubleCircleIcon, UserGroupIcon, DiceIcon, ContrastIcon } from "@plane/ui";
-import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip } from "lucide-react";
 import { FC } from "react";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
+import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarCheck2, CalendarClock } from "lucide-react";
+import { LayersIcon, DoubleCircleIcon, UserGroupIcon, DiceIcon, ContrastIcon } from "@plane/ui";
 import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,
@@ -19,6 +18,7 @@ import {
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
 } from "components/issues/issue-layouts/spreadsheet";
+import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
   [key: string]: {
@@ -60,7 +60,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "target_date",
     descendingOrderTitle: "Old",
-    icon: CalendarDays,
+    icon: CalendarCheck2,
     Column: SpreadsheetDueDateColumn,
   },
   estimate: {
@@ -114,7 +114,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "start_date",
     descendingOrderTitle: "Old",
-    icon: CalendarDays,
+    icon: CalendarClock,
     Column: SpreadsheetStartDateColumn,
   },
   state: {

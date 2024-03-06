@@ -1,15 +1,15 @@
 import React from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Pencil, X } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject } from "hooks/store";
 // components
+import { Tooltip } from "@plane/ui";
 import { ParentIssuesListModal } from "components/issues";
 // ui
-import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
+import { useIssueDetail, useProject } from "hooks/store";
 // types
 import { TIssueOperations } from "./root";
 

@@ -1,20 +1,20 @@
 import React, { useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
 import { DayPicker, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
 import { CalendarDays, X } from "lucide-react";
 // hooks
+import { cn } from "helpers/common.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { cn } from "helpers/common.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
@@ -86,6 +86,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
   const toggleDropdown = () => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: Date | null) => {
@@ -146,7 +147,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
               <span className="flex-grow truncate">{value ? renderFormattedDate(value) : placeholder}</span>
             )}
-            {isClearable && isDateSelected && (
+            {isClearable && !disabled && isDateSelected && (
               <X
                 className={cn("h-2 w-2 flex-shrink-0", clearIconClassName)}
                 onClick={(e) => {

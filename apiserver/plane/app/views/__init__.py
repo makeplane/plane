@@ -49,6 +49,7 @@ from .workspace import (
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
     WorkspaceEstimatesEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
     WorkspaceModulesEndpoint,
     WorkspaceCyclesEndpoint,
 )
@@ -187,3 +188,5 @@ from .dashboard import (
     DashboardEndpoint,
     WidgetsEndpoint
 )
+
+from .error_404 import custom_404_view

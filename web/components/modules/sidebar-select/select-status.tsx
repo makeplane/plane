@@ -5,10 +5,10 @@ import { Control, Controller, UseFormWatch } from "react-hook-form";
 // ui
 import { CustomSelect, DoubleCircleIcon } from "@plane/ui";
 // types
+import { MODULE_STATUS } from "constants/module";
 import { IModule } from "@plane/types";
 // common
 // constants
-import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   control: Control<Partial<IModule>, any>;

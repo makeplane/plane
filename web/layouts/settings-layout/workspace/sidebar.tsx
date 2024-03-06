@@ -1,10 +1,10 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
+import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
 import { useUser } from "hooks/store";
 // constants
-import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
 
 export const WorkspaceSettingsSidebar = () => {
   // router

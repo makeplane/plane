@@ -1,21 +1,13 @@
 import React, { FC, useState, useRef, useEffect, Fragment } from "react";
-import { useRouter } from "next/router";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // editor
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // hooks
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-// services
-import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
-// components
+import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "components/core";
-import { ParentIssuesListModal } from "components/issues";
-import { IssueLabelSelect } from "components/issues/select";
-import { CreateLabelModal } from "components/labels";
 import {
   CycleDropdown,
   DateDropdown,
@@ -23,13 +15,20 @@ import {
   ModuleDropdown,
   PriorityDropdown,
   ProjectDropdown,
-  ProjectMemberDropdown,
+  MemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
-// ui
-import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
-// helpers
+import { ParentIssuesListModal } from "components/issues";
+import { IssueLabelSelect } from "components/issues/select";
+import { CreateLabelModal } from "components/labels";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+// services
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
+// components
+// ui
+// helpers
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
@@ -63,6 +62,31 @@ export interface IssueFormProps {
 // services
 const aiService = new AIService();
 const fileService = new FileService();
+
+const TAB_INDICES = [
+  "name",
+  "description_html",
+  "feeling_lucky",
+  "ai_assistant",
+  "state_id",
+  "priority",
+  "assignee_ids",
+  "label_ids",
+  "start_date",
+  "target_date",
+  "cycle_id",
+  "module_ids",
+  "estimate_point",
+  "parent_id",
+  "create_more",
+  "discard_button",
+  "draft_button",
+  "submit_button",
+  "project_id",
+  "remove_parent",
+];
+
+const getTabIndex = (key: string) => TAB_INDICES.findIndex((tabIndex) => tabIndex === key) + 1;
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
@@ -100,8 +124,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting },
@@ -137,6 +159,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
+  useEffect(() => {
+    if (data?.description_html) setValue("description_html", data?.description_html);
+  }, [data?.description_html]);
+
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
@@ -170,8 +196,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       })
       .then((res) => {
         if (res.response === "")
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "Issue title isn't informative enough to generate the description. Please try with a different title.",
@@ -182,14 +208,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         const error = err?.data?.error;
 
         if (err.status === 429)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });
@@ -271,7 +297,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       }}
                       buttonVariant="border-with-text"
                       // TODO: update tabIndex logic
-                      tabIndex={19}
+                      tabIndex={getTabIndex("project_id")}
                     />
                   </div>
                 )}
@@ -294,15 +320,18 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                 </span>
                 <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
-                <X
-                  className="h-3 w-3 cursor-pointer"
+                <button
+                  type="button"
+                  className="grid place-items-center"
                   onClick={() => {
                     setValue("parent_id", null);
                     handleFormChange();
                     setSelectedParentIssue(null);
                   }}
-                  tabIndex={20}
-                />
+                  tabIndex={getTabIndex("remove_parent")}
+                >
+                  <X className="h-3 w-3 cursor-pointer" />
+                </button>
               </div>
             </div>
           )}
@@ -331,86 +360,111 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     ref={ref}
                     hasError={Boolean(errors.name)}
                     placeholder="Issue Title"
-                    className="resize-none text-xl w-full"
-                    tabIndex={1}
+                    className="w-full resize-none text-xl"
+                    tabIndex={getTabIndex("name")}
                   />
                 )}
               />
               <div className="relative">
-                <div className="absolute bottom-3.5 right-3.5 z-10 border-0.5 flex items-center gap-2">
-                  {issueName && issueName.trim() !== "" && envConfig?.has_openai_configured && (
-                    <button
-                      type="button"
-                      className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-80 ${
-                        iAmFeelingLucky ? "cursor-wait" : ""
-                      }`}
-                      onClick={handleAutoGenerateDescription}
-                      disabled={iAmFeelingLucky}
-                      tabIndex={3}
-                    >
-                      {iAmFeelingLucky ? (
-                        "Generating response"
-                      ) : (
-                        <>
-                          <Sparkle className="h-3.5 w-3.5" />I{"'"}m feeling lucky
-                        </>
-                      )}
-                    </button>
-                  )}
-                  {envConfig?.has_openai_configured && (
-                    <GptAssistantPopover
-                      isOpen={gptAssistantModal}
-                      projectId={projectId}
-                      handleClose={() => {
-                        setGptAssistantModal((prevData) => !prevData);
-                        // this is done so that the title do not reset after gpt popover closed
-                        reset(getValues());
-                      }}
-                      onResponse={(response) => {
-                        handleAiAssistance(response);
-                      }}
-                      placement="top-end"
-                      button={
+                {data?.description_html === undefined ? (
+                  <Loader className="min-h-[7rem] space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-2 py-2">
+                    <Loader.Item width="100%" height="26px" />
+                    <div className="flex items-center gap-2">
+                      <Loader.Item width="26px" height="26px" />
+                      <Loader.Item width="400px" height="26px" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Loader.Item width="26px" height="26px" />
+                      <Loader.Item width="400px" height="26px" />
+                    </div>
+                    <Loader.Item width="80%" height="26px" />
+                    <div className="flex items-center gap-2">
+                      <Loader.Item width="50%" height="26px" />
+                    </div>
+                    <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
+                      <Loader.Item width="100px" height="26px" />
+                      <Loader.Item width="50px" height="26px" />
+                    </div>
+                  </Loader>
+                ) : (
+                  <Fragment>
+                    <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
+                      {issueName && issueName.trim() !== "" && envConfig?.has_openai_configured && (
                         <button
                           type="button"
-                          className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                          onClick={() => setGptAssistantModal((prevData) => !prevData)}
-                          tabIndex={4}
+                          className={`flex items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs ${
+                            iAmFeelingLucky ? "cursor-wait" : ""
+                          }`}
+                          onClick={handleAutoGenerateDescription}
+                          disabled={iAmFeelingLucky}
+                          tabIndex={getTabIndex("feeling_lucky")}
                         >
-                          <Sparkle className="h-4 w-4" />
-                          AI
+                          {iAmFeelingLucky ? (
+                            "Generating response"
+                          ) : (
+                            <>
+                              <Sparkle className="h-3.5 w-3.5" />I{"'"}m feeling lucky
+                            </>
+                          )}
                         </button>
-                      }
+                      )}
+                      {envConfig?.has_openai_configured && (
+                        <GptAssistantPopover
+                          isOpen={gptAssistantModal}
+                          projectId={projectId}
+                          handleClose={() => {
+                            setGptAssistantModal((prevData) => !prevData);
+                            // this is done so that the title do not reset after gpt popover closed
+                            reset(getValues());
+                          }}
+                          onResponse={(response) => {
+                            handleAiAssistance(response);
+                          }}
+                          placement="top-end"
+                          button={
+                            <button
+                              type="button"
+                              className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
+                              onClick={() => setGptAssistantModal((prevData) => !prevData)}
+                              tabIndex={getTabIndex("ai_assistant")}
+                            >
+                              <Sparkle className="h-4 w-4" />
+                              AI
+                            </button>
+                          }
+                        />
+                      )}
+                    </div>
+                    <Controller
+                      name="description_html"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <RichTextEditorWithRef
+                          cancelUploadImage={fileService.cancelUpload}
+                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                          deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                          restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                          ref={editorRef}
+                          debouncedUpdatesEnabled={false}
+                          value={
+                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                              ? watch("description_html")
+                              : value
+                          }
+                          initialValue={data?.description_html}
+                          customClassName="min-h-[7rem] border-custom-border-100"
+                          onChange={(description: any, description_html: string) => {
+                            onChange(description_html);
+                            handleFormChange();
+                          }}
+                          mentionHighlights={mentionHighlights}
+                          mentionSuggestions={mentionSuggestions}
+                          // tabIndex={2}
+                        />
+                      )}
                     />
-                  )}
-                </div>
-                <Controller
-                  name="description_html"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <RichTextEditorWithRef
-                      cancelUploadImage={fileService.cancelUpload}
-                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                      deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                      restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                      ref={editorRef}
-                      debouncedUpdatesEnabled={false}
-                      value={
-                        !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                          ? watch("description_html")
-                          : value
-                      }
-                      customClassName="min-h-[7rem] border-custom-border-100"
-                      onChange={(description: Object, description_html: string) => {
-                        onChange(description_html);
-                        handleFormChange();
-                      }}
-                      mentionHighlights={mentionHighlights}
-                      mentionSuggestions={mentionSuggestions}
-                      // tabIndex={2}
-                    />
-                  )}
-                />
+                  </Fragment>
+                )}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Controller
@@ -426,7 +480,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         }}
                         projectId={projectId}
                         buttonVariant="border-with-text"
-                        tabIndex={6}
+                        tabIndex={getTabIndex("state_id")}
                       />
                     </div>
                   )}
@@ -443,7 +497,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           handleFormChange();
                         }}
                         buttonVariant="border-with-text"
-                        tabIndex={7}
+                        tabIndex={getTabIndex("priority")}
                       />
                     </div>
                   )}
@@ -453,7 +507,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   name="assignee_ids"
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
-                      <ProjectMemberDropdown
+                      <MemberDropdown
                         projectId={projectId}
                         value={value}
                         onChange={(assigneeIds) => {
@@ -464,7 +518,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         buttonClassName={value?.length > 0 ? "hover:bg-transparent px-0" : ""}
                         placeholder="Assignees"
                         multiple
-                        tabIndex={8}
+                        tabIndex={getTabIndex("assignee_ids")}
                       />
                     </div>
                   )}
@@ -482,7 +536,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           handleFormChange();
                         }}
                         projectId={projectId}
-                        tabIndex={9}
+                        tabIndex={getTabIndex("label_ids")}
                       />
                     </div>
                   )}
@@ -498,6 +552,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         buttonVariant="border-with-text"
                         maxDate={maxDate ?? undefined}
                         placeholder="Start date"
+                        tabIndex={getTabIndex("start_date")}
                       />
                     </div>
                   )}
@@ -513,6 +568,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         buttonVariant="border-with-text"
                         minDate={minDate ?? undefined}
                         placeholder="Due date"
+                        tabIndex={getTabIndex("target_date")}
                       />
                     </div>
                   )}
@@ -531,7 +587,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }}
                           value={value}
                           buttonVariant="border-with-text"
-                          tabIndex={11}
+                          tabIndex={getTabIndex("cycle_id")}
                         />
                       </div>
                     )}
@@ -551,7 +607,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             handleFormChange();
                           }}
                           buttonVariant="border-with-text"
-                          tabIndex={12}
+                          tabIndex={getTabIndex("module_ids")}
                           multiple
                           showCount
                         />
@@ -573,7 +629,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }}
                           projectId={projectId}
                           buttonVariant="border-with-text"
-                          tabIndex={13}
+                          tabIndex={getTabIndex("estimate_point")}
                         />
                       </div>
                     )}
@@ -583,7 +639,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
                     >
                       {watch("parent_id") ? (
                         <div className="flex items-center gap-1 text-custom-text-200">
@@ -603,7 +659,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     </button>
                   }
                   placement="bottom-start"
-                  tabIndex={14}
+                  tabIndex={getTabIndex("parent_id")}
                 >
                   {watch("parent_id") ? (
                     <>
@@ -653,7 +709,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
             }}
-            tabIndex={15}
+            tabIndex={getTabIndex("create_more")}
           >
             <div className="flex cursor-pointer items-center justify-center">
               <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
@@ -661,7 +717,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             <span className="text-xs">Create more</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={16}>
+            <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={getTabIndex("discard_button")}>
               Discard
             </Button>
 
@@ -673,7 +729,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     size="sm"
                     loading={isSubmitting}
                     onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
-                    tabIndex={17}
+                    tabIndex={getTabIndex("draft_button")}
                   >
                     {isSubmitting ? "Moving" : "Move from draft"}
                   </Button>
@@ -683,7 +739,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     size="sm"
                     loading={isSubmitting}
                     onClick={handleSubmit((data) => handleFormSubmit(data, true))}
-                    tabIndex={17}
+                    tabIndex={getTabIndex("draft_button")}
                   >
                     {isSubmitting ? "Saving" : "Save as draft"}
                   </Button>
@@ -691,7 +747,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               </Fragment>
             )}
 
-            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={isDraft ? 18 : 17}>
+            <Button
+              variant="primary"
+              type="submit"
+              size="sm"
+              loading={isSubmitting}
+              tabIndex={isDraft ? getTabIndex("submit_button") : getTabIndex("draft_button")}
+            >
               {data?.id ? (isSubmitting ? "Updating" : "Update issue") : isSubmitting ? "Creating" : "Create issue"}
             </Button>
           </div>

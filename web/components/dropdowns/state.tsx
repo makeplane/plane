@@ -1,22 +1,22 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
+import { StateGroupIcon } from "@plane/ui";
+import { cn } from "helpers/common.helper";
 import { useApplication, useProjectState } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // icons
-import { StateGroupIcon } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -104,6 +104,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const toggleDropdown = () => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: string) => {
@@ -117,6 +118,13 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
     toggleDropdown();
+  };
+
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
@@ -205,6 +213,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

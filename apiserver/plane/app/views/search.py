@@ -48,8 +48,8 @@ class GlobalSearchEndpoint(BaseAPIView):
         return (
             Project.objects.filter(
                 q,
-                Q(project_projectmember__member=self.request.user)
-                | Q(network=2),
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
             .distinct()
@@ -71,6 +71,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         issues = Issue.issue_objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -95,6 +96,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         cycles = Cycle.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -118,6 +120,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         modules = Module.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -141,6 +144,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         pages = Page.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -164,6 +168,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         issue_views = IssueView.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
             workspace__slug=slug,
         )
 
@@ -230,12 +235,14 @@ class IssueSearchEndpoint(BaseAPIView):
         cycle = request.query_params.get("cycle", "false")
         module = request.query_params.get("module", False)
         sub_issue = request.query_params.get("sub_issue", "false")
+        target_date = request.query_params.get("target_date", True)
 
         issue_id = request.query_params.get("issue_id", False)
 
         issues = Issue.issue_objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
         )
 
         if workspace_search == "false":
@@ -266,6 +273,9 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if module:
             issues = issues.exclude(issue_module__module=module)
+
+        if target_date == "none":
+            issues = issues.filter(target_date__isnull=True)
 
         return Response(
             issues.values(

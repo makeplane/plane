@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { addDays } from "date-fns";
+import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
-// hooks
-import { useChart } from "../hooks";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
+import { useGanttChart } from "../hooks/use-gantt-chart";
 import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
 };
 
-export const ChartAddBlock: React.FC<Props> = (props) => {
+export const ChartAddBlock: React.FC<Props> = observer((props) => {
   const { block, blockUpdateHandler } = props;
   // states
   const [isButtonVisible, setIsButtonVisible] = useState(false);
@@ -24,7 +24,7 @@ export const ChartAddBlock: React.FC<Props> = (props) => {
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   // chart hook
-  const { currentViewData } = useChart();
+  const { currentViewData } = useGanttChart();
 
   const handleButtonClick = () => {
     if (!currentViewData) return;
@@ -88,4 +88,4 @@ export const ChartAddBlock: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

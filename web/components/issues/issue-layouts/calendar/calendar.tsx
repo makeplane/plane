@@ -1,21 +1,21 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssues, useUser } from "hooks/store";
 // components
-import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
 import { Spinner } from "@plane/ui";
+import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // types
-import { ICalendarWeek } from "./types";
-import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { useCalendarView } from "hooks/store/use-calendar-view";
 import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useIssues, useUser } from "hooks/store";
+import { useCalendarView } from "hooks/store/use-calendar-view";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+import { ICalendarWeek } from "./types";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -30,6 +30,7 @@ type Props = {
     data: TIssue,
     viewId?: string
   ) => Promise<TIssue | undefined>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   readOnly?: boolean;
 };
@@ -43,6 +44,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     showWeekends,
     quickActions,
     quickAddCallback,
+    addIssuesToView,
     viewId,
     readOnly = false,
   } = props;
@@ -73,42 +75,46 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     <>
       <div className="flex h-full w-full flex-col overflow-hidden">
         <CalendarHeader issuesFilterStore={issuesFilterStore} viewId={viewId} />
-        <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
-        <div className="h-full w-full overflow-y-auto vertical-scrollbar scrollbar-lg">
-          {layout === "month" && (
-            <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
-              {allWeeksOfActiveMonth &&
-                Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
-                  <CalendarWeekDays
-                    issuesFilterStore={issuesFilterStore}
-                    key={weekIndex}
-                    week={week}
-                    issues={issues}
-                    groupedIssueIds={groupedIssueIds}
-                    enableQuickIssueCreate
-                    disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-                    quickActions={quickActions}
-                    quickAddCallback={quickAddCallback}
-                    viewId={viewId}
-                    readOnly={readOnly}
-                  />
-                ))}
-            </div>
-          )}
-          {layout === "week" && (
-            <CalendarWeekDays
-              issuesFilterStore={issuesFilterStore}
-              week={issueCalendarView.allDaysOfActiveWeek}
-              issues={issues}
-              groupedIssueIds={groupedIssueIds}
-              enableQuickIssueCreate
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-              quickActions={quickActions}
-              quickAddCallback={quickAddCallback}
-              viewId={viewId}
-              readOnly={readOnly}
-            />
-          )}
+        <div className="flex h-full w-full vertical-scrollbar scrollbar-lg flex-col">
+          <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
+          <div className="h-full w-full">
+            {layout === "month" && (
+              <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+                {allWeeksOfActiveMonth &&
+                  Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
+                    <CalendarWeekDays
+                      issuesFilterStore={issuesFilterStore}
+                      key={weekIndex}
+                      week={week}
+                      issues={issues}
+                      groupedIssueIds={groupedIssueIds}
+                      enableQuickIssueCreate
+                      disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+                      quickActions={quickActions}
+                      quickAddCallback={quickAddCallback}
+                      addIssuesToView={addIssuesToView}
+                      viewId={viewId}
+                      readOnly={readOnly}
+                    />
+                  ))}
+              </div>
+            )}
+            {layout === "week" && (
+              <CalendarWeekDays
+                issuesFilterStore={issuesFilterStore}
+                week={issueCalendarView.allDaysOfActiveWeek}
+                issues={issues}
+                groupedIssueIds={groupedIssueIds}
+                enableQuickIssueCreate
+                disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+                quickActions={quickActions}
+                quickAddCallback={quickAddCallback}
+                addIssuesToView={addIssuesToView}
+                viewId={viewId}
+                readOnly={readOnly}
+              />
+            )}
+          </div>
         </div>
       </div>
     </>
