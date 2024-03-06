@@ -108,11 +108,11 @@ export class ProfileIssues extends IssueHelperStore implements IProfileIssues {
     let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues, false, true);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
       else issues = this.unGroupedIssues(orderBy, _issues);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues, true);
-      else issues = this.groupedIssues(groupBy, orderBy, _issues, false, true);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
+      else issues = this.groupedIssues(groupBy, orderBy, _issues);
     }
 
     return issues;

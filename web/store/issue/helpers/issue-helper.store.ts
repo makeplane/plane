@@ -20,15 +20,13 @@ export type TIssueHelperStore = {
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
     issues: TIssueMap,
-    isCalendarIssues?: boolean,
-    isWorkspaceLevel?: boolean
+    isCalendarIssues?: boolean
   ): { [group_id: string]: string[] };
   subGroupedIssues(
     subGroupBy: TIssueDisplayFilterOptions,
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: TIssueMap,
-    isWorkspaceLevel?: boolean
+    issues: TIssueMap
   ): { [sub_group_id: string]: { [group_id: string]: string[] } };
   unGroupedIssues(orderBy: TIssueOrderByOptions, issues: TIssueMap): string[];
   issueDisplayFiltersDefaultData(groupBy: string | null): string[];
@@ -62,8 +60,7 @@ export class IssueHelperStore implements TIssueHelperStore {
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
     issues: TIssueMap,
-    isCalendarIssues: boolean = false,
-    isWorkspaceLevel: boolean = false
+    isCalendarIssues: boolean = false
   ) => {
     const _issues: { [group_id: string]: string[] } = {};
     if (!groupBy) return _issues;
@@ -80,8 +77,7 @@ export class IssueHelperStore implements TIssueHelperStore {
 
       if (groupBy === "state_detail.group") {
         // if groupBy state_detail.group is coming from the project level the we are using stateDetails from root store else we are looping through the stateMap
-        const stateDetails = isWorkspaceLevel ? this.rootStore?.workspaceStateDetails : this.rootStore?.stateDetails;
-        const state_group = stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        const state_group = (this.rootStore?.stateMap || {})?.[_issue?.state_id]?.group || "None";
         groupArray = [state_group];
       } else {
         const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
@@ -101,8 +97,7 @@ export class IssueHelperStore implements TIssueHelperStore {
     subGroupBy: TIssueDisplayFilterOptions,
     groupBy: TIssueDisplayFilterOptions,
     orderBy: TIssueOrderByOptions,
-    issues: TIssueMap,
-    isWorkspaceLevel: boolean = false
+    issues: TIssueMap
   ) => {
     const _issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
     if (!subGroupBy || !groupBy) return _issues;
@@ -122,8 +117,8 @@ export class IssueHelperStore implements TIssueHelperStore {
       let subGroupArray = [];
       let groupArray = [];
       if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
-        const stateDetails = isWorkspaceLevel ? this.rootStore?.workspaceStateDetails : this.rootStore?.stateDetails;
-        const state_group = stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        const state_group = (this.rootStore?.stateMap || {})?.[_issue?.state_id]?.group || "None";
+
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
