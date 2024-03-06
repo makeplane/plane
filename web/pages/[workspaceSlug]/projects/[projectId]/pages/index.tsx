@@ -2,18 +2,9 @@ import { useState, Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
-import { PageHead } from "components/core";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-import { PagesHeader } from "components/headers";
-import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
-import { PagesLoader } from "components/ui";
-import { PAGE_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { PAGE_TABS_LIST } from "constants/page";
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-page";
 import useLocalStorage from "hooks/use-local-storage";
@@ -22,9 +13,16 @@ import useSize from "hooks/use-window-size";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
+import { EmptyState } from "components/empty-state";
+import { PagesHeader } from "components/headers";
+import { PagesLoader } from "components/ui";
+import { PageHead } from "components/core";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
+import { PAGE_TABS_LIST } from "constants/page";
+import { EmptyStateType } from "constants/empty-state";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -52,14 +50,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
-  const {
-    currentUser,
-    currentUserLoader,
-    membership: { currentProjectRole },
-  } = useUser();
+  const { currentUser, currentUserLoader } = useUser();
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
@@ -103,9 +95,6 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   };
 
   // derived values
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "pages", isLightMode);
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
 
@@ -216,22 +205,11 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
         </>
       ) : (
         <EmptyState
-          image={EmptyStateImagePath}
-          title={PAGE_EMPTY_STATE_DETAILS["pages"].title}
-          description={PAGE_EMPTY_STATE_DETAILS["pages"].description}
-          primaryButton={{
-            text: PAGE_EMPTY_STATE_DETAILS["pages"].primaryButton.text,
-            onClick: () => {
-              setTrackElement("Pages empty state");
-              toggleCreatePageModal(true);
-            },
+          type={EmptyStateType.PROJECT_PAGE}
+          primaryButtonOnClick={() => {
+            setTrackElement("Pages empty state");
+            toggleCreatePageModal(true);
           }}
-          comicBox={{
-            title: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.title,
-            description: PAGE_EMPTY_STATE_DETAILS["pages"].comicBox.description,
-          }}
-          size="lg"
-          disabled={!isEditingAllowed}
         />
       )}
     </>
