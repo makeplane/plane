@@ -4,14 +4,14 @@ import { CircleDashed, Plus } from "lucide-react";
 // components
 import { CreateUpdateIssueModal } from "components/issues";
 import { ExistingIssuesListModal } from "components/core";
-import { CustomMenu } from "@plane/ui";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // mobx
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
-import useToast from "hooks/use-toast";
 import { useState } from "react";
 import { TCreateModalStoreTypes } from "constants/issue";
 
@@ -38,8 +38,6 @@ export const HeaderGroupByCard = observer(
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 
-    const { setToastAlert } = useToast();
-
     const renderExistingIssueModal = moduleId || cycleId;
     const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 
@@ -51,8 +49,8 @@ export const HeaderGroupByCard = observer(
       try {
         addIssuesToView && addIssuesToView(issues);
       } catch (error) {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Selected issues could not be added to the cycle. Please try again.",
         });

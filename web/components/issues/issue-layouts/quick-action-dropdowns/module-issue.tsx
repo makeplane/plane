@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { ArchiveIcon, CustomMenu } from "@plane/ui";
-import { observer } from "mobx-react";
-import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 import omit from "lodash/omit";
+import { observer } from "mobx-react";
 // hooks
-import useToast from "hooks/use-toast";
 import { useIssues, useEventTracker, useUser, useProjectState } from "hooks/store";
+// ui
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
@@ -45,8 +45,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     membership: { currentProjectRole },
   } = useUser();
   const { getStateById } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   // auth
@@ -64,8 +62,8 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
 
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })

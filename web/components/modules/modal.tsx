@@ -4,7 +4,8 @@ import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useEventTracker, useModule, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ModuleForm } from "components/modules";
 // types
@@ -36,8 +37,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const { captureModuleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     reset(defaultValues);
@@ -55,8 +54,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
     await createModule(workspaceSlug.toString(), selectedProjectId, payload)
       .then((res) => {
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Module created successfully.",
         });
@@ -66,8 +65,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Module could not be created. Please try again.",
         });
@@ -86,8 +85,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         handleClose();
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Module updated successfully.",
         });
@@ -97,8 +96,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Module could not be updated. Please try again.",
         });

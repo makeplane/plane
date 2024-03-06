@@ -5,7 +5,6 @@ import useSWR from "swr";
 import { useTheme } from "next-themes";
 // hooks
 import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -18,6 +17,7 @@ import {
   PriorityIcon,
   Avatar,
   CycleGroupIcon,
+  setPromiseToast,
 } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
@@ -60,8 +60,6 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   } = useCycle();
   const { currentProjectDetails } = useProject();
   const { getUserDetails } = useMember();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ACTIVE_CYCLE_${projectId}` : null,
@@ -119,12 +117,18 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id);
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
     });
   };
 
@@ -132,12 +136,22 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      activeCycle.id
+    );
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
     });
   };
 

@@ -6,9 +6,8 @@ import { AlertTriangleIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IProject } from "@plane/types";
 // constants
@@ -40,8 +39,6 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const {
     membership: { leaveProject },
   } = useUser();
-  // toast
-  const { setToastAlert } = useToast();
 
   const {
     control,
@@ -71,8 +68,8 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
               });
             })
             .catch(() => {
-              setToastAlert({
-                type: "error",
+              setToast({
+                type: TOAST_TYPE.ERROR,
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
@@ -82,22 +79,22 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
               });
             });
         } else {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Please confirm leaving the project by typing the 'Leave Project'.",
           });
         }
       } else {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Please enter the project name as shown in the description.",
         });
       }
     } else {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please fill all fields.",
       });

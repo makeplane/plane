@@ -7,14 +7,12 @@ import { useUser, useWebhook, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "components/web-hooks";
 import { PageHead } from "components/core";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWebhook } from "@plane/types";
@@ -31,8 +29,6 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   } = useUser();
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
-  // toast
-  const { setToastAlert } = useToast();
 
   // TODO: fix this error
   // useEffect(() => {
@@ -62,15 +58,15 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
     };
     await updateWebhook(workspaceSlug.toString(), formData.id, payload)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Webhook updated successfully.",
         });
       })
       .catch((error) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Something went wrong. Please try again.",
         });

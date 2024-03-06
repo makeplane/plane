@@ -7,14 +7,22 @@ import { FileService } from "services/file.service";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
-import useToast from "hooks/use-toast";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
 import { DeactivateAccountModal } from "components/account";
 // ui
-import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
+import {
+  Button,
+  CustomSelect,
+  CustomSearchSelect,
+  Input,
+  Spinner,
+  TOAST_TYPE,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
 // icons
 import { ChevronDown, User2 } from "lucide-react";
 // types
@@ -52,8 +60,6 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     control,
     formState: { errors },
   } = useForm<IUser>({ defaultValues });
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
   // custom hooks
@@ -76,24 +82,22 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       user_timezone: formData.user_timezone,
     };
 
-    await updateCurrentUser(payload)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Profile updated successfully.",
-        });
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "There was some error in updating your profile. Please try again.",
-        })
-      );
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+    const updateCurrentUserDetail = updateCurrentUser(payload).finally(() => setIsLoading(false));
+    setPromiseToast(updateCurrentUserDetail, {
+      loading: "Updating...",
+      success: {
+        title: "Success!",
+        message: () => `Profile updated successfully.`,
+      },
+      error: {
+        title: "Error!",
+        message: () => `There was some error in updating your profile. Please try again.`,
+      },
+    });
+
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 300);
   };
 
   const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
@@ -105,16 +109,16 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       if (updateUser)
         updateCurrentUser({ avatar: "" })
           .then(() => {
-            setToastAlert({
-              type: "success",
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
               title: "Success!",
-              message: "Profile picture removed successfully.",
+              message: "Profile picture deleted successfully.",
             });
             setIsRemoving(false);
           })
           .catch(() => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: "There was some error in deleting your profile picture. Please try again.",
             });
