@@ -1,15 +1,15 @@
 import { FC, useState } from "react";
 // hooks
-import { useIssueDetail, useMember } from "hooks/store";
 // ui
+import { Pencil, Trash2, LinkIcon } from "lucide-react";
 import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // types
-import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
+import { useIssueDetail, useMember } from "hooks/store";
+import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {
   linkId: string;
@@ -50,7 +50,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
 
       <div className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
         <div
-          className="flex w-full items-start justify-between gap-2 cursor-pointer"
+          className="flex w-full cursor-pointer items-start justify-between gap-2"
           onClick={() => {
             copyTextToClipboard(linkDetail.url);
             setToast({

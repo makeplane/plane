@@ -1,8 +1,19 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
+import { ArrowRight, PanelRight, Plus } from "lucide-react";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
+import { ProjectAnalyticsModal } from "components/analytics";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { ModuleMobileHeader } from "components/modules/module-mobile-header";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { cn } from "helpers/common.helper";
+import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -16,24 +27,13 @@ import {
 } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, LayersIcon } from "@plane/ui";
 // icons
-import { ArrowRight, PanelRight, Plus } from "lucide-react";
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -64,11 +64,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -100,7 +96,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        moduleId?.toString()
+      );
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -119,7 +121,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, moduleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        moduleId?.toString()
+      );
     },
     [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
@@ -127,7 +135,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        moduleId?.toString()
+      );
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -135,7 +149,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId);
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        moduleId?.toString()
+      );
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -166,13 +186,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                         label={currentProjectDetails?.name ?? "Project"}
                         href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                         icon={
-                          currentProjectDetails?.emoji ? (
-                            renderEmoji(currentProjectDetails.emoji)
-                          ) : currentProjectDetails?.icon_prop ? (
-                            renderEmoji(currentProjectDetails.icon_prop)
-                          ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                              {currentProjectDetails?.name.charAt(0)}
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
                         }

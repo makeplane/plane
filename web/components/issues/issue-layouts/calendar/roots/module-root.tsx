@@ -1,15 +1,15 @@
-import { useRouter } from "next/router";
+import { useMemo } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hoks
+import { ModuleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
-import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
-import { EIssuesStoreType } from "constants/issue";
-import { useMemo } from "react";
 
 export const ModuleCalendarLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);

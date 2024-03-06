@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Search } from "lucide-react";
 import { useTheme } from "next-themes";
+import { Search } from "lucide-react";
 // hooks
-import { useApplication, useProjectView, useUser } from "hooks/store";
 // components
-import { ProjectViewListItem } from "components/views";
+import { Input } from "@plane/ui";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Input } from "@plane/ui";
 import { ViewListLoader } from "components/ui";
+import { ProjectViewListItem } from "components/views";
 // constants
-import { EUserProjectRoles } from "constants/project";
 import { VIEW_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useProjectView, useUser } from "hooks/store";
 
 export const ProjectViewsList = observer(() => {
   // states

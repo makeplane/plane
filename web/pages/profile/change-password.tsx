@@ -1,20 +1,20 @@
 import { ReactElement, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // hooks
+import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { PageHead } from "components/core";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { useApplication, useUser } from "hooks/store";
 // services
-import { UserService } from "services/user.service";
 // components
-import { PageHead } from "components/core";
 // layout
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "lib/types";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { UserService } from "services/user.service";
 
 interface FormValues {
   old_password: string;
@@ -85,8 +85,8 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title="Profile - Change Password" />
-      <div className="flex flex-col h-full">
-        <div className="block md:hidden flex-shrink-0 border-b border-custom-border-200 p-4">
+      <div className="flex h-full flex-col">
+        <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
           <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
         </div>
         <form

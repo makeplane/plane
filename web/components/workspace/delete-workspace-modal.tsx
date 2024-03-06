@@ -1,17 +1,17 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { useEventTracker, useWorkspace } from "hooks/store";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// types
-import type { IWorkspace } from "@plane/types";
 // constants
 import { WORKSPACE_DELETED } from "constants/event-tracker";
+// hooks
+import { useEventTracker, useWorkspace } from "hooks/store";
+// types
+import type { IWorkspace } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -55,7 +55,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
     if (!data || !canDelete) return;
 
     await deleteWorkspace(data.slug)
-      .then((res) => {
+      .then(() => {
         handleClose();
         router.push("/");
         captureWorkspaceEvent({

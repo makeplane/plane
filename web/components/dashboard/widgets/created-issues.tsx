@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Tab } from "@headlessui/react";
 // hooks
 import { useDashboard } from "hooks/store";
@@ -15,9 +15,9 @@ import {
 // helpers
 import { getCustomDates, getRedirectionFilters, getTabKey } from "helpers/dashboard.helper";
 // types
-import { EDurationFilters, TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
+import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
 // constants
-import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
+import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
 const WIDGET_KEY = "created_issues";
 

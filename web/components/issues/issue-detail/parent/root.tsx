@@ -2,14 +2,14 @@ import { FC } from "react";
 import Link from "next/link";
 import { MinusCircle } from "lucide-react";
 // component
-import { IssueParentSiblings } from "./siblings";
 // ui
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssues, useProject, useProjectState } from "hooks/store";
 // types
-import { TIssueOperations } from "../root";
 import { TIssue } from "@plane/types";
+import { TIssueOperations } from "../root";
+import { IssueParentSiblings } from "./siblings";
 
 export type TIssueParentDetail = {
   workspaceSlug: string;

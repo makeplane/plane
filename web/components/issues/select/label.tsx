@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import { Combobox } from "@headlessui/react";
-import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
 // hooks
+import { Check, Component, Plus, Search, Tag } from "lucide-react";
+import { IssueLabelsList } from "components/ui";
 import { useLabel } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
-import { IssueLabelsList } from "components/ui";
 // icons
-import { Check, Component, Plus, Search, Tag } from "lucide-react";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
