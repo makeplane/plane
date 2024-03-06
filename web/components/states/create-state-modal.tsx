@@ -4,17 +4,16 @@ import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Popover, Transition } from "@headlessui/react";
-// hooks
-import { ChevronDown } from "lucide-react";
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
-import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
-import { GROUP_CHOICES } from "constants/project";
-import { useProjectState } from "hooks/store";
-// ui
 // icons
+import { ChevronDown } from "lucide-react";
+// ui
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { GROUP_CHOICES } from "constants/project";
+// hooks
+import { useProjectState } from "hooks/store";
 // types
 import type { IState } from "@plane/types";
-// constants
 
 // types
 type Props = {

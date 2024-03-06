@@ -2,15 +2,20 @@ import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
-import { Check, CircleDot, Globe2 } from "lucide-react";
-// hooks
-import { Button, Loader, ToggleSwitch } from "@plane/ui";
-import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-import { useProjectPublish } from "hooks/store";
 // ui
-import { CustomPopover } from "./popover";
+import { Dialog, Transition } from "@headlessui/react";
+// icons
+import { Check, CircleDot, Globe2 } from "lucide-react";
+// ui
+import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useProjectPublish } from "hooks/store";
+// store
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
 // types
+import { IProject } from "@plane/types";
+// local components
+import { CustomPopover } from "./popover";
 
 type Props = {
   isOpen: boolean;
@@ -358,14 +363,16 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                           : "hover:bg-custom-background-80 hover:text-custom-text-100"
                                       }`}
                                       onClick={() => {
-                                        const changedViews =
+                                        const _views =
                                           value.length > 0
                                             ? value.includes(option.key)
                                               ? value.filter((_o: string) => _o !== option.key)
                                               : [...value, option.key]
                                             : [option.key];
-                                        if (changedViews.length === 0) return;
-                                        onChange(changedViews);
+
+                                        if (_views.length === 0) return;
+
+                                        onChange(_views);
                                         checkIfUpdateIsRequired();
                                       }}
                                     >

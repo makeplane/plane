@@ -2,19 +2,18 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
+// icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
-import { CustomSelect, Tooltip } from "@plane/ui";
+// ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { ConfirmProjectMemberRemove } from "components/project";
+// constants
 import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 import { ROLE } from "constants/workspace";
+// hooks
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
-// components
-// ui
-// icons
-// constants
 
 type Props = {
   userId: string;
