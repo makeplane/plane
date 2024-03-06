@@ -13,7 +13,6 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
@@ -33,6 +32,7 @@ import useLocalStorage from "hooks/use-local-storage";
 // helpers
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
@@ -163,13 +163,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                         label={currentProjectDetails?.name ?? "Project"}
                         href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                         icon={
-                          currentProjectDetails?.emoji ? (
-                            renderEmoji(currentProjectDetails.emoji)
-                          ) : currentProjectDetails?.icon_prop ? (
-                            renderEmoji(currentProjectDetails.icon_prop)
-                          ) : (
-                            <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                              {currentProjectDetails?.name.charAt(0)}
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
                         }
@@ -209,7 +205,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0"
                     placement="bottom-start"
                   >
-                    {currentProjectCycleIds?.map((cycleId) => <CycleDropdownOption key={cycleId} cycleId={cycleId} />)}
+                    {currentProjectCycleIds?.map((cycleId) => (
+                      <CycleDropdownOption key={cycleId} cycleId={cycleId} />
+                    ))}
                   </CustomMenu>
                 }
               />

@@ -11,14 +11,15 @@ import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 import { EUserProjectRoles } from "constants/project";
-import { renderEmoji } from "helpers/emoji.helper";
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import { TCycleLayout } from "@plane/types";
+import { ProjectLogo } from "components/project";
 
 export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
+  const { workspaceSlug } = router.query;
   // store hooks
   const {
     commandPalette: { toggleCreateCycleModal },
@@ -32,9 +33,6 @@ export const CyclesHeader: FC = observer(() => {
   const canUserCreateCycle =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const { workspaceSlug } = router.query as {
-    workspaceSlug: string;
-  };
   const { setValue: setCycleLayout } = useLocalStorage<TCycleLayout>("cycle_layout", "list");
 
   const handleCurrentLayout = useCallback(
@@ -58,13 +56,9 @@ export const CyclesHeader: FC = observer(() => {
                     label={currentProjectDetails?.name ?? "Project"}
                     href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                     icon={
-                      currentProjectDetails?.emoji ? (
-                        renderEmoji(currentProjectDetails.emoji)
-                      ) : currentProjectDetails?.icon_prop ? (
-                        renderEmoji(currentProjectDetails.icon_prop)
-                      ) : (
-                        <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
-                          {currentProjectDetails?.name.charAt(0)}
+                      currentProjectDetails && (
+                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                          <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                         </span>
                       )
                     }

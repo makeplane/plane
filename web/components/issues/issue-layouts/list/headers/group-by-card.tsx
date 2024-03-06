@@ -47,7 +47,13 @@ export const HeaderGroupByCard = observer(
       const issues = data.map((i) => i.id);
 
       try {
-        addIssuesToView && addIssuesToView(issues);
+        await addIssuesToView?.(issues);
+
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the cycle successfully.",
+        });
       } catch (error) {
         setToast({
           type: TOAST_TYPE.ERROR,

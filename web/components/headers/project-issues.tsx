@@ -11,7 +11,6 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
-import { renderEmoji } from "helpers/emoji.helper";
 import {
   useApplication,
   useEventTracker,
@@ -21,11 +20,12 @@ import {
   useUser,
   useMember,
 } from "hooks/store";
+import { useIssues } from "hooks/store/use-issues";
 // components
 // ui
 // types
-import { useIssues } from "hooks/store/use-issues";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
 // helper
 
@@ -123,17 +123,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                       label={currentProjectDetails?.name ?? "Project"}
                       icon={
                         currentProjectDetails ? (
-                          currentProjectDetails?.emoji ? (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                              {renderEmoji(currentProjectDetails.emoji)}
-                            </span>
-                          ) : currentProjectDetails?.icon_prop ? (
-                            <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                              {renderEmoji(currentProjectDetails.icon_prop)}
-                            </div>
-                          ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                              {currentProjectDetails?.name.charAt(0)}
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
                         ) : (

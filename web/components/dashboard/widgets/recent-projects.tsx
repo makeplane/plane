@@ -7,13 +7,13 @@ import { Avatar, AvatarGroup } from "@plane/ui";
 import { WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 import { PROJECT_BACKGROUND_COLORS } from "constants/dashboard";
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { renderEmoji } from "helpers/emoji.helper";
 import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
 // ui
 // helpers
 // types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
 
 const WIDGET_KEY = "recent_projects";
@@ -38,17 +38,9 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
       <div
         className={`h-[3.375rem] w-[3.375rem] grid place-items-center rounded border border-transparent flex-shrink-0 ${randomBgColor}`}
       >
-        {projectDetails.emoji ? (
-          <span className="grid h-7 w-7 flex-shrink-0 text-2xl place-items-center rounded uppercase">
-            {renderEmoji(projectDetails.emoji)}
-          </span>
-        ) : projectDetails.icon_prop ? (
-          <div className="grid h-7 w-7 flex-shrink-0 place-items-center">{renderEmoji(projectDetails.icon_prop)}</div>
-        ) : (
-          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-            {projectDetails.name.charAt(0)}
-          </span>
-        )}
+        <div className="h-7 w-7 grid place-items-center">
+          <ProjectLogo logo={projectDetails.logo_props} className="text-xl" />
+        </div>
       </div>
       <div className="flex-grow truncate">
         <h6 className="text-sm text-custom-text-300 font-medium group-hover:underline group-hover:text-custom-text-100 truncate">

@@ -1,9 +1,10 @@
 import { ContrastIcon } from "lucide-react";
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+// components
+import { ProjectLogo } from "components/project";
 // stores
 import { ISSUE_PRIORITIES } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
-import { renderEmoji } from "helpers/emoji.helper";
 import { ICycleStore } from "store/cycle.store";
 import { ILabelStore } from "store/label.store";
 import { IMemberRootStore } from "store/member";
@@ -62,7 +63,11 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
       return {
         id: project.id,
         name: project.name,
-        icon: <div className="h-6 w-6">{renderEmoji(project.emoji || "")}</div>,
+        icon: (
+          <div className="w-6 h-6 grid place-items-center flex-shrink-0">
+            <ProjectLogo logo={project.logo_props} />
+          </div>
+        ),
         payload: { project_id: project.id },
       };
     }) as any;
