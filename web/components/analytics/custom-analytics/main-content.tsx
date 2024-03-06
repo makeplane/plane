@@ -2,15 +2,15 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // components
+import { Button, Loader } from "@plane/ui";
 import { AnalyticsGraph, AnalyticsTable } from "components/analytics";
 // ui
-import { Button, Loader } from "@plane/ui";
 // helpers
+import { ANALYTICS } from "constants/fetch-keys";
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 // fetch-keys
-import { ANALYTICS } from "constants/fetch-keys";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;

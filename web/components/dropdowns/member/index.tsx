@@ -3,19 +3,19 @@ import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 // hooks
+import { cn } from "helpers/common.helper";
 import { useMember } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { ButtonAvatars } from "./avatar";
 import { DropdownButton } from "../buttons";
+import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
+import { ButtonAvatars } from "./avatar";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
+import { MemberOptions } from "./member-options";
 import { MemberDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
-import { MemberOptions } from "./member-options";
 
 type Props = {
   projectId?: string;

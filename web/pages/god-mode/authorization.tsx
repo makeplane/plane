@@ -1,18 +1,19 @@
 import { ReactElement, useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
 // layouts
+import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+
+import { PageHead } from "components/core";
+import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
+import { useApplication } from "hooks/store";
 import { InstanceAdminLayout } from "layouts/admin-layout";
 // types
 import { NextPageWithLayout } from "lib/types";
 // hooks
-import { useApplication } from "hooks/store";
 // ui
-import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
-import { PageHead } from "components/core";
 
 const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   // store

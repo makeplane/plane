@@ -1,11 +1,11 @@
 import React from "react";
 import Image from "next/image";
 // components
-import { ComicBoxButton } from "./comic-box-button";
 // ui
 import { Button, getButtonStyling } from "@plane/ui";
 // helper
 import { cn } from "helpers/common.helper";
+import { ComicBoxButton } from "./comic-box-button";
 
 type Props = {
   title: string;

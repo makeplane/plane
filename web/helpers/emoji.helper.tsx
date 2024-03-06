@@ -51,3 +51,12 @@ export const groupReactions: (reactions: any[], key: string) => { [key: string]:
 
   return groupedReactions;
 };
+
+export const convertHexEmojiToDecimal = (emojiUnified: string): string => {
+  if (!emojiUnified) return "";
+
+  return emojiUnified
+    .split("-")
+    .map((e) => parseInt(e, 16))
+    .join("-");
+};

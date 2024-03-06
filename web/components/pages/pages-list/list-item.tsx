@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   AlertCircle,
   Archive,
@@ -13,17 +14,16 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { useRouter } from "next/router";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
+import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 import { useMember, usePage, useUser } from "hooks/store";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { IIssueLabel } from "@plane/types";
 
 export interface IPagesListItem {

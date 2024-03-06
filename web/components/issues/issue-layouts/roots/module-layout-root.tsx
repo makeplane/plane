@@ -1,10 +1,9 @@
 import React, { Fragment } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import size from "lodash/size";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // mobx store
-import { useIssues } from "hooks/store";
 // components
 import {
   IssuePeekOverview,
@@ -19,6 +18,7 @@ import {
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 

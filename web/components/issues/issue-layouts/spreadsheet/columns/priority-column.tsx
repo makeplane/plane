@@ -8,7 +8,7 @@ import { TIssue } from "@plane/types";
 type Props = {
   issue: TIssue;
   onClose: () => void;
-  onChange: (issue: TIssue, data: Partial<TIssue>,updates:any) => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 

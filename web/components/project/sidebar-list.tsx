@@ -1,21 +1,21 @@
-import { useState, FC, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
+import { useState, FC, useRef, useEffect } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
-import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { cn } from "helpers/common.helper";
+import { orderJoinedProjects } from "helpers/project.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { orderJoinedProjects } from "helpers/project.helper";
-import { cn } from "helpers/common.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { IProject } from "@plane/types";
 
 export const ProjectSidebarList: FC = observer(() => {
@@ -63,8 +63,8 @@ export const ProjectSidebarList: FC = observer(() => {
 
     const joinedProjectsList: IProject[] = [];
     joinedProjects.map((projectId) => {
-      const _project = getProjectById(projectId);
-      if (_project) joinedProjectsList.push(_project);
+      const projectDetails = getProjectById(projectId);
+      if (projectDetails) joinedProjectsList.push(projectDetails);
     });
     if (joinedProjectsList.length <= 0) return;
 

@@ -2,9 +2,9 @@ import { useState, Fragment } from "react";
 import { useRouter } from "next/router";
 import { Transition, Dialog } from "@headlessui/react";
 // hooks
+import { Button } from "@plane/ui";
 import { useProject, useUser } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
 // types
 import type { IProject } from "@plane/types";
 

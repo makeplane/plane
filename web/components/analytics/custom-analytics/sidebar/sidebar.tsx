@@ -1,24 +1,24 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
-import { AnalyticsService } from "services/analytics.service";
 // hooks
-import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
 // components
-import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
 // ui
+import { CalendarDays, Download, RefreshCw } from "lucide-react";
 import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { CalendarDays, Download, RefreshCw } from "lucide-react";
+import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 import { cn } from "helpers/common.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
+import { AnalyticsService } from "services/analytics.service";
+import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
@@ -143,7 +143,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "relative h-full flex w-full gap-2 justify-between items-start px-5 py-4 bg-custom-sidebar-background-100",
+        "relative flex h-full w-full items-start justify-between gap-2 bg-custom-sidebar-background-100 px-5 py-4",
         !isProjectLevel ? "flex-col" : ""
       )}
     >
@@ -176,10 +176,10 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
         </>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 justify-end">
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <Button
           variant="neutral-primary"
-          prependIcon={<RefreshCw className="h-3 md:h-3.5 w-3 md:w-3.5" />}
+          prependIcon={<RefreshCw className="h-3 w-3 md:h-3.5 md:w-3.5" />}
           onClick={() => {
             if (!workspaceSlug) return;
 
