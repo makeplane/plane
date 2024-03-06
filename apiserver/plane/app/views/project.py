@@ -65,7 +65,7 @@ from plane.db.models import (
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
-
+from plane.utils.cache import cache_response
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ProjectListSerializer
@@ -1045,6 +1045,8 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    # Cache the below api for 24 hours
+    @cache_response(60 * 60 * 24, user=False)
     def get(self, request):
         files = []
         s3 = boto3.client(
