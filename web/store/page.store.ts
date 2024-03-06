@@ -35,7 +35,7 @@ export interface IPageStore {
   addToFavorites: () => Promise<void>;
   removeFromFavorites: () => Promise<void>;
   updateName: (name: string) => Promise<void>;
-  updateDescription: (description: string) => Promise<void>;
+  updateDescription: (description: string) => void;
 
   // Reactions
   disposers: Array<() => void>;
@@ -89,7 +89,7 @@ export class PageStore implements IPageStore {
       addToFavorites: action,
       removeFromFavorites: action,
       updateName: action,
-      updateDescription: action,
+      updateDescription: action.bound,
       setIsSubmitting: action,
       cleanup: action,
     });
@@ -166,7 +166,7 @@ export class PageStore implements IPageStore {
     this.name = name;
   });
 
-  updateDescription = action("updateDescription", async (description_html: string) => {
+  updateDescription = action("updateDescription", (description_html: string) => {
     const { projectId, workspaceSlug } = this.rootStore.app.router;
     if (!projectId || !workspaceSlug) return;
 
