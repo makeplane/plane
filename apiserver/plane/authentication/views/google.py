@@ -60,7 +60,7 @@ class GoogleCallbackEndpoint(View):
             user = provider.authenticate()
             process_workspace_project_invitations(user=user)
             user_login(request=request, user=user)
-            return HttpResponseRedirect(request.session.get("referer"))
+            return HttpResponseRedirect(referer)
         except ImproperlyConfigured as e:
             url = referer + "?" + urlencode({"error": str(e)})
             return HttpResponseRedirect(url)
