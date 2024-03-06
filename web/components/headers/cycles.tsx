@@ -1,21 +1,20 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { List, Plus } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
-// components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-import { ProjectLogo } from "components/project";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
-// types
-import { TCycleLayout } from "@plane/types";
-// constants
-import { EUserProjectRoles } from "constants/project";
+// helpers
+// components
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { CYCLE_VIEW_LAYOUTS } from "constants/cycle";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
+import { TCycleLayout } from "@plane/types";
+import { ProjectLogo } from "components/project";
 
 export const CyclesHeader: FC = observer(() => {
   // router
@@ -107,6 +106,7 @@ export const CyclesHeader: FC = observer(() => {
         >
           {CYCLE_VIEW_LAYOUTS.map((layout) => (
             <CustomMenu.MenuItem
+              key={layout.key}
               onClick={() => {
                 // handleLayoutChange(ISSUE_LAYOUTS[index].key);
                 handleCurrentLayout(layout.key as TCycleLayout);

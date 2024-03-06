@@ -1,6 +1,6 @@
+import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
-import { set } from "lodash";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // types

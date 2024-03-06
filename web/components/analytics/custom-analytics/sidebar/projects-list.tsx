@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { Contrast, LayoutGrid, Users } from "lucide-react";
 // hooks
-import { useProject } from "hooks/store";
-// components
-import { ProjectLogo } from "components/project";
+// icons
+import { Contrast, LayoutGrid, Users } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { useProject } from "hooks/store";
+import { ProjectLogo } from "components/project";
 
 type Props = {
   projectIds: string[];

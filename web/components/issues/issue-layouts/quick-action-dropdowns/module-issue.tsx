@@ -1,23 +1,24 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 // hooks
-import { useIssues, useEventTracker, useUser, useProjectState } from "hooks/store";
 // ui
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-// helpers
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { STATE_GROUPS } from "constants/state";
 import { copyUrlToClipboard } from "helpers/string.helper";
+import { useIssues, useEventTracker, useUser, useProjectState } from "hooks/store";
+// components
+// helpers
 // types
 import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { STATE_GROUPS } from "constants/state";
 
 export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {

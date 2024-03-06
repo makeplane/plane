@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+// components
+import { Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "components/issues";
 // hooks
 import { useProject } from "hooks/store";
 // components
-import { FilterHeader, FilterOption } from "components/issues";
 import { ProjectLogo } from "components/project";
 // ui
-import { Loader } from "@plane/ui";
+// helpers
 
 type Props = {
   appliedFilters: string[] | null;

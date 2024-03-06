@@ -1,33 +1,33 @@
-import { Sparkle } from "lucide-react";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+import useSWR from "swr";
+import { Sparkle } from "lucide-react";
 // hooks
 
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-// services
-import { FileService } from "services/file.service";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-// components
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover, PageHead } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
+import { IssuePeekOverview } from "components/issues";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
+// services
+import { AppLayout } from "layouts/app-layout";
+import { NextPageWithLayout } from "lib/types";
+import { FileService } from "services/file.service";
+// layouts
+// components
 // ui
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // assets
 // helpers
 // types
 import { IPage } from "@plane/types";
-import { NextPageWithLayout } from "lib/types";
 // fetch-keys
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { IssuePeekOverview } from "components/issues";
 
 // services
 const fileService = new FileService();
@@ -311,7 +311,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     updatePageTitle={updatePageTitle}
                     onActionCompleteHandler={actionCompleteAlert}
                     customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
-                    onChange={(_description_json: Object, description_html: string) => {
+                    onChange={(_description_json: any, description_html: string) => {
                       setShowAlert(true);
                       onChange(description_html);
                       handleSubmit(updatePage)();

@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
-import { useDashboard } from "hooks/store";
 // components
 import {
   DurationFilterDropdown,
@@ -12,11 +11,10 @@ import {
   WidgetProps,
 } from "components/dashboard/widgets";
 // helpers
-import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { IssuesByPriorityGraph } from "components/graphs";
+import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 
 const WIDGET_KEY = "issues_by_priority";
 
@@ -68,7 +66,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   }));
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96 flex flex-col">
+    <div className="flex min-h-96 w-full flex-col overflow-hidden rounded-xl border-[0.5px] border-custom-border-200 bg-custom-background-100 py-6 duration-300 hover:shadow-custom-shadow-4xl">
       <div className="flex items-center justify-between gap-2 pl-7 pr-6">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned`}
@@ -88,8 +86,8 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
         />
       </div>
       {totalCount > 0 ? (
-        <div className="flex items-center h-full">
-          <div className="w-full -mt-[11px]">
+        <div className="flex h-full items-center">
+          <div className="-mt-[11px] w-full">
             <IssuesByPriorityGraph
               data={chartData}
               onBarClick={(datum) => {
@@ -101,7 +99,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
           </div>
         </div>
       ) : (
-        <div className="h-full grid place-items-center">
+        <div className="grid h-full place-items-center">
           <IssuesByPriorityEmptyState />
         </div>
       )}

@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
+import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 // icons
 import {
   MoreVertical,
@@ -18,13 +18,7 @@ import {
   MoreHorizontal,
   Inbox,
 } from "lucide-react";
-// hooks
-import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
-import { cn } from "helpers/common.helper";
-import { getNumberCount } from "helpers/string.helper";
-// components
+// ui
 import {
   CustomMenu,
   Tooltip,
@@ -36,8 +30,15 @@ import {
   setPromiseToast,
 } from "@plane/ui";
 import { LeaveProjectModal, ProjectLogo, PublishProjectModal } from "components/project";
-// constants
 import { EUserProjectRoles } from "constants/project";
+import { cn } from "helpers/common.helper";
+import { getNumberCount } from "helpers/string.helper";
+// hooks
+import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// helpers
+
+// components
 
 type Props = {
   projectId: string;

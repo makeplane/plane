@@ -1,19 +1,19 @@
 import React from "react";
-import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
-import { TwitterPicker } from "react-color";
-import { Dialog, Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useProjectState } from "hooks/store";
-// ui
-import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+import { useRouter } from "next/router";
+import { TwitterPicker } from "react-color";
+import { Controller, useForm } from "react-hook-form";
+import { Dialog, Popover, Transition } from "@headlessui/react";
 // icons
 import { ChevronDown } from "lucide-react";
-// types
-import type { IState } from "@plane/types";
+// ui
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+// hooks
+import { useProjectState } from "hooks/store";
+// types
+import type { IState } from "@plane/types";
 
 // types
 type Props = {

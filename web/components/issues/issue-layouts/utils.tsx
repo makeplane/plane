@@ -3,15 +3,16 @@ import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "
 // components
 import { ProjectLogo } from "components/project";
 // stores
+import { ISSUE_PRIORITIES } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
+import { ICycleStore } from "store/cycle.store";
+import { ILabelStore } from "store/label.store";
 import { IMemberRootStore } from "store/member";
+import { IModuleStore } from "store/module.store";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
-import { ILabelStore } from "store/label.store";
-import { ICycleStore } from "store/cycle.store";
-import { IModuleStore } from "store/module.store";
+// helpers
 // constants
-import { STATE_GROUPS } from "constants/state";
-import { ISSUE_PRIORITIES } from "constants/issue";
 // types
 import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
 
@@ -116,19 +117,19 @@ const getModuleColumns = (projectStore: IProjectStore, moduleStore: IModuleStore
   const modules = [];
 
   moduleIds.map((moduleId) => {
-    const _module = getModuleById(moduleId);
-    if (_module)
+    const moduleInfo = getModuleById(moduleId);
+    if (moduleInfo)
       modules.push({
-        id: _module.id,
-        name: _module.name,
-        icon: <DiceIcon className="w-3.5 h-3.5" />,
-        payload: { module_ids: [_module.id] },
+        id: moduleInfo.id,
+        name: moduleInfo.name,
+        icon: <DiceIcon className="h-3.5 w-3.5" />,
+        payload: { module_ids: [moduleInfo.id] },
       });
   }) as any;
   modules.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="w-3.5 h-3.5" />,
+    icon: <DiceIcon className="h-3.5 w-3.5" />,
   });
 
   return modules as any;
@@ -142,7 +143,7 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
     id: state.id,
     name: state.name,
     icon: (
-      <div className="w-3.5 h-3.5 rounded-full">
+      <div className="h-3.5 w-3.5 rounded-full">
         <StateGroupIcon stateGroup={state.group} color={state.color} width="14" height="14" />
       </div>
     ),
@@ -157,7 +158,7 @@ const getStateGroupColumns = () => {
     id: stateGroup.key,
     name: stateGroup.label,
     icon: (
-      <div className="w-3.5 h-3.5 rounded-full">
+      <div className="h-3.5 w-3.5 rounded-full">
         <StateGroupIcon stateGroup={stateGroup.key} width="14" height="14" />
       </div>
     ),
@@ -187,7 +188,7 @@ const getLabelsColumns = (label: ILabelStore) => {
     id: label.id,
     name: label.name,
     icon: (
-      <div className="w-[12px] h-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
+      <div className="h-[12px] w-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
     ),
     payload: label?.id === "None" ? {} : { label_ids: [label.id] },
   }));

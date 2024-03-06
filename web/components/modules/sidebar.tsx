@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 import {
@@ -14,13 +14,6 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
-// hooks
-import { useModule, useUser, useEventTracker } from "hooks/store";
-// components
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import { DeleteModuleModal } from "components/modules";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
 // ui
 import {
   CustomMenu,
@@ -32,15 +25,22 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
+// components
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
+import ProgressChart from "components/core/sidebar/progress-chart";
+import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
+import { DeleteModuleModal } from "components/modules";
+// constant
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
+import { MODULE_STATUS } from "constants/module";
+import { EUserProjectRoles } from "constants/project";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useModule, useUser, useEventTracker } from "hooks/store";
 // types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
-// constant
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -340,7 +340,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <CalendarClock className="h-4 w-4" />
             <span className="text-base">Date range</span>
           </div>
-          <div className="w-3/5 h-7">
+          <div className="h-7 w-3/5">
             <Controller
               control={control}
               name="start_date"
@@ -384,7 +384,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               control={control}
               name="lead_id"
               render={({ field: { value } }) => (
-                <div className="w-3/5 h-7">
+                <div className="h-7 w-3/5">
                   <MemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
@@ -408,7 +408,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               control={control}
               name="member_ids"
               render={({ field: { value } }) => (
-                <div className="w-3/5 h-7">
+                <div className="h-7 w-3/5">
                   <MemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
@@ -429,7 +429,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="h-7 w-3/5 flex items-center">
+            <div className="flex h-7 w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>

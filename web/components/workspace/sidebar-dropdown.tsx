@@ -1,16 +1,18 @@
 import { Fragment, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { Menu, Transition } from "@headlessui/react";
-import { mutate } from "swr";
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { usePopper } from "react-popper";
+import { mutate } from "swr";
+// ui
+import { Menu, Transition } from "@headlessui/react";
+// icons
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+// plane ui
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
-// ui
-import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWorkspace } from "@plane/types";
 // Static Data

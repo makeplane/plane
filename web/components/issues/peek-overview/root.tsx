@@ -1,18 +1,19 @@
 import { FC, useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-// ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-// components
 import { IssueView } from "components/issues";
+// ui
+// components
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "constants/event-tracker";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+// components
 // types
 import { TIssue } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "constants/event-tracker";
 
 interface IIssuePeekOverview {
   is_archived?: boolean;

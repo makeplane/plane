@@ -2,9 +2,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // hooks
+import { Tooltip } from "@plane/ui";
 import { useApplication } from "hooks/store";
 // ui
-import { Tooltip } from "@plane/ui";
 
 const INSTANCE_ADMIN_LINKS = [
   {

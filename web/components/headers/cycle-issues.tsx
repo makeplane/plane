@@ -1,9 +1,19 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { ArrowRight, Plus, PanelRight } from "lucide-react";
+import { useRouter } from "next/router";
 // hooks
+import { ArrowRight, Plus, PanelRight } from "lucide-react";
+import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
+import { ProjectAnalyticsModal } from "components/analytics";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { cn } from "helpers/common.helper";
+import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -17,22 +27,13 @@ import {
 } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
-import { ProjectLogo } from "components/project";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
+// icons
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { cn } from "helpers/common.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router

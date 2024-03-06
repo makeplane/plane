@@ -1,19 +1,20 @@
 import { linearGradientDef } from "@nivo/core";
 // assets
-import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
-import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
-import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
-import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { ContrastIcon } from "@plane/ui";
+import { Props } from "components/icons/types";
 import CompletedIssuesDark from "public/empty-state/dashboard/dark/completed-issues.svg";
+import OverdueIssuesDark from "public/empty-state/dashboard/dark/overdue-issues.svg";
+import UpcomingIssuesDark from "public/empty-state/dashboard/dark/upcoming-issues.svg";
 import CompletedIssuesLight from "public/empty-state/dashboard/light/completed-issues.svg";
+import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issues.svg";
+import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
 // types
 import { EDurationFilters, TIssuesListTypes, TStateGroups } from "@plane/types";
 import { Props } from "components/icons/types";
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
 // icons
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
-import { ContrastIcon } from "@plane/ui";
 
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [

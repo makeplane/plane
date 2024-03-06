@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // store hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useEstimate } from "hooks/store";
 // types
 import { IEstimate } from "@plane/types";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +29,7 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
   const handleEstimateDelete = () => {
     if (!workspaceSlug || !projectId) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const estimateId = data?.id!;
 
     deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)

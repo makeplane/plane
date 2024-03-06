@@ -1,31 +1,33 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+// icons
 import { Lock } from "lucide-react";
+// ui
+import {
+  Button,
+  CustomSelect,
+  Input,
+  TextArea,
+  TOAST_TYPE,
+  setToast,
+  CustomEmojiIconPicker,
+  EmojiIconPickerTypes,
+} from "@plane/ui";
+// components
+import { ImagePickerPopover } from "components/core";
+// constants
+import { PROJECT_UPDATED } from "constants/event-tracker";
+import { NETWORK_CHOICES } from "constants/project";
+// helpers
+import { renderFormattedDate } from "helpers/date-time.helper";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
 // services
 import { ProjectService } from "services/project";
-// components
-import { ImagePickerPopover } from "components/core";
-import { ProjectLogo } from "components/project";
-import {
-  Button,
-  CustomEmojiIconPicker,
-  CustomSelect,
-  EmojiIconPickerTypes,
-  Input,
-  TOAST_TYPE,
-  TextArea,
-  setToast,
-} from "@plane/ui";
-// helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { convertHexEmojiToDecimal } from "helpers/emoji.helper";
 // types
 import { IProject, IWorkspace } from "@plane/types";
-// constants
-import { NETWORK_CHOICES } from "constants/project";
-import { PROJECT_UPDATED } from "constants/event-tracker";
+import { ProjectLogo } from "./project-logo";
+import { convertHexEmojiToDecimal } from "helpers/emoji.helper";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;

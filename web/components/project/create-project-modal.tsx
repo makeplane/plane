@@ -1,10 +1,8 @@
 import { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
+import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-// hooks
-import { useEventTracker, useProject, useUser } from "hooks/store";
 // ui
 import {
   Button,
@@ -19,16 +17,17 @@ import {
 // components
 import { ImagePickerPopover } from "components/core";
 import { MemberDropdown } from "components/dropdowns";
-import { ProjectLogo } from "components/project";
-// helpers
-import { projectIdentifierSanitizer } from "helpers/project.helper";
-import { convertHexEmojiToDecimal, getRandomEmoji } from "helpers/emoji.helper";
-// types
-import { IProject } from "@plane/types";
 // constants
+import { PROJECT_CREATED } from "constants/event-tracker";
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { PROJECT_CREATED } from "constants/event-tracker";
+// helpers
+import { convertHexEmojiToDecimal, getRandomEmoji } from "helpers/emoji.helper";
+// hooks
+import { useEventTracker, useProject, useUser } from "hooks/store";
+import { projectIdentifierSanitizer } from "helpers/project.helper";
+import { ProjectLogo } from "./project-logo";
+import { IProject } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -293,7 +292,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             />
                           )}
                         />
-                        <span className="text-xs text-red-500">{errors?.name?.message}</span>
+                        <span className="text-xs text-red-500">
+                          <>{errors?.name?.message}</>
+                        </span>
                       </div>
                       <div>
                         <Controller
@@ -323,12 +324,14 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               onChange={handleIdentifierChange(onChange)}
                               hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
-                              className="w-full text-xs focus:border-blue-400 uppercase"
+                              className="w-full text-xs uppercase focus:border-blue-400"
                               tabIndex={2}
                             />
                           )}
                         />
-                        <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
+                        <span className="text-xs text-red-500">
+                          <>{errors?.identifier?.message}</>
+                        </span>
                       </div>
                       <div className="md:col-span-4">
                         <Controller

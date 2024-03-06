@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
 // layouts
+import { SignInView } from "components/page-views";
 import DefaultLayout from "layouts/default-layout";
 // components
-import { SignInView } from "components/page-views";
 // type
 import { NextPageWithLayout } from "lib/types";
 

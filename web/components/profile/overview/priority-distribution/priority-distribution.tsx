@@ -1,9 +1,9 @@
 // components
-import { PriorityDistributionContent } from "./main-content";
 // ui
 import { Loader } from "@plane/ui";
 // types
 import { IUserPriorityDistribution } from "@plane/types";
+import { PriorityDistributionContent } from "./main-content";
 
 type Props = {
   priorityDistribution: IUserPriorityDistribution[] | undefined;

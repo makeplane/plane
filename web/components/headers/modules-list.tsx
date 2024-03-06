@@ -1,18 +1,19 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+// icons
 import { GanttChartSquare, LayoutGrid, List, Plus } from "lucide-react";
-// hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
-// components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-import { ProjectLogo } from "components/project";
 // ui
 import { Breadcrumbs, Button, Tooltip, DiceIcon, CustomMenu } from "@plane/ui";
+// components
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+// hooks
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
+import { ProjectLogo } from "components/project";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
@@ -117,7 +118,11 @@ export const ModulesListHeader: React.FC = observer(() => {
           closeOnSelect
         >
           {MODULE_VIEW_LAYOUTS.map((layout) => (
-            <CustomMenu.MenuItem onClick={() => setModulesView(layout.key)} className="flex items-center gap-2">
+            <CustomMenu.MenuItem
+              key={layout.key}
+              onClick={() => setModulesView(layout.key)}
+              className="flex items-center gap-2"
+            >
               <layout.icon className="w-3 h-3" />
               <div className="text-custom-text-300">{layout.title}</div>
             </CustomMenu.MenuItem>

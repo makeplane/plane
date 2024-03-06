@@ -5,13 +5,13 @@ import { useRouter } from "next/router";
 // icons
 import { CalendarDays } from "lucide-react";
 // hooks
-import { useInboxIssues, useIssueDetail, useProject } from "hooks/store";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // helpers
+import { InboxIssueStatus } from "components/inbox/inbox-issue-status";
 import { renderFormattedDate } from "helpers/date-time.helper";
 // components
-import { InboxIssueStatus } from "components/inbox/inbox-issue-status";
+import { useInboxIssues, useIssueDetail, useProject } from "hooks/store";
 
 type TInboxIssueListItem = {
   workspaceSlug: string;
