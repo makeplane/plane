@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// components
-import { FilterHeader, FilterOption } from "components/issues";
 // hooks
 import { useProject } from "hooks/store";
+// components
+import { FilterHeader, FilterOption } from "components/issues";
+import { ProjectLogo } from "components/project";
 // ui
 import { Loader } from "@plane/ui";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -52,19 +51,9 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
                     isChecked={appliedFilters?.includes(project.id) ? true : false}
                     onClick={() => handleUpdate(project.id)}
                     icon={
-                      project.emoji ? (
-                        <span className="grid flex-shrink-0 place-items-center text-sm">
-                          {renderEmoji(project.emoji)}
-                        </span>
-                      ) : project.icon_prop ? (
-                        <div className="-my-1 grid flex-shrink-0 place-items-center">
-                          {renderEmoji(project.icon_prop)}
-                        </div>
-                      ) : (
-                        <span className="mr-1 grid flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                          {project?.name.charAt(0)}
-                        </span>
-                      )
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <ProjectLogo logo={project.logo_props} className="text-sm" />
+                      </span>
                     }
                     title={project.name}
                   />
