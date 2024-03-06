@@ -1,31 +1,19 @@
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // hooks
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 // components
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 import { ProjectCard } from "components/project";
 import { ProjectsLoader } from "components/ui";
 // constants
-import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import { EmptyStateType } from "constants/empty-state";
 
 export const ProjectCardList = observer(() => {
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-    currentUser,
-  } = useUser();
+
   const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("onboarding", "projects", isLightMode);
-
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!workspaceProjectIds) return <ProjectsLoader />;
 
@@ -49,22 +37,11 @@ export const ProjectCardList = observer(() => {
         </div>
       ) : (
         <EmptyState
-          image={emptyStateImage}
-          title={WORKSPACE_EMPTY_STATE_DETAILS["projects"].title}
-          description={WORKSPACE_EMPTY_STATE_DETAILS["projects"].description}
-          primaryButton={{
-            text: WORKSPACE_EMPTY_STATE_DETAILS["projects"].primaryButton.text,
-            onClick: () => {
-              setTrackElement("Project empty state");
-              commandPaletteStore.toggleCreateProjectModal(true);
-            },
+          type={EmptyStateType.WORKSPACE_PROJECTS}
+          primaryButtonOnClick={() => {
+            setTrackElement("Project empty state");
+            commandPaletteStore.toggleCreateProjectModal(true);
           }}
-          comicBox={{
-            title: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.title,
-            description: WORKSPACE_EMPTY_STATE_DETAILS["projects"].comicBox.description,
-          }}
-          size="lg"
-          disabled={!isEditingAllowed}
         />
       )}
     </>

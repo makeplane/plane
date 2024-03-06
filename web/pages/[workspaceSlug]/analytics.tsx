@@ -1,44 +1,33 @@
 import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import { Tab } from "@headlessui/react";
 // hooks
+import { useApplication, useEventTracker, useProject, useWorkspace } from "hooks/store";
 // layouts
+import { AppLayout } from "layouts/app-layout";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { PageHead } from "components/core";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 import { WorkspaceAnalyticsHeader } from "components/headers";
-// constants
-import { ANALYTICS_TABS } from "constants/analytics";
-import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useApplication, useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
 // type
 import { NextPageWithLayout } from "lib/types";
+// constants
+import { ANALYTICS_TABS } from "constants/analytics";
+import { EmptyStateType } from "constants/empty-state";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { analytics_tab } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     commandPalette: { toggleCreateProjectModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-    currentUser,
-  } = useUser();
   const { workspaceProjectIds } = useProject();
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "analytics", isLightMode);
-  const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Analytics` : undefined;
 
   return (
@@ -79,22 +68,11 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
         </div>
       ) : (
         <EmptyState
-          image={EmptyStateImagePath}
-          title={WORKSPACE_EMPTY_STATE_DETAILS["analytics"].title}
-          description={WORKSPACE_EMPTY_STATE_DETAILS["analytics"].description}
-          primaryButton={{
-            text: WORKSPACE_EMPTY_STATE_DETAILS["analytics"].primaryButton.text,
-            onClick: () => {
-              setTrackElement("Analytics empty state");
-              toggleCreateProjectModal(true);
-            },
+          type={EmptyStateType.WORKSPACE_ANALYTICS}
+          primaryButtonOnClick={() => {
+            setTrackElement("Analytics empty state");
+            toggleCreateProjectModal(true);
           }}
-          comicBox={{
-            title: WORKSPACE_EMPTY_STATE_DETAILS["analytics"].comicBox.title,
-            description: WORKSPACE_EMPTY_STATE_DETAILS["analytics"].comicBox.description,
-          }}
-          size="lg"
-          disabled={!isEditingAllowed}
         />
       )}
     </>

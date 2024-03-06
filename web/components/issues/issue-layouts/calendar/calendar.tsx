@@ -30,6 +30,7 @@ type Props = {
     data: TIssue,
     viewId?: string
   ) => Promise<TIssue | undefined>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   readOnly?: boolean;
   updateFilters?: (
@@ -48,6 +49,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     showWeekends,
     quickActions,
     quickAddCallback,
+    addIssuesToView,
     viewId,
     updateFilters,
     readOnly = false,
@@ -96,6 +98,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                       disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                       quickActions={quickActions}
                       quickAddCallback={quickAddCallback}
+                      addIssuesToView={addIssuesToView}
                       viewId={viewId}
                       readOnly={readOnly}
                     />
@@ -112,6 +115,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                 quickActions={quickActions}
                 quickAddCallback={quickAddCallback}
+                addIssuesToView={addIssuesToView}
                 viewId={viewId}
                 readOnly={readOnly}
               />

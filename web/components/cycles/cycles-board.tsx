@@ -1,13 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
-// hooks
 // components
 import { CyclePeekOverview, CyclesBoardCard } from "components/cycles";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // constants
-import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { useUser } from "hooks/store";
+import { EMPTY_STATE_DETAILS } from "constants/empty-state";
 
 export interface ICyclesBoard {
   cycleIds: string[];
@@ -19,15 +16,6 @@ export interface ICyclesBoard {
 
 export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
   const { cycleIds, filter, workspaceSlug, projectId, peekCycle } = props;
-  // theme
-  const { resolvedTheme } = useTheme();
-  // store hooks
-  const { currentUser } = useUser();
-
-  const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS[filter as keyof typeof CYCLE_EMPTY_STATE_DETAILS];
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("cycle", filter, isLightMode);
 
   return (
     <>
@@ -52,12 +40,7 @@ export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
           </div>
         </div>
       ) : (
-        <EmptyState
-          title={emptyStateDetail.title}
-          description={emptyStateDetail.description}
-          image={emptyStateImage}
-          size="sm"
-        />
+        <EmptyState type={`project-cycle-${filter}` as keyof typeof EMPTY_STATE_DETAILS} size="sm" />
       )}
     </>
   );
