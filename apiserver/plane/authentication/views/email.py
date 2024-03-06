@@ -2,7 +2,6 @@
 from urllib.parse import urlencode
 
 # Django imports
-from django.contrib.auth import login
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect

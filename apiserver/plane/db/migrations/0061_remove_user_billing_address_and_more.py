@@ -220,4 +220,36 @@ class Migration(migrations.Migration):
             name="use_case",
         ),
         # sessions
+        migrations.CreateModel(
+            name="Session",
+            fields=[
+                (
+                    "session_data",
+                    models.TextField(verbose_name="session data"),
+                ),
+                (
+                    "expire_date",
+                    models.DateTimeField(
+                        db_index=True, verbose_name="expire date"
+                    ),
+                ),
+                (
+                    "device_info",
+                    models.JSONField(blank=True, default=None, null=True),
+                ),
+                (
+                    "session_key",
+                    models.CharField(
+                        max_length=128, primary_key=True, serialize=False
+                    ),
+                ),
+                ("user_id", models.CharField(max_length=50, null=True)),
+            ],
+            options={
+                "verbose_name": "session",
+                "verbose_name_plural": "sessions",
+                "db_table": "sessions",
+                "abstract": False,
+            },
+        ),
     ]

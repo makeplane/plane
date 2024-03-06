@@ -1,4 +1,5 @@
 # Python imports
+import uuid
 from urllib.parse import urlencode
 
 # Django import
@@ -16,10 +17,12 @@ from plane.authentication.utils.workspace_project_join import (
 
 class GoogleOauthInitiateEndpoint(View):
     def get(self, request):
-        referer = request.META.get("HTTP_REFERER")
+        referer = request.META.get("HTTP_REFERER", "/")
         request.session["referer"] = referer
         try:
-            provider = GoogleOAuthProvider(request=request)
+            state = uuid.uuid4().hex
+            provider = GoogleOAuthProvider(request=request, state=state)
+            request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except ImproperlyConfigured as e:
@@ -30,7 +33,13 @@ class GoogleOauthInitiateEndpoint(View):
 class GoogleCallbackEndpoint(View):
     def get(self, request):
         code = request.GET.get("code")
+        state = request.GET.get("state")
         referer = request.session.get("referer")
+
+        if state != request.session.get("state", ""):
+            url = referer + "?" + urlencode({"error": "State does not match"})
+            return HttpResponseRedirect(url)
+
         if not code:
             url = (
                 referer
@@ -49,8 +58,8 @@ class GoogleCallbackEndpoint(View):
                 code=code,
             )
             user = provider.authenticate()
-            user_login(request=request, user=user)
             process_workspace_project_invitations(user=user)
+            user_login(request=request, user=user)
             return HttpResponseRedirect(request.session.get("referer"))
         except ImproperlyConfigured as e:
             url = referer + "?" + urlencode({"error": str(e)})

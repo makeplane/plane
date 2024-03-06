@@ -1,6 +1,7 @@
 # Python imports
 import os
 from datetime import datetime
+from urllib.parse import urlencode
 
 import pytz
 import requests
@@ -20,7 +21,7 @@ class GitHubOAuthProvider(OauthAdapter):
     provider = "github"
     scope = "read:user user:email"
 
-    def __init__(self, request, code=None):
+    def __init__(self, request, code=None, state=None):
 
         GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = get_configuration_value(
             [
@@ -36,7 +37,7 @@ class GitHubOAuthProvider(OauthAdapter):
         )
 
         if not (GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET):
-            return ImproperlyConfigured(
+            raise ImproperlyConfigured(
                 "Google is not configured. Please contact the support team."
             )
 
@@ -46,7 +47,15 @@ class GitHubOAuthProvider(OauthAdapter):
         redirect_uri = (
             f"{request.scheme}://{request.get_host()}/auth/callback/github/"
         )
-        auth_url = f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope={self.scope}"
+        url_params = {
+            "client_id": client_id,
+            "redirect_uri": redirect_uri,
+            "scope": self.scope,
+            "state": state,
+        }
+        auth_url = (
+            f"https://github.com/login/oauth/authorize?{urlencode(url_params)}"
+        )
         super().__init__(
             request,
             self.provider,

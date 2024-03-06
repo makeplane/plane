@@ -69,9 +69,13 @@ class Adapter:
             else:
                 user.set_password(self.code)
                 user.is_password_autoset = False
-            user.avatar = self.user_data.get("user").get("avatar", "")
-            user.first_name = self.user_data.get("user").get("first_name", "")
-            user.last_name = self.user_data.get("user").get("last_name", "")
+
+            avatar = self.user_data.get("user", {}).get("avatar", "")
+            first_name = self.user_data.get("user", {}).get("first_name", "")
+            last_name = self.user_data.get("user", {}).get("last_name", "")
+            user.avatar = avatar if avatar else ""
+            user.first_name = first_name if first_name else ""
+            user.last_name = last_name if last_name else ""
             user.save()
             Profile.objects.create(user=user)
 

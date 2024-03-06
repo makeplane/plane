@@ -1,6 +1,7 @@
 # Python imports
 import os
 from datetime import datetime
+from urllib.parse import urlencode
 
 import pytz
 
@@ -18,7 +19,7 @@ class GoogleOAuthProvider(OauthAdapter):
     scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
     provider = "google"
 
-    def __init__(self, request, code=None):
+    def __init__(self, request, code=None, state=None):
         (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) = get_configuration_value(
             [
                 {
@@ -33,7 +34,7 @@ class GoogleOAuthProvider(OauthAdapter):
         )
 
         if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET):
-            return ImproperlyConfigured(
+            raise ImproperlyConfigured(
                 "Google is not configured. Please contact the support team."
             )
 
@@ -43,7 +44,16 @@ class GoogleOAuthProvider(OauthAdapter):
         redirect_uri = (
             f"{request.scheme}://{request.get_host()}/auth/callback/google/"
         )
-        auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={self.scope}&access_type=offline&prompt=consent"
+        url_params = {
+            "client_id": client_id,
+            "scope": self.scope,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "access_type": "offline",
+            "prompt": "consent",
+            "state": state,
+        }
+        auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(url_params)}"
 
         super().__init__(
             request,
