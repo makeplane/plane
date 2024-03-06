@@ -10,8 +10,13 @@ import { NETWORK_CHOICES } from "constants/project";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
+<<<<<<< HEAD
+=======
+import EmojiIconPicker from "components/emoji-icon-picker";
+import { ImagePickerPopover } from "components/core";
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import { ProjectService } from "services/project";
@@ -33,8 +38,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   // store hooks
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -84,8 +87,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             element: "Project general settings",
           },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project updated successfully",
         });
@@ -95,8 +98,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           eventName: PROJECT_UPDATED,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Project could not be updated. Please try again.",
         });

@@ -4,9 +4,13 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // services
+<<<<<<< HEAD
 // hooks
+=======
+import { AuthService } from "services/auth.service";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 import useToast from "hooks/use-toast";
@@ -34,8 +38,6 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
   const { onSubmit } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -59,8 +61,8 @@ export const SignUpPasswordForm: React.FC<Props> = observer((props) => {
       .passwordSignIn(payload)
       .then(async () => await onSubmit())
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

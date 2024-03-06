@@ -3,6 +3,13 @@ import { useRouter } from "next/router";
 import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 // hooks
+<<<<<<< HEAD
+=======
+import { useEventTracker, useIssues, useUser } from "hooks/store";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
@@ -32,16 +39,14 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
   // auth
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
   const isRestoringAllowed = handleRestore && isEditingAllowed;
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archived-issues/${issue.id}`;
 
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })
@@ -56,6 +61,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         onSubmit={handleDelete}
       />
       <CustomMenu
+        menuItemsClassName="z-[14]"
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}

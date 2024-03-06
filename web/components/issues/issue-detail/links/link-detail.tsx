@@ -1,6 +1,12 @@
 import { FC, useState } from "react";
 // hooks
+<<<<<<< HEAD
 // ui
+=======
+import { useIssueDetail, useMember } from "hooks/store";
+// ui
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 import { ExternalLinkIcon, Tooltip } from "@plane/ui";
@@ -27,7 +33,6 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     link: { getLinkById },
   } = useIssueDetail();
   const { getUserDetails } = useMember();
-  const { setToastAlert } = useToast();
 
   // state
   const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
@@ -55,8 +60,8 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
           className="flex w-full items-start justify-between gap-2 cursor-pointer"
           onClick={() => {
             copyTextToClipboard(linkDetail.url);
-            setToastAlert({
-              type: "success",
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
               title: "Link copied!",
               message: "Link copied to clipboard",
             });

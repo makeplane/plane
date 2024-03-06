@@ -33,7 +33,7 @@ export const CustomAnalyticsMainContent: React.FC<Props> = (props) => {
       {!error ? (
         analytics ? (
           analytics.total > 0 ? (
-            <div className="h-full overflow-y-auto">
+            <div className="h-full overflow-y-auto vertical-scrollbar scrollbar-md">
               <AnalyticsGraph
                 analytics={analytics}
                 barGraphData={barGraphData}

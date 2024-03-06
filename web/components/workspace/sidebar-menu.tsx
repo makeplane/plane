@@ -31,7 +31,7 @@ export const WorkspaceSidebarMenu = observer(() => {
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
-      themeStore.toggleMobileSidebar();
+      themeStore.toggleSidebar();
     }
     captureEvent(SIDEBAR_CLICKED, {
       destination: itemKey,

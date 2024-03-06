@@ -5,11 +5,10 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
 // hooks
-import { Button } from "@plane/ui";
 import { useUser } from "hooks/store";
 // ui
-// hooks
-import useToast from "hooks/use-toast";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -26,7 +25,6 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
 
   const router = useRouter();
 
-  const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
 
   const handleClose = () => {
@@ -39,8 +37,8 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
 
     await deactivateAccount()
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Account deactivated successfully.",
         });
@@ -50,8 +48,8 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
         handleClose();
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error,
         })

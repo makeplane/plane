@@ -16,8 +16,12 @@ import { Listbox, Transition } from "@headlessui/react";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 // services
 // hooks
+<<<<<<< HEAD
+=======
+import { useEventTracker } from "hooks/store";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // hooks
@@ -269,7 +273,6 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 
-  const { setToastAlert } = useToast();
   const { resolvedTheme } = useTheme();
   // store hooks
   const { captureEvent } = useEventTracker();
@@ -322,8 +325,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
           state: "SUCCESS",
           element: "Onboarding",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
         });
@@ -336,8 +339,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
           state: "FAILED",
           element: "Onboarding",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error,
         });

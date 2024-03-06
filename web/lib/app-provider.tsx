@@ -2,6 +2,7 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import Router from "next/router";
+<<<<<<< HEAD
 import { ThemeProvider } from "next-themes";
 import NProgress from "nprogress";
 import { SWRConfig } from "swr";
@@ -14,6 +15,23 @@ import { ToastContextProvider } from "contexts/toast.context";
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 // layouts
 import InstanceLayout from "layouts/instance-layout";
+=======
+import NProgress from "nprogress";
+import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
+// ui
+import { Toast } from "@plane/ui";
+// constants
+import { SWR_CONFIG } from "constants/swr-config";
+// layouts
+import InstanceLayout from "layouts/instance-layout";
+// contexts
+import { SWRConfig } from "swr";
+//helpers
+import { resolveGeneralTheme } from "helpers/theme.helper";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("lib/posthog-provider"), { ssr: false });
@@ -40,27 +58,29 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   const {
     config: { envConfig },
   } = useApplication();
+  // themes
+  const { resolvedTheme } = useTheme();
 
   return (
-    <ThemeProvider themes={THEMES} defaultTheme="system">
-      <ToastContextProvider>
-        <InstanceLayout>
-          <StoreWrapper>
-            <CrispWrapper user={currentUser}>
-              <PostHogProvider
-                user={currentUser}
-                currentWorkspaceId={currentWorkspace?.id}
-                workspaceRole={currentWorkspaceRole}
-                projectRole={currentProjectRole}
-                posthogAPIKey={envConfig?.posthog_api_key || null}
-                posthogHost={envConfig?.posthog_host || null}
-              >
-                <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-              </PostHogProvider>
-            </CrispWrapper>
-          </StoreWrapper>
-        </InstanceLayout>
-      </ToastContextProvider>
-    </ThemeProvider>
+    <>
+      {/* TODO: Need to handle custom themes for toast */}
+      <Toast theme={resolveGeneralTheme(resolvedTheme)} />
+      <InstanceLayout>
+        <StoreWrapper>
+          <CrispWrapper user={currentUser}>
+            <PostHogProvider
+              user={currentUser}
+              currentWorkspaceId={currentWorkspace?.id}
+              workspaceRole={currentWorkspaceRole}
+              projectRole={currentProjectRole}
+              posthogAPIKey={envConfig?.posthog_api_key || null}
+              posthogHost={envConfig?.posthog_host || null}
+            >
+              <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
+            </PostHogProvider>
+          </CrispWrapper>
+        </StoreWrapper>
+      </InstanceLayout>
+    </>
   );
 });

@@ -11,12 +11,15 @@ import { MEMBER_INVITED } from "constants/event-tracker";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { getUserRole } from "helpers/user.helper";
 import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { NextPageWithLayout } from "lib/types";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
@@ -39,8 +42,6 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -59,8 +60,8 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
           state: "SUCCESS",
           element: "Workspace settings member page",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
         });
@@ -77,8 +78,8 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
           state: "FAILED",
           element: "Workspace settings member page",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
         });

@@ -6,8 +6,12 @@ import { Controller, useForm } from "react-hook-form"; // services
 // hooks
 import { usePopper } from "react-popper";
 // ui
+<<<<<<< HEAD
 import { Popover, Transition } from "@headlessui/react";
 import { Button, Input } from "@plane/ui";
+=======
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 import useToast from "hooks/use-toast";
 import { AIService } from "services/ai.service";
@@ -44,8 +48,6 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",
@@ -78,8 +80,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
         ? error || "You have reached the maximum number of requests of 50 requests per month per user."
         : error || "Some error occurred. Please try again.";
 
-    setToastAlert({
-      type: "error",
+    setToast({
+      type: TOAST_TYPE.ERROR,
       title: "Error!",
       message: errorMessage,
     });
@@ -104,8 +106,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   };
 
   const handleInvalidTask = () => {
-    setToastAlert({
-      type: "error",
+    setToast({
+      type: TOAST_TYPE.ERROR,
       title: "Error!",
       message: "Please enter some task to get AI assistance.",
     });

@@ -94,7 +94,10 @@ export const ModuleMobileHeader = () => {
         >
           {layouts.map((layout, index) => (
             <CustomMenu.MenuItem
+<<<<<<< HEAD
               key={index}
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
               onClick={() => {
                 handleLayoutChange(ISSUE_LAYOUTS[index].key);
               }}
@@ -147,6 +150,10 @@ export const ModuleMobileHeader = () => {
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
+<<<<<<< HEAD
+=======
+              ignoreGroupedFilters={["module"]}
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
             />
           </FiltersDropdown>
         </div>

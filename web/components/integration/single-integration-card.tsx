@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 // services
+<<<<<<< HEAD
 import { CheckCircle } from "lucide-react";
 import { Button, Loader, Tooltip } from "@plane/ui";
 import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
@@ -13,6 +14,14 @@ import { useApplication, useUser } from "hooks/store";
 import useIntegrationPopup from "hooks/use-integration-popup";
 import useToast from "hooks/use-toast";
 // ui
+=======
+import { IntegrationService } from "services/integrations";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import useIntegrationPopup from "hooks/use-integration-popup";
+// ui
+import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
@@ -54,8 +63,6 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const isUserAdmin = currentWorkspaceRole === 20;
 
@@ -87,8 +94,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
         );
         setDeletingIntegration(false);
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Deleted successfully!",
           message: `${integration.title} integration deleted successfully.`,
         });
@@ -96,8 +103,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
       .catch(() => {
         setDeletingIntegration(false);
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: `${integration.title} integration could not be deleted. Please try again.`,
         });

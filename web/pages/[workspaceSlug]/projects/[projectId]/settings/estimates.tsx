@@ -26,7 +26,7 @@ const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className={`h-full w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
+      <div className={`w-full overflow-y-auto py-8 pr-9  ${isAdmin ? "" : "pointer-events-none opacity-60"}`}>
         <EstimatesList />
       </div>
     </>

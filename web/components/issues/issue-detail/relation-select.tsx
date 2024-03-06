@@ -7,9 +7,12 @@ import { RelatedIcon, Tooltip } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { cn } from "helpers/common.helper";
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { TIssueRelationTypes, ISearchIssueResponse } from "@plane/types";
@@ -60,15 +63,13 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
     toggleRelationModal,
   } = useIssueDetail();
   const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const relationIssueIds = getRelationByIssueIdRelationType(issueId, relationKey);
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });

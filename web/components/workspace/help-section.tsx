@@ -10,8 +10,15 @@ import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+<<<<<<< HEAD
 import useSize from "hooks/use-window-size";
 // package
+=======
+// icons
+import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
+import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
+// assets
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import packageJson from "package.json";
 
 const HELP_OPTIONS = [
@@ -39,11 +46,15 @@ export interface WorkspaceHelpSectionProps {
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
   // store hooks
   const {
-    theme: { sidebarCollapsed, toggleSidebar, toggleMobileSidebar },
+    theme: { sidebarCollapsed, toggleSidebar },
     commandPalette: { toggleShortcutModal },
   } = useApplication();
+<<<<<<< HEAD
   // hooks
   const [windowWidth] = useSize();
+=======
+
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
@@ -98,7 +109,11 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
+<<<<<<< HEAD
             onClick={() => (windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar())}
+=======
+            onClick={() => toggleSidebar()}
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
           >
             <MoveLeft className="h-3.5 w-3.5" />
           </button>
@@ -109,7 +124,11 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
               className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
                 isCollapsed ? "w-full" : ""
               }`}
+<<<<<<< HEAD
               onClick={() => (windowWidth <= 768 ? toggleMobileSidebar() : toggleSidebar())}
+=======
+              onClick={() => toggleSidebar()}
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
             >
               <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
             </button>

@@ -12,8 +12,13 @@ import { Button, Input } from "@plane/ui";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 import useToast from "hooks/use-toast";
 import { IntegrationService } from "services/integrations/integration.service";
+<<<<<<< HEAD
 // hooks
 // ui
+=======
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import { IUser, IImporterService } from "@plane/types";
@@ -36,8 +41,6 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { setToastAlert } = useToast();
-
   const handleDeletion = () => {
     if (!workspaceSlug || !data) return;
 
@@ -52,8 +55,8 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
     integrationService
       .deleteImporterService(workspaceSlug as string, data.service, data.id)
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         })

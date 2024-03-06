@@ -1,7 +1,11 @@
 // ui
+<<<<<<< HEAD
 import { observer } from "mobx-react";
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 import { ExternalLinkIcon, Tooltip } from "@plane/ui";
+=======
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
@@ -10,6 +14,12 @@ import { useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { ILinkDetails, UserAuth } from "@plane/types";
 // hooks
+<<<<<<< HEAD
+=======
+import { observer } from "mobx-react";
+import { useMeasure } from "@nivo/core";
+import { useMember } from "hooks/store";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   links: ILinkDetails[];
@@ -19,18 +29,16 @@ type Props = {
 };
 
 export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth }) => {
-  // toast
-  const { setToastAlert } = useToast();
   const { getUserDetails } = useMember();
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    setToastAlert({
-      message: "The URL has been successfully copied to your clipboard",
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Copied to clipboard",
+      message: "The URL has been successfully copied to your clipboard",
     });
   };
 

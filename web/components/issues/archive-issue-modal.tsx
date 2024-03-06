@@ -4,8 +4,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@plane/ui";
 import { useProject } from "hooks/store";
 import { useIssues } from "hooks/store/use-issues";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { TIssue } from "@plane/types";
 
@@ -24,8 +27,6 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
   // store hooks
   const { getProjectById } = useProject();
   const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   if (!dataId && !data) return null;
 
@@ -44,8 +45,8 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
     await onSubmit()
       .then(() => onClose())
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Issue could not be archived. Please try again.",
         })

@@ -2,8 +2,12 @@ import { useRef } from "react";
 // components
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // hooks
+<<<<<<< HEAD
 import { TCreateModalStoreTypes } from "constants/issue";
 import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
+=======
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import {
   GroupByColumnTypes,
@@ -65,10 +69,21 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const project = useProject();
   const label = useLabel();
   const projectState = useProjectState();
+  const cycle = useCycle();
+  const _module = useModule();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const groups = getGroupByColumns(group_by as GroupByColumnTypes, project, label, projectState, member, true);
+  const groups = getGroupByColumns(
+    group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    _module,
+    label,
+    projectState,
+    member,
+    true
+  );
 
   if (!groups) return null;
 

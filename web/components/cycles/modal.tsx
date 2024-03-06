@@ -8,7 +8,16 @@ import useLocalStorage from "hooks/use-local-storage";
 import useToast from "hooks/use-toast";
 import { CycleService } from "services/cycle.service";
 // hooks
+<<<<<<< HEAD
 // components
+=======
+import { useEventTracker, useCycle, useProject } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
+// components
+import { CycleForm } from "components/cycles";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
 // constants
@@ -32,8 +41,6 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { captureCycleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
 
@@ -43,8 +50,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await createCycle(workspaceSlug, selectedProjectId, payload)
       .then((res) => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Cycle created successfully.",
         });
@@ -54,8 +61,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         });
       })
       .catch((err) => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Error in creating cycle. Please try again.",
         });
@@ -77,8 +84,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           eventName: CYCLE_UPDATED,
           payload: { ...res, changed_properties: changed_properties, state: "SUCCESS" },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Cycle updated successfully.",
         });
@@ -88,8 +95,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           eventName: CYCLE_UPDATED,
           payload: { ...payload, state: "FAILED" },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Error in updating cycle. Please try again.",
         });
@@ -138,8 +145,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       }
       handleClose();
     } else
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
       });

@@ -10,9 +10,12 @@ import { EUserProjectRoles } from "constants/project";
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useProjectView, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { IProjectView } from "@plane/types";
@@ -30,8 +33,6 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -54,8 +55,8 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/views/${view.id}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "View link copied to clipboard.",
       });

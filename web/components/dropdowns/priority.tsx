@@ -58,7 +58,7 @@ const BorderButton = (props: ButtonProps) => {
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "bg-custom-background-80 border-custom-border-300",
+    none: "hover:bg-custom-background-80 border-custom-border-300",
   };
 
   return (
@@ -197,7 +197,7 @@ const TransparentButton = (props: ButtonProps) => {
     high: "text-orange-950",
     medium: "text-yellow-950",
     low: "text-blue-950",
-    none: "",
+    none: "hover:text-custom-text-300",
   };
 
   return (

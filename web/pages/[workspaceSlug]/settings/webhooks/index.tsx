@@ -70,7 +70,7 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="h-full w-full overflow-hidden py-8 pr-9">
+      <div className="w-full overflow-y-auto py-8 pr-9">
         <CreateWebhookModal
           createWebhook={createWebhook}
           clearSecretKey={clearSecretKey}

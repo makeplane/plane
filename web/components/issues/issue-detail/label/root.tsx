@@ -3,10 +3,16 @@ import { observer } from "mobx-react-lite";
 // components
 // hooks
 import { useIssueDetail, useLabel } from "hooks/store";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
+<<<<<<< HEAD
 import useToast from "hooks/use-toast";
 import { IIssueLabel, TIssue } from "@plane/types";
 import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
+=======
+import { IIssueLabel, TIssue } from "@plane/types";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -27,7 +33,6 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
   // hooks
   const { updateIssue } = useIssueDetail();
   const { createLabel } = useLabel();
-  const { setToastAlert } = useToast();
 
   const labelOperations: TLabelOperations = useMemo(
     () => ({
@@ -35,16 +40,10 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         try {
           if (onLabelUpdate) onLabelUpdate(data.label_ids || []);
           else await updateIssue(workspaceSlug, projectId, issueId, data);
-          if (!isInboxIssue)
-            setToastAlert({
-              title: "Issue updated successfully",
-              type: "success",
-              message: "Issue updated successfully",
-            });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Issue update failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Issue update failed",
           });
         }
@@ -53,23 +52,23 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         try {
           const labelResponse = await createLabel(workspaceSlug, projectId, data);
           if (!isInboxIssue)
-            setToastAlert({
+            setToast({
               title: "Label created successfully",
-              type: "success",
+              type: TOAST_TYPE.SUCCESS,
               message: "Label created successfully",
             });
           return labelResponse;
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Label creation failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Label creation failed",
           });
           return error;
         }
       },
     }),
-    [updateIssue, createLabel, setToastAlert, onLabelUpdate]
+    [updateIssue, createLabel, onLabelUpdate]
   );
 
   return (

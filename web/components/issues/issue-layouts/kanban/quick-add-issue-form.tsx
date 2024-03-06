@@ -11,6 +11,12 @@ import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
+<<<<<<< HEAD
+=======
+import { createIssuePayload } from "helpers/issue.helper";
+// ui
+import { setPromiseToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { TIssue } from "@plane/types";
 // constants
@@ -73,7 +79,6 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
 
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  const { setToastAlert } = useToast();
 
   const {
     reset,
@@ -97,39 +102,42 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
       ...formData,
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          {
-            ...payload,
-          },
-          viewId
-        ).then((res) => {
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        {
+          ...payload,
+        },
+        viewId
+      );
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
+      });
+
+      await quickAddPromise
+        .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Kanban quick add" },
             path: router.asPath,
           });
-        }));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
-      });
-    } catch (err: any) {
-      captureIssueEvent({
-        eventName: ISSUE_CREATED,
-        payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
-        path: router.asPath,
-      });
-      console.error(err);
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+        })
+        .catch(() => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
+            path: router.asPath,
+          });
+        });
     }
   };
 

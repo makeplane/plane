@@ -55,11 +55,20 @@ export const WorkspaceSidebarQuickAction = observer(() => {
 
   const workspaceDraftIssue = workspaceSlug ? storedValue?.[workspaceSlug] ?? undefined : undefined;
 
+<<<<<<< HEAD
   // const removeWorkspaceDraftIssue = () => {
   //   const draftIssues = storedValue ?? {};
   //   if (workspaceSlug && draftIssues[workspaceSlug]) delete draftIssues[workspaceSlug];
   //   setValue(draftIssues);
   // };
+=======
+  const removeWorkspaceDraftIssue = () => {
+    const draftIssues = storedValue ?? {};
+    if (workspaceSlug && draftIssues[workspaceSlug]) delete draftIssues[workspaceSlug];
+    setValue(draftIssues);
+    return Promise.resolve();
+  };
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
   return (
     <>
@@ -67,7 +76,12 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         isOpen={isDraftIssueModalOpen}
         onClose={() => setIsDraftIssueModalOpen(false)}
         data={workspaceDraftIssue ?? {}}
+<<<<<<< HEAD
         isDraft
+=======
+        onSubmit={() => removeWorkspaceDraftIssue()}
+        isDraft={true}
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
       />
 
       <div

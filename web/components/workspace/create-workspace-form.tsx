@@ -9,9 +9,14 @@ import { WORKSPACE_CREATED } from "constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 // hooks
 import { useEventTracker, useWorkspace } from "hooks/store";
+<<<<<<< HEAD
 import useToast from "hooks/use-toast";
 // services
 import { WorkspaceService } from "services/workspace.service";
+=======
+// ui
+import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspace } from "@plane/types";
 
@@ -51,8 +56,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     handleSubmit,
@@ -79,8 +82,8 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   element: "Create workspace page",
                 },
               });
-              setToastAlert({
-                type: "success",
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
@@ -95,8 +98,8 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   element: "Create workspace page",
                 },
               });
-              setToastAlert({
-                type: "error",
+              setToast({
+                type: TOAST_TYPE.ERROR,
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               });
@@ -104,8 +107,8 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         } else setSlugError(true);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });

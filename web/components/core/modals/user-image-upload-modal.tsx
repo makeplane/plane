@@ -10,8 +10,13 @@ import { useApplication } from "hooks/store";
 // services
 import useToast from "hooks/use-toast";
 import { FileService } from "services/file.service";
+<<<<<<< HEAD
 // hooks
 // ui
+=======
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // constants
 
@@ -32,8 +37,6 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     config: { envConfig },
@@ -76,8 +79,8 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
         if (value) fileService.deleteUserFile(value);
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

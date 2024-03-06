@@ -6,7 +6,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
 // hooks
 import { useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -25,8 +26,6 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
 
   const { resolvedTheme, setTheme } = useTheme();
 
-  const { setToastAlert } = useToast();
-
   const handleClose = () => {
     setSwitchingAccount(false);
     setIsDeactivating(false);
@@ -44,8 +43,8 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
         handleClose();
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -58,8 +57,8 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
 
     await deactivateAccount()
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Account deleted successfully.",
         });
@@ -69,8 +68,8 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
         handleClose();
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error,
         })

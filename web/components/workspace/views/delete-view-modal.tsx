@@ -11,7 +11,12 @@ import { Button } from "@plane/ui";
 import { GLOBAL_VIEW_DELETED } from "constants/event-tracker";
 // store hooks
 import { useGlobalView, useEventTracker } from "hooks/store";
+<<<<<<< HEAD
 import useToast from "hooks/use-toast";
+=======
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspaceView } from "@plane/types";
 
@@ -31,8 +36,6 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { deleteGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -55,8 +58,8 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
           view_id: data.id,
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong while deleting the view. Please try again.",
         });

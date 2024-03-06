@@ -8,8 +8,11 @@ import { Popover, Transition } from "@headlessui/react";
 import { Button, Input } from "@plane/ui";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
 import { useLabel } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IIssueLabel } from "@plane/types";
 // fetch-keys
@@ -35,8 +38,6 @@ export const CreateUpdateLabelInline = observer(
     const { workspaceSlug, projectId } = router.query;
     // store hooks
     const { createLabel, updateLabel } = useLabel();
-    // toast alert
-    const { setToastAlert } = useToast();
     // form info
     const {
       handleSubmit,
@@ -65,9 +66,9 @@ export const CreateUpdateLabelInline = observer(
           reset(defaultValues);
         })
         .catch((error) => {
-          setToastAlert({
+          setToast({
             title: "Oops!",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: error?.error ?? "Error while adding the label",
           });
           reset(formData);
@@ -83,9 +84,9 @@ export const CreateUpdateLabelInline = observer(
           handleClose();
         })
         .catch((error) => {
-          setToastAlert({
+          setToast({
             title: "Oops!",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: error?.error ?? "Error while updating the label",
           });
           reset(formData);

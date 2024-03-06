@@ -2,12 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+<<<<<<< HEAD
 
 // hooks
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // services
 // ui
+<<<<<<< HEAD
 import { Search } from "lucide-react";
 import { Button, LayersIcon } from "@plane/ui";
+=======
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
@@ -29,8 +36,6 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string>("");
-
-  const { setToastAlert } = useToast();
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -62,9 +67,9 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const handleSubmit = () => {
     if (!selectedItem || selectedItem.length === 0)
-      return setToastAlert({
+      return setToast({
         title: "Error",
-        type: "error",
+        type: TOAST_TYPE.ERROR,
       });
     onSubmit(selectedItem);
     handleClose();

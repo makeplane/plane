@@ -10,9 +10,12 @@ import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 import { ROLE } from "constants/workspace";
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // constants
 
@@ -37,8 +40,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
@@ -58,8 +59,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           router.push(`/${workspaceSlug}/projects`);
         })
         .catch((err) =>
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error",
             message: err?.error || "Something went wrong. Please try again.",
           })
@@ -67,8 +68,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     } else
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), userDetails.member.id).catch(
         (err) =>
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error",
             message: err?.error || "Something went wrong. Please try again.",
           })
@@ -151,8 +152,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
                 const error = err.error;
                 const errorString = Array.isArray(error) ? error[0] : error;
 
-                setToastAlert({
-                  type: "error",
+                setToast({
+                  type: TOAST_TYPE.ERROR,
                   title: "Error!",
                   message: errorString ?? "An error occurred while updating member role. Please try again.",
                 });

@@ -1,15 +1,23 @@
 import { useEffect, useRef } from "react";
+<<<<<<< HEAD
 import { observer } from "mobx-react-lite";
+=======
+import { useRouter } from "next/router";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Disclosure, Transition } from "@headlessui/react";
 // hooks
+<<<<<<< HEAD
 import { ChevronDown, Pencil } from "lucide-react";
 import { Loader, Tooltip } from "@plane/ui";
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
+=======
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { useApplication, useUser } from "hooks/store";
 // services
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -20,6 +28,10 @@ import { ProfileSidebarTime } from "./time";
 // icons
 // helpers
 // fetch-keys
+<<<<<<< HEAD
+=======
+import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 // services
 const userService = new UserService();
@@ -76,7 +88,7 @@ export const ProfileSidebar = observer(() => {
 
   return (
     <div
-      className={`flex-shrink-0 overflow-hidden overflow-y-auto shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
+      className={`flex-shrink-0 overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
       style={themeStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
@@ -166,8 +178,13 @@ export const ProfileSidebar = observer(() => {
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
+<<<<<<< HEAD
                                         ? "bg-yellow-500/10 text-yellow-500"
                                         : "bg-green-500/10 text-green-500"
+=======
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-green-500/10 text-green-500"
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
                                   }`}
                                 >
                                   {completedIssuePercentage}%

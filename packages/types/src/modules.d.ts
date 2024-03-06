@@ -1,14 +1,4 @@
-import type {
-  IUser,
-  IUserLite,
-  TIssue,
-  IProject,
-  IWorkspace,
-  IWorkspaceLite,
-  IProjectLite,
-  IIssueFilterOptions,
-  ILinkDetails,
-} from "@plane/types";
+import type { TIssue, IIssueFilterOptions, ILinkDetails } from "@plane/types";
 
 export type TModuleStatus =
   | "backlog"

@@ -3,10 +3,14 @@ import isNil from "lodash/isNil";
 import { observer } from "mobx-react-lite";
 import { Bell, BellOff } from "lucide-react";
 // UI
-import { Button, Loader } from "@plane/ui";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
+<<<<<<< HEAD
 import useToast from "hooks/use-toast";
+=======
+import isNil from "lodash/isNil";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 export type TIssueSubscription = {
   workspaceSlug: string;
@@ -22,7 +26,6 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     createSubscription,
     removeSubscription,
   } = useIssueDetail();
-  const { setToastAlert } = useToast();
   // state
   const [loading, setLoading] = useState(false);
 
@@ -33,16 +36,16 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     try {
       if (isSubscribed) await removeSubscription(workspaceSlug, projectId, issueId);
       else await createSubscription(workspaceSlug, projectId, issueId);
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
         message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
       });
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error",
         message: "Something went wrong. Please try again later.",
       });

@@ -1,19 +1,32 @@
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
+=======
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 // hooks
 // components
+<<<<<<< HEAD
 // ui
 import { PriorityIcon } from "@plane/ui";
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import {
   DurationFilterDropdown,
   IssuesByPriorityEmptyState,
   WidgetLoader,
   WidgetProps,
 } from "components/dashboard/widgets";
+<<<<<<< HEAD
 import { MarimekkoGraph } from "components/ui";
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
+<<<<<<< HEAD
 // constants
 import { PRIORITY_GRAPH_GRADIENTS } from "constants/dashboard";
 import { ISSUE_PRIORITIES } from "constants/issue";
@@ -66,17 +79,25 @@ const CustomBar = (props: any) => {
     </Link>
   );
 };
+=======
+import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
+// constants
+import { IssuesByPriorityGraph } from "components/graphs";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 const WIDGET_KEY = "issues_by_priority";
 
 export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  // router
+  const router = useRouter();
   // store hooks
   const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByPriorityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDuration = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDuration = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
+  const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TIssuesByPriorityWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -86,7 +107,10 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
       filters,
     });
 
-    const filterDates = getCustomDates(filters.duration ?? selectedDuration);
+    const filterDates = getCustomDates(
+      filters.duration ?? selectedDuration,
+      filters.custom_dates ?? selectedCustomDates
+    );
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -94,7 +118,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(selectedDuration);
+    const filterDates = getCustomDates(selectedDuration, selectedCustomDates);
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       ...(filterDates.trim() !== "" ? { target_date: filterDates } : {}),
@@ -105,6 +129,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
   if (!widgetDetails || !widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   const totalCount = widgetStats.reduce((acc, item) => acc + item?.count, 0);
+<<<<<<< HEAD
   const chartData = widgetStats
     .filter((i) => i.count !== 0)
     .map((item) => ({
@@ -128,6 +153,12 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
       </g>
     );
   };
+=======
+  const chartData = widgetStats.map((item) => ({
+    priority: item?.priority,
+    priority_count: item?.count,
+  }));
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96 flex flex-col">
@@ -139,60 +170,27 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
           Assigned by priority
         </Link>
         <DurationFilterDropdown
+          customDates={selectedCustomDates}
           value={selectedDuration}
-          onChange={(val) =>
+          onChange={(val, customDates) =>
             handleUpdateFilters({
               duration: val,
+              ...(val === "custom" ? { custom_dates: customDates } : {}),
             })
           }
         />
       </div>
       {totalCount > 0 ? (
-        <div className="flex items-center px-11 h-full">
+        <div className="flex items-center h-full">
           <div className="w-full -mt-[11px]">
-            <MarimekkoGraph
+            <IssuesByPriorityGraph
               data={chartData}
-              id="priority"
-              value="percentage"
-              dimensions={ISSUE_PRIORITIES.map((p) => ({
-                id: p.key,
-                value: p.key,
-              }))}
-              axisBottom={null}
-              axisLeft={null}
-              height="119px"
-              margin={{
-                top: 11,
-                right: 0,
-                bottom: 0,
-                left: 0,
+              onBarClick={(datum) => {
+                router.push(
+                  `/${workspaceSlug}/workspace-views/assigned?priority=${`${datum.data.priority}`.toLowerCase()}`
+                );
               }}
-              defs={PRIORITY_GRAPH_GRADIENTS}
-              fill={ISSUE_PRIORITIES.map((p) => ({
-                match: {
-                  id: p.key,
-                },
-                id: `gradient${p.title}`,
-              }))}
-              tooltip={() => <></>}
-              enableGridX={false}
-              enableGridY={false}
-              layers={[CustomBarsLayer]}
             />
-            <div className="flex items-center gap-1 w-full mt-3 text-sm font-semibold text-custom-text-300">
-              {chartData.map((item) => (
-                <p
-                  key={item.priority}
-                  className="flex items-center gap-1 flex-shrink-0"
-                  style={{
-                    width: `${item.percentage}%`,
-                  }}
-                >
-                  <PriorityIcon priority={item.priority} withContainer />
-                  {item.percentage.toFixed(0)}%
-                </p>
-              ))}
-            </div>
           </div>
         </div>
       ) : (

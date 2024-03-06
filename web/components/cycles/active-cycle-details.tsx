@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // hooks
+<<<<<<< HEAD
 import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
+=======
+import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
+// ui
+import { SingleProgressStats } from "components/core";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import {
   AvatarGroup,
   Loader,
@@ -15,6 +21,7 @@ import {
   PriorityIcon,
   Avatar,
   CycleGroupIcon,
+  setPromiseToast,
 } from "@plane/ui";
 import { SingleProgressStats } from "components/core";
 // ui
@@ -60,8 +67,6 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   } = useCycle();
   const { currentProjectDetails } = useProject();
   const { getUserDetails } = useMember();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ACTIVE_CYCLE_${projectId}` : null,
@@ -119,12 +124,18 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id);
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
     });
   };
 
@@ -132,12 +143,22 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), activeCycle.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      activeCycle.id
+    );
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't add the cycle to favorites. Please try again.",
-      });
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
     });
   };
 
@@ -311,7 +332,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                           {currentProjectDetails?.identifier}-{issue.sequence_id}
                         </span>
                       </Tooltip>
-                      <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                      <Tooltip position="top-left" tooltipContent={issue.name}>
                         <span className="text-[0.825rem] text-custom-text-100">{truncateText(issue.name, 30)}</span>
                       </Tooltip>
                     </div>

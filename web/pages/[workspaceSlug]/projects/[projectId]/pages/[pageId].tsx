@@ -15,7 +15,6 @@ import { EUserProjectRoles } from "constants/project";
 import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import useToast from "hooks/use-toast";
 // services
 import { AppLayout } from "layouts/app-layout";
 import { NextPageWithLayout } from "lib/types";
@@ -23,6 +22,11 @@ import { FileService } from "services/file.service";
 // layouts
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // assets
 // helpers
 // types
@@ -53,8 +57,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
@@ -148,10 +150,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => {
-    setToastAlert({
+    setToast({
       title,
       message,
-      type,
+      type: type as TOAST_TYPE,
     });
   };
 

@@ -6,8 +6,11 @@ import { Plus, X, Loader } from "lucide-react";
 // hooks
 import { Input } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IIssueLabel } from "@plane/types";
 import { TLabelOperations } from "./root";
@@ -28,7 +31,6 @@ const defaultValues: Partial<IIssueLabel> = {
 export const LabelCreate: FC<ILabelCreate> = (props) => {
   const { workspaceSlug, projectId, issueId, labelOperations, disabled = false } = props;
   // hooks
-  const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -63,9 +65,9 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
       reset(defaultValues);
     } catch (error) {
-      setToastAlert({
+      setToast({
         title: "Label creation failed",
-        type: "error",
+        type: TOAST_TYPE.ERROR,
         message: "Label creation failed. Please try again sometime later.",
       });
     }

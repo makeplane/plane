@@ -5,8 +5,11 @@ import { AlertTriangle } from "lucide-react";
 // hooks
 import { Button } from "@plane/ui";
 import { useWebhook } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 interface IDeleteWebhook {
   isOpen: boolean;
@@ -19,8 +22,6 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   const [isDeleting, setIsDeleting] = useState(false);
   // router
   const router = useRouter();
-  // toast
-  const { setToastAlert } = useToast();
   // store hooks
   const { removeWebhook } = useWebhook();
 
@@ -37,16 +38,16 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
 
     removeWebhook(workspaceSlug.toString(), webhookId.toString())
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Webhook deleted successfully.",
         });
         router.replace(`/${workspaceSlug}/settings/webhooks/`);
       })
       .catch((error) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Something went wrong. Please try again.",
         })

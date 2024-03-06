@@ -6,11 +6,20 @@ import useSWRInfinite from "swr/infinite";
 // services
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 import { NotificationService } from "services/notification.service";
+<<<<<<< HEAD
 // hooks
 import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
 import useToast from "./use-toast";
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // fetch-keys
 // type
+<<<<<<< HEAD
+=======
+import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 const PER_PAGE = 30;
 
@@ -19,8 +28,6 @@ const userNotificationServices = new NotificationService();
 const useUserNotification = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const [snoozed, setSnoozed] = useState<boolean>(false);
   const [archived, setArchived] = useState<boolean>(false);
@@ -265,15 +272,15 @@ const useUserNotification = () => {
     await userNotificationServices
       .markAllNotificationsAsRead(workspaceSlug.toString(), markAsReadParams)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "All Notifications marked as read.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });

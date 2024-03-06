@@ -1,7 +1,10 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+<<<<<<< HEAD
 import useSWR, { mutate } from "swr";
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 import { SelectRepository, SelectChannel } from "components/integration";
 // constants
@@ -11,8 +14,13 @@ import useToast from "hooks/use-toast";
 // icons
 import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
+<<<<<<< HEAD
 // services
 import { ProjectService } from "services/project";
+=======
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspaceIntegration } from "@plane/types";
 
@@ -37,8 +45,6 @@ const projectService = new ProjectService();
 export const IntegrationCard: React.FC<Props> = ({ integration }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const { data: syncedGithubRepository } = useSWR(
     projectId ? PROJECT_GITHUB_REPOSITORY(projectId as string) : null,
@@ -68,16 +74,16 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
       .then(() => {
         mutate(PROJECT_GITHUB_REPOSITORY(projectId as string));
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: `${login}/${name} repository synced with the project successfully.`,
         });
       })
       .catch((err) => {
         console.error(err);
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Repository could not be synced with the project. Please try again.",
         });

@@ -1,0 +1,59 @@
+import { useState } from "react";
+// components
+import { CollaboratorsList } from "./collaborators-list";
+// ui
+import { Button } from "@plane/ui";
+
+type Props = {
+  dashboardId: string;
+  perPage: number;
+  workspaceSlug: string;
+};
+
+export const DefaultCollaboratorsList: React.FC<Props> = (props) => {
+  const { dashboardId, perPage, workspaceSlug } = props;
+  // states
+  const [pageCount, setPageCount] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [resultsCount, setResultsCount] = useState(0);
+
+  const handleLoadMore = () => setPageCount((prev) => prev + 1);
+
+  const updateTotalPages = (count: number) => setTotalPages(count);
+
+  const updateResultsCount = (count: number) => setResultsCount(count);
+
+  const collaboratorsPages: JSX.Element[] = [];
+  for (let i = 0; i < pageCount; i++)
+    collaboratorsPages.push(
+      <CollaboratorsList
+        key={i}
+        dashboardId={dashboardId}
+        cursor={`${perPage}:${i}:0`}
+        perPage={perPage}
+        updateResultsCount={updateResultsCount}
+        updateTotalPages={updateTotalPages}
+        workspaceSlug={workspaceSlug}
+      />
+    );
+
+  return (
+    <>
+      <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
+        {collaboratorsPages}
+      </div>
+      {pageCount < totalPages && resultsCount !== 0 && (
+        <div className="flex items-center justify-center text-xs w-full">
+          <Button
+            variant="link-primary"
+            size="sm"
+            className="my-3 hover:bg-custom-primary-100/20"
+            onClick={handleLoadMore}
+          >
+            Load more
+          </Button>
+        </div>
+      )}
+    </>
+  );
+};

@@ -2,6 +2,16 @@ import React, { ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
+<<<<<<< HEAD
+=======
+import { useProject, useUser } from "hooks/store";
+// layouts
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
 import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
@@ -22,8 +32,6 @@ const AutomationSettingsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -34,8 +42,8 @@ const AutomationSettingsPage: NextPageWithLayout = observer(() => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
     await updateProject(workspaceSlug.toString(), projectId.toString(), formData).catch(() => {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Something went wrong. Please try again.",
       });

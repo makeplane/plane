@@ -9,8 +9,11 @@ import { ChevronDown } from "lucide-react";
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 import { GROUP_CHOICES } from "constants/project";
 import { useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import type { IState } from "@plane/types";
@@ -37,8 +40,6 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { createState } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -71,15 +72,15 @@ export const CreateStateModal: React.FC<Props> = observer((props) => {
 
         if (typeof error === "object") {
           Object.keys(error).forEach((key) => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: Array.isArray(error[key]) ? error[key].join(", ") : error[key],
             });
           });
         } else {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               error ?? err.status === 400

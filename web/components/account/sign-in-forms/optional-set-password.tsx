@@ -2,9 +2,15 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // services
 // hooks
+<<<<<<< HEAD
 // ui
 import { Eye, EyeOff } from "lucide-react";
 import { Button, Input } from "@plane/ui";
+=======
+import { useEventTracker } from "hooks/store";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED } from "constants/event-tracker";
 import { checkEmailValidity } from "helpers/string.helper";
@@ -38,8 +44,6 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -62,8 +66,8 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
     await authService
       .setPassword(payload)
       .then(async () => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Password created successfully.",
         });
@@ -78,8 +82,8 @@ export const SignInOptionalSetPasswordForm: React.FC<Props> = (props) => {
           state: "FAILED",
           first_time: false,
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

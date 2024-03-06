@@ -6,8 +6,11 @@ import { AlertTriangle } from "lucide-react";
 // hooks
 import { Button } from "@plane/ui";
 import { useProjectView } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IProjectView } from "@plane/types";
 
@@ -26,8 +29,6 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteView } = useProjectView();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -43,15 +44,15 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
       .then(() => {
         handleClose();
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View deleted successfully.",
         });
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be deleted. Please try again.",
         })

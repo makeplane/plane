@@ -9,9 +9,17 @@ import { MemberSelect } from "components/project";
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 import { EUserProjectRoles } from "constants/project";
 import { useProject, useUser } from "hooks/store";
+<<<<<<< HEAD
 import useToast from "hooks/use-toast";
+=======
+import { Controller, useForm } from "react-hook-form";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 // ui
+<<<<<<< HEAD
+=======
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // fetch-keys
@@ -33,8 +41,6 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
-  // hooks
-  const { setToastAlert } = useToast();
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
@@ -72,9 +78,9 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     })
       .then(() => {
         fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Project updated successfully",
         });
       })

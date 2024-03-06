@@ -1,10 +1,23 @@
 import { useState } from "react";
+<<<<<<< HEAD
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 import { ArchiveIcon, CustomMenu } from "@plane/ui";
 // hooks
+=======
+import { useRouter } from "next/router";
+import omit from "lodash/omit";
+import { observer } from "mobx-react";
+// hooks
+import { useEventTracker, useIssues, useProjectState, useUser } from "hooks/store";
+// ui
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// icons
+import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
@@ -45,8 +58,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     membership: { currentProjectRole },
   } = useUser();
   const { getStateById } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   // auth
@@ -64,8 +75,8 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
 
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })
@@ -106,6 +117,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         storeType={EIssuesStoreType.CYCLE}
       />
       <CustomMenu
+        menuItemsClassName="z-[14]"
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}

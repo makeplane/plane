@@ -12,8 +12,13 @@ import { EIssuesStoreType } from "constants/issue";
 import { useIssues, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { IssueService } from "services/issue";
+<<<<<<< HEAD
 // hooks
 // ui
+=======
+// ui
+import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import { IUser, TIssue } from "@plane/types";
@@ -55,8 +60,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
       : null
   );
 
-  const { setToastAlert } = useToast();
-
   const {
     handleSubmit,
     watch,
@@ -79,8 +82,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId) return;
 
     if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });
@@ -91,16 +94,16 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
 
     await removeBulkIssues(workspaceSlug as string, projectId as string, data.delete_issue_ids)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Issues deleted successfully!",
         });
         handleClose();
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         })

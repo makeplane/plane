@@ -12,8 +12,16 @@ import { useApplication, useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 // hooks
+<<<<<<< HEAD
+=======
+import { useApplication, useEventTracker } from "hooks/store";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { IPasswordSignInData } from "@plane/types";
@@ -43,8 +51,6 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   // states
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   const {
     config: { envConfig },
   } = useApplication();
@@ -83,8 +89,8 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
         await onSubmit();
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
@@ -107,8 +113,8 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
       .generateUniqueCode({ email: emailFormValue })
       .then(() => handleStepChange(ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD))
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

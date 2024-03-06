@@ -9,8 +9,11 @@ import { ChevronDown } from "lucide-react";
 import { Button, Input } from "@plane/ui";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 import { useLabel } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // constants
@@ -64,8 +67,6 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     reset(defaultValues);
   };
 
-  const { setToastAlert } = useToast();
-
   const onSubmit = async (formData: IIssueLabel) => {
     if (!workspaceSlug) return;
 
@@ -75,9 +76,9 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
         if (onSuccess) onSuccess(res);
       })
       .catch((error) => {
-        setToastAlert({
+        setToast({
           title: "Oops!",
-          type: "error",
+          type: TOAST_TYPE.ERROR,
           message: error?.error ?? "Error while adding the label",
         });
         reset(formData);

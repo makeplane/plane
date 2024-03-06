@@ -2,6 +2,27 @@ import React, { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
+// services
+import { FileService } from "services/file.service";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import useUserAuth from "hooks/use-user-auth";
+// layouts
+import { ProfileSettingsLayout } from "layouts/settings-layout";
+// components
+import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
+import { DeactivateAccountModal } from "components/account";
+// ui
+import {
+  Button,
+  CustomSelect,
+  CustomSearchSelect,
+  Input,
+  Spinner,
+  TOAST_TYPE,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
 // icons
 import { ChevronDown, User2 } from "lucide-react";
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
@@ -52,8 +73,6 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     control,
     formState: { errors },
   } = useForm<IUser>({ defaultValues });
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
   // custom hooks
@@ -76,24 +95,22 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       user_timezone: formData.user_timezone,
     };
 
-    await updateCurrentUser(payload)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Profile updated successfully.",
-        });
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "There was some error in updating your profile. Please try again.",
-        })
-      );
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+    const updateCurrentUserDetail = updateCurrentUser(payload).finally(() => setIsLoading(false));
+    setPromiseToast(updateCurrentUserDetail, {
+      loading: "Updating...",
+      success: {
+        title: "Success!",
+        message: () => `Profile updated successfully.`,
+      },
+      error: {
+        title: "Error!",
+        message: () => `There was some error in updating your profile. Please try again.`,
+      },
+    });
+
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 300);
   };
 
   const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
@@ -105,16 +122,16 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
       if (updateUser)
         updateCurrentUser({ avatar: "" })
           .then(() => {
-            setToastAlert({
-              type: "success",
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
               title: "Success!",
-              message: "Profile picture removed successfully.",
+              message: "Profile picture deleted successfully.",
             });
             setIsRemoving(false);
           })
           .catch(() => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: "There was some error in deleting your profile picture. Please try again.",
             });
@@ -163,7 +180,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
             )}
           />
           <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-10 md:pt-16 px-8 pb-8 lg:w-3/5">
+          <div className="mx-auto flex h-full w-full flex-col space-y-10 overflow-y-auto pt-10 md:pt-16 px-8 pb-8 lg:w-3/5 vertical-scrollbar scrollbar-md">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex w-full flex-col gap-8">
                 <div className="relative h-44 w-full">

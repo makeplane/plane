@@ -10,9 +10,21 @@ import { useEventTracker } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 // hooks
+<<<<<<< HEAD
 // ui
 // helpers
 // constants
+=======
+import { useEventTracker } from "hooks/store";
+// ui
+import { Button, Input, TOAST_TYPE, setToast  } from "@plane/ui";
+// helpers
+import { checkEmailValidity } from "helpers/string.helper";
+// components
+import { ESignUpSteps } from "components/account";
+// constants
+import { PASSWORD_CREATE_SELECTED, PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "constants/event-tracker";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 
 type Props = {
@@ -41,8 +53,6 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -65,8 +75,8 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
     await authService
       .setPassword(payload)
       .then(async () => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Password created successfully.",
         });
@@ -81,8 +91,8 @@ export const SignUpOptionalSetPasswordForm: React.FC<Props> = (props) => {
           state: "FAILED",
           first_time: true,
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

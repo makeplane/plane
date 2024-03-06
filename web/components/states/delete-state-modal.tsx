@@ -7,8 +7,11 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
 import { STATE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useProjectState } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IState } from "@plane/types";
 // constants
@@ -29,8 +32,6 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureProjectStateEvent } = useEventTracker();
   const { deleteState } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -55,15 +56,15 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
       })
       .catch((err) => {
         if (err.status === 400)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "This state contains some issues within it, please move them to some other state to delete this state.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });

@@ -9,9 +9,14 @@ import { ISSUE_DELETED } from "constants/event-tracker";
 import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useUser } from "hooks/store";
+<<<<<<< HEAD
 import { useIssues } from "hooks/store/use-issues";
 import useToast from "hooks/use-toast";
 // ui
+=======
+// ui
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
 import { IDraftIssues, IDraftIssuesFilter } from "store/issue/draft";
@@ -80,8 +85,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
   const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const issueIds = issues?.groupedIssueIds || [];
 
@@ -159,9 +162,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           issueIds,
           viewId
         ).catch((err) => {
-          setToastAlert({
+          setToast({
             title: "Error",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: err.detail ?? "Failed to perform this action",
           });
         });
@@ -291,27 +294,29 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               </Droppable>
             </div>
 
-            <KanBanView
-              issuesMap={issueMap}
-              issueIds={issueIds}
-              displayProperties={displayProperties}
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              handleIssues={handleIssues}
-              quickActions={renderQuickActions}
-              handleKanbanFilters={handleKanbanFilters}
-              kanbanFilters={kanbanFilters}
-              enableQuickIssueCreate={enableQuickAdd}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-              quickAddCallback={issues?.quickAddIssue}
-              viewId={viewId}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-              canEditProperties={canEditProperties}
-              storeType={storeType}
-              addIssuesToView={addIssuesToView}
-              scrollableContainerRef={scrollableContainerRef}
-              isDragStarted={isDragStarted}
-            />
+            <div className="w-max h-max">
+              <KanBanView
+                issuesMap={issueMap}
+                issueIds={issueIds}
+                displayProperties={displayProperties}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                handleIssues={handleIssues}
+                quickActions={renderQuickActions}
+                handleKanbanFilters={handleKanbanFilters}
+                kanbanFilters={kanbanFilters}
+                enableQuickIssueCreate={enableQuickAdd}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
+                quickAddCallback={issues?.quickAddIssue}
+                viewId={viewId}
+                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+                canEditProperties={canEditProperties}
+                storeType={storeType}
+                addIssuesToView={addIssuesToView}
+                scrollableContainerRef={scrollableContainerRef}
+                isDragStarted={isDragStarted}
+              />
+            </div>
           </DragDropContext>
         </div>
       </div>

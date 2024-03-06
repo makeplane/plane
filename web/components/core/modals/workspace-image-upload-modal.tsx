@@ -11,8 +11,13 @@ import { useApplication, useWorkspace } from "hooks/store";
 // services
 import useToast from "hooks/use-toast";
 import { FileService } from "services/file.service";
+<<<<<<< HEAD
 // hooks
 // ui
+=======
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // constants
 
@@ -36,8 +41,6 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const {
     config: { envConfig },
@@ -83,8 +86,8 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
         if (value && currentWorkspace) fileService.deleteFile(currentWorkspace.id, value);
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

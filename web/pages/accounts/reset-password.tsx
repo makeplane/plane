@@ -4,12 +4,16 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 // hooks
+<<<<<<< HEAD
 import { Eye, EyeOff } from "lucide-react";
 import { Button, Input } from "@plane/ui";
 import { LatestFeatureBlock } from "components/common";
 import { PageHead } from "components/core";
 import { NEW_PASS_CREATED } from "constants/event-tracker";
 import { checkEmailValidity } from "helpers/string.helper";
+=======
+import useSignInRedirection from "hooks/use-sign-in-redirection";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { useEventTracker } from "hooks/store";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 import useToast from "hooks/use-toast";
@@ -17,6 +21,10 @@ import useToast from "hooks/use-toast";
 import DefaultLayout from "layouts/default-layout";
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // images
 import { NextPageWithLayout } from "lib/types";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
@@ -47,8 +55,6 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast
-  const { setToastAlert } = useToast();
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // form info
@@ -82,8 +88,8 @@ const ResetPasswordPage: NextPageWithLayout = () => {
         captureEvent(NEW_PASS_CREATED, {
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

@@ -1,9 +1,15 @@
 import { useState } from "react";
+<<<<<<< HEAD
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import { ArchiveIcon, CustomMenu } from "@plane/ui";
+=======
+import { useRouter } from "next/router";
+import omit from "lodash/omit";
+import { observer } from "mobx-react";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // hooks
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
@@ -11,7 +17,9 @@ import { EUserProjectRoles } from "constants/project";
 import { STATE_GROUPS } from "constants/state";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useIssues, useProjectState, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // components
 // helpers
 // types
@@ -54,16 +62,14 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
 
-  const { setToastAlert } = useToast();
-
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
 
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
 
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })
@@ -108,6 +114,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
         isDraft={isDraftIssue}
       />
       <CustomMenu
+        menuItemsClassName="z-[14]"
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}

@@ -7,9 +7,16 @@ import { Button } from "@plane/ui";
 import useToast from "hooks/use-toast";
 import DefaultLayout from "layouts/default-layout";
 import { AuthService } from "services/auth.service";
+<<<<<<< HEAD
 // hooks
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // layouts
 // ui
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 // services
 const authService = new AuthService();
@@ -17,14 +24,12 @@ const authService = new AuthService();
 const CustomErrorComponent = () => {
   const router = useRouter();
 
-  const { setToastAlert } = useToast();
-
   const handleSignOut = async () => {
     await authService
       .signOut()
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })

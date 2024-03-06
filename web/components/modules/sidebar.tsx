@@ -14,6 +14,7 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
+<<<<<<< HEAD
 // ui
 import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
 // components
@@ -25,6 +26,26 @@ import { DeleteModuleModal } from "components/modules";
 import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+=======
+// hooks
+import { useModule, useUser, useEventTracker } from "hooks/store";
+// components
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
+import { DeleteModuleModal } from "components/modules";
+import ProgressChart from "components/core/sidebar/progress-chart";
+import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
+// ui
+import {
+  CustomMenu,
+  Loader,
+  LayersIcon,
+  CustomSelect,
+  ModuleStatusIcon,
+  UserGroupIcon,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
@@ -65,8 +86,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
 
-  const { setToastAlert } = useToast();
-
   const { reset, control } = useForm({
     defaultValues,
   });
@@ -99,15 +118,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link created",
           message: "Module link created successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -125,15 +144,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link updated",
           message: "Module link updated successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -149,15 +168,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link deleted",
           message: "Module link deleted successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -167,15 +186,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link copied",
           message: "Module link copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -187,8 +206,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
       target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
     });
-    setToastAlert({
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Success!",
       message: "Module updated successfully.",
     });
@@ -366,12 +385,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             />
           </div>
         </div>
-
-        {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {moduleDetails.description}
-          </span>
-        )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">

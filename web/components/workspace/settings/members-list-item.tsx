@@ -13,7 +13,17 @@ import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
+<<<<<<< HEAD
 import useToast from "hooks/use-toast";
+=======
+// components
+import { ConfirmWorkspaceMemberRemove } from "components/workspace";
+// ui
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   memberId: string;
@@ -36,8 +46,6 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
   // derived values
   const memberDetails = getWorkspaceMemberDetails(memberId);
 
@@ -53,8 +61,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         router.push("/profile");
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error",
           message: err?.error || "Something went wrong. Please try again.",
         })
@@ -65,8 +73,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     if (!workspaceSlug || !memberDetails) return;
 
     await removeMemberFromWorkspace(workspaceSlug.toString(), memberDetails.member.id).catch((err) =>
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error",
         message: err?.error || "Something went wrong. Please try again.",
       })
@@ -166,8 +174,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
               updateMember(workspaceSlug.toString(), memberDetails.member.id, {
                 role: value,
               }).catch(() => {
-                setToastAlert({
-                  type: "error",
+                setToast({
+                  type: TOAST_TYPE.ERROR,
                   title: "Error!",
                   message: "An error occurred while updating member role. Please try again.",
                 });

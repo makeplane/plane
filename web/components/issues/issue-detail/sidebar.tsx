@@ -15,8 +15,13 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 // hooks
+<<<<<<< HEAD
 import { ArchiveIcon, ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, Tooltip, UserGroupIcon } from "@plane/ui";
 import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
+=======
+import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import {
   DeleteIssueModal,
   IssueLinkRoot,
@@ -27,6 +32,30 @@ import {
   IssueLabel,
   ArchiveIssueModal,
 } from "components/issues";
+<<<<<<< HEAD
+=======
+import { IssueSubscription } from "./subscription";
+import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
+// ui
+import {
+  ArchiveIcon,
+  ContrastIcon,
+  DiceIcon,
+  DoubleCircleIcon,
+  RelatedIcon,
+  Tooltip,
+  UserGroupIcon,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
+import { cn } from "helpers/common.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+// types
+import type { TIssueOperations } from "./root";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { STATE_GROUPS } from "constants/state";
 import { cn } from "helpers/common.helper";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
@@ -61,7 +90,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getProjectById } = useProject();
   const { currentUser } = useUser();
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
-  const { setToastAlert } = useToast();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
@@ -73,8 +101,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });

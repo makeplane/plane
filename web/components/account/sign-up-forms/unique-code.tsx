@@ -12,7 +12,14 @@ import useToast from "hooks/use-toast";
 import { AuthService } from "services/auth.service";
 import { UserService } from "services/user.service";
 // hooks
+<<<<<<< HEAD
 // ui
+=======
+import useTimer from "hooks/use-timer";
+import { useEventTracker } from "hooks/store";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { IEmailCheckData, IMagicSignInData } from "@plane/types";
@@ -44,8 +51,6 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
   // form info
@@ -84,8 +89,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
         captureEvent(CODE_VERIFIED, {
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });
@@ -101,8 +106,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
       .generateUniqueCode(payload)
       .then(() => {
         setResendCodeTimer(30);
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "A new unique code has been sent to your email.",
         });
@@ -112,8 +117,8 @@ export const SignUpUniqueCodeForm: React.FC<Props> = (props) => {
         });
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })

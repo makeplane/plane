@@ -148,7 +148,7 @@ export class ProjectStore implements IProjectStore {
     projects = sortBy(projects, "created_at");
 
     const projectIds = projects
-      .filter((project) => project.workspace === currentWorkspace.id && project.is_favorite)
+      .filter((project) => project.workspace === currentWorkspace.id && project.is_member && project.is_favorite)
       .map((project) => project.id);
     return projectIds;
   }

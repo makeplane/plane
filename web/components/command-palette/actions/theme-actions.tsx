@@ -6,7 +6,8 @@ import { Settings } from "lucide-react";
 // hooks
 import { THEME_OPTIONS } from "constants/themes";
 import { useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 
 type Props = {
@@ -21,15 +22,14 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
   const { updateCurrentUserTheme } = useUser();
   // hooks
   const { setTheme } = useTheme();
-  const { setToastAlert } = useToast();
 
   const updateUserTheme = async (newTheme: string) => {
     setTheme(newTheme);
 
     return updateCurrentUserTheme(newTheme).catch(() => {
-      setToastAlert({
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Failed to save user theme settings!",
-        type: "error",
       });
     });
   };

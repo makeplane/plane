@@ -19,7 +19,7 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
   return (
     <div className="relative flex flex-col gap-4 h-full">
       <h4 className="font-medium">Selected Projects</h4>
-      <div className="relative space-y-6 overflow-hidden overflow-y-auto">
+      <div className="relative space-y-6 overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md">
         {projectIds.map((projectId) => {
           const project = getProjectById(projectId);
 
@@ -42,7 +42,7 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
                   <span className="ml-1 text-xs text-custom-text-200">({project.identifier})</span>
                 </h5>
               </div>
-              <div className="mt-4 w-full space-y-3 pl-2">
+              <div className="mt-4 w-full space-y-3 px-2">
                 <div className="flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2">
                     <Users className="text-custom-text-200" size={14} strokeWidth={2} />

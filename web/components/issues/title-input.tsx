@@ -32,7 +32,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   useEffect(() => {
     const textarea = document.querySelector("#title-input");
     if (debouncedValue && debouncedValue !== value) {
-      issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }, false).finally(() => {
+      issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }).finally(() => {
         setIsSubmitting("saved");
         if (textarea && !textarea.matches(":focus")) {
           const trimmedTitle = debouncedValue.trim();

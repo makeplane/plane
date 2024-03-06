@@ -3,9 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Menu } from "@headlessui/react";
+<<<<<<< HEAD
 // icons
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
+=======
+import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
+// hooks
+import { useEventTracker } from "hooks/store";
+// icons
+import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // constants
 import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 import { snoozeOptions } from "constants/notification";
@@ -49,8 +57,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const { workspaceSlug } = router.query;
   // states
   const [showSnoozeOptions, setShowSnoozeOptions] = React.useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   // refs
   const snoozeRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,9 +67,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
       onClick: () => {
         markNotificationReadStatusToggle(notification.id).then(() => {
-          setToastAlert({
+          setToast({
             title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
           });
         });
       },
@@ -78,9 +84,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       ),
       onClick: () => {
         markNotificationArchivedStatus(notification.id).then(() => {
-          setToastAlert({
+          setToast({
             title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
           });
         });
       },
@@ -93,9 +99,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       return;
     }
     markSnoozeNotification(notification.id, date).then(() => {
-      setToastAlert({
+      setToast({
         title: `Notification snoozed till ${renderFormattedDate(date)}`,
-        type: "success",
+        type: TOAST_TYPE.SUCCESS,
       });
     });
   };
@@ -330,9 +336,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
-                setToastAlert({
+                setToast({
                   title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
-                  type: "success",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
@@ -352,9 +358,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
-                setToastAlert({
+                setToast({
                   title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-                  type: "success",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
@@ -403,9 +409,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                       tab: selectedTab,
                       state: "SUCCESS",
                     });
-                    setToastAlert({
+                    setToast({
                       title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
-                      type: "success",
+                      type: TOAST_TYPE.SUCCESS,
                     });
                   });
                 }}

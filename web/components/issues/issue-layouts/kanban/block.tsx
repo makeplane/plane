@@ -71,7 +71,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       </WithDisplayPropertiesHOC>
 
       {issue?.is_draft ? (
-        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+        <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
@@ -84,7 +84,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
           disabled={!!issue?.tempId}
         >
-          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <Tooltip tooltipContent={issue.name}>
             <span>{issue.name}</span>
           </Tooltip>
         </ControlLink>
@@ -141,7 +141,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
         >
           <div
             className={cn(
-              "rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+              "rounded border-[0.5px] w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
               { "hover:cursor-grab": !isDragDisabled },
               { "border-custom-primary-100": snapshot.isDragging },
               { "border border-custom-primary-70 hover:border-custom-primary-70": peekIssueId === issue.id }

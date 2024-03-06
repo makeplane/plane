@@ -7,8 +7,11 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
 import { MODULE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useModule } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // types
 import type { IModule } from "@plane/types";
@@ -30,8 +33,6 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureModuleEvent } = useEventTracker();
   const { deleteModule } = useModule();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -47,8 +48,8 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
       .then(() => {
         if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project_id}/modules`);
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Module deleted successfully.",
         });
@@ -58,8 +59,8 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });

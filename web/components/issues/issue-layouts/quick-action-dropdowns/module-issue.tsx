@@ -1,10 +1,22 @@
 import { useState } from "react";
+<<<<<<< HEAD
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 import { ArchiveIcon, CustomMenu } from "@plane/ui";
 // hooks
+=======
+import { useRouter } from "next/router";
+import omit from "lodash/omit";
+import { observer } from "mobx-react";
+// hooks
+import { useIssues, useEventTracker, useUser, useProjectState } from "hooks/store";
+// ui
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
@@ -45,8 +57,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     membership: { currentProjectRole },
   } = useUser();
   const { getStateById } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   // auth
@@ -64,8 +74,8 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
 
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })
@@ -106,6 +116,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
         storeType={EIssuesStoreType.MODULE}
       />
       <CustomMenu
+        menuItemsClassName="z-[14]"
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}

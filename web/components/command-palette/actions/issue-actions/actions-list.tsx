@@ -7,9 +7,11 @@ import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useUser, useIssues } from "hooks/store";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // helpers
 // types
 import { TIssue } from "@plane/types";
@@ -36,8 +38,6 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
   } = useApplication();
   const { currentUser } = useUser();
-
-  const { setToastAlert } = useToast();
 
   const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;
@@ -71,14 +71,14 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });

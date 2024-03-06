@@ -9,9 +9,12 @@ import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from
 import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
 import { orderArrayBy } from "helpers/array.helper";
 import { useEstimate, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 // ui
+<<<<<<< HEAD
+=======
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IEstimate } from "@plane/types";
 // helpers
@@ -31,8 +34,6 @@ export const EstimatesList: React.FC = observer(() => {
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
   const { currentUser } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -50,8 +51,8 @@ export const EstimatesList: React.FC = observer(() => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: errorString ?? "Estimate could not be disabled. Please try again",
       });

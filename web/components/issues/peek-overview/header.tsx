@@ -3,8 +3,26 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
-import { ArchiveIcon, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Tooltip } from "@plane/ui";
+import {
+  ArchiveIcon,
+  CenterPanelIcon,
+  CustomSelect,
+  FullScreenPanelIcon,
+  SidePanelIcon,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
 // helpers
+<<<<<<< HEAD
+=======
+import { copyUrlToClipboard } from "helpers/string.helper";
+// store hooks
+import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+// helpers
+import { cn } from "helpers/common.helper";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
 import { STATE_GROUPS } from "constants/state";
 import { cn } from "helpers/common.helper";
@@ -74,8 +92,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  // hooks
-  const { setToastAlert } = useToast();
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
@@ -87,8 +103,8 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(issueLink).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });

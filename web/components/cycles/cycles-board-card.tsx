@@ -3,11 +3,29 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+<<<<<<< HEAD
+=======
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } from "@plane/ui";
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
+<<<<<<< HEAD
+=======
+import {
+  Avatar,
+  AvatarGroup,
+  CustomMenu,
+  Tooltip,
+  LayersIcon,
+  CycleGroupIcon,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+} from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // icons
 // helpers
 import { CYCLE_STATUS } from "constants/cycle";
@@ -41,8 +59,6 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   } = useUser();
   const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
   const { getUserDetails } = useMember();
-  // toast alert
-  const { setToastAlert } = useToast();
   // computed
   const cycleDetails = getCycleById(cycleId);
 
@@ -81,8 +97,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Cycle link copied to clipboard.",
       });
@@ -93,42 +109,56 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
+      () => {
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "Grid layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
-        captureEvent(CYCLE_UNFAVORITED, {
-          cycle_id: cycleId,
-          element: "Grid layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      cycleId
+    ).then(() => {
+      captureEvent(CYCLE_UNFAVORITED, {
+        cycle_id: cycleId,
+        element: "Grid layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
+    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {

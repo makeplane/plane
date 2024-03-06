@@ -8,8 +8,11 @@ import { AlertTriangle } from "lucide-react";
 import { Button, Input } from "@plane/ui";
 import { WORKSPACE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
+<<<<<<< HEAD
+=======
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import type { IWorkspace } from "@plane/types";
 // constants
@@ -32,8 +35,6 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -69,15 +70,15 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
             element: "Workspace general settings page",
           },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Workspace deleted successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         });

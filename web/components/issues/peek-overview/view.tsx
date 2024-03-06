@@ -3,7 +3,15 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 // hooks
+<<<<<<< HEAD
 import { Spinner } from "@plane/ui";
+=======
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useKeypress from "hooks/use-keypress";
+// store hooks
+import { useIssueDetail } from "hooks/store";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -50,15 +58,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const issue = getIssueById(issueId);
-  // hooks
-  const { alerts } = useToast();
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
   };
 
   useOutsideClickDetector(issuePeekOverviewRef, () => {
-    if (!isAnyModalOpen && (!alerts || alerts.length === 0)) {
+    if (!isAnyModalOpen) {
       removeRoutePeekId();
     }
   });

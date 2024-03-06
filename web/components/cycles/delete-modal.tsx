@@ -7,8 +7,11 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
 import { CYCLE_DELETED } from "constants/event-tracker";
 import { useEventTracker, useCycle } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
+<<<<<<< HEAD
+=======
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { ICycle } from "@plane/types";
 // constants
@@ -31,8 +34,6 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   // store hooks
   const { captureCycleEvent } = useEventTracker();
   const { deleteCycle } = useCycle();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const formSubmit = async () => {
     if (!cycle) return;
@@ -41,8 +42,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
     try {
       await deleteCycle(workspaceSlug, projectId, cycle.id)
         .then(() => {
-          setToastAlert({
-            type: "success",
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: "Cycle deleted successfully.",
           });
@@ -62,8 +63,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
 
       handleClose();
     } catch (error) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Warning!",
         message: "Something went wrong please try again later.",
       });

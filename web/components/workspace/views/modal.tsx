@@ -9,7 +9,14 @@ import { WorkspaceViewForm } from "components/workspace";
 import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
 // store hooks
 import { useEventTracker, useGlobalView } from "hooks/store";
+<<<<<<< HEAD
 import useToast from "hooks/use-toast";
+=======
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { WorkspaceViewForm } from "components/workspace";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspaceView } from "@plane/types";
 
@@ -28,8 +35,6 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -52,8 +57,8 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
           applied_filters: res.filters,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View created successfully.",
         });
@@ -66,8 +71,8 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
           applied_filters: payload?.filters,
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be created. Please try again.",
         });
@@ -91,8 +96,8 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
           applied_filters: res.filters,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View updated successfully.",
         });
@@ -104,8 +109,8 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
           applied_filters: data.filters,
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be updated. Please try again.",
         });

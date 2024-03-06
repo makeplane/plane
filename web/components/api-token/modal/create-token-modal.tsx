@@ -9,7 +9,12 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { csvDownload } from "helpers/download.helper";
 import useToast from "hooks/use-toast";
 import { APITokenService } from "services/api_token.service";
+<<<<<<< HEAD
 // hooks
+=======
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // components
 // helpers
 // types
@@ -32,8 +37,6 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -76,10 +79,10 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
         );
       })
       .catch((err) => {
-        setToastAlert({
-          message: err.message,
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error",
+          message: err.message,
         });
 
         throw err;

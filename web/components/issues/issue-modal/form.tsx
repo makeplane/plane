@@ -6,7 +6,15 @@ import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // editor
 // hooks
+<<<<<<< HEAD
 import { Button, CustomMenu, Input, Loader, ToggleSwitch } from "@plane/ui";
+=======
+import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+// services
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
+// components
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { GptAssistantPopover } from "components/core";
 import {
   CycleDropdown,
@@ -18,9 +26,15 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
+<<<<<<< HEAD
 import { ParentIssuesListModal } from "components/issues";
 import { IssueLabelSelect } from "components/issues/select";
 import { CreateLabelModal } from "components/labels";
+=======
+// ui
+import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
@@ -125,8 +139,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting },
@@ -199,8 +211,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       })
       .then((res) => {
         if (res.response === "")
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "Issue title isn't informative enough to generate the description. Please try with a different title.",
@@ -211,14 +223,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         const error = err?.data?.error;
 
         if (err.status === 429)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });

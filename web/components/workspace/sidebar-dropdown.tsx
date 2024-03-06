@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
+<<<<<<< HEAD
 import { mutate } from "swr";
 // ui components
 import { Menu, Transition } from "@headlessui/react";
@@ -14,6 +15,12 @@ import { Avatar, Loader } from "@plane/ui";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
+=======
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
+// ui
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // types
 import { IWorkspace } from "@plane/types";
 
@@ -58,12 +65,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    theme: { sidebarCollapsed, toggleMobileSidebar },
+    theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
   const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  // hooks
-  const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -92,8 +97,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -101,7 +106,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
   const handleItemClick = () => {
     if (window.innerWidth < 768) {
-      toggleMobileSidebar();
+      toggleSidebar();
     }
   };
   const workspacesList = Object.values(workspaces ?? {});

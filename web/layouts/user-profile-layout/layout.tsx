@@ -4,6 +4,12 @@ import { useRouter } from "next/router";
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 import { useUser } from "hooks/store";
 // components
+<<<<<<< HEAD
+=======
+import { ProfileNavbar, ProfileSidebar } from "components/profile";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 
 type Props = {
   children: React.ReactNode;
@@ -11,27 +17,25 @@ type Props = {
   showProfileIssuesFilter?: boolean;
 };
 
-const AUTHORIZED_ROLES = [20, 15, 10];
+const AUTHORIZED_ROLES = [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.VIEWER];
 
 export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
   const { children, className, showProfileIssuesFilter } = props;
+  // router
   const router = useRouter();
-
+  // store hooks
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-
-  if (!currentWorkspaceRole) return null;
-
-  const isAuthorized = AUTHORIZED_ROLES.includes(currentWorkspaceRole);
-
+  // derived values
+  const isAuthorized = currentWorkspaceRole && AUTHORIZED_ROLES.includes(currentWorkspaceRole);
   const isAuthorizedPath = router.pathname.includes("assigned" || "created" || "subscribed");
 
   return (
     <div className="h-full w-full md:flex md:flex-row-reverse md:overflow-hidden">
       <ProfileSidebar />
       <div className="flex w-full flex-col md:h-full md:overflow-hidden">
-        <ProfileNavbar isAuthorized={isAuthorized} showProfileIssuesFilter={showProfileIssuesFilter} />
+        <ProfileNavbar isAuthorized={!!isAuthorized} showProfileIssuesFilter={showProfileIssuesFilter} />
         {isAuthorized || !isAuthorizedPath ? (
           <div className={`w-full overflow-hidden md:h-full ${className}`}>{children}</div>
         ) : (

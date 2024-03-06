@@ -27,15 +27,18 @@ export const ProfileActivity = observer(() => {
   const { currentUser } = useUser();
 
   const { data: userProfileActivity } = useSWR(
-    workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString()) : null,
+    workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString(), {}) : null,
     workspaceSlug && userId
-      ? () => userService.getUserProfileActivity(workspaceSlug.toString(), userId.toString())
+      ? () =>
+          userService.getUserProfileActivity(workspaceSlug.toString(), userId.toString(), {
+            per_page: 10,
+          })
       : null
   );
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">Recent Activity</h3>
+      <h3 className="text-lg font-medium">Recent activity</h3>
       <div className="rounded border border-custom-border-100 p-6">
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (

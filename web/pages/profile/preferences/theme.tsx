@@ -1,17 +1,17 @@
 import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
-// hooks
+// ui
 import { Spinner } from "@plane/ui";
+import { Spinner, setPromiseToast } from "@plane/ui";
+// components
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
+// constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
+// hooks
 import { useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // layouts
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
-// components
-// ui
-// constants
 // type
 import { NextPageWithLayout } from "lib/types";
 
@@ -24,7 +24,6 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   const userTheme = currentUser?.theme;
   // hooks
   const { setTheme } = useTheme();
-  const { setToastAlert } = useToast();
 
   useEffect(() => {
     if (userTheme) {
@@ -37,11 +36,18 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
 
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
     setTheme(themeOption.value);
-    updateCurrentUserTheme(themeOption.value).catch(() => {
-      setToastAlert({
-        title: "Failed to Update the theme",
-        type: "error",
-      });
+    const updateCurrentUserThemePromise = updateCurrentUserTheme(themeOption.value);
+
+    setPromiseToast(updateCurrentUserThemePromise, {
+      loading: "Updating theme...",
+      success: {
+        title: "Success!",
+        message: () => "Theme updated successfully!",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Failed to Update the theme",
+      },
     });
   };
 

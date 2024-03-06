@@ -16,18 +16,20 @@ import { IssueDetailsSidebar } from "./sidebar";
 // ui
 // images
 // hooks
+<<<<<<< HEAD
 // types
+=======
+import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
+// types
+import { TIssue } from "@plane/types";
+// ui
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
 // constants
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  update: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    showToast?: boolean
-  ) => Promise<void>;
+  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -76,7 +78,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { captureIssueEvent } = useEventTracker();
-  const { setToastAlert } = useToast();
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -91,22 +92,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           console.error("Error fetching the parent issue");
         }
       },
-      update: async (
-        workspaceSlug: string,
-        projectId: string,
-        issueId: string,
-        data: Partial<TIssue>,
-        showToast: boolean = true
-      ) => {
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
-          if (showToast) {
-            setToastAlert({
-              title: "Issue updated successfully",
-              type: "success",
-              message: "Issue updated successfully",
-            });
-          }
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -126,20 +114,27 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
+          setToast({
             title: "Issue update failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Issue update failed",
           });
         }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
+<<<<<<< HEAD
           if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
           else await removeIssue(workspaceSlug, projectId, issueId);
           setToastAlert({
+=======
+          let response;
+          if (is_archived) response = await removeArchivedIssue(workspaceSlug, projectId, issueId);
+          else response = await removeIssue(workspaceSlug, projectId, issueId);
+          setToast({
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
             title: "Issue deleted successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Issue deleted successfully",
           });
           captureIssueEvent({
@@ -148,9 +143,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Issue delete failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Issue delete failed",
           });
           captureIssueEvent({
@@ -163,8 +158,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          setToastAlert({
-            type: "success",
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: "Issue archived successfully.",
           });
@@ -174,8 +169,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: router.asPath,
           });
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Issue could not be archived. Please try again.",
           });
@@ -188,12 +183,19 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
-          setToastAlert({
-            title: "Cycle added to issue successfully",
-            type: "success",
-            message: "Issue added to issue successfully",
+          const addToCyclePromise = addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          setPromiseToast(addToCyclePromise, {
+            loading: "Adding cycle to issue...",
+            success: {
+              title: "Success!",
+              message: () => "Cycle added to issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Cycle add to issue failed",
+            },
           });
+          await addToCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issueIds, state: "SUCCESS", element: "Issue detail page" },
@@ -213,21 +215,23 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
-            title: "Cycle add to issue failed",
-            type: "error",
-            message: "Cycle add to issue failed",
-          });
         }
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          const response = await removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
-          setToastAlert({
-            title: "Cycle removed from issue successfully",
-            type: "success",
-            message: "Cycle removed from issue successfully",
+          const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          setPromiseToast(removeFromCyclePromise, {
+            loading: "Removing cycle from issue...",
+            success: {
+              title: "Success!",
+              message: () => "Cycle removed from issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Cycle remove from issue failed",
+            },
           });
+          const response = await removeFromCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
@@ -247,21 +251,23 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
-            title: "Cycle remove from issue failed",
-            type: "error",
-            message: "Cycle remove from issue failed",
-          });
         }
       },
       addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
         try {
-          const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setToastAlert({
-            title: "Module added to issue successfully",
-            type: "success",
-            message: "Module added to issue successfully",
+          const addToModulePromise = addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
+          setPromiseToast(addToModulePromise, {
+            loading: "Adding module to issue...",
+            success: {
+              title: "Success!",
+              message: () => "Module added to issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Module add to issue failed",
+            },
           });
+          const response = await addToModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
@@ -281,21 +287,23 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
-            title: "Module add to issue failed",
-            type: "error",
-            message: "Module add to issue failed",
-          });
         }
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
-          await removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
-          setToastAlert({
-            title: "Module removed from issue successfully",
-            type: "success",
-            message: "Module removed from issue successfully",
+          const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
+          setPromiseToast(removeFromModulePromise, {
+            loading: "Removing module from issue...",
+            success: {
+              title: "Success!",
+              message: () => "Module removed from issue successfully",
+            },
+            error: {
+              title: "Error!",
+              message: () => "Module remove from issue failed",
+            },
           });
+          await removeFromModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -315,11 +323,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: router.asPath,
           });
-          setToastAlert({
-            title: "Module remove from issue failed",
-            type: "error",
-            message: "Module remove from issue failed",
-          });
         }
       },
       removeModulesFromIssue: async (
@@ -328,20 +331,19 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         issueId: string,
         moduleIds: string[]
       ) => {
-        try {
-          await removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
-          setToastAlert({
-            type: "success",
-            title: "Successful!",
-            message: "Issue removed from module successfully.",
-          });
-        } catch (error) {
-          setToastAlert({
-            type: "error",
+        const removeModulesFromIssuePromise = removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
+        setPromiseToast(removeModulesFromIssuePromise, {
+          loading: "Removing module from issue...",
+          success: {
+            title: "Success!",
+            message: () => "Module removed from issue successfully",
+          },
+          error: {
             title: "Error!",
-            message: "Issue could not be removed from module. Please try again.",
-          });
-        }
+            message: () => "Module remove from issue failed",
+          },
+        });
+        await removeModulesFromIssuePromise;
       },
     }),
     [
@@ -356,9 +358,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       addModulesToIssue,
       removeIssueFromModule,
       removeModulesFromIssue,
+<<<<<<< HEAD
       setToastAlert,
       captureIssueEvent,
       router.asPath,
+=======
+>>>>>>> 921b9078f1e18a034934f2ddc89e736fc38cffe4
     ]
   );
 
