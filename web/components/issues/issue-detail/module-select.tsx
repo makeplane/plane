@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
 import xor from "lodash/xor";
+import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail } from "hooks/store";
 // components
 import { ModuleDropdown } from "components/dropdowns";
 // ui
-import { Spinner } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
+import { useIssueDetail } from "hooks/store";
 // types
 import type { TIssueOperations } from "./root";
 
@@ -58,14 +57,14 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
   };
 
   return (
-    <div className={cn(`flex items-center gap-1 h-full`, className)}>
+    <div className={cn(`flex h-full items-center gap-1`, className)}>
       <ModuleDropdown
         projectId={projectId}
         value={issue?.module_ids ?? []}
         onChange={handleIssueModuleChange}
         placeholder="No module"
         disabled={disableSelect}
-        className="w-full h-full group"
+        className="group h-full w-full"
         buttonContainerClassName="w-full"
         buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
         buttonVariant="transparent-with-text"

@@ -1,19 +1,19 @@
 import { useEffect } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { History } from "lucide-react";
 // hooks
-import { useDashboard, useUser } from "hooks/store";
 // components
+import { Avatar, getButtonStyling } from "@plane/ui";
 import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
-import { Avatar, getButtonStyling } from "@plane/ui";
 // helpers
+import { cn } from "helpers/common.helper";
 import { calculateTimeAgo } from "helpers/date-time.helper";
+import { useDashboard, useUser } from "hooks/store";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
-import { cn } from "helpers/common.helper";
 
 const WIDGET_KEY = "recent_activity";
 
@@ -36,12 +36,12 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
-      <Link href={redirectionLink} className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline">
+    <div className="min-h-96 w-full rounded-xl border-[0.5px] border-custom-border-200 bg-custom-background-100 py-6 duration-300 hover:shadow-custom-shadow-4xl">
+      <Link href={redirectionLink} className="mx-7 text-lg font-semibold text-custom-text-300 hover:underline">
         Your issue activities
       </Link>
       {widgetStats.length > 0 ? (
-        <div className="space-y-6 mt-4 mx-7">
+        <div className="mx-7 mt-4 space-y-6">
           {widgetStats.map((activity) => (
             <div key={activity.id} className="flex gap-5">
               <div className="flex-shrink-0">
@@ -49,7 +49,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
                   activity.new_value === "restore" ? (
                     <History className="h-3.5 w-3.5 text-custom-text-200" />
                   ) : (
-                    <div className="h-6 w-6 flex justify-center">
+                    <div className="flex h-6 w-6 justify-center">
                       <ActivityIcon activity={activity} />
                     </div>
                   )
@@ -89,14 +89,14 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
             href={redirectionLink}
             className={cn(
               getButtonStyling("link-primary", "sm"),
-              "w-min mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
+              "mx-auto w-min px-2 py-1 text-xs hover:bg-custom-primary-100/20"
             )}
           >
             View all
           </Link>
         </div>
       ) : (
-        <div className="h-full grid place-items-center">
+        <div className="grid h-full place-items-center">
           <RecentActivityEmptyState />
         </div>
       )}

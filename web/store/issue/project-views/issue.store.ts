@@ -1,13 +1,13 @@
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
-import set from "lodash/set";
 import pull from "lodash/pull";
+import set from "lodash/set";
+import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
+import { IssueService } from "services/issue/issue.service";
+import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services
-import { IssueService } from "services/issue/issue.service";
 // types
 import { IIssueRootStore } from "../root.store";
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
 
 export interface IProjectViewIssues {
   // observable

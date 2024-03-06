@@ -1,15 +1,15 @@
 import { useState, FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { ChevronDown, XCircle } from "lucide-react";
-// hooks
-import { useMember, useUser } from "hooks/store";
-// components
-import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
+// hooks
+import { useMember, useUser } from "hooks/store";
 
 type Props = {
   invitationId: string;

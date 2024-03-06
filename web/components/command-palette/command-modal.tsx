@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Command } from "cmdk";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { FolderPlus, Search, Settings } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useProject } from "hooks/store";
-// services
-import { WorkspaceService } from "services/workspace.service";
-import { IssueService } from "services/issue";
-// hooks
-import useDebounce from "hooks/use-debounce";
-// components
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import {
   CommandPaletteThemeActions,
   ChangeIssueAssignee,
@@ -24,11 +18,17 @@ import {
   CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
 } from "components/command-palette";
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { useApplication, useEventTracker, useProject } from "hooks/store";
+// services
+import useDebounce from "hooks/use-debounce";
+import { IssueService } from "services/issue";
+import { WorkspaceService } from "services/workspace.service";
+// hooks
+// components
 // types
 import { IWorkspaceSearchResults } from "@plane/types";
 // fetch-keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 // services
 const workspaceService = new WorkspaceService();

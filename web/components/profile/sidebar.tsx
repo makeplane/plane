@@ -1,25 +1,26 @@
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import useSWR from "swr";
-import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+// ui
+import { Disclosure, Transition } from "@headlessui/react";
+// icons
+import { ChevronDown, Pencil } from "lucide-react";
+// plane ui
+import { Loader, Tooltip } from "@plane/ui";
+// fetch-keys
+import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+// helpers
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { useApplication, useUser } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // services
 import { UserService } from "services/user.service";
 // components
 import { ProfileSidebarTime } from "./time";
-// ui
-import { Loader, Tooltip } from "@plane/ui";
-// icons
-import { ChevronDown, Pencil } from "lucide-react";
-// helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { renderEmoji } from "helpers/emoji.helper";
-// fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 
 // services
 const userService = new UserService();
@@ -76,7 +77,7 @@ export const ProfileSidebar = observer(() => {
 
   return (
     <div
-      className={`flex-shrink-0 overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
+      className={`vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 shadow-custom-shadow-sm transition-all md:relative md:w-[300px]`}
       style={themeStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
@@ -106,7 +107,7 @@ export const ProfileSidebar = observer(() => {
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 text-custom-text-100 capitalize">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 capitalize text-custom-text-100">
                   {userProjectsData.user_data.first_name?.[0]}
                 </div>
               )}

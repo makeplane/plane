@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { mutate } from "swr";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
+import { mutate } from "swr";
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
@@ -11,7 +11,9 @@ import { useApplication, useUser, useWorkspace } from "hooks/store";
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "constants/profile";
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useToast from "hooks/use-toast";
 
 const WORKSPACE_ACTION_LINKS = [
   {

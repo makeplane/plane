@@ -1,20 +1,20 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { List, Plus } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
 // helpers
-import { renderEmoji } from "helpers/emoji.helper";
-import { EUserProjectRoles } from "constants/project";
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
-import { TCycleLayout } from "@plane/types";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { CYCLE_VIEW_LAYOUTS } from "constants/cycle";
+import { EUserProjectRoles } from "constants/project";
+import { renderEmoji } from "helpers/emoji.helper";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
+import { TCycleLayout } from "@plane/types";
 
 export const CyclesHeader: FC = observer(() => {
   // router
@@ -73,7 +73,9 @@ export const CyclesHeader: FC = observer(() => {
               />
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={<BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />}
+                link={
+                  <BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
           </div>
@@ -110,6 +112,7 @@ export const CyclesHeader: FC = observer(() => {
         >
           {CYCLE_VIEW_LAYOUTS.map((layout) => (
             <CustomMenu.MenuItem
+              key={layout.key}
               onClick={() => {
                 // handleLayoutChange(ISSUE_LAYOUTS[index].key);
                 handleCurrentLayout(layout.key as TCycleLayout);

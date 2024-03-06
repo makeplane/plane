@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 import Link from "next/link";
-// hooks
-import { useProject } from "hooks/store";
-// components
-import { DeleteProjectModal, JoinProjectModal } from "components/project";
+import { useRouter } from "next/router";
+import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
+// components
+import { DeleteProjectModal, JoinProjectModal, EUserProjectRoles } from "components/project";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
+// hooks
+import { useProject } from "hooks/store";
 // types
 import type { IProject } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 export type ProjectCardProps = {
   project: IProject;

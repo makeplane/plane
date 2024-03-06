@@ -2,17 +2,16 @@ import { FC, useMemo } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
-import { InboxIssueMainContent } from "./main-content";
-import { InboxIssueDetailsSidebar } from "./sidebar";
-// hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "../root";
+import { InboxIssueMainContent } from "./main-content";
+import { InboxIssueDetailsSidebar } from "./sidebar";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 export type TInboxIssueDetailRoot = {
   workspaceSlug: string;
@@ -48,12 +47,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
           console.error("Error fetching the parent issue");
         }
       },
-      update: async (
-        workspaceSlug: string,
-        projectId: string,
-        issueId: string,
-        data: Partial<TIssue>,
-      ) => {
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           await updateInboxIssue(workspaceSlug, projectId, inboxId, issueId, data);
           captureIssueEvent({

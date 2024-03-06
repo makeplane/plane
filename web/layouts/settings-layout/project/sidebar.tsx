@@ -1,12 +1,12 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // ui
 import { Loader } from "@plane/ui";
 // hooks
+import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
 import { useUser } from "hooks/store";
 // constants
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
 
 export const ProjectSettingsSidebar = () => {
   const router = useRouter();
