@@ -66,7 +66,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
               <CreateWorkspaceForm
                 onSubmit={onSubmit}
                 defaultValues={defaultValues}
-                setDefaultValues={setDefaultValues}
+                setDefaultValues={setDefaultValues as any}
               />
             </div>
           </div>

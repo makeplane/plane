@@ -11,7 +11,7 @@ import OverdueIssuesLight from "public/empty-state/dashboard/light/overdue-issue
 import UpcomingIssuesLight from "public/empty-state/dashboard/light/upcoming-issues.svg";
 // types
 import { TIssuesListTypes, TStateGroups } from "@plane/types";
-import { Props } from "components/icons/types";
+
 // constants
 import { EUserWorkspaceRoles } from "./workspace";
 // icons
