@@ -13,11 +13,12 @@ import {
   useWorkspace,
   useIssueDetail,
 } from "hooks/store";
-import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { TIssue } from "@plane/types";
 // constants
@@ -89,8 +90,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
   // router
   const router = useRouter();
-  // toast alert
-  const { setToastAlert } = useToast();
   // local storage
   const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
     Record<string, Partial<TIssue>>
@@ -186,9 +185,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         await addIssueToCycle(response, payload.cycle_id);
       if (payload.module_ids && payload.module_ids.length > 0 && storeType !== EIssuesStoreType.MODULE)
         await addIssueToModule(response, payload.module_ids);
-
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Issue created successfully.",
       });
@@ -200,8 +198,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       !createMore && handleClose();
       return response;
     } catch (error) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });
@@ -221,8 +219,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         ? await draftIssues.updateIssue(workspaceSlug, payload.project_id, data.id, payload)
         : await currentIssueStore.updateIssue(workspaceSlug, payload.project_id, data.id, payload, viewId);
 
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Issue updated successfully.",
       });
@@ -233,8 +231,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       });
       handleClose();
     } catch (error) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Issue could not be created. Please try again.",
       });

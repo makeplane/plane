@@ -1,13 +1,12 @@
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, Input, ToggleSwitch } from "@plane/ui";
+import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { Eye, EyeOff } from "lucide-react";
 // types
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
 
 export interface IInstanceEmailForm {
   config: IFormattedInstanceConfiguration;
@@ -29,8 +28,6 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { instance: instanceStore } = useApplication();
-  // toast
-  const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -55,9 +52,9 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Email Settings updated successfully",
         })
       )

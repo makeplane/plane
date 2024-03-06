@@ -28,7 +28,7 @@ const ProfilePreferencesThemePage: NextPageWithLayout = () => {
   return (
     <>
       <PageHead title="Profile - Email Preference" />
-      <div className="mx-auto mt-8 h-full w-full overflow-y-auto px-6 lg:px-20 pb-8">
+      <div className="mx-auto mt-8 h-full w-full px-6 lg:px-20 pb-8">
         <EmailNotificationForm data={data} />
       </div>
     </>

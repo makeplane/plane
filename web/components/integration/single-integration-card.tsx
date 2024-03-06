@@ -8,10 +8,9 @@ import useSWR, { mutate } from "swr";
 import { IntegrationService } from "services/integrations";
 // hooks
 import { useApplication, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { Button, Loader, Tooltip } from "@plane/ui";
+import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
@@ -54,8 +53,6 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const isUserAdmin = currentWorkspaceRole === 20;
 
@@ -87,8 +84,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
         );
         setDeletingIntegration(false);
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Deleted successfully!",
           message: `${integration.title} integration deleted successfully.`,
         });
@@ -96,8 +93,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
       .catch(() => {
         setDeletingIntegration(false);
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: `${integration.title} integration could not be deleted. Please try again.`,
         });

@@ -8,7 +8,6 @@ import { Controller, useForm } from "react-hook-form";
 
 import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import useToast from "hooks/use-toast";
 // services
 import { FileService } from "services/file.service";
 // layouts
@@ -18,7 +17,7 @@ import { GptAssistantPopover, PageHead } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Spinner } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // assets
 // helpers
 // types
@@ -53,8 +52,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { handleSubmit, setValue, watch, getValues, control, reset } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
@@ -148,10 +145,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => {
-    setToastAlert({
+    setToast({
       title,
       message,
-      type,
+      type: type as TOAST_TYPE,
     });
   };
 

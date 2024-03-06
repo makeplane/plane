@@ -7,7 +7,6 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { Sparkle } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
-import useToast from "hooks/use-toast";
 // services
 import { FileService } from "services/file.service";
 import { AIService } from "services/ai.service";
@@ -15,7 +14,7 @@ import { AIService } from "services/ai.service";
 import { PriorityDropdown } from "components/dropdowns";
 import { GptAssistantPopover } from "components/core";
 // ui
-import { Button, Input, ToggleSwitch } from "@plane/ui";
+import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 // constants
@@ -46,9 +45,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // refs
   const editorRef = useRef<any>(null);
-  // toast alert
-  const { setToastAlert } = useToast();
-  const { mentionHighlights, mentionSuggestions } = useMention();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query as {
@@ -56,6 +52,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     projectId: string;
     inboxId: string;
   };
+  // hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
 
@@ -138,8 +136,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
       })
       .then((res) => {
         if (res.response === "")
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "Issue title isn't informative enough to generate the description. Please try with a different title.",
@@ -150,14 +148,14 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
         const error = err?.data?.error;
 
         if (err.status === 429)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });

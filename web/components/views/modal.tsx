@@ -3,7 +3,8 @@ import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useProjectView } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ProjectViewForm } from "components/views";
 // types
@@ -22,8 +23,6 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
   // store hooks
   const { createView, updateView } = useProjectView();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -33,15 +32,15 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     await createView(workspaceSlug, projectId, payload)
       .then(() => {
         handleClose();
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View created successfully.",
         });
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         })
@@ -52,8 +51,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     await updateView(workspaceSlug, projectId, data?.id as string, payload)
       .then(() => handleClose())
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Something went wrong. Please try again.",
         })
