@@ -129,7 +129,7 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
+          <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
@@ -157,7 +157,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
-            <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
+            <div className="mt-2 h-full space-y-1.5 overflow-y-auto vertical-scrollbar scrollbar-sm">
               {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}

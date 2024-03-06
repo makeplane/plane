@@ -76,7 +76,7 @@ export const ProfileSidebar = observer(() => {
 
   return (
     <div
-      className={`flex-shrink-0 overflow-hidden overflow-y-auto shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
+      className={`flex-shrink-0 overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md shadow-custom-shadow-sm border-l border-custom-border-100 bg-custom-sidebar-background-100 h-full z-[5] fixed md:relative transition-all w-full md:w-[300px]`}
       style={themeStore.profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
@@ -162,12 +162,13 @@ export const ProfileSidebar = observer(() => {
                             {project.assigned_issues > 0 && (
                               <Tooltip tooltipContent="Completion percentage" position="left">
                                 <div
-                                  className={`rounded px-1 py-0.5 text-xs font-medium ${completedIssuePercentage <= 35
-                                    ? "bg-red-500/10 text-red-500"
-                                    : completedIssuePercentage <= 70
+                                  className={`rounded px-1 py-0.5 text-xs font-medium ${
+                                    completedIssuePercentage <= 35
+                                      ? "bg-red-500/10 text-red-500"
+                                      : completedIssuePercentage <= 70
                                       ? "bg-yellow-500/10 text-yellow-500"
                                       : "bg-green-500/10 text-green-500"
-                                    }`}
+                                  }`}
                                 >
                                   {completedIssuePercentage}%
                                 </div>

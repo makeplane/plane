@@ -94,7 +94,7 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
                   </Tab>
                 ))}
               </Tab.List>
-              <Tab.Panels className="flex-1 overflow-y-auto">
+              <Tab.Panels className="flex-1 overflow-y-auto vertical-scrollbar scrollbar-sm">
                 <Tab.Panel>
                   {recentEmojis.length > 0 && (
                     <div className="py-2">
