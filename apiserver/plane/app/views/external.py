@@ -18,7 +18,6 @@ from plane.app.serializers import (
     ProjectLiteSerializer,
     WorkspaceLiteSerializer,
 )
-from plane.utils.integrations.github import get_release_notes
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -83,12 +82,6 @@ class GPTIntegrationEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-
-
-class ReleaseNotesEndpoint(BaseAPIView):
-    def get(self, request):
-        release_notes = get_release_notes()
-        return Response(release_notes, status=status.HTTP_200_OK)
 
 
 class UnsplashEndpoint(BaseAPIView):
