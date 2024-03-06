@@ -4,11 +4,10 @@ import { observer } from "mobx-react-lite";
 import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // ui
-import { RelatedIcon, Tooltip } from "@plane/ui";
+import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
@@ -60,15 +59,13 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
     toggleRelationModal,
   } = useIssueDetail();
   const { issueMap } = useIssues();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const relationIssueIds = getRelationByIssueIdRelationType(issueId, relationKey);
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });

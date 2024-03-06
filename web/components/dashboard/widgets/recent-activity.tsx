@@ -8,11 +8,12 @@ import { useDashboard, useUser } from "hooks/store";
 import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "components/dashboard/widgets";
 // ui
-import { Avatar } from "@plane/ui";
+import { Avatar, getButtonStyling } from "@plane/ui";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
+import { cn } from "helpers/common.helper";
 
 const WIDGET_KEY = "recent_activity";
 
@@ -23,6 +24,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   // derived values
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   const widgetStats = getWidgetStats<TRecentActivityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
+  const redirectionLink = `/${workspaceSlug}/profile/${currentUser?.id}/activity`;
 
   useEffect(() => {
     fetchWidgetStats(workspaceSlug, dashboardId, {
@@ -35,7 +37,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
 
   return (
     <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 min-h-96">
-      <Link href="/profile/activity" className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline">
+      <Link href={redirectionLink} className="text-lg font-semibold text-custom-text-300 mx-7 hover:underline">
         Your issue activities
       </Link>
       {widgetStats.length > 0 ? (
@@ -83,6 +85,15 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
               </div>
             </div>
           ))}
+          <Link
+            href={redirectionLink}
+            className={cn(
+              getButtonStyling("link-primary", "sm"),
+              "w-min mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
+            )}
+          >
+            View all
+          </Link>
         </div>
       ) : (
         <div className="h-full grid place-items-center">

@@ -71,16 +71,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
     async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
-      await issueOperations.update(
-        workspaceSlug,
-        projectId,
-        issueId,
-        {
-          name: formData.name ?? "",
-          description_html: formData.description_html ?? "<p></p>",
-        },
-        false
-      );
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        name: formData.name ?? "",
+        description_html: formData.description_html ?? "<p></p>",
+      });
     },
     [workspaceSlug, projectId, issueId, issueOperations]
   );

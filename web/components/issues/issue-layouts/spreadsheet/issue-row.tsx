@@ -241,9 +241,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           disabled={!!issueDetail?.tempId}
         >
           <div className="w-full overflow-hidden">
-            <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
+            <Tooltip tooltipContent={issueDetail.name}>
               <div
-                className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                className="h-full w-full cursor-pointer truncate px-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
                 tabIndex={-1}
               >
                 {issueDetail.name}

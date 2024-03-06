@@ -4,12 +4,11 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 import { Controller, useForm } from "react-hook-form";
 
 import { MemberSelect } from "components/project";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // fetch-keys
@@ -33,8 +32,6 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
-  // hooks
-  const { setToastAlert } = useToast();
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
@@ -72,9 +69,9 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     })
       .then(() => {
         fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Project updated successfully",
         });
       })
