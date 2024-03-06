@@ -14,7 +14,7 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
-// hooks
+// ui
 import {
   CustomMenu,
   Loader,
@@ -25,17 +25,18 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
-import useToast from "hooks/use-toast";
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 // components
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
 import { DeleteModuleModal } from "components/modules";
-// ui
+// constant
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
+import { MODULE_STATUS } from "constants/module";
+import { EUserProjectRoles } from "constants/project";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { useModule, useUser, useEventTracker } from "hooks/store";
 // hooks
 import { useModule, useUser, useEventTracker } from "hooks/store";
 // types
@@ -333,12 +334,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             {moduleDetails.description}
           </span>
         )}
+
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
             <CalendarClock className="h-4 w-4" />
             <span className="text-base">Date range</span>
           </div>
-          <div className="w-3/5 h-7">
+          <div className="h-7 w-3/5">
             <Controller
               control={control}
               name="start_date"
@@ -382,7 +384,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               control={control}
               name="lead_id"
               render={({ field: { value } }) => (
-                <div className="w-3/5 h-7">
+                <div className="h-7 w-3/5">
                   <MemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
@@ -406,7 +408,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               control={control}
               name="member_ids"
               render={({ field: { value } }) => (
-                <div className="w-3/5 h-7">
+                <div className="h-7 w-3/5">
                   <MemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
@@ -427,7 +429,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="h-7 w-3/5 flex items-center">
+            <div className="flex h-7 w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>

@@ -56,7 +56,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   // store hooks
   const {
     router: { workspaceSlug },

@@ -23,7 +23,6 @@ import {
 // images
 import GithubLogo from "public/services/github.png";
 import { IntegrationService, GithubIntegrationService } from "services/integrations";
-import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // hooks
 // components
 // icons

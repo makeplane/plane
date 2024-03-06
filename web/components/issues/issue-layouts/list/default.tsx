@@ -3,6 +3,8 @@ import { useRef } from "react";
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
+// constants
+import { TCreateModalStoreTypes } from "constants/issue";
 // types
 import {
   GroupByColumnTypes,
@@ -14,7 +16,6 @@ import {
   IGroupByColumn,
 } from "@plane/types";
 import { EIssueActions } from "../types";
-// constants
 import { getGroupByColumns } from "../utils";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 
@@ -65,7 +66,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const label = useLabel();
   const projectState = useProjectState();
   const cycle = useCycle();
-  const _module = useModule();
+  const projectModule = useModule();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -73,7 +74,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     group_by as GroupByColumnTypes,
     project,
     cycle,
-    _module,
+    projectModule,
     label,
     projectState,
     member,
@@ -118,7 +119,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div ref={containerRef} className="relative overflow-auto h-full w-full vertical-scrollbar scrollbar-lg">
+    <div ref={containerRef} className="vertical-scrollbar scrollbar-lg relative h-full w-full overflow-auto">
       {groups &&
         groups.length > 0 &&
         groups.map(

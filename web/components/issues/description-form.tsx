@@ -136,7 +136,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
                   debouncedFormSave();
                 }}
                 required
-                className="min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
+                className="block min-h-min w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
                 hasError={Boolean(errors?.name)}
                 role="textbox"
               />
@@ -173,7 +173,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
                   setIsSubmitting={setIsSubmitting}
                   dragDropEnabled
                   customClassName="min-h-[150px] shadow-sm"
-                  onChange={(description: Object, description_html: string) => {
+                  onChange={(description: any, description_html: string) => {
                     setShowAlert(true);
                     setIsSubmitting("submitting");
                     onChange(description_html);

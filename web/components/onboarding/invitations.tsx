@@ -57,17 +57,18 @@ export const Invitations: React.FC<Props> = (props) => {
   };
 
   const submitInvitations = async () => {
-    if (invitationsRespond.length <= 0) return;
+    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
+
+    if (invitationsRespond.length <= 0 && !invitation?.role) return;
 
     setIsJoiningWorkspaces(true);
-    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async () => {
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          role: getUserRole(invitation?.role!),
+          role: getUserRole(invitation?.role as any),
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",
@@ -83,7 +84,7 @@ export const Invitations: React.FC<Props> = (props) => {
         console.error(error);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          role: getUserRole(invitation?.role!),
+          role: getUserRole(invitation?.role as any),
           project_id: undefined,
           accepted_from: "App",
           state: "FAILED",

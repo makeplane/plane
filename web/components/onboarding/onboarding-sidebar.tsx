@@ -86,8 +86,9 @@ type Props = {
   watch?: UseFormWatch<IWorkspace>;
   userFullName?: string;
 };
-var timer: number = 0;
-var lastWorkspaceName: string = "";
+
+let timer: number = 0;
+let lastWorkspaceName: string = "";
 
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;

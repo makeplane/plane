@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 // components
-import { Spinner } from "@plane/ui";
 import { CycleDropdown } from "components/dropdowns";
 // ui
 // helpers
@@ -41,14 +40,14 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
   };
 
   return (
-    <div className={cn("flex items-center gap-1 h-full", className)}>
+    <div className={cn("flex h-full items-center gap-1", className)}>
       <CycleDropdown
         value={issue?.cycle_id ?? null}
         onChange={handleIssueCycleChange}
         projectId={projectId}
         disabled={disableSelect}
         buttonVariant="transparent-with-text"
-        className="w-full group"
+        className="group w-full"
         buttonContainerClassName="w-full text-left"
         buttonClassName={`text-sm justify-between  ${issue?.cycle_id ? "" : "text-custom-text-400"}`}
         placeholder="No cycle"

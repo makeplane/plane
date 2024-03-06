@@ -4,15 +4,14 @@ import { useRouter } from "next/router";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
-// hooks
-import { Button, Input } from "@plane/ui";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
-import { useLabel } from "hooks/store";
 // ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
+// hooks
+import { useLabel } from "hooks/store";
 // types
 import { IIssueLabel } from "@plane/types";
-// fetch-keys
 
 type Props = {
   labelForm: boolean;

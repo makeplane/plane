@@ -8,13 +8,11 @@ import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react"
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // components
-import useToast from "hooks/use-toast";
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { STATE_GROUPS } from "constants/state";
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { useEventTracker, useIssues, useProjectState, useUser } from "hooks/store";
 import { useEventTracker, useIssues, useProjectState, useUser } from "hooks/store";
 // components
 // helpers

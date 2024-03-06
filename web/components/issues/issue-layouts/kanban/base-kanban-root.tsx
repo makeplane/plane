@@ -3,7 +3,6 @@ import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } 
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { Spinner } from "@plane/ui";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { DeleteIssueModal } from "components/issues";
 import { ISSUE_DELETED } from "constants/event-tracker";
@@ -260,7 +259,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       )}
 
       <div
-        className="flex relative h-full w-full overflow-auto bg-custom-background-90 vertical-scrollbar horizontal-scrollbar scrollbar-lg"
+        className="vertical-scrollbar horizontal-scrollbar scrollbar-lg relative flex h-full w-full overflow-auto bg-custom-background-90"
         ref={scrollableContainerRef}
       >
         <div className="relative h-max w-max min-w-full bg-custom-background-90 px-2">
@@ -288,7 +287,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               </Droppable>
             </div>
 
-            <div className="w-max h-max">
+            <div className="h-max w-max">
               <KanBanView
                 issuesMap={issueMap}
                 issueIds={issueIds}

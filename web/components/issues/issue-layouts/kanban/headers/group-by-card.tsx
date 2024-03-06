@@ -1,16 +1,17 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+// lucide icons
+import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import useToast from "hooks/use-toast";
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal } from "components/issues";
-// lucide icons
+// constants
+import { TCreateModalStoreTypes } from "constants/issue";
 // hooks
 import { useEventTracker } from "hooks/store";
-// mobx
 // types
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
 
@@ -104,12 +105,12 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         </div>
 
         <div
-          className={`relative overflow-hidden flex items-center gap-1 ${
+          className={`relative flex items-center gap-1 overflow-hidden ${
             verticalAlignPosition ? `flex-col` : `w-full flex-row`
           }`}
         >
           <div
-            className={`inline-block truncate line-clamp-1 font-medium text-custom-text-100 overflow-hidden ${
+            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-custom-text-100 ${
               verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
             }`}
           >

@@ -1,26 +1,24 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-// hooks
+// icons
 import { Lock } from "lucide-react";
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+// ui
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
-import { ImagePickerPopover } from "components/core";
+// components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
-import EmojiIconPicker from "components/emoji-icon-picker";
+// constants
 import { PROJECT_UPDATED } from "constants/event-tracker";
 import { NETWORK_CHOICES } from "constants/project";
+// helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
+// hooks
 import { useEventTracker, useProject } from "hooks/store";
-// components
-// icons
-// types
-import { ProjectService } from "services/project";
-import { IProject, IWorkspace } from "@plane/types";
-// helpers
-// constants
 // services
+import { ProjectService } from "services/project";
+// types
+import { IProject, IWorkspace } from "@plane/types";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;

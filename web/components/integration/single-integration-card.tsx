@@ -14,7 +14,6 @@ import useIntegrationPopup from "hooks/use-integration-popup";
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
 import { IntegrationService } from "services/integrations";
-import { IntegrationService } from "services/integrations";
 // types
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // fetch-keys

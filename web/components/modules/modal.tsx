@@ -5,8 +5,6 @@ import { Dialog, Transition } from "@headlessui/react";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ModuleForm } from "components/modules";
-// constants
-import { ModuleForm } from "components/modules";
 import { MODULE_CREATED, MODULE_UPDATED } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useModule, useProject } from "hooks/store";

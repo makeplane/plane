@@ -97,7 +97,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 customClassName="p-2"
                 editorContentCustomClassNames="min-h-[35px]"
                 debouncedUpdatesEnabled={false}
-                onChange={(comment_json: Object, comment_html: string) => {
+                onChange={(comment_json: any, comment_html: string) => {
                   onChange(comment_html);
                 }}
                 mentionSuggestions={mentionSuggestions}

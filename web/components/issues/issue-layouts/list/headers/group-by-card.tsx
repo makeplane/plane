@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
@@ -11,7 +10,6 @@ import { CreateUpdateIssueModal } from "components/issues";
 // ui
 // mobx
 // hooks
-import { TCreateModalStoreTypes } from "constants/issue";
 import { TCreateModalStoreTypes } from "constants/issue";
 import { useEventTracker } from "hooks/store";
 // types

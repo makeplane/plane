@@ -3,11 +3,11 @@ import { useForm, Controller } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // ui
 import { Input, Button, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { checkEmailValidity } from "helpers/string.helper";
 // services
 import { AuthService } from "services/auth.service";
 const authService = new AuthService();
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
 
 interface InstanceSetupEmailFormValues {
   email: string;

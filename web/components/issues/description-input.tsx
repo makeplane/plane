@@ -77,7 +77,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
       initialValue={initialValue}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
-      onChange={(description: Object, description_html: string) => {
+      onChange={(description: any, description_html: string) => {
         setIsSubmitting("submitting");
         setDescriptionHTML(description_html === "" ? "<p></p>" : description_html);
       }}

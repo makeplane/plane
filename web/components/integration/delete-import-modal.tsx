@@ -8,9 +8,7 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { AlertTriangle } from "lucide-react";
-import { Button, Input } from "@plane/ui";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 import { IntegrationService } from "services/integrations/integration.service";
 // ui

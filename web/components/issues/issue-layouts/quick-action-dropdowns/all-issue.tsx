@@ -5,14 +5,12 @@ import { useRouter } from "next/router";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // hooks
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // ui
 // components
 import { EIssuesStoreType } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { useEventTracker, useProjectState } from "hooks/store";
 import { useEventTracker, useProjectState } from "hooks/store";
 // components
 // helpers

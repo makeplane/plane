@@ -4,9 +4,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 // hooks
 import { PlusIcon } from "lucide-react";
-import { PlusIcon } from "lucide-react";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import useToast from "hooks/use-toast";
 import { ISSUE_CREATED } from "constants/event-tracker";
 import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";

@@ -1,6 +1,5 @@
 import { FC, useState } from "react";
 import isNil from "lodash/isNil";
-import isNil from "lodash/isNil";
 import { observer } from "mobx-react-lite";
 import { Bell, BellOff } from "lucide-react";
 // UI

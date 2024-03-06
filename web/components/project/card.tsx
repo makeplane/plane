@@ -3,17 +3,15 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
-// hooks
-import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
+// ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
-import { DeleteProjectModal, JoinProjectModal } from "components/project";
-import { EUserProjectRoles } from "constants/project";
+// components
+import { DeleteProjectModal, JoinProjectModal, EUserProjectRoles } from "components/project";
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
+// hooks
 import { useProject } from "hooks/store";
-// components
-// ui
-// helpers
 // types
 import type { IProject } from "@plane/types";
 // constants

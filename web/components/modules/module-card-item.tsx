@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // hooks
-import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
 import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";

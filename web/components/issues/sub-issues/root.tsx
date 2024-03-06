@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
 // hooks
-import { CustomMenu } from "@plane/ui";
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";

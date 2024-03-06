@@ -6,7 +6,6 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { Sparkle } from "lucide-react";
 // hooks
-import { Button, Input, ToggleSwitch } from "@plane/ui";
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "components/core";
 import { PriorityDropdown } from "components/dropdowns";

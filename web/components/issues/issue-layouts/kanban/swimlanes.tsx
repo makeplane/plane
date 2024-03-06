@@ -2,7 +2,6 @@ import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { TCreateModalStoreTypes } from "constants/issue";
-import { useLabel, useMember, useProject, useProjectState } from "hooks/store";
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 import {
   GroupByColumnTypes,
@@ -48,7 +47,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   kanbanFilters,
   handleKanbanFilters,
 }) => (
-  <div className="relative flex gap-2 h-max min-h-full w-full items-center">
+  <div className="relative flex h-max min-h-full w-full items-center gap-2">
     {list &&
       list.length > 0 &&
       list.map((_list: IGroupByColumn) => (
@@ -228,14 +227,14 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
   const project = useProject();
   const label = useLabel();
   const cycle = useCycle();
-  const _module = useModule();
+  const projectModule = useModule();
   const projectState = useProjectState();
 
   const groupByList = getGroupByColumns(
     group_by as GroupByColumnTypes,
     project,
     cycle,
-    _module,
+    projectModule,
     label,
     projectState,
     member
@@ -244,7 +243,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     sub_group_by as GroupByColumnTypes,
     project,
     cycle,
-    _module,
+    projectModule,
     label,
     projectState,
     member

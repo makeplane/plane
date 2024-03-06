@@ -13,23 +13,17 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
-// helpers
-import useToast from "hooks/use-toast";
+// components
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
 import { STATE_GROUPS } from "constants/state";
-import { cn } from "helpers/common.helper";
+// helpers
 import { cn } from "helpers/common.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // store hooks
-import { copyUrlToClipboard } from "helpers/string.helper";
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // helpers
 // components
-// hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
-// store hooks
 // helpers
-// components
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 

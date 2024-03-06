@@ -1,16 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// icons
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 // ui
 import { DiceIcon, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { EUserProjectRoles } from "constants/project";
 // hooks
 import { useEventTracker, useProject, useUser } from "hooks/store";
 // types
 import { IProject } from "@plane/types";
-
-type Props = {};
 
 const PROJECT_FEATURES_LIST = [
   {
@@ -45,7 +44,7 @@ const PROJECT_FEATURES_LIST = [
   },
 ];
 
-export const ProjectFeaturesList: FC<Props> = observer(() => {
+export const ProjectFeaturesList: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
