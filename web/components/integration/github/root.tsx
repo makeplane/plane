@@ -30,6 +30,7 @@ import { IntegrationService, GithubIntegrationService } from "services/integrati
 // types
 import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // fetch-keys
+import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 export type TIntegrationSteps = "import-configure" | "import-data" | "repo-details" | "import-users" | "import-confirm";
 export interface IIntegrationData {

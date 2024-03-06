@@ -240,7 +240,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               <ProjectLogo logo={value} className="text-xl" />
                             </span>
                           }
-                          onChange={(val) => {
+                          onChange={(val: any) => {
                             let logoValue = {};
 
                             if (val.type === "emoji")

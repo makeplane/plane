@@ -15,6 +15,8 @@ import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";
+import { useIssues, useUser } from "hooks/store";
+import { EUserProjectRoles } from "constants/project";
 
 interface IBaseCalendarRoot {
   issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;

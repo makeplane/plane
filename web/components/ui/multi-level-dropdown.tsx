@@ -71,7 +71,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                   <div className="relative p-1" key={option.id}>
                     <Menu.Item
                       as="button"
-                      onClick={(e: unknown) => {
+                      onClick={(e: any) => {
                         if (option.hasChildren) {
                           e?.stopPropagation();
                           e?.preventDefault();
@@ -108,12 +108,12 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                           height === "sm"
                             ? "max-h-28"
                             : height === "md"
-                              ? "max-h-44"
-                              : height === "rg"
-                                ? "max-h-56"
-                                : height === "lg"
-                                  ? "max-h-80"
-                                  : ""
+                            ? "max-h-44"
+                            : height === "rg"
+                            ? "max-h-56"
+                            : height === "lg"
+                            ? "max-h-80"
+                            : ""
                         }`}
                       >
                         {option.children ? (

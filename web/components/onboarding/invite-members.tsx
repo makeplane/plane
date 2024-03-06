@@ -368,8 +368,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
       >
         <p className="text-base font-semibold text-onboarding-text-400">Members</p>
 
-        {Array.from({ length: 4 }).map((i) => (
-          <div key={i} className="mt-6 flex items-center gap-2">
+        {Array.from({ length: 4 }).map((i, index) => (
+          <div key={index} className="mt-6 flex items-center gap-2">
             <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
               <Image src={resolvedTheme === "dark" ? userDark : userLight} alt="user" className="object-cover" />
             </div>

@@ -8,7 +8,7 @@ import { DeleteIssueModal } from "components/issues";
 import { ISSUE_DELETED } from "constants/event-tracker";
 import { EIssueFilterType, TCreateModalStoreTypes } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
-import { useEventTracker, useUser } from "hooks/store";
+import { useEventTracker, useIssues, useUser } from "hooks/store";
 // ui
 // types
 import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
