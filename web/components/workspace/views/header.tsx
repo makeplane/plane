@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+// icons
 import { Plus } from "lucide-react";
-// store hooks
-import { useEventTracker, useGlobalView, useUser } from "hooks/store";
 // components
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // constants
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
 import { GLOBAL_VIEW_OPENED } from "constants/event-tracker";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+// store hooks
+import { useEventTracker, useGlobalView, useUser } from "hooks/store";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -24,9 +25,8 @@ const ViewTab = observer((props: { viewId: string }) => {
   if (!view) return null;
 
   return (
-    <Link key={viewId} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
+    <Link key={viewId} id={`global-view-${viewId}`} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
       <span
-        id={`global-view-${viewId}`}
         className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
           viewId === globalViewId
             ? "border-custom-primary-100 text-custom-primary-100"
@@ -42,6 +42,7 @@ const ViewTab = observer((props: { viewId: string }) => {
 export const GlobalViewsHeader: React.FC = observer(() => {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   // router
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
@@ -54,19 +55,22 @@ export const GlobalViewsHeader: React.FC = observer(() => {
 
   // bring the active view to the centre of the header
   useEffect(() => {
-    if (!globalViewId) return;
-
-    captureEvent(GLOBAL_VIEW_OPENED, {
-      view_id: globalViewId,
-      view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
-        ? "Default"
-        : "Custom",
-    });
-
-    const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
-
-    if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
-  }, [globalViewId]);
+    if (globalViewId && currentWorkspaceViews) {
+      captureEvent(GLOBAL_VIEW_OPENED, {
+        view_id: globalViewId,
+        view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
+          ? "Default"
+          : "Custom",
+      });
+      const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
+      if (activeTabElement && containerRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const activeTabRect = activeTabElement.getBoundingClientRect();
+        const diff = containerRect.right - activeTabRect.right;
+        activeTabElement.scrollIntoView({ behavior: "smooth", inline: diff > 500 ? "center" : "nearest" });
+      }
+    }
+  }, [globalViewId, currentWorkspaceViews, containerRef, captureEvent]);
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -74,9 +78,12 @@ export const GlobalViewsHeader: React.FC = observer(() => {
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div className="group relative flex border-b border-custom-border-200">
-        <div className="flex w-full items-center overflow-x-auto px-4">
+        <div
+          ref={containerRef}
+          className="flex w-full items-center overflow-x-auto px-4 horizontal-scrollbar scrollbar-sm"
+        >
           {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
-            <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
+            <Link key={tab.key} id={`global-view-${tab.key}`} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
               <span
                 className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
                   tab.key === globalViewId
@@ -89,9 +96,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
             </Link>
           ))}
 
-          {currentWorkspaceViews?.map((viewId) => (
-            <ViewTab key={viewId} viewId={viewId} />
-          ))}
+          {currentWorkspaceViews?.map((viewId) => <ViewTab key={viewId} viewId={viewId} />)}
         </div>
 
         {isAuthorizedUser && (

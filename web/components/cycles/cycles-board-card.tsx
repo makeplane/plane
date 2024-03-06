@@ -1,22 +1,32 @@
 import { FC, MouseEvent, useState } from "react";
-import { useRouter } from "next/router";
+import { observer } from "mobx-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
-import { useEventTracker, useCycle, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
+import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
+import {
+  Avatar,
+  AvatarGroup,
+  CustomMenu,
+  Tooltip,
+  LayersIcon,
+  CycleGroupIcon,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+} from "@plane/ui";
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
-import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } from "@plane/ui";
 // icons
-import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
+import { CYCLE_STATUS } from "constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // constants
-import { CYCLE_STATUS } from "constants/cycle";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 //.types
 import { TCycleGroups } from "@plane/types";
 
@@ -26,7 +36,7 @@ export interface ICyclesBoardCard {
   cycleId: string;
 }
 
-export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
+export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -39,8 +49,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
-  // toast alert
-  const { setToastAlert } = useToast();
+  const { getUserDetails } = useMember();
   // computed
   const cycleDetails = getCycleById(cycleId);
 
@@ -69,8 +78,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
@@ -79,8 +88,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Cycle link copied to clipboard.",
       });
@@ -91,42 +100,56 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
+      () => {
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "Grid layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
-        captureEvent(CYCLE_UNFAVORITED, {
-          cycle_id: cycleId,
-          element: "Grid layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      cycleId
+    ).then(() => {
+      captureEvent(CYCLE_UNFAVORITED, {
+        cycle_id: cycleId,
+        element: "Grid layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
+    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
@@ -211,13 +234,14 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
-              {cycleDetails.assignees.length > 0 && (
-                <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
+              {cycleDetails.assignee_ids.length > 0 && (
+                <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
-                      {cycleDetails.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                      ))}
+                      {cycleDetails.assignee_ids.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   </div>
                 </Tooltip>
@@ -295,4 +319,4 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       </Link>
     </div>
   );
-};
+});

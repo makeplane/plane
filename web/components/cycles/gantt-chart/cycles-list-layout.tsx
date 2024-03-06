@@ -1,15 +1,15 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { CycleGanttBlock } from "components/cycles";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
+import { EUserProjectRoles } from "constants/project";
 import { useCycle, useUser } from "hooks/store";
 // components
-import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
-import { CycleGanttBlock } from "components/cycles";
 // types
 import { ICycle } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string;
@@ -33,7 +33,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await updateCycleDetails(workspaceSlug.toString(), cycle.project, cycle.id, payload);
+    await updateCycleDetails(workspaceSlug.toString(), cycle.project_id, cycle.id, payload);
   };
 
   const blockFormat = (blocks: (ICycle | null)[]) => {
@@ -63,7 +63,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
         blocks={cycleIds ? blockFormat(cycleIds.map((c) => getCycleById(c))) : null}
         blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
         sidebarToRender={(props) => <CycleGanttSidebar {...props} />}
-        blockToRender={(data: ICycle) => <CycleGanttBlock data={data} />}
+        blockToRender={(data: ICycle) => <CycleGanttBlock cycleId={data.id} />}
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}

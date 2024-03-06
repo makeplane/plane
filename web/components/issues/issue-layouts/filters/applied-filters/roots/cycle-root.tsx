@@ -1,12 +1,12 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { AppliedFiltersList, SaveFilterView } from "components/issues";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { useIssues, useLabel, useProjectState } from "hooks/store";
 // components
-import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types
 import { IIssueFilterOptions } from "@plane/types";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 
 export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -36,22 +36,34 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
     if (!value) {
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug,
+        projectId,
+        EIssueFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        cycleId
+      );
       return;
     }
 
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug,
+      projectId,
+      EIssueFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      cycleId
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !cycleId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;

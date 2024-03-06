@@ -1,16 +1,16 @@
 import { FC, useMemo } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { ArchivedIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
-import { ArchivedIssueQuickActions } from "components/issues";
 // types
 import { TIssue } from "@plane/types";
 // constants
-import { BaseListRoot } from "../base-list-root";
 import { EIssueActions } from "../../types";
-import { EIssuesStoreType } from "constants/issue";
+import { BaseListRoot } from "../base-list-root";
 
 export const ArchivedIssueListLayout: FC = observer(() => {
   const router = useRouter();
@@ -23,6 +23,11 @@ export const ArchivedIssueListLayout: FC = observer(() => {
         if (!workspaceSlug || !projectId) return;
 
         await issues.removeIssue(workspaceSlug, projectId, issue.id);
+      },
+      [EIssueActions.RESTORE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !projectId) return;
+
+        await issues.restoreIssue(workspaceSlug, projectId, issue.id);
       },
     }),
     [issues, workspaceSlug, projectId]

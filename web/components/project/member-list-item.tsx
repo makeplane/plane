@@ -1,20 +1,19 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { ConfirmProjectMemberRemove } from "components/project";
-// ui
-import { CustomSelect, Tooltip } from "@plane/ui";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
+// ui
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { ConfirmProjectMemberRemove } from "components/project";
 // constants
-import { ROLE } from "constants/workspace";
-import { EUserProjectRoles } from "constants/project";
 import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
+import { ROLE } from "constants/workspace";
+// hooks
+import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
 
 type Props = {
   userId: string;
@@ -37,8 +36,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
@@ -58,8 +55,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           router.push(`/${workspaceSlug}/projects`);
         })
         .catch((err) =>
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error",
             message: err?.error || "Something went wrong. Please try again.",
           })
@@ -67,8 +64,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     } else
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), userDetails.member.id).catch(
         (err) =>
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error",
             message: err?.error || "Something went wrong. Please try again.",
           })
@@ -151,8 +148,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
                 const error = err.error;
                 const errorString = Array.isArray(error) ? error[0] : error;
 
-                setToastAlert({
-                  type: "error",
+                setToast({
+                  type: TOAST_TYPE.ERROR,
                   title: "Error!",
                   message: errorString ?? "An error occurred while updating member role. Please try again.",
                 });

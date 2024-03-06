@@ -2,9 +2,9 @@ import { FC } from "react";
 // mobx
 import { observer } from "mobx-react-lite";
 // ui
+import { Settings } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // icons
-import { Settings } from "lucide-react";
 import { BreadcrumbLink } from "components/common";
 
 export interface IInstanceAdminHeader {

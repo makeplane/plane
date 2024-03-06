@@ -1,21 +1,21 @@
-import { Fragment, ReactNode, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
-import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
+import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
+import { PriorityIcon, Tooltip } from "@plane/ui";
+import { ISSUE_PRIORITIES } from "constants/issue";
+import { cn } from "helpers/common.helper";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
-import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
 import { TIssuePriorities } from "@plane/types";
+import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -58,7 +58,7 @@ const BorderButton = (props: ButtonProps) => {
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "bg-custom-background-80 border-custom-border-300",
+    none: "hover:bg-custom-background-80 border-custom-border-300",
   };
 
   return (
@@ -197,7 +197,7 @@ const TransparentButton = (props: ButtonProps) => {
     high: "text-orange-950",
     medium: "text-yellow-950",
     low: "text-blue-950",
-    none: "",
+    none: "hover:text-custom-text-300",
   };
 
   return (
@@ -272,6 +272,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -305,20 +306,15 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const filteredOptions =
     query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  const onOpen = () => {
-    if (referenceElement) referenceElement.focus();
-  };
-
   const handleClose = () => {
     if (!isOpen) return;
     setIsOpen(false);
-    if (referenceElement) referenceElement.blur();
     onClose && onClose();
   };
 
   const toggleDropdown = () => {
-    if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: TIssuePriorities) => {
@@ -334,13 +330,26 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     toggleDropdown();
   };
 
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
   useOutsideClickDetector(dropdownRef, handleClose);
 
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-    ? BackgroundButton
-    : TransparentButton;
+      ? BackgroundButton
+      : TransparentButton;
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   return (
     <Combobox
@@ -409,11 +418,14 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
+                as="input"
+                ref={inputRef}
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

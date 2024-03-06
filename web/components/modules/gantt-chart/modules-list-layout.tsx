@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
-import { useModule, useProject } from "hooks/store";
 // components
 import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
 import { ModuleGanttBlock } from "components/modules";
+import { useModule, useProject } from "hooks/store";
 // types
 import { IModule } from "@plane/types";
 
@@ -22,7 +22,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await updateModuleDetails(workspaceSlug.toString(), module.project, module.id, payload);
+    await updateModuleDetails(workspaceSlug.toString(), module.project_id, module.id, payload);
   };
 
   const blockFormat = (blocks: string[]) =>
@@ -47,11 +47,12 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
         blocks={projectModuleIds ? blockFormat(projectModuleIds) : null}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        blockToRender={(data: IModule) => <ModuleGanttBlock data={data} />}
+        blockToRender={(data: IModule) => <ModuleGanttBlock moduleId={data.id} />}
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
         enableReorder={isAllowed}
+        enableAddBlock={isAllowed}
         showAllBlocks
       />
     </div>

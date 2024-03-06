@@ -1,24 +1,34 @@
 import { FC, MouseEvent, useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { useEventTracker, useCycle, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
-// ui
-import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar } from "@plane/ui";
-// icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
-// helpers
+import {
+  CustomMenu,
+  Tooltip,
+  CircularProgressIndicator,
+  CycleGroupIcon,
+  AvatarGroup,
+  Avatar,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+} from "@plane/ui";
+import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
+import { CYCLE_STATUS } from "constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+// components
+// ui
+// icons
+// helpers
 // constants
-import { CYCLE_STATUS } from "constants/cycle";
-import { EUserWorkspaceRoles } from "constants/workspace";
 // types
 import { TCycleGroups } from "@plane/types";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -30,7 +40,7 @@ type TCyclesListItem = {
   projectId: string;
 };
 
-export const CyclesListItem: FC<TCyclesListItem> = (props) => {
+export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
@@ -43,8 +53,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
-  // toast alert
-  const { setToastAlert } = useToast();
+  const { getUserDetails } = useMember();
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -52,8 +61,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Cycle link copied to clipboard.",
       });
@@ -64,42 +73,56 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
+      () => {
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "List layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding cycle to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the cycle to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
-        captureEvent(CYCLE_UNFAVORITED, {
-          cycle_id: cycleId,
-          element: "List layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      cycleId
+    ).then(() => {
+      captureEvent(CYCLE_UNFAVORITED, {
+        cycle_id: cycleId,
+        element: "List layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing cycle from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Cycle removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+      },
+    });
   };
 
   const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
@@ -204,7 +227,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                 </Tooltip>
               </div>
 
-              <button onClick={openCycleOverview} className="flex-shrink-0 z-[5] invisible group-hover:visible">
+              <button onClick={openCycleOverview} className="invisible z-[5] flex-shrink-0 group-hover:visible">
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>
@@ -229,13 +252,14 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
             </div>
 
             <div className="relative flex flex-shrink-0 items-center gap-3">
-              <Tooltip tooltipContent={`${cycleDetails.assignees.length} Members`}>
+              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`}>
                 <div className="flex w-10 cursor-default items-center justify-center">
-                  {cycleDetails.assignees.length > 0 ? (
+                  {cycleDetails.assignee_ids?.length > 0 ? (
                     <AvatarGroup showTooltip={false}>
-                      {cycleDetails.assignees.map((assignee) => (
-                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
-                      ))}
+                      {cycleDetails.assignee_ids?.map((assigne_id) => {
+                        const member = getUserDetails(assigne_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   ) : (
                     <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
@@ -289,4 +313,4 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
       </Link>
     </>
   );
-};
+});

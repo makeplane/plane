@@ -152,7 +152,7 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="w-full pb-64 pl-7 pt-5 page-renderer">
+    <div className="w-full pb-64 md:pl-7 pl-3 pt-5 page-renderer">
       {!readonly ? (
         <input
           onChange={(e) => handlePageTitleChange(e.target.value)}

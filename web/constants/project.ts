@@ -11,15 +11,22 @@ export enum EUserProjectRoles {
   ADMIN = 20,
 }
 
-export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: LucideIcon }[] = [
+export const NETWORK_CHOICES: {
+  key: 0 | 2;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+}[] = [
   {
     key: 0,
     label: "Private",
+    description: "Accessible only by invite",
     icon: Lock,
   },
   {
     key: 2,
     label: "Public",
+    description: "Anyone in the workspace can join",
     icon: Globe2,
   },
 ];
@@ -50,11 +57,11 @@ export const MONTHS = [
 export const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export const PROJECT_AUTOMATION_MONTHS = [
-  { label: "1 Month", value: 1 },
-  { label: "3 Months", value: 3 },
-  { label: "6 Months", value: 6 },
-  { label: "9 Months", value: 9 },
-  { label: "12 Months", value: 12 },
+  { label: "1 month", value: 1 },
+  { label: "3 months", value: 3 },
+  { label: "6 months", value: 6 },
+  { label: "9 months", value: 9 },
+  { label: "12 months", value: 12 },
 ];
 
 export const PROJECT_UNSPLASH_COVERS = [

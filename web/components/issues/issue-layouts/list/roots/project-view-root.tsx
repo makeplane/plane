@@ -2,21 +2,22 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // store
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // constants
-import { EIssuesStoreType } from "constants/issue";
 // types
-import { EIssueActions } from "../../types";
 import { TIssue } from "@plane/types";
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
+import { EIssueActions } from "../../types";
 // components
 import { BaseListRoot } from "../base-list-root";
-import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 
 export interface IViewListLayout {
   issueActions: {
     [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
     [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
+    [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
   };
 }
 

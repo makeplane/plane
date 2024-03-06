@@ -1,14 +1,14 @@
 import { useRef } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // types
+import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
+import { useEventTracker } from "hooks/store";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { EIssueActions } from "../types";
 // constants
-import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 // components
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { useEventTracker } from "hooks/store";
-import { observer } from "mobx-react";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -34,11 +34,11 @@ export const IssueColumn = observer((props: Props) => {
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
       displayPropertyKey={property}
-      shouldRenderProperty={shouldRenderProperty}
+      shouldRenderProperty={() => shouldRenderProperty}
     >
       <td
         tabIndex={0}
-        className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100 focus:border-custom-primary-70"
+        className="h-11 w-full min-w-[8rem] bg-custom-background-100 text-sm after:absolute after:w-full after:bottom-[-1px] after:border after:border-custom-border-100 border-r-[1px] border-custom-border-100"
         ref={tableCellRef}
       >
         <Column

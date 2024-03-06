@@ -1,21 +1,21 @@
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
+import { cn } from "helpers/common.helper";
 import { useProject } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
+import { ProjectLogo } from "components/project";
 // helpers
-import { cn } from "helpers/common.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -50,6 +50,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -76,13 +77,11 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
       query: `${projectDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="grid place-items-center flex-shrink-0">
-            {projectDetails?.emoji
-              ? renderEmoji(projectDetails?.emoji)
-              : projectDetails?.icon_prop
-              ? renderEmoji(projectDetails?.icon_prop)
-              : null}
-          </span>
+          {projectDetails && (
+            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+              <ProjectLogo logo={projectDetails?.logo_props} className="text-sm" />
+            </span>
+          )}
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -94,19 +93,13 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
 
   const selectedProject = value ? getProjectById(value) : null;
 
-  const onOpen = () => {
-    if (referenceElement) referenceElement.focus();
-  };
-
   const handleClose = () => {
     if (!isOpen) return;
     setIsOpen(false);
     onClose && onClose();
-    if (referenceElement) referenceElement.blur();
   };
 
   const toggleDropdown = () => {
-    if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
   };
 
@@ -124,6 +117,12 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   return (
     <Combobox
@@ -168,13 +167,9 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               variant={buttonVariant}
             >
-              {!hideIcon && (
-                <span className="grid place-items-center flex-shrink-0">
-                  {selectedProject?.emoji
-                    ? renderEmoji(selectedProject?.emoji)
-                    : selectedProject?.icon_prop
-                    ? renderEmoji(selectedProject?.icon_prop)
-                    : null}
+              {!hideIcon && selectedProject && (
+                <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                  <ProjectLogo logo={selectedProject.logo_props} className="text-sm" />
                 </span>
               )}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
@@ -198,6 +193,8 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
+                as="input"
+                ref={inputRef}
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}

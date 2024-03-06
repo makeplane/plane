@@ -1,9 +1,8 @@
-import React, { useMemo } from "react";
-import { useRouter } from "next/router";
+import React, { Fragment, useMemo } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
-import { useIssues } from "hooks/store";
 // components
 import {
   IssuePeekOverview,
@@ -15,9 +14,10 @@ import {
   ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
-import { Spinner } from "@plane/ui";
+import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../types";
@@ -41,7 +41,8 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
           viewId.toString()
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const issueActions = useMemo(
@@ -63,39 +64,38 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId || !viewId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
 
-      {issues?.loader === "init-loader" || !issues?.groupedIssueIds ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectViewEmptyState />
         </div>
       ) : (
-        <>
-          {issues?.groupedIssueIds?.length === 0 ? (
-            <ProjectViewEmptyState />
-          ) : (
-            <>
-              <div className="relative h-full w-full overflow-auto">
-                {activeLayout === "list" ? (
-                  <ProjectViewListLayout issueActions={issueActions} />
-                ) : activeLayout === "kanban" ? (
-                  <ProjectViewKanBanLayout issueActions={issueActions} />
-                ) : activeLayout === "calendar" ? (
-                  <ProjectViewCalendarLayout issueActions={issueActions} />
-                ) : activeLayout === "gantt_chart" ? (
-                  <ProjectViewGanttLayout issueActions={issueActions} />
-                ) : activeLayout === "spreadsheet" ? (
-                  <ProjectViewSpreadsheetLayout issueActions={issueActions} />
-                ) : null}
-              </div>
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto">
+            {activeLayout === "list" ? (
+              <ProjectViewListLayout issueActions={issueActions} />
+            ) : activeLayout === "kanban" ? (
+              <ProjectViewKanBanLayout issueActions={issueActions} />
+            ) : activeLayout === "calendar" ? (
+              <ProjectViewCalendarLayout issueActions={issueActions} />
+            ) : activeLayout === "gantt_chart" ? (
+              <ProjectViewGanttLayout issueActions={issueActions} />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectViewSpreadsheetLayout issueActions={issueActions} />
+            ) : null}
+          </div>
 
-              {/* peek overview */}
-              <IssuePeekOverview />
-            </>
-          )}
-        </>
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
       )}
     </div>
   );

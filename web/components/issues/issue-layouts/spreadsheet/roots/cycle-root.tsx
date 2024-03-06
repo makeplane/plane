@@ -1,14 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
+import { EIssuesStoreType } from "constants/issue";
 import { useCycle, useIssues } from "hooks/store";
 // components
-import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { EIssueActions } from "../../types";
 import { TIssue } from "@plane/types";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueActions } from "../../types";
+import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
 export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -32,6 +32,10 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
         if (!workspaceSlug || !cycleId) return;
         issues.removeIssueFromCycle(workspaceSlug, issue.project_id, cycleId, issue.id);
       },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug || !cycleId) return;
+        issues.archiveIssue(workspaceSlug, issue.project_id, issue.id, cycleId);
+      },
     }),
     [issues, workspaceSlug, cycleId]
   );
@@ -39,7 +43,7 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
 
-  const canEditIssueProperties = () => !isCompletedCycle;
+  const canEditIssueProperties = useCallback(() => !isCompletedCycle, [isCompletedCycle]);
 
   return (
     <BaseSpreadsheetRoot

@@ -1,13 +1,9 @@
 import { useState, ReactElement } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useProject } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
-// components
+import { PageHead } from "components/core";
 import { ProjectSettingHeader } from "components/headers";
 import {
   DeleteProjectModal,
@@ -15,6 +11,11 @@ import {
   ProjectDetailsForm,
   ProjectDetailsFormLoader,
 } from "components/project";
+import { useProject } from "hooks/store";
+// layouts
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
+// components
 // types
 import { NextPageWithLayout } from "lib/types";
 
@@ -28,18 +29,19 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
   const { currentProjectDetails, fetchProjectDetails } = useProject();
   // api call to fetch project details
   // TODO: removed this API if not necessary
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
-
+  // derived values
+  const isAdmin = currentProjectDetails?.member_role === 20;
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
   // const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
   // const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  const isAdmin = currentProjectDetails?.member_role === 20;
-
   return (
     <>
+      <PageHead title={pageTitle} />
       {currentProjectDetails && (
         <DeleteProjectModal
           project={currentProjectDetails}
@@ -49,10 +51,11 @@ const GeneralSettingsPage: NextPageWithLayout = observer(() => {
       )}
 
       <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
-        {currentProjectDetails && workspaceSlug ? (
+        {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
             workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
             isAdmin={isAdmin}
           />
         ) : (

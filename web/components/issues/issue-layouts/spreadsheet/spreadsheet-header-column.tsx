@@ -1,10 +1,10 @@
 import { useRef } from "react";
 //types
+import { observer } from "mobx-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 //components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { HeaderColumn } from "./columns/header-column";
-import { observer } from "mobx-react";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
@@ -25,10 +25,10 @@ export const SpreadsheetHeaderColumn = observer((props: Props) => {
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
       displayPropertyKey={property}
-      shouldRenderProperty={shouldRenderProperty}
+      shouldRenderProperty={() => shouldRenderProperty}
     >
       <th
-        className="h-11 w-full min-w-[8rem] items-center bg-custom-background-90 text-sm font-medium px-4 py-1 border border-b-0 border-t-0 border-custom-border-100 focus:border-custom-primary-70"
+        className="h-11 w-full min-w-[8rem] items-center bg-custom-background-90 text-sm font-medium px-4 py-1 border border-b-0 border-t-0 border-custom-border-100"
         ref={tableHeaderCellRef}
         tabIndex={0}
       >

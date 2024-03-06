@@ -1,28 +1,19 @@
-name: Build Pull Request Contents
+name: Build and Lint on Pull Request
 
 on:
+  workflow_dispatch:
   pull_request:
     types: ["opened", "synchronize"]
 
 jobs:
-  build-pull-request-contents:
-    name: Build Pull Request Contents
-    runs-on: ubuntu-20.04
-    permissions:
-      pull-requests: read
-
+  get-changed-files:
+    runs-on: ubuntu-latest
+    outputs:
+      apiserver_changed: ${{ steps.changed-files.outputs.apiserver_any_changed }}
+      web_changed: ${{ steps.changed-files.outputs.web_any_changed }}
+      space_changed: ${{ steps.changed-files.outputs.deploy_any_changed }}
     steps:
-      - name: Checkout Repository to Actions
-        uses: actions/checkout@v3.3.0
-        with:
-          token: ${{ secrets.ACCESS_TOKEN }}
-
-      - name: Setup Node.js 18.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-          cache: "yarn"
-
+      - uses: actions/checkout@v3
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v41
@@ -32,17 +23,82 @@ jobs:
               - apiserver/**
             web:
               - web/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
             deploy:
               - space/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
 
-      - name: Build Plane's Main App
-        if: steps.changed-files.outputs.web_any_changed == 'true'
-        run: |
-          yarn
-          yarn build --filter=web
+  lint-apiserver:
+    needs: get-changed-files
+    runs-on: ubuntu-latest
+    if: needs.get-changed-files.outputs.apiserver_changed == 'true'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x' # Specify the Python version you need
+      - name: Install Pylint
+        run: python -m pip install ruff
+      - name: Install Apiserver Dependencies
+        run: cd apiserver && pip install -r requirements.txt
+      - name: Lint apiserver
+        run: ruff check --fix apiserver
 
-      - name: Build Plane's Deploy App
-        if: steps.changed-files.outputs.deploy_any_changed == 'true'
-        run: |
-          yarn 
-          yarn build --filter=space
+  lint-web:
+    needs: get-changed-files
+    if: needs.get-changed-files.outputs.web_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: yarn install
+      - run: yarn lint --filter=web
+
+  lint-space:
+    needs: get-changed-files
+    if: needs.get-changed-files.outputs.space_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: yarn install
+      - run: yarn lint --filter=space
+
+  build-web:
+    needs: lint-web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: yarn install
+      - run: yarn build --filter=web
+
+  build-space:
+    needs: lint-space
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: yarn install
+      - run: yarn build --filter=space

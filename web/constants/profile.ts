@@ -63,22 +63,9 @@ export const PROFILE_ADMINS_TAB = [
     label: "Subscribed",
     selected: "/[workspaceSlug]/profile/[userId]/subscribed",
   },
+  {
+    route: "activity",
+    label: "Activity",
+    selected: "/[workspaceSlug]/profile/[userId]/activity",
+  },
 ];
-
-export const PROFILE_EMPTY_STATE_DETAILS = {
-  assigned: {
-    key: "assigned",
-    title: "No issues are assigned to you",
-    description: "Issues assigned to you can be tracked from here.",
-  },
-  subscribed: {
-    key: "created",
-    title: "No issues yet",
-    description: "All issues created by you come here, track them here directly.",
-  },
-  created: {
-    key: "subscribed",
-    title: "No issues yet",
-    description: "Subscribe to issues you are interested in, track all of them here.",
-  },
-};

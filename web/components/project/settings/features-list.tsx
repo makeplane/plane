@@ -1,17 +1,15 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
-import { DiceIcon, ToggleSwitch } from "@plane/ui";
-// hooks
-import { useEventTracker, useProject, useUser, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-// types
-import { IProject } from "@plane/types";
+// ui
+import { DiceIcon, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { EUserProjectRoles } from "constants/project";
-
-type Props = {};
+// hooks
+import { useEventTracker, useProject, useUser } from "hooks/store";
+// types
+import { IProject } from "@plane/types";
 
 const PROJECT_FEATURES_LIST = [
   {
@@ -46,7 +44,7 @@ const PROJECT_FEATURES_LIST = [
   },
 ];
 
-export const ProjectFeaturesList: FC<Props> = observer(() => {
+export const ProjectFeaturesList: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -58,13 +56,11 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   } = useUser();
   const { currentProjectDetails, updateProject } = useProject();
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
-    setToastAlert({
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Success!",
       message: "Project feature updated successfully.",
     });

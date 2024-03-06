@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useCycle } from "hooks/store";
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui components
-import { Loader } from "@plane/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
+import { useCycle } from "hooks/store";
 // types
 import { TCycleLayout, TCycleView } from "@plane/types";
 
@@ -25,66 +25,44 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     currentProjectDraftCycleIds,
     currentProjectUpcomingCycleIds,
     currentProjectCycleIds,
+    loader,
   } = useCycle();
 
   const cyclesList =
     filter === "completed"
       ? currentProjectCompletedCycleIds
       : filter === "draft"
-      ? currentProjectDraftCycleIds
-      : filter === "upcoming"
-      ? currentProjectUpcomingCycleIds
-      : currentProjectCycleIds;
+        ? currentProjectDraftCycleIds
+        : filter === "upcoming"
+          ? currentProjectUpcomingCycleIds
+          : currentProjectCycleIds;
+
+  if (loader || !cyclesList)
+    return (
+      <>
+        {layout === "list" && <CycleModuleListLayout />}
+        {layout === "board" && <CycleModuleBoardLayout />}
+        {layout === "gantt" && <GanttLayoutLoader />}
+      </>
+    );
 
   return (
     <>
       {layout === "list" && (
-        <>
-          {cyclesList ? (
-            <CyclesList cycleIds={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
-          ) : (
-            <Loader className="space-y-4 p-8">
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-            </Loader>
-          )}
-        </>
+        <CyclesList cycleIds={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
       )}
 
       {layout === "board" && (
-        <>
-          {cyclesList ? (
-            <CyclesBoard
-              cycleIds={cyclesList}
-              filter={filter}
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              peekCycle={peekCycle}
-            />
-          ) : (
-            <Loader className="grid grid-cols-1 gap-9 p-8 md:grid-cols-2 lg:grid-cols-3">
-              <Loader.Item height="200px" />
-              <Loader.Item height="200px" />
-              <Loader.Item height="200px" />
-            </Loader>
-          )}
-        </>
+        <CyclesBoard
+          cycleIds={cyclesList}
+          filter={filter}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          peekCycle={peekCycle}
+        />
       )}
 
-      {layout === "gantt" && (
-        <>
-          {cyclesList ? (
-            <CyclesListGanttChartView cycleIds={cyclesList} workspaceSlug={workspaceSlug} />
-          ) : (
-            <Loader className="space-y-4">
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-            </Loader>
-          )}
-        </>
-      )}
+      {layout === "gantt" && <CyclesListGanttChartView cycleIds={cyclesList} workspaceSlug={workspaceSlug} />}
     </>
   );
 });

@@ -29,13 +29,10 @@ const Breadcrumbs = ({ children, onBack }: BreadcrumbsProps) => {
             <React.Fragment key={index}>
               {index > 0 && !isSmallScreen && (
                 <div className="flex items-center gap-2.5">
-                  <ChevronRight
-                    className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400"
-                    aria-hidden="true"
-                  />
+                  <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
                 </div>
               )}
-              <div className={`flex items-center gap-2.5 ${isSmallScreen && index > 0 ? 'hidden sm:flex' : 'flex'}`}>
+              <div className={`flex items-center gap-2.5 ${isSmallScreen && index > 0 ? "hidden sm:flex" : "flex"}`}>
                 {child}
               </div>
             </React.Fragment>
@@ -46,7 +43,11 @@ const Breadcrumbs = ({ children, onBack }: BreadcrumbsProps) => {
       {isSmallScreen && childrenArray.length > 1 && (
         <>
           <div className="flex items-center gap-2.5">
-            {onBack && <span onClick={onBack} className="text-custom-text-200">...</span>}
+            {onBack && (
+              <span onClick={onBack} className="text-custom-text-200">
+                ...
+              </span>
+            )}
             <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
           </div>
           <div className="flex items-center gap-2.5">{childrenArray[childrenArray.length - 1]}</div>

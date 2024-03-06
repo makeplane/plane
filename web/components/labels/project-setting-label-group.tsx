@@ -1,12 +1,4 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { Disclosure, Transition } from "@headlessui/react";
-
-// store
-import { observer } from "mobx-react-lite";
-// icons
-import { ChevronDown, Pencil, Trash2 } from "lucide-react";
-// types
-import { IIssueLabel } from "@plane/types";
 import {
   Draggable,
   DraggableProvided,
@@ -14,10 +6,18 @@ import {
   DraggableStateSnapshot,
   Droppable,
 } from "@hello-pangea/dnd";
-import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
-import { CreateUpdateLabelInline } from "./create-update-label-inline";
-import { ProjectSettingLabelItem } from "./project-setting-label-item";
+import { observer } from "mobx-react-lite";
+import { Disclosure, Transition } from "@headlessui/react";
+
+// store
+// icons
+import { ChevronDown, Pencil, Trash2 } from "lucide-react";
+// types
 import useDraggableInPortal from "hooks/use-draggable-portal";
+import { IIssueLabel } from "@plane/types";
+import { CreateUpdateLabelInline } from "./create-update-label-inline";
+import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
+import { ProjectSettingLabelItem } from "./project-setting-label-item";
 
 type Props = {
   label: IIssueLabel;
@@ -107,7 +107,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                         customMenuItems={customMenuItems}
                         dragHandleProps={dragHandleProps}
                         handleLabelDelete={handleLabelDelete}
-                        isLabelGroup={true}
+                        isLabelGroup
                       />
                     )}
 

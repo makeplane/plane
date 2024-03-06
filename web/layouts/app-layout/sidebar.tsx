@@ -1,13 +1,13 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useRef } from "react";
 import { observer } from "mobx-react-lite";
 // components
+import { ProjectSidebarList } from "components/project";
 import {
   WorkspaceHelpSection,
   WorkspaceSidebarDropdown,
   WorkspaceSidebarMenu,
   WorkspaceSidebarQuickAction,
 } from "components/workspace";
-import { ProjectSidebarList } from "components/project";
 // hooks
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -26,19 +26,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
       }
     }
   });
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        themStore.toggleSidebar(true);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [themStore]);
 
   return (
     <div

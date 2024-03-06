@@ -1,37 +1,26 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 // components
 import { PagesListView } from "components/pages/pages-list";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // ui
 import { Loader } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // constants
-import { EUserProjectRoles } from "constants/project";
+import { EmptyStateType } from "constants/empty-state";
 
 export const RecentPagesList: FC = observer(() => {
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
-  const {
-    membership: { currentProjectRole },
-    currentUser,
-  } = useUser();
-  const { recentProjectPages } = useProjectPages();
 
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("pages", "recent", isLightMode);
+  const { recentProjectPages } = useProjectPages();
 
   // FIXME: replace any with proper type
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value: any) => value.length === 0);
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!recentProjectPages) {
     return (
@@ -52,7 +41,7 @@ export const RecentPagesList: FC = observer(() => {
 
             return (
               <div key={key}>
-                <h2 className="sticky top-0 z-[1] mb-2 bg-custom-background-100 text-xl font-semibold capitalize">
+                <h2 className="sticky top-0 z-[1] mb-2 bg-custom-background-100 text-xl font-semibold capitalize px-3 md:p-0">
                   {replaceUnderscoreIfSnakeCase(key)}
                 </h2>
                 <PagesListView pageIds={recentProjectPages[key]} />
@@ -63,15 +52,9 @@ export const RecentPagesList: FC = observer(() => {
       ) : (
         <>
           <EmptyState
-            title="Write a note, a doc, or a full knowledge base"
-            description="Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely! Pages will be sorted and grouped by last updated."
-            image={EmptyStateImagePath}
-            primaryButton={{
-              text: "Create new page",
-              onClick: () => commandPaletteStore.toggleCreatePageModal(true),
-            }}
+            type={EmptyStateType.PROJECT_PAGE_RECENT}
+            primaryButtonOnClick={() => commandPaletteStore.toggleCreatePageModal(true)}
             size="sm"
-            disabled={!isEditingAllowed}
           />
         </>
       )}

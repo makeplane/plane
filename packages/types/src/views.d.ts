@@ -1,4 +1,8 @@
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "./view-props";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "./view-props";
 
 export interface IProjectView {
   id: string;

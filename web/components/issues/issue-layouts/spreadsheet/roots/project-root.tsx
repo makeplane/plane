@@ -2,13 +2,13 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // mobx store
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 
-import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
-import { EIssueActions } from "../../types";
 import { TIssue } from "@plane/types";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueActions } from "../../types";
+import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
 export const ProjectSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -27,6 +27,11 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
         if (!workspaceSlug) return;
 
         await issues.removeIssue(workspaceSlug, issue.project_id, issue.id);
+      },
+      [EIssueActions.ARCHIVE]: async (issue: TIssue) => {
+        if (!workspaceSlug) return;
+
+        await issues.archiveIssue(workspaceSlug, issue.project_id, issue.id);
       },
     }),
     [issues, workspaceSlug]
