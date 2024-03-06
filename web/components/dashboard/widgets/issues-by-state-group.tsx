@@ -15,14 +15,9 @@ import {
 // helpers
 import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import {
-  EDurationFilters,
-  TIssuesByStateGroupsWidgetFilters,
-  TIssuesByStateGroupsWidgetResponse,
-  TStateGroups,
-} from "@plane/types";
+import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
+import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "constants/dashboard";
 import { STATE_GROUPS } from "constants/state";
 
 const WIDGET_KEY = "issues_by_state_groups";
