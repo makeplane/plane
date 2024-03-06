@@ -78,6 +78,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
+from plane.utils.cache import invalidate_cache
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -1001,6 +1002,21 @@ class LabelViewSet(BaseViewSet):
         ProjectMemberPermission,
     ]
 
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("parent")
+            .distinct()
+            .order_by("sort_order")
+        )
+
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -1020,22 +1036,13 @@ class LabelViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("parent")
-            .distinct()
-            .order_by("sort_order")
-        )
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):

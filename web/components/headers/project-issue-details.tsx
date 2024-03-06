@@ -1,41 +1,32 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 // hooks
 import { PanelRight } from "lucide-react";
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { cn } from "helpers/common.helper";
-import { useApplication, useProject } from "hooks/store";
+import { useApplication, useIssueDetail, useProject } from "hooks/store";
 // ui
 // helpers
 // services
-import { IssueService } from "services/issue";
 import { ProjectLogo } from "components/project";
 // constants
 // components
-
-// services
-const issueService = new IssueService();
 
 export const ProjectIssueDetailsHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
   // store hooks
-  const { currentProjectDetails, getProjectById } = useProject();
+  const { currentProjectDetails } = useProject();
   const { theme: themeStore } = useApplication();
-
-  const { data: issueDetails } = useSWR(
-    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
-
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  // derived values
+  const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
   const isSidebarCollapsed = themeStore.issueDetailSidebarCollapsed;
 
   return (
@@ -77,8 +68,9 @@ export const ProjectIssueDetailsHeader: FC = observer(() => {
               link={
                 <BreadcrumbLink
                   label={
-                    `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ??
-                    "..."
+                    currentProjectDetails && issueDetails
+                      ? `${currentProjectDetails.identifier}-${issueDetails.sequence_id}`
+                      : ""
                   }
                 />
               }

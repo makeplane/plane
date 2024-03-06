@@ -13,7 +13,6 @@ import { ProjectLogo } from "components/project";
 // ui
 // types
 import { IssueArchiveService } from "services/issue";
-import { TIssue } from "@plane/types";
 // constants
 // services
 // helpers
@@ -26,9 +25,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
   // store hooks
-  const { currentProjectDetails, getProjectById } = useProject();
+  const { currentProjectDetails } = useProject();
 
-  const { data: issueDetails } = useSWR<TIssue | undefined>(
+  const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
@@ -79,8 +78,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
               link={
                 <BreadcrumbLink
                   label={
-                    `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ??
-                    "..."
+                    currentProjectDetails && issueDetails
+                      ? `${currentProjectDetails.identifier}-${issueDetails.sequence_id}`
+                      : ""
                   }
                 />
               }

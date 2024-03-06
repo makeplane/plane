@@ -57,6 +57,8 @@ from plane.app.serializers import (
     WorkspaceEstimateSerializer,
     StateSerializer,
     LabelSerializer,
+    CycleSerializer,
+    ModuleSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
@@ -77,7 +79,6 @@ from plane.db.models import (
     Label,
     WorkspaceMember,
     CycleIssue,
-    IssueReaction,
     WorkspaceUserProperties,
     Estimate,
     EstimatePoint,
@@ -91,17 +92,11 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
     WorkspaceViewerPermission,
     WorkspaceUserPermission,
-    ProjectLitePermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.event_tracking_task import workspace_invite_event
-from plane.app.serializers.module import (
-    ModuleSerializer,
-)
-from plane.app.serializers.cycle import (
-    CycleSerializer,
-)
+from plane.utils.cache import cache_response, invalidate_cache
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -151,7 +146,8 @@ class WorkSpaceViewSet(BaseViewSet):
             .annotate(total_issues=issue_count)
             .select_related("owner")
         )
-
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
     def create(self, request):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
@@ -197,6 +193,20 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_410_GONE,
                 )
 
+    @cache_response(60 * 60 * 2)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
 
 class UserWorkSpacesEndpoint(BaseAPIView):
     search_fields = [
@@ -206,6 +216,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
         "owner",
     ]
 
+    @cache_response(60 * 60 * 2)
     def get(self, request):
         fields = [
             field
@@ -403,6 +414,8 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     ]
     """Invitation response endpoint the user can respond to the invitation"""
 
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(
             pk=pk, workspace__slug=slug
@@ -499,6 +512,9 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             .annotate(total_members=Count("workspace__workspace_member"))
         )
 
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(path="/api/workspaces/:slug/members/", url_params=True, user=False)
     def create(self, request):
         invitations = request.data.get("invitations", [])
         workspace_invitations = WorkspaceMemberInvite.objects.filter(
@@ -569,6 +585,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .select_related("member")
         )
 
+    @cache_response(60 * 60 * 2)
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
@@ -593,6 +610,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache(path="/api/workspaces/:slug/members/", url_params=True, user=False)
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
             pk=pk,
@@ -635,6 +653,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @invalidate_cache(path="/api/workspaces/:slug/members/", url_params=True, user=False)
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
@@ -699,6 +718,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @invalidate_cache(path="/api/workspaces/:slug/members/", url_params=True, user=False)
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,
@@ -1550,6 +1570,7 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
         WorkspaceViewerPermission,
     ]
 
+    @cache_response(60 * 60 * 2)
     def get(self, request, slug):
         labels = Label.objects.filter(
             workspace__slug=slug,
@@ -1565,6 +1586,7 @@ class WorkspaceStatesEndpoint(BaseAPIView):
         WorkspaceEntityPermission,
     ]
 
+    @cache_response(60 * 60 * 2)
     def get(self, request, slug):
         states = State.objects.filter(
             workspace__slug=slug,
@@ -1580,6 +1602,7 @@ class WorkspaceEstimatesEndpoint(BaseAPIView):
         WorkspaceEntityPermission,
     ]
 
+    @cache_response(60 * 60 * 2)
     def get(self, request, slug):
         estimate_ids = Project.objects.filter(
             workspace__slug=slug, estimate__isnull=False
