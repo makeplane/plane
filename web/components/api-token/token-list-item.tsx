@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 // components
+import { Tooltip } from "@plane/ui";
 import { DeleteApiTokenModal } from "components/api-token";
 // ui
-import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 // types

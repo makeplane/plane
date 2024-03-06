@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
 // hooks
+import { DiceIcon } from "@plane/ui";
 import { useModule } from "hooks/store";
 // ui
-import { DiceIcon } from "@plane/ui";
 
 type Props = {
   handleRemove: (val: string) => void;

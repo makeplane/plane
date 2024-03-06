@@ -1,15 +1,15 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { observer } from "mobx-react";
 // hooks
+import { ProjectInboxHeader } from "components/headers";
+import { InboxLayoutLoader } from "components/ui";
 import { useInbox, useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // ui
-import { InboxLayoutLoader } from "components/ui";
 // components
-import { ProjectInboxHeader } from "components/headers";
 // types
 import { NextPageWithLayout } from "lib/types";
 

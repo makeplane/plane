@@ -1,21 +1,21 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 // hooks
+import { cn } from "helpers/common.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 import { useProject } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // helpers
-import { cn } from "helpers/common.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -81,8 +81,8 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             {projectDetails?.emoji
               ? renderEmoji(projectDetails?.emoji)
               : projectDetails?.icon_prop
-              ? renderEmoji(projectDetails?.icon_prop)
-              : null}
+                ? renderEmoji(projectDetails?.icon_prop)
+                : null}
           </span>
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
@@ -174,8 +174,8 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
                   {selectedProject?.emoji
                     ? renderEmoji(selectedProject?.emoji)
                     : selectedProject?.icon_prop
-                    ? renderEmoji(selectedProject?.icon_prop)
-                    : null}
+                      ? renderEmoji(selectedProject?.icon_prop)
+                      : null}
                 </span>
               )}
               {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (

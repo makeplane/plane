@@ -1,8 +1,20 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
+import { ArrowRight, PanelRight, Plus } from "lucide-react";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
+import { ProjectAnalyticsModal } from "components/analytics";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { ModuleMobileHeader } from "components/modules/module-mobile-header";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { cn } from "helpers/common.helper";
+import { renderEmoji } from "helpers/emoji.helper";
+import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -16,24 +28,12 @@ import {
 } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, LayersIcon } from "@plane/ui";
 // icons
-import { ArrowRight, PanelRight, Plus } from "lucide-react";
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -212,9 +212,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0"
                     placement="bottom-start"
                   >
-                    {projectModuleIds?.map((moduleId) => (
-                      <ModuleDropdownOption key={moduleId} moduleId={moduleId} />
-                    ))}
+                    {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}
                   </CustomMenu>
                 }
               />

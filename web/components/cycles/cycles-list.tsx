@@ -2,14 +2,14 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useUser } from "hooks/store";
 // components
+import { Loader } from "@plane/ui";
 import { CyclePeekOverview, CyclesListItem } from "components/cycles";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
-import { Loader } from "@plane/ui";
 // constants
 import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { useUser } from "hooks/store";
 
 export interface ICyclesList {
   cycleIds: string[];

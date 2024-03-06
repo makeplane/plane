@@ -1,23 +1,22 @@
 import { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
+import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-// hooks
-import { useEventTracker, useProject, useUser } from "hooks/store";
 // ui
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
-import EmojiIconPicker from "components/emoji-icon-picker";
 import { MemberDropdown } from "components/dropdowns";
+import EmojiIconPicker from "components/emoji-icon-picker";
+// constants
+import { PROJECT_CREATED } from "constants/event-tracker";
+import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
-// constants
-import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { PROJECT_CREATED } from "constants/event-tracker";
+// hooks
+import { useEventTracker, useProject, useUser } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -306,7 +305,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               onChange={handleIdentifierChange(onChange)}
                               hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
-                              className="w-full text-xs focus:border-blue-400 uppercase"
+                              className="w-full text-xs uppercase focus:border-blue-400"
                               tabIndex={2}
                             />
                           )}

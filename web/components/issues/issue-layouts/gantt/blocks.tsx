@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
 // hooks
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 type Props = {
   issueId: string;

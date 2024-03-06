@@ -1,16 +1,16 @@
 import { ReactElement } from "react";
 import useSWR from "swr";
 // layouts
+import { PageHead } from "components/core";
+import { EmailNotificationForm } from "components/profile/preferences";
+import { EmailSettingsLoader } from "components/ui";
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
 // ui
-import { EmailSettingsLoader } from "components/ui";
 // components
-import { EmailNotificationForm } from "components/profile/preferences";
-import { PageHead } from "components/core";
 // services
+import { NextPageWithLayout } from "lib/types";
 import { UserService } from "services/user.service";
 // type
-import { NextPageWithLayout } from "lib/types";
 
 // services
 const userService = new UserService();

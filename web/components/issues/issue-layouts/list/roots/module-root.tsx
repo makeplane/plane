@@ -1,16 +1,16 @@
 import React, { useMemo } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
+import { ModuleIssueQuickActions } from "components/issues";
+import { EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // components
-import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { EIssuesStoreType } from "constants/issue";
 
 export interface IModuleListLayout {}
 

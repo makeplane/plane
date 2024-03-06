@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef, Fragment } from "react";
+import { Placement } from "@popperjs/core";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
-import { AIService } from "services/ai.service";
-// hooks
 import { usePopper } from "react-popper";
+import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { Popover, Transition } from "@headlessui/react";
+// hooks
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
-import { Popover, Transition } from "@headlessui/react";
 // types
-import { Placement } from "@popperjs/core";
+import { AIService } from "services/ai.service";
 
 type Props = {
   isOpen: boolean;
@@ -192,7 +192,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
       >
         <Popover.Panel
           as="div"
-          className={`fixed z-10 flex flex-col w-full max-w-full min-w-[50rem] space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
+          className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -211,7 +211,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               </div>
             )}
             {response !== "" && (
-              <div className="page-block-section text-sm max-h-[8rem]">
+              <div className="page-block-section max-h-[8rem] text-sm">
                 Response:
                 <RichReadOnlyEditorWithRef
                   value={`<p>${response}</p>`}

@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { PlusIcon } from "lucide-react";
 import { useTheme } from "next-themes";
+import { PlusIcon } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
 import { ExistingIssuesListModal } from "components/core";
+// ui
+// components
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { CYCLE_EMPTY_STATE_DETAILS, EMPTY_FILTER_STATE_DETAILS } from "constants/empty-state";
+import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
+// components
 // types
 import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssuesStoreType } from "constants/issue";
-import { CYCLE_EMPTY_STATE_DETAILS, EMPTY_FILTER_STATE_DETAILS } from "constants/empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -44,7 +45,6 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
-  const { updateIssue, fetchIssue } = useIssueDetail();
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();

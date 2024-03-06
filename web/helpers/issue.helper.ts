@@ -1,8 +1,12 @@
-import { v4 as uuidv4 } from "uuid";
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import { v4 as uuidv4 } from "uuid";
 // helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
+import { IGanttBlock } from "components/gantt-chart";
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
+import { orderArrayBy } from "helpers/array.helper";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -11,10 +15,6 @@ import {
   TIssueParams,
   TStateGroups,
 } from "@plane/types";
-import { IGanttBlock } from "components/gantt-chart";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { STATE_GROUPS } from "constants/state";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,

@@ -1,17 +1,17 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useModule, useUser } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
 // components
-import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 // ui
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // constants
-import { EUserProjectRoles } from "constants/project";
 import { MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EUserProjectRoles } from "constants/project";
+import { useApplication, useEventTracker, useModule, useUser } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
 
 export const ModulesListView: React.FC = observer(() => {
   // router

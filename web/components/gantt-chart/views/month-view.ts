@@ -1,7 +1,7 @@
 // types
+import { weeks, months } from "../data";
 import { ChartDataType, IGanttBlock } from "../types";
 // data
-import { weeks, months } from "../data";
 // helpers
 import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from "./helpers";
 
@@ -178,7 +178,7 @@ export const getMonthChartItemPositionWidthInMonth = (chartData: ChartDataType, 
   const positionDaysDifference: number = Math.abs(Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24)));
   scrollPosition = positionDaysDifference * chartData.data.width;
 
-  var diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
+  let diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
   diffMonths -= startDate.getMonth();
   diffMonths += itemStartDate.getMonth();
 

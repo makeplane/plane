@@ -1,23 +1,23 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
+import { Popover, Transition } from "@headlessui/react";
 // hooks
-import { useCalendarView } from "hooks/store";
 // ui
-import { ToggleSwitch } from "@plane/ui";
 // icons
 import { Check, ChevronUp } from "lucide-react";
+import { ToggleSwitch } from "@plane/ui";
 // types
-import { TCalendarLayouts } from "@plane/types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
 import { EIssueFilterType } from "constants/issue";
+import { useCalendarView } from "hooks/store";
 import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { TCalendarLayouts } from "@plane/types";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

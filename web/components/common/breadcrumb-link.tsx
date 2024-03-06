@@ -1,5 +1,5 @@
-import { Tooltip } from "@plane/ui";
 import Link from "next/link";
+import { Tooltip } from "@plane/ui";
 
 type Props = {
   label?: string;

@@ -1,7 +1,7 @@
 // types
+import { STATE_GROUPS } from "constants/state";
 import { IUserStateDistribution } from "@plane/types";
 // constants
-import { STATE_GROUPS } from "constants/state";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];

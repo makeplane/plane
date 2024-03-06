@@ -1,15 +1,15 @@
 import { FC, useState, Fragment, useEffect } from "react";
-import { Plus, X, Loader } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
+import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
+import { Plus, X, Loader } from "lucide-react";
 // hooks
+import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
 // ui
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { TLabelOperations } from "./root";
 import { IIssueLabel } from "@plane/types";
+import { TLabelOperations } from "./root";
 
 type ILabelCreate = {
   workspaceSlug: string;
@@ -72,7 +72,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   return (
     <>
       <div
-        className="flex-shrink-0 transition-all relative flex items-center gap-1 cursor-pointer border border-custom-border-100 rounded-full text-xs p-0.5 px-2 hover:bg-custom-background-90 text-custom-text-300 hover:text-custom-text-200"
+        className="relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-custom-border-100 p-0.5 px-2 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200"
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">
@@ -149,7 +149,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
             <X className="h-4 w-4 text-white" />
           </button>
           <button type="submit" className="grid place-items-center rounded bg-green-500 p-1.5" disabled={isSubmitting}>
-            {isSubmitting ? <Loader className="h-4 w-4 text-white spin" /> : <Plus className="h-4 w-4 text-white" />}
+            {isSubmitting ? <Loader className="spin h-4 w-4 text-white" /> : <Plus className="h-4 w-4 text-white" />}
           </button>
         </form>
       )}

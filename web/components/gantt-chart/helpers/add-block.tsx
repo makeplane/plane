@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { addDays } from "date-fns";
+import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { IBlockUpdateData, IGanttBlock } from "../types";
 import { useGanttChart } from "../hooks/use-gantt-chart";
-import { observer } from "mobx-react";
+import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;
