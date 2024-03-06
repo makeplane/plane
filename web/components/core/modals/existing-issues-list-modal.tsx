@@ -64,12 +64,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
 
     handleClose();
-
-    setToast({
-      type: TOAST_TYPE.SUCCESS,
-      title: "Success",
-      message: `Issue${selectedIssues.length > 1 ? "s" : ""} added successfully`,
-    });
   };
 
   useEffect(() => {
@@ -180,7 +174,10 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </div>
 
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md">
+                  <Combobox.Options
+                    static
+                    className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}
