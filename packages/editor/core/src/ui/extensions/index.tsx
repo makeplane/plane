@@ -56,9 +56,7 @@ export const CoreEditorExtensions = (
     },
     code: false,
     codeBlock: false,
-    // horizontalRule: {
-    //   HTMLAttributes: { class: "mt-4 mb-4" },
-    // },
+    horizontalRule: false,
     blockquote: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
