@@ -1,39 +1,27 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 // hooks
+import { useApplication, useEventTracker, useModule } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
 // components
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
+import { EmptyState } from "components/empty-state";
 // ui
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
 // constants
-import { MODULE_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { EUserProjectRoles } from "constants/project";
-import { useApplication, useEventTracker, useModule, useUser } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { EmptyStateType } from "constants/empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-    currentUser,
-  } = useUser();
+
   const { projectModuleIds, loader } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "modules", isLightMode);
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (loader || !projectModuleIds)
     return (
@@ -88,22 +76,11 @@ export const ModulesListView: React.FC = observer(() => {
         </>
       ) : (
         <EmptyState
-          title={MODULE_EMPTY_STATE_DETAILS["modules"].title}
-          description={MODULE_EMPTY_STATE_DETAILS["modules"].description}
-          image={EmptyStateImagePath}
-          comicBox={{
-            title: MODULE_EMPTY_STATE_DETAILS["modules"].comicBox.title,
-            description: MODULE_EMPTY_STATE_DETAILS["modules"].comicBox.description,
+          type={EmptyStateType.PROJECT_MODULE}
+          primaryButtonOnClick={() => {
+            setTrackElement("Module empty state");
+            commandPaletteStore.toggleCreateModuleModal(true);
           }}
-          primaryButton={{
-            text: MODULE_EMPTY_STATE_DETAILS["modules"].primaryButton.text,
-            onClick: () => {
-              setTrackElement("Module empty state");
-              commandPaletteStore.toggleCreateModuleModal(true);
-            },
-          }}
-          size="lg"
-          disabled={!isEditingAllowed}
         />
       )}
     </>

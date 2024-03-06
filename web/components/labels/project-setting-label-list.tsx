@@ -1,4 +1,6 @@
 import React, { useState, useRef } from "react";
+import { useRouter } from "next/router";
+import { observer } from "mobx-react";
 import {
   DragDropContext,
   Draggable,
@@ -7,26 +9,23 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 // hooks
-import { Button, Loader } from "@plane/ui";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { useLabel } from "hooks/store";
+import useDraggableInPortal from "hooks/use-draggable-portal";
+// components
 import {
   CreateUpdateLabelInline,
   DeleteLabelModal,
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
 } from "components/labels";
-import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
-import { useLabel, useUser } from "hooks/store";
-import useDraggableInPortal from "hooks/use-draggable-portal";
-// components
+import { EmptyState } from "components/empty-state";
 // ui
+import { Button, Loader } from "@plane/ui";
 // types
 import { IIssueLabel } from "@plane/types";
 // constants
+import { EmptyStateType } from "constants/empty-state";
 
 const LABELS_ROOT = "labels.root";
 
@@ -41,10 +40,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
-  const { currentUser } = useUser();
   const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
   // portal
   const renderDraggable = useDraggableInPortal();
@@ -53,10 +49,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     setIsUpdating(false);
     setLabelForm(true);
   };
-
-  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["labels"];
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("project-settings", "labels", isLightMode);
 
   const onDragEnd = (result: DropResult) => {
     const { combine, draggableId, destination, source } = result;
@@ -121,13 +113,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         )}
         {projectLabels ? (
           projectLabels.length === 0 && !showLabelForm ? (
-            <div className="flex h-full w-full items-center justify-center">
-              <EmptyState
-                title={emptyStateDetail.title}
-                description={emptyStateDetail.description}
-                image={emptyStateImage}
-                size="lg"
-              />
+            <div className="flex items-center justify-center h-full w-full">
+              <EmptyState type={EmptyStateType.PROJECT_SETTINGS_LABELS} />
             </div>
           ) : (
             projectLabelsTree && (

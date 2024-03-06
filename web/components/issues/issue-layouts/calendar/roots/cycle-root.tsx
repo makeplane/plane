@@ -1,15 +1,16 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 //hooks
-import { CycleIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
 import { useCycle, useIssues } from "hooks/store";
 // components
+import { CycleIssueQuickActions } from "components/issues";
+import { BaseCalendarRoot } from "../base-calendar-root";
 // types
 import { TIssue } from "@plane/types";
 import { EIssueActions } from "../../types";
-import { BaseCalendarRoot } from "../base-calendar-root";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
@@ -46,11 +47,20 @@ export const CycleCalendarLayout: React.FC = observer(() => {
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
 
+  const addIssuesToView = useCallback(
+    (issueIds: string[]) => {
+      if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+      return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+    },
+    [issues?.addIssueToCycle, workspaceSlug, projectId, cycleId]
+  );
+
   return (
     <BaseCalendarRoot
       issueStore={issues}
       issuesFilterStore={issuesFilter}
       QuickActions={CycleIssueQuickActions}
+      addIssuesToView={addIssuesToView}
       issueActions={issueActions}
       viewId={cycleId.toString()}
       isCompletedCycle={isCompletedCycle}

@@ -77,7 +77,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: unknown) => {
+  const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: any) => {
     if (!workspaceSlug || !projectId || !data) return;
 
     const selectedProjectId = payload.project_id ?? projectId.toString();

@@ -15,6 +15,8 @@ import { TGroupedIssues, TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { handleDragDrop } from "./utils";
+import { useIssues, useUser } from "hooks/store";
+import { EUserProjectRoles } from "constants/project";
 
 interface IBaseCalendarRoot {
   issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
@@ -27,12 +29,21 @@ interface IBaseCalendarRoot {
     [EIssueActions.ARCHIVE]?: (issue: TIssue) => Promise<void>;
     [EIssueActions.RESTORE]?: (issue: TIssue) => Promise<void>;
   };
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   isCompletedCycle?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, isCompletedCycle = false } = props;
+  const {
+    issueStore,
+    issuesFilterStore,
+    QuickActions,
+    issueActions,
+    addIssuesToView,
+    viewId,
+    isCompletedCycle = false,
+  } = props;
 
   // router
   const router = useRouter();
@@ -126,6 +137,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 readOnly={!isEditingAllowed || isCompletedCycle}
               />
             )}
+            addIssuesToView={addIssuesToView}
             quickAddCallback={issueStore.quickAddIssue}
             viewId={viewId}
             readOnly={!isEditingAllowed || isCompletedCycle}

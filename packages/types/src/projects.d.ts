@@ -130,6 +130,7 @@ export type TProjectIssuesSearchParams = {
   sub_issue?: boolean;
   issue_id?: string;
   workspace_search: boolean;
+  target_date?: string;
 };
 
 export interface ISearchIssueResponse {

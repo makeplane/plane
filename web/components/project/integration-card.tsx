@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import useSWR, { mutate } from "swr";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -13,7 +14,6 @@ import SlackLogo from "public/services/slack.png";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
 import { ProjectService } from "services/project";
-import useSWR, { mutate } from "swr";
 
 type Props = {
   integration: IWorkspaceIntegration;

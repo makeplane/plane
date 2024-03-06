@@ -9,6 +9,9 @@ import { ChevronDown, Plus, X } from "lucide-react";
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { useEventTracker, useMember, useUser } from "hooks/store";
+import { EUserProjectRoles } from "constants/project";
+import { PROJECT_MEMBER_ADDED } from "constants/event-tracker";
+import { ROLE } from "constants/workspace";
 // constants
 
 type Props = {
