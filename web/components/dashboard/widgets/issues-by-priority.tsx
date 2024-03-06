@@ -14,9 +14,10 @@ import {
 // helpers
 import { getCustomDates } from "helpers/dashboard.helper";
 // types
-import { EDurationFilters, TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
+import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // constants
 import { IssuesByPriorityGraph } from "components/graphs";
+import { EDurationFilters } from "constants/dashboard";
 
 const WIDGET_KEY = "issues_by_priority";
 

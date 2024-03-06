@@ -3,9 +3,9 @@ import { Tab } from "@headlessui/react";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
-import { EDurationFilters, TIssuesListTypes } from "@plane/types";
+import { TIssuesListTypes } from "@plane/types";
 // constants
-import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
+import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
 type Props = {
   durationFilter: EDurationFilters;
