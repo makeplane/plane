@@ -12,6 +12,7 @@ import { useEventTracker, useWorkspace } from "hooks/store";
 // ui
 // types
 import { IWorkspace } from "@plane/types";
+import { WorkspaceService } from "services/workspace.service";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;

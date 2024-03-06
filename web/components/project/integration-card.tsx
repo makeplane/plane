@@ -12,6 +12,8 @@ import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
 // types
 import { IWorkspaceIntegration } from "@plane/types";
+import { ProjectService } from "services/project";
+import useSWR, { mutate } from "swr";
 
 type Props = {
   integration: IWorkspaceIntegration;
