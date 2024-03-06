@@ -7,7 +7,6 @@ import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // hooks
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
@@ -27,7 +26,7 @@ import {
   StateDropdown,
 } from "components/dropdowns";
 // ui
-import { Button, CustomMenu, Input, Loader, ToggleSwitch } from "@plane/ui";
+import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
@@ -125,8 +124,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     formState: { errors, isDirty, isSubmitting },
@@ -199,8 +196,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       })
       .then((res) => {
         if (res.response === "")
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
               "Issue title isn't informative enough to generate the description. Please try with a different title.",
@@ -211,14 +208,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         const error = err?.data?.error;
 
         if (err.status === 429)
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });

@@ -3,7 +3,8 @@ import { observer } from "mobx-react-lite";
 import { AuthService } from "services/auth.service";
 // hooks
 import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { GitHubSignInButton, GoogleSignInButton } from "components/account";
 
@@ -17,8 +18,6 @@ const authService = new AuthService();
 
 export const OAuthOptions: React.FC<Props> = observer((props) => {
   const { handleSignInRedirection, type } = props;
-  // toast alert
-  const { setToastAlert } = useToast();
   // mobx store
   const {
     config: { envConfig },
@@ -39,9 +38,9 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         if (response) handleSignInRedirection();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
-      setToastAlert({
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error signing in!",
-        type: "error",
         message: err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
@@ -60,9 +59,9 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         if (response) handleSignInRedirection();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
-      setToastAlert({
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error signing in!",
-        type: "error",
         message: err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }

@@ -4,11 +4,10 @@ import { observer } from "mobx-react-lite";
 import { ChevronDown, XCircle } from "lucide-react";
 // hooks
 import { useMember, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
-import { CustomSelect, Tooltip } from "@plane/ui";
+import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
@@ -30,8 +29,6 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
-  // toast alert
-  const { setToastAlert } = useToast();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
 
@@ -40,15 +37,15 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
 
     await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success",
           message: "Invitation removed successfully.",
         });
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error",
           message: err?.error || "Something went wrong. Please try again.",
         })
@@ -116,8 +113,8 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
               updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
                 role: value,
               }).catch(() => {
-                setToastAlert({
-                  type: "error",
+                setToast({
+                  type: TOAST_TYPE.ERROR,
                   title: "Error!",
                   message: "An error occurred while updating member role. Please try again.",
                 });

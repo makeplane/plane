@@ -56,7 +56,6 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
         dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
       />
-      {isUpdating && <Spinner className="h-4 w-4" />}
     </div>
   );
 });

@@ -5,7 +5,6 @@ import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
 // hooks
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
 // components
 import {
   AcceptIssueModal,
@@ -14,11 +13,11 @@ import {
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 // types
-import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
+import type { TInboxDetailedStatus } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 import { ISSUE_DELETED } from "constants/event-tracker";
 
@@ -30,7 +29,7 @@ type TInboxIssueActionsHeader = {
 };
 
 type TInboxIssueOperations = {
-  updateInboxIssueStatus: (data: TInboxStatus) => Promise<void>;
+  updateInboxIssueStatus: (data: TInboxDetailedStatus) => Promise<void>;
   removeInboxIssue: () => Promise<void>;
 };
 
@@ -51,7 +50,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { setToastAlert } = useToast();
 
   // states
   const [date, setDate] = useState(new Date());
@@ -74,8 +72,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId) throw new Error("Missing required parameters");
           await updateInboxIssueStatus(workspaceSlug, projectId, inboxId, inboxIssueId, data);
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Something went wrong while updating inbox status. Please try again.",
           });
@@ -98,8 +96,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
           });
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
@@ -122,7 +120,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       inboxIssueId,
       updateInboxIssueStatus,
       removeInboxIssue,
-      setToastAlert,
       captureIssueEvent,
       router,
     ]

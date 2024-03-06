@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
-import useToast from "hooks/use-toast";
 import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -12,7 +11,7 @@ import { IssueDetailRoot } from "components/issues";
 import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 import { PageHead } from "components/core";
 // ui
-import { ArchiveIcon, Button, Loader } from "@plane/ui";
+import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 import { RotateCcw } from "lucide-react";
 // types
@@ -35,7 +34,6 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   const {
     issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
   const {
     membership: { currentProjectRole },
@@ -66,8 +64,8 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
 
     await restoreIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success",
           message:
             issue &&
@@ -78,8 +76,8 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });

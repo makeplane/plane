@@ -1,16 +1,16 @@
 import { useState, FC } from "react";
 import { useRouter } from "next/router";
-import { Button, Tooltip } from "@plane/ui";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useWebhook, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
+// ui
+import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IWebhook } from "@plane/types";
 
@@ -29,23 +29,21 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
-  // hooks
-  const { setToastAlert } = useToast();
 
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
 
     copyTextToClipboard(webhookSecretKey)
       .then(() =>
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Secret key copied to clipboard.",
         })
       )
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Error occurred while copying secret key.",
         })
@@ -59,8 +57,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
 
     regenerateSecretKey(workspaceSlug.toString(), data.id)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "New key regenerated successfully.",
         });
@@ -71,8 +69,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
         }
       })
       .catch((err) =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
