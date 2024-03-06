@@ -1,10 +1,9 @@
 import { MouseEvent } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 // hooks
-import { useCycle, useIssues, useMember, useProject, useUser } from "hooks/store";
+import { useCycle, useIssues, useMember, useProject } from "hooks/store";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -23,7 +22,7 @@ import {
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
 import { StateDropdown } from "components/dropdowns";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // icons
 import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 // helpers
@@ -35,7 +34,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 import { EIssuesStoreType } from "constants/issue";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
-import { CYCLE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EmptyStateType } from "constants/empty-state";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -45,9 +44,6 @@ interface IActiveCycleDetails {
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
-  const { resolvedTheme } = useTheme();
-  // store hooks
-  const { currentUser } = useUser();
   const {
     issues: { fetchActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -78,11 +74,6 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
       : null
   );
 
-  const emptyStateDetail = CYCLE_EMPTY_STATE_DETAILS["active"];
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("cycle", "active", isLightMode);
-
   if (!activeCycle && isLoading)
     return (
       <Loader>
@@ -90,15 +81,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
       </Loader>
     );
 
-  if (!activeCycle)
-    return (
-      <EmptyState
-        title={emptyStateDetail.title}
-        description={emptyStateDetail.description}
-        image={emptyStateImage}
-        size="sm"
-      />
-    );
+  if (!activeCycle) return <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />;
 
   const endDate = new Date(activeCycle.end_date ?? "");
   const startDate = new Date(activeCycle.start_date ?? "");
