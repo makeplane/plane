@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .issue import IssueFlatSerializer, LabelLiteSerializer
+from .issue import IssueInboxSerializer, LabelLiteSerializer, IssueSerializer
 from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
@@ -24,12 +24,37 @@ class InboxSerializer(BaseSerializer):
 
 
 class InboxIssueSerializer(BaseSerializer):
-    issue_detail = IssueFlatSerializer(source="issue", read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    issue = IssueInboxSerializer(read_only=True)
 
     class Meta:
         model = InboxIssue
-        fields = "__all__"
+        fields = [
+            "id",
+            "status",
+            "duplicate_to",
+            "snoozed_till",
+            "source",
+            "issue",
+        ]
+        read_only_fields = [
+            "project",
+            "workspace",
+        ]
+
+
+class InboxIssueDetailSerializer(BaseSerializer):
+    issue = IssueSerializer(read_only=True)
+
+    class Meta:
+        model = InboxIssue
+        fields = [
+            "id",
+            "status",
+            "duplicate_to",
+            "snoozed_till",
+            "source",
+            "issue",
+        ]
         read_only_fields = [
             "project",
             "workspace",

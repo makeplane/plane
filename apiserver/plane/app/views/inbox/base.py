@@ -35,6 +35,7 @@ from plane.app.serializers import (
     InboxSerializer,
     InboxIssueSerializer,
     IssueDetailSerializer,
+    InboxIssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -169,49 +170,14 @@ class InboxIssueViewSet(BaseViewSet):
         ).distinct()
 
     def list(self, request, slug, project_id):
-        filters = issue_filters(request.query_params, "GET")
         workspace = Workspace.objects.filter(slug=slug).first()
         inbox_id = Inbox.objects.filter(
             workspace_id=workspace.id, project_id=project_id
         ).first()
-        issue_queryset = (
-            self.get_queryset()
-            .filter(issue_inbox__inbox_id=inbox_id)
-            .filter(**filters)
-            .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
-        )
-        if self.expand:
-            issues = IssueSerializer(
-                issue_queryset, expand=self.expand, many=True
-            ).data
-        else:
-            issues = issue_queryset.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-            )
+        inbox_issue = InboxIssue.objects.filter(
+            inbox_id=inbox_id.id, project_id=project_id
+        ).prefetch_related("issue")
+        issues = InboxIssueSerializer(inbox_issue, many=True).data
         return Response(
             issues,
             status=status.HTTP_200_OK,
@@ -275,15 +241,13 @@ class InboxIssueViewSet(BaseViewSet):
             workspace_id=workspace.id, project_id=project_id
         ).first()
         # create an inbox issue
-        InboxIssue.objects.create(
+        inbox_issue = InboxIssue.objects.create(
             inbox_id=inbox_id.id,
             project_id=project_id,
             issue=issue,
             source=request.data.get("source", "in-app"),
         )
-
-        issue = self.get_queryset().filter(pk=issue.id).first()
-        serializer = IssueSerializer(issue, expand=self.expand)
+        serializer = InboxIssueSerializer(inbox_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, issue_id):
