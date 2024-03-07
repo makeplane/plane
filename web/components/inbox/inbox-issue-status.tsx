@@ -1,34 +1,25 @@
 import React from "react";
 import { observer } from "mobx-react";
-// hooks
-import { INBOX_STATUS } from "constants/inbox";
-import { useInboxIssues } from "hooks/store";
 // constants
+import { INBOX_STATUS } from "constants/inbox";
+// types
+import { TInboxIssue } from "@plane/types";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  inboxId: string;
-  issueId: string;
+  inboxIssue: TInboxIssue;
   iconSize?: number;
   showDescription?: boolean;
 };
 
 export const InboxIssueStatus: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId, issueId, iconSize = 18, showDescription = false } = props;
-  // hooks
-  const {
-    issues: { getInboxIssueByIssueId },
-  } = useInboxIssues();
+  const { workspaceSlug, projectId, inboxIssue, iconSize = 18, showDescription = false } = props;
+  // derived values
+  const inboxIssueStatusDetail = INBOX_STATUS.find((s) => s.status === inboxIssue.status);
+  const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
 
-  const inboxIssueDetail = getInboxIssueByIssueId(inboxId, issueId);
-  if (!inboxIssueDetail) return <></>;
-
-  const inboxIssueStatusDetail = INBOX_STATUS.find((s) => s.status === inboxIssueDetail.status);
   if (!inboxIssueStatusDetail) return <></>;
-
-  const isSnoozedDatePassed =
-    inboxIssueDetail.status === 0 && new Date(inboxIssueDetail.snoozed_till ?? "") < new Date();
 
   return (
     <div
@@ -45,8 +36,8 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
         inboxIssueStatusDetail.description(
           workspaceSlug,
           projectId,
-          inboxIssueDetail.duplicate_to ?? "",
-          new Date(inboxIssueDetail.snoozed_till ?? "")
+          inboxIssue.duplicate_to ?? "",
+          new Date(inboxIssue.snoozed_till ?? "")
         )
       ) : (
         <span>{inboxIssueStatusDetail.title}</span>

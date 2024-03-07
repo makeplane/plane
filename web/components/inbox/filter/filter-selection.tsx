@@ -1,65 +1,35 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
-// mobx store
 // ui
-// icons
 import { PriorityIcon } from "@plane/ui";
+// components
 import { MultiLevelDropdown } from "components/ui";
-// types
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 import { ISSUE_PRIORITIES } from "constants/issue";
-import { useInboxIssues } from "hooks/store";
-import { TInboxIssueFilterOptions } from "@plane/types";
+// hooks
+import { useProjectInbox } from "hooks/store";
+// types
+// import { TInboxIssueFilterOptions } from "@plane/types";
 
-type TInboxIssueFilterSelection = { workspaceSlug: string; projectId: string; inboxId: string };
+type TInboxIssueFilterSelection = { workspaceSlug: string; projectId: string };
 
 export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId } = props;
-  // router
-  const router = useRouter();
-  const { inboxIssueId } = router.query;
-  // hooks
-  const {
-    filters: { inboxFilters, updateInboxFilters },
-  } = useInboxIssues();
+  const { projectId } = props;
+  // hooks'
+  const { projectInboxFilters, updateInboxIssuePriorityFilters, updateInboxIssueStatusFilters } = useProjectInbox();
 
-  const filters = inboxFilters?.filters;
-
-  let filtersLength = 0;
-  Object.keys(filters ?? {}).forEach((key) => {
-    const filterKey = key as keyof TInboxIssueFilterOptions;
-    if (filters?.[filterKey] && Array.isArray(filters[filterKey])) filtersLength += (filters[filterKey] ?? []).length;
-  });
+  const handleSelect = (option: { key: string; value: string }) => {
+    if (!projectId) return;
+    if (option.key === "priority") updateInboxIssuePriorityFilters(projectId, option.key, option.value);
+    if (option.key === "inbox_status") updateInboxIssueStatusFilters(projectId, option.key, parseInt(option.value));
+  };
 
   return (
     <div className="relative">
       <MultiLevelDropdown
         label="Filters"
-        onSelect={(option) => {
-          if (!workspaceSlug || !projectId || !inboxId) return;
-
-          const key = option.key as keyof TInboxIssueFilterOptions;
-          const currentValue: any[] = filters?.[key] ?? [];
-
-          const valueExists = currentValue.includes(option.value);
-
-          if (valueExists)
-            updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
-              [option.key]: currentValue.filter((val) => val !== option.value),
-            });
-          else
-            updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
-              [option.key]: [...currentValue, option.value],
-            });
-
-          if (inboxIssueId) {
-            router.push({
-              pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
-            });
-          }
-        }}
+        onSelect={handleSelect}
         direction="right"
         height="rg"
         options={[
@@ -79,7 +49,7 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
                 key: "priority",
                 value: priority.key,
               },
-              selected: filters?.priority?.includes(priority.key),
+              selected: projectInboxFilters?.priority?.includes(priority.key),
             })),
           },
           {
@@ -101,17 +71,17 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
                 key: "inbox_status",
                 value: status.status,
               },
-              selected: filters?.inbox_status?.includes(status.status),
+              selected: projectInboxFilters?.inbox_status?.includes(status.status),
             })),
           },
         ]}
       />
 
-      {filtersLength > 0 && (
+      {/* {filtersLength > 0 && (
         <div className="absolute -right-2 -top-2 z-10 grid h-4 w-4 place-items-center rounded-full border border-custom-border-200 bg-custom-background-80 text-[0.65rem] text-custom-text-100">
           <span>{filtersLength}</span>
         </div>
-      )}
+      )} */}
     </div>
   );
 });

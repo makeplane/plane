@@ -12,12 +12,11 @@ import { useInboxIssues } from "hooks/store";
 type TInboxContentRoot = {
   workspaceSlug: string;
   projectId: string;
-  inboxId: string;
   inboxIssueId: string | undefined;
 };
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = props;
+  const { workspaceSlug, projectId, inboxIssueId } = props;
   // hooks
   const {
     issues: { loader, getInboxIssuesByInboxId },
@@ -65,17 +64,11 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
                 <InboxIssueActionsHeader
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
-                  inboxId={inboxId}
                   inboxIssueId={inboxIssueId}
                 />
               </div>
               <div className="w-full h-full">
-                <InboxIssueDetailRoot
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  inboxId={inboxId}
-                  issueId={inboxIssueId}
-                />
+                <InboxIssueDetailRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={inboxIssueId} />
               </div>
             </div>
           )}

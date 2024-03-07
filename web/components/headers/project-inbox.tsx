@@ -2,16 +2,15 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
-// hooks
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { CreateInboxIssueModal } from "components/inbox";
-// helper
-import { useProject } from "hooks/store";
 import { ProjectLogo } from "components/project";
+// hooks
+import { useProject, useProjectInbox } from "hooks/store";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states
@@ -21,6 +20,7 @@ export const ProjectInboxHeader: FC = observer(() => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { currentProjectDetails } = useProject();
+  const { isLoading } = useProjectInbox();
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -51,6 +51,7 @@ export const ProjectInboxHeader: FC = observer(() => {
                 <BreadcrumbLink label="Inbox Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
               }
             />
+            {isLoading && <span>Syncing...</span>}
           </Breadcrumbs>
         </div>
       </div>

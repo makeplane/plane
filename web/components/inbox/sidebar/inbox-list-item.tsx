@@ -4,45 +4,34 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
 import { CalendarDays } from "lucide-react";
-// hooks
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
-// helpers
-import { InboxIssueStatus } from "components/inbox/inbox-issue-status";
-import { renderFormattedDate } from "helpers/date-time.helper";
 // components
-import { useInboxIssues, useIssueDetail, useProject } from "hooks/store";
+import { InboxIssueStatus } from "components/inbox";
+// helpers
+import { renderFormattedDate } from "helpers/date-time.helper";
+// types
+import { TInboxIssue } from "@plane/types";
 
-type TInboxIssueListItem = {
+type InboxIssueListItemProps = {
   workspaceSlug: string;
   projectId: string;
-  inboxId: string;
-  issueId: string;
+  projectIdentifier: string;
+  inboxIssue: TInboxIssue;
 };
 
-export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId, issueId } = props;
+export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
+  const { workspaceSlug, projectId, inboxIssue, projectIdentifier } = props;
   // router
   const router = useRouter();
   const { inboxIssueId } = router.query;
-  // hooks
-  const { getProjectById } = useProject();
-  const {
-    issues: { getInboxIssueByIssueId },
-  } = useInboxIssues();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
 
-  const inboxIssueDetail = getInboxIssueByIssueId(inboxId, issueId);
-  const issue = getIssueById(issueId);
-
-  if (!issue || !inboxIssueDetail) return <></>;
+  const issue = inboxIssue.issue;
 
   useEffect(() => {
-    if (issueId === inboxIssueId) {
+    if (issue.id === inboxIssueId) {
       setTimeout(() => {
-        const issueItemCard = document.getElementById(`inbox-issue-list-item-${issueId}`);
+        const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
         if (issueItemCard)
           issueItemCard.scrollIntoView({
             behavior: "smooth",
@@ -50,24 +39,24 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
           });
       }, 200);
     }
-  }, [issueId, inboxIssueId]);
+  }, [inboxIssueId, issue.id]);
 
   return (
     <>
       <Link
         id={`inbox-issue-list-item-${issue.id}`}
-        key={`${inboxId}_${issueId}`}
-        href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issueId}`}
+        key={`${projectId}_${issue.id}`}
+        href={`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${issue.id}`}
       >
         <div
           className={`relative min-h-[5rem]select-none space-y-3 border-b border-custom-border-200 px-4 py-2 hover:bg-custom-primary/5 cursor-pointer ${
-            inboxIssueId === issueId ? "bg-custom-primary/5" : " "
-          } ${inboxIssueDetail.status !== -2 ? "opacity-60" : ""}`}
+            inboxIssueId === issue.id ? "bg-custom-primary/5" : " "
+          } ${inboxIssue.status !== -2 ? "opacity-60" : ""}`}
         >
           <div className="flex items-center justify-between gap-x-2">
             <div className="relative flex items-center gap-x-2 overflow-hidden">
               <p className="flex-shrink-0 text-xs text-custom-text-200">
-                {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
+                {projectIdentifier}-{issue.sequence_id}
               </p>
               <h5 className="truncate text-sm">{issue.name}</h5>
             </div>
@@ -75,13 +64,11 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
               <InboxIssueStatus
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
-                inboxId={inboxId}
-                issueId={issueId}
+                inboxIssue={inboxIssue}
                 iconSize={14}
               />
             </div>
           </div>
-
           <div className="flex flex-wrap items-center gap-2">
             <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
               <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />

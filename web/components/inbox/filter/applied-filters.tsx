@@ -12,7 +12,7 @@ import { useInboxIssues } from "hooks/store";
 import { TInboxIssueFilterOptions, TIssuePriorities } from "@plane/types";
 // constants
 
-type TInboxIssueAppliedFilter = { workspaceSlug: string; projectId: string; inboxId: string };
+type TInboxIssueAppliedFilter = { workspaceSlug: string; projectId: string };
 
 export const IssueStatusLabel = ({ status }: { status: number }) => {
   const issueStatusDetail = INBOX_STATUS.find((s) => s.status === status);
@@ -30,7 +30,7 @@ export const IssueStatusLabel = ({ status }: { status: number }) => {
 };
 
 export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((props) => {
-  const { workspaceSlug, projectId, inboxId } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks
   const {
     filters: { inboxFilters, updateInboxFilters },
@@ -39,13 +39,13 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
   const filters = inboxFilters?.filters;
 
   const handleUpdateFilter = (filter: Partial<TInboxIssueFilterOptions>) => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
-    updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), filter);
+    if (!workspaceSlug || !projectId) return;
+    updateInboxFilters(workspaceSlug.toString(), projectId.toString(), filter);
   };
 
   const handleClearAllFilters = () => {
     const newFilters: TInboxIssueFilterOptions = { priority: [], inbox_status: [] };
-    updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), newFilters);
+    updateInboxFilters(workspaceSlug.toString(), projectId.toString(), newFilters);
   };
 
   let filtersLength = 0;
@@ -80,12 +80,12 @@ export const InboxIssueAppliedFilter: FC<TInboxIssueAppliedFilter> = observer((p
                             priority === "urgent"
                               ? "bg-red-500/20 text-red-500"
                               : priority === "high"
-                                ? "bg-orange-500/20 text-orange-500"
-                                : priority === "medium"
-                                  ? "bg-yellow-500/20 text-yellow-500"
-                                  : priority === "low"
-                                    ? "bg-green-500/20 text-green-500"
-                                    : "bg-custom-background-90 text-custom-text-200"
+                              ? "bg-orange-500/20 text-orange-500"
+                              : priority === "medium"
+                              ? "bg-yellow-500/20 text-yellow-500"
+                              : priority === "low"
+                              ? "bg-green-500/20 text-green-500"
+                              : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
                           <div className="relative flex items-center gap-1">
