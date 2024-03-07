@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
-import { Tab, Popover } from "@headlessui/react";
 import { Control, Controller } from "react-hook-form";
+import useSWR from "swr";
+import { Tab, Popover } from "@headlessui/react";
 // hooks
+import { Button, Input, Loader } from "@plane/ui";
+import { MAX_FILE_SIZE } from "constants/common";
 import { useApplication, useWorkspace } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 // services
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { FileService } from "services/file.service";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { Button, Input, Loader } from "@plane/ui";
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
 
 const tabOptions = [
   {
@@ -187,7 +187,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                   );
                 })}
               </Tab.List>
-              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
+              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md">
                 {(unsplashImages || !unsplashError) && (
                   <Tab.Panel className="mt-4 h-full w-full space-y-4">
                     <div className="flex gap-x-2">

@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
-import isEmpty from "lodash/isEmpty";
-// services
-import { CycleService } from "services/cycle.service";
-// hooks
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
+// icons
+import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
+// ui
+import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
-// ui
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
-// icons
-import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
+import { DateRangeDropdown } from "components/dropdowns";
+// constants
+import { CYCLE_STATUS } from "constants/cycle";
+import { CYCLE_UPDATED } from "constants/event-tracker";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+// services
+import { CycleService } from "services/cycle.service";
 // types
 import { ICycle } from "@plane/types";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { CYCLE_UPDATED } from "constants/event-tracker";
-// fetch-keys
-import { CYCLE_STATUS } from "constants/cycle";
-import { DateRangeDropdown } from "components/dropdowns";
 
 type Props = {
   cycleId: string;
@@ -60,8 +58,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const { control, reset } = useForm({
     defaultValues,
@@ -98,15 +94,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link Copied!",
           message: "Cycle link copied to clipboard.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
@@ -147,14 +143,14 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     if (isDateValid) {
       submitChanges(payload, "date_range");
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Cycle updated successfully.",
       });
     } else {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message:
           "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
@@ -220,8 +216,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-      ? "0 Issue"
-      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+        ? "0 Issue"
+        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
@@ -302,7 +298,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <CalendarClock className="h-4 w-4" />
               <span className="text-base">Date range</span>
             </div>
-            <div className="w-3/5 h-7">
+            <div className="h-7 w-3/5">
               <Controller
                 control={control}
                 name="start_date"

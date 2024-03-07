@@ -400,7 +400,7 @@ class BasePaginator:
             cursor_result = paginator.get_result(
                 limit=per_page, cursor=input_cursor
             )
-        except BadPaginationError as e:
+        except BadPaginationError:
             raise ParseError(detail="Error in parsing")
 
         if on_results:

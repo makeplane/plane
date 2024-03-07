@@ -1,14 +1,14 @@
+import { useEffect } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { BarChart2, PanelRight } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
-import { useApplication } from "hooks/store";
-import { observer } from "mobx-react";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { cn } from "helpers/common.helper";
-import { useEffect } from "react";
+import { useApplication } from "hooks/store";
 
 export const WorkspaceAnalyticsHeader = observer(() => {
   const router = useRouter();
@@ -47,11 +47,21 @@ export const WorkspaceAnalyticsHeader = observer(() => {
                 }
               />
             </Breadcrumbs>
-            {analytics_tab === 'custom' &&
-              <button className="block md:hidden" onClick={() => { themeStore.toggleWorkspaceAnalyticsSidebar() }}>
-                <PanelRight className={cn("w-4 h-4 block md:hidden", !themeStore.workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200")} />
+            {analytics_tab === "custom" && (
+              <button
+                className="block md:hidden"
+                onClick={() => {
+                  themeStore.toggleWorkspaceAnalyticsSidebar();
+                }}
+              >
+                <PanelRight
+                  className={cn(
+                    "w-4 h-4 block md:hidden",
+                    !themeStore.workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200"
+                  )}
+                />
               </button>
-            }
+            )}
           </div>
         </div>
       </div>

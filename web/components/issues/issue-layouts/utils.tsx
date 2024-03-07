@@ -1,24 +1,39 @@
-import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
-import { EIssueListRow, ISSUE_PRIORITIES } from "constants/issue";
-import { renderEmoji } from "helpers/emoji.helper";
+import { ContrastIcon } from "lucide-react";
+import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+// components
+import { ProjectLogo } from "components/project";
+// stores
+import { ISSUE_PRIORITIES } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
+import { ICycleStore } from "store/cycle.store";
+import { ILabelStore } from "store/label.store";
 import { IMemberRootStore } from "store/member";
+import { IModuleStore } from "store/module.store";
 import { IProjectStore } from "store/project/project.store";
 import { IStateStore } from "store/state.store";
-import { GroupByColumnTypes, IGroupByColumn, IIssueListRow, TGroupedIssues, TUnGroupedIssues } from "@plane/types";
-import { STATE_GROUPS } from "constants/state";
-import { ILabelStore } from "store/label.store";
+// helpers
+// constants
+// types
+import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,
   project: IProjectStore,
+  cycle: ICycleStore,
+  module: IModuleStore,
   label: ILabelStore,
   projectState: IStateStore,
   member: IMemberRootStore,
-  includeNone?: boolean
+  includeNone?: boolean,
+  isWorkspaceLevel?: boolean
 ): IGroupByColumn[] | undefined => {
   switch (groupBy) {
     case "project":
       return getProjectColumns(project);
+    case "cycle":
+      return getCycleColumns(project, cycle);
+    case "module":
+      return getModuleColumns(project, module);
     case "state":
       return getStateColumns(projectState);
     case "state_detail.group":
@@ -26,7 +41,7 @@ export const getGroupByColumns = (
     case "priority":
       return getPriorityColumns();
     case "labels":
-      return getLabelsColumns(label) as any;
+      return getLabelsColumns(label, isWorkspaceLevel) as any;
     case "assignees":
       return getAssigneeColumns(member) as any;
     case "created_by":
@@ -49,10 +64,76 @@ const getProjectColumns = (project: IProjectStore): IGroupByColumn[] | undefined
       return {
         id: project.id,
         name: project.name,
-        icon: <div className="w-6 h-6">{renderEmoji(project.emoji || "")}</div>,
+        icon: (
+          <div className="w-6 h-6 grid place-items-center flex-shrink-0">
+            <ProjectLogo logo={project.logo_props} />
+          </div>
+        ),
         payload: { project_id: project.id },
       };
     }) as any;
+};
+
+const getCycleColumns = (projectStore: IProjectStore, cycleStore: ICycleStore): IGroupByColumn[] | undefined => {
+  const { currentProjectDetails } = projectStore;
+  const { getProjectCycleIds, getCycleById } = cycleStore;
+
+  if (!currentProjectDetails || !currentProjectDetails?.id) return;
+
+  const cycleIds = currentProjectDetails?.id ? getProjectCycleIds(currentProjectDetails?.id) : undefined;
+  if (!cycleIds) return;
+
+  const cycles = [];
+
+  cycleIds.map((cycleId) => {
+    const cycle = getCycleById(cycleId);
+    if (cycle) {
+      const cycleStatus = cycle.status ? (cycle.status.toLocaleLowerCase() as TCycleGroups) : "draft";
+      cycles.push({
+        id: cycle.id,
+        name: cycle.name,
+        icon: <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />,
+        payload: { cycle_id: cycle.id },
+      });
+    }
+  });
+  cycles.push({
+    id: "None",
+    name: "None",
+    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+  });
+
+  return cycles as any;
+};
+
+const getModuleColumns = (projectStore: IProjectStore, moduleStore: IModuleStore): IGroupByColumn[] | undefined => {
+  const { currentProjectDetails } = projectStore;
+  const { getProjectModuleIds, getModuleById } = moduleStore;
+
+  if (!currentProjectDetails || !currentProjectDetails?.id) return;
+
+  const moduleIds = currentProjectDetails?.id ? getProjectModuleIds(currentProjectDetails?.id) : undefined;
+  if (!moduleIds) return;
+
+  const modules = [];
+
+  moduleIds.map((moduleId) => {
+    const moduleInfo = getModuleById(moduleId);
+    if (moduleInfo)
+      modules.push({
+        id: moduleInfo.id,
+        name: moduleInfo.name,
+        icon: <DiceIcon className="h-3.5 w-3.5" />,
+        payload: { module_ids: [moduleInfo.id] },
+      });
+  }) as any;
+  modules.push({
+    id: "None",
+    name: "None",
+    icon: <DiceIcon className="h-3.5 w-3.5" />,
+  });
+
+  return modules as any;
 };
 
 const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefined => {
@@ -63,7 +144,7 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
     id: state.id,
     name: state.name,
     icon: (
-      <div className="w-3.5 h-3.5 rounded-full">
+      <div className="h-3.5 w-3.5 rounded-full">
         <StateGroupIcon stateGroup={state.group} color={state.color} width="14" height="14" />
       </div>
     ),
@@ -78,7 +159,7 @@ const getStateGroupColumns = () => {
     id: stateGroup.key,
     name: stateGroup.label,
     icon: (
-      <div className="w-3.5 h-3.5 rounded-full">
+      <div className="h-3.5 w-3.5 rounded-full">
         <StateGroupIcon stateGroup={stateGroup.key} width="14" height="14" />
       </div>
     ),
@@ -97,18 +178,19 @@ const getPriorityColumns = () => {
   }));
 };
 
-const getLabelsColumns = (label: ILabelStore) => {
-  const { projectLabels } = label;
+const getLabelsColumns = (label: ILabelStore, isWorkspaceLevel: boolean = false) => {
+  const { workspaceLabels, projectLabels } = label;
 
-  if (!projectLabels) return;
-
-  const labels = [...projectLabels, { id: "None", name: "None", color: "#666" }];
+  const labels = [
+    ...(isWorkspaceLevel ? workspaceLabels || [] : projectLabels || []),
+    { id: "None", name: "None", color: "#666" },
+  ];
 
   return labels.map((label) => ({
     id: label.id,
     name: label.name,
     icon: (
-      <div className="w-[12px] h-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
+      <div className="h-[12px] w-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
     ),
     payload: label?.id === "None" ? {} : { label_ids: [label.id] },
   }));

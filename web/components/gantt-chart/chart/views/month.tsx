@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
+import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "components/gantt-chart/constants";
 import { useGanttChart } from "components/gantt-chart/hooks/use-gantt-chart";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
 import { IMonthBlock } from "../../views";
 // constants
-import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "components/gantt-chart/constants";
 
 export const MonthChartView: FC<any> = observer(() => {
   // chart hook

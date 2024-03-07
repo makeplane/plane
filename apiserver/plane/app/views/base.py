@@ -1,30 +1,30 @@
 # Python imports
-import zoneinfo
 import traceback
 
+import zoneinfo
+
 # Django imports
-from django.urls import resolve
 from django.conf import settings
-from django.utils import timezone
-from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError
+from django.urls import resolve
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Third part imports
 from rest_framework import status
-from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
 from rest_framework.exceptions import APIException
-from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from sentry_sdk import capture_exception
-from django_filters.rest_framework import DjangoFilterBackend
+
+from plane.bgtasks.webhook_task import send_webhook
 
 # Module imports
 from plane.utils.paginator import BasePaginator
-from plane.bgtasks.webhook_task import send_webhook
 
 
 class TimezoneMixin:
@@ -104,7 +104,11 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             response = super().handle_exception(exc)
             return response
         except Exception as e:
-            print(e, traceback.format_exc()) if settings.DEBUG else print("Server Error")
+            (
+                print(e, traceback.format_exc())
+                if settings.DEBUG
+                else print("Server Error")
+            )
             if isinstance(e, IntegrityError):
                 return Response(
                     {"error": "The payload is not valid"},
@@ -119,14 +123,14 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
             if isinstance(e, ObjectDoesNotExist):
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
                 capture_exception(e)
                 return Response(
-                    {"error": f"The required key does not exist."},
+                    {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -226,13 +230,13 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if isinstance(e, ObjectDoesNotExist):
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
                 return Response(
-                    {"error": f"The required key does not exist."},
+                    {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 

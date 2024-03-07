@@ -1,15 +1,15 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
+import { CycleGanttBlock } from "components/cycles";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
+import { EUserProjectRoles } from "constants/project";
 import { useCycle, useUser } from "hooks/store";
 // components
-import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
-import { CycleGanttBlock } from "components/cycles";
 // types
 import { ICycle } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string;

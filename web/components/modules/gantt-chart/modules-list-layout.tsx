@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
-import { useModule, useProject } from "hooks/store";
 // components
 import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
 import { ModuleGanttBlock } from "components/modules";
+import { useModule, useProject } from "hooks/store";
 // types
 import { IModule } from "@plane/types";
 

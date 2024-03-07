@@ -16,7 +16,6 @@ from django.contrib.auth.hashers import make_password
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.conf import settings
 
 ## Third Party Imports
 from rest_framework import status
@@ -172,7 +171,7 @@ class ResetPasswordEndpoint(BaseAPIView):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-        except DjangoUnicodeDecodeError as indentifier:
+        except DjangoUnicodeDecodeError:
             return Response(
                 {"error": "token is not valid, please check the new one"},
                 status=status.HTTP_401_UNAUTHORIZED,
