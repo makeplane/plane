@@ -59,21 +59,6 @@ from .estimate import (
     ProjectEstimatePointEndpoint,
 )
 
-from .auth_extended import (
-    ForgotPasswordEndpoint,
-    ResetPasswordEndpoint,
-    ChangePasswordEndpoint,
-    SetUserPasswordEndpoint,
-    EmailCheckEndpoint,
-    MagicGenerateEndpoint,
-)
-
-
-from .authentication import (
-    SignInEndpoint,
-    SignOutEndpoint,
-    MagicSignInEndpoint,
-)
 
 from .module import (
     ModuleViewSet,
