@@ -2,15 +2,15 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // components
+import { Button, Loader } from "@plane/ui";
 import { AnalyticsGraph, AnalyticsTable } from "components/analytics";
 // ui
-import { Button, Loader } from "@plane/ui";
 // helpers
+import { ANALYTICS } from "constants/fetch-keys";
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 // fetch-keys
-import { ANALYTICS } from "constants/fetch-keys";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
@@ -33,7 +33,7 @@ export const CustomAnalyticsMainContent: React.FC<Props> = (props) => {
       {!error ? (
         analytics ? (
           analytics.total > 0 ? (
-            <div className="h-full overflow-y-auto">
+            <div className="h-full overflow-y-auto vertical-scrollbar scrollbar-md">
               <AnalyticsGraph
                 analytics={analytics}
                 barGraphData={barGraphData}

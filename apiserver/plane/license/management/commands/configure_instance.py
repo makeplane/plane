@@ -3,7 +3,6 @@ import os
 
 # Django imports
 from django.core.management.base import BaseCommand
-from django.conf import settings
 
 # Module imports
 from plane.license.models import InstanceConfiguration

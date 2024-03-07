@@ -1,15 +1,14 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomMenu } from "@plane/ui";
-//icons
 import { Pencil, Trash2 } from "lucide-react";
-// helpers
+import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { orderArrayBy } from "helpers/array.helper";
+import { useProject } from "hooks/store";
+// ui
+//icons
+// helpers
 // types
 import { IEstimate } from "@plane/types";
 
@@ -26,8 +25,6 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { currentProjectDetails, updateProject } = useProject();
-  // hooks
-  const { setToastAlert } = useToast();
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -38,8 +35,8 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: errorString ?? "Estimate points could not be used. Please try again.",
       });

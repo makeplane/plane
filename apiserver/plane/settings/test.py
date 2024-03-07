@@ -1,4 +1,5 @@
 """Test Settings"""
+
 from .common import *  # noqa
 
 DEBUG = True

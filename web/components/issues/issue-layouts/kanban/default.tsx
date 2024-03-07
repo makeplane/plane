@@ -1,4 +1,6 @@
+import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
+// constants
 // hooks
 import {
   useCycle,
@@ -10,9 +12,6 @@ import {
   useProject,
   useProjectState,
 } from "hooks/store";
-// components
-import { HeaderGroupByCard } from "./headers/group-by-card";
-import { KanbanGroup } from "./kanban-group";
 // types
 import {
   GroupByColumnTypes,
@@ -25,11 +24,12 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
 } from "@plane/types";
-// constants
-import { EIssueActions } from "../types";
+// parent components
 import { getGroupByColumns } from "../utils";
-import { TCreateModalStoreTypes } from "constants/issue";
-import { MutableRefObject } from "react";
+// components
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import { KanbanGroup } from "./kanban-group";
+import { KanbanStoreType } from "./base-kanban-root";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;
@@ -39,7 +39,7 @@ export interface IGroupByKanBan {
   group_by: string | null;
   sub_group_id: string;
   isDragDisabled: boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
@@ -52,7 +52,7 @@ export interface IGroupByKanBan {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -69,7 +69,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     group_by,
     sub_group_id = "null",
     isDragDisabled,
-    handleIssues,
+    updateIssue,
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
@@ -89,11 +89,19 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const project = useProject();
   const label = useLabel();
   const cycle = useCycle();
-  const _module = useModule();
+  const moduleInfo = useModule();
   const projectState = useProjectState();
   const { peekIssue } = useIssueDetail();
 
-  const list = getGroupByColumns(group_by as GroupByColumnTypes, project, cycle, _module, label, projectState, member);
+  const list = getGroupByColumns(
+    group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    moduleInfo,
+    label,
+    projectState,
+    member
+  );
 
   if (!list) return null;
 
@@ -114,16 +122,19 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className={`relative w-full flex gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
+    <div className={`relative flex w-full gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
       {groupList &&
         groupList.length > 0 &&
         groupList.map((_list: IGroupByColumn) => {
           const groupByVisibilityToggle = visibilityGroupBy(_list);
 
           return (
-            <div className={`relative flex flex-shrink-0 flex-col group ${groupByVisibilityToggle ? `` : `w-[350px]`}`}>
+            <div
+              key={_list.id}
+              className={`group relative flex flex-shrink-0 flex-col ${groupByVisibilityToggle ? `` : `w-[350px]`}`}
+            >
               {sub_group_by === null && (
-                <div className="flex-shrink-0 sticky top-0 z-[2] w-full bg-custom-background-90 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}
@@ -152,7 +163,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   group_by={group_by}
                   sub_group_id={sub_group_id}
                   isDragDisabled={isDragDisabled}
-                  handleIssues={handleIssues}
+                  updateIssue={updateIssue}
                   quickActions={quickActions}
                   enableQuickIssueCreate={enableQuickIssueCreate}
                   quickAddCallback={quickAddCallback}
@@ -178,7 +189,7 @@ export interface IKanBan {
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;
-  handleIssues: (issue: TIssue, action: EIssueActions) => void;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
@@ -192,7 +203,7 @@ export interface IKanBan {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -207,7 +218,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     sub_group_by,
     group_by,
     sub_group_id = "null",
-    handleIssues,
+    updateIssue,
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
@@ -234,7 +245,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       sub_group_by={sub_group_by}
       sub_group_id={sub_group_id}
       isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
-      handleIssues={handleIssues}
+      updateIssue={updateIssue}
       quickActions={quickActions}
       kanbanFilters={kanbanFilters}
       handleKanbanFilters={handleKanbanFilters}

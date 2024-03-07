@@ -43,7 +43,7 @@ class ApiTokenEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, pk=None):
-        if pk == None:
+        if pk is None:
             api_tokens = APIToken.objects.filter(
                 user=request.user, workspace__slug=slug
             )

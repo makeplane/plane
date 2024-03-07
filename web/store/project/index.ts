@@ -1,6 +1,6 @@
-import { IProjectStore, ProjectStore } from "./project.store";
-import { IProjectPublishStore, ProjectPublishStore } from "./project-publish.store";
 import { RootStore } from "store/root.store";
+import { IProjectPublishStore, ProjectPublishStore } from "./project-publish.store";
+import { IProjectStore, ProjectStore } from "./project.store";
 
 export interface IProjectRootStore {
   project: IProjectStore;

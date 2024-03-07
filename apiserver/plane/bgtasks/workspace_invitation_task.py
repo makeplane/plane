@@ -1,7 +1,4 @@
 # Python imports
-import os
-import requests
-import json
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -12,8 +9,6 @@ from django.conf import settings
 # Third party imports
 from celery import shared_task
 from sentry_sdk import capture_exception
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 
 # Module imports
 from plane.db.models import Workspace, WorkspaceMemberInvite, User
@@ -83,7 +78,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         msg.send()
 
         return
-    except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
+    except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist):
         print("Workspace or WorkspaceMember Invite Does not exists")
         return
     except Exception as e:

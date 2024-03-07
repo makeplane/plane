@@ -1,7 +1,5 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useDashboard } from "hooks/store";
-// components
 import {
   AssignedIssuesWidget,
   CreatedIssuesWidget,
@@ -13,6 +11,8 @@ import {
   RecentProjectsWidget,
   WidgetProps,
 } from "components/dashboard";
+import { useApplication, useDashboard } from "hooks/store";
+// components
 // types
 import { TWidgetKeys } from "@plane/types";
 

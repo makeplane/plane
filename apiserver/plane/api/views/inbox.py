@@ -119,7 +119,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             )
 
         # Check for valid priority
-        if not request.data.get("issue", {}).get("priority", "none") in [
+        if request.data.get("issue", {}).get("priority", "none") not in [
             "low",
             "medium",
             "high",

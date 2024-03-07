@@ -3,14 +3,14 @@ import useSWR from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import { WorkspaceService } from "services/workspace.service";
 // components
-import { MarkdownRenderer } from "components/ui";
-import { Loader } from "@plane/ui";
-// icons
 import { X } from "lucide-react";
+import { Loader } from "@plane/ui";
+import { MarkdownRenderer } from "components/ui";
+// icons
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
+import { WorkspaceService } from "services/workspace.service";
 
 type Props = {
   isOpen: boolean;

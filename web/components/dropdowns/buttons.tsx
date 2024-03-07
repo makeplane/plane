@@ -1,10 +1,10 @@
 // helpers
+import { Tooltip } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
+import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
 import { TButtonVariants } from "./types";
 // constants
-import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
-import { Tooltip } from "@plane/ui";
 
 export type DropdownButtonProps = {
   children: React.ReactNode;
@@ -31,8 +31,8 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
   const ButtonToRender: React.FC<ButtonProps> = BORDER_BUTTON_VARIANTS.includes(variant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(variant)
-    ? BackgroundButton
-    : TransparentButton;
+      ? BackgroundButton
+      : TransparentButton;
 
   return (
     <ButtonToRender

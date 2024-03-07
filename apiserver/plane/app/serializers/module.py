@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
-from .user import UserLiteSerializer
 from .project import ProjectLiteSerializer
 
 from plane.db.models import (
@@ -142,7 +141,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
-
     class Meta:
         model = ModuleLink
         fields = "__all__"
@@ -216,7 +214,6 @@ class ModuleSerializer(DynamicBaseSerializer):
 
 
 class ModuleDetailSerializer(ModuleSerializer):
-
     link_module = ModuleLinkSerializer(read_only=True, many=True)
     sub_issues = serializers.IntegerField(read_only=True)
 

@@ -1,13 +1,13 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { ReactionSelector } from "./reaction-selector";
-// hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { renderEmoji } from "helpers/emoji.helper";
 import { useIssueDetail } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
 // types
 import { IUser } from "@plane/types";
-import { renderEmoji } from "helpers/emoji.helper";
+import { ReactionSelector } from "./reaction-selector";
 
 export type TIssueReaction = {
   workspaceSlug: string;
@@ -24,7 +24,6 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
     createReaction,
     removeReaction,
   } = useIssueDetail();
-  const { setToastAlert } = useToast();
 
   const reactionIds = getReactionsByIssueId(issueId);
   const userReactions = reactionsByUser(issueId, currentUser.id).map((r) => r.reaction);
@@ -35,15 +34,15 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await createReaction(workspaceSlug, projectId, issueId, reaction);
-          setToastAlert({
+          setToast({
             title: "Reaction created successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Reaction creation failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Reaction creation failed",
           });
         }
@@ -52,15 +51,15 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
         try {
           if (!workspaceSlug || !projectId || !issueId || !currentUser?.id) throw new Error("Missing fields");
           await removeReaction(workspaceSlug, projectId, issueId, reaction, currentUser.id);
-          setToastAlert({
+          setToast({
             title: "Reaction removed successfully",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Reaction remove failed",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Reaction remove failed",
           });
         }
@@ -70,7 +69,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
         else await issueReactionOperations.create(reaction);
       },
     }),
-    [workspaceSlug, projectId, issueId, currentUser, createReaction, removeReaction, setToastAlert, userReactions]
+    [workspaceSlug, projectId, issueId, currentUser, createReaction, removeReaction, userReactions]
   );
 
   return (
