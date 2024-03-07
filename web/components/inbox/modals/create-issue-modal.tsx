@@ -84,9 +84,9 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const issueName = watch("name");
 
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
+    if (!workspaceSlug || !projectId) return;
 
-    await createInboxIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), formData)
+    await createInboxIssue(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
         if (!createMore) {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.id}`);

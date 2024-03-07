@@ -8,6 +8,8 @@ export enum EInboxStatus {
   DUPLICATE = 2,
 }
 
+export type TInboxIssue = {};
+
 export type TInboxStatus =
   | EInboxStatus.PENDING
   | EInboxStatus.REJECT
