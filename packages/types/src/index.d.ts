@@ -12,10 +12,7 @@ export * from "./pages";
 export * from "./ai";
 export * from "./estimate";
 export * from "./importer";
-
-// FIXME: Remove this after development and the refactor/mobx-store-issue branch is stable
-export * from "./inbox/root";
-
+export * from "./inbox";
 export * from "./analytics";
 export * from "./calendar";
 export * from "./notifications";

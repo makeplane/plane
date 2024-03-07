@@ -1,5 +1,38 @@
-import { TIssue } from "../issues/base";
-import type { IProjectLite } from "../projects";
+import { TIssue } from "./issues/base";
+import type { IProjectLite } from "./projects";
+
+export type TInboxIssue = {
+  id: string;
+  status: -2 | -1 | 0 | 1 | 2;
+  snoozed_till: Date | null;
+  duplicate_to: string | null;
+  source: string;
+  issue: TIssue;
+};
+
+export type TInboxIssueFilterOptions = {
+  priority: string[];
+  inbox_status: number[];
+};
+
+export type TInboxIssueQueryParams = "priority" | "inbox_status";
+
+export type TInboxIssueFilters = { filters: TInboxIssueFilterOptions };
+
+export type TInbox = {
+  id: string;
+  name: string;
+  description: string;
+  workspace: string;
+  project: string;
+  is_default: boolean;
+  view_props: TInboxIssueFilters;
+  created_by: string;
+  updated_by: string;
+  created_at: Date;
+  updated_at: Date;
+  pending_issue_count: number;
+};
 
 export type TInboxIssueExtended = {
   completed_at: string | null;
