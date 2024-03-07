@@ -467,7 +467,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }}
                           mentionHighlights={mentionHighlights}
                           mentionSuggestions={mentionSuggestions}
-                          // tabIndex={2}
+                          tabIndex={getTabIndex("description_html")}
                         />
                       )}
                     />

@@ -6,10 +6,22 @@ interface EditorContentProps {
   editor: Editor | null;
   editorContentCustomClassNames: string | undefined;
   children?: ReactNode;
+  tabIndex?: number;
 }
 
-export const EditorContentWrapper = ({ editor, editorContentCustomClassNames = "", children }: EditorContentProps) => (
-  <div className={`contentEditor ${editorContentCustomClassNames}`}>
+export const EditorContentWrapper = ({
+  editor,
+  editorContentCustomClassNames = "",
+  tabIndex,
+  children,
+}: EditorContentProps) => (
+  <div
+    className={`contentEditor ${editorContentCustomClassNames}`}
+    tabIndex={tabIndex}
+    onFocus={() => {
+      editor?.chain().focus(undefined, { scrollIntoView: false }).run();
+    }}
+  >
     <EditorContent editor={editor} />
     {editor?.isActive("image") && editor?.isEditable && <ImageResizer editor={editor} />}
     {children}
