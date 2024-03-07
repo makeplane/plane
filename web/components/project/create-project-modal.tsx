@@ -86,7 +86,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     control,
     watch,
     setValue,
-    getValues,
   } = useForm<IProject>({
     defaultValues,
     reValidateMode: "onChange",
@@ -172,11 +171,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     const alphanumericValue = projectIdentifierSanitizer(value);
     setIsChangeInIdentifierRequired(false);
     onChange(alphanumericValue);
-  };
-
-  const handleLeadChange = (onChange: any, lead: string | null) => {
-    if (lead === getValues("project_lead")) onChange(null);
-    else onChange(lead);
   };
 
   return (
@@ -412,7 +406,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               <div className="h-7 flex-shrink-0" tabIndex={5}>
                                 <MemberDropdown
                                   value={value}
-                                  onChange={(lead) => handleLeadChange(onChange, lead)}
+                                  onChange={(lead) => onChange(lead === value ? null : lead)}
                                   placeholder="Lead"
                                   multiple={false}
                                   buttonVariant="border-with-text"
