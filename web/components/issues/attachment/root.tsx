@@ -1,8 +1,8 @@
 import { FC, useMemo } from "react";
 // hooks
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { useEventTracker, useIssueDetail } from "hooks/store";
 // ui
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueAttachmentUpload } from "./attachment-upload";
 import { IssueAttachmentsList } from "./attachments-list";

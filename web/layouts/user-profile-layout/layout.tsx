@@ -1,9 +1,9 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useUser } from "hooks/store";
+import { useRouter } from "next/router";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
+// hooks
+import { useUser } from "hooks/store";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 

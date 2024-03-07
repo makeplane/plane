@@ -69,9 +69,10 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
           title: "Success",
           message:
             issue &&
-            `${getProjectById(issue.project_id)?.identifier}-${
-              issue?.sequence_id
-            } is restored successfully under the project ${getProjectById(issue.project_id)?.name}`,
+            `${getProjectById(issue.project_id)
+              ?.identifier}-${issue?.sequence_id} is restored successfully under the project ${getProjectById(
+              issue.project_id
+            )?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })

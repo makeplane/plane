@@ -1,14 +1,14 @@
 import { FC, useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { TIssueLink } from "@plane/types";
 import { IssueLinkCreateUpdateModal } from "./create-update-link-modal";
 import { IssueLinkList } from "./links";
 // types
-import { TIssueLink } from "@plane/types";
 
 export type TLinkOperations = {
   create: (data: Partial<TIssueLink>) => Promise<void>;

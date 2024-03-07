@@ -5,7 +5,6 @@ import os
 
 # Django imports
 from django.utils import timezone
-from django.conf import settings
 
 # Third Party modules
 from rest_framework.response import Response
@@ -250,9 +249,11 @@ class OauthEndpoint(BaseAPIView):
                 [
                     WorkspaceMember(
                         workspace_id=project_member_invite.workspace_id,
-                        role=project_member_invite.role
-                        if project_member_invite.role in [5, 10, 15]
-                        else 15,
+                        role=(
+                            project_member_invite.role
+                            if project_member_invite.role in [5, 10, 15]
+                            else 15
+                        ),
                         member=user,
                         created_by_id=project_member_invite.created_by_id,
                     )
@@ -266,9 +267,11 @@ class OauthEndpoint(BaseAPIView):
                 [
                     ProjectMember(
                         workspace_id=project_member_invite.workspace_id,
-                        role=project_member_invite.role
-                        if project_member_invite.role in [5, 10, 15]
-                        else 15,
+                        role=(
+                            project_member_invite.role
+                            if project_member_invite.role in [5, 10, 15]
+                            else 15
+                        ),
                         member=user,
                         created_by_id=project_member_invite.created_by_id,
                     )
@@ -391,9 +394,11 @@ class OauthEndpoint(BaseAPIView):
                 [
                     WorkspaceMember(
                         workspace_id=project_member_invite.workspace_id,
-                        role=project_member_invite.role
-                        if project_member_invite.role in [5, 10, 15]
-                        else 15,
+                        role=(
+                            project_member_invite.role
+                            if project_member_invite.role in [5, 10, 15]
+                            else 15
+                        ),
                         member=user,
                         created_by_id=project_member_invite.created_by_id,
                     )
@@ -407,9 +412,11 @@ class OauthEndpoint(BaseAPIView):
                 [
                     ProjectMember(
                         workspace_id=project_member_invite.workspace_id,
-                        role=project_member_invite.role
-                        if project_member_invite.role in [5, 10, 15]
-                        else 15,
+                        role=(
+                            project_member_invite.role
+                            if project_member_invite.role in [5, 10, 15]
+                            else 15
+                        ),
                         member=user,
                         created_by_id=project_member_invite.created_by_id,
                     )

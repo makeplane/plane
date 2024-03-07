@@ -159,8 +159,8 @@ export const LinkModal: FC<Props> = (props) => {
                           ? "Updating Link..."
                           : "Update Link"
                         : isSubmitting
-                        ? "Adding Link..."
-                        : "Add Link"}
+                          ? "Adding Link..."
+                          : "Add Link"}
                     </Button>
                   </div>
                 </form>

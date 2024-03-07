@@ -1,17 +1,21 @@
 import { Fragment, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+// ui
 import { Dialog, Transition } from "@headlessui/react";
+// icons
 import { Check, CircleDot, Globe2 } from "lucide-react";
-// hooks
-import { useProjectPublish } from "hooks/store";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-import { CustomPopover } from "./popover";
+// hooks
+import { useProjectPublish } from "hooks/store";
+// store
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
 // types
 import { IProject } from "@plane/types";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project-publish.store";
+// local components
+import { CustomPopover } from "./popover";
 
 type Props = {
   isOpen: boolean;
@@ -359,16 +363,16 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                           : "hover:bg-custom-background-80 hover:text-custom-text-100"
                                       }`}
                                       onClick={() => {
-                                        const _views =
+                                        const optionViews =
                                           value.length > 0
                                             ? value.includes(option.key)
                                               ? value.filter((_o: string) => _o !== option.key)
                                               : [...value, option.key]
                                             : [option.key];
 
-                                        if (_views.length === 0) return;
+                                        if (optionViews.length === 0) return;
 
-                                        onChange(_views);
+                                        onChange(optionViews);
                                         checkIfUpdateIsRequired();
                                       }}
                                     >

@@ -1,20 +1,20 @@
 import { useEffect, useState, useRef } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // hooks
+import { setPromiseToast } from "@plane/ui";
+import { ISSUE_CREATED } from "constants/event-tracker";
+import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
-import { createIssuePayload } from "helpers/issue.helper";
 // ui
-import { setPromiseToast } from "@plane/ui";
 // types
 import { TIssue } from "@plane/types";
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
 
 const Inputs = (props: any) => {
   const { register, setFocus, projectDetail } = props;
@@ -139,7 +139,7 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
   return (
     <>
       {isOpen ? (
-        <div className="shadow-custom-shadow-sm m-1.5 rounded overflow-hidden">
+        <div className="m-1.5 overflow-hidden rounded shadow-custom-shadow-sm">
           <form
             ref={ref}
             onSubmit={handleSubmit(onSubmitHandler)}

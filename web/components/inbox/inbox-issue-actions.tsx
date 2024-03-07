@@ -1,10 +1,12 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
-// hooks
-import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
+// icons
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   AcceptIssueModal,
@@ -12,14 +14,12 @@ import {
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
-// ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+import { ISSUE_DELETED } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
+// hooks
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 // types
 import type { TInboxDetailedStatus } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
-import { ISSUE_DELETED } from "constants/event-tracker";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -232,7 +232,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       )}
 
       {inboxIssueId && (
-        <div className="px-4 w-full h-full relative flex items-center gap-2 justify-between">
+        <div className="relative flex h-full w-full items-center justify-between gap-2 px-4">
           <div className="flex items-center gap-x-2">
             <button
               type="button"
@@ -273,7 +273,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                             setDate(date);
                           }}
                           mode="single"
-                          className="border border-custom-border-200 rounded-md p-3"
+                          className="rounded-md border border-custom-border-200 p-3"
                           disabled={[
                             {
                               before: tomorrow,

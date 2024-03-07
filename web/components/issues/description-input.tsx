@@ -1,16 +1,15 @@
 import { FC, useState, useEffect } from "react";
 // components
-import { Loader } from "@plane/ui";
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
-// store hooks
+import { Loader } from "@plane/ui";
+// hooks
 import { useMention, useWorkspace } from "hooks/store";
+import useDebounce from "hooks/use-debounce";
 // services
 import { FileService } from "services/file.service";
 const fileService = new FileService();
 // types
 import { TIssueOperations } from "./issue-detail";
-// hooks
-import useDebounce from "hooks/use-debounce";
 
 export type IssueDescriptionInputProps = {
   workspaceSlug: string;
@@ -78,7 +77,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = (props) => 
       initialValue={initialValue}
       dragDropEnabled
       customClassName="min-h-[150px] shadow-sm"
-      onChange={(description: Object, description_html: string) => {
+      onChange={(description: any, description_html: string) => {
         setIsSubmitting("submitting");
         setDescriptionHTML(description_html === "" ? "<p></p>" : description_html);
       }}

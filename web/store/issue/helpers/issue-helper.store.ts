@@ -1,16 +1,16 @@
-import orderBy from "lodash/orderBy";
 import get from "lodash/get";
 import indexOf from "lodash/indexOf";
 import isEmpty from "lodash/isEmpty";
+import orderBy from "lodash/orderBy";
 import values from "lodash/values";
 // types
-import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
-import { IIssueRootStore } from "../root.store";
 // constants
 import { ISSUE_PRIORITIES } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
+import { IIssueRootStore } from "../root.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -76,8 +76,8 @@ export class IssueHelperStore implements TIssueHelperStore {
       let groupArray = [];
 
       if (groupBy === "state_detail.group") {
-        const state_group =
-          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        // if groupBy state_detail.group is coming from the project level the we are using stateDetails from root store else we are looping through the stateMap
+        const state_group = (this.rootStore?.stateMap || {})?.[_issue?.state_id]?.group || "None";
         groupArray = [state_group];
       } else {
         const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
@@ -117,8 +117,8 @@ export class IssueHelperStore implements TIssueHelperStore {
       let subGroupArray = [];
       let groupArray = [];
       if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
-        const state_group =
-          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        const state_group = (this.rootStore?.stateMap || {})?.[_issue?.state_id]?.group || "None";
+
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
@@ -233,10 +233,10 @@ export class IssueHelperStore implements TIssueHelperStore {
   }
 
   /**
-   * This Method is mainly used to filter out empty values in the begining
+   * This Method is mainly used to filter out empty values in the beginning
    * @param key key of the value that is to be checked if empty
    * @param object any object in which the key's value is to be checked
-   * @returns 1 if emoty, 0 if not empty
+   * @returns 1 if empty, 0 if not empty
    */
   getSortOrderToFilterEmptyValues(key: string, object: any) {
     const value = object?.[key];

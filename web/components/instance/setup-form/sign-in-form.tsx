@@ -1,15 +1,15 @@
 import { FC, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-// hooks
-import { useUser } from "hooks/store";
 // ui
 import { Input, Button, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { checkEmailValidity } from "helpers/string.helper";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { AuthService } from "services/auth.service";
 const authService = new AuthService();
-// helpers
-import { checkEmailValidity } from "helpers/string.helper";
 
 interface InstanceSetupEmailFormValues {
   email: string;

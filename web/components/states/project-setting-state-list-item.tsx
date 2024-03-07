@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useEventTracker, useProjectState } from "hooks/store";
 // ui
+import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
 import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
-import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { useEventTracker, useProjectState } from "hooks/store";
 // types
 import { IState } from "@plane/types";
 

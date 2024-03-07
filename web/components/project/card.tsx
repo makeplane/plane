@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 import Link from "next/link";
-// hooks
-import { useProject } from "hooks/store";
-// components
-import { DeleteProjectModal, JoinProjectModal } from "components/project";
+import { useRouter } from "next/router";
+import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
+// components
+import { DeleteProjectModal, JoinProjectModal, ProjectLogo } from "components/project";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
+// hooks
+import { useProject } from "hooks/store";
 // types
 import type { IProject } from "@plane/types";
-// constants
 import { EUserProjectRoles } from "constants/project";
+// constants
 
 export type ProjectCardProps = {
   project: IProject;
@@ -124,13 +123,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
 
           <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="item-center flex h-9 w-9 flex-shrink-0 justify-center rounded bg-white/90">
-                <span className="flex items-center justify-center">
-                  {project.emoji
-                    ? renderEmoji(project.emoji)
-                    : project.icon_prop
-                    ? renderEmoji(project.icon_prop)
-                    : null}
+              <div className="flex item-center justify-center h-9 w-9 flex-shrink-0 rounded bg-white/90">
+                <span className="grid place-items-center">
+                  <ProjectLogo logo={project.logo_props} />
                 </span>
               </div>
 

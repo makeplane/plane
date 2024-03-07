@@ -1,8 +1,8 @@
 import { FC } from "react";
 // components
+import { useIssueDetail } from "hooks/store";
 import { LabelListItem } from "./label-list-item";
 // hooks
-import { useIssueDetail } from "hooks/store";
 // types
 import { TLabelOperations } from "./root";
 
@@ -29,6 +29,7 @@ export const LabelList: FC<TLabelList> = (props) => {
     <>
       {issueLabels.map((labelId) => (
         <LabelListItem
+          key={labelId}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}

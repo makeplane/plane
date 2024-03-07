@@ -152,8 +152,8 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
                           ? "Updating Link..."
                           : "Update Link"
                         : isSubmitting
-                        ? "Adding Link..."
-                        : "Add Link"}
+                          ? "Adding Link..."
+                          : "Add Link"}
                     </Button>
                   </div>
                 </form>

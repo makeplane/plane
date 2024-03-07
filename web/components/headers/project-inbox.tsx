@@ -1,17 +1,17 @@
 import { FC, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
 // hooks
-import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
-import { CreateInboxIssueModal } from "components/inbox";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { CreateInboxIssueModal } from "components/inbox";
 // helper
-import { renderEmoji } from "helpers/emoji.helper";
+import { useProject } from "hooks/store";
+import { ProjectLogo } from "components/project";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states
@@ -35,13 +35,9 @@ export const ProjectInboxHeader: FC = observer(() => {
                   href={`/${workspaceSlug}/projects`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
-                    currentProjectDetails?.emoji ? (
-                      renderEmoji(currentProjectDetails.emoji)
-                    ) : currentProjectDetails?.icon_prop ? (
-                      renderEmoji(currentProjectDetails.icon_prop)
-                    ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                        {currentProjectDetails?.name.charAt(0)}
+                    currentProjectDetails && (
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                       </span>
                     )
                   }

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 // hooks
+import { AlertTriangle } from "lucide-react";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useLabel } from "hooks/store";
 // icons
-import { AlertTriangle } from "lucide-react";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import type { IIssueLabel } from "@plane/types";
 

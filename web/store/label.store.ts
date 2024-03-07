@@ -1,11 +1,11 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // services
+import { buildTree } from "helpers/array.helper";
 import { IssueLabelService } from "services/issue";
 // helpers
-import { buildTree } from "helpers/array.helper";
 // types
 import { RootStore } from "store/root.store";
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
