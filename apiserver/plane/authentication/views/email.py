@@ -51,7 +51,7 @@ class SignInAuthEndpoint(View):
             user = provider.authenticate()
             user_login(request=request, user=user)
             process_workspace_project_invitations(user=user)
-            return HttpResponseRedirect(request.session.get("referer", "/"))
+            return HttpResponseRedirect(referer)
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})
             return HttpResponseRedirect(url)
@@ -90,7 +90,7 @@ class SignUpAuthEndpoint(View):
             user = provider.authenticate()
             user_login(request=request, user=user)
             process_workspace_project_invitations(user=user)
-            return HttpResponseRedirect(request.session.get("referer", "/"))
+            return HttpResponseRedirect(referer)
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})
             return HttpResponseRedirect(url)

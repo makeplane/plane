@@ -1,22 +1,22 @@
 # Python imports
 import uuid
 
+# Django imports
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-
-# Django imports
+from django.http import HttpResponseRedirect
 from django.utils import timezone
+from django.views import View
 
 # Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from plane.app.serializers import UserMeSerializer
-
 # Module imports
 from plane.app.views import BaseAPIView
+from plane.authentication.utils.login import user_login
 from plane.db.models import User
 from plane.license.api.permissions import (
     InstanceAdminPermission,
@@ -160,13 +160,14 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class InstanceAdminSignInEndpoint(BaseAPIView):
+class InstanceAdminSignInEndpoint(View):
     permission_classes = [
         AllowAny,
     ]
 
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
+        referer = request.META.get("HTTP_REFERER", "/")
         # Check instance first
         instance = Instance.objects.first()
         if instance is None:
@@ -183,8 +184,8 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
             )
 
         # Get the email and password from all the user
-        email = request.data.get("email", False)
-        password = request.data.get("password", False)
+        email = request.POST.get("email", False)
+        password = request.POST.get("password", False)
 
         # return error if the email and password is not present
         if not email or not password:
@@ -243,8 +244,8 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
         instance.save()
 
         # get tokens for user
-        serializer = UserMeSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        user_login(request=request, user=user)
+        return HttpResponseRedirect(referer)
 
 
 class SignUpScreenVisitedEndpoint(BaseAPIView):
