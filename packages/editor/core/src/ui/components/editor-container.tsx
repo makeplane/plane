@@ -13,32 +13,26 @@ export const EditorContainer = ({ editor, editorClassNames, hideDragHandle, chil
   <div
     id="editor-container"
     onClick={() => {
-      if (!editor?.isFocused) {
-        editor?.chain().focus("end", { scrollIntoView: false }).run();
-        if (editor?.state) {
-          const { selection } = editor.state;
-          const currentNode = selection.$from.node();
-          if ((currentNode && currentNode.content.size > 0) || editor.isActive("table")) {
-            if (editor.isActive("listItem")) {
-              console.log("hit list case");
-              editor.commands.enter();
-              editor.commands.liftListItem("listItem");
-            } else if (editor.isActive("taskItem")) {
-              editor.commands.enter();
-              editor.commands.liftListItem("taskItem");
-            } else if (editor.isActive("table")) {
-              handleNodeInsertionIfLastNodeTable(editor);
-            } else if (editor.isActive("codeBlock")) {
-              editor.commands.exitCode();
-            } else if (editor.isActive("image")) {
-              editor.commands.createParagraphNear();
-            } else {
-              console.log("hit end case");
-              editor.commands.enter();
-            }
-          }
-        }
-      }
+      if (!editor) return;
+      if (!editor.isEditable) return;
+      if (editor.isFocused) return; // if editor is already focused, do nothing
+
+      const { selection } = editor.state;
+      const currentNode = selection.$from.node();
+
+      editor?.chain().focus("end", { scrollIntoView: false }).run(); // Focus the editor at the end
+
+      if (currentNode.content.size <= 0) return; // if the current node is empty, do nothing
+
+      // Insert a new paragraph at the end of the document
+      const endPosition = editor?.state.doc.content.size;
+      editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
+
+      // Optionally, focus the newly added paragraph for immediate editing
+      editor
+        .chain()
+        .setTextSelection(endPosition + 1)
+        .run();
     }}
     onMouseLeave={() => {
       hideDragHandle?.();
