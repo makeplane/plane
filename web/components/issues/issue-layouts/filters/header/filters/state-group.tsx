@@ -22,11 +22,7 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = sortBy(
-    (Object.values(STATE_GROUPS) ?? []).filter((s) => s.key.includes(searchQuery.toLowerCase())),
-    // First sort by whether the state-group is in appliedFilters, then by names
-    [(s) => !(appliedFilters ?? []).includes(s.key), (s) => s.label.toLowerCase()]
-  );
+  const filteredOptions = Object.values(STATE_GROUPS).filter((s) => s.key.includes(searchQuery.toLowerCase()));
 
   const handleViewToggle = () => {
     if (!filteredOptions) return;

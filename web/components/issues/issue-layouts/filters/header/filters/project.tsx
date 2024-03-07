@@ -36,7 +36,8 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
       (project) => !(appliedFilters ?? []).includes(project.id),
       (project) => project.name.toLowerCase(),
     ]);
-  }, [projects, searchQuery, appliedFilters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, appliedFilters]);
 
   const handleViewToggle = () => {
     if (!sortedOptions) return;
