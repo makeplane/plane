@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Module imports
-from .base import BaseAPIView, BaseViewSet
+from ..base import BaseAPIView, BaseViewSet
 from plane.db.models import FileAsset, Workspace
 from plane.app.serializers import FileAssetSerializer
 

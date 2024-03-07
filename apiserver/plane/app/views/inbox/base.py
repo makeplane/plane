@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseViewSet
+from ..base import BaseViewSet
 from plane.app.permissions import ProjectBasePermission, ProjectLitePermission
 from plane.db.models import (
     Inbox,
