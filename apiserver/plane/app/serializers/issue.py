@@ -620,6 +620,20 @@ class IssueStateSerializer(DynamicBaseSerializer):
         fields = "__all__"
 
 
+class IssueInboxSerializer(DynamicBaseSerializer):
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "name",
+            "priority",
+            "sequence_id",
+            "project_id",
+            "created_at",
+        ]
+        read_only_fields = fields
+
+
 class IssueSerializer(DynamicBaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
