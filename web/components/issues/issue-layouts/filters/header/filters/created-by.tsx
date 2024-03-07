@@ -32,7 +32,8 @@ export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
       (memberId) => !(appliedFilters ?? []).includes(memberId),
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
-  }, [memberIds, searchQuery, appliedFilters, getUserDetails]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 

@@ -27,7 +27,8 @@ export const FilterState: React.FC<Props> = observer((props) => {
     const filteredOptions = (states ?? []).filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return sortBy(filteredOptions, [(s) => !(appliedFilters ?? []).includes(s.id), (s) => s.name.toLowerCase()]);
-  }, [states, searchQuery, appliedFilters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
     if (!sortedOptions) return;

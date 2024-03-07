@@ -42,7 +42,7 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
       (cycle) => cycle.name.toLowerCase(),
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, appliedFilters]);
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
     if (!sortedOptions) return;

@@ -36,7 +36,8 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
       (label) => !(appliedFilters ?? []).includes(label.id),
       (label) => label.name.toLowerCase(),
     ]);
-  }, [labels, searchQuery, appliedFilters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
     if (!sortedOptions) return;
