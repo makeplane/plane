@@ -24,9 +24,9 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from rest_framework import status
 
 # Third party imports
+from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import (
