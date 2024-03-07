@@ -203,7 +203,7 @@ class InboxIssueViewSet(BaseViewSet):
             request=request,
             queryset=(inbox_issue),
             on_results=lambda inbox_issues: InboxIssueSerializer(
-                inbox_issue,
+                inbox_issues,
                 many=True,
             ).data,
         )

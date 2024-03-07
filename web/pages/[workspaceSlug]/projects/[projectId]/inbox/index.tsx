@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useRef } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -11,16 +11,19 @@ import { InboxIssueList, InboxIssueFilterSelection } from "components/inbox";
 import { InboxLayoutLoader } from "components/ui";
 // hooks
 import { useProject, useProjectInbox } from "hooks/store";
+
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // types
 import { NextPageWithLayout } from "lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
+  /// router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
   // return null when workspaceSlug or projectId is not available
   if (!workspaceSlug || !projectId) return null;
+
   // store
   const { fetchInboxIssues, projectInboxIssues } = useProjectInbox();
   const { currentProjectDetails } = useProject();

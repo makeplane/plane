@@ -1,5 +1,10 @@
 import { TIssue } from "./issues/base";
 import type { IProjectLite } from "./projects";
+import { TPaginationInfo } from "./common";
+
+export type TInboxIssueListResponse = TPaginationInfo & {
+  results: TInboxIssue[];
+};
 
 export type TInboxIssue = {
   id: string;

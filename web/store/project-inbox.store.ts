@@ -5,7 +5,7 @@ import pull from "lodash/pull";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
-import { TInboxIssueFilterOptions, TInboxIssue, TIssue } from "@plane/types";
+import { TInboxIssueFilterOptions, TInboxIssue, TIssue, TPaginationInfo } from "@plane/types";
 // root store
 import { RootStore } from "./root.store";
 import { uniq } from "lodash";
@@ -28,6 +28,7 @@ export interface IProjectInboxStore {
 
 export class ProjectInboxStore implements IProjectInboxStore {
   isLoading: boolean = false;
+  inboxIssuePaginationInfo: Record<string, TPaginationInfo> = {};
   inboxIssues: Record<string, Record<string, TInboxIssue>> = {};
   inboxFilters: Record<string, TInboxIssueFilterOptions> = {};
   rootStore;
@@ -78,12 +79,20 @@ export class ProjectInboxStore implements IProjectInboxStore {
     runInAction(() => {
       this.isLoading = true;
     });
-    const response = await this.inboxIssueService.list(workspaceSlug, projectId, params);
-    runInAction(() => {
-      this.inboxIssues[projectId] = keyBy(response, "id");
-      this.isLoading = false;
+    const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
+      params,
+      per_page: 10,
     });
-    return response;
+    console.log("response", results);
+    runInAction(() => {
+      this.inboxIssues[projectId] = keyBy(results, "id");
+      this.isLoading = false;
+      this.inboxIssuePaginationInfo = {
+        ...this.inboxIssuePaginationInfo,
+        [projectId]: paginationInfo,
+      };
+    });
+    return results;
   };
 
   /**
