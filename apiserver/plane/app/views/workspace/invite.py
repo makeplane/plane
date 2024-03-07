@@ -30,7 +30,7 @@ from plane.db.models import (
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.bgtasks.event_tracking_task import workspace_invite_event
-
+from plane.utils.cache import invalidate_cache
 
 class WorkspaceInvitationsViewset(BaseViewSet):
     """Endpoint for creating, listing and  deleting workspaces"""
@@ -165,6 +165,8 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     ]
     """Invitation response endpoint the user can respond to the invitation"""
 
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(
             pk=pk, workspace__slug=slug
@@ -261,6 +263,11 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             .annotate(total_members=Count("workspace__workspace_member"))
         )
 
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(
+        path="/api/workspaces/:slug/members/", url_params=True, user=False
+    )
     def create(self, request):
         invitations = request.data.get("invitations", [])
         workspace_invitations = WorkspaceMemberInvite.objects.filter(

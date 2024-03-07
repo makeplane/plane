@@ -34,6 +34,7 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
     WorkspaceUserPermission,
 )
+from plane.utils.cache import cache_response, invalidate_cache
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
@@ -73,6 +74,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .select_related("member")
         )
 
+    @cache_response(60 * 60 * 2)
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
@@ -97,6 +99,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @invalidate_cache(
+        path="/api/workspaces/:slug/members/", url_params=True, user=False
+    )
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
             pk=pk,
@@ -139,6 +144,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @invalidate_cache(
+        path="/api/workspaces/:slug/members/", url_params=True, user=False
+    )
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
@@ -203,6 +211,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @invalidate_cache(
+        path="/api/workspaces/:slug/members/", url_params=True, user=False
+    )
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,

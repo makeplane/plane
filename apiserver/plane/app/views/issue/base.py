@@ -78,7 +78,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from collections import defaultdict
-
+from plane.utils.cache import invalidate_cache
 
 class IssueListEndpoint(BaseAPIView):
 

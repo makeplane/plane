@@ -7,13 +7,14 @@ from plane.app.serializers import LabelSerializer
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Label
 from plane.app.permissions import WorkspaceViewerPermission
-
+from plane.utils.cache import cache_response
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceViewerPermission,
     ]
 
+    @cache_response(60 * 60 * 2)
     def get(self, request, slug):
         labels = Label.objects.filter(
             workspace__slug=slug,

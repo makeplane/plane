@@ -12,6 +12,7 @@ from plane.app.permissions import WorkspaceEntityPermission
 from django.db.models import (
     Prefetch,
 )
+from plane.utils.cache import cache_response
 
 
 class WorkspaceEstimatesEndpoint(BaseAPIView):
@@ -19,6 +20,7 @@ class WorkspaceEstimatesEndpoint(BaseAPIView):
         WorkspaceEntityPermission,
     ]
 
+    @cache_response(60 * 60 * 2)
     def get(self, request, slug):
         estimate_ids = Project.objects.filter(
             workspace__slug=slug, estimate__isnull=False

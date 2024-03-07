@@ -42,7 +42,7 @@ from plane.app.permissions import (
     WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
 )
-
+from plane.utils.cache import cache_response, invalidate_cache
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -92,6 +92,8 @@ class WorkSpaceViewSet(BaseViewSet):
             .select_related("owner")
         )
 
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
     def create(self, request):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
@@ -136,6 +138,19 @@ class WorkSpaceViewSet(BaseViewSet):
                     {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_410_GONE,
                 )
+    @cache_response(60 * 60 * 2)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @invalidate_cache(path="/api/workspaces/", user=False)
+    @invalidate_cache(path="/api/users/me/workspaces/")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 
 class UserWorkSpacesEndpoint(BaseAPIView):
@@ -146,6 +161,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
         "owner",
     ]
 
+    @cache_response(60 * 60 * 2)
     def get(self, request):
         fields = [
             field
