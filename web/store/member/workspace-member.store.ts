@@ -1,17 +1,17 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // services
+import { EUserWorkspaceRoles } from "constants/workspace";
 import { WorkspaceService } from "services/workspace.service";
 // types
-import { RootStore } from "store/root.store";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
 import { IRouterStore } from "store/application/router.store";
+import { RootStore } from "store/root.store";
+import { IUserStore } from "store/user";
+// constants
 import { IMemberRootStore } from ".";
-import { IUserRootStore } from "store/user/user_legacy";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -56,7 +56,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]> = {}; // { workspaceSlug: [invitations] }
   // stores
   routerStore: IRouterStore;
-  userStore: IUserRootStore;
+  userStore: IUserStore;
   memberRoot: IMemberRootStore;
   // services
   workspaceService;
@@ -95,7 +95,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     if (!workspaceSlug) return null;
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     members = sortBy(members, [
-      (m) => m.member !== this.userStore.currentUser?.id,
+      (m) => m.member !== this.userStore.data?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     //filter out bots
@@ -128,7 +128,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       const memberDetails = this.getWorkspaceMemberDetails(userId);
       if (!memberDetails) return false;
       const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${
-        memberDetails.member.display_name
+        memberDetails.member?.display_name
       } ${memberDetails.member.email ?? ""}`;
       return memberSearchQuery.toLowerCase()?.includes(searchQuery.toLowerCase());
     });

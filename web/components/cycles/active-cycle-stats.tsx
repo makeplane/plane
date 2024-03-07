@@ -1,11 +1,11 @@
 import React, { Fragment } from "react";
 import { Tab } from "@headlessui/react";
 // hooks
+import { Avatar } from "@plane/ui";
+import { SingleProgressStats } from "components/core";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { SingleProgressStats } from "components/core";
 // ui
-import { Avatar } from "@plane/ui";
 // types
 import { ICycle } from "@plane/types";
 
@@ -82,7 +82,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                       <div className="flex items-center gap-2">
                         <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
 
-                        <span>{assignee.display_name}</span>
+                        <span>{assignee?.display_name ?? ""}</span>
                       </div>
                     }
                     completed={assignee.completed_issues}

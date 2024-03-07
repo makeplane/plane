@@ -1,13 +1,16 @@
-import { ReactElement } from "react";
-import Head from "next/head";
+import { ThemeProvider } from "next-themes";
 import { AppProps } from "next/app";
+import Head from "next/head";
+import { ReactElement } from "react";
 // styles
-import "styles/globals.css";
 import "styles/command-pallette.css";
+import "styles/emoji.css";
+import "styles/globals.css";
 import "styles/nprogress.css";
 import "styles/react-day-picker.css";
 // constants
 import { SITE_TITLE } from "constants/seo-variables";
+import { THEMES } from "constants/themes";
 // mobx store provider
 import { StoreProvider } from "contexts/store-context";
 // lib
@@ -29,7 +32,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppPropsWith
         <title>{SITE_TITLE}</title>
       </Head>
       <StoreProvider {...pageProps}>
-        <AppProvider session={session}>{getLayout(<Component {...pageProps} />)}</AppProvider>
+        <ThemeProvider themes={THEMES} defaultTheme="system">
+          <AppProvider session={session}>{getLayout(<Component {...pageProps} />)}</AppProvider>
+        </ThemeProvider>
       </StoreProvider>
     </>
   );

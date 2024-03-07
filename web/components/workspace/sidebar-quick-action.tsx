@@ -1,31 +1,38 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
+// components
+import { CreateUpdateIssueModal } from "components/issues";
+// constants
+import { EIssuesStoreType } from "constants/issue";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // hooks
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
-// components
-import { CreateUpdateDraftIssueModal } from "components/issues";
-// constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { EIssuesStoreType } from "constants/issue";
+// types
+import { TIssue } from "@plane/types";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
-  const { theme: themeStore, commandPalette: commandPaletteStore } = useApplication();
+  const {
+    router: { workspaceSlug },
+    theme: themeStore,
+    commandPalette: commandPaletteStore,
+  } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { joinedProjectIds } = useProject();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
 
-  const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
+  const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
 
   //useState control for displaying draft issue button instead of group hover
   const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timeoutRef = useRef<any>();
 
   const isSidebarCollapsed = themeStore.sidebarCollapsed;
@@ -35,7 +42,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   const disabled = joinedProjectIds.length === 0;
 
   const onMouseEnter = () => {
-    //if renet before timout clear the timeout
+    // if enter before time out clear the timeout
     timeoutRef?.current && clearTimeout(timeoutRef.current);
     setIsDraftButtonOpen(true);
   };
@@ -45,18 +52,26 @@ export const WorkspaceSidebarQuickAction = observer(() => {
       setIsDraftButtonOpen(false);
     }, 300);
   };
+
+  const workspaceDraftIssue = workspaceSlug ? storedValue?.[workspaceSlug] ?? undefined : undefined;
+
+  const removeWorkspaceDraftIssue = () => {
+    const draftIssues = storedValue ?? {};
+    if (workspaceSlug && draftIssues[workspaceSlug]) delete draftIssues[workspaceSlug];
+    setValue(draftIssues);
+    return Promise.resolve();
+  };
+
   return (
     <>
-      <CreateUpdateDraftIssueModal
+      <CreateUpdateIssueModal
         isOpen={isDraftIssueModalOpen}
-        handleClose={() => setIsDraftIssueModalOpen(false)}
-        prePopulateData={storedValue ? JSON.parse(storedValue) : {}}
-        onSubmit={() => {
-          localStorage.removeItem("draftedIssue");
-          clearValue();
-        }}
-        fieldsToShow={["all"]}
+        onClose={() => setIsDraftIssueModalOpen(false)}
+        data={workspaceDraftIssue ?? {}}
+        onSubmit={() => removeWorkspaceDraftIssue()}
+        isDraft
       />
+
       <div
         className={`mt-4 flex w-full cursor-pointer items-center justify-between px-4 ${
           isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
@@ -87,7 +102,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
             </button>
 
-            {!disabled && storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
+            {!disabled && workspaceDraftIssue && (
               <>
                 <div
                   className={`h-8 w-0.5 bg-custom-sidebar-background-80 ${isSidebarCollapsed ? "hidden" : "block"}`}

@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
-import useToast from "hooks/use-toast";
-import { useIssueDetail, useIssues, useProject } from "hooks/store";
+import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -12,13 +11,14 @@ import { IssueDetailRoot } from "components/issues";
 import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 import { PageHead } from "components/core";
 // ui
-import { ArchiveIcon, Loader } from "@plane/ui";
+import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { History } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 // types
 import { NextPageWithLayout } from "lib/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
 
 const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
@@ -32,10 +32,12 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
     issue: { getIssueById },
   } = useIssueDetail();
   const {
-    issues: { removeIssueFromArchived },
+    issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
   const { isLoading } = useSWR(
     workspaceSlug && projectId && archivedIssueId
@@ -46,33 +48,37 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
       : null
   );
 
-  const issue = getIssueById(archivedIssueId?.toString() || "") || undefined;
-  const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
+  // derived values
+  const issue = archivedIssueId ? getIssueById(archivedIssueId.toString()) : undefined;
+  const project = issue ? getProjectById(issue?.project_id) : undefined;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+  // auth
+  const canRestoreIssue = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   if (!issue) return <></>;
 
-  const handleUnArchive = async () => {
+  const handleRestore = async () => {
     if (!workspaceSlug || !projectId || !archivedIssueId) return;
 
     setIsRestoring(true);
 
-    await removeIssueFromArchived(workspaceSlug as string, projectId as string, archivedIssueId as string)
+    await restoreIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success",
           message:
             issue &&
-            `${getProjectById(issue.project_id)?.identifier}-${
-              issue?.sequence_id
-            } is restored successfully under the project ${getProjectById(issue.project_id)?.name}`,
+            `${getProjectById(issue.project_id)
+              ?.identifier}-${issue?.sequence_id} is restored successfully under the project ${getProjectById(
+              issue.project_id
+            )?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });
@@ -102,21 +108,22 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
         </Loader>
       ) : (
         <div className="flex h-full overflow-hidden">
-          <div className="h-full w-full space-y-2 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
-            {issue?.archived_at && (
+          <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto p-5">
+            {issue?.archived_at && canRestoreIssue && (
               <div className="flex items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
                 <div className="flex items-center gap-2">
                   <ArchiveIcon className="h-3.5 w-3.5" />
-                  <p>This issue has been archived by Plane.</p>
+                  <p>This issue has been archived.</p>
                 </div>
-                <button
-                  className="flex items-center gap-2 rounded-md border border-custom-border-200 p-1.5 text-sm"
-                  onClick={handleUnArchive}
+                <Button
+                  className="flex items-center gap-1.5 rounded-md border border-custom-border-200 p-1.5 text-sm"
+                  onClick={handleRestore}
                   disabled={isRestoring}
+                  variant="neutral-primary"
                 >
-                  <History className="h-3.5 w-3.5" />
-                  <span>{isRestoring ? "Restoring..." : "Restore Issue"}</span>
-                </button>
+                  <RotateCcw className="h-3 w-3" />
+                  <span>{isRestoring ? "Restoring" : "Restore"}</span>
+                </Button>
               </div>
             )}
             {workspaceSlug && projectId && archivedIssueId && (

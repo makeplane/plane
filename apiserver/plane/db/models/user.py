@@ -1,25 +1,20 @@
 # Python imports
-import uuid
-import string
 import random
+import string
+import uuid
+
 import pytz
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    UserManager,
+)
 
 # Django imports
 from django.db import models
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    UserManager,
-    PermissionsMixin,
-)
 from django.db.models.signals import post_save
-from django.conf import settings
 from django.dispatch import receiver
 from django.utils import timezone
-
-# Third party imports
-from sentry_sdk import capture_exception
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 
 # Module imports
 from ..mixins import TimeAuditModel
@@ -201,26 +196,6 @@ class Account(TimeAuditModel):
         verbose_name_plural = "Accounts"
         db_table = "accounts"
         ordering = ("-created_at",)
-
-
-@receiver(post_save, sender=User)
-def send_welcome_slack(sender, instance, created, **kwargs):
-    try:
-        if created and not instance.is_bot:
-            # Send message on slack as well
-            if settings.SLACK_BOT_TOKEN:
-                client = WebClient(token=settings.SLACK_BOT_TOKEN)
-                try:
-                    _ = client.chat_postMessage(
-                        channel="#trackers",
-                        text=f"New user {instance.email} has signed up and begun the onboarding journey.",
-                    )
-                except SlackApiError as e:
-                    print(f"Got an error: {e.response['error']}")
-        return
-    except Exception as e:
-        capture_exception(e)
-        return
 
 
 @receiver(post_save, sender=User)

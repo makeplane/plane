@@ -1,0 +1,73 @@
+name: Feature Preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      web-build:
+        required: true
+        type: boolean
+        default: true
+      space-build:
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  feature-deploy:
+    name: Feature Deploy
+    runs-on: ubuntu-latest
+    env:
+      KUBE_CONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+      BUILD_WEB: ${{ (github.event.inputs.web-build == '' && true) || github.event.inputs.web-build }}
+      BUILD_SPACE: ${{ (github.event.inputs.space-build == '' && false) || github.event.inputs.space-build }}
+
+    steps:
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Kubectl Setup
+        run: |
+          curl -LO "https://dl.k8s.io/release/${{secrets.KUBE_VERSION}}/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG_FILE" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: HELM Setup
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+      - name: App Deploy
+        run: |
+          helm --kube-insecure-skip-tls-verify repo add feature-preview ${{ secrets.FEATURE_PREVIEW_HELM_CHART_URL }} 
+          GIT_BRANCH=${{ github.ref_name }}
+          APP_NAMESPACE=${{ secrets.FEATURE_PREVIEW_NAMESPACE }}
+
+          METADATA=$(helm install feature-preview/${{ secrets.FEATURE_PREVIEW_HELM_CHART_NAME }} \
+              --kube-insecure-skip-tls-verify \
+              --generate-name \
+              --namespace $APP_NAMESPACE \
+              --set shared_config.git_repo=${{github.server_url}}/${{ github.repository }}.git \
+              --set shared_config.git_branch="$GIT_BRANCH" \
+              --set web.enabled=${{ env.BUILD_WEB }} \
+              --set space.enabled=${{ env.BUILD_SPACE }} \
+              --output json \
+              --timeout 1000s)
+
+          APP_NAME=$(echo $METADATA | jq -r '.name')
+
+          INGRESS_HOSTNAME=$(kubectl get ingress -n feature-builds --insecure-skip-tls-verify \
+              -o jsonpath='{.items[?(@.metadata.annotations.meta\.helm\.sh\/release-name=="'$APP_NAME'")]}' | \
+              jq -r '.spec.rules[0].host')
+
+          echo "****************************************"
+          echo "APP NAME ::: $APP_NAME"
+          echo "INGRESS HOSTNAME ::: $INGRESS_HOSTNAME"
+          echo "****************************************"

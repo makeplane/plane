@@ -1,7 +1,7 @@
 import { FC, Fragment, Dispatch, SetStateAction, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // headless ui
-import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/ui";
 // helper

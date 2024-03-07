@@ -11,12 +11,11 @@ import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // images
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
@@ -48,8 +47,6 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   // next-themes
   const { theme } = useTheme();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS", () => workspaceService.userWorkspaceInvitations());
 
@@ -68,8 +65,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
   const submitInvitations = () => {
     if (invitationsRespond.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one invitation.",
       });
@@ -80,7 +77,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then((res) => {
+      .then(() => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
@@ -88,6 +85,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           role: getUserRole(invitation?.role!),
           project_id: undefined,
           accepted_from: "App",
@@ -101,8 +99,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
             router.push(`/${redirectWorkspace?.slug}`);
           })
           .catch(() => {
-            setToastAlert({
-              type: "error",
+            setToast({
+              type: TOAST_TYPE.ERROR,
               title: "Error!",
               message: "Something went wrong, Please try again.",
             });
@@ -116,8 +114,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           state: "FAILED",
           element: "Workspace invitations page",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong, Please try again.",
         });

@@ -75,6 +75,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
 )
+from plane.utils.cache import invalidate_cache
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 
@@ -82,7 +83,6 @@ from . import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class IssueListEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -1004,6 +1004,23 @@ class LabelViewSet(BaseViewSet):
         ProjectMemberPermission,
     ]
 
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("parent")
+            .distinct()
+            .order_by("sort_order")
+        )
+
+    @invalidate_cache(
+        path="/api/workspaces/:slug/labels/", url_params=True, user=False
+    )
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -1023,22 +1040,17 @@ class LabelViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("parent")
-            .distinct()
-            .order_by("sort_order")
-        )
+    @invalidate_cache(
+        path="/api/workspaces/:slug/labels/", url_params=True, user=False
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @invalidate_cache(
+        path="/api/workspaces/:slug/labels/", url_params=True, user=False
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
@@ -1650,6 +1662,44 @@ class IssueArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def archive(self, request, slug, project_id, pk=None):
+        issue = Issue.issue_objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+        )
+        if issue.state.group not in ["completed", "cancelled"]:
+            return Response(
+                {
+                    "error": "Can only archive completed or cancelled state group issue"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps(
+                {
+                    "archived_at": str(timezone.now().date()),
+                    "automation": False,
+                }
+            ),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        issue.archived_at = timezone.now().date()
+        issue.save()
+
+        return Response(
+            {"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK
+        )
+
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,
@@ -1673,7 +1723,7 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.archived_at = None
         issue.save()
 
-        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -2175,12 +2225,6 @@ class IssueDraftViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
-
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
         state_order = [

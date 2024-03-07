@@ -1,5 +1,9 @@
-import { EUserProjectRoles } from "constants/project";
-import { IIssueActivity, IIssueLite, TStateGroups } from ".";
+import {
+  EUserProjectRoles,
+  IIssueActivity,
+  TIssuePriorities,
+  TStateGroups,
+} from ".";
 
 export interface IUser {
   id: string;
@@ -15,15 +19,16 @@ export interface IUser {
   is_email_verified: boolean;
   // is_onboarded: boolean;
   is_password_autoset: boolean;
-  // is_tour_completed: boolean;
-  // role: string | null;
-  // onboarding_step: {
-  //   workspace_join?: boolean;
-  //   profile_complete?: boolean;
-  //   workspace_create?: boolean;
-  //   workspace_invite?: boolean;
-  // };
-  // last_workspace_id: string;
+  is_tour_completed: boolean;
+  mobile_number: string | null;
+  role: string | null;
+  onboarding_step: {
+    workspace_join?: boolean;
+    profile_complete?: boolean;
+    workspace_create?: boolean;
+    workspace_invite?: boolean;
+  };
+  last_workspace_id: string;
   user_timezone: string;
   username: string;
   // theme: IUserTheme;
@@ -108,28 +113,13 @@ export interface IUserActivity {
 }
 
 export interface IUserPriorityDistribution {
-  priority: string;
+  priority: TIssuePriorities;
   priority_count: number;
 }
 
 export interface IUserStateDistribution {
   state_group: TStateGroups;
   state_count: number;
-}
-
-export interface IUserWorkspaceDashboard {
-  assigned_issues_count: number;
-  completed_issues_count: number;
-  issue_activities: IUserActivity[];
-  issues_due_week_count: number;
-  overdue_issues: IIssueLite[];
-  completed_issues: {
-    week_in_month: number;
-    completed_count: number;
-  }[];
-  pending_issues_count: number;
-  state_distribution: IUserStateDistribution[];
-  upcoming_issues: IIssueLite[];
 }
 
 export interface IUserActivityResponse {
@@ -172,11 +162,7 @@ export interface IUserProfileProjectSegregation {
     assigned_issues: number;
     completed_issues: number;
     created_issues: number;
-    emoji: string | null;
-    icon_prop: null;
     id: string;
-    identifier: string;
-    name: string;
     pending_issues: number;
   }[];
   user_data: {

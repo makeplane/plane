@@ -1,31 +1,28 @@
-import { useEffect, useState, ReactElement } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { ReactElement, useEffect, useState } from "react";
 import useSWR from "swr";
 // hooks
-import { useEventTracker, useUser, useWorkspace, useUserProfile } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-import { UserAuthWrapper } from "layouts/auth-layout";
-// components
+import { useEventTracker, useUser, useUserProfile, useWorkspace } from "hooks/store";
+// hooks
+import { Spinner } from "@plane/ui";
+import { PageHead } from "components/core";
 import {
   InviteMembers,
   JoinWorkspaces,
-  UserDetails,
-  SwitchOrDeleteAccountModal,
   OnboardingHeader,
+  SwitchOrDeleteAccountModal,
+  UserDetails,
 } from "components/onboarding";
-import { PageHead } from "components/core";
-// ui
-import { Spinner } from "@plane/ui";
+import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
+import useUserAuth from "hooks/use-user-auth";
+// services
+import { UserAuthWrapper } from "layouts/auth-layout";
+import DefaultLayout from "layouts/default-layout";
+import { NextPageWithLayout } from "lib/types";
+import { WorkspaceService } from "services/workspace.service";
 // types
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
-import { NextPageWithLayout } from "lib/types";
-// constants
-import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
 
 // services
 const workspaceService = new WorkspaceService();

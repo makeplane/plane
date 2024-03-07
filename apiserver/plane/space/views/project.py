@@ -12,7 +12,6 @@ from rest_framework.permissions import AllowAny
 # Module imports
 from .base import BaseAPIView
 from plane.app.serializers import ProjectDeployBoardSerializer
-from plane.app.permissions import ProjectMemberPermission
 from plane.db.models import (
     Project,
     ProjectDeployBoard,

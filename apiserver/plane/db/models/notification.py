@@ -6,6 +6,7 @@ from django.db import models
 from .base import BaseModel
 
 
+
 class Notification(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", related_name="notifications", on_delete=models.CASCADE

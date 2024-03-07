@@ -8,10 +8,11 @@ type Props = {
   title: React.ReactNode;
   onClick?: () => void;
   multiple?: boolean;
+  activePulse?: boolean;
 };
 
 export const FilterOption: React.FC<Props> = (props) => {
-  const { icon, isChecked, multiple = true, onClick, title } = props;
+  const { icon, isChecked, multiple = true, onClick, title, activePulse = false } = props;
 
   return (
     <button
@@ -30,6 +31,9 @@ export const FilterOption: React.FC<Props> = (props) => {
         {icon && <div className="grid w-5 flex-shrink-0 place-items-center">{icon}</div>}
         <div className="flex-grow truncate text-xs text-custom-text-200">{title}</div>
       </div>
+      {activePulse && (
+        <div className="flex-shrink-0 text-xs w-2 h-2 rounded-full bg-custom-primary-100 animate-pulse ml-auto" />
+      )}
     </button>
   );
 };

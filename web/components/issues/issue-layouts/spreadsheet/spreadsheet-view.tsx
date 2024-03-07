@@ -3,12 +3,11 @@ import { observer } from "mobx-react-lite";
 // components
 import { Spinner } from "@plane/ui";
 import { SpreadsheetQuickAddIssueForm } from "components/issues";
+import { useProject } from "hooks/store";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { SpreadsheetTable } from "./spreadsheet-table";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { EIssueActions } from "../types";
 //hooks
-import { useProject } from "hooks/store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -20,7 +19,7 @@ type Props = {
     customActionButton?: React.ReactElement,
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -41,7 +40,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     handleDisplayFilterUpdate,
     issueIds,
     quickActions,
-    handleIssues,
+    updateIssue,
     quickAddCallback,
     viewId,
     canEditProperties,
@@ -75,7 +74,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           isEstimateEnabled={isEstimateEnabled}
           portalElement={portalRef}
           quickActions={quickActions}
-          handleIssues={handleIssues}
+          updateIssue={updateIssue}
           canEditProperties={canEditProperties}
           containerRef={containerRef}
         />

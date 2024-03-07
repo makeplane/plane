@@ -1,19 +1,19 @@
 import React, { FC } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// components
-import { CustomMenu } from "@plane/ui";
-import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal, CreateUpdateDraftIssueModal } from "components/issues";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { ExistingIssuesListModal } from "components/core";
+import { CreateUpdateIssueModal } from "components/issues";
+// constants
 // hooks
-import useToast from "hooks/use-toast";
 import { useEventTracker } from "hooks/store";
-// mobx
-import { observer } from "mobx-react-lite";
 // types
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters } from "@plane/types";
-import { TCreateModalStoreTypes } from "constants/issue";
+import { KanbanStoreType } from "../base-kanban-root";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -26,7 +26,7 @@ interface IHeaderGroupByCard {
   handleKanbanFilters: any;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType?: TCreateModalStoreTypes;
+  storeType: KanbanStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
@@ -56,8 +56,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
   const isDraftIssue = router.pathname.includes("draft-issue");
 
-  const { setToastAlert } = useToast();
-
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 
@@ -67,10 +65,16 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     const issues = data.map((i) => i.id);
 
     try {
-      addIssuesToView && addIssuesToView(issues);
+      await addIssuesToView?.(issues);
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Issues added to the cycle successfully.",
+      });
     } catch (error) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Selected issues could not be added to the cycle. Please try again.",
       });
@@ -106,13 +110,21 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
-        <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `w-full flex-row`}`}>
+        <div
+          className={`relative flex items-center gap-1 overflow-hidden ${
+            verticalAlignPosition ? `flex-col` : `w-full flex-row`
+          }`}
+        >
           <div
-            className={`line-clamp-1 font-medium text-custom-text-100 ${verticalAlignPosition ? `vertical-lr` : ``}`}
+            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-custom-text-100 ${
+              verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
+            }`}
           >
             {title}
           </div>
-          <div className={`text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}>
+          <div
+            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}
+          >
             {count || 0}
           </div>
         </div>

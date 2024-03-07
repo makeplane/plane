@@ -1,13 +1,10 @@
 import uuid
 
-from django.conf import settings
-
 # Django imports
 from django.db import models
 
-from ..mixins import TimeAuditModel
-
 # Module imports
+from ..mixins import TimeAuditModel
 from .base import BaseModel
 
 

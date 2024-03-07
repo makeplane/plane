@@ -1,7 +1,7 @@
 import Link from "next/link";
 // hooks
-import { useIssueDetail } from "hooks/store";
 // components
+import { Loader, getButtonStyling } from "@plane/ui";
 import {
   AssignedCompletedIssueListItem,
   AssignedIssuesEmptyState,
@@ -14,10 +14,10 @@ import {
   IssueListItemProps,
 } from "components/dashboard/widgets";
 // ui
-import { Loader, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 import { getRedirectionFilters } from "helpers/dashboard.helper";
+import { useIssueDetail } from "hooks/store";
 // types
 import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
 

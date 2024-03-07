@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Count, F, Q, Sum
+from django.db.models import Count, F, Sum
 from django.db.models.functions import ExtractMonth
 from django.utils import timezone
 
@@ -52,8 +52,8 @@ class AnalyticsEndpoint(BaseAPIView):
         if (
             not x_axis
             or not y_axis
-            or not x_axis in valid_xaxis_segment
-            or not y_axis in valid_yaxis
+            or x_axis not in valid_xaxis_segment
+            or y_axis not in valid_yaxis
         ):
             return Response(
                 {
@@ -267,8 +267,8 @@ class ExportAnalyticsEndpoint(BaseAPIView):
         if (
             not x_axis
             or not y_axis
-            or not x_axis in valid_xaxis_segment
-            or not y_axis in valid_yaxis
+            or x_axis not in valid_xaxis_segment
+            or y_axis not in valid_yaxis
         ):
             return Response(
                 {

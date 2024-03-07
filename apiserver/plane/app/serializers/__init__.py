@@ -88,16 +88,6 @@ from .module import (
 
 from .api import APITokenSerializer, APITokenReadSerializer
 
-from .integration import (
-    IntegrationSerializer,
-    WorkspaceIntegrationSerializer,
-    GithubIssueSyncSerializer,
-    GithubRepositorySerializer,
-    GithubRepositorySyncSerializer,
-    GithubCommentSyncSerializer,
-    SlackProjectSyncSerializer,
-)
-
 from .importer import ImporterSerializer
 
 from .page import (

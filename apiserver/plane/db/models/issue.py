@@ -321,7 +321,7 @@ class IssueAssignee(ProjectBaseModel):
 
 class IssueLink(ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
-    url = models.URLField()
+    url = models.TextField()
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
     )

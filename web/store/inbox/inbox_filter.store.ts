@@ -1,6 +1,6 @@
-import { observable, action, makeObservable, runInAction, computed } from "mobx";
-import set from "lodash/set";
 import isEmpty from "lodash/isEmpty";
+import set from "lodash/set";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // services
 import { InboxService } from "services/inbox.service";
 // types

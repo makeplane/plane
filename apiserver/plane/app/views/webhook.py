@@ -41,7 +41,7 @@ class WebhookEndpoint(BaseAPIView):
             raise IntegrityError
 
     def get(self, request, slug, pk=None):
-        if pk == None:
+        if pk is None:
             webhooks = Webhook.objects.filter(workspace__slug=slug)
             serializer = WebhookSerializer(
                 webhooks,

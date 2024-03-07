@@ -8,10 +8,42 @@ from .analytic import (
 from .api import ApiTokenEndpoint
 from .asset import FileAssetEndpoint, FileAssetViewSet, UserAssetsEndpoint
 from .base import BaseAPIView, BaseViewSet, WebhookMixin
-from .config import (
-    AuthConfigurationEndpoint,
-    ConfigurationEndpoint,
-    MobileConfigurationEndpoint,
+
+from .workspace import (
+    WorkSpaceViewSet,
+    UserWorkSpacesEndpoint,
+    WorkSpaceAvailabilityCheckEndpoint,
+    WorkspaceJoinEndpoint,
+    WorkSpaceMemberViewSet,
+    TeamMemberViewSet,
+    WorkspaceInvitationsViewset,
+    UserWorkspaceInvitationsViewSet,
+    UserLastProjectWithWorkspaceEndpoint,
+    WorkspaceMemberUserEndpoint,
+    WorkspaceMemberUserViewsEndpoint,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
+    UserWorkspaceDashboardEndpoint,
+    WorkspaceThemeViewSet,
+    WorkspaceUserProfileStatsEndpoint,
+    WorkspaceUserActivityEndpoint,
+    WorkspaceUserProfileEndpoint,
+    WorkspaceUserProfileIssuesEndpoint,
+    WorkspaceLabelsEndpoint,
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceUserPropertiesEndpoint,
+    WorkspaceStatesEndpoint,
+    WorkspaceEstimatesEndpoint,
+    ExportWorkspaceUserActivityEndpoint,
+    WorkspaceModulesEndpoint,
+    WorkspaceCyclesEndpoint,
+)
+from .state import StateViewSet
+from .view import (
+    GlobalViewViewSet,
+    GlobalViewIssuesViewSet,
+    IssueViewViewSet,
+    IssueViewFavoriteViewSet,
 )
 from .cycle import (
     CycleDateCheckEndpoint,
@@ -26,30 +58,49 @@ from .estimate import (
     BulkEstimatePointEndpoint,
     ProjectEstimatePointEndpoint,
 )
-from .exporter import ExportIssuesEndpoint
+
+from .auth_extended import (
+    ForgotPasswordEndpoint,
+    ResetPasswordEndpoint,
+    ChangePasswordEndpoint,
+    SetUserPasswordEndpoint,
+    EmailCheckEndpoint,
+    MagicGenerateEndpoint,
+)
+
+
+from .authentication import (
+    SignInEndpoint,
+    SignOutEndpoint,
+    MagicSignInEndpoint,
+)
+
+from .module import (
+    ModuleViewSet,
+    ModuleIssueViewSet,
+    ModuleLinkViewSet,
+    ModuleFavoriteViewSet,
+    ModuleUserPropertiesEndpoint,
+)
+
+from .api import ApiTokenEndpoint
+
+from .page import (
+    PageViewSet,
+    PageFavoriteViewSet,
+    PageLogEndpoint,
+    SubPagesEndpoint,
+)
+
+from .search import GlobalSearchEndpoint, IssueSearchEndpoint
+
+
 from .external import (
     GPTIntegrationEndpoint,
-    ReleaseNotesEndpoint,
     UnsplashEndpoint,
 )
-from .importer import (
-    BulkImportIssuesEndpoint,
-    BulkImportModulesEndpoint,
-    ImportServiceEndpoint,
-    ServiceIssueImportSummaryEndpoint,
-    UpdateServiceImportStatusEndpoint,
-)
 from .inbox import InboxIssueViewSet, InboxViewSet
-from .integration import (
-    BulkCreateGithubIssueSyncEndpoint,
-    GithubCommentSyncViewSet,
-    GithubIssueSyncViewSet,
-    GithubRepositoriesEndpoint,
-    GithubRepositorySyncViewSet,
-    IntegrationViewSet,
-    SlackProjectSyncViewSet,
-    WorkspaceIntegrationViewSet,
-)
+
 from .issue import (
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
@@ -126,31 +177,7 @@ from .webhook import (
     WebhookLogsEndpoint,
     WebhookSecretRegenerateEndpoint,
 )
-from .workspace import (
-    TeamMemberViewSet,
-    UserActivityGraphEndpoint,
-    UserIssueCompletedGraphEndpoint,
-    UserLastProjectWithWorkspaceEndpoint,
-    UserWorkspaceDashboardEndpoint,
-    UserWorkspaceInvitationsViewSet,
-    UserWorkSpacesEndpoint,
-    WorkSpaceAvailabilityCheckEndpoint,
-    WorkspaceCyclesEndpoint,
-    WorkspaceEstimatesEndpoint,
-    WorkspaceInvitationsViewset,
-    WorkspaceJoinEndpoint,
-    WorkspaceLabelsEndpoint,
-    WorkspaceMemberUserEndpoint,
-    WorkspaceMemberUserViewsEndpoint,
-    WorkSpaceMemberViewSet,
-    WorkspaceModulesEndpoint,
-    WorkspaceProjectMemberEndpoint,
-    WorkspaceStatesEndpoint,
-    WorkspaceThemeViewSet,
-    WorkspaceUserActivityEndpoint,
-    WorkspaceUserProfileEndpoint,
-    WorkspaceUserProfileIssuesEndpoint,
-    WorkspaceUserProfileStatsEndpoint,
-    WorkspaceUserPropertiesEndpoint,
-    WorkSpaceViewSet,
-)
+
+from .dashboard import DashboardEndpoint, WidgetsEndpoint
+
+from .error_404 import custom_404_view

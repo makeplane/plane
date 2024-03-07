@@ -4,14 +4,14 @@ import Image from "next/image";
 // headless ui
 import { Tab } from "@headlessui/react";
 // hooks
+import { Avatar, StateGroupIcon } from "@plane/ui";
+import { SingleProgressStats } from "components/core";
 import useLocalStorage from "hooks/use-local-storage";
 // images
 import emptyLabel from "public/empty-state/empty_label.svg";
 import emptyMembers from "public/empty-state/empty_members.svg";
 // components
-import { SingleProgressStats } from "components/core";
 // ui
-import { Avatar, StateGroupIcon } from "@plane/ui";
 // types
 import {
   IModule,
@@ -137,8 +137,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={assignee.assignee_id}
                     title={
                       <div className="flex items-center gap-2">
-                        <Avatar name={assignee.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
-                        <span>{assignee.display_name}</span>
+                        <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+                        <span>{assignee?.display_name ?? ""}</span>
                       </div>
                     }
                     completed={assignee.completed_issues}

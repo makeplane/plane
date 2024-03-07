@@ -1,17 +1,17 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // services
+import { EUserProjectRoles } from "constants/project";
 import { ProjectMemberService } from "services/project";
 // types
-import { RootStore } from "store/root.store";
 import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";
-// constants
-import { EUserProjectRoles } from "constants/project";
-import { IMemberRootStore } from ".";
 import { IRouterStore } from "store/application/router.store";
-import { IUserRootStore } from "store/user/user_legacy";
+import { RootStore } from "store/root.store";
+import { IUserStore } from "store/user";
+// constants
+import { IMemberRootStore } from ".";
 
 interface IProjectMemberDetails {
   id: string;
@@ -54,7 +54,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
   } = {};
   // stores
   routerStore: IRouterStore;
-  userStore: IUserRootStore;
+  userStore: IUserStore;
   memberRoot: IMemberRootStore;
   // services
   projectMemberService;
@@ -88,7 +88,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     if (!projectId) return null;
     let members = Object.values(this.projectMemberMap?.[projectId] ?? {});
     members = sortBy(members, [
-      (m) => m.member !== this.userStore.currentUser?.id,
+      (m) => m.member !== this.userStore.data?.id,
       (m) => this.memberRoot.memberMap?.[m.member]?.display_name.toLowerCase(),
     ]);
     const memberIds = members.map((m) => m.member);
@@ -121,7 +121,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     if (!this.projectMemberMap?.[projectId]) return null;
     let members = Object.values(this.projectMemberMap?.[projectId]);
     members = sortBy(members, [
-      (m) => m.member !== this.userStore.currentUser?.id,
+      (m) => m.member !== this.userStore.data?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     const memberIds = members.map((m) => m.member);
