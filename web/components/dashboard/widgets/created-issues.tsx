@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
 import { Tab } from "@headlessui/react";
 // hooks
 import { useDashboard } from "hooks/store";
@@ -17,7 +17,7 @@ import { getCustomDates, getRedirectionFilters, getTabKey } from "helpers/dashbo
 // types
 import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
 // constants
-import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
+import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
 const WIDGET_KEY = "created_issues";
 
@@ -30,8 +30,9 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TCreatedIssuesWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? "none";
+  const selectedDurationFilter = widgetDetails?.widget_filters.duration ?? EDurationFilters.NONE;
   const selectedTab = getTabKey(selectedDurationFilter, widgetDetails?.widget_filters.tab);
+  const selectedCustomDates = widgetDetails?.widget_filters.custom_dates ?? [];
 
   const handleUpdateFilters = async (filters: Partial<TCreatedIssuesWidgetFilters>) => {
     if (!widgetDetails) return;
@@ -43,7 +44,10 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       filters,
     });
 
-    const filterDates = getCustomDates(filters.duration ?? selectedDurationFilter);
+    const filterDates = getCustomDates(
+      filters.duration ?? selectedDurationFilter,
+      filters.custom_dates ?? selectedCustomDates
+    );
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
       issue_type: filters.tab ?? selectedTab,
@@ -52,7 +56,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   };
 
   useEffect(() => {
-    const filterDates = getCustomDates(selectedDurationFilter);
+    const filterDates = getCustomDates(selectedDurationFilter, selectedCustomDates);
 
     fetchWidgetStats(workspaceSlug, dashboardId, {
       widget_key: WIDGET_KEY,
@@ -78,8 +82,17 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           Created by you
         </Link>
         <DurationFilterDropdown
+          customDates={selectedCustomDates}
           value={selectedDurationFilter}
-          onChange={(val) => {
+          onChange={(val, customDates) => {
+            if (val === "custom" && customDates) {
+              handleUpdateFilters({
+                duration: val,
+                custom_dates: customDates,
+              });
+              return;
+            }
+
             if (val === selectedDurationFilter) return;
 
             let newTab = selectedTab;

@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
-import useToast from "hooks/use-toast";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 import { useEventTracker } from "hooks/store";
 // layouts
@@ -14,7 +13,7 @@ import DefaultLayout from "layouts/default-layout";
 import { LatestFeatureBlock } from "components/common";
 import { PageHead } from "components/core";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // helpers
@@ -47,8 +46,6 @@ const ResetPasswordPage: NextPageWithLayout = () => {
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  // toast
-  const { setToastAlert } = useToast();
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
   // form info
@@ -82,8 +79,8 @@ const ResetPasswordPage: NextPageWithLayout = () => {
         captureEvent(NEW_PASS_CREATED, {
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         });

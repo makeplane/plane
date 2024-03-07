@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 import Link from "next/link";
-// hooks
-import { useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { DeleteProjectModal, JoinProjectModal } from "components/project";
+import { useRouter } from "next/router";
+import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // ui
-import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
+// components
+import { DeleteProjectModal, JoinProjectModal, ProjectLogo } from "components/project";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
+// hooks
+import { useProject } from "hooks/store";
 // types
 import type { IProject } from "@plane/types";
-// constants
 import { EUserProjectRoles } from "constants/project";
+// constants
 
 export type ProjectCardProps = {
   project: IProject;
@@ -27,8 +25,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
@@ -42,24 +38,34 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
-    addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding project to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project added to favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
-      });
+        message: () => "Couldn't add the project to favorites. Please try again.",
+      },
     });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
-      setToastAlert({
-        type: "error",
+    const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing project from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project removed from favorites.",
+      },
+      error: {
         title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
-      });
+        message: () => "Couldn't remove the project from favorites. Please try again.",
+      },
     });
   };
 
@@ -67,8 +73,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${project.id}/issues`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       });
@@ -117,13 +123,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
 
           <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="item-center flex h-9 w-9 flex-shrink-0 justify-center rounded bg-white/90">
-                <span className="flex items-center justify-center">
-                  {project.emoji
-                    ? renderEmoji(project.emoji)
-                    : project.icon_prop
-                    ? renderEmoji(project.icon_prop)
-                    : null}
+              <div className="flex item-center justify-center h-9 w-9 flex-shrink-0 rounded bg-white/90">
+                <span className="grid place-items-center">
+                  <ProjectLogo logo={project.logo_props} />
                 </span>
               </div>
 

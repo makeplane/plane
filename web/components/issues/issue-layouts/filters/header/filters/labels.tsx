@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import sortBy from "lodash/sortBy";
 // components
+import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Loader } from "@plane/ui";
 // types
 import { IIssueLabel } from "@plane/types";
 

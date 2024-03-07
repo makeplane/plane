@@ -112,16 +112,16 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
       updated_from: props.path?.includes("workspace-views")
         ? "All views"
         : props.path?.includes("cycles")
-        ? "Cycle"
-        : props.path?.includes("modules")
-        ? "Module"
-        : props.path?.includes("views")
-        ? "Project view"
-        : props.path?.includes("inbox")
-        ? "Inbox"
-        : props.path?.includes("draft")
-        ? "Draft"
-        : "Project",
+          ? "Cycle"
+          : props.path?.includes("modules")
+            ? "Module"
+            : props.path?.includes("views")
+              ? "Project view"
+              : props.path?.includes("inbox")
+                ? "Inbox"
+                : props.path?.includes("draft")
+                  ? "Draft"
+                  : "Project",
     };
   }
   return eventPayload;

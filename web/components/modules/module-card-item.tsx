@@ -1,22 +1,21 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // hooks
-import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
+import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-// ui
-import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-// constants
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
+// components
+// ui
+// helpers
+// constants
 
 type Props = {
   moduleId: string;
@@ -30,8 +29,6 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -48,21 +45,27 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
+    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
+      () => {
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the module to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding module to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the module to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -70,29 +73,37 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
-        captureEvent(MODULE_UNFAVORITED, {
-          module_id: moduleId,
-          element: "Grid layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the module from favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeModuleFromFavorites(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      moduleId
+    ).then(() => {
+      captureEvent(MODULE_UNFAVORITED, {
+        module_id: moduleId,
+        element: "Grid layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing module from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the module from favorites. Please try again.",
+      },
+    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Module link copied to clipboard.",
       });
@@ -148,8 +159,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (
@@ -254,7 +265,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                     </button>
                   ))}
 
-                <CustomMenu ellipsis className="z-10">
+                <CustomMenu ellipsis className="z-10" placement="left-start">
                   {isEditingAllowed && (
                     <>
                       <CustomMenu.MenuItem onClick={handleEditModule}>

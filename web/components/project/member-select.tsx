@@ -2,9 +2,9 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { Ban } from "lucide-react";
 // hooks
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 import { useMember } from "hooks/store";
 // ui
-import { Avatar, CustomSearchSelect } from "@plane/ui";
 
 type Props = {
   value: any;
@@ -50,9 +50,9 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption && <Avatar name={selectedOption.member.display_name} src={selectedOption.member.avatar} />}
+          {selectedOption && <Avatar name={selectedOption.member?.display_name} src={selectedOption.member?.avatar} />}
           {selectedOption ? (
-            selectedOption.member.display_name
+            selectedOption.member?.display_name
           ) : (
             <div className="flex items-center gap-2">
               <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />

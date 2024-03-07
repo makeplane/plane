@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
+import { Rocket, Search } from "lucide-react";
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import useDebounce from "hooks/use-debounce";
 import { ProjectService } from "services/project";
 // hooks
-import useDebounce from "hooks/use-debounce";
 // ui
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { Rocket, Search } from "lucide-react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 
@@ -136,7 +134,10 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       </div>
                     </Tooltip>
                   </div>
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                  <Combobox.Options
+                    static
+                    className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}

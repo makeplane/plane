@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
 import { useModule } from "hooks/store";
 // components

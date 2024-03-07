@@ -56,8 +56,8 @@ export const getAllDatesInWeekByWeekNumber = (weekNumber: number, year: number) 
   const startDate = new Date(firstDayOfYear.getTime());
   startDate.setDate(startDate.getDate() + 7 * (weekNumber - 1));
 
-  var datesInWeek = [];
-  for (var i = 0; i < 7; i++) {
+  const datesInWeek = [];
+  for (let i = 0; i < 7; i++) {
     const currentDate = new Date(startDate.getTime());
     currentDate.setDate(currentDate.getDate() + i);
     datesInWeek.push(currentDate);

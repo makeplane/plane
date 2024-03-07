@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react";
 import sortBy from "lodash/sortBy";
+import { observer } from "mobx-react";
 // components
+import { Loader, CycleGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
 import { useApplication, useCycle } from "hooks/store";
 // ui
-import { Loader, CycleGroupIcon } from "@plane/ui";
 // types
 import { TCycleGroups } from "@plane/types";
 

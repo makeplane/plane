@@ -1,5 +1,4 @@
 # Python import
-import os
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -75,7 +74,7 @@ def project_invitation(email, project_id, token, current_site, invitor):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         return
-    except (Project.DoesNotExist, ProjectMemberInvite.DoesNotExist) as e:
+    except (Project.DoesNotExist, ProjectMemberInvite.DoesNotExist):
         return
     except Exception as e:
         # Print logs if in DEBUG mode

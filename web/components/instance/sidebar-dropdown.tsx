@@ -1,19 +1,17 @@
 import { Fragment } from "react";
-import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { mutate } from "swr";
 // components
 import { Menu, Transition } from "@headlessui/react";
 // icons
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // hooks
+import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { useApplication, useUser } from "hooks/store";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Avatar, Tooltip } from "@plane/ui";
 
 // Static Data
 const PROFILE_LINKS = [
@@ -35,7 +33,6 @@ export const InstanceSidebarDropdown = observer(() => {
   } = useApplication();
   const { signOut, currentUser, currentUserSettings } = useUser();
   // hooks
-  const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
 
   // redirect url for normal mode
@@ -53,8 +50,8 @@ export const InstanceSidebarDropdown = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })

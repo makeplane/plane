@@ -115,7 +115,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     value={value}
                     debouncedUpdatesEnabled={false}
                     customClassName="min-h-[50px] p-3 shadow-sm"
-                    onChange={(comment_json: Object, comment_html: string) => {
+                    onChange={(comment_json: unknown, comment_html: string) => {
                       onChange(comment_html);
                     }}
                   />
