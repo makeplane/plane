@@ -6,7 +6,7 @@ import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IEstimateStore, EstimateStore } from "./estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
-import { IInboxRootStore, InboxRootStore } from "./inbox/root.store";
+import { IInboxRootStore, InboxRootStore } from "./inbox_legacy/root.store";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 import { ILabelStore, LabelStore } from "./label.store";
 import { IMemberRootStore, MemberRootStore } from "./member";
@@ -18,6 +18,7 @@ import { IStateStore, StateStore } from "./state.store";
 import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
+import { ProjectInboxStore, IProjectInboxStore } from "./project-inbox.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -40,6 +41,7 @@ export class RootStore {
   mention: IMentionStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
+  projectInbox: IProjectInboxStore;
 
   constructor() {
     this.app = new AppRootStore(this);
@@ -61,6 +63,8 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    // inbox
+    this.projectInbox = new ProjectInboxStore(this);
   }
 
   resetOnSignout() {
@@ -80,5 +84,6 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectInbox = new ProjectInboxStore(this);
   }
 }

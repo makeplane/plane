@@ -22,3 +22,4 @@ export * from "./use-kanban-view";
 export * from "./use-issue-detail";
 export * from "./use-inbox";
 export * from "./use-inbox-issues";
+export * from "./use-project-inbox";

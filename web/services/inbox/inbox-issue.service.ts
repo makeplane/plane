@@ -12,15 +12,11 @@ export class InboxIssueService extends APIService {
   async fetchInboxIssues(
     workspaceSlug: string,
     projectId: string,
-    inboxId: string,
     params?: TInboxIssueFilterOptions | {}
   ): Promise<TInboxIssueExtendedDetail[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/?expand=issue_inbox`,
-      {
-        params,
-      }
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -45,16 +41,12 @@ export class InboxIssueService extends APIService {
   async createInboxIssue(
     workspaceSlug: string,
     projectId: string,
-    inboxId: string,
     data: {
       source: string;
       issue: Partial<TIssue>;
     }
   ): Promise<TInboxIssueExtendedDetail> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/?expand=issue_inbox`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

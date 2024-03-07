@@ -174,9 +174,9 @@ export class InboxIssue implements IInboxIssue {
     }
   };
 
-  createInboxIssue = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<TIssue>) => {
+  createInboxIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
     try {
-      const response = await this.inboxIssueService.createInboxIssue(workspaceSlug, projectId, inboxId, {
+      const response = await this.inboxIssueService.createInboxIssue(workspaceSlug, projectId, {
         source: "in-app",
         issue: data,
       });

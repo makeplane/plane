@@ -5,7 +5,7 @@ import useSWR from "swr";
 // hooks
 import { ProjectInboxHeader } from "components/headers";
 import { InboxLayoutLoader } from "components/ui";
-import { useInbox, useProject } from "hooks/store";
+import { useInbox, useProject, useProjectInbox } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // ui
@@ -16,28 +16,24 @@ import { NextPageWithLayout } from "lib/types";
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // return null when workspaceSlug or projectId is not available
+  if (!workspaceSlug || !projectId) return null;
+  // store
+  const { fetchInboxIssues, projectInboxIssues } = useProjectInbox();
+  // fetching inbox issues
+  const { isLoading } = useSWR(`PROJECT_INBOX_ISSUES_${projectId}`, () => {
+    fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+  });
+  // derived values
+  // const inboxIssues = projectInboxIssues;
 
-  const { currentProjectDetails } = useProject();
-  const { fetchInboxes } = useInbox();
-
-  useSWR(
-    workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view
-      ? `INBOX_${workspaceSlug.toString()}_${projectId.toString()}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view) {
-        const inboxes = await fetchInboxes(workspaceSlug.toString(), projectId.toString());
-        if (inboxes && inboxes.length > 0)
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxes[0].id}`);
-      }
-    }
-  );
-
-  return (
+  if (!projectInboxIssues) {
     <div className="flex h-full flex-col">
-      {currentProjectDetails?.inbox_view ? <InboxLayoutLoader /> : <div>You don{"'"}t have access to inbox</div>}
-    </div>
-  );
+      <InboxLayoutLoader />
+    </div>;
+  }
+
+  return <div className="flex h-full flex-col">Inbox Issues Page</div>;
 });
 
 ProjectInboxPage.getLayout = function getLayout(page: ReactElement) {
