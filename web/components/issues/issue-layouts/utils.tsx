@@ -24,7 +24,8 @@ export const getGroupByColumns = (
   label: ILabelStore,
   projectState: IStateStore,
   member: IMemberRootStore,
-  includeNone?: boolean
+  includeNone?: boolean,
+  isWorkspaceLevel?: boolean
 ): IGroupByColumn[] | undefined => {
   switch (groupBy) {
     case "project":
@@ -40,7 +41,7 @@ export const getGroupByColumns = (
     case "priority":
       return getPriorityColumns();
     case "labels":
-      return getLabelsColumns(label) as any;
+      return getLabelsColumns(label, isWorkspaceLevel) as any;
     case "assignees":
       return getAssigneeColumns(member) as any;
     case "created_by":
@@ -177,12 +178,13 @@ const getPriorityColumns = () => {
   }));
 };
 
-const getLabelsColumns = (label: ILabelStore) => {
-  const { projectLabels } = label;
+const getLabelsColumns = (label: ILabelStore, isWorkspaceLevel: boolean = false) => {
+  const { workspaceLabels, projectLabels } = label;
 
-  if (!projectLabels) return;
-
-  const labels = [...projectLabels, { id: "None", name: "None", color: "#666" }];
+  const labels = [
+    ...(isWorkspaceLevel ? workspaceLabels || [] : projectLabels || []),
+    { id: "None", name: "None", color: "#666" },
+  ];
 
   return labels.map((label) => ({
     id: label.id,
