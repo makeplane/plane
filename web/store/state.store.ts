@@ -17,6 +17,7 @@ export interface IStateStore {
   // observables
   stateMap: Record<string, IState>;
   // computed
+  workspaceStates: IState[] | undefined;
   projectStates: IState[] | undefined;
   groupedProjectStates: Record<string, IState[]> | undefined;
   // computed actions
@@ -74,12 +75,21 @@ export class StateStore implements IStateStore {
   }
 
   /**
+   * Returns the stateMap belongs to a specific workspace
+   */
+  get workspaceStates() {
+    const workspaceSlug = this.router.workspaceSlug || "";
+    if (!workspaceSlug || !this.fetchedMap[workspaceSlug]) return;
+    return sortStates(Object.values(this.stateMap));
+  }
+
+  /**
    * Returns the stateMap belongs to a specific project
    */
   get projectStates() {
     const projectId = this.router.projectId;
-    const worksapceSlug = this.router.workspaceSlug || "";
-    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    const workspaceSlug = this.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
   }
 
@@ -106,8 +116,8 @@ export class StateStore implements IStateStore {
    * @returns IState[]
    */
   getProjectStates = computedFn((projectId: string) => {
-    const worksapceSlug = this.router.workspaceSlug || "";
-    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])) return;
+    const workspaceSlug = this.router.workspaceSlug || "";
+    if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
   });
 

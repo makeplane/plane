@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .base import BaseViewSet, BaseAPIView
+from ..base import BaseViewSet, BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Project, Estimate, EstimatePoint
 from plane.app.serializers import (

@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet
+from .. import BaseViewSet
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import (
     ProjectEntityPermission,

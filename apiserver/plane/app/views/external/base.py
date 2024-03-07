@@ -10,7 +10,7 @@ from rest_framework import status
 # Django imports
 
 # Module imports
-from .base import BaseAPIView
+from ..base import BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project
 from plane.app.serializers import (
