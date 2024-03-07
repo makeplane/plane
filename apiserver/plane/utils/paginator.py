@@ -4,15 +4,14 @@ from collections import defaultdict
 from collections.abc import Sequence
 
 # Django imports
-from django.db.models import Count, F, Q, Window
-from django.db.models.functions import DenseRank, RowNumber
-from rest_framework.exceptions import ParseError, ValidationError
+from django.db.models import Count, F, Window
+from django.db.models.functions import RowNumber
+from rest_framework.exceptions import ParseError
 
 # Third party imports
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import Issue
 
 
 class Cursor:

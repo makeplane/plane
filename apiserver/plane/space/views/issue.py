@@ -3,18 +3,11 @@ import json
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import (
-    Case,
-    CharField,
     Exists,
     F,
     Func,
-    IntegerField,
-    Max,
     OuterRef,
-    Prefetch,
     Q,
-    Value,
-    When,
 )
 
 # Django imports
@@ -41,11 +34,9 @@ from plane.db.models import (
     IssueLink,
     IssueReaction,
     IssueVote,
-    Label,
     ProjectDeployBoard,
     ProjectMember,
     ProjectPublicMember,
-    State,
 )
 from plane.utils.grouper import (
     issue_group_values,

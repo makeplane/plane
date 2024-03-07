@@ -39,7 +39,6 @@ from plane.app.serializers import (
     CycleSerializer,
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
-    IssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (

@@ -1,35 +1,21 @@
 # Python imports
 import json
-import random
-from collections import defaultdict
-from itertools import chain
 
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import IntegrityError
 from django.db.models import (
-    Case,
-    CharField,
     Exists,
     F,
     Func,
-    Max,
     OuterRef,
     Prefetch,
     Q,
-    UUIDField,
-    Value,
-    When,
 )
-from django.db.models.functions import Coalesce
 
 # Django imports
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from rest_framework import status
-from rest_framework.parsers import FormParser, MultiPartParser
 
 # Third Party imports
 from rest_framework.response import Response
@@ -37,45 +23,23 @@ from rest_framework.response import Response
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
-    ProjectMemberPermission,
-    WorkSpaceAdminPermission,
 )
 from plane.app.serializers import (
-    CommentReactionSerializer,
-    IssueActivitySerializer,
-    IssueAttachmentSerializer,
-    IssueCommentSerializer,
     IssueCreateSerializer,
     IssueDetailSerializer,
-    IssueFlatSerializer,
-    IssueLinkSerializer,
-    IssueLiteSerializer,
     IssuePropertySerializer,
-    IssueReactionSerializer,
-    IssueRelationSerializer,
     IssueSerializer,
-    IssueSubscriberSerializer,
-    LabelSerializer,
-    ProjectMemberLiteSerializer,
-    RelatedIssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
-    CommentReaction,
     Issue,
-    IssueActivity,
     IssueAttachment,
-    IssueComment,
     IssueLink,
     IssueProperty,
     IssueReaction,
-    IssueRelation,
     IssueSubscriber,
-    Label,
     Project,
-    ProjectMember,
 )
-from plane.utils.cache import invalidate_cache
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,

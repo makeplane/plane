@@ -2,17 +2,13 @@
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
-    Case,
-    CharField,
     Exists,
     F,
     Func,
-    Max,
     OuterRef,
     Q,
     UUIDField,
     Value,
-    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
@@ -27,7 +23,6 @@ from plane.app.permissions import (
     WorkspaceEntityPermission,
 )
 from plane.app.serializers import (
-    IssueSerializer,
     IssueViewFavoriteSerializer,
     IssueViewSerializer,
 )
