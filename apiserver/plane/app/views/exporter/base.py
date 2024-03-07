@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseAPIView
+from .. import BaseAPIView
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.bgtasks.export_task import issue_export_task
 from plane.db.models import Project, ExporterHistory, Workspace

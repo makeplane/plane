@@ -63,11 +63,14 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     });
 
     await updateProject(workspaceSlug.toString(), projectId.toString(), {
-      default_assignee: formData.default_assignee === "none" ? null : formData.default_assignee,
-      project_lead: formData.project_lead === "none" ? null : formData.project_lead,
+      default_assignee:
+        formData.default_assignee === "none"
+          ? null
+          : formData.default_assignee ?? currentProjectDetails?.default_assignee,
+      project_lead:
+        formData.project_lead === "none" ? null : formData.project_lead ?? currentProjectDetails?.project_lead,
     })
       .then(() => {
-        fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
         setToast({
           title: "Success",
           type: TOAST_TYPE.SUCCESS,
