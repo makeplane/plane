@@ -177,10 +177,13 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_issue = InboxIssue.objects.filter(
             inbox_id=inbox_id.id, project_id=project_id
         ).prefetch_related("issue")
-        issues = InboxIssueSerializer(inbox_issue, many=True).data
-        return Response(
-            issues,
-            status=status.HTTP_200_OK,
+        return self.paginate(
+            request=request,
+            queryset=(inbox_issue),
+            on_results=lambda inbox_issues: InboxIssueSerializer(
+                inbox_issue,
+                many=True,
+            ).data,
         )
 
     def create(self, request, slug, project_id):
@@ -247,7 +250,7 @@ class InboxIssueViewSet(BaseViewSet):
             issue=issue,
             source=request.data.get("source", "in-app"),
         )
-        serializer = InboxIssueSerializer(inbox_issue)
+        serializer = InboxIssueDetailSerializer(inbox_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, issue_id):
@@ -367,58 +370,29 @@ class InboxIssueViewSet(BaseViewSet):
                         if state is not None:
                             issue.state = state
                             issue.save()
-                return Response(status=status.HTTP_204_NO_CONTENT)
+
+                serializer = InboxIssueDetailSerializer(inbox_issue).data
+                return Response(serializer, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            issue = self.get_queryset().filter(pk=issue_id).first()
-            serializer = IssueSerializer(issue, expand=self.expand)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = InboxIssueDetailSerializer(inbox_issue).data
+            return Response(serializer, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, issue_id):
-        issue = (
-            self.get_queryset()
-            .filter(pk=issue_id)
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related(
-                        "issue", "actor"
-                    ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_link",
-                    queryset=IssueLink.objects.select_related("created_by"),
-                )
-            )
-            .annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        issue_id=OuterRef("pk"),
-                        subscriber=request.user,
-                    )
-                )
-            )
+        workspace = Workspace.objects.filter(slug=slug).first()
+        inbox_id = Inbox.objects.filter(
+            workspace_id=workspace.id, project_id=project_id
         ).first()
-        if issue is None:
-            return Response(
-                {"error": "Requested object was not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        serializer = IssueDetailSerializer(issue)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        inbox_issue = InboxIssue.objects.get(
+            inbox_id=inbox_id.id, issue_id=issue_id, project_id=project_id
+        )
+        issue = InboxIssueDetailSerializer(inbox_issue).data
+        return Response(
+            issue,
+            status=status.HTTP_200_OK,
+        )
 
     def destroy(self, request, slug, project_id, issue_id):
         workspace = Workspace.objects.filter(slug=slug).first()
