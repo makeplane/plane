@@ -67,7 +67,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId || !viewId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(
       workspaceSlug.toString(),
