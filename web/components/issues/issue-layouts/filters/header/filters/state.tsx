@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import sortBy from "lodash/sortBy";
 // components
@@ -23,17 +23,17 @@ export const FilterState: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = sortBy(
-    (states ?? []).filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase())),
-    // First sort by whether the state is in appliedFilters, then by names
-    [(s) => !(appliedFilters ?? []).includes(s.id), (s) => s.name.toLowerCase()]
-  );
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (states ?? []).filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return sortBy(filteredOptions, [(s) => !(appliedFilters ?? []).includes(s.id), (s) => s.name.toLowerCase()]);
+  }, [states, searchQuery, appliedFilters]);
 
   const handleViewToggle = () => {
-    if (!filteredOptions) return;
+    if (!sortedOptions) return;
 
-    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
-    else setItemsToRender(filteredOptions.length);
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
   };
 
   return (
@@ -45,10 +45,10 @@ export const FilterState: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((state) => (
+                {sortedOptions.slice(0, itemsToRender).map((state) => (
                   <FilterOption
                     key={state.id}
                     isChecked={appliedFilters?.includes(state.id) ? true : false}
@@ -57,13 +57,13 @@ export const FilterState: React.FC<Props> = observer((props) => {
                     title={state.name}
                   />
                 ))}
-                {filteredOptions.length > 5 && (
+                {sortedOptions.length > 5 && (
                   <button
                     type="button"
                     className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
                   </button>
                 )}
               </>
