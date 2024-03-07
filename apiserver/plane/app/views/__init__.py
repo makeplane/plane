@@ -166,3 +166,10 @@ from .webhook import (
 from .dashboard import DashboardEndpoint, WidgetsEndpoint
 
 from .error_404 import custom_404_view
+
+from .config import (
+    ConfigurationEndpoint,
+    AuthConfigurationEndpoint,
+    MobileConfigurationEndpoint,
+)
+from .exporter import ExportIssuesEndpoint
