@@ -66,8 +66,10 @@ class StateAPIEndpoint(BaseAPIView):
 
                 serializer.save(project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError as e:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        except IntegrityError:
             state = State.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
@@ -136,7 +138,9 @@ class StateAPIEndpoint(BaseAPIView):
                 and State.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", state.external_source),
+                    external_source=request.data.get(
+                        "external_source", state.external_source
+                    ),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):

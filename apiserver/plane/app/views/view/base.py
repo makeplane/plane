@@ -15,11 +15,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import UUIDField
 from django.db.models.functions import Coalesce
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
 
 # Third party imports
 from rest_framework.response import Response
@@ -146,11 +143,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]

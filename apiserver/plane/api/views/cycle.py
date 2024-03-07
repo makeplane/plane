@@ -2,7 +2,7 @@
 import json
 
 # Django imports
-from django.db.models import Q, Count, Sum, Prefetch, F, OuterRef, Func
+from django.db.models import Q, Count, Sum, F, OuterRef, Func
 from django.utils import timezone
 from django.core import serializers
 
@@ -321,7 +321,9 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 and Cycle.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", cycle.external_source),
+                    external_source=request.data.get(
+                        "external_source", cycle.external_source
+                    ),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):

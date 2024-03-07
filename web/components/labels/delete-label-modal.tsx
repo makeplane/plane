@@ -1,15 +1,13 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 // hooks
+import { AlertTriangle } from "lucide-react";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useLabel } from "hooks/store";
 // icons
-import { AlertTriangle } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
 // types
 import type { IIssueLabel } from "@plane/types";
 
@@ -28,8 +26,6 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   const { deleteLabel } = useLabel();
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-  // hooks
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -49,8 +45,8 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
         setIsDeleteLoading(false);
 
         const error = err?.error || "Label could not be deleted. Please try again.";
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error,
         });

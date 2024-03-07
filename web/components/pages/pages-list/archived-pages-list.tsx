@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
+import { Loader, Spinner } from "@plane/ui";
 import { PagesListView } from "components/pages/pages-list";
 // hooks
 // ui
-import { Loader, Spinner } from "@plane/ui";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const ArchivedPagesList: FC = observer(() => {

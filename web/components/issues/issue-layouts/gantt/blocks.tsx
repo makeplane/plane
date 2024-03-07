@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
 // hooks
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 type Props = {
   issueId: string;
@@ -97,7 +97,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
         <div className="flex-shrink-0 text-xs text-custom-text-300">
           {projectIdentifier} {issueDetails?.sequence_id}
         </div>
-        <Tooltip tooltipHeading="Title" tooltipContent={issueDetails?.name}>
+        <Tooltip tooltipContent={issueDetails?.name}>
           <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>

@@ -1,19 +1,19 @@
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
 // components
-import { CreateUpdateIssueModal } from "components/issues";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
-import { CustomMenu } from "@plane/ui";
+import { CreateUpdateIssueModal } from "components/issues";
+// ui
 // mobx
-import { observer } from "mobx-react-lite";
 // hooks
+import { EIssuesStoreType } from "constants/issue";
 import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
-import useToast from "hooks/use-toast";
-import { useState } from "react";
-import { TCreateModalStoreTypes } from "constants/issue";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -21,7 +21,7 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
-  storeType: TCreateModalStoreTypes;
+  storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
 }
 
@@ -38,8 +38,6 @@ export const HeaderGroupByCard = observer(
 
     const isDraftIssue = router.pathname.includes("draft-issue");
 
-    const { setToastAlert } = useToast();
-
     const renderExistingIssueModal = moduleId || cycleId;
     const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
 
@@ -49,10 +47,16 @@ export const HeaderGroupByCard = observer(
       const issues = data.map((i) => i.id);
 
       try {
-        addIssuesToView && addIssuesToView(issues);
+        await addIssuesToView?.(issues);
+
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the cycle successfully.",
+        });
       } catch (error) {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Selected issues could not be added to the cycle. Please try again.",
         });

@@ -45,6 +45,7 @@ export interface RichTextEditorProps extends IRichTextEditor {
 interface EditorHandle {
   clearEditor: () => void;
   setEditorValue: (content: string) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
 }
 
 const RichTextEditor = ({

@@ -79,7 +79,10 @@ def archive_old_issues():
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=json.dumps(
-                                {"archived_at": str(archive_at), "automation": True}
+                                {
+                                    "archived_at": str(archive_at),
+                                    "automation": True,
+                                }
                             ),
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,

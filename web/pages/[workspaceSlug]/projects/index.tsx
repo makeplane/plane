@@ -2,13 +2,13 @@ import { ReactElement } from "react";
 import { observer } from "mobx-react";
 // components
 import { PageHead } from "components/core";
-import { ProjectCardList } from "components/project";
 import { ProjectsHeader } from "components/headers";
+import { ProjectCardList } from "components/project";
 // layouts
+import { useWorkspace } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 // type
 import { NextPageWithLayout } from "lib/types";
-import { useWorkspace } from "hooks/store";
 
 const ProjectsPage: NextPageWithLayout = observer(() => {
   // store
