@@ -54,7 +54,11 @@ from plane.db.models import (
     User,
 )
 from plane.utils.analytics_plot import burndown_plot
-from plane.utils.grouper import issue_on_results, issue_queryset_grouper
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator
@@ -759,7 +763,8 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
         # Group by
         group_by = request.GET.get("group_by", False)
         issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, field=group_by
+            queryset=issue_queryset,
+            field=group_by,
         )
 
         # List Paginate
@@ -781,6 +786,12 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             ),
             paginator_cls=GroupedOffsetPaginator,
             group_by_field_name=group_by,
+            group_by_fields=issue_group_values(
+                field=group_by,
+                slug=slug,
+                project_id=project_id,
+                filters=filters,
+            ),
             count_filter=Q(
                 Q(issue_inbox__status=1)
                 | Q(issue_inbox__status=-1)

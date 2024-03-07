@@ -188,6 +188,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             group_by_fields=issue_group_values(
                 field=group_by,
                 slug=slug,
+                filters=filters,
             ),
             paginator_cls=GroupedOffsetPaginator,
             group_by_field_name=group_by,

@@ -50,7 +50,11 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.analytics_plot import burndown_plot
-from plane.utils.grouper import issue_on_results, issue_queryset_grouper
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator
@@ -521,6 +525,12 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
             queryset=issue_queryset,
             on_results=lambda issues: issue_on_results(
                 group_by=group_by, issues=issues
+            ),
+            group_by_fields=issue_group_values(
+                field=group_by,
+                slug=slug,
+                project_id=project_id,
+                filters=filters,
             ),
             paginator_cls=GroupedOffsetPaginator,
             group_by_field_name=group_by,

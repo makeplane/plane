@@ -1,17 +1,18 @@
 # Django imports
-from django.db.models import Q, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import F, Q, UUIDField, Value
 from django.db.models.functions import Coalesce
 
 # Module imports
 from plane.db.models import (
-    State,
-    Label,
-    ProjectMember,
     Cycle,
+    Issue,
+    Label,
     Module,
+    Project,
+    ProjectMember,
+    State,
     WorkspaceMember,
 )
 
@@ -144,7 +145,7 @@ def issue_on_results(issues, group_by):
     return issues.values(*required_fields)
 
 
-def issue_group_values(field, slug, project_id=None):
+def issue_group_values(field, slug, project_id=None, filters={}):
     if field == "state_id":
         queryset = State.objects.filter(
             ~Q(name="Triage"),
@@ -191,6 +192,11 @@ def issue_group_values(field, slug, project_id=None):
             return list(queryset.filter(project_id=project_id)) + ["None"]
         else:
             return list(queryset) + ["None"]
+    if field == "project_id":
+        queryset = Project.objects.filter(workspace__slug=slug).values_list(
+            "id", flat=True
+        )
+        return list(queryset)
     if field == "priority":
         return [
             "low",
@@ -207,4 +213,26 @@ def issue_group_values(field, slug, project_id=None):
             "completed",
             "cancelled",
         ]
+    if field == "target_date":
+        queryset = (
+            Issue.issue_objects.filter(workspace__slug=slug)
+            .filter(**filters)
+            .values_list("target_date", flat=True)
+            .distinct()
+        )
+        if project_id:
+            return list(queryset.filter(project_id=project_id))
+        else:
+            return list(queryset)
+    if field == "start_date":
+        queryset = (
+            Issue.issue_objects.filter(workspace__slug=slug)
+            .filter(**filters)
+            .values_list("start_date", flat=True)
+            .distinct()
+        )
+        if project_id:
+            return list(queryset.filter(project_id=project_id))
+        else:
+            return list(queryset)
     return []

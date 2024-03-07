@@ -1,15 +1,15 @@
 # Python imports
 import math
-from collections.abc import Sequence
 from collections import defaultdict
+from collections.abc import Sequence
 
 # Django imports
-from django.db.models import Window, F, Count, Q
-from django.db.models.functions import RowNumber, DenseRank
+from django.db.models import Count, F, Q, Window
+from django.db.models.functions import DenseRank, RowNumber
+from rest_framework.exceptions import ParseError, ValidationError
 
 # Third party imports
 from rest_framework.response import Response
-from rest_framework.exceptions import ParseError, ValidationError
 
 # Module imports
 from plane.db.models import Issue
@@ -325,7 +325,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
 
     def __query_grouper(self, results):
         processed_results = self.__get_field_dict()
-        print(results)
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
             if group_value in processed_results:

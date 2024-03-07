@@ -1,61 +1,64 @@
 # Python imports
 import json
 
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Case,
+    CharField,
+    Exists,
+    F,
+    Func,
+    IntegerField,
+    Max,
+    OuterRef,
+    Prefetch,
+    Q,
+    Value,
+    When,
+)
+
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Case,
-    Value,
-    CharField,
-    When,
-    Exists,
-    Max,
-    IntegerField,
-)
-from django.core.serializers.json import DjangoJSONEncoder
-
-# Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-# Module imports
-from .base import BaseViewSet, BaseAPIView
-from plane.app.serializers import (
-    IssueCommentSerializer,
-    IssueReactionSerializer,
-    CommentReactionSerializer,
-    IssueVoteSerializer,
-    IssuePublicSerializer,
-)
+# Third Party imports
+from rest_framework.response import Response
 
-from plane.db.models import (
-    Issue,
-    IssueComment,
-    Label,
-    IssueLink,
-    IssueAttachment,
-    State,
-    ProjectMember,
-    IssueReaction,
-    CommentReaction,
-    ProjectDeployBoard,
-    IssueVote,
-    ProjectPublicMember,
-)
-from plane.utils.grouper import (
-    issue_queryset_grouper,
-    issue_on_results,
+from plane.app.serializers import (
+    CommentReactionSerializer,
+    IssueCommentSerializer,
+    IssuePublicSerializer,
+    IssueReactionSerializer,
+    IssueVoteSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import (
+    CommentReaction,
+    Issue,
+    IssueAttachment,
+    IssueComment,
+    IssueLink,
+    IssueReaction,
+    IssueVote,
+    Label,
+    ProjectDeployBoard,
+    ProjectMember,
+    ProjectPublicMember,
+    State,
+)
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator
+
+# Module imports
+from .base import BaseAPIView, BaseViewSet
+
 
 class IssueCommentPublicViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
@@ -594,6 +597,11 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 group_by=group_by, issues=issues
             ),
             paginator_cls=GroupedOffsetPaginator,
+            group_by_fields=issue_group_values(
+                field=group_by,
+                slug=slug,
+                filters=filters,
+            ),
             group_by_field_name=group_by,
             count_filter=Q(
                 Q(issue_inbox__status=1)
