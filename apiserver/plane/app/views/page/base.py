@@ -26,7 +26,7 @@ from plane.db.models import (
 )
 
 # Module imports
-from .base import BaseAPIView, BaseViewSet
+from ..base import BaseAPIView, BaseViewSet
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
