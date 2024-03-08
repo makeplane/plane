@@ -1,6 +1,7 @@
 # Python imports
 import os
 import uuid
+from urllib.parse import urlencode
 
 # Django imports
 from django.contrib.auth.hashers import make_password
@@ -18,7 +19,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views import BaseAPIView
 from plane.authentication.utils.login import user_login
-from plane.db.models import User
+from plane.db.models import Profile, User
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
@@ -294,32 +295,44 @@ class InstanceAdminSignInEndpoint(View):
 
         # check if the instance is already activated
         if InstanceAdmin.objects.first():
-            return Response(
-                {"error": "Admin for this instance is already registered"},
-                status=status.HTTP_400_BAD_REQUEST,
+            url = (
+                referer
+                + "?"
+                + urlencode(
+                    {
+                        "error": "Admin for the instance has been already registered"
+                    }
+                )
             )
-
+            return HttpResponseRedirect(url)
         # Get the email and password from all the user
         email = request.POST.get("email", False)
         password = request.POST.get("password", False)
+        first_name = request.POST.get("first_name", False)
+        last_name = request.POST.get("last_name", "")
+        company_name = request.POST.get("company_name", "")
+        is_telemetry_enabled = request.POST.get("is_telemetry_enabled", True)
 
         # return error if the email and password is not present
-        if not email or not password:
-            return Response(
-                {"error": "Email and password are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+        if not email or not password or not first_name:
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "Email, name and password are required"})
             )
+            return HttpResponseRedirect(url)
 
         # Validate the email
         email = email.strip().lower()
         try:
             validate_email(email)
         except ValidationError:
-            return Response(
-                {"error": "Please provide a valid email address."},
-                status=status.HTTP_400_BAD_REQUEST,
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "Please provide a valid email address."})
             )
-
+            return HttpResponseRedirect(url)
         # Check if already a user exists or not
         user = User.objects.filter(email=email).first()
 
@@ -327,20 +340,26 @@ class InstanceAdminSignInEndpoint(View):
         if user:
             # Check user password
             if not user.check_password(password):
-                return Response(
-                    {
-                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                    },
-                    status=status.HTTP_403_FORBIDDEN,
+                url = (
+                    referer
+                    + "?"
+                    + urlencode(
+                        {
+                            "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                        }
+                    )
                 )
+                return HttpResponseRedirect(url)
         else:
             user = User.objects.create(
+                first_name=first_name,
+                last_name=last_name,
                 email=email,
                 username=uuid.uuid4().hex,
                 password=make_password(password),
                 is_password_autoset=False,
             )
-
+            _ = Profile.objects.create(user=user, company_name=company_name)
         # settings last active for the user
         user.is_active = True
         user.last_active = timezone.now()
@@ -357,11 +376,13 @@ class InstanceAdminSignInEndpoint(View):
         )
         # Make the setup flag True
         instance.is_setup_done = True
+        instance.is_telemetry_enabled = is_telemetry_enabled
         instance.save()
 
         # get tokens for user
         user_login(request=request, user=user)
-        return HttpResponseRedirect(referer)
+        url = referer + "?" + urlencode({"success": "true"})
+        return HttpResponseRedirect(url)
 
 
 class SignUpScreenVisitedEndpoint(BaseAPIView):

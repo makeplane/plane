@@ -160,6 +160,7 @@ class Profile(TimeAuditModel):
     billing_address_country = models.CharField(max_length=255, default="INDIA")
     billing_address = models.JSONField(null=True)
     has_billing_address = models.BooleanField(default=False)
+    company_name = models.CharField(max_length=255, blank=True)
 
     class Meta:
         verbose_name = "Profile"

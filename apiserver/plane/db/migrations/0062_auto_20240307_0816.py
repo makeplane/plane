@@ -52,6 +52,19 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name="socialloginconnection",
+            name="medium",
+            field=models.CharField(
+                choices=[
+                    ("Google", "google"),
+                    ("Github", "github"),
+                    ("Jira", "jira"),
+                ],
+                default=None,
+                max_length=20,
+            ),
+        ),
         migrations.CreateModel(
             name="Profile",
             fields=[
@@ -66,6 +79,10 @@ class Migration(migrations.Migration):
                     models.DateTimeField(
                         auto_now=True, verbose_name="Last Modified At"
                     ),
+                ),
+                (
+                    "company_name",
+                    models.CharField(blank=True, max_length=255),
                 ),
                 (
                     "id",

@@ -86,18 +86,19 @@ class SignOutAuthEndpoint(View):
         return HttpResponseRedirect(url)
 
 
-class CSRFTokenEndpoint(View):
+class CSRFTokenEndpoint(APIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
 
     def get(self, request):
         # Generate a CSRF token
         csrf_token = get_token(request)
-        url = (
-            request.META.get("HTTP_REFERER", "/")
-            + "?"
-            + urlencode({"csrf_token": csrf_token})
-        )
         # Return the CSRF token in a JSON response
-        return HttpResponseRedirect(url)
+        return Response(
+            {"csrf_token": str(csrf_token)}, status=status.HTTP_200_OK
+        )
 
 
 def generate_password_token(user):
