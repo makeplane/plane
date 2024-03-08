@@ -40,7 +40,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ vars.FEATURE_PREVIEW_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
       AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
-      NEXT_PUBLIC_API_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
+      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -54,21 +54,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: feature-preview
+          path: plane
       - name: Install Dependencies
         run: |
-          cd $GITHUB_WORKSPACE/feature-preview
+          cd $GITHUB_WORKSPACE/plane
           yarn install
       - name: Build Web
         id: build-web
         run: |
-          cd $GITHUB_WORKSPACE/feature-preview
+          cd $GITHUB_WORKSPACE/plane
           yarn build --filter=web
           cd $GITHUB_WORKSPACE
 
           TAR_NAME="web.tar.gz"
-          tar -czf $TAR_NAME ./feature-preview
-          
+          tar -czf $TAR_NAME ./plane
+
           FILE_EXPIRY=$(date -u -d "+2 days" +"%Y-%m-%dT%H:%M:%SZ")
           aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
      
@@ -82,6 +82,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.FEATURE_PREVIEW_AWS_SECRET_ACCESS_KEY }}
       AWS_BUCKET: ${{ vars.FEATURE_PREVIEW_AWS_BUCKET }}
       NEXT_PUBLIC_DEPLOY_WITH_NGINX: 1
+      NEXT_PUBLIC_API_BASE_URL: ${{ vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL }}
     outputs:
       do-build: ${{ needs.setup-feature-build.outputs.space-build }}
       s3-url: ${{ steps.build-space.outputs.S3_PRESIGNED_URL }}
