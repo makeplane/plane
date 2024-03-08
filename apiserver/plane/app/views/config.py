@@ -104,7 +104,7 @@ class ConfigurationEndpoint(BaseAPIView):
                 else None
             )
         )
-        data["is_github_enabled"] = (
+        data["is_github_enabled"] = bool(
             GITHUB_CLIENT_ID
             if GITHUB_CLIENT_ID and GITHUB_CLIENT_ID != '""'
             else None
