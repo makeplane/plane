@@ -137,7 +137,6 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/configs/", user=False)
-    @invalidate_cache(path="/api/mobile-configs/", user=False)
     def patch(self, request):
         configurations = InstanceConfiguration.objects.filter(
             key__in=request.data.keys()
