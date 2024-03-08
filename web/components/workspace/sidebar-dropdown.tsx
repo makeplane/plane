@@ -24,8 +24,8 @@ const userLinks = (workspaceSlug: string, userId: string) => [
     icon: Mails,
   },
   {
-    key: "view_profile",
-    name: "View profile",
+    key: "my_activity",
+    name: "My activity",
     href: `/${workspaceSlug}/profile/${userId}`,
     icon: CircleUserRound,
   },
@@ -38,7 +38,7 @@ const userLinks = (workspaceSlug: string, userId: string) => [
 ];
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
-    name: "View profile",
+    name: "My activity",
     icon: UserCircle2,
     link: `/${workspaceSlug}/profile/${userId}`,
   },
