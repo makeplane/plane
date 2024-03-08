@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { Loader } from "@plane/ui";
 import { PagesListView } from "components/pages/pages-list";
 // ui
-import { Loader } from "@plane/ui";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export const AllPagesList: FC = observer(() => {

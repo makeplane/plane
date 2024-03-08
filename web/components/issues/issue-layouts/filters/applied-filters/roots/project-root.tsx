@@ -1,13 +1,13 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useLabel, useProjectState, useUser } from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
 // components
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
+import { useLabel, useProjectState, useUser } from "hooks/store";
+import { useIssues } from "hooks/store/use-issues";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -59,7 +59,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, { ...newFilters });
   };

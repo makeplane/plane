@@ -1,13 +1,13 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // hooks
-import { useIssues, useLabel } from "hooks/store";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
-import { IIssueFilterOptions } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { useIssues, useLabel } from "hooks/store";
 import { useWorkspaceIssueProperties } from "hooks/use-workspace-issue-properties";
+import { IIssueFilterOptions } from "@plane/types";
 
 export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -57,7 +57,7 @@ export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !userId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.FILTERS, { ...newFilters }, userId.toString());
   };

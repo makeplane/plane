@@ -1,12 +1,12 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
+import { Button, Spinner } from "@plane/ui";
 import { useLabel, useMember, useProject, useUser } from "hooks/store";
 // icons
-import { Button, Spinner } from "@plane/ui";
 
 export interface IWorkspaceAuthWrapper {
   children: ReactNode;

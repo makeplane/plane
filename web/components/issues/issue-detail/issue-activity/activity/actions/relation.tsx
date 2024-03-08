@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
+import { issueRelationObject } from "components/issues/issue-detail/relation-select";
 import { useIssueDetail } from "hooks/store";
 // components
+import { TIssueRelationTypes } from "@plane/types";
 import { IssueActivityBlockComponent } from "./";
 // component helpers
-import { issueRelationObject } from "components/issues/issue-detail/relation-select";
 // types
-import { TIssueRelationTypes } from "@plane/types";
 
 type TIssueRelationActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 

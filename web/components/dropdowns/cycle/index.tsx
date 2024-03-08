@@ -3,19 +3,19 @@ import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 // hooks
+import { ContrastIcon } from "@plane/ui";
+import { cn } from "helpers/common.helper";
 import { useCycle } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "../buttons";
 // icons
-import { ContrastIcon } from "@plane/ui";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
+import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { TDropdownProps } from "../types";
 // constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { CycleOptions } from "./cycle-options";
 
 type Props = TDropdownProps & {
@@ -67,6 +67,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
 
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
   };
 
   const dropdownOnChange = (val: string | null) => {

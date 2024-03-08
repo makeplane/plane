@@ -3,8 +3,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 // images
 import instanceNotReady from "public/instance/plane-instance-not-ready.webp";
-import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 
 export const InstanceNotReady = () => {
   const { resolvedTheme } = useTheme();

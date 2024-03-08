@@ -1,22 +1,22 @@
 import { FC } from "react";
-import useSWR from "swr";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
-import { useProject } from "hooks/store";
-// ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-// types
-import { TIssue } from "@plane/types";
-// constants
-import { ISSUE_DETAILS } from "constants/fetch-keys";
-// services
-import { IssueArchiveService } from "services/issue";
-// helpers
-import { renderEmoji } from "helpers/emoji.helper";
-// components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { useProject } from "hooks/store";
+// components
+import { ProjectLogo } from "components/project";
+// ui
+// types
+import { IssueArchiveService } from "services/issue";
+// constants
+// services
+// helpers
+// components
 
 const issueArchiveService = new IssueArchiveService();
 
@@ -25,9 +25,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
   // store hooks
-  const { currentProjectDetails, getProjectById } = useProject();
+  const { currentProjectDetails } = useProject();
 
-  const { data: issueDetails } = useSWR<TIssue | undefined>(
+  const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
@@ -52,13 +52,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
                   href={`/${workspaceSlug}/projects`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
-                    currentProjectDetails?.emoji ? (
-                      renderEmoji(currentProjectDetails.emoji)
-                    ) : currentProjectDetails?.icon_prop ? (
-                      renderEmoji(currentProjectDetails.icon_prop)
-                    ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                        {currentProjectDetails?.name.charAt(0)}
+                    currentProjectDetails && (
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                       </span>
                     )
                   }
@@ -82,8 +78,9 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
               link={
                 <BreadcrumbLink
                   label={
-                    `${getProjectById(issueDetails?.project_id || "")?.identifier}-${issueDetails?.sequence_id}` ??
-                    "..."
+                    currentProjectDetails && issueDetails
+                      ? `${currentProjectDetails.identifier}-${issueDetails.sequence_id}`
+                      : ""
                   }
                 />
               }

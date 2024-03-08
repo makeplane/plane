@@ -1,8 +1,12 @@
-import { v4 as uuidv4 } from "uuid";
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import { v4 as uuidv4 } from "uuid";
 // helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
+import { IGanttBlock } from "components/gantt-chart";
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { STATE_GROUPS } from "constants/state";
+import { orderArrayBy } from "helpers/array.helper";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -11,10 +15,6 @@ import {
   TIssueParams,
   TStateGroups,
 } from "@plane/types";
-import { IGanttBlock } from "components/gantt-chart";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { STATE_GROUPS } from "constants/state";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -171,3 +171,16 @@ export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>
     start_date: block.start_date ? new Date(block.start_date) : null,
     target_date: block.target_date ? new Date(block.target_date) : null,
   }));
+
+export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
+  const changedFields: Partial<TIssue> = {};
+
+  const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
+  for (const dirtyField of dirtyFieldKeys) {
+    if (!!dirtyFields[dirtyField]) {
+      changedFields[dirtyField] = formData[dirtyField];
+    }
+  }
+
+  return changedFields;
+}
