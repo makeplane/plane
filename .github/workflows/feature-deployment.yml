@@ -4,19 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       web-build:
-        required: true
+        required: false
         description: 'Build Web'
         type: boolean
         default: true
       space-build:
-        required: true
+        required: false
         description: 'Build Space'
         type: boolean
         default: false
 
 env:
-  BUILD_WEB: ${{ (github.event.inputs.web-build == '' && false) || github.event.inputs.web-build }}
-  BUILD_SPACE: ${{ (github.event.inputs.space-build == '' && false) || github.event.inputs.space-build }}
+  BUILD_WEB: ${{ github.event.inputs.web-build }}
+  BUILD_SPACE: ${{ github.event.inputs.space-build }}
 
 jobs:
   setup-feature-build:
@@ -24,15 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          path: feature-preview
+        run: |
+          echo "BUILD_WEB=$BUILD_WEB" 
+          echo "BUILD_SPACE=$BUILD_SPACE"
     outputs:
       web-build: ${{ env.BUILD_WEB}} 
       space-build: ${{env.BUILD_SPACE}}
 
   feature-build-web:
-    if: ${{ needs.setup-feature-build.outputs.web-build }}
+    if: ${{ needs.setup-feature-build.outputs.web-build == 'true' }}
     needs: setup-feature-build
     name: Feature Build Web
     runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
           aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
      
   feature-build-space:
-    if: ${{ needs.setup-feature-build.outputs.space-build }}
+    if: ${{ needs.setup-feature-build.outputs.space-build == 'true' }}
     needs: setup-feature-build
     name: Feature Build Space
     runs-on: ubuntu-latest
@@ -117,7 +117,7 @@ jobs:
           aws s3 cp $TAR_NAME s3://${{ env.AWS_BUCKET }}/${{github.sha}}/$TAR_NAME --expires $FILE_EXPIRY
 
   feature-deploy:
-    if: ${{ always() }}
+    if: ${{ always() && (needs.setup-feature-build.outputs.web-build == 'true' || needs.setup-feature-build.outputs.space-build == 'true') }}
     needs: [feature-build-web, feature-build-space]
     name: Feature Deploy
     runs-on: ubuntu-latest
@@ -170,28 +170,17 @@ jobs:
             APP_NAMESPACE="${{ vars.FEATURE_PREVIEW_NAMESPACE }}"
             DEPLOY_SCRIPT_URL="${{ vars.FEATURE_PREVIEW_DEPLOY_SCRIPT_URL }}"
 
-            # create values.yaml
-            cat <<EOF > values.yaml
-            ingress:
-              primaryDomain: ${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} 
-            web:
-              image: ${{vars.FEATURE_PREVIEW_DOCKER_BASE}}
-              enabled: ${{ env.BUILD_WEB || false }}
-              artifact_url: $WEB_S3_URL
-            space:
-              image: ${{vars.FEATURE_PREVIEW_DOCKER_BASE}}
-              enabled: ${{ env.BUILD_SPACE || false }}
-              artifact_url: $SPACE_S3_URL
-            shared_config:
-              deploy_script_url: $DEPLOY_SCRIPT_URL
-            EOF
-
-            cat values.yaml
-
             METADATA=$(helm --kube-insecure-skip-tls-verify install feature-preview/${{ vars.FEATURE_PREVIEW_HELM_CHART_NAME }} \
                 --generate-name \
                 --namespace $APP_NAMESPACE \
-                --values values.yaml \
+                --set ingress.primaryDomain=${{vars.FEATURE_PREVIEW_PRIMARY_DOMAIN || 'feature.plane.tools' }} \
+                --set web.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
+                --set web.enabled=${{ env.BUILD_WEB || false }} \
+                --set web.artifact_url=$WEB_S3_URL \
+                --set space.image=${{vars.FEATURE_PREVIEW_DOCKER_BASE}} \
+                --set space.enabled=${{ env.BUILD_SPACE || false }} \
+                --set space.artifact_url=$SPACE_S3_URL \
+                --set shared_config.deploy_script_url=$DEPLOY_SCRIPT_URL \
                 --output json \
                 --timeout 1000s)
 
