@@ -55,6 +55,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         const filterKey = key as keyof IIssueFilterOptions;
 
         if (!value) return;
+        if (Array.isArray(value) && value.length === 0) return;
 
         return (
           <div

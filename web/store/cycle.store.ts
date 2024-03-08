@@ -10,10 +10,11 @@ import { CycleService } from "services/cycle.service";
 import { IssueService } from "services/issue";
 import { ProjectService } from "services/project";
 import { RootStore } from "store/root.store";
-import { ICycle, CycleDateCheckData } from "@plane/types";
+import { ICycle, CycleDateCheckData, TCycleDisplayFilters, TCycleFilters } from "@plane/types";
+import { orderCycles, shouldFilterCycle } from "helpers/cycle.helper";
 
 export interface ICycleStore {
-  //Loaders
+  // loaders
   loader: boolean;
   // observables
   fetchedMap: Record<string, boolean>;
@@ -27,6 +28,11 @@ export interface ICycleStore {
   currentProjectDraftCycleIds: string[] | null;
   currentProjectActiveCycleId: string | null;
   // computed actions
+  getFilteredCycleIds: (
+    displayFilters: TCycleDisplayFilters,
+    filters: TCycleFilters,
+    searchQuery: string
+  ) => string[] | null;
   getCycleById: (cycleId: string) => ICycle | null;
   getCycleNameById: (cycleId: string) => string | undefined;
   getActiveCycleById: (cycleId: string) => ICycle | null;
@@ -182,6 +188,28 @@ export class CycleStore implements ICycleStore {
     );
     return activeCycle || null;
   }
+
+  /**
+   * @description returns filtered cycle ids based on display filters and filters
+   * @param {TCycleDisplayFilters} displayFilters
+   * @param {TCycleFilters} filters
+   * @returns {string[] | null}
+   */
+  getFilteredCycleIds = computedFn(
+    (displayFilters: TCycleDisplayFilters, filters: TCycleFilters, searchQuery: string) => {
+      const projectId = this.rootStore.app.router.projectId;
+      if (!projectId || !this.fetchedMap[projectId]) return null;
+      let cycles = Object.values(this.cycleMap ?? {}).filter(
+        (c) =>
+          c.project_id === projectId &&
+          c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          shouldFilterCycle(c, filters)
+      );
+      cycles = orderCycles(cycles, displayFilters.order_by);
+      const cycleIds = cycles.map((c) => c.id);
+      return cycleIds;
+    }
+  );
 
   /**
    * @description returns cycle details by cycle id
