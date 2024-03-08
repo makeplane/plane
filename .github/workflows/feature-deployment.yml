@@ -182,6 +182,7 @@ jobs:
                 --set space.enabled=${{ env.BUILD_SPACE || false }} \
                 --set space.artifact_url=$SPACE_S3_URL \
                 --set shared_config.deploy_script_url=$DEPLOY_SCRIPT_URL \
+                --set shared_config.api_base_url=${{vars.FEATURE_PREVIEW_NEXT_PUBLIC_API_BASE_URL}} \
                 --output json \
                 --timeout 1000s)
 
