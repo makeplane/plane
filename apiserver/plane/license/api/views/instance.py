@@ -19,7 +19,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views import BaseAPIView
 from plane.authentication.utils.login import user_login
-from plane.db.models import Profile, User
+from plane.db.models import Profile, User, Workspace
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
@@ -59,8 +59,8 @@ class InstanceEndpoint(BaseAPIView):
         data["is_activated"] = True
         # Get all the configuration
         (
-            GOOGLE_CLIENT_ID,
-            GITHUB_CLIENT_ID,
+            IS_GOOGLE_ENABLED,
+            IS_GITHUB_ENABLED,
             GITHUB_APP_NAME,
             EMAIL_HOST,
             EMAIL_HOST_USER,
@@ -75,12 +75,12 @@ class InstanceEndpoint(BaseAPIView):
         ) = get_configuration_value(
             [
                 {
-                    "key": "GOOGLE_CLIENT_ID",
-                    "default": os.environ.get("GOOGLE_CLIENT_ID", ""),
+                    "key": "IS_GOOGLE_ENABLED",
+                    "default": os.environ.get("IS_GOOGLE_ENABLED", "0"),
                 },
                 {
-                    "key": "GITHUB_CLIENT_ID",
-                    "default": os.environ.get("GITHUB_CLIENT_ID", ""),
+                    "key": "IS_GITHUB_ENABLED",
+                    "default": os.environ.get("IS_GITHUB_ENABLED", "0"),
                 },
                 {
                     "key": "GITHUB_APP_NAME",
@@ -131,19 +131,12 @@ class InstanceEndpoint(BaseAPIView):
 
         data = {}
         # Authentication
+        data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
+        data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
+        data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
+        data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
 
-        data["is_google_enabled"] = bool(
-            (
-                GOOGLE_CLIENT_ID
-                if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != '""'
-                else None
-            )
-        )
-        data["is_github_enabled"] = bool(
-            GITHUB_CLIENT_ID
-            if GITHUB_CLIENT_ID and GITHUB_CLIENT_ID != '""'
-            else None
-        )
+        # Github app name
         data["github_app_name"] = str(GITHUB_APP_NAME)
 
         # Slack client
@@ -170,8 +163,10 @@ class InstanceEndpoint(BaseAPIView):
             and bool(EMAIL_HOST_USER)
             and bool(EMAIL_HOST_PASSWORD)
         )
+        instance_data = serializer.data
+        instance_data["workspaces_exist"] = Workspace.objects.count() > 1
 
-        response_data = {"config": data, "instance": serializer.data}
+        response_data = {"config": data, "instance": instance_data}
         return Response(response_data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/instances/", user=False)

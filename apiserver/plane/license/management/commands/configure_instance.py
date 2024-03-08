@@ -106,6 +106,18 @@ class Command(BaseCommand):
                 "category": "UNSPLASH",
                 "is_encrypted": True,
             },
+            {
+                "key": "IS_GOOGLE_ENABLED",
+                "value": os.environ.get("IS_GOOGLE_ENABLED", "0"),
+                "category": "IS_GOOGLE_ENABLED",
+                "is_encrypted": False,
+            },
+            {
+                "key": "IS_GITHUB_ENABLED",
+                "value": os.environ.get("IS_GITHUB_ENABLED", "0"),
+                "category": "IS_GITHUB_ENABLED",
+                "is_encrypted": False,
+            },
         ]
 
         for item in config_keys:
