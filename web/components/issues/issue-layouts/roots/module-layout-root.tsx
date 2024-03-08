@@ -38,7 +38,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
       if (workspaceSlug && projectId && moduleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
         captureIssuesListOpenedEvent({
-          path: router.asPath,
+          routePath: router.asPath,
           filters: issuesFilter?.issueFilters?.filters,
         })
         await issues?.fetchIssues(

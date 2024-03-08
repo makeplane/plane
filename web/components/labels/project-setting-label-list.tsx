@@ -25,7 +25,6 @@ import { Button, Loader } from "@plane/ui";
 // types
 import { IIssueLabel } from "@plane/types";
 // constants
-import { LABEL_ADDED_G, LABEL_REMOVED_G } from "constants/event-tracker";
 import { EmptyStateType } from "constants/empty-state";
 
 const LABELS_ROOT = "labels.root";
@@ -43,7 +42,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { projectLabels, updateLabelPosition, projectLabelsTree, getLabelById } = useLabel();
-  const { captureEvent } = useEventTracker();
+  const { captureLabelDragNDropEvent } = useEventTracker();
   // portal
   const renderDraggable = useDraggableInPortal();
 
@@ -71,40 +70,18 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
     if (result.reason == "DROP" && childLabel != parentLabel) {
       const childLabelData = getLabelById(childLabel);
-      if (childLabelData?.parent != parentLabel) {
-        if (childLabelData?.parent) {
-          captureEvent(LABEL_REMOVED_G, {
-            group_id: childLabelData?.parent,
-            child_id: childLabel,
-            child_count:
-              (projectLabelsTree?.find((label) => label.id === childLabelData?.parent)?.children?.length ?? 0) - 1,
-          });
-          parentLabel &&
-            captureEvent(LABEL_ADDED_G, {
-              group_id: parentLabel,
-              child_id: childLabel,
-              child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
-            });
-        } else {
-          captureEvent(LABEL_ADDED_G, {
-            group_id: parentLabel,
-            child_id: childLabel,
-            child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
-          });
-        }
-      }
-
-      updateLabelPosition(
-        workspaceSlug?.toString()!,
-        projectId?.toString()!,
-        childLabel,
-        parentLabel,
-        index,
-        prevParentLabel == parentLabel,
-        prevIndex
-      );
-      return;
+      captureLabelDragNDropEvent(childLabelData?.parent, parentLabel, childLabel, projectLabelsTree);
     }
+    updateLabelPosition(
+      workspaceSlug?.toString()!,
+      projectId?.toString()!,
+      childLabel,
+      parentLabel,
+      index,
+      prevParentLabel == parentLabel,
+      prevIndex
+    );
+    return;
   };
 
   return (

@@ -11,7 +11,7 @@ import { useEventTracker, useProjectView } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
 // constants
-import { VIEW_CREATED, VIEW_UPDATED } from "constants/event-tracker";
+import { VIEW_CREATED, VIEW_UPDATED, elementFromPath } from "constants/event-tracker";
 
 type Props = {
   data?: IProjectView | null;
@@ -26,7 +26,6 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
   // router
   const router = useRouter();
-  const { cycleId, moduleId, viewId } = router.query;
   // store hooks
   const { createView, updateView } = useProjectView();
   const { captureEvent, getTrackElement } = useEventTracker();
@@ -39,19 +38,12 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     await createView(workspaceSlug, projectId, payload)
       .then((res) => {
         handleClose();
+        const element = elementFromPath(router.asPath);
         captureEvent(VIEW_CREATED, {
           view_id: res.id,
           filters: res.filters,
-          element_id: cycleId ?? moduleId ?? viewId ?? projectId,
-          element: getTrackElement
-            ? getTrackElement
-            : cycleId
-            ? "Cycle issues page"
-            : moduleId
-            ? "Module issues page"
-            : viewId
-            ? "View issues page"
-            : "Project issues page",
+          element: getTrackElement ?? element?.element,
+          element_id: element?.element_id,
           state: "SUCCESS",
         });
         setToast({

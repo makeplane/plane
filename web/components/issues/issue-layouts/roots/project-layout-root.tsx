@@ -36,7 +36,7 @@ export const ProjectLayoutRoot: FC = observer(() => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
         captureIssuesListOpenedEvent({
-          path: router.asPath,
+          routePath: router.asPath,
           filters: issuesFilter?.issueFilters?.filters,
         });
         await issues?.fetchIssues(

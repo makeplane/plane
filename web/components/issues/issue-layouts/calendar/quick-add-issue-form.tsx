@@ -155,14 +155,14 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Calendar quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Calendar quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         });
     }

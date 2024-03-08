@@ -6,8 +6,6 @@ import { RootStore } from "./root.store";
 import { getUserRole } from "helpers/user.helper";
 // constants
 import {
-  GROUP_WORKSPACE,
-  WORKSPACE_CREATED,
   EventProps,
   IssueEventProps,
   getCycleEventPayload,
@@ -17,12 +15,17 @@ import {
   getProjectStateEventPayload,
   getWorkspaceEventPayload,
   getPageEventPayload,
-  ISSUES_LIST_OPENED,
   getIssuesListOpenedPayload,
   getIssuesFilterEventPayload,
   getIssuesDisplayFilterPayload,
   LP_UPDATED,
+  ISSUES_LIST_OPENED,
+  GROUP_WORKSPACE,
+  WORKSPACE_CREATED,
+  LABEL_REMOVED_G,
+  LABEL_ADDED_G,
 } from "constants/event-tracker";
+import { IIssueLabelTree } from "@plane/types";
 
 export interface IEventTrackerStore {
   // properties
@@ -45,6 +48,12 @@ export interface IEventTrackerStore {
   captureIssuesListOpenedEvent: (payload: any) => void;
   captureIssuesFilterEvent: (props: EventProps) => void;
   captureIssuesDisplayFilterEvent: (props: EventProps) => void;
+  captureLabelDragNDropEvent: (
+    childLabelParent: string | null | undefined,
+    parentLabel: string | null | undefined,
+    childLabel: string | null | undefined,
+    projectLabelsTree: IIssueLabelTree[] | undefined
+  ) => void;
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
@@ -69,6 +78,7 @@ export class EventTrackerStore implements IEventTrackerStore {
       captureProjectStateEvent: action,
       captureIssuesListOpenedEvent: action,
       joinWorkspaceMetricGroup: action,
+      captureWorkspaceEvent: action,
     });
     // store
     this.rootStore = _rootStore;
@@ -291,5 +301,36 @@ export class EventTrackerStore implements IEventTrackerStore {
     };
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
+  };
+
+  captureLabelDragNDropEvent = (
+    childLabelParent: string | null | undefined,
+    parentLabel: string | null | undefined,
+    childLabel: string | null | undefined,
+    projectLabelsTree: IIssueLabelTree[] | undefined
+  ) => {
+    if (childLabelParent != parentLabel) {
+      // if the child label has a parent, then remove it from the parent and add it to a new parent.
+      if (childLabelParent) {
+        this.captureEvent(LABEL_REMOVED_G, {
+          group_id: childLabelParent,
+          child_id: childLabel,
+          child_count: (projectLabelsTree?.find((label) => label.id === childLabelParent)?.children?.length ?? 0) - 1,
+        });
+        parentLabel &&
+          this.captureEvent(LABEL_ADDED_G, {
+            group_id: parentLabel,
+            child_id: childLabel,
+            child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
+          });
+      } else {
+        // if the child label has no parent, then add it to a new parent.
+        this.captureEvent(LABEL_ADDED_G, {
+          group_id: parentLabel,
+          child_id: childLabel,
+          child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
+        });
+      }
+    }
   };
 }

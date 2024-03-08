@@ -93,7 +93,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         await fetchAllGlobalViews(workspaceSlug.toString());
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
         captureIssuesListOpenedEvent({
-          path: router.asPath,
+          routePath: router.asPath,
         });
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();

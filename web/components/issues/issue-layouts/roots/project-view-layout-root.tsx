@@ -34,7 +34,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
       if (workspaceSlug && projectId && viewId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
         captureIssuesListOpenedEvent({
-          path: router.asPath,
+          routePath: router.asPath,
           filters: issuesFilter?.issueFilters?.filters,
         });
         await issues?.fetchIssues(

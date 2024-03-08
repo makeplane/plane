@@ -99,7 +99,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
             state: "SUCCESS",
             element: "Inbox page",
           },
-          path: router.pathname,
+          routePath: router.pathname,
         });
       })
       .catch((error) => {
@@ -111,7 +111,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
             state: "FAILED",
             element: "Inbox page",
           },
-          path: router.pathname,
+          routePath: router.pathname,
         });
       });
   };

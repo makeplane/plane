@@ -166,7 +166,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_CREATED,
         payload: { ...response, state: "SUCCESS" },
-        path: router.asPath,
+        routePath: router.asPath,
       });
       !createMore && handleClose();
       return response;
@@ -179,7 +179,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_CREATED,
         payload: { ...payload, state: "FAILED" },
-        path: router.asPath,
+        routePath: router.asPath,
       });
     }
   };
@@ -200,7 +200,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
-        path: router.asPath,
+        routePath: router.asPath,
       });
       handleClose();
     } catch (error) {
@@ -212,7 +212,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
-        path: router.asPath,
+        routePath: router.asPath,
       });
     }
   };

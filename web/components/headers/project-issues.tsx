@@ -87,7 +87,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         captureIssuesFilterEvent({
           eventName: isFilterRemoved ? FILTER_REMOVED : FILTER_APPLIED,
           payload: {
-            path: router.asPath,
+            routePath: router.asPath,
             filters: issueFilters,
             filter_property: value,
             filter_type: key,
@@ -120,7 +120,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           payload: {
             property_type: Object.keys(updatedDisplayFilter).join(","),
             property: Object.values(updatedDisplayFilter)?.[0],
-            path: router.asPath,
+            routePath: router.asPath,
             filters: issueFilters,
           },
         })
@@ -137,7 +137,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           eventName: Object.values(property)?.[0] === true ? DP_APPLIED : DP_REMOVED,
           payload: {
             display_property: Object.keys(property).join(","),
-            path: router.asPath,
+            routePath: router.asPath,
             filters: issueFilters,
           },
         });
@@ -227,7 +227,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                   captureIssuesFilterEvent({
                     eventName: FILTER_SEARCHED,
                     payload: {
-                      path: router.asPath,
+                      routePath: router.asPath,
                       current_filters: issueFilters?.filters,
                       layout: issueFilters?.displayFilters?.layout,
                     },

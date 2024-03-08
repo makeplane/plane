@@ -123,14 +123,14 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Kanban quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         });
     }

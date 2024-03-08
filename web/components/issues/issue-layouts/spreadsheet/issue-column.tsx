@@ -53,7 +53,7 @@ export const IssueColumn = observer((props: Props) => {
                   element: "Spreadsheet layout",
                 },
                 updates: updates,
-                path: router.asPath,
+                routePath: router.asPath,
               });
             })
           }

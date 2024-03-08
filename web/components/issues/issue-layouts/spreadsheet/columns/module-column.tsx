@@ -52,7 +52,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
           element: "Spreadsheet layout",
         },
         updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
-        path: router.asPath,
+        routePath: router.asPath,
       });
     },
     [workspaceSlug, issue, addModulesToIssue, removeModulesFromIssue, captureIssueEvent, router.asPath]

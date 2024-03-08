@@ -4,7 +4,7 @@ export type IssueEventProps = {
   eventName: string;
   payload: any;
   updates?: any;
-  path?: string;
+  routePath?: string;
 };
 
 export type EventProps = {
@@ -72,7 +72,7 @@ export const getPageEventPayload = (payload: any) => ({
 });
 
 export const getIssueEventPayload = (props: IssueEventProps) => {
-  const { eventName, payload, updates, path } = props;
+  const { eventName, payload, updates, routePath } = props;
   let eventPayload: any = {
     issue_id: payload.id,
     estimate_point: payload.estimate_point,
@@ -97,35 +97,33 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     module_id: payload.module_id,
     archived_at: payload.archived_at,
     state: payload.state,
-    view_id: path?.includes("workspace-views") || path?.includes("views") ? path.split("/").pop() : "",
+    view_id: routePath?.includes("workspace-views") || routePath?.includes("views") ? routePath.split("/").pop() : "",
   };
 
   if (eventName === ISSUE_UPDATED) {
     eventPayload = {
       ...eventPayload,
       ...updates,
-      updated_from: elementFromPath(path),
+      updated_from: elementFromPath(routePath),
     };
   }
   return eventPayload;
 };
 
-export const getProjectStateEventPayload = (payload: any) => {
-  return {
-    state_id: payload.id,
-    created_at: payload.created_at,
-    updated_at: payload.updated_at,
-    group: payload.group,
-    color: payload.color,
-    default: payload.default,
-    state: payload.state,
-    element: payload.element,
-    change_details: payload.change_details,
-  };
-};
+export const getProjectStateEventPayload = (payload: any) => ({
+  state_id: payload.id,
+  created_at: payload.created_at,
+  updated_at: payload.updated_at,
+  group: payload.group,
+  color: payload.color,
+  default: payload.default,
+  state: payload.state,
+  element: payload.element,
+  change_details: payload.change_details,
+});
 
 export const getIssuesListOpenedPayload = (payload: any) => ({
-  ...elementFromPath(payload?.path),
+  ...elementFromPath(payload?.routePath),
   layout: payload?.displayFilters?.layout,
   filters: payload?.filters,
   display_properties: payload?.displayProperties,
@@ -136,7 +134,7 @@ export const getIssuesFilterEventPayload = (payload: any) => ({
   filter_property: payload?.filter_property,
   layout: payload?.filters?.displayFilters?.layout,
   current_filters: payload?.filters?.filters,
-  ...elementFromPath(payload?.path),
+  ...elementFromPath(payload?.routePath),
 });
 
 export const getIssuesDisplayFilterPayload = (payload: any) => {
@@ -149,32 +147,32 @@ export const getIssuesDisplayFilterPayload = (payload: any) => {
   return {
     layout: payload?.filters?.displayFilters?.layout,
     current_display_properties: payload?.filters?.displayProperties,
-    ...elementFromPath(payload?.path),
+    ...elementFromPath(payload?.routePath),
     display_property: payload.display_property,
     property: property,
     property_type: payload.property_type,
   };
 };
 
-export const elementFromPath = (path?: string) => {
-  path = path?.split("?")?.[0];
-  if (!path) return;
+export const elementFromPath = (routePath?: string) => {
+  routePath = routePath?.split("?")?.[0];
+  if (!routePath) return;
 
   let element = "Dashboard";
-  if (path.includes("workspace-views")) element = "Global view";
-  else if (path.includes("cycles")) element = "Cycle";
-  else if (path.includes("modules")) element = "Module";
-  else if (path.includes("pages")) element = "Project page";
-  else if (path.includes("views")) element = "Project view";
-  else if (path.includes("profile")) element = "Profile";
-  else if (path.includes("inbox")) element = "Inbox";
-  else if (path.includes("draft")) element = "Draft";
-  else if (path.includes("archived")) element = "Archive";
-  else if (path.includes("projects")) element = "Project";
+  if (routePath.includes("workspace-views")) element = "Global view";
+  else if (routePath.includes("cycles")) element = "Cycle";
+  else if (routePath.includes("modules")) element = "Module";
+  else if (routePath.includes("pages")) element = "Project page";
+  else if (routePath.includes("views")) element = "Project view";
+  else if (routePath.includes("profile")) element = "Profile";
+  else if (routePath.includes("inbox")) element = "Inbox";
+  else if (routePath.includes("draft")) element = "Draft";
+  else if (routePath.includes("archived")) element = "Archive";
+  else if (routePath.includes("projects")) element = "Project";
 
   return {
     element: element,
-    element_id: ["Project", "Draft", "Archive"].includes(element) ? path.split("/").at(-2) : path.split("/").at(-1),
+    element_id: ["Project", "Draft", "Archive"].includes(element) ? routePath.split("/")?.at(-2) : routePath.split("/")?.at(-1),
   };
 };
 

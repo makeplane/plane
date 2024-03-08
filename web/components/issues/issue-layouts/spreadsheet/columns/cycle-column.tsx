@@ -41,7 +41,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
           element: "Spreadsheet layout",
         },
         updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
-        path: router.asPath,
+        routePath: router.asPath,
       });
     },
     [workspaceSlug, issue, addIssueToCycle, removeIssueFromCycle, captureIssueEvent, router.asPath]

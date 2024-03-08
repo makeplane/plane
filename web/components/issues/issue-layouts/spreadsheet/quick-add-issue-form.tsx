@@ -183,14 +183,14 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         })
         .catch((err) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
             payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           console.error(err);
         });
