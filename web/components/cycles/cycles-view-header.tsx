@@ -104,7 +104,6 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
               className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
               placeholder="Search"
               value={searchQuery}
-              autoFocus
               onChange={(e) => handleUpdateSearchQuery(e.target.value)}
               onKeyDown={handleInputKeyDown}
             />
