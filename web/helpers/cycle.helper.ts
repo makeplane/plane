@@ -2,26 +2,23 @@ import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "helpers/filter.helper";
 // types
-import { ICycle, TCycleFilters, TCycleOrderByOptions } from "@plane/types";
+import { ICycle, TCycleFilters } from "@plane/types";
 
 /**
- * @description orders cycles based on the orderByKey
+ * @description orders cycles based on their status
  * @param {ICycle[]} cycles
- * @param {TCycleOrderByOptions | undefined} orderByKey
  * @returns {ICycle[]}
  */
-export const orderCycles = (cycles: ICycle[], orderByKey: TCycleOrderByOptions | undefined): ICycle[] => {
-  let orderedCycles: ICycle[] = [];
-  if (cycles.length === 0) return orderedCycles;
+export const orderCycles = (cycles: ICycle[]): ICycle[] => {
+  if (cycles.length === 0) return [];
 
-  if (orderByKey === "name") orderedCycles = sortBy(cycles, [(c) => c.name.toLowerCase()]);
-  if (orderByKey === "-name") orderedCycles = sortBy(cycles, [(c) => c.name.toLowerCase()]).reverse();
-  if (orderByKey === "end_date") orderedCycles = sortBy(cycles, [(c) => c.end_date]);
-  if (orderByKey === "-end_date") orderedCycles = sortBy(cycles, [(c) => !c.end_date]);
-  if (orderByKey === "sort_order") orderedCycles = sortBy(cycles, [(c) => c.sort_order]);
-  if (orderByKey === "-sort_order") orderedCycles = sortBy(cycles, [(c) => !c.start_date]);
+  const activeCycle = cycles.filter((c) => c.status.toLowerCase() === "current");
+  let upcomingCycles = cycles.filter((c) => c.status.toLowerCase() === "upcoming");
+  upcomingCycles = sortBy(upcomingCycles, (c) => c.start_date);
+  let draftCycles = cycles.filter((c) => c.status.toLowerCase() === "draft");
+  draftCycles = sortBy(draftCycles, (c) => c.name.toLowerCase());
 
-  return orderedCycles;
+  return [...activeCycle, ...upcomingCycles, ...draftCycles];
 };
 
 /**

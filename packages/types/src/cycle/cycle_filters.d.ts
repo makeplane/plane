@@ -2,17 +2,9 @@ export type TCycleTabOptions = "active" | "all";
 
 export type TCycleLayoutOptions = "list" | "board" | "gantt";
 
-export type TCycleOrderByOptions =
-  | "name"
-  | "-name"
-  | "end_date"
-  | "-end_date"
-  | "sort_order";
-
 export type TCycleDisplayFilters = {
   active_tab?: TCycleTabOptions;
   layout?: TCycleLayoutOptions;
-  order_by?: TCycleOrderByOptions;
 };
 
 export type TCycleFilters = {

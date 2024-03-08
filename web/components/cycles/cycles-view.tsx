@@ -2,8 +2,7 @@ import { FC } from "react";
 import Image from "next/image";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useCycle } from "hooks/store";
-import useCycleFilters from "hooks/use-cycle-filters";
+import { useCycle, useCycleFilter } from "hooks/store";
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui
@@ -19,17 +18,15 @@ export interface ICyclesView {
   workspaceSlug: string;
   projectId: string;
   peekCycle: string | undefined;
-  searchQuery: string;
 }
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
-  const { layout, workspaceSlug, projectId, peekCycle, searchQuery } = props;
+  const { layout, workspaceSlug, projectId, peekCycle } = props;
   // store hooks
   const { getFilteredCycleIds, loader } = useCycle();
-  // cycle filters hook
-  const { displayFilters, filters } = useCycleFilters(projectId);
+  const { searchQuery } = useCycleFilter();
   // derived values
-  const filteredCycleIds = getFilteredCycleIds(displayFilters ?? {}, filters ?? {}, searchQuery);
+  const filteredCycleIds = getFilteredCycleIds(projectId);
 
   if (loader || !filteredCycleIds)
     return (

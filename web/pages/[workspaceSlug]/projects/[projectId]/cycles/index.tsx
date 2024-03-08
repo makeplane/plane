@@ -3,8 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
 // hooks
-import { useEventTracker, useCycle, useProject } from "hooks/store";
-import useCycleFilters from "hooks/use-cycle-filters";
+import { useEventTracker, useCycle, useProject, useCycleFilter } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -32,7 +31,6 @@ import { EmptyStateType } from "constants/empty-state";
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // states
   const [createModal, setCreateModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { currentProjectCycleIds, loader } = useCycle();
@@ -41,24 +39,24 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
   // cycle filters hook
-  const { clearAllFilters, filters, displayFilters, handleUpdateDisplayFilters, handleUpdateFilters } = useCycleFilters(
-    projectId?.toString() ?? ""
-  );
+  const { clearAllFilters, currentProjectDisplayFilters, currentProjectFilters, updateDisplayFilters, updateFilters } =
+    useCycleFilter();
   // derived values
   const totalCycles = currentProjectCycleIds?.length ?? 0;
   const project = projectId ? getProjectById(projectId?.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Cycles` : undefined;
   // selected display filters
-  const cycleTab = displayFilters?.active_tab;
-  const cycleLayout = displayFilters?.layout;
+  const cycleTab = currentProjectDisplayFilters?.active_tab;
+  const cycleLayout = currentProjectDisplayFilters?.layout;
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
-    let newValues = filters?.[key] ?? [];
+    if (!projectId) return;
+    let newValues = currentProjectFilters?.[key] ?? [];
 
     if (!value) newValues = [];
     else newValues = newValues.filter((val) => val !== value);
 
-    handleUpdateFilters({ [key]: newValues });
+    updateFilters(projectId.toString(), { [key]: newValues });
   };
 
   if (!workspaceSlug || !projectId) return null;
@@ -99,23 +97,20 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             defaultIndex={CYCLE_TABS_LIST.findIndex((i) => i.key == cycleTab)}
             selectedIndex={CYCLE_TABS_LIST.findIndex((i) => i.key == cycleTab)}
             onChange={(i) => {
+              if (!projectId) return;
               const tab = CYCLE_TABS_LIST[i];
               if (!tab) return;
-              handleUpdateDisplayFilters({
+              updateDisplayFilters(projectId.toString(), {
                 active_tab: tab.key,
               });
             }}
           >
-            <CyclesViewHeader
-              handleUpdateSearchQuery={(val) => setSearchQuery(val)}
-              projectId={projectId.toString()}
-              searchQuery={searchQuery}
-            />
-            {calculateTotalFilters(filters ?? {}) !== 0 && (
+            <CyclesViewHeader projectId={projectId.toString()} />
+            {calculateTotalFilters(currentProjectFilters ?? {}) !== 0 && (
               <div className="border-b border-custom-border-200 px-5 py-3">
                 <CycleAppliedFiltersList
-                  appliedFilters={filters ?? {}}
-                  handleClearAllFilters={clearAllFilters}
+                  appliedFilters={currentProjectFilters ?? {}}
+                  handleClearAllFilters={() => clearAllFilters(projectId.toString())}
                   handleRemoveFilter={handleRemoveFilter}
                 />
               </div>
@@ -131,7 +126,6 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                     workspaceSlug={workspaceSlug.toString()}
                     projectId={projectId.toString()}
                     peekCycle={peekCycle?.toString()}
-                    searchQuery={searchQuery}
                   />
                 )}
               </Tab.Panel>

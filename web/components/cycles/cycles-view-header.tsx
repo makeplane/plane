@@ -1,11 +1,12 @@
 import { useCallback, useRef, useState } from "react";
+import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 import { ListFilter, Search, X } from "lucide-react";
 // hooks
-import useCycleFilters from "hooks/use-cycle-filters";
+import { useCycleFilter } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { CycleFiltersSelection, OrderByDropdown } from "components/cycles";
+import { CycleFiltersSelection } from "components/cycles";
 import { FiltersDropdown } from "components/issues";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -17,19 +18,24 @@ import { TCycleFilters } from "@plane/types";
 import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 
 type Props = {
-  handleUpdateSearchQuery: (value: string) => void;
   projectId: string;
-  searchQuery: string;
 };
 
-export const CyclesViewHeader: React.FC<Props> = (props) => {
-  const { handleUpdateSearchQuery, projectId, searchQuery } = props;
+export const CyclesViewHeader: React.FC<Props> = observer((props) => {
+  const { projectId } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // hooks
-  const { displayFilters, filters, handleUpdateDisplayFilters, handleUpdateFilters } = useCycleFilters(projectId);
+  const {
+    currentProjectDisplayFilters,
+    currentProjectFilters,
+    searchQuery,
+    updateDisplayFilters,
+    updateFilters,
+    updateSearchQuery,
+  } = useCycleFilter();
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
@@ -37,25 +43,25 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
 
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
-      const newValues = filters?.[key] ?? [];
+      const newValues = currentProjectFilters?.[key] ?? [];
 
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       else {
-        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (currentProjectFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      handleUpdateFilters({ [key]: newValues });
+      updateFilters(projectId, { [key]: newValues });
     },
-    [filters, handleUpdateFilters]
+    [currentProjectFilters, projectId, updateFilters]
   );
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") handleUpdateSearchQuery("");
+      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
       else setIsSearchOpen(false);
     }
   };
@@ -76,7 +82,7 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
           </Tab>
         ))}
       </Tab.List>
-      {displayFilters?.active_tab !== "active" && (
+      {currentProjectDisplayFilters?.active_tab !== "active" && (
         <div className="hidden h-full sm:flex items-center gap-3 self-end">
           {!isSearchOpen && (
             <button
@@ -104,7 +110,7 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
               className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
               placeholder="Search"
               value={searchQuery}
-              onChange={(e) => handleUpdateSearchQuery(e.target.value)}
+              onChange={(e) => updateSearchQuery(e.target.value)}
               onKeyDown={handleInputKeyDown}
             />
             {isSearchOpen && (
@@ -112,7 +118,7 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
                 type="button"
                 className="grid place-items-center"
                 onClick={() => {
-                  handleUpdateSearchQuery("");
+                  updateSearchQuery("");
                   setIsSearchOpen(false);
                 }}
               >
@@ -120,17 +126,8 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
               </button>
             )}
           </div>
-          <OrderByDropdown
-            value={displayFilters?.order_by}
-            onChange={(val) => {
-              if (val === displayFilters?.order_by) return;
-              handleUpdateDisplayFilters({
-                order_by: val,
-              });
-            }}
-          />
           <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
-            <CycleFiltersSelection filters={filters ?? {}} handleFiltersUpdate={handleFilters} />
+            <CycleFiltersSelection filters={currentProjectFilters ?? {}} handleFiltersUpdate={handleFilters} />
           </FiltersDropdown>
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {CYCLE_VIEW_LAYOUTS.map((layout) => (
@@ -138,10 +135,12 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
                 <button
                   type="button"
                   className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                    displayFilters?.layout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                    currentProjectDisplayFilters?.layout == layout.key
+                      ? "bg-custom-background-100 shadow-custom-shadow-2xs"
+                      : ""
                   }`}
                   onClick={() =>
-                    handleUpdateDisplayFilters({
+                    updateDisplayFilters(projectId, {
                       layout: layout.key,
                     })
                   }
@@ -149,7 +148,9 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
                   <layout.icon
                     strokeWidth={2}
                     className={`h-3.5 w-3.5 ${
-                      displayFilters?.layout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                      currentProjectDisplayFilters?.layout == layout.key
+                        ? "text-custom-text-100"
+                        : "text-custom-text-200"
                     }`}
                   />
                 </button>
@@ -160,4 +161,4 @@ export const CyclesViewHeader: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

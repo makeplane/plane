@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import useSWR from "swr";
 // hooks
-import { useCycle, useIssues, useMember, useProject } from "hooks/store";
+import { useCycle, useCycleFilter, useIssues, useMember, useProject } from "hooks/store";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -37,7 +37,6 @@ import { EIssuesStoreType } from "constants/issue";
 import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
 import { EmptyStateType } from "constants/empty-state";
-import useCycleFilters from "hooks/use-cycle-filters";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -62,7 +61,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
   const { currentProjectDetails } = useProject();
   const { getUserDetails } = useMember();
   // cycle filters hook
-  const { handleUpdateDisplayFilters } = useCycleFilters(projectId);
+  const { updateDisplayFilters } = useCycleFilter();
   // derived values
   const activeCycle = currentProjectActiveCycleId ? getActiveCycleById(currentProjectActiveCycleId) : null;
   const cycleOwnerDetails = activeCycle ? getUserDetails(activeCycle.owned_by_id) : undefined;
@@ -107,7 +106,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                   type="button"
                   className="text-custom-primary-100 font-medium"
                   onClick={() =>
-                    handleUpdateDisplayFilters({
+                    updateDisplayFilters(projectId, {
                       active_tab: "all",
                     })
                   }
