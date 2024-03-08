@@ -1,4 +1,5 @@
 # Python imports
+import os
 from urllib.parse import urlencode
 
 # Django imports
@@ -26,7 +27,6 @@ from rest_framework.views import APIView
 ## Module imports
 from plane.app.serializers import (
     ChangePasswordSerializer,
-    ResetPasswordSerializer,
     UserSerializer,
 )
 from plane.authentication.utils.login import user_login
@@ -35,6 +35,8 @@ from plane.authentication.utils.workspace_project_join import (
 )
 from plane.bgtasks.forgot_password_task import forgot_password
 from plane.db.models import User
+from plane.license.models import Instance
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class EmailCheckEndpoint(APIView):
@@ -44,6 +46,14 @@ class EmailCheckEndpoint(APIView):
     ]
 
     def post(self, request):
+        # Check instance configuration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         email = request.data.get("email", False)
         existing_user = User.objects.filter(email=email).first()
 
@@ -68,8 +78,11 @@ class SignOutAuthEndpoint(View):
 
     def post(self, request):
         logout(request)
-        query_string = urlencode({"message": "User signed out successfully"})
-        url = request.META.get("HTTP_REFERER", "/") + "?" + query_string
+        url = (
+            request.META.get("HTTP_REFERER", "/")
+            + "?"
+            + urlencode({"success": "true"})
+        )
         return HttpResponseRedirect(url)
 
 
@@ -78,8 +91,11 @@ class CSRFTokenEndpoint(View):
     def get(self, request):
         # Generate a CSRF token
         csrf_token = get_token(request)
-        query_string = urlencode({"csrf_token": csrf_token})
-        url = request.META.get("HTTP_REFERER", "/") + "?" + query_string
+        url = (
+            request.META.get("HTTP_REFERER", "/")
+            + "?"
+            + urlencode({"csrf_token": csrf_token})
+        )
         # Return the CSRF token in a JSON response
         return HttpResponseRedirect(url)
 
@@ -92,9 +108,45 @@ def generate_password_token(user):
 
 
 class ForgotPasswordEndpoint(APIView):
+    permission_classes = [
+        AllowAny,
+    ]
 
     def post(self, request):
         email = request.data.get("email")
+
+        # Check instance configuration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD) = (
+            get_configuration_value(
+                [
+                    {
+                        "key": "EMAIL_HOST",
+                        "default": os.environ.get("EMAIL_HOST"),
+                    },
+                    {
+                        "key": "EMAIL_HOST_USER",
+                        "default": os.environ.get("EMAIL_HOST_USER"),
+                    },
+                    {
+                        "key": "EMAIL_HOST_PASSWORD",
+                        "default": os.environ.get("EMAIL_HOST_PASSWORD"),
+                    },
+                ]
+            )
+        )
+
+        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+            return Response(
+                {"error": "SMTP is not configured. Please contact your admin"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             validate_email(email)
@@ -124,43 +176,40 @@ class ForgotPasswordEndpoint(APIView):
         )
 
 
-class ResetPasswordEndpoint(APIView):
+class ResetPasswordEndpoint(View):
 
     def post(self, request, uidb64, token):
         try:
+            referer = request.META.get("HTTP_REFERER", "/")
             # Decode the id from the uidb64
             id = smart_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=id)
 
             # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):
-                return Response(
-                    {"error": "Token is invalid"},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
+                url = referer + "?" + urlencode({"error": "Token is invalid"})
+                return HttpResponseRedirect(url)
 
-            # Reset the password
-            serializer = ResetPasswordSerializer(data=request.data)
-            if serializer.is_valid():
-                # set_password also hashes the password that the user will get
-                user.set_password(serializer.data.get("new_password"))
-                user.is_password_autoset = False
-                user.save()
+            new_password = request.POST.get("new_password")
+            # set_password also hashes the password that the user will get
+            user.set_password(new_password)
+            user.is_password_autoset = False
+            user.save()
 
-                # Log the user in
-                # Generate access token for the user
-                user_login(request=request, user=user)
-                process_workspace_project_invitations(user=user)
-                return Response(status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
+            # Generate access token for the user
+            user_login(request=request, user=user)
+            process_workspace_project_invitations(user=user)
+            url = referer + "?" + urlencode({"success": "true"})
+            return HttpResponseRedirect(url)
         except DjangoUnicodeDecodeError:
-            return Response(
-                {"error": "token is not valid, please check the new one"},
-                status=status.HTTP_401_UNAUTHORIZED,
+            url = (
+                referer
+                + "?"
+                + urlencode(
+                    {"error": "token is not valid, please check the new one"}
+                )
             )
+            return HttpResponseRedirect(url)
 
 
 class ChangePasswordEndpoint(APIView):

@@ -13,6 +13,7 @@ from plane.authentication.utils.login import user_login
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
+from plane.license.models import Instance
 
 
 class GitHubOauthInitiateEndpoint(View):
@@ -20,6 +21,17 @@ class GitHubOauthInitiateEndpoint(View):
     def get(self, request):
         referer = request.META.get("HTTP_REFERER", "/")
         request.session["referer"] = referer
+
+        # Check instance configuration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "Instance is not configured"})
+            )
+            return HttpResponseRedirect(url)
+
         try:
             state = uuid.uuid4().hex
             provider = GitHubOAuthProvider(request=request, state=state)
@@ -62,7 +74,8 @@ class GitHubCallbackEndpoint(View):
             user = provider.authenticate()
             process_workspace_project_invitations(user=user)
             user_login(request=request, user=user)
-            return HttpResponseRedirect(referer)
+            url = referer + "?" + urlencode({"success": "true"})
+            return HttpResponseRedirect(url)
         except ImproperlyConfigured as e:
             url = referer + "?" + urlencode({"error": str(e)})
             return HttpResponseRedirect(url)
