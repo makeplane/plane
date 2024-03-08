@@ -39,6 +39,10 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
   } = useUser();
   // theme
   const { resolvedTheme } = useTheme();
+
+  // if empty state type is not found
+  if (!EMPTY_STATE_DETAILS[type]) return null;
+
   // current empty state details
   const { key, title, description, path, primaryButton, secondaryButton, accessType, access } =
     EMPTY_STATE_DETAILS[type];
