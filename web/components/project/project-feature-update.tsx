@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 // hooks
 import { useProject } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/ui";
 // components
 import { ProjectFeaturesList } from "./settings";
 import { ProjectLogo } from "./project-logo";
@@ -17,19 +17,12 @@ type Props = {
 
 export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, onClose } = props;
-  // router
-  const router = useRouter();
   // store hooks
   const { getProjectById } = useProject();
 
   if (!workspaceSlug || !projectId) return null;
   const currentProjectDetails = getProjectById(projectId);
   if (!currentProjectDetails) return null;
-
-  const handleProjectRedirect = () => {
-    router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
-    onClose();
-  };
 
   return (
     <>
@@ -49,9 +42,14 @@ export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
           <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={1}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleProjectRedirect} size="sm" tabIndex={2}>
+          <Link
+            href={`/${workspaceSlug}/projects/${projectId}/issues`}
+            onClick={onClose}
+            className={getButtonStyling("primary", "sm")}
+            tabIndex={2}
+          >
             Open project
-          </Button>
+          </Link>
         </div>
       </div>
     </>
