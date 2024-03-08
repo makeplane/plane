@@ -7,8 +7,7 @@ export type TCycleOrderByOptions =
   | "-name"
   | "end_date"
   | "-end_date"
-  | "sort_order"
-  | "-sort_order";
+  | "sort_order";
 
 export type TCycleDisplayFilters = {
   active_tab?: TCycleTabOptions;

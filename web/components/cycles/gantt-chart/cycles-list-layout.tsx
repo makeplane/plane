@@ -9,6 +9,7 @@ import { useCycle, useUser } from "hooks/store";
 // components
 // types
 import { ICycle } from "@plane/types";
+import useCycleFilters from "hooks/use-cycle-filters";
 // constants
 
 type Props = {
@@ -20,12 +21,14 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
   const { cycleIds } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store hooks
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { getCycleById, updateCycleDetails } = useCycle();
+  // cycle filters hook
+  const { displayFilters } = useCycleFilters(projectId?.toString() ?? "");
 
   const handleCycleUpdate = async (cycle: ICycle, data: IBlockUpdateData) => {
     if (!workspaceSlug || !cycle) return;
@@ -67,7 +70,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}
-        enableReorder={isAllowed}
+        enableReorder={isAllowed && displayFilters?.order_by === "sort_order"}
       />
     </div>
   );

@@ -46,18 +46,20 @@ export const OrderByDropdown: React.FC<Props> = (props) => {
         onClick={() => {
           if (value?.[0] === "-") onChange(value.slice(1) as TCycleOrderByOptions);
         }}
+        disabled={value === "sort_order"}
       >
         Ascending
-        {value?.[0] !== "-" && <Check className="h-3 w-3" />}
+        {value !== "sort_order" && value?.[0] !== "-" && <Check className="h-3 w-3" />}
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
           if (value?.[0] !== "-") onChange(`-${value}` as TCycleOrderByOptions);
         }}
+        disabled={value === "sort_order"}
       >
         Descending
-        {value?.[0] === "-" && <Check className="h-3 w-3" />}
+        {value !== "sort_order" && value?.[0] === "-" && <Check className="h-3 w-3" />}
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
