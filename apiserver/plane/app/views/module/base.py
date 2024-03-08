@@ -3,7 +3,7 @@ import json
 
 # Django Imports
 from django.utils import timezone
-from django.db.models import Prefetch, F, OuterRef, Exists, Count, Q
+from django.db.models import Prefetch, F, OuterRef, Exists, Count, Q, Func
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Value, UUIDField
