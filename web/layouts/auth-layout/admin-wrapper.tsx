@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { InstanceAdminRestriction } from "components/instance";
 import { useApplication, useUser } from "hooks/store";

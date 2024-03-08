@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // ui
 import { Avatar } from "@plane/ui";

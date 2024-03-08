@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { StateGroupIcon } from "@plane/ui";
 import { IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";

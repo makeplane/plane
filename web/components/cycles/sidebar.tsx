@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -216,8 +216,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-        ? "0 Issue"
-        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+      ? "0 Issue"
+      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
@@ -48,7 +48,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const {
     membership: { currentWorkspaceRole },
@@ -58,8 +58,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
 
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,
-    github_app_name: envConfig?.github_app_name || "",
-    slack_client_id: envConfig?.slack_client_id || "",
+    github_app_name: appConfig?.github_app_name || "",
+    slack_client_id: appConfig?.slack_client_id || "",
   });
 
   const { data: workspaceIntegrations } = useSWR(

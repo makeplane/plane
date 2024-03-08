@@ -1,5 +1,5 @@
 import { FC, Fragment } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";

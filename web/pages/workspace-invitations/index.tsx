@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";

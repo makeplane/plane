@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
@@ -62,7 +62,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
 
@@ -91,7 +91,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: appConfig?.file_size_limit ?? MAX_FILE_SIZE,
   });
 
   const handleSubmit = async () => {

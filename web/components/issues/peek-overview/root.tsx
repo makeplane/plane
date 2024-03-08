@@ -1,5 +1,5 @@
 import { FC, useEffect, useState, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";

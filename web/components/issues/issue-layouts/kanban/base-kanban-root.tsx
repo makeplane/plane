@@ -1,6 +1,6 @@
 import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";

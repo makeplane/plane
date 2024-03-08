@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
@@ -224,8 +224,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-                ? "cursor-pointer"
-                : "cursor-pointer hover:bg-custom-background-80"
+              ? "cursor-pointer"
+              : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={handleOnClick}
         >

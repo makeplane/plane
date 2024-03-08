@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { Button } from "@plane/ui";

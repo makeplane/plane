@@ -1,5 +1,5 @@
 import { FC, useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { ProjectSidebarList } from "components/project";
 import {

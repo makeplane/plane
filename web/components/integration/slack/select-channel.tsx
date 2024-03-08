@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 // hooks
@@ -23,7 +23,7 @@ const appInstallationService = new AppInstallationService();
 export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   // states
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
@@ -35,8 +35,8 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   const { startAuth } = useIntegrationPopup({
     provider: "slackChannel",
     stateParams: integration.id,
-    github_app_name: envConfig?.github_client_id || "",
-    slack_client_id: envConfig?.slack_client_id || "",
+    github_app_name: appConfig?.github_client_id || "",
+    slack_client_id: appConfig?.slack_client_id || "",
   });
 
   const { data: projectIntegration } = useSWR(

@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { Spinner } from "@plane/ui";
 import { SpreadsheetQuickAddIssueForm } from "components/issues";

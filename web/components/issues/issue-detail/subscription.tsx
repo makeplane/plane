@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import isNil from "lodash/isNil";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
 // UI
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";

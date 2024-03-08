@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { Camera, User2 } from "lucide-react";

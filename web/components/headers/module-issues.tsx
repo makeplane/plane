@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
@@ -206,7 +206,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0"
                     placement="bottom-start"
                   >
-                    {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}
+                    {projectModuleIds?.map((moduleId) => (
+                      <ModuleDropdownOption key={moduleId} moduleId={moduleId} />
+                    ))}
                   </CustomMenu>
                 }
               />

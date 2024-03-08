@@ -1,6 +1,6 @@
 import { Fragment, useRef, useState } from "react";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
@@ -62,7 +62,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     issues: { createInboxIssue },
   } = useInboxIssues();
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { captureIssueEvent } = useEventTracker();
 
@@ -240,7 +240,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                               </button>
                             )}
 
-                            {envConfig?.has_openai_configured && (
+                            {appConfig?.has_openai_configured && (
                               <GptAssistantPopover
                                 isOpen={gptAssistantModal}
                                 projectId={projectId}

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { useApplication } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";

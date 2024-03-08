@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 // hooks
 import { EmptyState } from "components/common";

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
@@ -142,8 +142,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       if (!memberDetails?.member) return;
       return {
         value: `${memberDetails?.member.id}`,
-        query: `${memberDetails?.member.first_name} ${memberDetails?.member
-          .last_name} ${memberDetails?.member.display_name.toLowerCase()}`,
+        query: `${memberDetails?.member.first_name} ${
+          memberDetails?.member.last_name
+        } ${memberDetails?.member.display_name.toLowerCase()}`,
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="flex-shrink-0 pt-0.5">

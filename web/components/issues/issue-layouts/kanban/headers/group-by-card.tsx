@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";

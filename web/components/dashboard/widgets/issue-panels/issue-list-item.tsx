@@ -1,5 +1,5 @@
 import isToday from "date-fns/isToday";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 // ui
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";

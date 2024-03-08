@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 // layouts
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { CommandPalette } from "components/command-palette";
 import { EIssuesStoreType } from "constants/issue";

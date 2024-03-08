@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types

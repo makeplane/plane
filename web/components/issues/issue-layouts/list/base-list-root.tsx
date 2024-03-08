@@ -1,5 +1,5 @@
 import { FC, useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // types
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";

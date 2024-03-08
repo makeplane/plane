@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Popover, Transition } from "@headlessui/react";
 import { Bell } from "lucide-react";
 // hooks

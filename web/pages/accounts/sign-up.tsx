@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
 // hooks
 import { Spinner } from "@plane/ui";
@@ -18,11 +18,11 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 const SignUpPage: NextPageWithLayout = observer(() => {
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { currentUser } = useUser();
 
-  if (currentUser || !envConfig)
+  if (currentUser || !appConfig)
     return (
       <div className="grid h-screen place-items-center">
         <Spinner />

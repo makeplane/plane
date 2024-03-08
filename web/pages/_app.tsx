@@ -22,7 +22,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps: { ...pageProps } }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
 
@@ -33,7 +33,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppPropsWith
       </Head>
       <StoreProvider {...pageProps}>
         <ThemeProvider themes={THEMES} defaultTheme="system">
-          <AppProvider session={session}>{getLayout(<Component {...pageProps} />)}</AppProvider>
+          <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
         </ThemeProvider>
       </StoreProvider>
     </>

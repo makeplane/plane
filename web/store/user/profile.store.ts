@@ -1,24 +1,25 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
-import set from "lodash/set";
 // services
 import { UserService } from "services/user.service";
 // types
 import { TUserProfile } from "@plane/types";
 
+type TError = {
+  status: string;
+  message: string;
+};
+
 export interface IProfileStore {
   // observables
   isLoading: boolean;
-  error: any | undefined;
-  // model observables
-
-  // computed
+  data: TUserProfile;
+  error: TError | undefined;
   // actions
   fetchUserProfile: () => Promise<void>;
 }
 
 export class ProfileStore implements IProfileStore {
   isLoading: boolean = false;
-  isInitialDataUpdated: boolean = false;
   data: TUserProfile = {
     id: undefined,
     user: undefined,
@@ -26,6 +27,13 @@ export class ProfileStore implements IProfileStore {
     last_workspace_id: undefined,
     theme: {
       theme: undefined,
+      text: undefined,
+      palette: undefined,
+      primary: undefined,
+      background: undefined,
+      darkPalette: undefined,
+      sidebarText: undefined,
+      sidebarBackground: undefined,
     },
     onboarding_step: {
       workspace_join: false,
@@ -42,31 +50,44 @@ export class ProfileStore implements IProfileStore {
     created_at: "",
     updated_at: "",
   };
-  error: any | undefined = undefined;
-  // service
+  error: TError | undefined = undefined;
+  // services
   userService: UserService;
 
   constructor() {
     makeObservable(this, {
       // observables
-      isInitialDataUpdated: observable.ref,
       isLoading: observable.ref,
       data: observable,
       error: observable,
-      // computed
       // actions
       fetchUserProfile: action,
     });
-    // service
+    // services
     this.userService = new UserService();
   }
 
   // actions
   fetchUserProfile = async () => {
-    const userProfile = await this.userService.getCurrentUserProfile();
-    console.log("profile", userProfile);
-    runInAction(() => {
-      this.data = userProfile;
-    });
+    try {
+      runInAction(() => {
+        this.isLoading = true;
+        this.error = undefined;
+      });
+      const userProfile = await this.userService.getCurrentUserProfile();
+      runInAction(() => {
+        this.isLoading = false;
+        this.data = userProfile;
+      });
+    } catch (error) {
+      console.log("Failed to fetch profile details");
+      runInAction(() => {
+        this.isLoading = true;
+        this.error = {
+          status: "error",
+          message: "Failed to fetch instance info",
+        };
+      });
+    }
   };
 }

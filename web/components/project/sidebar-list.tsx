@@ -1,6 +1,6 @@
 import { useState, FC, useRef, useEffect } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";

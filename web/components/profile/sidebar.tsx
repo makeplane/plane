@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -164,8 +164,8 @@ export const ProfileSidebar = observer(() => {
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
-                                        ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-green-500/10 text-green-500"
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-green-500/10 text-green-500"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

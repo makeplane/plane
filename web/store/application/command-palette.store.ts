@@ -1,8 +1,6 @@
 import { observable, action, makeObservable, computed } from "mobx";
 // services
 import { EIssuesStoreType, TCreateModalStoreTypes } from "constants/issue";
-import { PageService } from "services/page.service";
-import { ProjectService } from "services/project";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -11,6 +9,7 @@ export interface ModalData {
 
 export interface ICommandPaletteStore {
   // observables
+
   isCommandPaletteOpen: boolean;
   isShortcutModalOpen: boolean;
   isCreateProjectModalOpen: boolean;
@@ -50,9 +49,6 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   isCreateIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
   isBulkDeleteIssueModalOpen: boolean = false;
-  // service
-  projectService;
-  pageService;
 
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
 
@@ -84,9 +80,6 @@ export class CommandPaletteStore implements ICommandPaletteStore {
       toggleDeleteIssueModal: action,
       toggleBulkDeleteIssueModal: action,
     });
-    // services
-    this.projectService = new ProjectService();
-    this.pageService = new PageService();
   }
 
   /**

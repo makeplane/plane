@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks

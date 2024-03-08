@@ -1,5 +1,5 @@
 import size from "lodash/size";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
 import { useApplication, useEventTracker, useIssues } from "hooks/store";

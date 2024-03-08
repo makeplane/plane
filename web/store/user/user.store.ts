@@ -1,5 +1,4 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import set from "lodash/set";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // stores
 import { IAccountStore, AccountStore } from "store/user/account.store";
 import { ProfileStore, IProfileStore } from "store/user/profile.store";

@@ -1,14 +1,13 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Image from "next/image";
-// hooks
 import { Spinner } from "@plane/ui";
-import { SignInRoot } from "components/account";
-import { PageHead } from "components/core";
-import { useApplication, useUser } from "hooks/store";
+// hooks
+import { useStore } from "hooks";
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
-// ui
+import { PageHead } from "components/core";
+import { SignInRoot } from "components/account";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
@@ -17,9 +16,9 @@ export type AuthType = "sign-in" | "sign-up";
 export const SignInView = observer(() => {
   // store hooks
   const {
-    config: { envConfig },
-  } = useApplication();
-  const { currentUser } = useUser();
+    config: { appConfig },
+    user: { data: currentUser },
+  } = useStore();
   // sign in redirection hook
   const { isRedirecting, handleRedirection } = useSignInRedirection();
 
@@ -27,7 +26,7 @@ export const SignInView = observer(() => {
     handleRedirection();
   }, [handleRedirection]);
 
-  if (isRedirecting || currentUser || !envConfig)
+  if (isRedirecting || currentUser || !appConfig)
     return (
       <div className="grid h-screen place-items-center">
         <Spinner />

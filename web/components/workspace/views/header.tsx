@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
@@ -96,7 +96,9 @@ export const GlobalViewsHeader: React.FC = observer(() => {
             </Link>
           ))}
 
-          {currentWorkspaceViews?.map((viewId) => <ViewTab key={viewId} viewId={viewId} />)}
+          {currentWorkspaceViews?.map((viewId) => (
+            <ViewTab key={viewId} viewId={viewId} />
+          ))}
         </div>
 
         {isAuthorizedUser && (

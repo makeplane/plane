@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { Button } from "@plane/ui";
 import { useApplication } from "hooks/store";
@@ -15,13 +15,13 @@ type Props = {
 export const GithubAuth: React.FC<Props> = observer(({ workspaceIntegration, provider }) => {
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   // hooks
   const { startAuth, isConnecting } = useIntegrationPopup({
     provider,
-    github_app_name: envConfig?.github_app_name || "",
-    slack_client_id: envConfig?.slack_client_id || "",
+    github_app_name: appConfig?.github_app_name || "",
+    slack_client_id: appConfig?.slack_client_id || "",
   });
 
   return (

@@ -1,5 +1,5 @@
 // components
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { EstimateDropdown } from "components/dropdowns";
 // types
 import { TIssue } from "@plane/types";

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { Button, Input, TextArea } from "@plane/ui";
@@ -212,8 +212,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-              ? "Creating View..."
-              : "Create View"}
+            ? "Creating View..."
+            : "Create View"}
         </Button>
       </div>
     </form>

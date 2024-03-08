@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Disclosure, Transition } from "@headlessui/react";
