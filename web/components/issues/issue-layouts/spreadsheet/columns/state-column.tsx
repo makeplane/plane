@@ -18,7 +18,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <StateDropdown
-        projectId={issue.project_id}
+        projectId={issue.project_id ?? undefined}
         value={issue.state_id}
         onChange={(data) => onChange(issue, { state_id: data }, { changed_property: "state", change_details: data })}
         disabled={disabled}

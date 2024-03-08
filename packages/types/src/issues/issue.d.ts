@@ -24,7 +24,7 @@ export type TBaseIssue = {
   project_id: string | null;
   parent_id: string | null;
   cycle_id: string | null;
-  module_ids: string[];
+  module_ids: string[] | null;
 
   created_at: string;
   updated_at: string;

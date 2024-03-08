@@ -30,6 +30,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     workspaceSlug &&
     issueDetails &&
     !issueDetails.tempId &&
+    issueDetails.project_id &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
 
   return (
@@ -82,6 +83,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const handleIssuePeekOverview = () =>
     workspaceSlug &&
     issueDetails &&
+    issueDetails.project_id &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
 
   return (

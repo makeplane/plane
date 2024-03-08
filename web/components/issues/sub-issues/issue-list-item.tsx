@@ -176,7 +176,8 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 <div
                   className="invisible flex h-[22px] w-[22px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
                   onClick={() => {
-                    subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
+                    issue.project_id &&
+                      subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
                   }}
                 >
                   <X width={14} strokeWidth={2} />
@@ -187,17 +188,20 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
         </div>
       )}
 
-      {subIssueHelpers.issue_visibility.includes(issueId) && issue.sub_issues_count && issue.sub_issues_count > 0 && (
-        <IssueList
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          parentIssueId={issue.id}
-          spacingLeft={spacingLeft + 22}
-          disabled={disabled}
-          handleIssueCrudState={handleIssueCrudState}
-          subIssueOperations={subIssueOperations}
-        />
-      )}
+      {subIssueHelpers.issue_visibility.includes(issueId) &&
+        issue.sub_issues_count &&
+        issue.project_id &&
+        issue.sub_issues_count > 0 && (
+          <IssueList
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            parentIssueId={issue.id}
+            spacingLeft={spacingLeft + 22}
+            disabled={disabled}
+            handleIssueCrudState={handleIssueCrudState}
+            subIssueOperations={subIssueOperations}
+          />
+        )}
     </div>
   );
 });

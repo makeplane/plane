@@ -84,7 +84,7 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
 
           <div className="flex flex-wrap items-center gap-2">
             <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
-              <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
+              <PriorityIcon priority={issue.priority} className="h-3.5 w-3.5" />
             </Tooltip>
             <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}>
               <div className="flex items-center gap-1 rounded border border-custom-border-200 px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">

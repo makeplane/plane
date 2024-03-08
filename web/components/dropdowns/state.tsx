@@ -24,8 +24,8 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
   onClose?: () => void;
-  projectId: string;
-  value: string;
+  projectId: string | undefined;
+  value: string | undefined | null;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -92,7 +92,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   const selectedState = getStateById(value);
 
   const onOpen = () => {
-    if (!statesList && workspaceSlug) fetchProjectStates(workspaceSlug, projectId);
+    if (!statesList && workspaceSlug && projectId) fetchProjectStates(workspaceSlug, projectId);
   };
 
   const handleClose = () => {

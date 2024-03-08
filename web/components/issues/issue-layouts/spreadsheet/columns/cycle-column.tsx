@@ -30,7 +30,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
 
   const handleCycle = useCallback(
     async (cycleId: string | null) => {
-      if (!workspaceSlug || !issue || issue.cycle_id === cycleId) return;
+      if (!workspaceSlug || !issue || !issue.project_id || issue.cycle_id === cycleId) return;
       if (cycleId) await addIssueToCycle(workspaceSlug.toString(), issue.project_id, cycleId, [issue.id]);
       else await removeIssueFromCycle(workspaceSlug.toString(), issue.project_id, issue.cycle_id ?? "", issue.id);
       captureIssueEvent({
@@ -50,7 +50,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <CycleDropdown
-        projectId={issue.project_id}
+        projectId={issue.project_id ?? undefined}
         value={issue.cycle_id}
         onChange={handleCycle}
         disabled={disabled}

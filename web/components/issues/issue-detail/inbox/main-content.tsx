@@ -46,7 +46,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   const issue = issueId ? getIssueById(issueId) : undefined;
-  if (!issue) return <></>;
+  if (!issue || !issue.project_id) return <></>;
 
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
 

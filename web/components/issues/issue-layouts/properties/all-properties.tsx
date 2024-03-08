@@ -30,7 +30,9 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 
 export interface IIssueProperties {
   issue: TIssue;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
@@ -236,7 +238,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     });
   };
 
-  if (!displayProperties) return null;
+  if (!displayProperties || !issue.project_id) return null;
 
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
@@ -267,7 +269,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
         <div className="h-5">
           <PriorityDropdown
-            value={issue?.priority || null}
+            value={issue?.priority}
             onChange={handlePriority}
             disabled={isReadOnly}
             buttonVariant="border-without-text"

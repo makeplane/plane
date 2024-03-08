@@ -20,7 +20,7 @@ export interface IEstimateStore {
   areEstimatesEnabledForProject: (projectId: string) => boolean;
   getEstimatePointValue: (estimateKey: number | null, projectId: string | null) => string;
   getProjectEstimateById: (estimateId: string) => IEstimate | null;
-  getProjectActiveEstimateDetails: (projectId: string) => IEstimate | null;
+  getProjectActiveEstimateDetails: (projectId: string | undefined | null) => IEstimate | null;
   // fetch actions
   fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<IEstimate[]>;
   fetchWorkspaceEstimates: (workspaceSlug: string) => Promise<IEstimate[]>;
@@ -129,10 +129,15 @@ export class EstimateStore implements IEstimateStore {
    * @description returns the estimate details for the given estimate id
    * @param projectId
    */
-  getProjectActiveEstimateDetails = computedFn((projectId: string) => {
+  getProjectActiveEstimateDetails = computedFn((projectId: string | undefined | null) => {
     const projectDetails = this.rootStore.projectRoot.project?.getProjectById(projectId);
     const worksapceSlug = this.rootStore.app.router.workspaceSlug || "";
-    if (!projectDetails || !projectDetails?.estimate || !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug]))
+    if (
+      !projectId ||
+      !projectDetails ||
+      !projectDetails?.estimate ||
+      !(this.fetchedMap[projectId] || this.fetchedMap[worksapceSlug])
+    )
       return null;
     return this.estimateMap?.[projectDetails?.estimate || ""] || null;
   });

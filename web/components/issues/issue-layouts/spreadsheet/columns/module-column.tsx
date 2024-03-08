@@ -39,9 +39,9 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
       for (const moduleId of updatedModuleIds)
         if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
         else modulesToAdd.push(moduleId);
-      if (modulesToAdd.length > 0)
+      if (issue.project_id && modulesToAdd.length > 0)
         addModulesToIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd);
-      if (modulesToRemove.length > 0)
+      if (issue.project_id && modulesToRemove.length > 0)
         removeModulesFromIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToRemove);
 
       captureIssueEvent({
@@ -61,7 +61,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <ModuleDropdown
-        projectId={issue?.project_id}
+        projectId={issue?.project_id ?? undefined}
         value={issue?.module_ids ?? []}
         onChange={handleModule}
         disabled={disabled}

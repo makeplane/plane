@@ -24,7 +24,7 @@ type Props = TDropdownProps & {
   highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
   onClose?: () => void;
-  value: TIssuePriorities;
+  value: TIssuePriorities | undefined | null;
 };
 
 type ButtonProps = {
@@ -35,7 +35,7 @@ type ButtonProps = {
   hideText?: boolean;
   isActive?: boolean;
   highlightUrgent: boolean;
-  priority: TIssuePriorities;
+  priority: TIssuePriorities | undefined;
   showTooltip: boolean;
 };
 
@@ -66,7 +66,7 @@ const BorderButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
-          priorityClasses[priority],
+          priorityClasses[priority || "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -135,7 +135,7 @@ const BackgroundButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
-          priorityClasses[priority],
+          priorityClasses[priority || "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -205,7 +205,7 @@ const TransparentButton = (props: ButtonProps) => {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          priorityClasses[priority],
+          priorityClasses[priority || "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -342,8 +342,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-      ? BackgroundButton
-      : TransparentButton;
+    ? BackgroundButton
+    : TransparentButton;
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -393,7 +393,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             onClick={handleOnClick}
           >
             <ButtonToRender
-              priority={value}
+              priority={value ?? undefined}
               className={cn(buttonClassName, {
                 "text-white": resolvedTheme === "dark",
               })}

@@ -23,7 +23,7 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: number | null) => void;
   onClose?: () => void;
-  projectId: string;
+  projectId: string | undefined;
   value: number | null;
 };
 
@@ -107,10 +107,10 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  const selectedEstimate = value !== null ? getEstimatePointValue(value, projectId) : null;
+  const selectedEstimate = value !== null && projectId ? getEstimatePointValue(value, projectId) : null;
 
   const onOpen = () => {
-    if (!activeEstimate && workspaceSlug) fetchProjectEstimates(workspaceSlug, projectId);
+    if (!activeEstimate && workspaceSlug && projectId) fetchProjectEstimates(workspaceSlug, projectId);
   };
 
   const handleClose = () => {

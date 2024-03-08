@@ -118,7 +118,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = memo((props) => {
 
   if (!issue) return null;
 
-  const canEditIssueProperties = canEditProperties(issue.project_id);
+  const canEditIssueProperties = canEditProperties(issue.project_id ?? undefined);
 
   return (
     <Draggable

@@ -35,7 +35,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const { setPeekIssue } = useIssueDetail();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+    issue.project_id && setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
 
   const filterParams = getRedirectionFilters(tab);
 

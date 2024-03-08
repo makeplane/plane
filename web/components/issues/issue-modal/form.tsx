@@ -416,7 +416,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           )}
                         </button>
                       )}
-                      {envConfig?.has_openai_configured && (
+                      {envConfig?.has_openai_configured && projectId && (
                         <GptAssistantPopover
                           isOpen={gptAssistantModal}
                           projectId={projectId}
@@ -486,7 +486,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           onChange(stateId);
                           handleFormChange();
                         }}
-                        projectId={projectId}
+                        projectId={projectId ?? undefined}
                         buttonVariant="border-with-text"
                         tabIndex={getTabIndex("state_id")}
                       />
@@ -516,7 +516,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   render={({ field: { value, onChange } }) => (
                     <div className="h-7">
                       <MemberDropdown
-                        projectId={projectId}
+                        projectId={projectId ?? undefined}
                         value={value}
                         onChange={(assigneeIds) => {
                           onChange(assigneeIds);
@@ -543,7 +543,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           onChange(labelIds);
                           handleFormChange();
                         }}
-                        projectId={projectId}
+                        projectId={projectId ?? undefined}
                         tabIndex={getTabIndex("label_ids")}
                       />
                     </div>
@@ -588,7 +588,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
                         <CycleDropdown
-                          projectId={projectId}
+                          projectId={projectId ?? undefined}
                           onChange={(cycleId) => {
                             onChange(cycleId);
                             handleFormChange();
@@ -608,7 +608,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     render={({ field: { value, onChange } }) => (
                       <div className="h-7">
                         <ModuleDropdown
-                          projectId={projectId}
+                          projectId={projectId ?? undefined}
                           value={value ?? []}
                           onChange={(moduleIds) => {
                             onChange(moduleIds);
@@ -623,7 +623,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     )}
                   />
                 )}
-                {areEstimatesEnabledForProject(projectId) && (
+                {projectId && areEstimatesEnabledForProject(projectId) && (
                   <Controller
                     control={control}
                     name="estimate_point"
@@ -635,7 +635,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             onChange(estimatePoint);
                             handleFormChange();
                           }}
-                          projectId={projectId}
+                          projectId={projectId ?? undefined}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("estimate_point")}
                         />
@@ -702,7 +702,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                         setSelectedParentIssue(issue);
                       }}
-                      projectId={projectId}
+                      projectId={projectId ?? undefined}
                     />
                   )}
                 />

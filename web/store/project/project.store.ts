@@ -23,8 +23,8 @@ export interface IProjectStore {
   currentProjectDetails: IProject | undefined;
   // actions
   setSearchQuery: (query: string) => void;
-  getProjectById: (projectId: string) => IProject | null;
-  getProjectIdentifierById: (projectId: string) => string;
+  getProjectById: (projectId: string | undefined | null) => IProject | undefined;
+  getProjectIdentifierById: (projectId: string | undefined | null) => string;
   // fetch actions
   fetchProjects: (workspaceSlug: string) => Promise<IProject[]>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -206,8 +206,8 @@ export class ProjectStore implements IProjectStore {
    * @param projectId
    * @returns IProject | null
    */
-  getProjectById = computedFn((projectId: string) => {
-    const projectInfo = this.projectMap[projectId] || null;
+  getProjectById = computedFn((projectId: string | undefined | null) => {
+    const projectInfo = this.projectMap[projectId ?? ""] || undefined;
     return projectInfo;
   });
 
@@ -216,8 +216,8 @@ export class ProjectStore implements IProjectStore {
    * @param projectId
    * @returns string
    */
-  getProjectIdentifierById = computedFn((projectId: string) => {
-    const projectInfo = this.projectMap?.[projectId];
+  getProjectIdentifierById = computedFn((projectId: string | undefined | null) => {
+    const projectInfo = this.projectMap?.[projectId ?? ""];
     return projectInfo?.identifier;
   });
 

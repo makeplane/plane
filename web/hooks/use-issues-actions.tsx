@@ -19,12 +19,12 @@ interface IssueActions {
     userViewId?: "assigned" | "created" | "subscribed"
   ) => Promise<TIssuesResponse | undefined>;
   fetchNextIssues: () => Promise<TIssuesResponse | undefined>;
-  removeIssue: (projectId: string, issueId: string) => Promise<void>;
-  createIssue?: (projectId: string, data: Partial<TIssue>) => Promise<TIssue | undefined>;
-  updateIssue?: (projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
-  removeIssueFromView?: (projectId: string, issueId: string) => Promise<void>;
-  archiveIssue?: (projectId: string, issueId: string) => Promise<void>;
-  restoreIssue?: (projectId: string, issueId: string) => Promise<void>;
+  removeIssue: (projectId: string | undefined | null, issueId: string) => Promise<void>;
+  createIssue?: (projectId: string | undefined | null, data: Partial<TIssue>) => Promise<TIssue | undefined>;
+  updateIssue?: (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeIssueFromView?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
+  archiveIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
+  restoreIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   updateFilters: (
     projectId: string,
     filterType: EIssueFilterType,
@@ -83,29 +83,29 @@ const useProjectIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, projectId]);
 
   const createIssue = useCallback(
-    async (projectId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.createIssue(workspaceSlug, projectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.archiveIssue(workspaceSlug, projectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
@@ -157,36 +157,36 @@ const useCycleIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, projectId, cycleId]);
 
   const createIssue = useCallback(
-    async (projectId: string, data: Partial<TIssue>) => {
-      if (!cycleId || !workspaceSlug) return;
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!cycleId || !workspaceSlug || !projectId) return;
       return await issues.createIssue(workspaceSlug, projectId, data, cycleId);
     },
     [issues.createIssue, cycleId, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const removeIssueFromView = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!cycleId || !workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!cycleId || !workspaceSlug || !projectId) return;
       return await issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
     },
     [issues.removeIssueFromCycle, cycleId, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.archiveIssue(workspaceSlug, projectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
@@ -248,36 +248,36 @@ const useModuleIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, projectId, moduleId]);
 
   const createIssue = useCallback(
-    async (projectId: string, data: Partial<TIssue>) => {
-      if (!moduleId || !workspaceSlug) return;
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!moduleId || !workspaceSlug || !projectId) return;
       return await issues.createIssue(workspaceSlug, projectId, data, moduleId);
     },
     [issues.createIssue, moduleId, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const removeIssueFromView = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!moduleId || !workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!moduleId || !workspaceSlug || !projectId) return;
       return await issues.removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
     },
     [issues.removeIssueFromModule, moduleId, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.archiveIssue(workspaceSlug, projectId, issueId);
     },
     [issues.archiveIssue, moduleId, workspaceSlug]
@@ -330,29 +330,29 @@ const useProfileIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, userId]);
 
   const createIssue = useCallback(
-    async (projectId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.createIssue(workspaceSlug, projectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.archiveIssue(workspaceSlug, projectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
@@ -404,29 +404,29 @@ const useProjectViewIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, projectId]);
 
   const createIssue = useCallback(
-    async (projectId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.createIssue(workspaceSlug, projectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
   );
   const archiveIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.archiveIssue(workspaceSlug, projectId, issueId);
     },
     [issues.archiveIssue, workspaceSlug]
@@ -478,22 +478,22 @@ const useDraftIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, projectId]);
 
   const createIssue = useCallback(
-    async (projectId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.createIssue(workspaceSlug, projectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]
@@ -544,15 +544,15 @@ const useArchivedIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, projectId]);
 
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue]
   );
   const restoreIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.restoreIssue(workspaceSlug, projectId, issueId);
     },
     [issues.restoreIssue]
@@ -601,22 +601,22 @@ const useGlobalIssueActions = () => {
   }, [issues.fetchIssues, workspaceSlug, globalViewId]);
 
   const createIssue = useCallback(
-    async (projectId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.createIssue(workspaceSlug, projectId, data);
     },
     [issues.createIssue, workspaceSlug]
   );
   const updateIssue = useCallback(
-    async (projectId: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
     },
     [issues.updateIssue, workspaceSlug]
   );
   const removeIssue = useCallback(
-    async (projectId: string, issueId: string) => {
-      if (!workspaceSlug) return;
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
       return await issues.removeIssue(workspaceSlug, projectId, issueId);
     },
     [issues.removeIssue, workspaceSlug]

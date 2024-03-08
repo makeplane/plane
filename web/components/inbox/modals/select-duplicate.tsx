@@ -126,7 +126,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                           <ul className="text-sm text-custom-text-100">
                             {filteredIssues.map((issue) => {
                               const stateColor =
-                                getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)
+                                getProjectStates(issue?.project_id ?? "")?.find((state) => state?.id == issue?.state_id)
                                   ?.color || "";
 
                               return (

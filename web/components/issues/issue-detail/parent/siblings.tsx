@@ -26,7 +26,7 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = (props) => {
       ? `ISSUE_PARENT_CHILD_ISSUES_${peekIssue?.workspaceSlug}_${parentIssue.project_id}_${parentIssue.id}`
       : null,
     peekIssue && parentIssue && parentIssue.project_id
-      ? () => fetchSubIssues(peekIssue?.workspaceSlug, parentIssue.project_id, parentIssue.id)
+      ? () => fetchSubIssues(peekIssue?.workspaceSlug, parentIssue.project_id!, parentIssue.id)
       : null
   );
 

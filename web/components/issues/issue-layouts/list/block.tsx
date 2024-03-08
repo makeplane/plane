@@ -39,7 +39,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = observer((props: IssueBlock
 
   if (!issue) return null;
 
-  const canEditIssueProperties = canEditProperties(issue.project_id);
+  const canEditIssueProperties = canEditProperties(issue.project_id ?? undefined);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
 
   return (

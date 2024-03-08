@@ -111,10 +111,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   }, [data, projectId, workspaceProjectIds, isOpen, activeProjectId]);
 
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
-    if (!workspaceSlug || !activeProjectId) return;
+    if (!workspaceSlug || !issue.project_id) return;
 
     await cycleIssues.addIssueToCycle(workspaceSlug, issue.project_id, cycleId, [issue.id]);
-    fetchCycleDetails(workspaceSlug, activeProjectId, cycleId);
+    fetchCycleDetails(workspaceSlug, issue.project_id, cycleId);
   };
 
   const addIssueToModule = async (issue: TIssue, moduleIds: string[]) => {
