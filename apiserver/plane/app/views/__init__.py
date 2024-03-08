@@ -200,7 +200,6 @@ from .notification.base import (
 
 from .exporter.base import ExportIssuesEndpoint
 
-from .config import ConfigurationEndpoint
 
 from .webhook.base import (
     WebhookEndpoint,
