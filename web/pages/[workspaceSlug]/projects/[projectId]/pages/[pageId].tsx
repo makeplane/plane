@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -46,7 +46,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const {
     currentUser,
@@ -326,7 +326,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   />
                 )}
               />
-              {projectId && envConfig?.has_openai_configured && (
+              {projectId && appConfig?.has_openai_configured && (
                 <div className="absolute right-[68px] top-2.5">
                   <GptAssistantPopover
                     isOpen={gptModalOpen}

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
@@ -32,10 +32,10 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     filter === "completed"
       ? currentProjectCompletedCycleIds
       : filter === "draft"
-        ? currentProjectDraftCycleIds
-        : filter === "upcoming"
-          ? currentProjectUpcomingCycleIds
-          : currentProjectCycleIds;
+      ? currentProjectDraftCycleIds
+      : filter === "upcoming"
+      ? currentProjectUpcomingCycleIds
+      : currentProjectCycleIds;
 
   if (loader || !cyclesList)
     return (

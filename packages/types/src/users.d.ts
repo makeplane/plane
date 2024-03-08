@@ -48,7 +48,14 @@ export type TUserProfile = {
   role: string | undefined;
   last_workspace_id: string | undefined;
   theme: {
+    text: string | undefined;
     theme: string | undefined;
+    palette: string | undefined;
+    primary: string | undefined;
+    background: string | undefined;
+    darkPalette: string | undefined;
+    sidebarText: string | undefined;
+    sidebarBackground: string | undefined;
   };
   onboarding_step: {
     workspace_join: boolean;

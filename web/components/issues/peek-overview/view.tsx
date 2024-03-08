@@ -1,5 +1,5 @@
 import { FC, useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // ui
 import { Spinner } from "@plane/ui";
 // components

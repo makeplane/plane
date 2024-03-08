@@ -1,5 +1,5 @@
 import { useState, Fragment, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import useSWR from "swr";

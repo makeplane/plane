@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import sortBy from "lodash/sortBy";
 // hooks
 import { useMember } from "hooks/store";

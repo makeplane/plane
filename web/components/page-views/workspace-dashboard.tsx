@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components

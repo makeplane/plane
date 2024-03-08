@@ -1,6 +1,6 @@
 import React, { FC, useState, useRef, useEffect, Fragment } from "react";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
@@ -117,7 +117,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
@@ -397,7 +397,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 ) : (
                   <Fragment>
                     <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
-                      {issueName && issueName.trim() !== "" && envConfig?.has_openai_configured && (
+                      {issueName && issueName.trim() !== "" && appConfig?.has_openai_configured && (
                         <button
                           type="button"
                           className={`flex items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs ${
@@ -416,7 +416,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           )}
                         </button>
                       )}
-                      {envConfig?.has_openai_configured && (
+                      {appConfig?.has_openai_configured && (
                         <GptAssistantPopover
                           isOpen={gptAssistantModal}
                           projectId={projectId}

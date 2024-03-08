@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useState, ReactElement } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
 // hooks

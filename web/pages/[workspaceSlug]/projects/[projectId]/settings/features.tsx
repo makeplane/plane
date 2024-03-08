@@ -13,6 +13,8 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 // types
 import { NextPageWithLayout } from "lib/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 const FeaturesSettingsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -28,8 +30,10 @@ const FeaturesSettingsPage: NextPageWithLayout = observer(() => {
     workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString()) : null
   );
   // derived values
-  const isAdmin = memberDetails?.role === 20;
+  const isAdmin = memberDetails?.role === EUserProjectRoles.ADMIN;
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Features` : undefined;
+
+  if (!workspaceSlug || !projectId) return null;
 
   return (
     <>
@@ -38,7 +42,11 @@ const FeaturesSettingsPage: NextPageWithLayout = observer(() => {
         <div className="flex items-center border-b border-custom-border-100 py-3.5">
           <h3 className="text-xl font-medium">Features</h3>
         </div>
-        <ProjectFeaturesList />
+        <ProjectFeaturesList
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          isAdmin={isAdmin}
+        />
       </section>
     </>
   );

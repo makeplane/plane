@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import Link from "next/link";
 import {
@@ -32,7 +32,7 @@ export const SignUpRoot = observer(() => {
   const { handleRedirection } = useSignInRedirection();
   // mobx store
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { captureEvent } = useEventTracker();
 
@@ -50,12 +50,12 @@ export const SignUpRoot = observer(() => {
     await handleRedirection();
   };
 
-  const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
+  const isOAuthEnabled = envConfig && (appConfig.google_client_id || appConfig.github_client_id);
 
   useEffect(() => {
-    if (envConfig?.is_smtp_configured) setSignInStep(ESignUpSteps.EMAIL);
+    if (appConfig?.is_smtp_configured) setSignInStep(ESignUpSteps.EMAIL);
     else setSignInStep(ESignUpSteps.PASSWORD);
-  }, [envConfig?.is_smtp_configured]);
+  }, [appConfig?.is_smtp_configured]);
 
   return (
     <>

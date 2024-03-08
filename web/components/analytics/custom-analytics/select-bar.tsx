@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
 // hooks
 import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "components/analytics";

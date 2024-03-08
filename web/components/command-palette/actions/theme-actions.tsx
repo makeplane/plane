@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { Command } from "cmdk";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
 // hooks

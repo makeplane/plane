@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // components
 import { Tooltip, ControlLink } from "@plane/ui";

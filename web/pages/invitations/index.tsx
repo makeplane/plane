@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useTheme } from "next-themes";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { CheckCircle2 } from "lucide-react";
 // services
 import { WorkspaceService } from "services/workspace.service";

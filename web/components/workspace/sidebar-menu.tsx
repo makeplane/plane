@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Crown } from "lucide-react";
@@ -65,7 +65,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                         })}
                       />
                     }
-                    {!themeStore?.sidebarCollapsed && link.label}
+                    <p className="leading-5">{!themeStore?.sidebarCollapsed && link.label}</p>
                     {!themeStore?.sidebarCollapsed && link.key === "active-cycles" && (
                       <Crown className="h-3.5 w-3.5 text-amber-400" />
                     )}

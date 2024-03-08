@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
@@ -43,11 +43,11 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { captureEvent } = useEventTracker();
   // derived values
-  const isSmtpConfigured = envConfig?.is_smtp_configured;
+  const isSmtpConfigured = appConfig?.is_smtp_configured;
   // form info
   const {
     control,
@@ -211,9 +211,9 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
             disabled={!isValid}
             loading={isSubmitting}
           >
-            {envConfig?.is_smtp_configured ? "Continue" : "Go to workspace"}
+            {appConfig?.is_smtp_configured ? "Continue" : "Go to workspace"}
           </Button>
-          {envConfig && envConfig.is_smtp_configured && (
+          {envConfig && appConfig.is_smtp_configured && (
             <Button
               type="button"
               onClick={handleSendUniqueCode}

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { CyclePeekOverview, CyclesListItem } from "components/cycles";
 import { EmptyState } from "components/empty-state";

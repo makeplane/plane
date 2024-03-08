@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
@@ -205,7 +205,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0"
                     placement="bottom-start"
                   >
-                    {currentProjectCycleIds?.map((cycleId) => <CycleDropdownOption key={cycleId} cycleId={cycleId} />)}
+                    {currentProjectCycleIds?.map((cycleId) => (
+                      <CycleDropdownOption key={cycleId} cycleId={cycleId} />
+                    ))}
                   </CustomMenu>
                 }
               />

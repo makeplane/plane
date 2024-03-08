@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { CalendarDayTile } from "components/issues";
 // helpers

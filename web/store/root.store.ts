@@ -1,10 +1,9 @@
-import { enableStaticRendering } from "mobx-react-lite";
+import { enableStaticRendering } from "mobx-react";
 // root stores
 import { AppRootStore, IAppRootStore } from "./application";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { EstimateStore, IEstimateStore } from "./estimate.store";
-import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IInboxRootStore, InboxRootStore } from "./inbox/root.store";
 import { IIssueRootStore, IssueRootStore } from "./issue/root.store";
@@ -16,14 +15,23 @@ import { IProjectRootStore, ProjectRootStore } from "./project";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IStateStore, StateStore } from "./state.store";
-import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
+
+// independent new store structure
+import { RouterStore, IRouterStore } from "./application/router.store";
+import { CommandPaletteStore, ICommandPaletteStore } from "./application/command-palette.store";
+import { ThemeStore, IThemeStore } from "./application/theme.store";
+
+import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
+
+import { InstanceStore, IInstanceStore } from "./application/instance.store";
+import { IUserStore, UserStore } from "./user";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
   app: IAppRootStore;
-  eventTracker: IEventTrackerStore;
+
   workspaceRoot: IWorkspaceRootStore;
   projectRoot: IProjectRootStore;
   memberRoot: IMemberRootStore;
@@ -40,11 +48,18 @@ export class RootStore {
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
   // independent new store structure
+  router: IRouterStore;
+  commandPalette: ICommandPaletteStore;
+  theme: IThemeStore;
+
+  eventTracker: IEventTrackerStore;
+
+  instance: IInstanceStore;
   user: IUserStore;
 
   constructor() {
     this.app = new AppRootStore(this);
-    this.eventTracker = new EventTrackerStore(this);
+
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this);
@@ -61,6 +76,16 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+
+    // independent new store structure
+    // local data management stores
+    this.router = new RouterStore();
+    this.commandPalette = new CommandPaletteStore();
+    this.theme = new ThemeStore(this);
+
+    this.eventTracker = new EventTrackerStore(this);
+
+    this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
   }
 
@@ -81,7 +106,16 @@ export class RootStore {
     this.mention = new MentionStore(this);
     this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+
     // independent new store structure
+    // local data management stores
+    this.router = new RouterStore();
+    this.commandPalette = new CommandPaletteStore();
+    this.theme = new ThemeStore(this);
+
+    this.eventTracker = new EventTrackerStore(this);
+
+    this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
   }
 }

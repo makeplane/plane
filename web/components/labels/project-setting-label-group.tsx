@@ -6,7 +6,7 @@ import {
   DraggableStateSnapshot,
   Droppable,
 } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Disclosure, Transition } from "@headlessui/react";
 
 // store

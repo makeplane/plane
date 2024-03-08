@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // components
 import { ISSUE_DISPLAY_PROPERTIES } from "constants/issue";
 import { IIssueDisplayProperties } from "@plane/types";

@@ -1,6 +1,6 @@
 import { MutableRefObject, memo } from "react";
 import { Draggable, DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { Tooltip, ControlLink } from "@plane/ui";
 import RenderIfVisible from "components/core/render-if-visible-HOC";

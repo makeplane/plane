@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
@@ -102,8 +102,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving"
                         : "Leave"
                       : isRemoving
-                        ? "Removing"
-                        : "Remove"}
+                      ? "Removing"
+                      : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

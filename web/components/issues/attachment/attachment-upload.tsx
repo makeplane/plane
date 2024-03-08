@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 // hooks
 // constants
@@ -22,7 +22,7 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
   const { workspaceSlug, disabled = false, handleAttachmentOperations } = props;
   // store hooks
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   // states
   const [isLoading, setIsLoading] = useState(false);
@@ -48,12 +48,12 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     onDrop,
-    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: appConfig?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
   });
 
-  const maxFileSize = envConfig?.file_size_limit ?? MAX_FILE_SIZE;
+  const maxFileSize = appConfig?.file_size_limit ?? MAX_FILE_SIZE;
 
   const fileError =
     fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
@@ -36,7 +36,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
 
@@ -47,7 +47,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: appConfig?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
   });
 

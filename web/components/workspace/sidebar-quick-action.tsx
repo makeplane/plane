@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
 // components
 import { CreateUpdateIssueModal } from "components/issues";

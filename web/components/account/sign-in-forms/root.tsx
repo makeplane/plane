@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 // hooks
 import {
@@ -32,11 +32,11 @@ export const SignInRoot = observer(() => {
   const { handleRedirection } = useSignInRedirection();
   // mobx store
   const {
-    config: { envConfig },
+    config: { appConfig },
   } = useApplication();
   const { captureEvent } = useEventTracker();
   // derived values
-  const isSmtpConfigured = envConfig?.is_smtp_configured;
+  const isSmtpConfigured = appConfig?.is_smtp_configured;
 
   // step 1 submit handler- email verification
   const handleEmailVerification = (isPasswordAutoset: boolean) => {
@@ -55,7 +55,7 @@ export const SignInRoot = observer(() => {
     await handleRedirection();
   };
 
-  const isOAuthEnabled = envConfig && (envConfig.google_client_id || envConfig.github_client_id);
+  const isOAuthEnabled = envConfig && (appConfig.google_client_id || appConfig.github_client_id);
 
   useEffect(() => {
     if (isSmtpConfigured) setSignInStep(ESignInSteps.EMAIL);
@@ -107,10 +107,11 @@ export const SignInRoot = observer(() => {
           )}
         </>
       </div>
+
       {isOAuthEnabled &&
         (signInStep === ESignInSteps.EMAIL || (!isSmtpConfigured && signInStep === ESignInSteps.PASSWORD)) && (
           <>
-            <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_in" />
+            <OAuthOptions type="sign_in" />
             <p className="mt-6 text-center text-xs text-onboarding-text-300">
               Don{"'"}t have an account?{" "}
               <Link
