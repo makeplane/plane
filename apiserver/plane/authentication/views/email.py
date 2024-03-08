@@ -14,12 +14,24 @@ from plane.authentication.utils.login import user_login
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
+from plane.license.models import Instance
 
 
 class SignInAuthEndpoint(View):
 
     def post(self, request):
         referer = request.META.get("HTTP_REFERER", "/")
+
+        # Check instance configuration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "Instance is not configured"})
+            )
+            return HttpResponseRedirect(url)
+
         # set the referer as session to redirect after login
         email = request.POST.get("email", False)
         password = request.POST.get("password", False)
@@ -50,8 +62,8 @@ class SignInAuthEndpoint(View):
             )
             user = provider.authenticate()
             user_login(request=request, user=user)
-            process_workspace_project_invitations(user=user)
-            return HttpResponseRedirect(referer)
+            url = referer + "?" + urlencode({"success": "true"})
+            return HttpResponseRedirect(url)
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})
             return HttpResponseRedirect(url)
@@ -61,6 +73,16 @@ class SignUpAuthEndpoint(View):
 
     def post(self, request):
         referer = request.META.get("HTTP_REFERER", "/")
+
+        # Check instance configuration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            url = (
+                referer
+                + "?"
+                + urlencode({"error": "Instance is not configured"})
+            )
+            return HttpResponseRedirect(url)
 
         email = request.POST.get("email", False)
         password = request.POST.get("password", False)
@@ -90,7 +112,8 @@ class SignUpAuthEndpoint(View):
             user = provider.authenticate()
             user_login(request=request, user=user)
             process_workspace_project_invitations(user=user)
-            return HttpResponseRedirect(referer)
+            url = referer + "?" + urlencode({"success": "true"})
+            return HttpResponseRedirect(url)
         except AuthenticationException as e:
             url = referer + "?" + urlencode({"error": str(e)})
             return HttpResponseRedirect(url)

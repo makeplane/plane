@@ -1,11 +1,16 @@
 # Python imports
 import json
+import os
 import random
 import string
+
+# Django imports
+from django.core.exceptions import ImproperlyConfigured
 
 # Module imports
 from plane.authentication.adapter.base import AuthenticationException
 from plane.authentication.adapter.credential import CredentialAdapter
+from plane.license.utils.instance_value import get_configuration_value
 from plane.settings.redis import redis_instance
 
 
@@ -19,6 +24,31 @@ class MagicCodeProvider(CredentialAdapter):
         key,
         code=None,
     ):
+
+        (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD) = (
+            get_configuration_value(
+                [
+                    {
+                        "key": "EMAIL_HOST",
+                        "default": os.environ.get("EMAIL_HOST"),
+                    },
+                    {
+                        "key": "EMAIL_HOST_USER",
+                        "default": os.environ.get("EMAIL_HOST_USER"),
+                    },
+                    {
+                        "key": "EMAIL_HOST_PASSWORD",
+                        "default": os.environ.get("EMAIL_HOST_PASSWORD"),
+                    },
+                ]
+            )
+        )
+
+        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
+            raise ImproperlyConfigured(
+                "SMTP is not configured. Please contact the support team."
+            )
+
         super().__init__(request, self.provider)
         self.key = key
         self.code = code
