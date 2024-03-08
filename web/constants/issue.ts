@@ -427,3 +427,17 @@ export const groupReactionEmojis = (reactions: any) => {
 
   return _groupedEmojis;
 };
+
+
+export enum IssueGroupByOptions {
+  "state" = "state_id",
+  "priority" = "priority",
+  "labels" = "labels__id",
+  "state_detail.group" = "state__group",
+  "assignees" = "assignees__id",
+  "cycle" = "cycle_id",
+  "module" = "modules__id",
+  "target_date" = "target_date",
+  "project" = "project_id",
+  "created_by" = "created_by",
+}

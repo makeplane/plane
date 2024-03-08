@@ -4,15 +4,15 @@ import { TIssueLink } from "./issue_link";
 import { TIssueReaction } from "./issue_reaction";
 
 // new issue structure types
-export type TIssue = {
+
+export type TBaseIssue = {
   id: string;
   sequence_id: number;
   name: string;
-  description_html: string;
   sort_order: number;
 
-  state_id: string;
-  priority: TIssuePriorities;
+  state_id: string | null;
+  priority: TIssuePriorities | null;
   label_ids: string[];
   assignee_ids: string[];
   estimate_point: number | null;
@@ -21,10 +21,10 @@ export type TIssue = {
   attachment_count: number;
   link_count: number;
 
-  project_id: string;
+  project_id: string | null;
   parent_id: string | null;
   cycle_id: string | null;
-  module_ids: string[] | null;
+  module_ids: string[];
 
   created_at: string;
   updated_at: string;
@@ -37,9 +37,14 @@ export type TIssue = {
   updated_by: string;
 
   is_draft: boolean;
+};
+
+export type TIssue = TBaseIssue & {
+  description_html?: string;
   is_subscribed?: boolean;
 
   parent?: partial<TIssue>;
+
   issue_reactions?: TIssueReaction[];
   issue_attachment?: TIssueAttachment[];
   issue_link?: TIssueLink[];
@@ -50,4 +55,25 @@ export type TIssue = {
 
 export type TIssueMap = {
   [issue_id: string]: TIssue;
+};
+
+type TIssueResponseResults =
+  | TBaseIssue[]
+  | {
+      [key: string]: {
+        results: TBaseIssue[];
+        total_results: number;
+      };
+    };
+
+export type TIssuesResponse = {
+  grouped_by: string;
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  prev_page_results: boolean;
+  count: number;
+  total_pages: number;
+  extra_stats: null;
+  results: TIssueResponseResults;
 };

@@ -14,20 +14,22 @@ import {
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
-export interface IModuleIssuesFilter {
-  // observables
-  filters: Record<string, IIssueFilters>; // Record defines moduleId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+export interface IModuleIssuesFilter extends IBaseIssueFilterStore {
+  //helper actions
+  getFilterParams: (
+    options: IssuePaginationOptions,
+    cursor?: string
+  ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
   updateFilters: (
@@ -95,6 +97,22 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     return filteredRouteParams;
   }
 
+  getFilterParams = computedFn((options: IssuePaginationOptions, cursor: string | undefined) => {
+    const filterParams = this.appliedFilters;
+
+    const paginationOptions: Partial<Record<TIssueParams, string | boolean>> = {
+      ...filterParams,
+      cursor: cursor ? cursor : `${options.perPageCount}:0:0`,
+      per_page: options.perPageCount.toString(),
+    };
+
+    if (options.groupedBy) {
+      paginationOptions.group_by = options.groupedBy;
+    }
+
+    return paginationOptions;
+  });
+
   fetchFilters = async (workspaceSlug: string, projectId: string, moduleId: string) => {
     try {
       const _filters = await this.issueFilterService.fetchModuleIssueFilters(workspaceSlug, projectId, moduleId);
@@ -160,7 +178,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           });
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.moduleIssues.fetchIssues(
+          this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation",
@@ -204,7 +222,12 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           });
 
           if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.moduleIssues.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
+            this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
+              workspaceSlug,
+              projectId,
+              "mutation",
+              moduleId
+            );
 
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
             display_filters: _filters.displayFilters,

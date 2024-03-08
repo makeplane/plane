@@ -1,53 +1,41 @@
 import concat from "lodash/concat";
 import pull from "lodash/pull";
-import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
+import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 // services
-import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // types
-import { TIssue, TLoader, TGroupedIssues, TSubGroupedIssues, TUnGroupedIssues, ViewFlags } from "@plane/types";
-import { IssueHelperStore } from "../helpers/issue-helper.store";
+import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse } from "@plane/types";
 import { IIssueRootStore } from "../root.store";
+import { IModuleIssuesFilter } from "./filter.store";
 
-export interface IModuleIssues {
-  // observable
-  loader: TLoader;
-  issues: { [module_id: string]: string[] };
+export interface IModuleIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
-  // computed
-  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
     loadType: TLoader,
+    options: IssuePaginationOptions,
     moduleId: string
-  ) => Promise<TIssue[] | undefined>;
-  createIssue: (
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<TIssue>,
+    loadType: TLoader,
     moduleId: string
-  ) => Promise<TIssue | undefined>;
-  updateIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
-    moduleId: string
-  ) => Promise<void>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => Promise<void>;
-  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => Promise<void>;
-  quickAddIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    moduleId?: string | undefined
-  ) => Promise<TIssue | undefined>;
+  ) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<TIssuesResponse | undefined>;
+
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => Promise<TIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue | undefined>;
+  removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+
   addIssuesToModule: (
     workspaceSlug: string,
     projectId: string,
@@ -71,192 +59,98 @@ export interface IModuleIssues {
   removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
 }
 
-export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
-  loader: TLoader = "init-loader";
-  issues: { [module_id: string]: string[] } = {};
+export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
+  moduleId: string | undefined = undefined;
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
-  // root store
-  rootIssueStore: IIssueRootStore;
   // service
   moduleService;
-  issueService;
+  // filter store
+  issueFilterStore: IModuleIssuesFilter;
 
-  constructor(_rootStore: IIssueRootStore) {
-    super(_rootStore);
+  constructor(_rootStore: IIssueRootStore, issueFilterStore: IModuleIssuesFilter) {
+    super(_rootStore, issueFilterStore);
 
     makeObservable(this, {
       // observable
-      loader: observable.ref,
-      issues: observable,
-      // computed
-      groupedIssueIds: computed,
+      moduleId: observable.ref,
       // action
       fetchIssues: action,
-      createIssue: action,
-      updateIssue: action,
-      removeIssue: action,
-      archiveIssue: action,
-      quickAddIssue: action,
+
       addIssuesToModule: action,
       removeIssuesFromModule: action,
       addModulesToIssue: action,
       removeModulesFromIssue: action,
       removeIssueFromModule: action,
     });
-
-    this.rootIssueStore = _rootStore;
-    this.issueService = new IssueService();
+    // filter store
+    this.issueFilterStore = issueFilterStore;
+    // service
     this.moduleService = new ModuleService();
-  }
-
-  get groupedIssueIds() {
-    const moduleId = this.rootIssueStore?.moduleId;
-    if (!moduleId) return undefined;
-
-    const displayFilters = this.rootIssueStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
-    if (!displayFilters) return undefined;
-
-    const subGroupBy = displayFilters?.sub_group_by;
-    const groupBy = displayFilters?.group_by;
-    const orderBy = displayFilters?.order_by;
-    const layout = displayFilters?.layout;
-
-    const moduleIssueIds = this.issues[moduleId];
-    if (!moduleIssueIds) return;
-
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(moduleIssueIds, "un-archived");
-    if (!_issues) return [];
-
-    let issues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = [];
-
-    if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, _issues);
-      else issues = this.unGroupedIssues(orderBy, _issues);
-    } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues);
-      else issues = this.groupedIssues(groupBy, orderBy, _issues);
-    } else if (layout === "calendar") issues = this.groupedIssues("target_date", "target_date", _issues, true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", _issues);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", _issues);
-
-    return issues;
   }
 
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
-    loadType: TLoader = "init-loader",
+    loadType: TLoader,
+    options: IssuePaginationOptions,
     moduleId: string
   ) => {
     try {
-      this.loader = loadType;
-
-      const params = this.rootIssueStore?.moduleIssuesFilter?.appliedFilters;
-      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
       runInAction(() => {
-        set(
-          this.issues,
-          [moduleId],
-          response.map((issue) => issue.id)
-        );
-        this.loader = undefined;
+        this.loader = loadType;
       });
+      this.clear();
 
-      this.rootIssueStore.issues.addIssue(response);
+      this.moduleId = moduleId;
 
+      const params = this.issueFilterStore?.getFilterParams(options);
+      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
+
+      this.onfetchIssues(response, options);
       return response;
     } catch (error) {
-      console.error(error);
       this.loader = undefined;
       throw error;
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => {
+  fetchNextIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
+    if (!this.paginationOptions) return;
     try {
-      const response = await this.rootIssueStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+      this.loader = "pagination";
 
+      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions);
+      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
+
+      this.onfetchNexIssues(response);
       return response;
     } catch (error) {
+      this.loader = undefined;
       throw error;
     }
   };
 
-  updateIssue = async (
+  fetchIssuesWithExistingPagination = async (
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
-    data: Partial<TIssue>,
+    loadType: TLoader,
     moduleId: string
   ) => {
-    try {
-      await this.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-    } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
-      throw error;
-    }
+    if (!this.paginationOptions) return;
+    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, moduleId);
   };
 
-  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => {
+  override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, moduleId: string) => {
     try {
-      await this.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      const response = await super.createIssue(workspaceSlug, projectId, data, moduleId, false);
+      await this.addIssuesToModule(workspaceSlug, projectId, moduleId, [response.id], false);
+      this.moduleId === moduleId && this.addIssue(response);
+
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
-      const issueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === issueId);
-      if (issueIndex >= 0)
-        runInAction(() => {
-          this.issues[moduleId].splice(issueIndex, 1);
-        });
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string, moduleId: string) => {
-    try {
-      await this.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
-      runInAction(() => {
-        pull(this.issues[moduleId], issueId);
-      });
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  quickAddIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    data: TIssue,
-    moduleId: string | undefined = undefined
-  ) => {
-    try {
-      if (!moduleId) throw new Error("Module Id is required");
-
-      runInAction(() => {
-        this.issues[moduleId].push(data.id);
-        this.rootIssueStore.issues.addIssue([data]);
-      });
-
-      const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
-      this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
-
-      const quickAddIssueIndex = this.issues[moduleId].findIndex((_issueId) => _issueId === data.id);
-      if (quickAddIssueIndex >= 0)
-        runInAction(() => {
-          this.issues[moduleId].splice(quickAddIssueIndex, 1);
-          this.rootIssueStore.issues.removeIssue(data.id);
-        });
 
       return response;
     } catch (error) {
@@ -279,18 +173,20 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
       if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
 
       runInAction(() => {
-        update(this.issues, moduleId, (moduleIssueIds = []) => {
-          if (!moduleIssueIds) return [...issueIds];
-          else return uniq(concat(moduleIssueIds, issueIds));
-        });
+        this.moduleId === moduleId &&
+          update(this, "issues", (moduleIssueIds = []) => {
+            if (!moduleIssueIds) return [...issueIds];
+            else return uniq(concat(moduleIssueIds, issueIds));
+          });
       });
 
       issueIds.forEach((issueId) => {
-        update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) => {
+        update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) => {
           if (issueModuleIds.includes(moduleId)) return issueModuleIds;
           else return uniq(concat(issueModuleIds, [moduleId]));
         });
       });
+
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
     } catch (error) {
       throw error;
@@ -299,27 +195,29 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
   removeIssuesFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
     try {
-      runInAction(() => {
-        issueIds.forEach((issueId) => {
-          pull(this.issues[moduleId], issueId);
-        });
-      });
-
-      runInAction(() => {
-        issueIds.forEach((issueId) => {
-          update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) => {
-            if (issueModuleIds.includes(moduleId)) return pull(issueModuleIds, moduleId);
-            else return uniq(concat(issueModuleIds, [moduleId]));
-          });
-        });
-      });
-
       const response = await this.moduleService.removeIssuesFromModuleBulk(
         workspaceSlug,
         projectId,
         moduleId,
         issueIds
       );
+
+      runInAction(() => {
+        this.moduleId === moduleId &&
+          issueIds.forEach((issueId) => {
+            this.issues && pull(this.issues, issueId);
+          });
+      });
+
+      runInAction(() => {
+        issueIds.forEach((issueId) => {
+          update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) => {
+            if (issueModuleIds.includes(moduleId)) return pull(issueModuleIds, moduleId);
+            else return uniq(concat(issueModuleIds, [moduleId]));
+          });
+        });
+      });
+
       this.rootIssueStore.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);
 
       return response;
@@ -336,12 +234,13 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
 
       runInAction(() => {
         moduleIds.forEach((moduleId) => {
-          update(this.issues, moduleId, (moduleIssueIds = []) => {
-            if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
-            else return uniq(concat(moduleIssueIds, [issueId]));
-          });
+          this.moduleId === moduleId &&
+            update(this, "issues", (moduleIssueIds = []) => {
+              if (moduleIssueIds.includes(issueId)) return moduleIssueIds;
+              else return uniq(concat(moduleIssueIds, [issueId]));
+            });
         });
-        update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
+        update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
           uniq(concat(issueModuleIds, moduleIds))
         );
       });
@@ -356,11 +255,12 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
     try {
       runInAction(() => {
         moduleIds.forEach((moduleId) => {
-          update(this.issues, moduleId, (moduleIssueIds = []) => {
-            if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
-            else return uniq(concat(moduleIssueIds, [issueId]));
-          });
-          update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
+          this.moduleId === moduleId &&
+            update(this, "issues", (moduleIssueIds = []) => {
+              if (moduleIssueIds.includes(issueId)) return pull(moduleIssueIds, issueId);
+              else return uniq(concat(moduleIssueIds, [issueId]));
+            });
+          update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
             pull(issueModuleIds, moduleId)
           );
         });
@@ -382,8 +282,8 @@ export class ModuleIssues extends IssueHelperStore implements IModuleIssues {
   removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
     try {
       runInAction(() => {
-        pull(this.issues[moduleId], issueId);
-        update(this.rootStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
+        this.issues && this.moduleId === this.moduleId && pull(this.issues, issueId);
+        update(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"], (issueModuleIds = []) =>
           pull(issueModuleIds, moduleId)
         );
       });

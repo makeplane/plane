@@ -14,20 +14,22 @@ import {
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
-export interface IArchivedIssuesFilter {
-  // observables
-  filters: Record<string, IIssueFilters>; // Record defines projectId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+export interface IArchivedIssuesFilter extends IBaseIssueFilterStore {
+  //helper actions
+  getFilterParams: (
+    options: IssuePaginationOptions,
+    cursor?: string
+  ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateFilters: (
@@ -92,6 +94,22 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
     return filteredRouteParams;
   }
 
+  getFilterParams = computedFn((options: IssuePaginationOptions, cursor: string | undefined) => {
+    const filterParams = this.appliedFilters;
+
+    const paginationOptions: Partial<Record<TIssueParams, string | boolean>> = {
+      ...filterParams,
+      cursor: cursor ? cursor : `${options.perPageCount}:0:0`,
+      per_page: options.perPageCount.toString(),
+    };
+
+    if (options.groupedBy) {
+      paginationOptions.group_by = options.groupedBy;
+    }
+
+    return paginationOptions;
+  });
+
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
     try {
       const _filters = this.handleIssuesLocalFilters.get(
@@ -150,7 +168,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
           });
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.archivedIssues.fetchIssues(
+          this.rootIssueStore.archivedIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation"
@@ -193,7 +211,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
           });
 
           if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.archivedIssues.fetchIssues(workspaceSlug, projectId, "mutation");
+            this.rootIssueStore.archivedIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
 
           this.handleIssuesLocalFilters.set(EIssuesStoreType.ARCHIVED, type, workspaceSlug, projectId, undefined, {
             display_filters: _filters.displayFilters,

@@ -1,9 +1,5 @@
 import isEmpty from "lodash/isEmpty";
 // types
-// constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-// lib
-import { storage } from "lib/local-storage";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -14,6 +10,10 @@ import {
   TIssueParams,
   TStaticViewTypes,
 } from "@plane/types";
+// constants
+import { EIssueFilterType, EIssuesStoreType, IssueGroupByOptions } from "constants/issue";
+// lib
+import { storage } from "lib/local-storage";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -21,6 +21,14 @@ interface ILocalStoreIssueFilters {
   viewId: string | undefined; // It can be projectId, moduleId, cycleId, projectViewId
   userId: string | undefined;
   filters: IIssueFilters;
+}
+
+export interface IBaseIssueFilterStore {
+  // observables
+  filters: Record<string, IIssueFilters>;
+  //computed
+  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+  issueFilters: IIssueFilters | undefined;
 }
 
 export interface IIssueFilterHelperStore {
@@ -78,9 +86,11 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       module: filters?.module || undefined,
       start_date: filters?.start_date || undefined,
       target_date: filters?.target_date || undefined,
-      project: filters.project || undefined,
-      subscriber: filters.subscriber || undefined,
+      project: filters?.project || undefined,
+      subscriber: filters?.subscriber || undefined,
       // display filters
+      group_by: displayFilters?.group_by ? IssueGroupByOptions[displayFilters.group_by] : undefined,
+      order_by: displayFilters?.order_by || undefined,
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,
     };

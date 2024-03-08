@@ -2,7 +2,14 @@
 import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 // type
-import type { TIssue, IIssueDisplayProperties, TIssueLink, TIssueSubIssues, TIssueActivity } from "@plane/types";
+import type {
+  TIssue,
+  IIssueDisplayProperties,
+  TIssueLink,
+  TIssueSubIssues,
+  TIssueActivity,
+  TIssuesResponse,
+} from "@plane/types";
 // helper
 
 export class IssueService extends APIService {
@@ -10,7 +17,7 @@ export class IssueService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createIssue(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async createIssue(workspaceSlug: string, projectId: string, data: Partial<TIssue>): Promise<TIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -18,7 +25,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssue[]> {
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
       params: queries,
     })

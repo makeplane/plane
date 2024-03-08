@@ -11,6 +11,7 @@ import type {
   IUserProfileProjectSegregation,
   IUserSettings,
   IUserEmailNotificationSettings,
+  TIssuesResponse,
 } from "@plane/types";
 // helpers
 
@@ -178,7 +179,7 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<TIssue[]> {
+  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<TIssuesResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
       params,
     })

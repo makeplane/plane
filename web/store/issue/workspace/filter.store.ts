@@ -15,21 +15,19 @@ import {
   IIssueFilters,
   TIssueParams,
   TStaticViewTypes,
+  IssuePaginationOptions,
 } from "@plane/types";
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
 import { IIssueRootStore } from "../root.store";
+import { computedFn } from "mobx-utils";
 // constants
 // services
 
 type TWorkspaceFilters = "all-issues" | "assigned" | "created" | "subscribed" | string;
-export interface IWorkspaceIssuesFilter {
-  // observables
-  filters: Record<TWorkspaceFilters, IIssueFilters>; // Record defines viewId as key and IIssueFilters as value
-  // computed
-  issueFilters: IIssueFilters | undefined;
-  appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
+
+export interface IWorkspaceIssuesFilter extends IBaseIssueFilterStore {
   // fetch action
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
   updateFilters: (
@@ -42,6 +40,11 @@ export interface IWorkspaceIssuesFilter {
   //helper action
   getIssueFilters: (viewId: string | undefined) => IIssueFilters | undefined;
   getAppliedFilters: (viewId: string) => Partial<Record<TIssueParams, string | boolean>> | undefined;
+  getFilterParams: (
+    viewId: string,
+    options: IssuePaginationOptions,
+    cursor?: string
+  ) => Partial<Record<TIssueParams, string | boolean>>;
 }
 
 export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWorkspaceIssuesFilter {
@@ -63,9 +66,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       // fetch actions
       fetchFilters: action,
       updateFilters: action,
-      // helper actions
-      getIssueFilters: action,
-      getAppliedFilters: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -101,6 +101,22 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
     return filteredRouteParams;
   };
+
+  getFilterParams = computedFn((viewId: string, options: IssuePaginationOptions, cursor: string | undefined) => {
+    const filterParams = this.getAppliedFilters(viewId);
+
+    const paginationOptions: Partial<Record<TIssueParams, string | boolean>> = {
+      ...filterParams,
+      cursor: cursor ? cursor : `${options.perPageCount}:0:0`,
+      per_page: options.perPageCount.toString(),
+    };
+
+    if (options.groupedBy) {
+      paginationOptions.group_by = options.groupedBy;
+    }
+
+    return paginationOptions;
+  });
 
   get issueFilters() {
     const viewId = this.rootIssueStore.globalViewId;
@@ -182,7 +198,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           });
           const appliedFilters = _filters.filters || {};
           const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.workspaceIssues.fetchIssues(
+          this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             viewId,
             isEmpty(filteredFilters) ? "init-loader" : "mutation"
@@ -222,7 +238,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           });
 
           if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.workspaceIssues.fetchIssues(workspaceSlug, viewId, "mutation");
+            this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
 
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
             this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
