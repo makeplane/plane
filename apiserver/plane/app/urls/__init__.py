@@ -1,7 +1,6 @@
 from .analytic import urlpatterns as analytic_urls
 from .api import urlpatterns as api_urls
 from .asset import urlpatterns as asset_urls
-from .config import urlpatterns as configuration_urls
 from .cycle import urlpatterns as cycle_urls
 from .dashboard import urlpatterns as dashboard_urls
 from .estimate import urlpatterns as estimate_urls
@@ -22,7 +21,6 @@ from .workspace import urlpatterns as workspace_urls
 urlpatterns = [
     *analytic_urls,
     *asset_urls,
-    *configuration_urls,
     *cycle_urls,
     *dashboard_urls,
     *estimate_urls,
