@@ -17,7 +17,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 
 ## Third Party Imports
+# Third party imports
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -33,6 +35,33 @@ from plane.authentication.utils.workspace_project_join import (
 )
 from plane.bgtasks.forgot_password_task import forgot_password
 from plane.db.models import User
+
+
+class EmailCheckEndpoint(APIView):
+
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        email = request.data.get("email", False)
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            return Response(
+                {
+                    "existing_user": True,
+                    "is_password_autoset": existing_user.is_password_autoset,
+                },
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {
+                "existing_user": False,
+                "is_password_autoset": False,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class SignOutAuthEndpoint(View):
