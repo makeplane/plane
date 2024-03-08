@@ -12,10 +12,10 @@ import { PageHead } from "components/core";
 import { CyclesHeader } from "components/headers";
 import {
   CyclesView,
-  ActiveCycleDetails,
   CycleCreateUpdateModal,
   CyclesViewHeader,
   CycleAppliedFiltersList,
+  ActiveCycleRoot,
 } from "components/cycles";
 import { EmptyState } from "components/empty-state";
 // ui
@@ -24,10 +24,10 @@ import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from
 import { calculateTotalFilters } from "helpers/filter.helper";
 // types
 import { NextPageWithLayout } from "lib/types";
+import { TCycleFilters } from "@plane/types";
 // constants
 import { CYCLE_TABS_LIST } from "constants/cycle";
 import { EmptyStateType } from "constants/empty-state";
-import { TCycleFilters } from "@plane/types";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // states
@@ -122,7 +122,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             )}
             <Tab.Panels as={Fragment}>
               <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto p-4 sm:p-5">
-                <ActiveCycleDetails workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+                <ActiveCycleRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Tab.Panel>
               <Tab.Panel as="div" className="h-full overflow-y-auto">
                 {cycleTab && cycleLayout && (

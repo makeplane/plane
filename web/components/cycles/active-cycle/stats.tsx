@@ -134,7 +134,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab.Panels>
       ) : (
         <div className="mt-4 grid place-items-center text-center text-sm text-custom-text-200">
-          There are no high priority issues present in this cycle.
+          There are no issues present in this cycle.
         </div>
       )}
     </Tab.Group>

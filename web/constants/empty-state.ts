@@ -286,7 +286,7 @@ const emptyStateDetails = {
   },
   "project-cycle-active": {
     key: "project-cycle-active",
-    title: "No active cycles",
+    title: "No active cycle",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
