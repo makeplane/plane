@@ -60,6 +60,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) =>
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}
+        maxHeight="lg"
         closeOnSelect
         ellipsis
       >
