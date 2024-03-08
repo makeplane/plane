@@ -1,10 +1,14 @@
 import { KeyboardShortcutCommand } from "@tiptap/core";
-import { Selection, TextSelection } from "prosemirror-state";
+import { findParentNodeOfType } from "src/lib/utils";
 
 export const insertLineBelowTableAction: KeyboardShortcutCommand = ({ editor }) => {
-  const { selection, tr, schema } = editor.state;
+  // Check if the current selection or the closest node is a table
+  if (!editor.isActive("table")) return false;
 
-  // Check if the selection is inside a table and get the table node and its position
+  // Get the current selection
+  const { selection } = editor.state;
+
+  // Find the table node and its position
   const tableNode = findParentNodeOfType(selection, "table");
   if (!tableNode) return false;
 
@@ -19,49 +23,26 @@ export const insertLineBelowTableAction: KeyboardShortcutCommand = ({ editor }) 
 
   if (!selectionInLastRow) return false;
 
-  // Check for an existing empty node immediately after the table
+  // Calculate the position immediately after the table
   const nextNodePos = tablePos + table.nodeSize;
-  const nextNode = tr.doc.nodeAt(nextNodePos);
 
-  // If the next node is an empty paragraph, move the cursor there
+  // Check for an existing node immediately after the table
+  const nextNode = editor.state.doc.nodeAt(nextNodePos);
+
   if (nextNode && nextNode.type.name === "paragraph") {
-    const newPos = nextNodePos + 1; // Position inside the existing paragraph
-    const newSelection = TextSelection.create(tr.doc, newPos);
-    tr.setSelection(newSelection);
-  } else if (nextNode) {
-    return false;
+    // If the next node is an paragraph, move the cursor there
+    const endOfParagraphPos = nextNodePos + nextNode.nodeSize - 1;
+    editor.chain().setTextSelection(endOfParagraphPos).run();
+  } else if (!nextNode) {
+    // If the next node doesn't exist i.e. we're at the end of the document, create and insert a new empty node there
+    editor.chain().insertContentAt(nextNodePos, { type: "paragraph" }).run();
+    editor
+      .chain()
+      .setTextSelection(nextNodePos + 1)
+      .run();
   } else {
-    // If there's no node, or it's not an empty paragraph, insert a new paragraph and move the cursor there
-    // tr.insert(nextNodePos, schema.nodes.paragraph.create());
-    // const newPos = nextNodePos + 1; // Position after the inserted paragraph node
-    // const newSelection = TextSelection.create(tr.doc, newPos);
-    // tr.setSelection(newSelection);
-    tr.insert(nextNodePos, schema.nodes.paragraph.create());
-    editor.view.dispatch(tr); // Dispatch the transaction to insert the paragraph
-    const newPos = tr.mapping.map(nextNodePos + 1); // Accurately map the new position
-    // editor.chain().focus().setTextSelection(newPos).run();
-    editor.commands.focus("end");
-    // const newSelection = TextSelection.create(editor.state.doc, newPos); // Create a new selection at the mapped position
-    // editor.state.tr.setSelection(newSelection).scrollIntoView(); // Set the new selection and ensure it's visible
-    // editor.view.dispatch(editor.state.tr); // Dispatch the updated transaction
+    return false;
   }
 
-  if (tr.docChanged) {
-    return true;
-  }
-
-  return false;
+  return true;
 };
-
-// Helper function to find the parent node of a specific type
-export function findParentNodeOfType(selection: Selection, typeName: string) {
-  let depth = selection.$anchor.depth;
-  while (depth > 0) {
-    const node = selection.$anchor.node(depth);
-    if (node.type.name === typeName) {
-      return { node, pos: selection.$anchor.start(depth) - 1 };
-    }
-    depth--;
-  }
-  return null;
-}
