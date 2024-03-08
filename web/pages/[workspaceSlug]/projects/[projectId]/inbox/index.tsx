@@ -1,4 +1,4 @@
-import { ReactElement, useRef } from "react";
+import { ReactElement, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -30,35 +30,34 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   if (!workspaceSlug || !projectId) return null;
   // store
   const {
-    projectInboxIssues,
-    projectInboxIssuePaginationInfo: paginationInfo,
+    inboxIssues,
+    inboxIssuesArray,
+    inboxIssuePaginationInfo: paginationInfo,
     fetchInboxIssues,
-    projectInboxFilters,
+    fetchInboxIssuesNextPage,
   } = useProjectInbox();
   const { currentProjectDetails } = useProject();
   // fetching inbox issues
-  useSWR(`PROJECT_INBOX_ISSUES_${projectId}_`, () =>
-    fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), {
-      per_page: 10,
-    })
-  );
+  useSWR(`PROJECT_INBOX_ISSUES_${projectId}_`, () => fetchInboxIssues(workspaceSlug.toString(), projectId.toString()), {
+    revalidateOnFocus: false,
+  });
+
+  const fetchNextPages = useCallback(() => {
+    console.log("loading more");
+    fetchInboxIssuesNextPage(workspaceSlug.toString(), projectId.toString());
+  }, [fetchInboxIssuesNextPage, projectId, workspaceSlug]);
+
   // page observer
   const isVisible = useIntersectionObserver({
     containerRef,
     elementRef,
-    callback: () => {
-      console.log("loading more");
-      // fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), {
-      //   ...projectInboxFilters,
-      //   ...(paginationInfo?.next_cursor ? { cursor: paginationInfo.next_cursor } : 0),
-      //   per_page: 10,
-      // });
-    },
+    callback: fetchNextPages,
+    rootMargin: "20%",
   });
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
 
-  if (!projectInboxIssues || !currentProjectDetails) {
+  if (!inboxIssues || !currentProjectDetails) {
     return (
       <div className="flex h-full flex-col">
         <InboxLayoutLoader />
@@ -66,9 +65,11 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     );
   }
 
-  if (!inboxIssueId) {
-    router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${projectInboxIssues?.[0]?.issue.id}`);
-  }
+  console.log("inboxIssues", inboxIssues);
+
+  // if (!inboxIssueId) {
+  //   router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${inboxIssues?.[0]?.issue.id}`);
+  // }
 
   console.log("isVisible", isVisible);
   console.log("paginationInfo", paginationInfo);
@@ -98,13 +99,15 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
                   workspaceSlug={workspaceSlug.toString()}
                   projectId={projectId.toString()}
                   projectIdentifier={currentProjectDetails?.identifier}
-                  inboxIssues={projectInboxIssues}
+                  inboxIssues={inboxIssuesArray}
                 />
                 <div className="mt-4" ref={elementRef}>
-                  <Loader className="mx-auto w-full space-y-4 pb-4">
-                    <Loader.Item height="64px" width="w-100" />
-                    <Loader.Item height="64px" width="w-100" />
-                  </Loader>
+                  {paginationInfo?.next_page_results && (
+                    <Loader className="mx-auto w-full space-y-4 pb-4">
+                      <Loader.Item height="64px" width="w-100" />
+                      <Loader.Item height="64px" width="w-100" />
+                    </Loader>
+                  )}
                 </div>
               </div>
             </div>

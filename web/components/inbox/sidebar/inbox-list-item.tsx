@@ -28,18 +28,18 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
 
   const issue = inboxIssue.issue;
 
-  useEffect(() => {
-    if (issue.id === inboxIssueId) {
-      setTimeout(() => {
-        const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
-        if (issueItemCard)
-          issueItemCard.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-      }, 200);
-    }
-  }, [inboxIssueId, issue.id]);
+  // useEffect(() => {
+  //   if (issue.id === inboxIssueId) {
+  //     setTimeout(() => {
+  //       const issueItemCard = document.getElementById(`inbox-issue-list-item-${issue.id}`);
+  //       if (issueItemCard)
+  //         issueItemCard.scrollIntoView({
+  //           behavior: "smooth",
+  //           block: "center",
+  //         });
+  //     }, 200);
+  //   }
+  // }, [inboxIssueId, issue.id]);
 
   return (
     <>

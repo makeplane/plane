@@ -65,7 +65,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     reset,
     watch,
     getValues,
-    setValue,
   } = useForm<Partial<TIssue>>({ defaultValues });
   const issueName = watch("name");
 
@@ -234,7 +233,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             {envConfig?.has_openai_configured && (
                               <GptAssistantPopover
                                 isOpen={gptAssistantModal}
-                                projectId={projectId}
+                                projectId={projectId.toString()}
                                 handleClose={() => {
                                   setGptAssistantModal((prevData) => !prevData);
                                   // this is done so that the title do not reset after gpt popover closed
