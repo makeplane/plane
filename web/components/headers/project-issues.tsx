@@ -113,7 +113,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
             <SidebarHamburgerToggle />
-            <div>
+            <div className="flex items-center gap-2.5">
               <Breadcrumbs onBack={() => router.back()}>
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
@@ -145,6 +145,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                   }
                 />
               </Breadcrumbs>
+              {currentProjectDetails && issueFilters?.displayFilters && (
+                <span className="flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                  {issueFilters.displayFilters.sub_issue
+                    ? currentProjectDetails.total_issues + currentProjectDetails.sub_issues
+                    : currentProjectDetails.total_issues}
+                </span>
+              )}
             </div>
             {currentProjectDetails?.is_deployed && deployUrl && (
               <a

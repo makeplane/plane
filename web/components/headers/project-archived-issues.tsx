@@ -82,7 +82,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
             <ArrowLeft fontSize={14} strokeWidth={2} />
           </button>
         </div>
-        <div>
+        <div className="flex items-center gap-2.5">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -111,6 +111,13 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
               }
             />
           </Breadcrumbs>
+          {currentProjectDetails && issueFilters?.displayFilters && (
+            <span className="flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+              {issueFilters.displayFilters.sub_issue
+                ? currentProjectDetails.archived_issues + currentProjectDetails.archived_sub_issues
+                : currentProjectDetails.archived_issues}
+            </span>
+          )}
         </div>
       </div>
 
