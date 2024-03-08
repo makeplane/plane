@@ -14,12 +14,14 @@ export interface IProjectInboxStore {
   isLoading: boolean;
   inboxIssues: Record<string, Record<string, TInboxIssue>>;
   inboxFilters: Record<string, TInboxIssueFilterOptions>;
+  inboxIssuePaginationInfo: Record<string, TPaginationInfo>;
   projectInboxIssues: TInboxIssue[] | undefined;
   projectInboxFilters: TInboxIssueFilterOptions | undefined;
+  projectInboxIssuePaginationInfo: TPaginationInfo | undefined;
   fetchInboxIssues: (
     workspaceSlug: string,
     projectId: string,
-    params?: TInboxIssueFilterOptions
+    params?: Partial<TInboxIssueFilterOptions & TPaginationInfo>
   ) => Promise<TInboxIssue[]>;
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
   updateInboxIssuePriorityFilters: (projectId: string, key: string, value: string) => void;
@@ -39,6 +41,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       isLoading: observable.ref,
       inboxIssues: observable,
       inboxFilters: observable,
+      inboxIssuePaginationInfo: observable,
       // computed
       projectInboxIssues: computed,
       projectInboxFilters: computed,
@@ -65,7 +68,16 @@ export class ProjectInboxStore implements IProjectInboxStore {
   get projectInboxFilters() {
     const projectId = this.rootStore.app.router.query.projectId;
     if (!projectId) return;
-    return this.inboxFilters[projectId.toString()];
+    return this.inboxFilters[projectId.toString()] || {};
+  }
+
+  /**
+   * get project inbox issue pagination info from the project id in the router query
+   */
+  get projectInboxIssuePaginationInfo() {
+    const projectId = this.rootStore.app.router.query.projectId;
+    if (!projectId) return;
+    return this.inboxIssuePaginationInfo[projectId.toString()] || {};
   }
 
   /**
@@ -80,7 +92,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       this.isLoading = true;
     });
     const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
-      params,
+      ...params,
       per_page: 10,
     });
     console.log("response", results);

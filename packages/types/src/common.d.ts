@@ -6,4 +6,5 @@ export type TPaginationInfo = {
   prev_cursor: string;
   prev_page_results: boolean;
   total_pages: number;
+  per_page?: number;
 };

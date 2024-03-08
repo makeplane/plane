@@ -16,7 +16,7 @@ import { TInboxIssue } from "@plane/types";
 type InboxIssueListItemProps = {
   workspaceSlug: string;
   projectId: string;
-  projectIdentifier: string;
+  projectIdentifier?: string;
   inboxIssue: TInboxIssue;
 };
 

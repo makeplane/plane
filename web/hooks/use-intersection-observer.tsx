@@ -1,11 +1,16 @@
-import { RefObject, useEffect } from "react";
+import { RefObject, useState, useEffect } from "react";
 
-export const useIntersectionObserver = (
-  containerRef: RefObject<HTMLDivElement>,
-  elementRef: RefObject<HTMLDivElement>,
-  callback: () => void,
-  rootMargin = "20%"
-) => {
+export type UseIntersectionObserverProps = {
+  containerRef: RefObject<HTMLDivElement>;
+  elementRef: RefObject<HTMLDivElement>;
+  callback: () => void;
+  rootMargin?: string;
+};
+
+export const useIntersectionObserver = (props: UseIntersectionObserverProps) => {
+  const { containerRef, elementRef, callback, rootMargin = "0px" } = props;
+  const [isVisible, setVisibility] = useState(false);
+
   useEffect(() => {
     if (elementRef.current) {
       const observer = new IntersectionObserver(
@@ -13,9 +18,10 @@ export const useIntersectionObserver = (
           if (entry.isIntersecting) {
             callback();
           }
+          setVisibility(entry.isIntersecting);
         },
         {
-          root: null,
+          root: containerRef.current,
           rootMargin,
         }
       );
@@ -27,5 +33,10 @@ export const useIntersectionObserver = (
         }
       };
     }
+    // When i am passing callback as a dependency, it is causing infinite loop,
+    // Please make sure you fix this eslint lint disable error with caution
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef, containerRef, rootMargin, callback]);
+
+  return isVisible;
 };

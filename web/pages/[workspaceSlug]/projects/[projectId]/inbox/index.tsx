@@ -4,36 +4,59 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // icons
 import { Inbox } from "lucide-react";
+// ui
+import { Loader } from "@plane/ui";
 // components
 import { PageHead } from "components/core";
 import { ProjectInboxHeader } from "components/headers";
-import { InboxIssueList, InboxIssueFilterSelection } from "components/inbox";
+import { InboxIssueList } from "components/inbox";
 import { InboxLayoutLoader } from "components/ui";
 // hooks
 import { useProject, useProjectInbox } from "hooks/store";
-
+import { useIntersectionObserver } from "hooks/use-intersection-observer";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // types
 import { NextPageWithLayout } from "lib/types";
 
 const ProjectInboxPage: NextPageWithLayout = observer(() => {
+  // ref
+  const containerRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
   /// router
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
   // return null when workspaceSlug or projectId is not available
   if (!workspaceSlug || !projectId) return null;
-
   // store
-  const { fetchInboxIssues, projectInboxIssues } = useProjectInbox();
+  const {
+    projectInboxIssues,
+    projectInboxIssuePaginationInfo: paginationInfo,
+    fetchInboxIssues,
+    projectInboxFilters,
+  } = useProjectInbox();
   const { currentProjectDetails } = useProject();
   // fetching inbox issues
-  useSWR(`PROJECT_INBOX_ISSUES_${projectId}`, () => {
-    fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+  useSWR(`PROJECT_INBOX_ISSUES_${projectId}_`, () =>
+    fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), {
+      per_page: 10,
+    })
+  );
+  // page observer
+  const isVisible = useIntersectionObserver({
+    containerRef,
+    elementRef,
+    callback: () => {
+      console.log("loading more");
+      // fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), {
+      //   ...projectInboxFilters,
+      //   ...(paginationInfo?.next_cursor ? { cursor: paginationInfo.next_cursor } : 0),
+      //   per_page: 10,
+      // });
+    },
   });
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
-  // const inboxIssues = projectInboxIssues;
 
   if (!projectInboxIssues || !currentProjectDetails) {
     return (
@@ -46,6 +69,9 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   if (!inboxIssueId) {
     router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${projectInboxIssues?.[0]?.issue.id}`);
   }
+
+  console.log("isVisible", isVisible);
+  console.log("paginationInfo", paginationInfo);
 
   return (
     <div className="flex h-full flex-col">
@@ -60,19 +86,27 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
                 </div>
               </div>
               <div className="z-20">
-                <InboxIssueFilterSelection workspaceSlug={workspaceSlug} projectId={projectId} />
+                {/* <InboxIssueFilterSelection workspaceSlug={workspaceSlug} projectId={projectId} /> */}
               </div>
             </div>
             <div className="w-full h-auto">
               {/* <InboxIssueAppliedFilter workspaceSlug={workspaceSlug} projectId={projectId} /> */}
             </div>
             <div className="w-full h-full overflow-hidden">
-              <InboxIssueList
-                workspaceSlug={workspaceSlug.toString()}
-                projectId={projectId.toString()}
-                projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssues={projectInboxIssues}
-              />
+              <div className="overflow-y-auto w-full h-full vertical-scrollbar scrollbar-md" ref={containerRef}>
+                <InboxIssueList
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  projectIdentifier={currentProjectDetails?.identifier}
+                  inboxIssues={projectInboxIssues}
+                />
+                <div className="mt-4" ref={elementRef}>
+                  <Loader className="mx-auto w-full space-y-4 pb-4">
+                    <Loader.Item height="64px" width="w-100" />
+                    <Loader.Item height="64px" width="w-100" />
+                  </Loader>
+                </div>
+              </div>
             </div>
           </div>
         </div>
