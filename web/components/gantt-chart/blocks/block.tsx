@@ -1,16 +1,16 @@
 import { observer } from "mobx-react";
 // hooks
-import { useGanttChart } from "../hooks";
-import { useIssueDetail } from "hooks/store";
 // components
-import { ChartAddBlock, ChartDraggable } from "../helpers";
 // helpers
 import { cn } from "helpers/common.helper";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { useIssueDetail } from "hooks/store";
 // types
-import { IBlockUpdateData, IGanttBlock } from "../types";
 // constants
 import { BLOCK_HEIGHT } from "../constants";
+import { ChartAddBlock, ChartDraggable } from "../helpers";
+import { useGanttChart } from "../hooks";
+import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;

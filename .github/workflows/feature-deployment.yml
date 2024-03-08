@@ -54,7 +54,7 @@ jobs:
               --kube-insecure-skip-tls-verify \
               --generate-name \
               --namespace $APP_NAMESPACE \
-              --set shared_config.git_repo=${{ github.repositoryUrl }} \
+              --set shared_config.git_repo=${{github.server_url}}/${{ github.repository }}.git \
               --set shared_config.git_branch="$GIT_BRANCH" \
               --set web.enabled=${{ env.BUILD_WEB }} \
               --set space.enabled=${{ env.BUILD_SPACE }} \

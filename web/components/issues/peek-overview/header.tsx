@@ -1,22 +1,31 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
-import { ArchiveIcon, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-// hooks
-import useToast from "hooks/use-toast";
-// store hooks
-import { useEventTracker, useIssueDetail, useProjectState, useUser } from "hooks/store";
-// helpers
-import { cn } from "helpers/common.helper";
+import {
+  ArchiveIcon,
+  CenterPanelIcon,
+  CustomSelect,
+  FullScreenPanelIcon,
+  SidePanelIcon,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
 // components
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
 import { STATE_GROUPS } from "constants/state";
+// helpers
+import { cn } from "helpers/common.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+// store hooks
+import { useEventTracker, useIssueDetail, useProjectState, useUser } from "hooks/store";
 // constants
 import { ISSUE_OPENED, elementFromPath } from "constants/event-tracker";
+// helpers
+// components
+// helpers
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -77,8 +86,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { captureEvent } = useEventTracker();
-  // hooks
-  const { setToastAlert } = useToast();
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
@@ -90,8 +97,8 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(issueLink).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });

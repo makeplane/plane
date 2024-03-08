@@ -1,20 +1,21 @@
-import { useState, FC, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
+import { useState, FC, useRef, useEffect } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
-import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { orderJoinedProjects } from "helpers/project.helper";
-import { cn } from "helpers/common.helper";
-// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { cn } from "helpers/common.helper";
+import { orderJoinedProjects } from "helpers/project.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+// ui
+// components
+// helpers
+// constants
 import { IProject } from "@plane/types";
 
 export const ProjectSidebarList: FC = observer(() => {
@@ -42,15 +43,13 @@ export const ProjectSidebarList: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast
-  const { setToastAlert } = useToast();
 
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       });
@@ -64,16 +63,16 @@ export const ProjectSidebarList: FC = observer(() => {
 
     const joinedProjectsList: IProject[] = [];
     joinedProjects.map((projectId) => {
-      const _project = getProjectById(projectId);
-      if (_project) joinedProjectsList.push(_project);
+      const projectDetails = getProjectById(projectId);
+      if (projectDetails) joinedProjectsList.push(projectDetails);
     });
     if (joinedProjectsList.length <= 0) return;
 
     const updatedSortOrder = orderJoinedProjects(source.index, destination.index, draggableId, joinedProjectsList);
     if (updatedSortOrder != undefined)
       updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });

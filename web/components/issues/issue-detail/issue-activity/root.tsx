@@ -3,14 +3,15 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { History, LucideIcon, MessageCircle, ListRestart } from "lucide-react";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useEventTracker, useIssueDetail, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
 // components
-import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
-// types
 import { TIssueComment } from "@plane/types";
+import { IssueActivityCommentRoot, IssueActivityRoot, IssueCommentRoot, IssueCommentCreate } from "./";
 // constants
 import { COMMENT_CREATED, COMMENT_DELETED, COMMENT_UPDATED } from "constants/event-tracker";
+// types
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -53,7 +54,6 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { captureEvent } = useEventTracker();
   const { peekIssue } = useIssueDetail();
-  const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
   // state
   const [activityTab, setActivityTab] = useState<TActivityTabs>("all");
@@ -69,15 +69,15 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             is_public: data.access === "EXTERNAL",
             element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
           });
-          setToastAlert({
+          setToast({
             title: "Comment created successfully.",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Comment creation failed.",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Comment creation failed. Please try again later.",
           });
         }
@@ -91,15 +91,15 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             is_public: data.access === "EXTERNAL",
             element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
           });
-          setToastAlert({
+          setToast({
             title: "Comment updated successfully.",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Comment updated successfully.",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Comment update failed.",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Comment update failed. Please try again later.",
           });
         }
@@ -112,21 +112,21 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             issue_id: issueId,
             element: peekIssue ? "Peek issue" : inboxId ? "Inbox issue" : "Issue detail",
           });
-          setToastAlert({
+          setToast({
             title: "Comment removed successfully.",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
             message: "Comment removed successfully.",
           });
         } catch (error) {
-          setToastAlert({
+          setToast({
             title: "Comment remove failed.",
-            type: "error",
+            type: TOAST_TYPE.ERROR,
             message: "Comment remove failed. Please try again later.",
           });
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createComment, updateComment, removeComment, setToastAlert]
+    [workspaceSlug, projectId, issueId, createComment, updateComment, removeComment]
   );
 
   const project = getProjectById(projectId);

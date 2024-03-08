@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import {
   AlertCircle,
   Archive,
@@ -14,12 +14,6 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-// hooks
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import { useEventTracker, useMember, usePage, useUser } from "hooks/store";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -29,6 +23,10 @@ import { IIssueLabel } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { PAGE_ARCHIVED, PAGE_FAVORITED, PAGE_RESTORED, PAGE_UNFAVORITED, PAGE_UPDATED } from "constants/event-tracker";
+import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { useEventTracker, useMember, usePage, useUser } from "hooks/store";
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
 export interface IPagesListItem {
   pageId: string;

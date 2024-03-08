@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { ArchiveX } from "lucide-react";
+import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
+import { SelectMonthModal } from "components/automation";
 import { useEventTracker, useProject, useProjectState, useUser } from "hooks/store";
 // component
-import { SelectMonthModal } from "components/automation";
-import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
 // icons
-import { ArchiveX } from "lucide-react";
 // types
 import { IProject } from "@plane/types";
 // constants

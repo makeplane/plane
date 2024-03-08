@@ -1,22 +1,30 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // hooks
-import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
+import {
+  Avatar,
+  AvatarGroup,
+  CircularProgressIndicator,
+  CustomMenu,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+  setPromiseToast,
+} from "@plane/ui";
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-// ui
-import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-// constants
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
+// components
+// ui
+// helpers
+// constants
 
 type Props = {
   moduleId: string;
@@ -30,8 +38,6 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -48,21 +54,27 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
+    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
+      () => {
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the module to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding module to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the module to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -70,29 +82,37 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
-        captureEvent(MODULE_UNFAVORITED, {
-          module_id: moduleId,
-          element: "Grid layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the module from favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeModuleFromFavorites(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      moduleId
+    ).then(() => {
+      captureEvent(MODULE_UNFAVORITED, {
+        module_id: moduleId,
+        element: "Grid layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing module from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the module from favorites. Please try again.",
+      },
+    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Module link copied to clipboard.",
       });
@@ -155,9 +175,9 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
-        <div className="group flex w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 flex-col sm:flex-row px-5 py-6 text-sm hover:bg-custom-background-90">
-          <div className="relative flex w-full items-center gap-3 justify-between overflow-hidden">
-            <div className="relative w-full flex items-center gap-3 overflow-hidden">
+        <div className="group flex w-full flex-col items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90 sm:flex-row">
+          <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+            <div className="relative flex w-full items-center gap-3 overflow-hidden">
               <div className="flex items-center gap-4 truncate">
                 <span className="flex-shrink-0">
                   <CircularProgressIndicator size={38} percentage={progress}>
@@ -182,10 +202,10 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>
-            <div className="flex items-center justify-center flex-shrink-0">
+            <div className="flex flex-shrink-0 items-center justify-center">
               {moduleStatus && (
                 <span
-                  className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs flex-shrink-0"
+                  className="flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
                   style={{
                     color: moduleStatus.color,
                     backgroundColor: `${moduleStatus.color}20`,
@@ -197,7 +217,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </div>
           </div>
 
-          <div className="flex w-full sm:w-auto relative overflow-hidden items-center gap-2.5 justify-between sm:justify-end sm:flex-shrink-0 ">
+          <div className="relative flex w-full items-center justify-between gap-2.5 overflow-hidden sm:w-auto sm:flex-shrink-0 sm:justify-end ">
             <div className="text-xs text-custom-text-300">
               {renderDate && (
                 <span className=" text-xs text-custom-text-300">
@@ -206,7 +226,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               )}
             </div>
 
-            <div className="flex-shrink-0 relative flex items-center gap-3">
+            <div className="relative flex flex-shrink-0 items-center gap-3">
               <Tooltip tooltipContent={`${moduleDetails?.member_ids?.length || 0} Members`}>
                 <div className="flex w-10 cursor-default items-center justify-center gap-1">
                   {moduleDetails.member_ids.length > 0 ? (
@@ -235,7 +255,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   </button>
                 ))}
 
-              <CustomMenu verticalEllipsis buttonClassName="z-[1]" placement="bottom-end">
+              <CustomMenu verticalEllipsis buttonClassName="z-[1]" placement="left-start">
                 {isEditingAllowed && (
                   <>
                     <CustomMenu.MenuItem onClick={handleEditModule}>

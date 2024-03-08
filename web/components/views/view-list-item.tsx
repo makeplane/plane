@@ -1,22 +1,22 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
-// hooks
-import { useEventTracker, useProjectView, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
-// ui
-import { CustomMenu } from "@plane/ui";
+// constants
+import { EUserProjectRoles } from "constants/project";
 // helpers
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import { useEventTracker, useProjectView, useUser } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 import { VIEW_FAVORITED, VIEW_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
@@ -31,8 +31,6 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
@@ -68,8 +66,8 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/views/${view.id}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "View link copied to clipboard.",
       });

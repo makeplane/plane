@@ -1,23 +1,22 @@
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Menu } from "@headlessui/react";
-import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
-import { useEventTracker } from "hooks/store";
 // icons
-import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-// constants
-import { snoozeOptions } from "constants/notification";
-// helper
-import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
-import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
-// type
-import type { IUserNotification, NotificationType } from "@plane/types";
+import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
+// ui
+import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
+import { snoozeOptions } from "constants/notification";
+// helper
+import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
+// hooks
+import { useEventTracker } from "hooks/store";
+// type
+import type { IUserNotification, NotificationType } from "@plane/types";
 
 type NotificationCardProps = {
   selectedTab: NotificationType;
@@ -54,8 +53,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const { workspaceSlug } = router.query;
   // states
   const [showSnoozeOptions, setShowSnoozeOptions] = React.useState(false);
-  // toast alert
-  const { setToastAlert } = useToast();
   // refs
   const snoozeRef = useRef<HTMLDivElement | null>(null);
 
@@ -66,9 +63,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
       onClick: () => {
         markNotificationReadStatusToggle(notification.id).then(() => {
-          setToastAlert({
+          setToast({
             title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
           });
         });
       },
@@ -83,9 +80,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       ),
       onClick: () => {
         markNotificationArchivedStatus(notification.id).then(() => {
-          setToastAlert({
+          setToast({
             title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-            type: "success",
+            type: TOAST_TYPE.SUCCESS,
           });
         });
       },
@@ -98,9 +95,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       return;
     }
     markSnoozeNotification(notification.id, date).then(() => {
-      setToastAlert({
+      setToast({
         title: `Notification snoozed till ${renderFormattedDate(date)}`,
-        type: "success",
+        type: TOAST_TYPE.SUCCESS,
       });
     });
   };
@@ -190,12 +187,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               {notificationField === "comment"
                 ? "commented"
                 : notificationField === "archived_at"
-                ? notification.data.issue_activity.new_value === "restore"
-                  ? "restored the issue"
-                  : "archived the issue"
-                : notificationField === "None"
-                ? null
-                : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
+                  ? notification.data.issue_activity.new_value === "restore"
+                    ? "restored the issue"
+                    : "archived the issue"
+                  : notificationField === "None"
+                    ? null
+                    : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
               {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
               <span className="font-semibold">
                 {" "}
@@ -229,7 +226,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               <span className="semi-bold">{notification.message}</span>
             </div>
           )}
-          <div className="flex md:hidden items-start">
+          <div className="flex items-start md:hidden">
             <Menu as="div" className={" w-min text-left"}>
               {({ open }) => (
                 <>
@@ -245,11 +242,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                     <Menu.Items className={"absolute right-0 z-10"} static>
                       <div
                         className={
-                          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap"
+                          "my-1 min-w-[12rem] overflow-y-scroll whitespace-nowrap rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
                         }
                       >
                         {moreOptions.map((item) => (
-                          <Menu.Item as="div">
+                          <Menu.Item as="div" key={item.id}>
                             {({ close }) => (
                               <button
                                 onClick={(e) => {
@@ -258,7 +255,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                                   item.onClick();
                                   close();
                                 }}
-                                className="flex gap-x-2 items-center p-1.5"
+                                className="flex items-center gap-x-2 p-1.5"
                               >
                                 {item.icon}
                                 {item.name}
@@ -273,7 +270,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                               e.preventDefault();
                               setShowSnoozeOptions(true);
                             }}
-                            className="flex gap-x-2 items-center p-1.5"
+                            className="flex items-center gap-x-2 p-1.5"
                           >
                             <Clock className="h-3.5 w-3.5 text-custom-text-300" />
                             Snooze
@@ -288,10 +285,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             {showSnoozeOptions && (
               <div
                 ref={snoozeRef}
-                className="absolute right-36 z-20 my-1 top-24 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap"
+                className="absolute right-36 top-24 z-20 my-1 min-w-[12rem] overflow-y-scroll whitespace-nowrap rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
               >
                 {snoozeOptions.map((item) => (
                   <p
+                    key={item.label}
                     className="p-1.5"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -309,7 +307,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         </div>
 
         <div className="flex justify-between gap-2 text-xs">
-          <p className="text-custom-text-300 line-clamp-1">
+          <p className="line-clamp-1 text-custom-text-300">
             {truncateText(
               `${notification.data.issue.identifier}-${notification.data.issue.sequence_id} ${notification.data.issue.name}`,
               50
@@ -324,7 +322,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               </span>
             </p>
           ) : (
-            <p className="flex-shrink-0 text-custom-text-300 mt-auto">{calculateTimeAgo(notification.created_at)}</p>
+            <p className="mt-auto flex-shrink-0 text-custom-text-300">{calculateTimeAgo(notification.created_at)}</p>
           )}
         </div>
       </div>
@@ -341,9 +339,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
-                setToastAlert({
+                setToast({
                   title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
-                  type: "success",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
@@ -363,15 +361,15 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   tab: selectedTab,
                   state: "SUCCESS",
                 });
-                setToastAlert({
+                setToast({
                   title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-                  type: "success",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
           },
         ].map((item) => (
-          <Tooltip tooltipContent={item.name}>
+          <Tooltip tooltipContent={item.name} key={item.id}>
             <button
               type="button"
               onClick={(e) => {
@@ -414,9 +412,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                       tab: selectedTab,
                       state: "SUCCESS",
                     });
-                    setToastAlert({
+                    setToast({
                       title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
-                      type: "success",
+                      type: TOAST_TYPE.SUCCESS,
                     });
                   });
                 }}

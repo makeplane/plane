@@ -2,11 +2,12 @@ import { FC, Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import { useEventTracker, useProjectView } from "hooks/store";
-import useToast from "hooks/use-toast";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ProjectViewForm } from "components/views";
+// hooks
+import { useEventTracker, useProjectView } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
 // constants
@@ -29,8 +30,6 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   // store hooks
   const { createView, updateView } = useProjectView();
   const { captureEvent, getTrackElement } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -55,8 +54,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
             : "Project issues page",
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View created successfully.",
         });
@@ -65,8 +64,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
         captureEvent(VIEW_CREATED, {
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });
@@ -90,8 +89,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
           element: "Views page",
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.detail ?? "Something went wrong. Please try again.",
         });

@@ -1,8 +1,19 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
+import { ArrowRight, PanelRight, Plus } from "lucide-react";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
+import { ProjectAnalyticsModal } from "components/analytics";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { ModuleMobileHeader } from "components/modules/module-mobile-header";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { cn } from "helpers/common.helper";
+import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -14,23 +25,16 @@ import {
   useUser,
   useIssues,
 } from "hooks/store";
+import { useIssuesActions } from "hooks/use-issues-actions";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
 // icons
-import { ArrowRight, PanelRight, Plus } from "lucide-react";
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import {
   DP_APPLIED,
   DP_REMOVED,
@@ -41,9 +45,6 @@ import {
   LAYOUT_CHANGED,
   LP_UPDATED,
 } from "constants/event-tracker";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -74,15 +75,12 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = router.query;
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters },
   } = useIssues(EIssuesStoreType.MODULE);
+  const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
   const {
     commandPalette: { toggleCreateIssueModal },
@@ -110,20 +108,20 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId).then(() =>
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout }).then(() =>
         captureEvent(LAYOUT_CHANGED, {
           layout: layout,
           ...elementFromPath(router.asPath),
         })
       );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters, captureEvent, router.asPath]
+    [projectId, updateFilters, captureEvent, router.asPath]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!projectId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
       let isFilterRemoved = false;
       if (Array.isArray(value)) {
@@ -138,7 +136,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         } else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, moduleId).then(() => {
+      updateFilters(projectId.toString(), EIssueFilterType.FILTERS, { [key]: newValues }).then(() => {
         captureIssuesFilterEvent({
           eventName: isFilterRemoved ? FILTER_REMOVED : FILTER_APPLIED,
           payload: {
@@ -150,32 +148,31 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         });
       });
     },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
+    [projectId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId).then(
-        () =>
-          captureIssuesDisplayFilterEvent({
-            eventName: LP_UPDATED,
-            payload: {
-              property_type: Object.keys(updatedDisplayFilter).join(","),
-              property: Object.values(updatedDisplayFilter)?.[0],
-              path: router.asPath,
-              filters: issueFilters,
-            },
-          })
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter).then(() =>
+        captureIssuesDisplayFilterEvent({
+          eventName: LP_UPDATED,
+          payload: {
+            property_type: Object.keys(updatedDisplayFilter).join(","),
+            property: Object.values(updatedDisplayFilter)?.[0],
+            path: router.asPath,
+            filters: issueFilters,
+          },
+        })
       );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
+    [projectId, updateFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId).then(() =>
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property).then(() =>
         captureIssuesDisplayFilterEvent({
           eventName: Object.values(property)?.[0] === true ? DP_APPLIED : DP_REMOVED,
           payload: {
@@ -186,7 +183,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         })
       );
     },
-    [workspaceSlug, projectId, moduleId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
+    [projectId, updateFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   // derived values
@@ -215,13 +212,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                         label={currentProjectDetails?.name ?? "Project"}
                         href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                         icon={
-                          currentProjectDetails?.emoji ? (
-                            renderEmoji(currentProjectDetails.emoji)
-                          ) : currentProjectDetails?.icon_prop ? (
-                            renderEmoji(currentProjectDetails.icon_prop)
-                          ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                              {currentProjectDetails?.name.charAt(0)}
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                             </span>
                           )
                         }

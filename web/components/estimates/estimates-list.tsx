@@ -1,21 +1,19 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
 // store hooks
-import { useEstimate, useEventTracker, useProject, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
+import { useEstimate, useEventTracker, useProject } from "hooks/store";
 // components
 import { CreateUpdateEstimateModal, DeleteEstimateModal, EstimateListItem } from "components/estimates";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
+import { EmptyState } from "components/empty-state";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IEstimate } from "@plane/types";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // constants
-import { PROJECT_SETTINGS_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EmptyStateType } from "constants/empty-state";
 import { ESTIMATE_DISABLED } from "constants/event-tracker";
 
 export const EstimatesList: React.FC = observer(() => {
@@ -26,15 +24,10 @@ export const EstimatesList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { updateProject, currentProjectDetails } = useProject();
   const { projectEstimates, getProjectEstimateById } = useEstimate();
-  const { currentUser } = useUser();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -49,26 +42,22 @@ export const EstimatesList: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
 
     updateProject(workspaceSlug.toString(), projectId.toString(), { estimate: null })
-      .then(() => {
+      .then(() =>
         captureEvent(ESTIMATE_DISABLED, {
-          current_estimate_id : currentProjectDetails?.estimate,
-        });
-      })
+          current_estimate_id: currentProjectDetails?.estimate,
+        })
+      )
       .catch((err) => {
         const error = err?.error;
         const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: errorString ?? "Estimate could not be disabled. Please try again",
         });
       });
   };
-
-  const emptyStateDetail = PROJECT_SETTINGS_EMPTY_STATE_DETAILS["estimate"];
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("project-settings", "estimates", isLightMode);
 
   return (
     <>
@@ -124,12 +113,7 @@ export const EstimatesList: React.FC = observer(() => {
           </section>
         ) : (
           <div className="h-full w-full py-8">
-            <EmptyState
-              title={emptyStateDetail.title}
-              description={emptyStateDetail.description}
-              image={emptyStateImage}
-              size="lg"
-            />
+            <EmptyState type={EmptyStateType.PROJECT_SETTINGS_ESTIMATE} />
           </div>
         )
       ) : (

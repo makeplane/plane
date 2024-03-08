@@ -1,32 +1,24 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
-import { useTheme } from "next-themes";
 // hooks
-import { useApplication, useEventTracker, useProjectView, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProjectView } from "hooks/store";
 // components
+import { EmptyState } from "components/empty-state";
+import { ViewListLoader } from "components/ui";
 import { ProjectViewListItem } from "components/views";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
 // ui
 import { Input } from "@plane/ui";
-import { ViewListLoader } from "components/ui";
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { VIEW_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EmptyStateType } from "constants/empty-state";
 
 export const ProjectViewsList = observer(() => {
   // states
   const [query, setQuery] = useState("");
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     commandPalette: { toggleCreateViewModal },
   } = useApplication();
-  const {
-    membership: { currentProjectRole },
-    currentUser,
-  } = useUser();
   const { projectViewIds, getViewById, loader } = useProjectView();
   const { setTrackElement } = useEventTracker();
 
@@ -34,12 +26,7 @@ export const ProjectViewsList = observer(() => {
 
   const viewsList = projectViewIds.map((viewId) => getViewById(viewId));
 
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const EmptyStateImagePath = getEmptyStateImagePath("onboarding", "views", isLightMode);
-
   const filteredViewsList = viewsList.filter((v) => v?.name.toLowerCase().includes(query.toLowerCase()));
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
     <>
@@ -67,22 +54,11 @@ export const ProjectViewsList = observer(() => {
         </div>
       ) : (
         <EmptyState
-          title={VIEW_EMPTY_STATE_DETAILS["project-views"].title}
-          description={VIEW_EMPTY_STATE_DETAILS["project-views"].description}
-          image={EmptyStateImagePath}
-          comicBox={{
-            title: VIEW_EMPTY_STATE_DETAILS["project-views"].comicBox.title,
-            description: VIEW_EMPTY_STATE_DETAILS["project-views"].comicBox.description,
+          type={EmptyStateType.PROJECT_VIEW}
+          primaryButtonOnClick={() => {
+            setTrackElement("Views empty state");
+            toggleCreateViewModal(true);
           }}
-          primaryButton={{
-            text: VIEW_EMPTY_STATE_DETAILS["project-views"].primaryButton.text,
-            onClick: () => {
-              setTrackElement("Views empty state");
-              toggleCreateViewModal(true);
-            },
-          }}
-          size="lg"
-          disabled={!isEditingAllowed}
         />
       )}
     </>

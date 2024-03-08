@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useEventTracker, useProject, useUser } from "hooks/store";
 // component
+import { ArchiveRestore } from "lucide-react";
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 import { SelectMonthModal } from "components/automation";
 // icon
-import { ArchiveRestore } from "lucide-react";
 // constants
 import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "constants/project";
+import { AUTO_ARCHIVE_TOGGLED, AUTO_ARCHIVE_UPDATED } from "constants/event-tracker";
+import { useEventTracker, useProject, useUser } from "hooks/store";
 // types
 import { IProject } from "@plane/types";
-import { AUTO_ARCHIVE_TOGGLED, AUTO_ARCHIVE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

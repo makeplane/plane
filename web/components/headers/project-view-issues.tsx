@@ -1,9 +1,21 @@
 import { useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { Plus } from "lucide-react";
 // hooks
+// components
+// ui
+import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+// helpers
+// types
+// constants
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { truncateText } from "helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -15,20 +27,9 @@ import {
   useProjectView,
   useUser,
 } from "hooks/store";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { BreadcrumbLink } from "components/common";
-// ui
-import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
-// helpers
-import { truncateText } from "helpers/string.helper";
-import { renderEmoji } from "helpers/emoji.helper";
-// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
 import {
   DP_APPLIED,
   DP_REMOVED,
@@ -43,11 +44,7 @@ import {
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    viewId: string;
-  };
+  const { workspaceSlug, projectId, viewId } = router.query;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -72,8 +69,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId).then(() =>
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        viewId.toString()
+      ).then(() =>
         captureEvent(LAYOUT_CHANGED, {
           layout: layout,
           ...elementFromPath(router.asPath),
@@ -85,7 +88,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !viewId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
       let isFilterRemoved = false;
       if (Array.isArray(value)) {
@@ -100,7 +103,13 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         } else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, viewId).then(() => {
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        { [key]: newValues },
+        viewId.toString()
+      ).then(() => {
         captureIssuesFilterEvent({
           eventName: isFilterRemoved ? FILTER_REMOVED : FILTER_APPLIED,
           payload: {
@@ -117,8 +126,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId).then(() =>
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_FILTERS,
+        updatedDisplayFilter,
+        viewId.toString()
+      ).then(() =>
         captureIssuesDisplayFilterEvent({
           eventName: LP_UPDATED,
           payload: {
@@ -135,8 +150,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, viewId).then(() =>
+      if (!workspaceSlug || !projectId || !viewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        viewId.toString()
+      ).then(() =>
         captureIssuesDisplayFilterEvent({
           eventName: Object.values(property)?.[0] === true ? DP_APPLIED : DP_REMOVED,
           payload: {
@@ -167,17 +188,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
-                  currentProjectDetails?.emoji ? (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {renderEmoji(currentProjectDetails.emoji)}
-                    </span>
-                  ) : currentProjectDetails?.icon_prop ? (
-                    <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                      {renderEmoji(currentProjectDetails.icon_prop)}
-                    </div>
-                  ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
+                  currentProjectDetails && (
+                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                      <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
                     </span>
                   )
                 }

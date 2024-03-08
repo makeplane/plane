@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { useProjectView, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useEventTracker, useProjectView } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
 import { VIEW_DELETED } from "constants/event-tracker";
@@ -28,8 +27,6 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   // store hooks
   const { deleteView } = useProjectView();
   const { captureEvent } = useEventTracker();
-  // toast alert
-  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
@@ -49,8 +46,8 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
           element: "Views page",
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View deleted successfully.",
         });
@@ -61,8 +58,8 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
           element: "Views page",
           state: "FAILED",
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be deleted. Please try again.",
         });

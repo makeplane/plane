@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Rocket, Search, X } from "lucide-react";
 // services
-import { ProjectService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
+import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+
 import useDebounce from "hooks/use-debounce";
+
+import { ProjectService } from "services/project";
 // ui
-import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
@@ -43,8 +43,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
 
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
-  const { setToastAlert } = useToast();
-
   const handleClose = () => {
     onClose();
     setSearchTerm("");
@@ -54,8 +52,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
 
   const onSubmit = async () => {
     if (selectedIssues.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });
@@ -68,12 +66,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
 
     handleClose();
-
-    setToastAlert({
-      title: "Success",
-      type: "success",
-      message: `Issue${selectedIssues.length > 1 ? "s" : ""} added successfully`,
-    });
   };
 
   useEffect(() => {
@@ -184,7 +176,10 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </div>
 
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                  <Combobox.Options
+                    static
+                    className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}

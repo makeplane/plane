@@ -2,22 +2,22 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-// mobx store provider
-import { IUser, IWorkspace } from "@plane/types";
 // constants
 import { GROUP_WORKSPACE } from "constants/event-tracker";
+// types
+import { IUser } from "@plane/types";
 
 export interface IPosthogWrapper {
   children: ReactNode;
   user: IUser | null;
-  workspaces: Record<string, IWorkspace>;
+  workspaceIds: string[];
   currentWorkspaceId: string | undefined;
   posthogAPIKey: string | null;
   posthogHost: string | null;
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, workspaces, currentWorkspaceId, posthogAPIKey, posthogHost } = props;
+  const { children, user, workspaceIds, currentWorkspaceId, posthogAPIKey, posthogHost } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router
@@ -32,15 +32,16 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         last_name: user.last_name,
         email: user.email,
         use_case: user.use_case,
-        workspaces: Object.keys(workspaces),
+        workspaces: workspaceIds,
       });
     }
-  }, [user, workspaces]);
+  }, [user, workspaceIds]);
 
   useEffect(() => {
     if (posthogAPIKey && posthogHost) {
       posthog.init(posthogAPIKey, {
         api_host: posthogHost || "https://app.posthog.com",
+        debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });

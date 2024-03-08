@@ -4,14 +4,13 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { useEventTracker, useProject } from "hooks/store";
-import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // types
 import type { IProject } from "@plane/types";
-// constants
 import { PROJECT_DELETED } from "constants/event-tracker";
+// constants
 
 type DeleteProjectModal = {
   isOpen: boolean;
@@ -32,8 +31,6 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const {
     control,
@@ -66,8 +63,8 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
           eventName: PROJECT_DELETED,
           payload: { ...project, state: "SUCCESS", element: "Project general settings" },
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Project deleted successfully.",
         });
@@ -77,8 +74,8 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
           eventName: PROJECT_DELETED,
           payload: { ...project, state: "FAILED", element: "Project general settings" },
         });
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         });

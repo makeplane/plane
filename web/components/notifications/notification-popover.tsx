@@ -1,20 +1,20 @@
 import React, { Fragment } from "react";
+import { observer } from "mobx-react-lite";
 import { Popover, Transition } from "@headlessui/react";
 import { Bell } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
-import useUserNotification from "hooks/use-user-notifications";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
+import { Tooltip } from "@plane/ui";
 import { EmptyState } from "components/common";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
-import { Tooltip } from "@plane/ui";
 import { NotificationsLoader } from "components/ui";
+import { getNumberCount } from "helpers/string.helper";
+import { useApplication } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useUserNotification from "hooks/use-user-notifications";
+// components
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
-import { getNumberCount } from "helpers/string.helper";
 
 export const NotificationPopover = observer(() => {
   // states

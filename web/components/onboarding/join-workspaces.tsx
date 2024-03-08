@@ -1,10 +1,10 @@
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
+import { Controller, useForm } from "react-hook-form";
 // hooks
+import { Invitations, OnboardingSidebar, OnboardingStepIndicator, Workspace } from "components/onboarding";
 import { useUser } from "hooks/store";
 // components
-import { Invitations, OnboardingSidebar, OnboardingStepIndicator, Workspace } from "components/onboarding";
 // types
 import { IWorkspace, TOnboardingSteps } from "@plane/types";
 
