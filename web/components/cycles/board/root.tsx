@@ -38,7 +38,7 @@ export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
               <Disclosure.Button className="bg-custom-background-80 font-semibold text-sm py-1 px-2 rounded flex items-center gap-1">
                 {({ open }) => (
                   <>
-                    Completed cycles{" "}
+                    Completed cycles ({completedCycleIds.length})
                     <ChevronRight
                       className={cn("h-3 w-3 transition-all", {
                         "rotate-90": open,

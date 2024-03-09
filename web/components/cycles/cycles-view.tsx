@@ -38,7 +38,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
       </>
     );
 
-  if (filteredCycleIds.length === 0)
+  if (filteredCycleIds.length === 0 && filteredCompletedCycleIds?.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
