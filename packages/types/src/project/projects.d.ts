@@ -7,7 +7,7 @@ import type {
   IWorkspace,
   IWorkspaceLite,
   TStateGroups,
-} from ".";
+} from "..";
 
 export type TProjectLogoProps = {
   in_use: "emoji" | "icon";

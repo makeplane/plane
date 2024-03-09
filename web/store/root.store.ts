@@ -18,6 +18,7 @@ import { IStateStore, StateStore } from "./state.store";
 import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
+import { IProjectFilterStore, ProjectFilterStore } from "./project_filter.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -40,6 +41,7 @@ export class RootStore {
   mention: IMentionStore;
   dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
+  projectFilter: IProjectFilterStore;
 
   constructor() {
     this.app = new AppRootStore(this);
@@ -59,8 +61,9 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPages = new ProjectPageStore(this);
+    this.projectFilter = new ProjectFilterStore(this);
   }
 
   resetOnSignout() {
@@ -78,7 +81,8 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPages = new ProjectPageStore(this);
+    this.projectFilter = new ProjectFilterStore(this);
   }
 }
