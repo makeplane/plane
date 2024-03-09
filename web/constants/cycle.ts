@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 // types
-import { TCycleLayoutOptions, TCycleOrderByOptions, TCycleTabOptions } from "@plane/types";
+import { TCycleLayoutOptions, TCycleTabOptions } from "@plane/types";
 
 export const CYCLE_TABS_LIST: {
   key: TCycleTabOptions;
@@ -153,20 +153,5 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     description:
       "Spot challenges from one project to another and see inter-cycle dependencies that aren’t obvious from any other view.",
     icon: Microscope,
-  },
-];
-
-export const CYCLE_ORDER_BY_OPTIONS: { key: TCycleOrderByOptions; label: string }[] = [
-  {
-    key: "name",
-    label: "Name",
-  },
-  {
-    key: "end_date",
-    label: "Due date",
-  },
-  {
-    key: "sort_order",
-    label: "Manual",
   },
 ];

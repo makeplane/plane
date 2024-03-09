@@ -29,6 +29,7 @@ export interface ICycleStore {
   currentProjectActiveCycleId: string | null;
   // computed actions
   getFilteredCycleIds: (projectId: string) => string[] | null;
+  getFilteredCompletedCycleIds: (projectId: string) => string[] | null;
   getCycleById: (cycleId: string) => ICycle | null;
   getCycleNameById: (cycleId: string) => string | undefined;
   getActiveCycleById: (cycleId: string) => ICycle | null;
@@ -202,6 +203,28 @@ export class CycleStore implements ICycleStore {
         shouldFilterCycle(c, filters ?? {})
     );
     cycles = orderCycles(cycles);
+    const cycleIds = cycles.map((c) => c.id);
+    return cycleIds;
+  });
+
+  /**
+   * @description returns filtered cycle ids based on display filters and filters
+   * @param {TCycleDisplayFilters} displayFilters
+   * @param {TCycleFilters} filters
+   * @returns {string[] | null}
+   */
+  getFilteredCompletedCycleIds = computedFn((projectId: string) => {
+    const filters = this.rootStore.cycleFilter.getFiltersByProjectId(projectId);
+    const searchQuery = this.rootStore.cycleFilter.searchQuery;
+    if (!this.fetchedMap[projectId]) return null;
+    let cycles = Object.values(this.cycleMap ?? {}).filter(
+      (c) =>
+        c.project_id === projectId &&
+        c.status.toLowerCase() === "completed" &&
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        shouldFilterCycle(c, filters ?? {})
+    );
+    cycles = sortBy(cycles, [(c) => !c.start_date]);
     const cycleIds = cycles.map((c) => c.id);
     return cycleIds;
   });

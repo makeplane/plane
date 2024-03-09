@@ -23,10 +23,11 @@ export interface ICyclesView {
 export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { layout, workspaceSlug, projectId, peekCycle } = props;
   // store hooks
-  const { getFilteredCycleIds, loader } = useCycle();
+  const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader } = useCycle();
   const { searchQuery } = useCycleFilter();
   // derived values
   const filteredCycleIds = getFilteredCycleIds(projectId);
+  const filteredCompletedCycleIds = getFilteredCompletedCycleIds(projectId);
 
   if (loader || !filteredCycleIds)
     return (
@@ -59,18 +60,22 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
   return (
     <>
       {layout === "list" && (
-        <CyclesList cycleIds={filteredCycleIds} workspaceSlug={workspaceSlug} projectId={projectId} />
+        <CyclesList
+          completedCycleIds={filteredCompletedCycleIds ?? []}
+          cycleIds={filteredCycleIds}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+        />
       )}
-
       {layout === "board" && (
         <CyclesBoard
+          completedCycleIds={filteredCompletedCycleIds ?? []}
           cycleIds={filteredCycleIds}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           peekCycle={peekCycle}
         />
       )}
-
       {layout === "gantt" && <CyclesListGanttChartView cycleIds={filteredCycleIds} workspaceSlug={workspaceSlug} />}
     </>
   );

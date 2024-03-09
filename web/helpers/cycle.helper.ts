@@ -12,13 +12,21 @@ import { ICycle, TCycleFilters } from "@plane/types";
 export const orderCycles = (cycles: ICycle[]): ICycle[] => {
   if (cycles.length === 0) return [];
 
-  const activeCycle = cycles.filter((c) => c.status.toLowerCase() === "current");
-  let upcomingCycles = cycles.filter((c) => c.status.toLowerCase() === "upcoming");
-  upcomingCycles = sortBy(upcomingCycles, (c) => c.start_date);
-  let draftCycles = cycles.filter((c) => c.status.toLowerCase() === "draft");
-  draftCycles = sortBy(draftCycles, (c) => c.name.toLowerCase());
+  const STATUS_ORDER: {
+    [key: string]: number;
+  } = {
+    current: 1,
+    upcoming: 2,
+    draft: 3,
+  };
 
-  return [...activeCycle, ...upcomingCycles, ...draftCycles];
+  let filteredCycles = cycles.filter((c) => c.status.toLowerCase() !== "completed");
+  filteredCycles = sortBy(filteredCycles, [
+    (c) => STATUS_ORDER[c.status.toLowerCase()],
+    (c) => (c.status.toLowerCase() === "upcoming" ? c.start_date : c.name.toLowerCase()),
+  ]);
+
+  return filteredCycles;
 };
 
 /**
