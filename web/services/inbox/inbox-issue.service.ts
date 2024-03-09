@@ -10,6 +10,7 @@ export class InboxIssueService extends APIService {
   }
 
   async list(workspaceSlug: string, projectId: string, params = {}): Promise<TInboxIssueListResponse> {
+    console.log("params", params);
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/`, {
       params,
     })

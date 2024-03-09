@@ -2,6 +2,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import keyBy from "lodash/keyBy";
 import includes from "lodash/includes";
 import pull from "lodash/pull";
+import reduce from "lodash/reduce";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
@@ -15,7 +16,10 @@ export interface IProjectInboxStore {
   inboxIssues: Record<string, TInboxIssue>;
   inboxFilters: Partial<TInboxIssueFilterOptions>;
   inboxIssuePaginationInfo: Partial<TPaginationInfo>;
+  // computed
   inboxIssuesArray: TInboxIssue[];
+  inboxIssuesFiltersLength: number;
+  // actions
   fetchInboxIssues: (
     workspaceSlug: string,
     projectId: string,
@@ -44,6 +48,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       inboxIssuePaginationInfo: observable,
       // computed
       inboxIssuesArray: computed,
+      inboxIssuesFiltersLength: computed,
       // actions
       fetchInboxIssues: action,
       fetchInboxIssuesNextPage: action,
@@ -66,13 +71,12 @@ export class ProjectInboxStore implements IProjectInboxStore {
     runInAction(() => {
       this.isLoading = true;
       this.inboxIssues = {};
+      this.inboxIssuePaginationInfo = {};
     });
     const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
       ...params,
-      ...this.inboxFilters,
       per_page: this.PER_PAGE_COUNT,
     });
-    console.log("response", results);
     runInAction(() => {
       this.inboxIssues = keyBy(results, "id");
       this.isLoading = false;
@@ -91,7 +95,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
         cursor: this.inboxIssuePaginationInfo.next_cursor,
         per_page: this.PER_PAGE_COUNT,
       });
-      console.log("response", results);
       runInAction(() => {
         this.inboxIssues = { ...this.inboxIssues, ...keyBy(results, "id") };
         this.isLoading = false;
@@ -105,6 +108,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   get inboxIssuesArray() {
     return Object.values(this.inboxIssues);
+  }
+
+  get inboxIssuesFiltersLength() {
+    return reduce(this.inboxFilters, (acc, value) => acc + (value?.length || 0), 0);
   }
 
   /**
@@ -157,7 +164,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFilters);
+    console.log("this.inboxFilters", this.inboxFilters);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFilters });
   };
 
   /**
@@ -179,6 +187,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFilters);
+    // this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFilters);
   };
 }

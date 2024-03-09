@@ -9,7 +9,7 @@ import { Loader } from "@plane/ui";
 // components
 import { PageHead } from "components/core";
 import { ProjectInboxHeader } from "components/headers";
-import { InboxIssueList } from "components/inbox";
+import { InboxIssueList, InboxIssueFilterSelection } from "components/inbox";
 import { InboxLayoutLoader } from "components/ui";
 // hooks
 import { useProject, useProjectInbox } from "hooks/store";
@@ -25,9 +25,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const elementRef = useRef<HTMLDivElement>(null);
   /// router
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssueId } = router.query;
-  // return null when workspaceSlug or projectId is not available
-  if (!workspaceSlug || !projectId) return null;
+  const { workspaceSlug, projectId } = router.query;
   // store
   const {
     inboxIssues,
@@ -37,23 +35,26 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     fetchInboxIssuesNextPage,
   } = useProjectInbox();
   const { currentProjectDetails } = useProject();
-  // fetching inbox issues
-  useSWR(`PROJECT_INBOX_ISSUES_${projectId}_`, () => fetchInboxIssues(workspaceSlug.toString(), projectId.toString()), {
-    revalidateOnFocus: false,
-  });
 
   const fetchNextPages = useCallback(() => {
+    if (!workspaceSlug || !projectId) return;
     console.log("loading more");
     fetchInboxIssuesNextPage(workspaceSlug.toString(), projectId.toString());
   }, [fetchInboxIssuesNextPage, projectId, workspaceSlug]);
-
   // page observer
-  const isVisible = useIntersectionObserver({
+  useIntersectionObserver({
     containerRef,
     elementRef,
     callback: fetchNextPages,
     rootMargin: "20%",
   });
+  // return null when workspaceSlug or projectId is not available
+  if (!workspaceSlug || !projectId) return null;
+  // fetching inbox issues
+  useSWR(`PROJECT_INBOX_ISSUES_${projectId}`, () => fetchInboxIssues(workspaceSlug.toString(), projectId.toString()), {
+    revalidateOnFocus: false,
+  });
+
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
 
@@ -65,14 +66,9 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
     );
   }
 
-  console.log("inboxIssues", inboxIssues);
-
   // if (!inboxIssueId) {
   //   router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${inboxIssues?.[0]?.issue.id}`);
   // }
-
-  console.log("isVisible", isVisible);
-  console.log("paginationInfo", paginationInfo);
 
   return (
     <div className="flex h-full flex-col">
@@ -87,7 +83,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
                 </div>
               </div>
               <div className="z-20">
-                {/* <InboxIssueFilterSelection workspaceSlug={workspaceSlug} projectId={projectId} /> */}
+                <InboxIssueFilterSelection workspaceSlug={workspaceSlug} projectId={projectId} />
               </div>
             </div>
             <div className="w-full h-auto">

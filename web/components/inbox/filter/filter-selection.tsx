@@ -15,14 +15,15 @@ import { useProjectInbox } from "hooks/store";
 type TInboxIssueFilterSelection = { workspaceSlug: string; projectId: string };
 
 export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observer((props) => {
-  const { projectId } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks'
-  const { projectInboxFilters, updateInboxIssuePriorityFilters, updateInboxIssueStatusFilters } = useProjectInbox();
+  const { inboxFilters, inboxIssuesFiltersLength, updateInboxIssuePriorityFilters, updateInboxIssueStatusFilters } =
+    useProjectInbox();
 
   const handleSelect = (option: { key: string; value: string }) => {
     if (!projectId) return;
-    if (option.key === "priority") updateInboxIssuePriorityFilters(projectId, option.key, option.value);
-    if (option.key === "inbox_status") updateInboxIssueStatusFilters(projectId, option.key, parseInt(option.value));
+    if (option.key === "priority") updateInboxIssuePriorityFilters(workspaceSlug, projectId, option.value);
+    if (option.key === "inbox_status") updateInboxIssueStatusFilters(workspaceSlug, projectId, parseInt(option.value));
   };
 
   return (
@@ -49,7 +50,7 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
                 key: "priority",
                 value: priority.key,
               },
-              selected: projectInboxFilters?.priority?.includes(priority.key),
+              selected: inboxFilters?.priority?.includes(priority.key),
             })),
           },
           {
@@ -71,17 +72,17 @@ export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observe
                 key: "inbox_status",
                 value: status.status,
               },
-              selected: projectInboxFilters?.inbox_status?.includes(status.status),
+              selected: inboxFilters?.inbox_status?.includes(status.status),
             })),
           },
         ]}
       />
 
-      {/* {filtersLength > 0 && (
+      {inboxIssuesFiltersLength > 0 && (
         <div className="absolute -right-2 -top-2 z-10 grid h-4 w-4 place-items-center rounded-full border border-custom-border-200 bg-custom-background-80 text-[0.65rem] text-custom-text-100">
-          <span>{filtersLength}</span>
+          <span>{inboxIssuesFiltersLength}</span>
         </div>
-      )} */}
+      )}
     </div>
   );
 });
