@@ -231,7 +231,7 @@ class InboxIssueViewSet(BaseViewSet):
         # Create or get state
         state, _ = State.objects.get_or_create(
             name="Triage",
-            group="backlog",
+            group="triage",
             description="Default state for managing all Inbox Issues",
             project_id=project_id,
             color="#ff7700",
@@ -382,7 +382,7 @@ class InboxIssueViewSet(BaseViewSet):
                     )
 
                     # Update the issue state only if it is in triage state
-                    if issue.state.name == "Triage":
+                    if issue.state.group == "triage":
                         # Move to default state
                         state = State.objects.filter(
                             workspace__slug=slug,
