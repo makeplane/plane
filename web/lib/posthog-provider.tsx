@@ -14,31 +14,49 @@ export interface IPosthogWrapper {
   currentWorkspaceId: string | undefined;
   posthogAPIKey: string | null;
   posthogHost: string | null;
+  isCloud: boolean;
+  telemetryEnabled: boolean;
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const { children, user, workspaceIds, currentWorkspaceId, posthogAPIKey, posthogHost } = props;
+  const {
+    children,
+    user,
+    workspaceIds,
+    currentWorkspaceId,
+    posthogAPIKey,
+    posthogHost,
+    isCloud = false,
+    telemetryEnabled = false,
+  } = props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router
   const router = useRouter();
 
+  if (!isCloud && !telemetryEnabled) return <>{children}</>;
+
   useEffect(() => {
     if (user) {
       // Identify sends an event, so you want may want to limit how often you call it
-      posthog?.identify(user.email, {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        use_case: user.use_case,
-        workspaces: workspaceIds,
-      });
+      posthog?.identify(
+        isCloud ? user.email : user.id,
+        isCloud
+          ? {
+              id: user.id,
+              first_name: user.first_name,
+              last_name: user.last_name,
+              email: user.email,
+              use_case: user.use_case,
+              workspaces: workspaceIds,
+            }
+          : undefined
+      );
     }
-  }, [user, workspaceIds]);
+  }, [user, workspaceIds, isCloud]);
 
   useEffect(() => {
-    if (posthogAPIKey && posthogHost) {
+    if (posthogAPIKey && posthogHost && (isCloud || (!isCloud && telemetryEnabled))) {
       posthog.init(posthogAPIKey, {
         api_host: posthogHost || "https://app.posthog.com",
         debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
@@ -46,16 +64,16 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
     }
-  }, [posthogAPIKey, posthogHost]);
+  }, [posthogAPIKey, posthogHost, isCloud, telemetryEnabled]);
 
   useEffect(() => {
     // Join workspace group on workspace change
     if (lastWorkspaceId !== currentWorkspaceId && currentWorkspaceId && user) {
       setLastWorkspaceId(currentWorkspaceId);
-      posthog?.identify(user.email);
+      posthog?.identify(isCloud ? user.email : user.id);
       posthog?.group(GROUP_WORKSPACE, currentWorkspaceId);
     }
-  }, [currentWorkspaceId, lastWorkspaceId, user]);
+  }, [currentWorkspaceId, lastWorkspaceId, user, isCloud]);
 
   useEffect(() => {
     // Track page views
