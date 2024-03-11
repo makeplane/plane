@@ -283,6 +283,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                         description="Default state for managing all Inbox Issues",
                         project_id=project_id,
                         color="#ff7700",
+                        is_triage=True,
                     )
 
                 project = (

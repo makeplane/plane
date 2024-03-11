@@ -177,7 +177,7 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_issue = InboxIssue.objects.filter(
             inbox_id=inbox_id.id,
             project_id=project_id,
-        ).prefetch_related("issue")
+        ).select_related("issue")
         # inbox status filter
         inbox_status = [
             item
@@ -235,6 +235,7 @@ class InboxIssueViewSet(BaseViewSet):
             description="Default state for managing all Inbox Issues",
             project_id=project_id,
             color="#ff7700",
+            is_triage=True,
         )
 
         # create an issue
