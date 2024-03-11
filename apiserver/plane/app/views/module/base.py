@@ -3,7 +3,7 @@ import json
 
 # Django Imports
 from django.utils import timezone
-from django.db.models import Prefetch, F, OuterRef, Exists, Count, Q
+from django.db.models import Prefetch, F, OuterRef, Exists, Count, Q, Func
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Value, UUIDField
@@ -78,15 +78,6 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                         "module", "created_by"
                     ),
                 )
-            )
-            .annotate(
-                total_issues=Count(
-                    "issue_module",
-                    filter=Q(
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                    ),
-                ),
             )
             .annotate(
                 completed_issues=Count(
@@ -183,7 +174,6 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                     "external_id",
                     # computed fields
                     "is_favorite",
-                    "total_issues",
                     "cancelled_issues",
                     "completed_issues",
                     "started_issues",
@@ -225,7 +215,6 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "external_id",
                 # computed fields
                 "is_favorite",
-                "total_issues",
                 "cancelled_issues",
                 "completed_issues",
                 "started_issues",
@@ -237,7 +226,30 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         return Response(modules, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk):
-        queryset = self.get_queryset().filter(pk=pk)
+        queryset = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .annotate(
+                total_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=True,
+                    issue_module__module_id=pk,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=False,
+                    issue_module__module_id=pk,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
 
         assignee_distribution = (
             Issue.objects.filter(
@@ -380,7 +392,6 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "external_id",
                 # computed fields
                 "is_favorite",
-                "total_issues",
                 "cancelled_issues",
                 "completed_issues",
                 "started_issues",

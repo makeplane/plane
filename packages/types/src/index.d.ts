@@ -1,6 +1,6 @@
 export * from "./users";
 export * from "./workspace";
-export * from "./cycles";
+export * from "./cycle";
 export * from "./dashboard";
 export * from "./projects";
 export * from "./state";

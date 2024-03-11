@@ -7,7 +7,7 @@ export interface EmptyStateDetails {
   description?: string;
   path?: string;
   primaryButton?: {
-    icon?: any;
+    icon?: React.ReactNode;
     text: string;
     comicBox?: {
       title?: string;
@@ -15,7 +15,7 @@ export interface EmptyStateDetails {
     };
   };
   secondaryButton?: {
-    icon?: any;
+    icon?: React.ReactNode;
     text: string;
     comicBox?: {
       title?: string;
@@ -51,9 +51,7 @@ export enum EmptyStateType {
   PROJECT_CYCLES = "project-cycles",
   PROJECT_CYCLE_NO_ISSUES = "project-cycle-no-issues",
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
-  PROJECT_CYCLE_UPCOMING = "project-cycle-upcoming",
-  PROJECT_CYCLE_COMPLETED = "project-cycle-completed",
-  PROJECT_CYCLE_DRAFT = "project-cycle-draft",
+  PROJECT_CYCLE_ALL = "project-cycle-all",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
   PROJECT_DRAFT_EMPTY_FILTER = "project-draft-empty-filter",
@@ -288,28 +286,17 @@ const emptyStateDetails = {
   },
   "project-cycle-active": {
     key: "project-cycle-active",
-    title: "No active cycles",
+    title: "No active cycle",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
   },
-  "project-cycle-upcoming": {
-    key: "project-cycle-upcoming",
-    title: "No upcoming cycles",
-    description: "Upcoming cycles on deck! Just add dates to cycles in draft, and they'll show up right here.",
-    path: "/empty-state/cycle/upcoming",
-  },
-  "project-cycle-completed": {
-    key: "project-cycle-completed",
-    title: "No completed cycles",
-    description: "Any cycle with a past due date is considered completed. Explore all completed cycles here.",
-    path: "/empty-state/cycle/completed",
-  },
-  "project-cycle-draft": {
-    key: "project-cycle-draft",
-    title: "No draft cycles",
-    description: "No dates added in cycles? Find them here as drafts.",
-    path: "/empty-state/cycle/draft",
+  "project-cycle-all": {
+    key: "project-cycle-all",
+    title: "No cycles",
+    description:
+      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+    path: "/empty-state/cycle/active",
   },
   // empty filters
   "project-empty-filter": {

@@ -13,7 +13,7 @@ import { CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 import { EUserProjectRoles } from "constants/project";
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
-import { TCycleLayout } from "@plane/types";
+import { TCycleLayoutOptions } from "@plane/types";
 import { ProjectLogo } from "components/project";
 
 export const CyclesHeader: FC = observer(() => {
@@ -33,10 +33,10 @@ export const CyclesHeader: FC = observer(() => {
   const canUserCreateCycle =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
-  const { setValue: setCycleLayout } = useLocalStorage<TCycleLayout>("cycle_layout", "list");
+  const { setValue: setCycleLayout } = useLocalStorage<TCycleLayoutOptions>("cycle_layout", "list");
 
   const handleCurrentLayout = useCallback(
-    (_layout: TCycleLayout) => {
+    (_layout: TCycleLayoutOptions) => {
       setCycleLayout(_layout);
     },
     [setCycleLayout]
@@ -109,7 +109,7 @@ export const CyclesHeader: FC = observer(() => {
               key={layout.key}
               onClick={() => {
                 // handleLayoutChange(ISSUE_LAYOUTS[index].key);
-                handleCurrentLayout(layout.key as TCycleLayout);
+                handleCurrentLayout(layout.key as TCycleLayoutOptions);
               }}
               className="flex items-center gap-2"
             >
