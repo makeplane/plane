@@ -3,19 +3,20 @@
 # Python imports
 import os
 import ssl
-import certifi
 from datetime import timedelta
 from urllib.parse import urlparse
 
-# Django imports
-from django.core.management.utils import get_random_secret_key
+import certifi
 
 # Third party imports
 import dj_database_url
 import sentry_sdk
+
+# Django imports
+from django.core.management.utils import get_random_secret_key
+from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
-from sentry_sdk.integrations.celery import CeleryIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -345,3 +346,49 @@ INSTANCE_KEY = os.environ.get(
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+LOG_DIR = os.path.join(BASE_DIR, "logs")
+
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": (
+                os.path.join(BASE_DIR, "logs", "debug.log")
+                if DEBUG
+                else os.path.join(BASE_DIR, "logs", "error.log")
+            ),
+            "when": "midnight",
+            "interval": 1,  # One day
+            "backupCount": 5,  # Keep last 5 days of logs,
+            "formatter": "json",
+        },
+    },
+    "loggers": {
+        "plane": {
+            "level": "DEBUG" if DEBUG else "ERROR",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+    },
+}

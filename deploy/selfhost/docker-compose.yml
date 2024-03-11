@@ -90,6 +90,8 @@ services:
     command: ./bin/takeoff
     deploy:
       replicas: ${API_REPLICAS:-1}
+    volumes:
+      - logs/api:/code/plane/logs
     depends_on:
       - plane-db
       - plane-redis
@@ -100,6 +102,8 @@ services:
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/worker
+    volumes:
+      - logs/worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -111,6 +115,8 @@ services:
     pull_policy: ${PULL_POLICY:-always}
     restart: unless-stopped
     command: ./bin/beat
+    volumes:
+      - logs/beat-worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -169,3 +175,4 @@ volumes:
   pgdata:
   redisdata:
   uploads:
+  logs:

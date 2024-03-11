@@ -1,26 +1,27 @@
 # Python imports
-import zoneinfo
+import logging
 from urllib.parse import urlparse
 
+import zoneinfo
 
 # Django imports
 from django.conf import settings
-from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 # Third party imports
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle
-from plane.utils.paginator import BasePaginator
 from plane.bgtasks.webhook_task import send_webhook
+from plane.utils.paginator import BasePaginator
 
 
 class TimezoneMixin:
@@ -103,6 +104,35 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                     {"error": "The payload is not valid"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            if isinstance(e, ValidationError):
+                return Response(
+                    {"error": "Please provide valid detail"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if isinstance(e, ObjectDoesNotExist):
+                model_name = str(exc).split(" matching query does not exist.")[
+                    0
+                ]
+                return Response(
+                    {"error": f"{model_name} does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            if isinstance(e, KeyError):
+                return Response(
+                    {"error": f"key {e} does not exist"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            logger = logging.getLogger("plane")
+            logger.error(e)
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
             if isinstance(e, ValidationError):
                 return Response(

@@ -1,17 +1,17 @@
 # Python imports
+import logging
+
+# Third party imports
+from celery import shared_task
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.conf import settings
-
-# Third party imports
-from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import Workspace, WorkspaceMemberInvite, User
+from plane.db.models import User, Workspace, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_email_configuration
 
 
@@ -82,8 +82,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         print("Workspace or WorkspaceMember Invite Does not exists")
         return
     except Exception as e:
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return

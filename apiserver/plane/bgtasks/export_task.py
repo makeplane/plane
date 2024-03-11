@@ -4,6 +4,8 @@ import io
 import json
 import boto3
 import zipfile
+import logging
+from urllib.parse import urlparse, urlunparse
 
 # Django imports
 from django.conf import settings
@@ -403,8 +405,7 @@ def issue_export_task(
         exporter_instance.status = "failed"
         exporter_instance.reason = str(e)
         exporter_instance.save(update_fields=["status", "reason"])
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return

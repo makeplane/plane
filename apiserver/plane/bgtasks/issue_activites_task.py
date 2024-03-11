@@ -1,6 +1,7 @@
 # Python imports
 import json
 import requests
+import logging
 
 # Django imports
 from django.conf import settings
@@ -1668,8 +1669,7 @@ def issue_activity(
 
         return
     except Exception as e:
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return
