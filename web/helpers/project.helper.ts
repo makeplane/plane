@@ -74,8 +74,7 @@ export const shouldFilterProject = (
       fallsInFilters = fallsInFilters && filters.members.includes(`${project.project_lead}`);
     if (filterKey === "created_at" && filters.created_at && filters.created_at.length > 0) {
       filters.created_at.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!project.created_at && satisfiesDateFilter(new Date(project.created_at), dateFilter);
+        fallsInFilters = fallsInFilters && satisfiesDateFilter(new Date(project.created_at), dateFilter);
       });
     }
   });

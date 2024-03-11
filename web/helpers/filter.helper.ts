@@ -37,6 +37,12 @@ export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
   }
 
   if (from === "fromnow") {
+    if (operator === "before") {
+      if (value === "1_weeks") return differenceInCalendarDays(date, new Date()) <= -7;
+      if (value === "2_weeks") return differenceInCalendarDays(date, new Date()) <= -14;
+      if (value === "1_months") return differenceInCalendarDays(date, new Date()) <= -30;
+    }
+
     if (operator === "after") {
       if (value === "1_weeks") return differenceInCalendarDays(date, new Date()) >= 7;
       if (value === "2_weeks") return differenceInCalendarDays(date, new Date()) >= 14;

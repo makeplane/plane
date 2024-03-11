@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import { Check, Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // components
@@ -17,6 +17,7 @@ import { useProject } from "hooks/store";
 import type { IProject } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { differenceInCalendarDays } from "date-fns";
 
 type Props = {
   project: IProject;
@@ -98,10 +99,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           handleClose={() => setJoinProjectModal(false)}
         />
       )}
-      <div
-        onClick={() => {
-          if (project.is_member) router.push(`/${workspaceSlug?.toString()}/projects/${project.id}/issues`);
-          else setJoinProjectModal(true);
+      <Link
+        href={`/${workspaceSlug}/projects/${project.id}/issues`}
+        onClick={(e) => {
+          if (!project.is_member) {
+            e.preventDefault();
+            e.stopPropagation();
+            setJoinProjectModal(true);
+          }
         }}
         className="flex cursor-pointer flex-col rounded bg-custom-background-100 hover:shadow-custom-shadow-4xl transition-all"
       >
@@ -169,6 +174,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                     Public
                   </>
                 )}
+                {`${differenceInCalendarDays(new Date(project.created_at), new Date()) <= -7}`}
               </span>
             </div>
             <p className="line-clamp-2 break-words text-sm text-custom-text-300">
@@ -199,15 +205,21 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 <span className="text-sm italic text-custom-text-400">No member yet</span>
               )}
             </Tooltip>
-            {project.is_member && (isOwner || isMember) && (
-              <Link
-                href={`/${workspaceSlug}/projects/${project.id}/settings`}
-                className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Link>
-            )}
+            {project.is_member &&
+              (isOwner || isMember ? (
+                <Link
+                  href={`/${workspaceSlug}/projects/${project.id}/settings`}
+                  className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Link>
+              ) : (
+                <span className="flex items-center gap-1 text-custom-text-400 text-sm">
+                  <Check className="h-3.5 w-3.5" />
+                  Joined
+                </span>
+              ))}
             {!project.is_member && (
               <Button
                 variant="link-primary"
@@ -223,7 +235,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             )}
           </div>
         </div>
-      </div>
+      </Link>
     </>
   );
 });

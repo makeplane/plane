@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { DateFilterModal } from "components/core";
 import { FilterHeader, FilterOption } from "components/issues";
 // constants
-import { DATE_FILTER_OPTIONS } from "constants/filters";
+import { DATE_BEFORE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -20,7 +20,9 @@ export const FilterCreatedDate: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = DATE_FILTER_OPTIONS.filter((d) => d.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredOptions = DATE_BEFORE_FILTER_OPTIONS.filter((d) =>
+    d.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
