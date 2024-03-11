@@ -317,6 +317,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                         description="Default state for managing all Inbox Issues",
                         project_id=pk,
                         color="#ff7700",
+                        is_triage=True,
                     )
 
                 project = (
