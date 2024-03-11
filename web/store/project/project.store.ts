@@ -1,4 +1,3 @@
-import { cloneDeep, update } from "lodash";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
@@ -8,21 +7,20 @@ import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
 import { IProject } from "@plane/types";
 import { RootStore } from "../root.store";
+import { shouldFilterProject } from "helpers/project.helper";
 // services
 export interface IProjectStore {
   // observables
-  searchQuery: string;
   projectMap: {
     [projectId: string]: IProject; // projectId: project Info
   };
   // computed
-  searchedProjects: string[];
-  workspaceProjectIds: string[] | null;
+  filteredProjectIds: string[] | undefined;
+  workspaceProjectIds: string[] | undefined;
   joinedProjectIds: string[];
   favoriteProjectIds: string[];
   currentProjectDetails: IProject | undefined;
   // actions
-  setSearchQuery: (query: string) => void;
   getProjectById: (projectId: string) => IProject | null;
   getProjectIdentifierById: (projectId: string) => string;
   // fetch actions
@@ -41,7 +39,6 @@ export interface IProjectStore {
 
 export class ProjectStore implements IProjectStore {
   // observables
-  searchQuery: string = "";
   projectMap: {
     [projectId: string]: IProject; // projectId: project Info
   } = {};
@@ -56,16 +53,13 @@ export class ProjectStore implements IProjectStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
-      searchQuery: observable.ref,
       projectMap: observable,
       // computed
-      searchedProjects: computed,
+      filteredProjectIds: computed,
       workspaceProjectIds: computed,
       currentProjectDetails: computed,
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
-      // actions
-      setSearchQuery: action.bound,
       // fetch actions
       fetchProjects: action,
       fetchProjectDetails: action,
@@ -88,16 +82,22 @@ export class ProjectStore implements IProjectStore {
   }
 
   /**
-   * Returns searched projects based on search query
+   * @description returns filtered projects based on filters and search query
    */
-  get searchedProjects() {
+  get filteredProjectIds() {
     const workspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
-    if (!workspaceDetails) return [];
+    const {
+      currentWorkspaceDisplayFilters: displayFilters,
+      currentWorkspaceFilters: filters,
+      searchQuery,
+    } = this.rootStore.projectRoot.projectFilter;
+    if (!workspaceDetails || !displayFilters || !filters) return;
     const workspaceProjects = Object.values(this.projectMap).filter(
       (p) =>
         p.workspace === workspaceDetails.id &&
-        (p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          p.identifier.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        (p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.identifier.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        shouldFilterProject(p, filters)
     );
     return workspaceProjects.map((p) => p.id);
   }
@@ -107,7 +107,7 @@ export class ProjectStore implements IProjectStore {
    */
   get workspaceProjectIds() {
     const workspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
-    if (!workspaceDetails) return null;
+    if (!workspaceDetails) return;
     const workspaceProjects = Object.values(this.projectMap).filter((p) => p.workspace === workspaceDetails.id);
     const projectIds = workspaceProjects.map((p) => p.id);
     return projectIds ?? null;
@@ -152,14 +152,6 @@ export class ProjectStore implements IProjectStore {
       .map((project) => project.id);
     return projectIds;
   }
-
-  /**
-   * Sets search query
-   * @param query
-   */
-  setSearchQuery = (query: string) => {
-    this.searchQuery = query;
-  };
 
   /**
    * get Workspace projects using workspace slug

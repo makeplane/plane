@@ -1,25 +1,68 @@
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Search, Plus, Briefcase } from "lucide-react";
+import { Search, Plus, Briefcase, X } from "lucide-react";
 // hooks
-// ui
-import { Breadcrumbs, Button } from "@plane/ui";
-// constants
+import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "hooks/store";
+// components
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+// ui
+import { Breadcrumbs, Button } from "@plane/ui";
+// helpers
+import { cn } from "helpers/common.helper";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
-// components
-import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import { FiltersDropdown } from "components/issues";
+import { ProjectFiltersSelection } from "components/project";
+import { TProjectFilters } from "@plane/types";
 
 export const ProjectsHeader = observer(() => {
+  // states
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  // refs
+  const inputRef = useRef<HTMLInputElement>(null);
   // store hooks
-  const { commandPalette: commandPaletteStore } = useApplication();
+  const {
+    commandPalette: commandPaletteStore,
+    router: { workspaceSlug },
+  } = useApplication();
   const { setTrackElement } = useEventTracker();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const { workspaceProjectIds, searchQuery, setSearchQuery } = useProject();
-
+  const { workspaceProjectIds } = useProject();
+  const { currentWorkspaceFilters, updateFilters, searchQuery, updateSearchQuery } = useProjectFilter();
+  const {
+    workspace: { workspaceMemberIds },
+  } = useMember();
+  // auth
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
+  const handleFilters = useCallback(
+    (key: keyof TProjectFilters, value: string | string[]) => {
+      if (!workspaceSlug) return;
+      const newValues = currentWorkspaceFilters?.[key] ?? [];
+
+      if (Array.isArray(value))
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+        });
+      else {
+        if (currentWorkspaceFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+
+      updateFilters(workspaceSlug, { [key]: newValues });
+    },
+    [currentWorkspaceFilters, updateFilters, workspaceSlug]
+  );
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
+      else setIsSearchOpen(false);
+    }
+  };
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -34,18 +77,60 @@ export const ProjectsHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      <div className="flex w-full justify-end items-center gap-3">
+      <div className="w-full flex items-center justify-end gap-3">
         {workspaceProjectIds && workspaceProjectIds?.length > 0 && (
-          <div className=" flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
-            <Search className="h-3.5" />
-            <input
-              className="border-none w-full bg-transparent text-sm focus:outline-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search"
-            />
+          <div className="flex items-center">
+            {!isSearchOpen && (
+              <button
+                type="button"
+                className="-mr-1 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
+                onClick={() => {
+                  setIsSearchOpen(true);
+                  inputRef.current?.focus();
+                }}
+              >
+                <Search className="h-3.5 w-3.5" />
+              </button>
+            )}
+            <div
+              className={cn(
+                "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+                {
+                  "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+                }
+              )}
+            >
+              <Search className="h-3.5 w-3.5" />
+              <input
+                ref={inputRef}
+                className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => updateSearchQuery(e.target.value)}
+                onKeyDown={handleInputKeyDown}
+              />
+              {isSearchOpen && (
+                <button
+                  type="button"
+                  className="grid place-items-center"
+                  onClick={() => {
+                    updateSearchQuery("");
+                    setIsSearchOpen(false);
+                  }}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
           </div>
         )}
+        <FiltersDropdown title="Filters" placement="bottom-end">
+          <ProjectFiltersSelection
+            filters={currentWorkspaceFilters ?? {}}
+            handleFiltersUpdate={handleFilters}
+            memberIds={workspaceMemberIds ?? undefined}
+          />
+        </FiltersDropdown>
         {isAuthorizedUser && (
           <Button
             prependIcon={<Plus />}

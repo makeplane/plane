@@ -103,7 +103,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           if (project.is_member) router.push(`/${workspaceSlug?.toString()}/projects/${project.id}/issues`);
           else setJoinProjectModal(true);
         }}
-        className="flex cursor-pointer flex-col rounded border border-custom-border-200 bg-custom-background-100"
+        className="flex cursor-pointer flex-col rounded bg-custom-background-100 hover:shadow-custom-shadow-4xl transition-all"
       >
         <div className="relative h-16 w-full rounded-t">
           <img
@@ -152,7 +152,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           </div>
         </div>
 
-        <div className="h-44 w-full flex flex-col justify-between rounded-b">
+        <div className="h-44 w-full flex flex-col justify-between rounded-b border border-custom-border-200 border-t-0">
           <div className="flex flex-col flex-grow gap-3 text-custom-text-200 px-4 pt-10">
             <div className="flex flex-col gap-1">
               <h3 className="truncate font-semibold">{project.name}</h3>

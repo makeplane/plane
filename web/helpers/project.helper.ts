@@ -1,4 +1,7 @@
-import { IProject } from "@plane/types";
+// helpers
+import { satisfiesDateFilter } from "helpers/filter.helper";
+// types
+import { IProject, TProjectFilters } from "@plane/types";
 
 /**
  * Updates the sort order of the project.
@@ -46,3 +49,30 @@ export const orderJoinedProjects = (
 
 export const projectIdentifierSanitizer = (identifier: string): string =>
   identifier.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
+
+/**
+ * @description filters projects based on the filter
+ * @param {IProject} project
+ * @param {TProjectFilters} filter
+ * @returns {boolean}
+ */
+export const shouldFilterProject = (project: IProject, filter: TProjectFilters): boolean => {
+  let fallsInFilters = true;
+  Object.keys(filter).forEach((key) => {
+    const filterKey = key as keyof TProjectFilters;
+    if (filterKey === "access" && filter.access && filter.access.length > 0)
+      fallsInFilters = fallsInFilters && filter.access.includes(`${project.network}`);
+    if (filterKey === "lead" && filter.lead && filter.lead.length > 0)
+      fallsInFilters = fallsInFilters && filter.lead.includes(`${project.project_lead}`);
+    if (filterKey === "members" && filter.members && filter.members.length > 0)
+      fallsInFilters = fallsInFilters && filter.members.includes(`${project.project_lead}`);
+    if (filterKey === "created_at" && filter.created_at && filter.created_at.length > 0) {
+      filter.created_at.forEach((dateFilter) => {
+        fallsInFilters =
+          fallsInFilters && !!project.created_at && satisfiesDateFilter(new Date(project.created_at), dateFilter);
+      });
+    }
+  });
+
+  return fallsInFilters;
+};
