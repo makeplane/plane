@@ -2,27 +2,28 @@
 import json
 
 # Django improts
-from django.utils import timezone
-from django.db.models import Q
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView
-from plane.app.permissions import ProjectLitePermission
 from plane.api.serializers import InboxIssueSerializer, IssueSerializer
+from plane.app.permissions import ProjectLitePermission
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
+    Inbox,
     InboxIssue,
     Issue,
-    State,
-    ProjectMember,
     Project,
-    Inbox,
+    ProjectMember,
+    State,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+
+from .base import BaseAPIView
 
 
 class InboxIssueAPIEndpoint(BaseAPIView):

@@ -2,60 +2,54 @@
 import json
 
 # Django imports
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
-    Func,
-    F,
-    Q,
-    Exists,
-    OuterRef,
-    Count,
-    Prefetch,
     Case,
-    When,
-    Value,
     CharField,
+    Count,
+    Exists,
+    F,
+    OuterRef,
+    Prefetch,
+    Q,
+    UUIDField,
+    Value,
+    When,
 )
-from django.core import serializers
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models import UUIDField
-from django.db.models.functions import Coalesce
 
 # Third party imports
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
 
-# Module imports
-from .. import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    CycleSerializer,
-    CycleIssueSerializer,
-    CycleFavoriteSerializer,
-    IssueSerializer,
-    CycleWriteSerializer,
-    CycleUserPropertiesSerializer,
-)
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
 )
-from plane.db.models import (
-    User,
-    Cycle,
-    CycleIssue,
-    Issue,
-    CycleFavorite,
-    IssueLink,
-    IssueAttachment,
-    Label,
-    CycleUserProperties,
+from plane.app.serializers import (
+    CycleFavoriteSerializer,
+    CycleSerializer,
+    CycleUserPropertiesSerializer,
+    CycleWriteSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.issue_filters import issue_filters
+from plane.db.models import (
+    Cycle,
+    CycleFavorite,
+    CycleIssue,
+    CycleUserProperties,
+    Issue,
+    Label,
+    User,
+)
 from plane.utils.analytics_plot import burndown_plot
+
+# Module imports
+from .. import BaseAPIView, BaseViewSet, WebhookMixin
 
 
 class CycleViewSet(WebhookMixin, BaseViewSet):
@@ -327,13 +321,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 }
 
                 if data[0]["start_date"] and data[0]["end_date"]:
-                    data[0]["distribution"][
-                        "completion_chart"
-                    ] = burndown_plot(
-                        queryset=queryset.first(),
-                        slug=slug,
-                        project_id=project_id,
-                        cycle_id=data[0]["id"],
+                    data[0]["distribution"]["completion_chart"] = (
+                        burndown_plot(
+                            queryset=queryset.first(),
+                            slug=slug,
+                            project_id=project_id,
+                            cycle_id=data[0]["id"],
+                        )
                     )
 
             return Response(data, status=status.HTTP_200_OK)

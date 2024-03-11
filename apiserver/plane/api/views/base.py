@@ -1,26 +1,26 @@
 # Python imports
-import zoneinfo
 from urllib.parse import urlparse
 
+import zoneinfo
 
 # Django imports
 from django.conf import settings
-from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 from django.utils import timezone
 
 # Third party imports
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle
-from plane.utils.paginator import BasePaginator
 from plane.bgtasks.webhook_task import send_webhook
+from plane.utils.paginator import BasePaginator
 
 
 class TimezoneMixin:
