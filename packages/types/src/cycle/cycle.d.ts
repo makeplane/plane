@@ -26,6 +26,7 @@ export interface ICycle {
   sort_order: number;
   start_date: string | null;
   started_issues: number;
+  sub_issues: number;
   total_issues: number;
   unstarted_issues: number;
   updated_at: Date;

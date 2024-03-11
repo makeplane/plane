@@ -215,9 +215,10 @@ class ModuleSerializer(DynamicBaseSerializer):
 
 class ModuleDetailSerializer(ModuleSerializer):
     link_module = ModuleLinkSerializer(read_only=True, many=True)
+    sub_issues = serializers.IntegerField(read_only=True)
 
     class Meta(ModuleSerializer.Meta):
-        fields = ModuleSerializer.Meta.fields + ["link_module"]
+        fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues"]
 
 
 class ModuleFavoriteSerializer(BaseSerializer):
