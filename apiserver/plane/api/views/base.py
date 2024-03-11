@@ -134,34 +134,6 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-            if isinstance(e, ValidationError):
-                return Response(
-                    {
-                        "error": "The provided payload is not valid please try with a valid payload"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if isinstance(e, ObjectDoesNotExist):
-                return Response(
-                    {"error": "The required object does not exist."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-
-            if isinstance(e, KeyError):
-                return Response(
-                    {"error": " The required key does not exist."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if settings.DEBUG:
-                print(e)
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
     def dispatch(self, request, *args, **kwargs):
         try:
             response = super().dispatch(request, *args, **kwargs)
