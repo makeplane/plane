@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
@@ -369,16 +369,17 @@ LOGGING = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
+            "formatter": "json",
         },
         "file": {
-            "class": "logging.handlers.TimedRotatingFileHandler",
+            "class": "plane.utils.logging.SizedTimedRotatingFileHandler",
             "filename": (
                 os.path.join(BASE_DIR, "logs", "debug.log")
                 if DEBUG
                 else os.path.join(BASE_DIR, "logs", "error.log")
             ),
             "when": "midnight",
+            "maxBytes": 1024 * 1024 * 1,
             "interval": 1,  # One day
             "backupCount": 5,  # Keep last 5 days of logs,
             "formatter": "json",
