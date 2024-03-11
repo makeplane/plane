@@ -54,6 +54,7 @@ export enum EmptyStateType {
   PROJECT_CYCLE_UPCOMING = "project-cycle-upcoming",
   PROJECT_CYCLE_COMPLETED = "project-cycle-completed",
   PROJECT_CYCLE_DRAFT = "project-cycle-draft",
+  PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
   PROJECT_DRAFT_EMPTY_FILTER = "project-draft-empty-filter",
@@ -310,6 +311,13 @@ const emptyStateDetails = {
     title: "No draft cycles",
     description: "No dates added in cycles? Find them here as drafts.",
     path: "/empty-state/cycle/draft",
+  },
+  "project-cycle-completed-no-issues": {
+    key: "project-cycle-completed-no-issues",
+    title: "No issues in the cycle",
+    description:
+      "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
+    path: "/empty-state/cycle/completed-no-issues",
   },
   // empty filters
   "project-empty-filter": {
