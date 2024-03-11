@@ -9,7 +9,7 @@ import { Loader } from "@plane/ui";
 // components
 import { PageHead } from "components/core";
 import { ProjectInboxHeader } from "components/headers";
-import { InboxIssueList, InboxIssueFilterSelection } from "components/inbox";
+import { InboxIssueList, InboxIssueFilterSelection, InboxIssueAppliedFilter, InboxContentRoot } from "components/inbox";
 import { InboxLayoutLoader } from "components/ui";
 // hooks
 import { useProject, useProjectInbox } from "hooks/store";
@@ -25,7 +25,7 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const elementRef = useRef<HTMLDivElement>(null);
   /// router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, inboxIssueId } = router.query;
   // store
   const {
     inboxIssues,
@@ -83,11 +83,11 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
                 </div>
               </div>
               <div className="z-20">
-                <InboxIssueFilterSelection workspaceSlug={workspaceSlug} projectId={projectId} />
+                <InboxIssueFilterSelection workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </div>
             </div>
             <div className="w-full h-auto">
-              {/* <InboxIssueAppliedFilter workspaceSlug={workspaceSlug} projectId={projectId} /> */}
+              <InboxIssueAppliedFilter workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
             </div>
             <div className="w-full h-full overflow-hidden">
               <div className="overflow-y-auto w-full h-full vertical-scrollbar scrollbar-md" ref={containerRef}>

@@ -3,6 +3,8 @@ import keyBy from "lodash/keyBy";
 import includes from "lodash/includes";
 import pull from "lodash/pull";
 import reduce from "lodash/reduce";
+import mapValues from "lodash/mapValues";
+import isArray from "lodash/isArray";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
@@ -27,8 +29,11 @@ export interface IProjectInboxStore {
   ) => Promise<TInboxIssue[]>;
   fetchInboxIssuesNextPage: (workspaceSlug: string, projectId: string) => Promise<void>;
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
-  updateInboxIssuePriorityFilters: (projectId: string, key: string, value: string) => void;
-  updateInboxIssueStatusFilters: (workspaceSlug: string, projectId: string, value: number) => void;
+  updateInboxIssuePriorityFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+  updateInboxIssueStatusFilter: (workspaceSlug: string, projectId: string, value: number) => void;
+  resetInboxFilters: () => void;
+  resetInboxPriorityFilters: () => void;
+  resetInboxStatusFilters: () => void;
 }
 
 export class ProjectInboxStore implements IProjectInboxStore {
@@ -53,11 +58,31 @@ export class ProjectInboxStore implements IProjectInboxStore {
       fetchInboxIssues: action,
       fetchInboxIssuesNextPage: action,
       createInboxIssue: action,
-      updateInboxIssuePriorityFilters: action,
-      updateInboxIssueStatusFilters: action,
+      updateInboxIssuePriorityFilter: action,
+      updateInboxIssueStatusFilter: action,
+      resetInboxFilters: action,
+      resetInboxPriorityFilters: action,
+      resetInboxStatusFilters: action,
     });
     this.rootStore = _rootStore;
     this.inboxIssueService = new InboxIssueService();
+  }
+
+  get inboxIssuesArray() {
+    return Object.values(this.inboxIssues);
+  }
+
+  get inboxIssuesFiltersLength() {
+    return reduce(this.inboxFilters, (acc, value) => acc + (value?.length || 0), 0);
+  }
+
+  get inboxFiltersParams() {
+    return mapValues(this.inboxFilters, (value) => {
+      if (isArray(value) && value.length > 0) {
+        return value.join(",");
+      }
+      return;
+    });
   }
 
   /**
@@ -85,6 +110,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
     return results;
   };
 
+  /**
+   * fetch inbox issues next page
+   * @param workspaceSlug
+   * @param projectId
+   */
   fetchInboxIssuesNextPage = async (workspaceSlug: string, projectId: string) => {
     if (this.inboxIssuePaginationInfo?.next_cursor && this.inboxIssuePaginationInfo?.next_page_results) {
       runInAction(() => {
@@ -105,14 +135,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
       });
     }
   };
-
-  get inboxIssuesArray() {
-    return Object.values(this.inboxIssues);
-  }
-
-  get inboxIssuesFiltersLength() {
-    return reduce(this.inboxFilters, (acc, value) => acc + (value?.length || 0), 0);
-  }
 
   /**
    * create inbox issue
@@ -150,7 +172,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @param key
    * @param value
    */
-  updateInboxIssuePriorityFilters = (workspaceSlug: string, projectId: string, value: string) => {
+  updateInboxIssuePriorityFilter = (workspaceSlug: string, projectId: string, value: string) => {
     if (!this.rootStore.app.router.query.workspaceSlug) return;
     runInAction(() => {
       const priorityList = this.inboxFilters?.priority ?? [];
@@ -164,8 +186,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    console.log("this.inboxFilters", this.inboxFilters);
-    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFilters });
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
   };
 
   /**
@@ -174,7 +195,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @param key
    * @param value
    */
-  updateInboxIssueStatusFilters = (workspaceSlug: string, projectId: string, value: number) => {
+  updateInboxIssueStatusFilter = (workspaceSlug: string, projectId: string, value: number) => {
     runInAction(() => {
       const inboxStatusFilter = this.inboxFilters?.inbox_status ?? [];
       if (includes(inboxStatusFilter, value)) {
@@ -187,6 +208,27 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    // this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFilters);
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  };
+
+  /**
+   * reset all inbox filters to default
+   */
+  resetInboxFilters = () => {
+    this.inboxFilters = {};
+  };
+
+  /**
+   * reset all inbox priority filters to default
+   */
+  resetInboxPriorityFilters = () => {
+    this.inboxFilters = { ...this.inboxFilters, priority: [] };
+  };
+
+  /**
+   * reset all inbox status filters to default
+   */
+  resetInboxStatusFilters = () => {
+    this.inboxFilters = { ...this.inboxFilters, inbox_status: [] };
   };
 }
