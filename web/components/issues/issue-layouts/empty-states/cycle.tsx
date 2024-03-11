@@ -60,14 +60,14 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
       );
   };
 
-  const isCompletedCycle = !isEmpty(cycleDetails?.progress_snapshot ?? {});
+  const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
 
-  const emptyStateType = isCompletedCycle
+  const emptyStateType = isCompletedCycleSnapshotAvailable
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
     : isEmptyFilters
     ? EmptyStateType.PROJECT_EMPTY_FILTER
     : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
-  const additionalPath = isCompletedCycle ? undefined : activeLayout ?? "list";
+  const additionalPath = isCompletedCycleSnapshotAvailable ? undefined : activeLayout ?? "list";
   const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
@@ -86,7 +86,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
           additionalPath={additionalPath}
           size={emptyStateSize}
           primaryButtonOnClick={
-            !isCompletedCycle && !isEmptyFilters
+            !isCompletedCycleSnapshotAvailable && !isEmptyFilters
               ? () => {
                   setTrackElement("Cycle issue empty state");
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
@@ -94,7 +94,9 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
               : undefined
           }
           secondaryButtonOnClick={
-            !isCompletedCycle && isEmptyFilters ? handleClearAllFilters : () => setCycleIssuesListModal(true)
+            !isCompletedCycleSnapshotAvailable && isEmptyFilters
+              ? handleClearAllFilters
+              : () => setCycleIssuesListModal(true)
           }
         />
       </div>
