@@ -46,7 +46,7 @@ export const AppLayout: FC<IAppLayout> = observer((props) => {
           <div className="relative flex h-screen w-full overflow-hidden">
             <AppSidebar />
             <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-              <div className="z-10">
+              <div className="z-[13]">
                 <div className="flex items-center w-full border-b border-custom-border-200 z-10">
                   <div className="pl-5 py-4  bg-custom-sidebar-background-100 block md:hidden">
                     <SidebarHamburgerToggle />

@@ -22,7 +22,7 @@ export const SpreadsheetHeader = (props: Props) => {
     <thead className="sticky top-0 left-0 z-[1] border-b-[0.5px] border-custom-border-100">
       <tr>
         <th
-          className="sticky left-0 z-[1] h-11 w-45 sm:w-[28rem] flex items-center bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px]  before:border-custom-border-100"
+          className="sticky left-0 z-[15] h-11 w-40 md:w-[28rem] flex items-center bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px]  before:border-custom-border-100"
           tabIndex={-1}
         >
           <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
