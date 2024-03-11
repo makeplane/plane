@@ -1,35 +1,37 @@
 # Python imports
 import json
-import requests
 import logging
+
+import requests
+
+# Third Party imports
+from celery import shared_task
 
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
-# Third Party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
+from plane.app.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 
 # Module imports
 from plane.db.models import (
-    User,
-    Issue,
-    Project,
-    Label,
-    IssueActivity,
-    State,
-    Cycle,
-    Module,
-    IssueReaction,
     CommentReaction,
+    Cycle,
+    Issue,
+    IssueActivity,
     IssueComment,
+    IssueReaction,
     IssueSubscriber,
+    Label,
+    Module,
+    Project,
+    State,
+    User,
 )
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 from plane.settings.redis import redis_instance
+from plane.utils.exception_logger import log_exception
 
 
 # Track Changes in name
@@ -1648,7 +1650,7 @@ def issue_activity(
                             headers=headers,
                         )
             except Exception as e:
-                capture_exception(e)
+                log_exception(e)
 
         if notification:
             notifications.delay(
@@ -1669,7 +1671,5 @@ def issue_activity(
 
         return
     except Exception as e:
-        logger = logging.getLogger("plane")
-        logger.error(e)
-        capture_exception(e)
+        log_exception(e)
         return

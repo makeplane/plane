@@ -5,18 +5,17 @@ import logging
 
 # Third party imports
 from celery import shared_task
-from django.conf import settings
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.db.models import Issue
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.analytics_plot import build_graph_plot
+from plane.utils.exception_logger import log_exception
 from plane.utils.issue_filters import issue_filters
 
 row_mapping = {
@@ -505,9 +504,8 @@ def analytic_export_task(email, data, slug):
 
         csv_buffer = generate_csv_from_rows(rows)
         send_export_email(email, slug, csv_buffer, rows)
+        logging.getLogger("plane").info("Email sent succesfully.")
         return
     except Exception as e:
-        logger = logging.getLogger("plane")
-        logger.error(e)
-        capture_exception(e)
+        log_exception(e)
         return

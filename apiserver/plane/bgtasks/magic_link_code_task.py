@@ -3,16 +3,15 @@ import logging
 
 # Third party imports
 from celery import shared_task
-from django.conf import settings
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.exception_logger import log_exception
 
 
 @shared_task
@@ -53,9 +52,8 @@ def magic_link(email, key, token, current_site):
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
+        logging.getLogger("plane").info("Email sent successfully.")
         return
     except Exception as e:
-        logger = logging.getLogger("plane")
-        logger.error(e)
-        capture_exception(e)
+        log_exception(e)
         return

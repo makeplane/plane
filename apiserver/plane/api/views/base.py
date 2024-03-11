@@ -15,12 +15,12 @@ from rest_framework.response import Response
 
 # Third party imports
 from rest_framework.views import APIView
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle
 from plane.bgtasks.webhook_task import send_webhook
+from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 
 
@@ -126,9 +126,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            logger = logging.getLogger("plane")
-            logger.error(e)
-            capture_exception(e)
+            log_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
