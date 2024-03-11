@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
-import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
@@ -102,6 +102,12 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
+  const issueCount = currentProjectDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? currentProjectDetails?.total_issues + currentProjectDetails?.sub_issues
+      : currentProjectDetails?.total_issues
+    : undefined;
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -145,13 +151,16 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                   }
                 />
               </Breadcrumbs>
-              {currentProjectDetails && issueFilters?.displayFilters && (
-                <span className="flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                  {issueFilters.displayFilters.sub_issue
-                    ? currentProjectDetails.total_issues + currentProjectDetails.sub_issues
-                    : currentProjectDetails.total_issues}
-                </span>
-              )}
+              {issueCount && issueCount > 0 ? (
+                <Tooltip
+                  tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
+                  position="bottom"
+                >
+                  <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                    {issueCount}
+                  </span>
+                </Tooltip>
+              ) : null}
             </div>
             {currentProjectDetails?.is_deployed && deployUrl && (
               <a

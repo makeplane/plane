@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
 import { ArrowRight, Plus, PanelRight } from "lucide-react";
-import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
@@ -142,6 +142,12 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
+  const issueCount = cycleDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? cycleDetails.total_issues + cycleDetails?.sub_issues
+      : cycleDetails.total_issues
+    : undefined;
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -199,13 +205,18 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                         <ContrastIcon className="h-3 w-3" />
                         <div className="flex items-center gap-2 w-auto max-w-[70px] sm:max-w-[200px] truncate">
                           <p className="truncate">{cycleDetails?.name && cycleDetails.name}</p>
-                          {cycleDetails && issueFilters?.displayFilters && (
-                            <span className="flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                              {issueFilters.displayFilters.sub_issue
-                                ? cycleDetails.total_issues + cycleDetails.sub_issues
-                                : cycleDetails.total_issues}
-                            </span>
-                          )}
+                          {issueCount && issueCount > 0 ? (
+                            <Tooltip
+                              tooltipContent={`There are ${issueCount} ${
+                                issueCount > 1 ? "issues" : "issue"
+                              } in this cycle`}
+                              position="bottom"
+                            >
+                              <span className="flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                                {issueCount}
+                              </span>
+                            </Tooltip>
+                          ) : null}
                         </div>
                       </>
                     }
