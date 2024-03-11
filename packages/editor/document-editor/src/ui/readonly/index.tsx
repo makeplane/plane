@@ -110,7 +110,7 @@ const DocumentReadOnlyEditor = ({
           <PageRenderer
             onActionCompleteHandler={onActionCompleteHandler}
             updatePageTitle={() => Promise.resolve()}
-            readonly={true}
+            readonly
             editor={editor}
             editorClassNames={editorClassNames}
             documentDetails={documentDetails}
