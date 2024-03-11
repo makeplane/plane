@@ -39,6 +39,7 @@ class InboxIssueSerializer(BaseSerializer):
             "snoozed_till",
             "source",
             "issue",
+            "created_by",
         ]
         read_only_fields = [
             "project",

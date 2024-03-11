@@ -4,12 +4,13 @@ import { Dialog, Transition } from "@headlessui/react";
 import { CheckCircle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
-// types
+// hooks
 import { useProject } from "hooks/store";
+// types
 import type { TIssue } from "@plane/types";
 
 type Props = {
-  data: TIssue;
+  data: Partial<TIssue>;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;

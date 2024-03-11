@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 // helpers
 // types
-import type { IInboxIssue, IInbox, TInboxStatus, IInboxQueryParams, TInboxIssueListResponse } from "@plane/types";
+import type { IInboxIssue, IInbox, IInboxQueryParams, TInboxIssueListResponse } from "@plane/types";
 
 export class InboxService extends APIService {
   constructor() {
@@ -83,7 +83,7 @@ export class InboxService extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string,
-    data: TInboxStatus
+    data: any
   ): Promise<IInboxIssue> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,

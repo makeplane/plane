@@ -5,23 +5,25 @@ import pull from "lodash/pull";
 import reduce from "lodash/reduce";
 import mapValues from "lodash/mapValues";
 import isArray from "lodash/isArray";
+import uniq from "lodash/uniq";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
 import { TInboxIssueFilterOptions, TInboxIssue, TIssue, TPaginationInfo } from "@plane/types";
 // root store
 import { RootStore } from "./root.store";
-import { uniq } from "lodash";
+import { IInboxIssueStore, InboxIssueStore } from "./inbox-issue.store";
 
 export interface IProjectInboxStore {
   isLoading: boolean;
-  inboxIssues: Record<string, TInboxIssue>;
+  inboxIssues: Record<string, IInboxIssueStore>;
   inboxFilters: Partial<TInboxIssueFilterOptions>;
   inboxIssuePaginationInfo: Partial<TPaginationInfo>;
   // computed
-  inboxIssuesArray: TInboxIssue[];
+  inboxIssuesArray: IInboxIssueStore[];
   inboxIssuesFiltersLength: number;
   // actions
+  getIssueInboxByIssueId: (issueId: string) => IInboxIssueStore | undefined;
   fetchInboxIssues: (
     workspaceSlug: string,
     projectId: string,
@@ -29,16 +31,17 @@ export interface IProjectInboxStore {
   ) => Promise<TInboxIssue[]>;
   fetchInboxIssuesNextPage: (workspaceSlug: string, projectId: string) => Promise<void>;
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
+  deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
   updateInboxIssuePriorityFilter: (workspaceSlug: string, projectId: string, value: string) => void;
   updateInboxIssueStatusFilter: (workspaceSlug: string, projectId: string, value: number) => void;
-  resetInboxFilters: () => void;
-  resetInboxPriorityFilters: () => void;
-  resetInboxStatusFilters: () => void;
+  resetInboxFilters: (workspaceSlug: string, projectId: string) => void;
+  resetInboxPriorityFilters: (workspaceSlug: string, projectId: string) => void;
+  resetInboxStatusFilters: (workspaceSlug: string, projectId: string) => void;
 }
 
 export class ProjectInboxStore implements IProjectInboxStore {
   isLoading: boolean = false;
-  inboxIssues: Record<string, TInboxIssue> = {};
+  inboxIssues: Record<string, IInboxIssueStore> = {};
   inboxFilters: Partial<TInboxIssueFilterOptions> = {};
   inboxIssuePaginationInfo: Partial<TPaginationInfo> = {};
   PER_PAGE_COUNT = 10;
@@ -55,9 +58,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
       inboxIssuesArray: computed,
       inboxIssuesFiltersLength: computed,
       // actions
+      getIssueInboxByIssueId: action,
       fetchInboxIssues: action,
       fetchInboxIssuesNextPage: action,
       createInboxIssue: action,
+      deleteInboxIssue: action,
       updateInboxIssuePriorityFilter: action,
       updateInboxIssueStatusFilter: action,
       resetInboxFilters: action,
@@ -85,6 +90,9 @@ export class ProjectInboxStore implements IProjectInboxStore {
     });
   }
 
+  getIssueInboxByIssueId = (issueId: string) =>
+    Object.values(this.inboxIssues).find((issue) => issue.issue?.id === issueId);
+
   /**
    * fetch inbox issues
    * @param workspaceSlug
@@ -93,21 +101,30 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @returns
    */
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, params = {}) => {
-    runInAction(() => {
-      this.isLoading = true;
-      this.inboxIssues = {};
-      this.inboxIssuePaginationInfo = {};
-    });
-    const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
-      ...params,
-      per_page: this.PER_PAGE_COUNT,
-    });
-    runInAction(() => {
-      this.inboxIssues = keyBy(results, "id");
+    try {
+      runInAction(() => {
+        this.isLoading = true;
+        this.inboxIssues = {};
+        this.inboxIssuePaginationInfo = {};
+      });
+      const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
+        ...params,
+        per_page: this.PER_PAGE_COUNT,
+      });
+      runInAction(() => {
+        this.inboxIssues = mapValues(
+          keyBy(results, "id"),
+          (value) => new InboxIssueStore(workspaceSlug, projectId, value)
+        );
+        this.isLoading = false;
+        this.inboxIssuePaginationInfo = { ...this.inboxIssuePaginationInfo, ...paginationInfo };
+      });
+      return results;
+    } catch (error) {
+      console.error("Error fetching the inbox issues", error);
       this.isLoading = false;
-      this.inboxIssuePaginationInfo = { ...this.inboxIssuePaginationInfo, ...paginationInfo };
-    });
-    return results;
+      throw error;
+    }
   };
 
   /**
@@ -126,7 +143,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
         per_page: this.PER_PAGE_COUNT,
       });
       runInAction(() => {
-        this.inboxIssues = { ...this.inboxIssues, ...keyBy(results, "id") };
+        this.inboxIssues = {
+          ...this.inboxIssues,
+          ...mapValues(keyBy(results, "id"), (value) => new InboxIssueStore(workspaceSlug, projectId, value)),
+        };
         this.isLoading = false;
         this.inboxIssuePaginationInfo = {
           ...this.inboxIssuePaginationInfo,
@@ -146,7 +166,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   createInboxIssue = async (workspaceSlug: string, projectId: string, data: Partial<TInboxIssue>) => {
     const response = await this.inboxIssueService.create(workspaceSlug, projectId, data);
     runInAction(() => {
-      this.inboxIssues[response.id] = response;
+      this.inboxIssues[response.id] = new InboxIssueStore(workspaceSlug, projectId, response);
     });
     return response;
   };
@@ -159,11 +179,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @returns
    */
   deleteInboxIssue = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
-    const response = await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
+    await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId);
     runInAction(() => {
       delete this.inboxIssues[inboxIssueId];
     });
-    return response;
   };
 
   /**
@@ -214,21 +233,24 @@ export class ProjectInboxStore implements IProjectInboxStore {
   /**
    * reset all inbox filters to default
    */
-  resetInboxFilters = () => {
+  resetInboxFilters = (workspaceSlug: string, projectId: string) => {
     this.inboxFilters = {};
+    this.fetchInboxIssues(workspaceSlug, projectId);
   };
 
   /**
    * reset all inbox priority filters to default
    */
-  resetInboxPriorityFilters = () => {
+  resetInboxPriorityFilters = (workspaceSlug: string, projectId: string) => {
     this.inboxFilters = { ...this.inboxFilters, priority: [] };
+    this.fetchInboxIssues(workspaceSlug, projectId);
   };
 
   /**
    * reset all inbox status filters to default
    */
-  resetInboxStatusFilters = () => {
+  resetInboxStatusFilters = (workspaceSlug: string, projectId: string) => {
     this.inboxFilters = { ...this.inboxFilters, inbox_status: [] };
+    this.fetchInboxIssues(workspaceSlug, projectId);
   };
 }

@@ -1,15 +1,9 @@
 import { useContext } from "react";
 // mobx store
 import { StoreContext } from "contexts/store-context";
-// types
-import { IInboxFilter } from "store/inbox_legacy/inbox_filter.store";
-import { IInboxIssue } from "store/inbox_legacy/inbox_issue.store";
 
-export const useInboxIssues = (): {
-  issues: IInboxIssue;
-  filters: IInboxFilter;
-} => {
+export const useInboxIssues = (id: string) => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useInboxIssues must be used within StoreProvider");
-  return { issues: context.inbox.inboxIssue, filters: context.inbox.inboxFilter };
+  return context.projectInbox.getIssueInboxByIssueId(id);
 };

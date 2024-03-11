@@ -9,7 +9,7 @@ import { useProject } from "hooks/store";
 import type { TIssue } from "@plane/types";
 
 type Props = {
-  data: TIssue;
+  data: Partial<TIssue>;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;

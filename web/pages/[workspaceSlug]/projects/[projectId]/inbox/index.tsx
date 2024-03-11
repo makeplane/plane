@@ -54,7 +54,6 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   useSWR(`PROJECT_INBOX_ISSUES_${projectId}`, () => fetchInboxIssues(workspaceSlug.toString(), projectId.toString()), {
     revalidateOnFocus: false,
   });
-
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
 
@@ -110,11 +109,28 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
           </div>
         </div>
         <div className="w-full">
-          {/* <InboxContentRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            inboxIssueId={inboxIssueId?.toString() || undefined}
-          /> */}
+          {inboxIssueId ? (
+            <InboxContentRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              inboxIssueId={inboxIssueId?.toString() || undefined}
+            />
+          ) : (
+            <div className="grid h-full place-items-center p-4 text-custom-text-200">
+              <div className="grid h-full place-items-center">
+                <div className="my-5 flex flex-col items-center gap-4">
+                  <Inbox size={60} strokeWidth={1.5} />
+                  {inboxIssuesArray && inboxIssuesArray.length > 0 ? (
+                    <span className="text-custom-text-200">
+                      {inboxIssuesArray?.length} issues found. Select an issue from the sidebar to view its details.
+                    </span>
+                  ) : (
+                    <span className="text-custom-text-200">No issues found</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
