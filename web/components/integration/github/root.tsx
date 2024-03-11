@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
 // services
-import { IntegrationService, GithubIntegrationService } from "services/integrations";
-// hooks
-import useToast from "hooks/use-toast";
 // components
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import {
   GithubImportConfigure,
   GithubImportData,
@@ -21,12 +20,15 @@ import {
   GithubImportConfirm,
 } from "components/integration";
 // icons
-import { UserGroupIcon } from "@plane/ui";
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";
+import { IntegrationService, GithubIntegrationService } from "services/integrations";
+// hooks
+// components
+// icons
+// images
 // types
-import { IUser, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
+import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // fetch-keys
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
@@ -79,15 +81,11 @@ const integrationWorkflowData = [
   },
 ];
 
-type Props = {
-  user: IUser | undefined;
-};
-
 // services
 const integrationService = new IntegrationService();
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
+export const GithubImporterRoot: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
@@ -95,8 +93,6 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
 
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,
@@ -147,14 +143,14 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
     };
 
     await githubIntegrationService
-      .createGithubServiceImport(workspaceSlug as string, payload, user)
+      .createGithubServiceImport(workspaceSlug as string, payload)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/imports`);
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Import was unsuccessful. Please try again.",
         })
@@ -163,12 +159,12 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
 
   return (
     <form onSubmit={handleSubmit(createGithubImporterService)}>
-      <div className="space-y-2">
+      <div className="mt-4 space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
-          </div>
+          </span>
         </Link>
 
         <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
@@ -191,9 +187,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
                     }`}
                   >
                     <integration.icon
-                      width="18px"
-                      height="18px"
-                      color={index <= activeIntegrationState() ? "#ffffff" : "#d1d5db"}
+                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
                     />
                   </div>
                   {index < integrationWorkflowData.length - 1 && (

@@ -1,33 +1,50 @@
-import React, { useState } from "react";
-
+import React, { useMemo, useState } from "react";
+import { observer } from "mobx-react";
+import sortBy from "lodash/sortBy";
 // components
+import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Loader } from "@plane/ui";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "@plane/types";
 
 const LabelIcons = ({ color }: { color: string }) => (
-  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
 );
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  itemsToRender: number;
-  labels: IIssueLabels[] | undefined;
+  labels: IIssueLabel[] | undefined;
   searchQuery: string;
-  viewButtons: React.ReactNode;
 };
 
-export const FilterLabels: React.FC<Props> = (props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, labels, searchQuery, viewButtons } = props;
+export const FilterLabels: React.FC<Props> = observer((props) => {
+  const { appliedFilters, handleUpdate, labels, searchQuery } = props;
 
+  const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = labels?.filter((label) => label.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (labels || []).filter((label) =>
+      label.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return sortBy(filteredOptions, [
+      (label) => !(appliedFilters ?? []).includes(label.id),
+      (label) => label.name.toLowerCase(),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
+
+  const handleViewToggle = () => {
+    if (!sortedOptions) return;
+
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
+  };
 
   return (
     <>
@@ -38,10 +55,10 @@ export const FilterLabels: React.FC<Props> = (props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((label) => (
+                {sortedOptions.slice(0, itemsToRender).map((label) => (
                   <FilterOption
                     key={label?.id}
                     isChecked={appliedFilters?.includes(label?.id) ? true : false}
@@ -50,10 +67,18 @@ export const FilterLabels: React.FC<Props> = (props) => {
                     title={label.name}
                   />
                 ))}
-                {viewButtons}
+                {sortedOptions.length > 5 && (
+                  <button
+                    type="button"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    onClick={handleViewToggle}
+                  >
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
+                  </button>
+                )}
               </>
             ) : (
-              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">
@@ -66,4 +91,4 @@ export const FilterLabels: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

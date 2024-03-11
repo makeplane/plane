@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
+import { CURRENT_USER } from "constants/fetch-keys";
 import { UserService } from "services/user.service";
 // constants
-import { CURRENT_USER } from "constants/fetch-keys";
 // types
-import type { IUser } from "types";
+import type { IUser } from "@plane/types";
 
 // services
 const userService = new UserService();
@@ -31,7 +31,7 @@ export default function useUser({ redirectTo = "", redirectIfFound = false, opti
     ) {
       router.push(redirectTo);
       return;
-      // const nextLocation = router.asPath.split("?next=")[1];
+      // const nextLocation = router.asPath.split("?next_path=")[1];
       // if (nextLocation) {
       //   router.push(nextLocation as string);
       //   return;

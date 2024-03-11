@@ -1,21 +1,14 @@
 import { FC } from "react";
-import useSWR from "swr";
-
-import { useRouter } from "next/router";
-import Link from "next/link";
-
-// ui
-import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
-// hooks
 import { observer } from "mobx-react-lite";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// helpers
-import { truncateText } from "helpers/string.helper";
-// constant
-import { WORKSPACE_DETAILS } from "constants/fetch-keys";
-
-const workspaceService = new WorkspaceService();
+import { useRouter } from "next/router";
+// ui
+import { Settings } from "lucide-react";
+import { Breadcrumbs, CustomMenu } from "@plane/ui";
+// hooks
+// components
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
 
 export interface IWorkspaceSettingHeader {
   title: string;
@@ -27,29 +20,44 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
 
   const { workspaceSlug } = router.query;
 
-  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
-    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
-  );
-
   return (
-    <div
-      className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-    >
-      <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+        <SidebarHamburgerToggle />
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
               link={
-                <Link href={`/${workspaceSlug}`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}</p>
-                  </a>
-                </Link>
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/settings`}
+                  label="Settings"
+                  icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                />
               }
             />
-            <BreadcrumbItem title={title} unshrinkTitle />
+            <div className="hidden sm:hidden md:block lg:block">
+              <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={title} />} />
+            </div>
           </Breadcrumbs>
         </div>
+        <CustomMenu
+          className="flex-shrink-0 block sm:block md:hidden lg:hidden"
+          maxHeight="lg"
+          customButton={
+            <span className="text-xs px-1.5 py-1 border rounded-md text-custom-text-200 border-custom-border-300">
+              {title}
+            </span>
+          }
+          placement="bottom-start"
+          closeOnSelect
+        >
+          {WORKSPACE_SETTINGS_LINKS.map((item) => (
+            <CustomMenu.MenuItem key={item.key} onClick={() => router.push(`/${workspaceSlug}${item.href}`)}>
+              {item.label}
+            </CustomMenu.MenuItem>
+          ))}
+        </CustomMenu>
       </div>
     </div>
   );

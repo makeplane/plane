@@ -1,33 +1,41 @@
-import React from "react";
-import type { NextPage } from "next";
+import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
+import { PageHead } from "components/core";
 import { ProjectViewsHeader } from "components/headers";
 import { ProjectViewsList } from "components/views";
+// hooks
+import { useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
+// types
+import { NextPageWithLayout } from "lib/types";
 
-const ProjectViews: NextPage = () => {
+const ProjectViewsPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { projectViews: projectViewsStore } = useMobxStore();
-
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_VIEWS_LIST_${workspaceSlug.toString()}_${projectId.toString()}` : null,
-    workspaceSlug && projectId
-      ? () => projectViewsStore.fetchAllViews(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
+  const { projectId } = router.query;
+  // store
+  const { getProjectById } = useProject();
+  // derived values
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
 
   return (
-    <AppLayout header={<ProjectViewsHeader />} withProjectWrapper>
+    <>
+      <PageHead title={pageTitle} />
       <ProjectViewsList />
+    </>
+  );
+});
+
+ProjectViewsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectViewsHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectViews;
+export default ProjectViewsPage;

@@ -1,95 +1,91 @@
-import React, { useState } from "react";
+import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { EmptyState } from "components/common";
+import { PageHead } from "components/core";
+import { ModuleIssuesHeader } from "components/headers";
+import { ModuleLayoutRoot } from "components/issues";
+import { ModuleDetailsSidebar } from "components/modules";
+import { useModule, useProject } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { ExistingIssuesListModal } from "components/core";
-import { ModuleDetailsSidebar } from "components/modules";
-import { ModuleLayoutRoot } from "components/issues";
-import { ModuleIssuesHeader } from "components/headers";
-// ui
-import { EmptyState } from "components/common";
 // assets
+import { NextPageWithLayout } from "lib/types";
 import emptyModule from "public/empty-state/module.svg";
 // types
-import { NextPage } from "next";
 
-const ModuleIssuesPage: NextPage = () => {
-  const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
-
+const ModuleIssuesPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
-
-  const { module: moduleStore } = useMobxStore();
-
-  const { storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
+  // store hooks
+  const { fetchModuleDetails, getModuleById } = useModule();
+  const { getProjectById } = useProject();
+  // local storage
+  const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
-
+  // fetching module details
   const { error } = useSWR(
     workspaceSlug && projectId && moduleId ? `CURRENT_MODULE_DETAILS_${moduleId.toString()}` : null,
     workspaceSlug && projectId && moduleId
-      ? () => moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
+      ? () => fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
+  // derived values
+  const projectModule = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name && projectModule?.name ? `${project?.name} - ${projectModule?.name}` : undefined;
 
-  // TODO: add this function to bulk add issues to cycle
-  // const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
-  //   if (!workspaceSlug || !projectId) return;
+  const toggleSidebar = () => {
+    setValue(`${!isSidebarCollapsed}`);
+  };
 
-  //   const payload = {
-  //     issues: data.map((i) => i.id),
-  //   };
-
-  //   await moduleService
-  //     .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
-  //     .catch(() =>
-  //       setToastAlert({
-  //         type: "error",
-  //         title: "Error!",
-  //         message: "Selected issues could not be added to the module. Please try again.",
-  //       })
-  //     );
-  // };
-
-  // const openIssuesListModal = () => {
-  //   setModuleIssuesListModal(true);
-  // };
+  if (!workspaceSlug || !projectId || !moduleId) return <></>;
 
   return (
     <>
-      <AppLayout header={<ModuleIssuesHeader />} withProjectWrapper>
-        {/* TODO: Update logic to bulk add issues to a cycle */}
-        <ExistingIssuesListModal
-          isOpen={moduleIssuesListModal}
-          handleClose={() => setModuleIssuesListModal(false)}
-          searchParams={{ module: true }}
-          handleOnSubmit={async () => {}}
+      <PageHead title={pageTitle} />
+      {error ? (
+        <EmptyState
+          image={emptyModule}
+          title="Module does not exist"
+          description="The module you are looking for does not exist or has been deleted."
+          primaryButton={{
+            text: "View other modules",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
+          }}
         />
-        {error ? (
-          <EmptyState
-            image={emptyModule}
-            title="Module does not exist"
-            description="The module you are looking for does not exist or has been deleted."
-            primaryButton={{
-              text: "View other modules",
-              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
-            }}
-          />
-        ) : (
-          <div className="flex h-full w-full">
-            <div className={`h-full w-full ${isSidebarCollapsed ? "" : "mr-[24rem]"} duration-300`}>
-              <ModuleLayoutRoot />
-            </div>
-            {moduleId && <ModuleDetailsSidebar isOpen={!isSidebarCollapsed} moduleId={moduleId.toString()} />}
+      ) : (
+        <div className="flex h-full w-full">
+          <div className="h-full w-full overflow-hidden">
+            <ModuleLayoutRoot />
           </div>
-        )}
-      </AppLayout>
+          {moduleId && !isSidebarCollapsed && (
+            <div
+              className="flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 py-3.5 duration-300 vertical-scrollbar scrollbar-sm"
+              style={{
+                boxShadow:
+                  "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
+              }}
+            >
+              <ModuleDetailsSidebar moduleId={moduleId.toString()} handleClose={toggleSidebar} />
+            </div>
+          )}
+        </div>
+      )}
     </>
+  );
+});
+
+ModuleIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ModuleIssuesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
   );
 };
 

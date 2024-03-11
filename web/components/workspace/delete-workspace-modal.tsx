@@ -1,31 +1,22 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useToast from "hooks/use-toast";
-// icons
 import { AlertTriangle } from "lucide-react";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { WORKSPACE_DELETED } from "constants/event-tracker";
+// hooks
+import { useEventTracker, useWorkspace } from "hooks/store";
 // types
-import type { IUser, IWorkspace } from "types";
-// fetch-keys
-import { USER_WORKSPACES } from "constants/fetch-keys";
+import type { IWorkspace } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
   data: IWorkspace | null;
   onClose: () => void;
-  user: IUser | undefined;
 };
 
 const defaultValues = {
@@ -33,14 +24,14 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-// services
-const workspaceService = new WorkspaceService();
-
-export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
+export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
+  const { isOpen, data, onClose } = props;
+  // router
   const router = useRouter();
-
-  const { setToastAlert } = useToast();
-
+  // store hooks
+  const { captureWorkspaceEvent } = useEventTracker();
+  const { deleteWorkspace } = useWorkspace();
+  // form info
   const {
     control,
     formState: { errors, isSubmitting },
@@ -63,28 +54,39 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
   const onSubmit = async () => {
     if (!data || !canDelete) return;
 
-    await workspaceService
-      .deleteWorkspace(data.slug, user)
+    await deleteWorkspace(data.slug)
       .then(() => {
         handleClose();
-
         router.push("/");
-
-        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => prevData?.filter((workspace) => workspace.id !== data.id));
-
-        setToastAlert({
-          type: "success",
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "SUCCESS",
+            element: "Workspace general settings page",
+          },
+        });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Workspace deleted successfully.",
         });
       })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again later.",
-        })
-      );
+        });
+        captureWorkspaceEvent({
+          eventName: WORKSPACE_DELETED,
+          payload: {
+            ...data,
+            state: "FAILED",
+            element: "Workspace general settings page",
+          },
+        });
+      });
   };
 
   return (
@@ -99,7 +101,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -113,7 +115,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -151,6 +153,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                           hasError={Boolean(errors.workspaceName)}
                           placeholder="Workspace name"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />
@@ -175,16 +178,17 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                           hasError={Boolean(errors.confirmDelete)}
                           placeholder="Enter 'delete my workspace'"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />
                   </div>
 
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="danger" type="submit" disabled={!canDelete} loading={isSubmitting}>
+                    <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
                       {isSubmitting ? "Deleting..." : "Delete Workspace"}
                     </Button>
                   </div>
@@ -196,4 +200,4 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
       </Dialog>
     </Transition.Root>
   );
-};
+});

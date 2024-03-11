@@ -4,9 +4,9 @@ import { observer } from "mobx-react-lite";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
-import { TIssueOrderByOptions } from "types";
-// constants
 import { ISSUE_ORDER_BY_OPTIONS } from "constants/issue";
+import { TIssueOrderByOptions } from "@plane/types";
+// constants
 
 type Props = {
   selectedOrderBy: TIssueOrderByOptions | undefined;

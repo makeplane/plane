@@ -1,18 +1,18 @@
 import { objToQueryParams } from "helpers/string.helper";
-import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
+import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {
     state,
     state_group,
     priority,
+    mentions,
     assignees,
     created_by,
     labels,
     start_date,
     target_date,
     sub_issue,
-    start_target_date,
     project,
     layout,
     subscriber,
@@ -22,11 +22,11 @@ const paramsToKey = (params: any) => {
   let stateKey = state ? state.split(",") : [];
   let stateGroupKey = state_group ? state_group.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
+  let mentionsKey = mentions ? mentions.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
   let subscriberKey = subscriber ? subscriber.split(",") : [];
-  const startTargetDate = start_target_date ? `${start_target_date}`.toUpperCase() : "FALSE";
   const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
@@ -40,24 +40,12 @@ const paramsToKey = (params: any) => {
   stateGroupKey = stateGroupKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   assigneesKey = assigneesKey.sort().join("_");
+  mentionsKey = mentionsKey.sort().join("_");
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
   subscriberKey = subscriberKey.sort().join("_");
 
-  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
-};
-
-const inboxParamsToKey = (params: any) => {
-  const { priority, inbox_status } = params;
-
-  let priorityKey = priority ? priority.split(",") : [];
-  let inboxStatusKey = inbox_status ? inbox_status.split(",") : [];
-
-  // sorting each keys in ascending order
-  priorityKey = priorityKey.sort().join("_");
-  inboxStatusKey = inboxStatusKey.sort().join("_");
-
-  return `${priorityKey}_${inboxStatusKey}`;
+  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
 
 const myIssuesParamsToKey = (params: any) => {
@@ -93,13 +81,9 @@ export const USER_WORKSPACES = "USER_WORKSPACES";
 export const WORKSPACE_DETAILS = (workspaceSlug: string) => `WORKSPACE_DETAILS_${workspaceSlug.toUpperCase()}`;
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
-export const WORKSPACE_MEMBERS_WITH_EMAIL = (workspaceSlug: string) =>
-  `WORKSPACE_MEMBERS_WITH_EMAIL_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_MEMBERS_ME = (workspaceSlug: string) => `WORKSPACE_MEMBERS_ME${workspaceSlug.toUpperCase()}`;
-export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
-export const WORKSPACE_INVITATION_WITH_EMAIL = (workspaceSlug: string) =>
-  `WORKSPACE_INVITATION_WITH_EMAIL_${workspaceSlug.toUpperCase()}`;
-export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
+export const WORKSPACE_INVITATIONS = (workspaceSlug: string) => `WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`;
+export const WORKSPACE_INVITATION = (invitationId: string) => `WORKSPACE_INVITATION_${invitationId}`;
 export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "LAST_ACTIVE_WORKSPACE_AND_PROJECTS";
 
 export const PROJECTS_LIST = (
@@ -115,11 +99,7 @@ export const PROJECTS_LIST = (
 export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId.toUpperCase()}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId.toUpperCase()}`;
-export const PROJECT_MEMBERS_WITH_EMAIL = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_MEMBERS_WITH_EMAIL_${workspaceSlug}_${projectId.toUpperCase()}`;
-export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";
-export const PROJECT_INVITATIONS_WITH_EMAIL = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_INVITATIONS_WITH_EMAIL_${workspaceSlug}_${projectId.toUpperCase()}`;
+export const PROJECT_INVITATIONS = (projectId: string) => `PROJECT_INVITATIONS_${projectId.toString()}`;
 
 export const PROJECT_ISSUES_LIST = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ISSUES_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}`;
@@ -184,7 +164,7 @@ export const USER_ISSUES = (workspaceSlug: string, params: any) => {
 
   return `USER_ISSUES_${workspaceSlug.toUpperCase()}_${paramsKey}`;
 };
-export const USER_ACTIVITY = "USER_ACTIVITY";
+export const USER_ACTIVITY = (params: { cursor?: string }) => `USER_ACTIVITY_${params?.cursor}`;
 export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
   `USER_WORKSPACE_DASHBOARD_${workspaceSlug.toUpperCase()}`;
 export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId.toUpperCase()}`;
@@ -246,13 +226,14 @@ export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
 // Pages
 export const RECENT_PAGES_LIST = (projectId: string) => `RECENT_PAGES_LIST_${projectId.toUpperCase()}`;
 export const ALL_PAGES_LIST = (projectId: string) => `ALL_PAGES_LIST_${projectId.toUpperCase()}`;
+export const ARCHIVED_PAGES_LIST = (projectId: string) => `ARCHIVED_PAGES_LIST_${projectId.toUpperCase}`;
 export const FAVORITE_PAGES_LIST = (projectId: string) => `FAVORITE_PAGES_LIST_${projectId.toUpperCase()}`;
-export const MY_PAGES_LIST = (projectId: string) => `MY_PAGES_LIST_${projectId.toUpperCase()}`;
-export const OTHER_PAGES_LIST = (projectId: string) => `OTHER_PAGES_LIST_${projectId.toUpperCase()}`;
+export const PRIVATE_PAGES_LIST = (projectId: string) => `PRIVATE_PAGES_LIST_${projectId.toUpperCase()}`;
+export const SHARED_PAGES_LIST = (projectId: string) => `SHARED_PAGES_LIST_${projectId.toUpperCase()}`;
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId.toUpperCase()}`;
 export const PAGE_BLOCKS_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId.toUpperCase()}`;
 export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId.toUpperCase()}`;
-
+export const MY_PAGES_LIST = (pageId: string) => `MY_PAGE_LIST_${pageId}`;
 // estimates
 export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
 export const ESTIMATE_DETAILS = (estimateId: string) => `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
@@ -303,8 +284,13 @@ export const getPaginatedNotificationKey = (index: number, prevData: any, worksp
 // profile
 export const USER_PROFILE_DATA = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
-export const USER_PROFILE_ACTIVITY = (workspaceSlug: string, userId: string) =>
-  `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
+export const USER_PROFILE_ACTIVITY = (
+  workspaceSlug: string,
+  userId: string,
+  params: {
+    cursor?: string;
+  }
+) => `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${params?.cursor}`;
 export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_PROJECT_SEGREGATION_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
 export const USER_PROFILE_ISSUES = (workspaceSlug: string, userId: string, params: any) => {
@@ -318,3 +304,8 @@ export const ISSUE_REACTION_LIST = (workspaceSlug: string, projectId: string, is
   `ISSUE_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${issueId.toUpperCase()}`;
 export const COMMENT_REACTION_LIST = (workspaceSlug: string, projectId: string, commendId: string) =>
   `COMMENT_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${commendId.toUpperCase()}`;
+
+// api-tokens
+export const API_TOKENS_LIST = (workspaceSlug: string) => `API_TOKENS_LIST_${workspaceSlug.toUpperCase()}`;
+export const API_TOKEN_DETAILS = (workspaceSlug: string, tokenId: string) =>
+  `API_TOKEN_DETAILS_${workspaceSlug.toUpperCase()}_${tokenId.toUpperCase()}`;

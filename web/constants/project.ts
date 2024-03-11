@@ -1,15 +1,32 @@
+// icons
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { TIssuePriorities } from "types";
+import { SettingIcon } from "components/icons";
+// types
+import { Props } from "components/icons/types";
 
-export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: LucideIcon }[] = [
+export enum EUserProjectRoles {
+  GUEST = 5,
+  VIEWER = 10,
+  MEMBER = 15,
+  ADMIN = 20,
+}
+
+export const NETWORK_CHOICES: {
+  key: 0 | 2;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+}[] = [
   {
     key: 0,
     label: "Private",
+    description: "Accessible only by invite",
     icon: Lock,
   },
   {
     key: 2,
     label: "Public",
+    description: "Anyone in the workspace can join",
     icon: Globe2,
   },
 ];
@@ -21,10 +38,6 @@ export const GROUP_CHOICES = {
   completed: "Completed",
   cancelled: "Cancelled",
 };
-
-export const STATE_GROUP = ["Backlog", "Unstarted", "Started", "Completed", "Cancelled"];
-
-export const PRIORITIES: TIssuePriorities[] = ["urgent", "high", "medium", "low", "none"];
 
 export const MONTHS = [
   "January",
@@ -44,11 +57,11 @@ export const MONTHS = [
 export const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export const PROJECT_AUTOMATION_MONTHS = [
-  { label: "1 Month", value: 1 },
-  { label: "3 Months", value: 3 },
-  { label: "6 Months", value: 6 },
-  { label: "9 Months", value: 9 },
-  { label: "12 Months", value: 12 },
+  { label: "1 month", value: 1 },
+  { label: "3 months", value: 3 },
+  { label: "6 months", value: 6 },
+  { label: "9 months", value: 9 },
+  { label: "12 months", value: 12 },
 ];
 
 export const PROJECT_UNSPLASH_COVERS = [
@@ -68,4 +81,78 @@ export const PROJECT_UNSPLASH_COVERS = [
   "https://images.unsplash.com/photo-1693868769698-6c7440636a09?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80",
   "https://images.unsplash.com/photo-1691230995681-480d86cbc135?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80",
   "https://images.unsplash.com/photo-1675351066828-6fc770b90dd2?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80",
+];
+
+export const PROJECT_SETTINGS_LINKS: {
+  key: string;
+  label: string;
+  href: string;
+  access: EUserProjectRoles;
+  highlight: (pathname: string, baseUrl: string) => boolean;
+  Icon: React.FC<Props>;
+}[] = [
+  {
+    key: "general",
+    label: "General",
+    href: `/settings`,
+    access: EUserProjectRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings`,
+    Icon: SettingIcon,
+  },
+  {
+    key: "members",
+    label: "Members",
+    href: `/settings/members`,
+    access: EUserProjectRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members`,
+    Icon: SettingIcon,
+  },
+  {
+    key: "features",
+    label: "Features",
+    href: `/settings/features`,
+    access: EUserProjectRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/features`,
+    Icon: SettingIcon,
+  },
+  {
+    key: "states",
+    label: "States",
+    href: `/settings/states`,
+    access: EUserProjectRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states`,
+    Icon: SettingIcon,
+  },
+  {
+    key: "labels",
+    label: "Labels",
+    href: `/settings/labels`,
+    access: EUserProjectRoles.MEMBER,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels`,
+    Icon: SettingIcon,
+  },
+  {
+    key: "integrations",
+    label: "Integrations",
+    href: `/settings/integrations`,
+    access: EUserProjectRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations`,
+    Icon: SettingIcon,
+  },
+  {
+    key: "estimates",
+    label: "Estimates",
+    href: `/settings/estimates`,
+    access: EUserProjectRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/estimates`,
+    Icon: SettingIcon,
+  },
+  {
+    key: "automations",
+    label: "Automations",
+    href: `/settings/automations`,
+    access: EUserProjectRoles.ADMIN,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations`,
+    Icon: SettingIcon,
+  },
 ];

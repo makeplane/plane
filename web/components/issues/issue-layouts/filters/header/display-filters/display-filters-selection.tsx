@@ -11,8 +11,8 @@ import {
   FilterSubGroupBy,
 } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -20,6 +20,7 @@ type Props = {
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
   handleDisplayPropertiesUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
+  ignoreGroupedFilters?: Partial<TIssueGroupByOptions>[];
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
@@ -29,13 +30,14 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     handleDisplayFiltersUpdate,
     handleDisplayPropertiesUpdate,
     layoutDisplayFiltersOptions,
+    ignoreGroupedFilters = [],
   } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
     Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
 
   return (
-    <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
+    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">
@@ -47,14 +49,14 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       {isDisplayFilterEnabled("group_by") && (
         <div className="py-2">
           <FilterGroupBy
-            selectedGroupBy={displayFilters.group_by}
-            selectedSubGroupBy={displayFilters.sub_group_by}
+            displayFilters={displayFilters}
             groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
                 group_by: val,
               })
             }
+            ignoreGroupedFilters={ignoreGroupedFilters}
           />
         </div>
       )}
@@ -65,14 +67,14 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
         displayFilters.layout === "kanban" && (
           <div className="py-2">
             <FilterSubGroupBy
-              selectedGroupBy={displayFilters.group_by}
-              selectedSubGroupBy={displayFilters.sub_group_by}
+              displayFilters={displayFilters}
               handleUpdate={(val) =>
                 handleDisplayFiltersUpdate({
                   sub_group_by: val,
                 })
               }
               subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
+              ignoreGroupedFilters={ignoreGroupedFilters}
             />
           </div>
         )}

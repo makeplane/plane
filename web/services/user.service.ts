@@ -1,20 +1,18 @@
 // services
+import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // types
 import type {
-  IIssue,
+  TIssue,
   IUser,
   IUserActivityResponse,
+  IInstanceAdminStatus,
   IUserProfileData,
   IUserProfileProjectSegregation,
   IUserSettings,
-  IUserWorkspaceDashboard,
-} from "types";
+  IUserEmailNotificationSettings,
+} from "@plane/types";
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
-
-const trackEventService = new TrackEventService();
 
 export class UserService extends APIService {
   constructor() {
@@ -33,9 +31,9 @@ export class UserService extends APIService {
     params: any
   ): Promise<
     | {
-        [key: string]: IIssue[];
+        [key: string]: TIssue[];
       }
-    | IIssue[]
+    | TIssue[]
   > {
     return this.get(`/api/workspaces/${workspaceSlug}/my-issues/`, {
       params,
@@ -54,8 +52,24 @@ export class UserService extends APIService {
       });
   }
 
+  async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
+    return this.get("/api/users/me/instance-admin/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async currentUserSettings(): Promise<IUserSettings> {
     return this.get("/api/users/me/settings/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async currentUserEmailNotificationSettings(): Promise<IUserEmailNotificationSettings> {
+    return this.get("/api/users/me/notification-preferences/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -70,74 +84,44 @@ export class UserService extends APIService {
       });
   }
 
-  async updateUserOnBoard({ userRole }: any, user: IUser | undefined): Promise<any> {
+  async updateUserOnBoard(): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
     })
-      .then((response) => {
-        trackEventService.trackUserOnboardingCompleteEvent(
-          {
-            user_role: userRole ?? "None",
-          },
-          user as IUser
-        );
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updateUserTourCompleted(user: IUser): Promise<any> {
+  async updateUserTourCompleted(): Promise<any> {
     return this.patch("/api/users/me/tour-completed/", {
       is_tour_completed: true,
     })
-      .then((response) => {
-        trackEventService.trackUserTourCompleteEvent({ user_role: user.role ?? "None" }, user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getUserWorkspaceActivity(workspaceSlug: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/users/workspaces/${workspaceSlug}/activities/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async userWorkspaceDashboard(workspaceSlug: string, month: number): Promise<IUserWorkspaceDashboard> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`, {
-      params: {
-        month: month,
-      },
-    })
+  async updateCurrentUserEmailNotificationSettings(data: Partial<IUserEmailNotificationSettings>): Promise<any> {
+    return this.patch("/api/users/me/notification-preferences/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async forgotPassword(data: { email: string }): Promise<any> {
-    return this.post(`/api/forgot-password/`, data)
+  async getUserActivity(params: { per_page: number; cursor?: string }): Promise<IUserActivityResponse> {
+    return this.get("/api/users/me/activities/", { params })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response;
+        throw error?.response?.data;
       });
   }
 
-  async resetPassword(
-    uidb64: string,
-    token: string,
-    data: {
-      new_password: string;
-      confirm_password: string;
-    }
-  ): Promise<any> {
-    return this.post(`/api/reset-password/${uidb64}/${token}/`, data)
+  async changePassword(data: { old_password: string; new_password: string; confirm_password: string }): Promise<any> {
+    return this.post(`/api/users/me/change-password/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -163,27 +147,73 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileActivity(workspaceSlug: string, userId: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/?per_page=15`)
+  async getUserProfileActivity(
+    workspaceSlug: string,
+    userId: string,
+    params: {
+      per_page: number;
+      cursor?: string;
+    }
+  ): Promise<IUserActivityResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getUserProfileIssues(
+  async downloadProfileActivity(
     workspaceSlug: string,
     userId: string,
-    params: any
-  ): Promise<
-    | {
-        [key: string]: IIssue[];
-      }
-    | IIssue[]
-  > {
+    data: {
+      date: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/export/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<TIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
       params,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deactivateAccount() {
+    return this.delete(`/api/users/me/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async leaveWorkspace(workspaceSlug: string) {
+    return this.post(`/api/workspaces/${workspaceSlug}/members/leave/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
+    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/invitations/`, { project_ids })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async leaveProject(workspaceSlug: string, projectId: string) {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

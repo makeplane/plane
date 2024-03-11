@@ -1,12 +1,12 @@
 // ui
-import { BarGraph, ProfileEmptyState } from "components/ui";
 import { Loader } from "@plane/ui";
+import { BarGraph, ProfileEmptyState } from "components/ui";
 // image
+import { capitalizeFirstLetter } from "helpers/string.helper";
 import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // helpers
-import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { IUserProfileData } from "types";
+import { IUserProfileData } from "@plane/types";
 
 type Props = {
   userProfile: IUserProfileData | undefined;
@@ -16,7 +16,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
   <div className="flex flex-col space-y-2">
     <h3 className="text-lg font-medium">Issues by Priority</h3>
     {userProfile ? (
-      <div className="flex-grow border border-custom-border-100 rounded">
+      <div className="flex-grow rounded border border-custom-border-100">
         {userProfile.priority_distribution.length > 0 ? (
           <BarGraph
             data={userProfile.priority_distribution.map((priority) => ({

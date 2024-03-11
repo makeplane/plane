@@ -1,33 +1,24 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // types
 import type {
   GithubRepositoriesResponse,
-  IUser,
   IProject,
-  IProjectBulkInviteFormData,
-  IProjectMember,
   ISearchIssueResponse,
   ProjectPreferences,
   IProjectViewProps,
   TProjectIssuesSearchParams,
-} from "types";
-
-const trackEventService = new TrackEventService();
+} from "@plane/types";
 
 export class ProjectService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async createProject(workspaceSlug: string, data: Partial<IProject>, user: any): Promise<IProject> {
+  async createProject(workspaceSlug: string, data: Partial<IProject>): Promise<IProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
-      .then((response) => {
-        trackEventService.trackProjectEvent(response.data, "CREATE_PROJECT", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
@@ -61,128 +52,16 @@ export class ProjectService extends APIService {
       });
   }
 
-  async updateProject(workspaceSlug: string, projectId: string, data: Partial<IProject>, user: any): Promise<IProject> {
+  async updateProject(workspaceSlug: string, projectId: string, data: Partial<IProject>): Promise<IProject> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
-      .then((response) => {
-        trackEventService.trackProjectEvent(response.data, "UPDATE_PROJECT", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteProject(workspaceSlug: string, projectId: string, user: any | undefined): Promise<any> {
+  async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
-      .then((response) => {
-        trackEventService.trackProjectEvent({ projectId }, "DELETE_PROJECT", user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async inviteProject(
-    workspaceSlug: string,
-    projectId: string,
-    data: IProjectBulkInviteFormData,
-    user: IUser | undefined
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
-      .then((response) => {
-        trackEventService.trackProjectEvent(
-          {
-            workspaceId: response?.data?.workspace?.id,
-            workspaceSlug,
-            projectId,
-            projectName: response?.data?.project?.name,
-            memberEmail: response?.data?.member?.email,
-          },
-          "PROJECT_MEMBER_INVITE",
-          user as IUser
-        );
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/join/`, { project_ids })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async leaveProject(workspaceSlug: string, projectId: string, user: any): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
-      .then((response) => {
-        trackEventService.trackProjectEvent(
-          "PROJECT_MEMBER_LEAVE",
-          {
-            workspaceSlug,
-            projectId,
-            ...response?.data,
-          },
-          user
-        );
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async projectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async projectMembersWithEmail(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async projectMemberMe(workspaceSlug: string, projectId: string): Promise<IProjectMember> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async getProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<IProjectMember> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateProjectMember(
-    workspaceSlug: string,
-    projectId: string,
-    memberId: string,
-    data: Partial<IProjectMember>
-  ): Promise<IProjectMember> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -193,9 +72,6 @@ export class ProjectService extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: {
-      view_props?: IProjectViewProps;
-      default_props?: IProjectViewProps;
-      preferences?: ProjectPreferences;
       sort_order?: number;
     }
   ): Promise<any> {
@@ -207,7 +83,11 @@ export class ProjectService extends APIService {
   }
 
   async getGithubRepositories(url: string): Promise<GithubRepositoriesResponse> {
-    return this.request(url)
+    return this.request({
+      method: "get",
+      url,
+      headers: this.getAccessToken() ? this.getHeaders() : {},
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,110 +1,117 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
+import { useRouter } from "next/router";
+// hooks
+import { Button } from "@plane/ui";
 import { AppliedFiltersList } from "components/issues";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { useIssues, useLabel, useProjectState, useProjectView } from "hooks/store";
+// components
 // ui
-import { PrimaryButton } from "components/ui";
-// helpers
-import { areFiltersDifferent } from "helpers/filter.helper";
 // types
-import { IIssueFilterOptions } from "types";
+import { IIssueFilterOptions } from "@plane/types";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
-
+  // store hooks
   const {
-    project: projectStore,
-    projectViews: projectViewsStore,
-    projectViewFilters: projectViewFiltersStore,
-  } = useMobxStore();
-
-  const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
-  const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
-
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { projectLabels } = useLabel();
+  const { projectStates } = useProjectState();
+  const { viewMap, updateView } = useProjectView();
+  // derived values
+  const viewDetails = viewId ? viewMap[viewId.toString()] : null;
+  const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(storedFilters ?? {}).forEach(([key, value]) => {
+  let appliedFilters: IIssueFilterOptions | undefined = undefined;
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
-
     if (Array.isArray(value) && value.length === 0) return;
-
+    if (!appliedFilters) appliedFilters = {};
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!viewId) return;
-
-    // remove all values of the key if value is null
+    if (!workspaceSlug || !projectId || !viewId) return;
     if (!value) {
-      projectViewFiltersStore.updateStoredFilters(viewId.toString(), {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EIssueFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        viewId.toString()
+      );
       return;
     }
 
-    // remove the passed value from the key
-    let newValues = storedFilters?.[key] ?? [];
+    let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    projectViewFiltersStore.updateStoredFilters(viewId.toString(), {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      viewId.toString()
+    );
   };
 
   const handleClearAllFilters = () => {
     if (!workspaceSlug || !projectId || !viewId) return;
-
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(storedFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+    Object.keys(userFilters ?? {}).forEach((key) => {
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
-
-    projectViewFiltersStore.updateStoredFilters(viewId.toString(), {
-      ...newFilters,
-    });
+    updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      { ...newFilters },
+      viewId.toString()
+    );
   };
+
+  const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
+  // return if no filters are applied
+  if (!appliedFilters && areFiltersEqual) return null;
 
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;
 
-    projectViewsStore.updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
-      query_data: {
-        ...viewDetails.query_data,
-        ...(storedFilters ?? {}),
+    updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
+      filters: {
+        ...(appliedFilters ?? {}),
       },
     });
   };
 
-  // update stored filters when view details are fetched
-  useEffect(() => {
-    if (!viewId || !viewDetails) return;
-
-    if (!projectViewFiltersStore.storedFilters[viewId.toString()])
-      projectViewFiltersStore.updateStoredFilters(viewId.toString(), viewDetails?.query_data ?? {});
-  }, [projectViewFiltersStore, viewDetails, viewId]);
-
-  // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0) return null;
-
   return (
     <div className="flex items-center justify-between gap-4 p-4">
       <AppliedFiltersList
-        appliedFilters={appliedFilters}
+        appliedFilters={appliedFilters ?? {}}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
-        members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-        states={projectStore.states?.[projectId?.toString() ?? ""]}
+        labels={projectLabels ?? []}
+        states={projectStates}
+        alwaysAllowEditing
       />
-      {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data ?? {}) && (
-        <PrimaryButton className="whitespace-nowrap" onClick={handleUpdateView}>
-          Update view
-        </PrimaryButton>
+
+      {!areFiltersEqual && (
+        <>
+          <div />
+          <div className="flex flex-shrink-0 items-center justify-center">
+            <Button variant="primary" size="sm" onClick={handleUpdateView}>
+              Update view
+            </Button>
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,49 +1,59 @@
 import { useEffect, useState, Fragment } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import type { IIssue } from "types";
+import { TIssue } from "@plane/types";
+// hooks
+import { useIssues, useProject } from "hooks/store";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue;
+  dataId?: string | null | undefined;
+  data?: TIssue;
   onSubmit?: () => Promise<void>;
 };
 
-export const DeleteIssueModal: React.FC<Props> = observer((props) => {
-  const { data, isOpen, handleClose, onSubmit } = props;
+export const DeleteIssueModal: React.FC<Props> = (props) => {
+  const { dataId, data, isOpen, handleClose, onSubmit } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { issueMap } = useIssues();
 
-  const { issueDetail: issueDetailStore } = useMobxStore();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  // hooks
+  const { getProjectById } = useProject();
 
   useEffect(() => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
   }, [isOpen]);
 
+  if (!dataId && !data) return null;
+
+  const issue = data ? data : issueMap[dataId!];
+
   const onClose = () => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
     handleClose();
   };
 
   const handleIssueDelete = async () => {
-    if (!workspaceSlug) return;
-
-    setIsDeleteLoading(true);
-
-    await issueDetailStore.deleteIssue(workspaceSlug.toString(), data.project, data.id);
-
-    if (onSubmit) await onSubmit().finally(() => setIsDeleteLoading(false));
+    setIsDeleting(true);
+    if (onSubmit)
+      await onSubmit()
+        .then(() => {
+          onClose();
+        })
+        .catch(() => {
+          setToast({
+            title: "Error",
+            type: TOAST_TYPE.ERROR,
+            message: "Failed to delete issue",
+          });
+        })
+        .finally(() => setIsDeleting(false));
   };
 
   return (
@@ -58,7 +68,7 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -72,12 +82,12 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
-                    <span className="place-items-center rounded-full bg-red-500/20 p-4">
+                    <div className="grid place-items-center rounded-full bg-red-500/20 p-4">
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
-                    </span>
+                    </div>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
                     </span>
@@ -86,18 +96,18 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail.identifier}-{data?.sequence_id}
+                        {getProjectById(issue?.project_id)?.identifier}-{issue?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This action cannot be
                       undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button variant="danger" onClick={handleIssueDelete} loading={isDeleteLoading}>
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                    <Button variant="danger" size="sm" tabIndex={1} onClick={handleIssueDelete} loading={isDeleting}>
+                      {isDeleting ? "Deleting" : "Delete"}
                     </Button>
                   </div>
                 </div>
@@ -108,4 +118,4 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
       </Dialog>
     </Transition.Root>
   );
-});
+};

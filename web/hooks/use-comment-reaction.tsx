@@ -1,13 +1,12 @@
 import useSWR from "swr";
-
 // fetch keys
 import { COMMENT_REACTION_LIST } from "constants/fetch-keys";
 // services
+import { groupReactions } from "helpers/emoji.helper";
 import { IssueReactionService } from "services/issue";
 // helpers
-import { groupReactions } from "helpers/emoji.helper";
+import { useUser } from "./store";
 // hooks
-import useUser from "./use-user";
 
 // services
 const issueReactionService = new IssueReactionService();
@@ -52,8 +51,7 @@ const useCommentReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),
-      { reaction },
-      user.user
+      { reaction }
     );
 
     mutateCommentReactions((prev: any) => [...(prev || []), data]);
@@ -69,7 +67,8 @@ const useCommentReaction = (
     if (!workspaceSlug || !projectId || !commendId) return;
 
     mutateCommentReactions(
-      (prevData: any) => prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
+      (prevData: any) =>
+        prevData?.filter((r: any) => r.actor !== user?.currentUser?.id || r.reaction !== reaction) || [],
       false
     );
 
@@ -77,8 +76,7 @@ const useCommentReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),
-      reaction,
-      user.user
+      reaction
     );
 
     mutateCommentReactions();

@@ -31,11 +31,11 @@ export const ReactionSelector: React.FC<Props> = (props) => {
             } group inline-flex items-center rounded-md bg-custom-background-80 focus:outline-none`}
           >
             <span
-              className={`flex justify-center items-center rounded-md px-2 ${
-                size === "sm" ? "w-6 h-6" : size === "md" ? "w-7 h-7" : "w-8 h-8"
+              className={`flex items-center justify-center rounded-md px-2 ${
+                size === "sm" ? "h-6 w-6" : size === "md" ? "h-7 w-7" : "h-8 w-8"
               }`}
             >
-              <Icon iconName="add_reaction" className="text-custom-text-100 scale-125" />
+              <Icon iconName="add_reaction" className="scale-125 text-custom-text-100" />
             </span>
           </Popover.Button>
           <Transition
@@ -48,11 +48,11 @@ export const ReactionSelector: React.FC<Props> = (props) => {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel
-              className={`bg-custom-sidebar-background-100 absolute -left-2 z-10 ${
+              className={`absolute -left-2 z-10 bg-custom-sidebar-background-100 ${
                 position === "top" ? "-top-12" : "-bottom-12"
               }`}
             >
-              <div className="bg-custom-sidebar-background-100 border border-custom-border-200 shadow-custom-shadow-sm rounded-md p-1">
+              <div className="rounded-md border border-custom-border-200 bg-custom-sidebar-background-100 p-1 shadow-custom-shadow-sm">
                 <div className="flex gap-x-1">
                   {reactionEmojis.map((emoji) => (
                     <button
@@ -62,7 +62,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                         onSelect(emoji);
                         closePopover();
                       }}
-                      className={`grid place-items-center select-none rounded-md text-sm p-1 ${
+                      className={`grid select-none place-items-center rounded-md p-1 text-sm ${
                         selected.includes(emoji) ? "bg-custom-primary-100/10" : "hover:bg-custom-sidebar-background-80"
                       }`}
                     >

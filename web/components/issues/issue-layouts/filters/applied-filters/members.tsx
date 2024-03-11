@@ -1,42 +1,46 @@
 import { observer } from "mobx-react-lite";
-
-// ui
-import { Avatar } from "components/ui";
-// icons
 import { X } from "lucide-react";
+// ui
+import { Avatar } from "@plane/ui";
 // types
-import { IUserLite } from "types";
+import { useMember } from "hooks/store";
 
 type Props = {
   handleRemove: (val: string) => void;
-  members: IUserLite[] | undefined;
   values: string[];
+  editable: boolean | undefined;
 };
 
 export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, members, values } = props;
+  const { handleRemove, values, editable } = props;
+
+  const {
+    workspace: { getWorkspaceMemberDetails },
+  } = useMember();
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((memberId) => {
-        const memberDetails = members?.find((m) => m.id === memberId);
+        const memberDetails = getWorkspaceMemberDetails(memberId)?.member;
 
         if (!memberDetails) return null;
 
         return (
-          <div key={memberId} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
-            <Avatar user={memberDetails} height="16px" width="16px" />
+          <div key={memberId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+            <Avatar name={memberDetails.display_name} src={memberDetails.avatar} showTooltip={false} />
             <span className="normal-case">{memberDetails.display_name}</span>
-            <button
-              type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-              onClick={() => handleRemove(memberId)}
-            >
-              <X size={10} strokeWidth={2} />
-            </button>
+            {editable && (
+              <button
+                type="button"
+                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                onClick={() => handleRemove(memberId)}
+              >
+                <X size={10} strokeWidth={2} />
+              </button>
+            )}
           </div>
         );
       })}
-    </div>
+    </>
   );
 });

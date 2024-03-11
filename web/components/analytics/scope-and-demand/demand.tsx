@@ -1,9 +1,9 @@
 // icons
 import { Triangle } from "lucide-react";
 // types
-import { IDefaultAnalyticsResponse, TStateGroups } from "types";
+import { STATE_GROUPS } from "constants/state";
+import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;
@@ -13,7 +13,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
   <div className="space-y-3 rounded-[10px] border border-custom-border-200 p-3">
     <h5 className="text-xs text-red-500">DEMAND</h5>
     <div>
-      <h4 className="text-custom-text-100 text-base font-medium">Total open tasks</h4>
+      <h4 className="text-base font-medium text-custom-text-100">Total open tasks</h4>
       <h3 className="mt-1 text-xl font-semibold">{defaultAnalytics.open_issues}</h3>
     </div>
     <div className="space-y-6">
@@ -27,7 +27,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{
-                    backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
+                    backgroundColor: STATE_GROUPS[group.state_group as TStateGroups].color,
                   }}
                 />
                 <h6 className="capitalize">{group.state_group}</h6>
@@ -39,10 +39,10 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
             </div>
             <div className="bar relative h-1 w-full rounded bg-custom-background-80">
               <div
-                className="absolute top-0 left-0 h-1 rounded duration-300"
+                className="absolute left-0 top-0 h-1 rounded duration-300"
                 style={{
                   width: `${percentage}%`,
-                  backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
+                  backgroundColor: STATE_GROUPS[group.state_group as TStateGroups].color,
                 }}
               />
             </div>

@@ -1,74 +1,107 @@
+import { observer } from "mobx-react";
 // icons
-import { ExternalLinkIcon } from "@plane/ui";
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
+// ui
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "helpers/date-time.helper";
+// hooks
+import { useMember } from "hooks/store";
 // types
-import { linkDetails, UserAuth } from "types";
+import { ILinkDetails, UserAuth } from "@plane/types";
 
 type Props = {
-  links: linkDetails[];
+  links: ILinkDetails[];
   handleDeleteLink: (linkId: string) => void;
-  handleEditLink: (link: linkDetails) => void;
+  handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
 };
 
-export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEditLink, userAuth }) => {
+export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth }) => {
+  const { getUserDetails } = useMember();
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Copied to clipboard",
+      message: "The URL has been successfully copied to your clipboard",
+    });
+  };
 
   return (
     <>
-      {links.map((link) => (
-        <div key={link.id} className="relative">
-          {!isNotAllowed && (
-            <div className="absolute top-1.5 right-1.5 z-[1] flex items-center gap-1">
-              <button
-                type="button"
-                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
-                onClick={() => handleEditLink(link)}
-              >
-                <Pencil className="text-custom-text-200" />
-              </button>
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
-              >
-                <ExternalLinkIcon className="h-4 w-4 text-custom-text-200" />
-              </a>
-              <button
-                type="button"
-                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/20"
-                onClick={() => handleDeleteLink(link.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+      {links.map((link) => {
+        const createdByDetails = getUserDetails(link.created_by);
+        return (
+          <div key={link.id} className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
+            <div className="flex w-full items-start justify-between gap-2">
+              <div className="flex items-start gap-2 truncate">
+                <span className="py-1">
+                  <LinkIcon className="h-3 w-3 flex-shrink-0" />
+                </span>
+                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                  <span
+                    className="cursor-pointer truncate text-xs"
+                    onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
+                  >
+                    {link.title && link.title !== "" ? link.title : link.url}
+                  </span>
+                </Tooltip>
+              </div>
+
+              {!isNotAllowed && (
+                <div className="z-[1] flex flex-shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEditLink(link);
+                    }}
+                  >
+                    <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                  </button>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                  >
+                    <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                  </a>
+                  <button
+                    type="button"
+                    className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDeleteLink(link.id);
+                    }}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative flex gap-2 rounded-md bg-custom-background-90 p-2"
-          >
-            <div className="mt-0.5">
-              <LinkIcon className="h-3.5 w-3.5" />
-            </div>
-            <div>
-              <h5 className="w-4/5 break-words">{link.title ?? link.url}</h5>
-              <p className="mt-0.5 text-custom-text-200">
-                Added {timeAgo(link.created_at)}
+            <div className="px-5">
+              <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
+                Added {calculateTimeAgo(link.created_at)}
                 <br />
-                by{" "}
-                {link.created_by_detail.is_bot
-                  ? link.created_by_detail.first_name + " Bot"
-                  : link.created_by_detail.display_name}
+                {createdByDetails && (
+                  <>
+                    by{" "}
+                    {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}
+                  </>
+                )}
               </p>
             </div>
-          </a>
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </>
   );
-};
+});

@@ -1,33 +1,41 @@
-import React, { useState } from "react";
-
+import React, { useMemo, useState } from "react";
+import { observer } from "mobx-react";
+import sortBy from "lodash/sortBy";
 // components
+import { Loader, StateGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Loader, StateGroupIcon } from "@plane/ui";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // types
-import { IStateResponse } from "types";
+import { IState } from "@plane/types";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  itemsToRender: number;
   searchQuery: string;
-  states: IStateResponse | undefined;
-  viewButtons: React.ReactNode;
+  states: IState[] | undefined;
 };
 
-export const FilterState: React.FC<Props> = (props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, searchQuery, states, viewButtons } = props;
+export const FilterState: React.FC<Props> = observer((props) => {
+  const { appliedFilters, handleUpdate, searchQuery, states } = props;
 
+  const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
-
-  const statesList = getStatesList(states);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = statesList?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (states ?? []).filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return sortBy(filteredOptions, [(s) => !(appliedFilters ?? []).includes(s.id), (s) => s.name.toLowerCase()]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
+
+  const handleViewToggle = () => {
+    if (!sortedOptions) return;
+
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
+  };
 
   return (
     <>
@@ -38,10 +46,10 @@ export const FilterState: React.FC<Props> = (props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((state) => (
+                {sortedOptions.slice(0, itemsToRender).map((state) => (
                   <FilterOption
                     key={state.id}
                     isChecked={appliedFilters?.includes(state.id) ? true : false}
@@ -50,10 +58,18 @@ export const FilterState: React.FC<Props> = (props) => {
                     title={state.name}
                   />
                 ))}
-                {viewButtons}
+                {sortedOptions.length > 5 && (
+                  <button
+                    type="button"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    onClick={handleViewToggle}
+                  >
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
+                  </button>
+                )}
               </>
             ) : (
-              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">
@@ -66,4 +82,4 @@ export const FilterState: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

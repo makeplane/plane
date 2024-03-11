@@ -1,10 +1,18 @@
 import * as React from "react";
 
-export const Spinner: React.FC = () => (
+export interface ISpinner extends React.SVGAttributes<SVGElement> {
+  height?: string;
+  width?: string;
+  className?: string | undefined;
+}
+
+export const Spinner: React.FC<ISpinner> = ({ height = "32px", width = "32px", className = "" }) => (
   <div role="status">
     <svg
       aria-hidden="true"
-      className="mr-2 h-8 w-8 animate-spin fill-blue-600 text-custom-text-200"
+      height={height}
+      width={width}
+      className={`animate-spin fill-blue-600 text-custom-text-200 ${className}`}
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

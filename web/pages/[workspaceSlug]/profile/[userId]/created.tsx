@@ -1,20 +1,29 @@
-import React from "react";
-
-// contexts
-import { ProfileIssuesContextProvider } from "contexts/profile-issues-context";
+import { ReactElement } from "react";
+// store
+import { observer } from "mobx-react-lite";
 // layouts
-import { ProfileAuthWrapper } from "layouts/profile-layout";
+import { PageHead } from "components/core";
+import { UserProfileHeader } from "components/headers";
+import { ProfileIssuesPage } from "components/profile/profile-issues";
+import { AppLayout } from "layouts/app-layout";
+import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
-import { ProfileIssuesView } from "components/profile";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "lib/types";
 
-const ProfileCreatedIssues: NextPage = () => (
-  <ProfileIssuesContextProvider>
-    <ProfileAuthWrapper>
-      <ProfileIssuesView />
-    </ProfileAuthWrapper>
-  </ProfileIssuesContextProvider>
+const ProfileCreatedIssuesPage: NextPageWithLayout = () => (
+  <>
+    <PageHead title="Profile - Created" />
+    <ProfileIssuesPage type="created" />
+  </>
 );
 
-export default ProfileCreatedIssues;
+ProfileCreatedIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<UserProfileHeader type="Created" />}>
+      <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
+    </AppLayout>
+  );
+};
+
+export default observer(ProfileCreatedIssuesPage);

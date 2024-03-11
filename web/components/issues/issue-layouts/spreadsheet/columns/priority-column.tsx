@@ -1,47 +1,31 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 // components
-import { PrioritySelect } from "components/project";
-// hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { PriorityDropdown } from "components/dropdowns";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (data: Partial<IIssue>) => void;
-  expandedIssues: string[];
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div>
-      <PrioritySelect
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <PriorityDropdown
         value={issue.priority}
-        onChange={(data) => onChange({ priority: data })}
-        buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
-        hideDropdownArrow
+        onChange={(data) => onChange(issue, { priority: data }, { changed_property: "priority", change_details: data })}
         disabled={disabled}
+        buttonVariant="transparent-with-text"
+        buttonClassName="rounded-none text-left"
+        buttonContainerClassName="w-full"
+        onClose={onClose}
       />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetPriorityColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
-        ))}
     </div>
   );
-};
+});

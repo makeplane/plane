@@ -60,6 +60,7 @@ const calculateShades = (hexValue: string): TShades => {
 };
 
 export const applyTheme = (palette: string, isDarkPalette: boolean) => {
+  if (!palette) return;
   const dom = document?.querySelector<HTMLElement>("[data-theme='custom']");
   // palette: [bg, text, primary, sidebarBg, sidebarText]
   const values: string[] = palette.split(",");
@@ -117,3 +118,6 @@ export const unsetCustomCssVariables = () => {
     dom?.style.removeProperty("--color-scheme");
   }
 };
+
+export const resolveGeneralTheme = (resolvedTheme: string | undefined) =>
+  resolvedTheme?.includes("light") ? "light" : resolvedTheme?.includes("dark") ? "dark" : "system";

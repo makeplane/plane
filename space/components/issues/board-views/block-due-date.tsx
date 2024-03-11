@@ -49,8 +49,8 @@ export const IssueBlockDueDate = ({ due_date, group }: { due_date: string; group
   const iconDetails = dueDateIconDetails(due_date, group);
 
   return (
-    <div className="rounded flex px-2.5 py-1 items-center border-[0.5px] border-custom-border-300 gap-1 text-custom-text-100 text-xs">
-      <span className={`material-symbols-rounded text-sm -my-0.5 ${iconDetails.className}`}>
+    <div className="flex items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs text-custom-text-100">
+      <span className={`material-symbols-rounded -my-0.5 text-sm ${iconDetails.className}`}>
         {iconDetails.iconName}
       </span>
       {renderFullDate(due_date)}

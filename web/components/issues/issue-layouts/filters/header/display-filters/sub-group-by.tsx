@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
-import { TIssueGroupByOptions } from "types";
-// constants
 import { ISSUE_GROUP_BY_OPTIONS } from "constants/issue";
+import { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
+// constants
 
 type Props = {
-  selectedGroupBy: TIssueGroupByOptions | undefined;
-  selectedSubGroupBy: TIssueGroupByOptions | undefined;
+  displayFilters: IIssueDisplayFilterOptions;
   handleUpdate: (val: TIssueGroupByOptions) => void;
   subGroupByOptions: TIssueGroupByOptions[];
+  ignoreGroupedFilters: Partial<TIssueGroupByOptions>[];
 };
 
 export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
-  const { selectedGroupBy, selectedSubGroupBy, handleUpdate, subGroupByOptions } = props;
+  const { displayFilters, handleUpdate, subGroupByOptions, ignoreGroupedFilters } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
+
+  const selectedGroupBy = displayFilters.group_by ?? null;
+  const selectedSubGroupBy = displayFilters.sub_group_by ?? null;
 
   return (
     <>
@@ -31,6 +33,7 @@ export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
         <div>
           {ISSUE_GROUP_BY_OPTIONS.filter((option) => subGroupByOptions.includes(option.key)).map((subGroupBy) => {
             if (selectedGroupBy !== null && subGroupBy.key === selectedGroupBy) return null;
+            if (ignoreGroupedFilters.includes(subGroupBy?.key)) return null;
 
             return (
               <FilterOption

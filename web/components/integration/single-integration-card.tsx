@@ -1,25 +1,24 @@
 import { useState } from "react";
-
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
+import { CheckCircle } from "lucide-react";
+// ui
+import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import useIntegrationPopup from "hooks/use-integration-popup";
 // services
 import { IntegrationService } from "services/integrations";
-// hooks
-import useToast from "hooks/use-toast";
-import useIntegrationPopup from "hooks/use-integration-popup";
-// ui
-import { Button, Loader } from "@plane/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
-import { CheckCircle } from "lucide-react";
 // types
-import { IAppIntegration, IWorkspaceIntegration } from "types";
+import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // fetch-keys
-import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 type Props = {
   integration: IAppIntegration;
@@ -41,15 +40,27 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const integrationService = new IntegrationService();
 
-export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
+export const SingleIntegrationCard: React.FC<Props> = observer(({ integration }) => {
+  // states
   const [deletingIntegration, setDeletingIntegration] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    config: { envConfig },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
-  const { setToastAlert } = useToast();
+  const isUserAdmin = currentWorkspaceRole === 20;
 
-  const { startAuth, isConnecting: isInstalling } = useIntegrationPopup(integration.provider);
+  const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
+    provider: integration.provider,
+    github_app_name: envConfig?.github_app_name || "",
+    slack_client_id: envConfig?.slack_client_id || "",
+  });
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
@@ -73,8 +84,8 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
         );
         setDeletingIntegration(false);
 
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Deleted successfully!",
           message: `${integration.title} integration deleted successfully.`,
         });
@@ -82,8 +93,8 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
       .catch(() => {
         setDeletingIntegration(false);
 
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: `${integration.title} integration could not be deleted. Please try again.`,
         });
@@ -93,7 +104,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
   const isInstalled = workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
 
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6">
+    <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
       <div className="flex items-start gap-4">
         <div className="h-10 w-10 flex-shrink-0">
           <Image src={integrationDetails[integration.provider].logo} alt={`${integration.title} Logo`} />
@@ -102,10 +113,10 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
           <h3 className="flex items-center gap-2 text-sm font-medium">
             {integration.title}
             {workspaceIntegrations
-              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 text-white fill-green-500" />
+              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-green-500" />
               : null}
           </h3>
-          <p className="text-sm text-custom-text-200 tracking-tight">
+          <p className="text-sm tracking-tight text-custom-text-200">
             {workspaceIntegrations
               ? isInstalled
                 ? integrationDetails[integration.provider].installed
@@ -117,19 +128,46 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
       {workspaceIntegrations ? (
         isInstalled ? (
-          <Button variant="danger" onClick={handleRemoveIntegration} loading={deletingIntegration}>
-            {deletingIntegration ? "Uninstalling..." : "Uninstall"}
-          </Button>
+          <Tooltip
+            disabled={isUserAdmin}
+            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+          >
+            <Button
+              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
+              variant="danger"
+              onClick={() => {
+                if (!isUserAdmin) return;
+                handleRemoveIntegration();
+              }}
+              disabled={!isUserAdmin}
+              loading={deletingIntegration}
+            >
+              {deletingIntegration ? "Uninstalling..." : "Uninstall"}
+            </Button>
+          </Tooltip>
         ) : (
-          <Button variant="primary" onClick={startAuth} loading={isInstalling}>
-            {isInstalling ? "Installing..." : "Install"}
-          </Button>
+          <Tooltip
+            disabled={isUserAdmin}
+            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+          >
+            <Button
+              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
+              variant="primary"
+              onClick={() => {
+                if (!isUserAdmin) return;
+                startAuth();
+              }}
+              loading={isInstalling}
+            >
+              {isInstalling ? "Installing..." : "Install"}
+            </Button>
+          </Tooltip>
         )
       ) : (
         <Loader>
-          <Loader.Item height="35px" width="150px" />
+          <Loader.Item height="32px" width="64px" />
         </Loader>
       )}
     </div>
   );
-};
+});

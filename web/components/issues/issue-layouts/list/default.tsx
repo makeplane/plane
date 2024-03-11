@@ -1,274 +1,236 @@
-import React from "react";
-import { observer } from "mobx-react-lite";
+import { useRef } from "react";
 // components
-import { ListGroupByHeaderRoot } from "./headers/group-by-root";
-import { IssueBlock } from "./block";
+import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+// hooks
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
 // constants
-import { getValueFromObject } from "constants/issue";
-import { IIssue } from "types";
-import { IssueBlocksList } from "./blocks-list";
+// types
+import {
+  GroupByColumnTypes,
+  TGroupedIssues,
+  TIssue,
+  IIssueDisplayProperties,
+  TIssueMap,
+  TUnGroupedIssues,
+  IGroupByColumn,
+} from "@plane/types";
+import { getGroupByColumns } from "../utils";
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import { EIssuesStoreType } from "constants/issue";
 
 export interface IGroupByList {
-  issues: any;
+  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issuesMap: TIssueMap;
   group_by: string | null;
-  list: any;
-  listKey: string;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
-  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
-  is_list?: boolean;
-  states: any;
-  labels: any;
-  members: any;
-  projects: any;
-  stateGroups: any;
-  priorities: any;
-  estimates: any;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue) => React.ReactNode;
+  displayProperties: IIssueDisplayProperties | undefined;
+  enableIssueQuickAdd: boolean;
+  showEmptyGroup?: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    viewId?: string
+  ) => Promise<TIssue | undefined>;
+  disableIssueCreation?: boolean;
+  storeType: EIssuesStoreType;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  viewId?: string;
+  isCompletedCycle?: boolean;
 }
 
-const GroupByList: React.FC<IGroupByList> = observer((props) => {
+const GroupByList: React.FC<IGroupByList> = (props) => {
   const {
-    issues,
+    issueIds,
+    issuesMap,
     group_by,
-    list,
-    listKey,
-    handleIssues,
+    updateIssue,
     quickActions,
-    display_properties,
-    is_list = false,
-    states,
-    labels,
-    members,
-    projects,
-    stateGroups,
-    priorities,
-    estimates,
+    displayProperties,
+    enableIssueQuickAdd,
+    showEmptyGroup,
+    canEditProperties,
+    quickAddCallback,
+    viewId,
+    disableIssueCreation,
+    storeType,
+    addIssuesToView,
+    isCompletedCycle = false,
   } = props;
+  // store hooks
+  const member = useMember();
+  const project = useProject();
+  const label = useLabel();
+  const projectState = useProjectState();
+  const cycle = useCycle();
+  const projectModule = useModule();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const groups = getGroupByColumns(
+    group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    projectModule,
+    label,
+    projectState,
+    member,
+    true,
+    true
+  );
+
+  if (!groups) return null;
+
+  const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
+    const defaultState = projectState.projectStates?.find((state) => state.default);
+    let preloadedData: object = { state_id: defaultState?.id };
+
+    if (groupByKey === null) {
+      preloadedData = { ...preloadedData };
+    } else {
+      if (groupByKey === "state") {
+        preloadedData = { ...preloadedData, state_id: value };
+      } else if (groupByKey === "priority") {
+        preloadedData = { ...preloadedData, priority: value };
+      } else if (groupByKey === "labels" && value != "None") {
+        preloadedData = { ...preloadedData, label_ids: [value] };
+      } else if (groupByKey === "assignees" && value != "None") {
+        preloadedData = { ...preloadedData, assignee_ids: [value] };
+      } else if (groupByKey === "cycle" && value != "None") {
+        preloadedData = { ...preloadedData, cycle_id: value };
+      } else if (groupByKey === "module" && value != "None") {
+        preloadedData = { ...preloadedData, module_ids: [value] };
+      } else if (groupByKey === "created_by") {
+        preloadedData = { ...preloadedData };
+      } else {
+        preloadedData = { ...preloadedData, [groupByKey]: value };
+      }
+    }
+
+    return preloadedData;
+  };
+
+  const validateEmptyIssueGroups = (issues: TIssue[]) => {
+    const issuesCount = issues?.length || 0;
+    if (!showEmptyGroup && issuesCount <= 0) return false;
+    return true;
+  };
+
+  const is_list = group_by === null ? true : false;
+
+  const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className="relative w-full h-full">
-      {list &&
-        list.length > 0 &&
-        list.map((_list: any) => (
-          <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
-            <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky top-0 z-[2] px-3 border-b border-custom-border-100">
-              <ListGroupByHeaderRoot
-                column_id={getValueFromObject(_list, listKey) as string}
-                column_value={_list}
-                group_by={group_by}
-                issues_count={
-                  is_list ? issues?.length || 0 : issues?.[getValueFromObject(_list, listKey) as string]?.length || 0
-                }
-              />
-            </div>
-            <div className={`w-full h-full relative transition-all`}>
-              {issues && (
-                <IssueBlocksList
-                  columnId={getValueFromObject(_list, listKey) as string}
-                  issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
-                  handleIssues={handleIssues}
-                  quickActions={quickActions}
-                  display_properties={display_properties}
-                  states={states}
-                  labels={labels}
-                  members={members}
-                  priorities={priorities}
-                />
-              )}
-            </div>
-          </div>
-        ))}
+    <div ref={containerRef} className="vertical-scrollbar scrollbar-lg relative h-full w-full overflow-auto">
+      {groups &&
+        groups.length > 0 &&
+        groups.map(
+          (_list: IGroupByColumn) =>
+            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
+              <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
+                  <HeaderGroupByCard
+                    icon={_list.icon}
+                    title={_list.name || ""}
+                    count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
+                    issuePayload={_list.payload}
+                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
+                    storeType={storeType}
+                    addIssuesToView={addIssuesToView}
+                  />
+                </div>
+
+                {issueIds && (
+                  <IssueBlocksList
+                    issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
+                    issuesMap={issuesMap}
+                    updateIssue={updateIssue}
+                    quickActions={quickActions}
+                    displayProperties={displayProperties}
+                    canEditProperties={canEditProperties}
+                    containerRef={containerRef}
+                  />
+                )}
+
+                {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
+                  <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
+                    <ListQuickAddIssueForm
+                      prePopulatedData={prePopulateQuickAddData(group_by, _list.id)}
+                      quickAddCallback={quickAddCallback}
+                      viewId={viewId}
+                    />
+                  </div>
+                )}
+              </div>
+            )
+        )}
     </div>
   );
-});
+};
 
-// TODO: update all the types
 export interface IList {
-  issues: any;
+  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issuesMap: TIssueMap;
   group_by: string | null;
-  handleDragDrop?: (result: any) => void | undefined;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
-  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  projects: any;
-  stateGroups: any;
-  priorities: any;
-  estimates: any;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue) => React.ReactNode;
+  displayProperties: IIssueDisplayProperties | undefined;
+  showEmptyGroup: boolean;
+  enableIssueQuickAdd: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    viewId?: string
+  ) => Promise<TIssue | undefined>;
+  viewId?: string;
+  disableIssueCreation?: boolean;
+  storeType: EIssuesStoreType;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  isCompletedCycle?: boolean;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List: React.FC<IList> = (props) => {
   const {
-    issues,
+    issueIds,
+    issuesMap,
     group_by,
-    handleIssues,
+    updateIssue,
     quickActions,
-    display_properties,
-    states,
-    labels,
-    members,
-    projects,
-    stateGroups,
-    priorities,
-    estimates,
+    quickAddCallback,
+    viewId,
+    displayProperties,
+    showEmptyGroup,
+    enableIssueQuickAdd,
+    canEditProperties,
+    disableIssueCreation,
+    storeType,
+    addIssuesToView,
+    isCompletedCycle = false,
   } = props;
 
   return (
-    <div className="relative w-full h-full">
-      {group_by === null && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={[{ id: "null", title: "All Issues" }]}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          is_list={true}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
-
-      {group_by && group_by === "project" && projects && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={projects}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
-
-      {group_by && group_by === "state" && states && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={states}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
-
-      {group_by && group_by === "state_detail.group" && stateGroups && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={stateGroups}
-          listKey={`key`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
-
-      {group_by && group_by === "priority" && priorities && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={priorities}
-          listKey={`key`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
-
-      {group_by && group_by === "labels" && labels && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={labels}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
-
-      {group_by && group_by === "assignees" && members && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={members}
-          listKey={`member.id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
-
-      {group_by && group_by === "created_by" && members && (
-        <GroupByList
-          issues={issues}
-          group_by={group_by}
-          list={members}
-          listKey={`member.id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
-        />
-      )}
+    <div className="relative h-full w-full">
+      <GroupByList
+        issueIds={issueIds as TUnGroupedIssues}
+        issuesMap={issuesMap}
+        group_by={group_by}
+        updateIssue={updateIssue}
+        quickActions={quickActions}
+        displayProperties={displayProperties}
+        enableIssueQuickAdd={enableIssueQuickAdd}
+        showEmptyGroup={showEmptyGroup}
+        canEditProperties={canEditProperties}
+        quickAddCallback={quickAddCallback}
+        viewId={viewId}
+        disableIssueCreation={disableIssueCreation}
+        storeType={storeType}
+        addIssuesToView={addIssuesToView}
+        isCompletedCycle={isCompletedCycle}
+      />
     </div>
   );
-});
+};

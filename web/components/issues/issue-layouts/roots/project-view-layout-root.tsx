@@ -1,69 +1,84 @@
-import React from "react";
-import { useRouter } from "next/router";
+import React, { Fragment } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
-
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
-  ModuleKanBanLayout,
-  ModuleListLayout,
+  IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
+  ProjectViewEmptyState,
   ProjectViewGanttLayout,
+  ProjectViewKanBanLayout,
+  ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
+import { ActiveLoader } from "components/ui";
+// constants
+import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
+// types
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
-
-  const {
-    issueFilter: issueFilterStore,
-    projectViews: projectViewsStore,
-    projectViewIssues: projectViewIssuesStore,
-    projectViewFilters: projectViewFiltersStore,
-  } = useMobxStore();
+  // hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
   useSWR(
-    workspaceSlug && projectId && viewId ? `PROJECT_VIEW_FILTERS_AND_ISSUES_${viewId.toString()}` : null,
+    workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
-        // fetching the project display filters and display properties
-        await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-
-        // fetching the view details
-        await projectViewsStore.fetchViewDetails(workspaceSlug.toString(), projectId.toString(), viewId.toString());
-        // fetching the view issues
-        await projectViewIssuesStore.fetchViewIssues(
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
+        await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),
-          viewId.toString(),
-          projectViewFiltersStore.storedFilters[viewId.toString()] ?? {}
+          issues?.groupedIssueIds ? "mutation" : "init-loader",
+          viewId.toString()
         );
       }
-    }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+
+  if (!workspaceSlug || !projectId || !viewId) return <></>;
+
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
 
   return (
-    <div className="relative h-full w-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
-      <div className="h-full w-full overflow-y-auto">
-        {activeLayout === "list" ? (
-          <ModuleListLayout />
-        ) : activeLayout === "kanban" ? (
-          <ModuleKanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <ProjectViewCalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <ProjectViewGanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ProjectViewSpreadsheetLayout />
-        ) : null}
-      </div>
+
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <div className="relative h-full w-full overflow-y-auto">
+          <ProjectViewEmptyState />
+        </div>
+      ) : (
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto">
+            {activeLayout === "list" ? (
+              <ProjectViewListLayout />
+            ) : activeLayout === "kanban" ? (
+              <ProjectViewKanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <ProjectViewCalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <ProjectViewGanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectViewSpreadsheetLayout />
+            ) : null}
+          </div>
+
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
+      )}
     </div>
   );
 });

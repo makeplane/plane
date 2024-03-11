@@ -1,22 +1,33 @@
 /** @type {import('next').NextConfig} */
-const path = require("path");
-const withImages = require("next-images");
+require("dotenv").config({ path: ".env" });
+const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/",
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+      },
+    ];
+  },
+  basePath: process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX === "1" ? "/spaces" : "",
   reactStrictMode: false,
   swcMinify: true,
-  experimental: {
-    outputFileTracingRoot: path.join(__dirname, "../"),
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+    unoptimized: true,
   },
   output: "standalone",
 };
 
-if (parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) {
-  const nextConfigWithNginx = withImages({
-    basePath: "/spaces",
-    ...nextConfig,
-  });
-  module.exports = nextConfigWithNginx;
+if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {
+  module.exports = withSentryConfig(nextConfig, { silent: true }, { hideSourceMaps: true });
 } else {
   module.exports = nextConfig;
 }

@@ -1,97 +1,118 @@
-import StarterKit from "@tiptap/starter-kit";
-import TiptapLink from "@tiptap/extension-link";
-import TiptapUnderline from "@tiptap/extension-underline";
-import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
+import TextStyle from "@tiptap/extension-text-style";
+import TiptapUnderline from "@tiptap/extension-underline";
+import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
-import Gapcursor from "@tiptap/extension-gapcursor";
 
-import { CustomTableCell } from "./table/table-cell";
-import { Table } from "./table";
-import { TableHeader } from "./table/table-header";
-import { TableRow } from "@tiptap/extension-table-row";
+import { Table } from "src/ui/extensions/table/table";
+import { TableCell } from "src/ui/extensions/table/table-cell/table-cell";
+import { TableHeader } from "src/ui/extensions/table/table-header/table-header";
+import { TableRow } from "src/ui/extensions/table/table-row/table-row";
 
-import ImageExtension from "./image";
+import { ImageExtension } from "src/ui/extensions/image";
 
-import { DeleteImage } from "../../types/delete-image";
-import { isValidHttpUrl } from "../../lib/utils";
+import { isValidHttpUrl } from "src/lib/utils";
+import { Mentions } from "src/ui/mentions";
 
+import { CustomCodeBlockExtension } from "src/ui/extensions/code";
+import { ListKeymap } from "src/ui/extensions/custom-list-keymap";
+import { CustomKeymap } from "src/ui/extensions/keymap";
+import { CustomQuoteExtension } from "src/ui/extensions/quote";
+
+import { DeleteImage } from "src/types/delete-image";
+import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { RestoreImage } from "src/types/restore-image";
+import { CustomLinkExtension } from "src/ui/extensions/custom-link";
+import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
+import { CustomTypographyExtension } from "src/ui/extensions/typography";
+import { CustomHorizontalRule } from "./horizontal-rule/horizontal-rule";
 
 export const CoreEditorExtensions = (
+  mentionConfig: {
+    mentionSuggestions: IMentionSuggestion[];
+    mentionHighlights: string[];
+  },
   deleteFile: DeleteImage,
+  restoreFile: RestoreImage,
+  cancelUploadImage?: () => any
 ) => [
-    StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc list-outside leading-3 -mt-2",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal list-outside leading-3 -mt-2",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "leading-normal -mb-2",
-        },
-      },
-      blockquote: {
-        HTMLAttributes: {
-          class: "border-l-4 border-custom-border-300",
-        },
-      },
-      code: {
-        HTMLAttributes: {
-          class:
-            "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-          spellcheck: "false",
-        },
-      },
-      codeBlock: false,
-      horizontalRule: false,
-      dropcursor: {
-        color: "rgba(var(--color-text-100))",
-        width: 2,
-      },
-      gapcursor: false,
-    }),
-    Gapcursor,
-    TiptapLink.configure({
-      protocols: ["http", "https"],
-      validate: (url) => isValidHttpUrl(url),
+  StarterKit.configure({
+    bulletList: {
       HTMLAttributes: {
-        class:
-          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+        class: "list-disc list-outside leading-3 -mt-2",
       },
-    }),
-    ImageExtension(deleteFile).configure({
+    },
+    orderedList: {
       HTMLAttributes: {
-        class: "rounded-lg border border-custom-border-300",
+        class: "list-decimal list-outside leading-3 -mt-2",
       },
-    }),
-    TiptapUnderline,
-    TextStyle,
-    Color,
-    TaskList.configure({
+    },
+    listItem: {
       HTMLAttributes: {
-        class: "not-prose pl-2",
+        class: "leading-normal -mb-2",
       },
-    }),
-    TaskItem.configure({
-      HTMLAttributes: {
-        class: "flex items-start my-4",
-      },
-      nested: true,
-    }),
-    Markdown.configure({
-      html: true,
-      transformCopiedText: true,
-    }),
-    Table,
-    TableHeader,
-    CustomTableCell,
-    TableRow,
-  ];
+    },
+    code: false,
+    codeBlock: false,
+    horizontalRule: false,
+    blockquote: false,
+    dropcursor: {
+      color: "rgba(var(--color-text-100))",
+      width: 2,
+    },
+  }),
+  CustomQuoteExtension.configure({
+    HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
+  }),
+
+  CustomHorizontalRule.configure({
+    HTMLAttributes: { class: "mt-4 mb-4" },
+  }),
+  CustomKeymap,
+  ListKeymap,
+  CustomLinkExtension.configure({
+    openOnClick: true,
+    autolink: true,
+    linkOnPaste: true,
+    protocols: ["http", "https"],
+    validate: (url: string) => isValidHttpUrl(url),
+    HTMLAttributes: {
+      class:
+        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+    },
+  }),
+  CustomTypographyExtension,
+  ImageExtension(deleteFile, restoreFile, cancelUploadImage).configure({
+    HTMLAttributes: {
+      class: "rounded-lg border border-custom-border-300",
+    },
+  }),
+  TiptapUnderline,
+  TextStyle,
+  Color,
+  TaskList.configure({
+    HTMLAttributes: {
+      class: "not-prose pl-2",
+    },
+  }),
+  TaskItem.configure({
+    HTMLAttributes: {
+      class: "flex items-start my-4",
+    },
+    nested: true,
+  }),
+  CustomCodeBlockExtension,
+  CustomCodeInlineExtension,
+  Markdown.configure({
+    html: true,
+    transformCopiedText: true,
+    transformPastedText: true,
+  }),
+  Table,
+  TableHeader,
+  TableCell,
+  TableRow,
+  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, false),
+];

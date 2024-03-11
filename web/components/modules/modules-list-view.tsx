@@ -1,46 +1,74 @@
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useRouter } from "next/router";
 // hooks
+import { useApplication, useEventTracker, useModule } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { ModuleCardItem, ModulesListGanttChartView } from "components/modules";
-import { EmptyState } from "components/common";
+import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
+import { EmptyState } from "components/empty-state";
 // ui
-import { Loader } from "@plane/ui";
-// assets
-import emptyModule from "public/empty-state/module.svg";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
-  const { module: moduleStore } = useMobxStore();
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, peekModule } = router.query;
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
+
+  const { projectModuleIds, loader } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
-  const modulesList = moduleStore.projectModules;
-
-  if (!modulesList)
+  if (loader || !projectModuleIds)
     return (
-      <Loader className="grid grid-cols-3 gap-4 p-8">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-      </Loader>
+      <>
+        {modulesView === "list" && <CycleModuleListLayout />}
+        {modulesView === "grid" && <CycleModuleBoardLayout />}
+        {modulesView === "gantt_chart" && <GanttLayoutLoader />}
+      </>
     );
 
   return (
     <>
-      {modulesList.length > 0 ? (
+      {projectModuleIds.length > 0 ? (
         <>
+          {modulesView === "list" && (
+            <div className="h-full overflow-y-auto">
+              <div className="flex h-full w-full justify-between">
+                <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+                  {projectModuleIds.map((moduleId) => (
+                    <ModuleListItem key={moduleId} moduleId={moduleId} />
+                  ))}
+                </div>
+                <ModulePeekOverview
+                  projectId={projectId?.toString() ?? ""}
+                  workspaceSlug={workspaceSlug?.toString() ?? ""}
+                />
+              </div>
+            </div>
+          )}
           {modulesView === "grid" && (
-            <div className="h-full overflow-y-auto p-8">
-              <div className="grid grid-cols-1 gap-9 lg:grid-cols-2 xl:grid-cols-3">
-                {modulesList.map((module) => (
-                  <ModuleCardItem key={module.id} module={module} />
-                ))}
+            <div className="h-full w-full">
+              <div className="flex h-full w-full justify-between">
+                <div
+                  className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 ${
+                    peekModule
+                      ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
+                      : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
+                  } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
+                >
+                  {projectModuleIds.map((moduleId) => (
+                    <ModuleCardItem key={moduleId} moduleId={moduleId} />
+                  ))}
+                </div>
+                <ModulePeekOverview
+                  projectId={projectId?.toString() ?? ""}
+                  workspaceSlug={workspaceSlug?.toString() ?? ""}
+                />
               </div>
             </div>
           )}
@@ -48,18 +76,10 @@ export const ModulesListView: React.FC = observer(() => {
         </>
       ) : (
         <EmptyState
-          title="Manage your project with modules"
-          description="Modules are smaller, focused projects that help you group and organize issues."
-          image={emptyModule}
-          primaryButton={{
-            icon: <Plus className="h-4 w-4" />,
-            text: "New Module",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "m",
-              });
-              document.dispatchEvent(e);
-            },
+          type={EmptyStateType.PROJECT_MODULE}
+          primaryButtonOnClick={() => {
+            setTrackElement("Module empty state");
+            commandPaletteStore.toggleCreateModuleModal(true);
           }}
         />
       )}

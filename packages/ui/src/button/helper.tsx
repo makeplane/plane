@@ -22,10 +22,10 @@ export interface IButtonStyling {
 }
 
 enum buttonSizeStyling {
-  sm = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  lg = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  xl = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  sm = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  lg = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  xl = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
 }
 
 enum buttonIconStyling {
@@ -49,9 +49,9 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100 border border-custom-primary-100`,
-    hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
-    pressed: `focus:text-custom-primary-80 focus:bg-custom-primary-10 focus:border-custom-primary-80`,
+    default: `text-custom-primary-100 bg-transparent border border-custom-primary-100`,
+    hover: `hover:bg-custom-primary-100/20`,
+    pressed: `focus:text-custom-primary-100 focus:bg-custom-primary-100/30`,
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
@@ -80,7 +80,7 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "outline-danger": {
-    default: `text-red-500 bg-custom-background-100 border border-red-500`,
+    default: `text-red-500 bg-transparent border border-red-500`,
     hover: `hover:text-red-400 hover:border-red-400`,
     pressed: `focus:text-red-400 focus:border-red-400`,
     disabled: `cursor-not-allowed !text-red-300 !border-red-300`,
@@ -99,21 +99,17 @@ export const buttonStyling: IButtonStyling = {
   },
 };
 
-export const getButtonStyling = (
-  variant: TButtonVariant,
-  size: TButtonSizes,
-  disabled: boolean = false
-): string => {
-  let _variant: string = ``;
+export const getButtonStyling = (variant: TButtonVariant, size: TButtonSizes, disabled: boolean = false): string => {
+  let tempVariant: string = ``;
   const currentVariant = buttonStyling[variant];
 
-  _variant = `${currentVariant.default} ${
-    disabled ? currentVariant.disabled : currentVariant.hover
-  } ${currentVariant.pressed}`;
+  tempVariant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${
+    currentVariant.pressed
+  }`;
 
-  let _size: string = ``;
-  if (size) _size = buttonSizeStyling[size];
-  return `${_variant} ${_size}`;
+  let tempSize: string = ``;
+  if (size) tempSize = buttonSizeStyling[size];
+  return `${tempVariant} ${tempSize}`;
 };
 
 export const getIconStyling = (size: TButtonSizes): string => {

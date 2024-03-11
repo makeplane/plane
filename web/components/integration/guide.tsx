@@ -1,40 +1,44 @@
 import { useState } from "react";
-
-import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // hooks
+import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { IntegrationService } from "services/integrations";
 // components
+import { ImportExportSettingsLoader } from "components/ui";
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
+import { EmptyState } from "components/empty-state";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
 // icons
 import { RefreshCw } from "lucide-react";
 // types
-import { IImporterService } from "types";
-// fetch-keys
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+import { IImporterService } from "@plane/types";
 // constants
-import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
+import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+import { IMPORTERS_LIST } from "constants/workspace";
+import { EmptyStateType } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();
 
-const IntegrationGuide = () => {
+const IntegrationGuide = observer(() => {
+  // states
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);
   const [importToDelete, setImportToDelete] = useState<IImporterService | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
-
-  const { user } = useUserAuth();
+  // store hooks
+  const { currentUser, currentUserLoader } = useUser();
+  // custom hooks
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
 
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
@@ -52,7 +56,7 @@ const IntegrationGuide = () => {
         isOpen={deleteImportModal}
         handleClose={() => setDeleteImportModal(false)}
         data={importToDelete}
-        user={user}
+        user={currentUser}
       />
       <div className="h-full">
         {(!provider || provider === "csv") && (
@@ -76,10 +80,10 @@ const IntegrationGuide = () => {
                 </div>
               </a>
             </div> */}
-            {IMPORTERS_EXPORTERS_LIST.map((service) => (
+            {IMPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
@@ -87,25 +91,25 @@ const IntegrationGuide = () => {
                   </div>
                   <div>
                     <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                    <p className="text-sm text-custom-text-200 tracking-tight">{service.description}</p>
+                    <p className="text-sm tracking-tight text-custom-text-200">{service.description}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">
                   <Link href={`/${workspaceSlug}/settings/imports?provider=${service.provider}`}>
-                    <a>
+                    <span>
                       <Button variant="primary">{service.type}</Button>
-                    </a>
+                    </span>
                   </Link>
                 </div>
               </div>
             ))}
             <div>
-              <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-200">
+              <div className="flex items-center border-b border-custom-border-100 pb-3.5 pt-7">
                 <h3 className="flex gap-2 text-xl font-medium">
                   Previous Imports
                   <button
                     type="button"
-                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
+                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
                     onClick={() => {
                       setRefreshing(true);
                       mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
@@ -132,26 +136,23 @@ const IntegrationGuide = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-custom-text-200 px-4 py-6">No previous imports available.</p>
+                    <div className="h-full w-full flex items-center justify-center">
+                      <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
+                    </div>
                   )
                 ) : (
-                  <Loader className="mt-6 grid grid-cols-1 gap-3">
-                    <Loader.Item height="40px" width="100%" />
-                    <Loader.Item height="40px" width="100%" />
-                    <Loader.Item height="40px" width="100%" />
-                    <Loader.Item height="40px" width="100%" />
-                  </Loader>
+                  <ImportExportSettingsLoader />
                 )}
               </div>
             </div>
           </>
         )}
 
-        {provider && provider === "github" && <GithubImporterRoot user={user} />}
-        {provider && provider === "jira" && <JiraImporterRoot user={user} />}
+        {provider && provider === "github" && <GithubImporterRoot />}
+        {provider && provider === "jira" && <JiraImporterRoot />}
       </div>
     </>
   );
-};
+});
 
 export default IntegrationGuide;

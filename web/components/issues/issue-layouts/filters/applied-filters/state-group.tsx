@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 
 // icons
-import { StateGroupIcon } from "@plane/ui";
 import { X } from "lucide-react";
-import { TStateGroups } from "types";
+import { StateGroupIcon } from "@plane/ui";
+import { TStateGroups } from "@plane/types";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -14,9 +14,9 @@ export const AppliedStateGroupFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((stateGroup) => (
-        <div key={stateGroup} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
+        <div key={stateGroup} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
           <StateGroupIcon stateGroup={stateGroup as TStateGroups} height="12px" width="12px" />
           {stateGroup}
           <button
@@ -28,6 +28,6 @@ export const AppliedStateGroupFilters: React.FC<Props> = observer((props) => {
           </button>
         </div>
       ))}
-    </div>
+    </>
   );
 });

@@ -1,230 +1,294 @@
-import { FC, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
-import { ChevronDown, Search, X, Check } from "lucide-react";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
-// components
-import { Tooltip } from "@plane/ui";
+import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search, Tags } from "lucide-react";
 // hooks
-import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
-
-interface IFiltersOption {
-  id: string;
-  title: string;
-  color: string | null;
-}
+import { Tooltip } from "@plane/ui";
+import { useApplication, useLabel } from "hooks/store";
+import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// components
+// types
+import { IIssueLabel } from "@plane/types";
 
 export interface IIssuePropertyLabels {
-  value?: any;
-  onChange?: (id: any, data: any) => void;
+  projectId: string | null;
+  value: string[];
+  defaultOptions?: any;
+  onChange: (data: string[]) => void;
   disabled?: boolean;
-  list?: any;
-
+  hideDropdownArrow?: boolean;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
-  dropdownArrow?: boolean;
+  placement?: Placement;
+  maxRender?: number;
+  noLabelBorder?: boolean;
+  placeholderText?: string;
+  onClose?: () => void;
 }
 
-export const IssuePropertyLabels: FC<IIssuePropertyLabels> = observer((props) => {
+export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
   const {
+    projectId,
     value,
+    defaultOptions = [],
     onChange,
+    onClose,
     disabled,
-    list,
-
+    hideDropdownArrow = false,
     className,
-    buttonClassName,
-    optionsClassName,
-    dropdownArrow = true,
+    buttonClassName = "",
+    optionsClassName = "",
+    placement,
+    maxRender = 2,
+    noLabelBorder = false,
+    placeholderText,
   } = props;
+  // states
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  // refs
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  // popper-js refs
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { fetchProjectLabels, getProjectLabels } = useLabel();
 
-  const dropdownBtn = useRef<any>(null);
-  const dropdownOptions = useRef<any>(null);
+  const storeLabels = getProjectLabels(projectId);
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>("");
+  const onOpen = () => {
+    if (!storeLabels && workspaceSlug && projectId)
+      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+  };
 
-  const options: IFiltersOption[] | [] =
-    (list &&
-      list?.length > 0 &&
-      list.map((_label: any) => ({
-        id: _label?.id,
-        title: _label?.name,
-        color: _label?.color || null,
-      }))) ||
-    [];
+  const handleClose = () => {
+    if (!isOpen) return;
+    setIsOpen(false);
+    onClose && onClose();
+  };
 
-  useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
+  const toggleDropdown = () => {
+    if (!isOpen) onOpen();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (isOpen) onClose && onClose();
+  };
 
-  const selectedOption: IFiltersOption[] =
-    (value && value?.length > 0 && options.filter((_label: IFiltersOption) => value.includes(_label.id))) || [];
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
 
-  const filteredOptions: IFiltersOption[] =
-    search === ""
-      ? options && options.length > 0
-        ? options
-        : []
-      : options && options.length > 0
-      ? options.filter((_label: IFiltersOption) =>
-          _label.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(dropdownRef, handleClose);
+
+  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (query !== "" && e.key === "Escape") {
+      e.stopPropagation();
+      setQuery("");
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
+
+  if (!value) return null;
+
+  let projectLabels: IIssueLabel[] = defaultOptions;
+  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+
+  const options = projectLabels.map((label) => ({
+    value: label?.id,
+    query: label?.name,
+    content: (
+      <div className="flex items-center justify-start gap-2 overflow-hidden">
+        <span
+          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+          style={{
+            backgroundColor: label?.color,
+          }}
+        />
+        <div className="line-clamp-1 inline-block truncate">{label?.name}</div>
+      </div>
+    ),
+  }));
+
+  const filteredOptions =
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+
+  const label = (
+    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden text-custom-text-200">
+      {value.length > 0 ? (
+        value.length <= maxRender ? (
+          <>
+            {projectLabels
+              ?.filter((l) => value.includes(l?.id))
+              .map((label) => (
+                <Tooltip key={label.id} position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
+                  <div
+                    key={label?.id}
+                    className={`flex overflow-hidden hover:bg-custom-background-80 ${
+                      !disabled && "cursor-pointer"
+                    } h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs`}
+                  >
+                    <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+                      <span
+                        className="h-2 w-2 flex-shrink-0 rounded-full"
+                        style={{
+                          backgroundColor: label?.color ?? "#000000",
+                        }}
+                      />
+                      <div className="line-clamp-1 inline-block w-auto max-w-[100px] truncate">{label?.name}</div>
+                    </div>
+                  </div>
+                </Tooltip>
+              ))}
+          </>
+        ) : (
+          <div
+            className={`flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
+              disabled ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
+          >
+            <Tooltip
+              position="top"
+              tooltipHeading="Labels"
+              tooltipContent={projectLabels
+                ?.filter((l) => value.includes(l?.id))
+                .map((l) => l?.name)
+                .join(", ")}
+            >
+              <div className="flex h-full items-center gap-1.5 text-custom-text-200">
+                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+                {`${value.length} Labels`}
+              </div>
+            </Tooltip>
+          </div>
         )
-      : [];
+      ) : (
+        <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
+          <div
+            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+              noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+            }`}
+          >
+            <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+            {placeholderText}
+          </div>
+        </Tooltip>
+      )}
+    </div>
+  );
 
   return (
     <Combobox
-      multiple={true}
       as="div"
-      className={`${className}`}
-      value={selectedOption.map((_label: IFiltersOption) => _label.id) as string[]}
-      onChange={(data: string[]) => {
-        if (onChange && selectedOption) onChange(data, selectedOption);
-      }}
+      ref={dropdownRef}
+      className={`w-auto max-w-full flex-shrink-0 text-left ${className}`}
+      value={value}
+      onChange={onChange}
       disabled={disabled}
+      onKeyDownCapture={handleKeyDown}
+      multiple
     >
-      {({ open }: { open: boolean }) => {
-        if (open) {
-          if (!isOpen) setIsOpen(true);
-        } else if (isOpen) setIsOpen(false);
+      <Combobox.Button as={Fragment}>
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
+            disabled
+              ? "cursor-not-allowed text-custom-text-200"
+              : value.length <= maxRender
+                ? "cursor-pointer"
+                : "cursor-pointer hover:bg-custom-background-80"
+          }  ${buttonClassName}`}
+          onClick={handleOnClick}
+        >
+          {label}
+          {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+        </button>
+      </Combobox.Button>
 
-        return (
-          <>
-            <Combobox.Button
-              ref={dropdownBtn}
-              type="button"
-              className={`flex items-center justify-between gap-1 px-1 py-0.5 rounded-sm shadow-sm border border-custom-border-300 duration-300 outline-none ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-              } ${buttonClassName}`}
-            >
-              {selectedOption && selectedOption?.length > 0 ? (
-                <>
-                  {selectedOption?.length === 1 ? (
-                    <Tooltip
-                      tooltipHeading={`Labels`}
-                      tooltipContent={(selectedOption.map((_label: IFiltersOption) => _label.title) || []).join(", ")}
-                    >
-                      <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                        <div
-                          className="flex-shrink-0 w-[10px] h-[10px] rounded-full"
-                          style={{
-                            backgroundColor: selectedOption[0]?.color || "#444",
-                          }}
-                        />
-                        <div className="pl-0.5 pr-1 text-xs">{selectedOption[0]?.title}</div>
-                      </div>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip
-                      tooltipHeading={`Labels`}
-                      tooltipContent={(selectedOption.map((_label: IFiltersOption) => _label.title) || []).join(", ")}
-                    >
-                      <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                        <div
-                          className="flex-shrink-0 w-[10px] h-[10px] rounded-full"
-                          style={{ backgroundColor: "#444" }}
-                        />
-                        <div className="pl-0.5 pr-1 text-xs">{selectedOption?.length} Labels</div>
-                      </div>
-                    </Tooltip>
-                  )}
-                </>
-              ) : (
-                <Tooltip tooltipHeading={`Labels`} tooltipContent={``}>
-                  <div className="text-xs">Select Labels</div>
-                </Tooltip>
-              )}
-
-              {dropdownArrow && !disabled && (
-                <div className="flex-shrink-0 w-[14px] h-[14px] flex justify-center items-center">
-                  <ChevronDown width={14} strokeWidth={2} />
-                </div>
-              )}
-            </Combobox.Button>
-
-            <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
-              <Combobox.Options
-                ref={dropdownOptions}
-                className={`absolute z-10 border border-custom-border-300 p-2 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none whitespace-nowrap mt-1 space-y-1 ${optionsClassName}`}
-              >
-                {options && options.length > 0 ? (
-                  <>
-                    <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-1">
-                      <div className="flex-shrink-0 flex justify-center items-center w-[16px] h-[16px] rounded-sm">
-                        <Search width={12} strokeWidth={2} />
-                      </div>
-
-                      <div>
-                        <Combobox.Input
-                          className="w-full bg-transparent p-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          placeholder="Search"
-                          displayValue={(assigned: any) => assigned?.name}
-                        />
-                      </div>
-
-                      {search && search.length > 0 && (
-                        <div
-                          onClick={() => setSearch("")}
-                          className="flex-shrink-0 flex justify-center items-center w-[16px] h-[16px] rounded-sm cursor-pointer hover:bg-custom-background-80"
-                        >
-                          <X width={12} strokeWidth={2} />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={`space-y-0.5 max-h-48 overflow-y-scroll`}>
-                      {filteredOptions ? (
-                        filteredOptions.length > 0 ? (
-                          filteredOptions.map((option) => (
-                            <Combobox.Option
-                              key={option.id}
-                              value={option.id}
-                              className={({ active }) =>
-                                `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                                  active || (value && value.length > 0 && value.includes(option?.id))
-                                    ? "bg-custom-background-80"
-                                    : ""
-                                } ${
-                                  value && value.length > 0 && value.includes(option?.id)
-                                    ? "text-custom-text-100"
-                                    : "text-custom-text-200"
-                                }`
-                              }
-                            >
-                              <div className="flex items-center gap-1 w-full px-1">
-                                <div
-                                  className="flex-shrink-0 w-[10px] h-[10px] rounded-full"
-                                  style={{
-                                    backgroundColor: option.color || "#444",
-                                  }}
-                                />
-                                <div className="line-clamp-1">{option.title}</div>
-                                {value && value.length > 0 && value.includes(option?.id) && (
-                                  <div className="flex-shrink-0 ml-auto w-[13px] h-[13px] flex justify-center items-center">
-                                    <Check width={13} strokeWidth={2} />
-                                  </div>
-                                )}
-                              </div>
-                            </Combobox.Option>
-                          ))
-                        ) : (
-                          <span className="flex items-center gap-2 p-1">
-                            <p className="text-left text-custom-text-200 ">No matching results</p>
-                          </span>
-                        )
-                      ) : (
-                        <p className="text-center text-custom-text-200">Loading...</p>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-center text-custom-text-200">No options available.</p>
-                )}
-              </Combobox.Options>
+      {isOpen && (
+        <Combobox.Options className="fixed z-10" static>
+          <div
+            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+              <Search className="h-3.5 w-3.5 text-custom-text-300" />
+              <Combobox.Input
+                ref={inputRef}
+                className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search"
+                displayValue={(assigned: any) => assigned?.name || ""}
+                onKeyDown={searchInputKeyDown}
+              />
             </div>
-          </>
-        );
-      }}
+            <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
+              {isLoading ? (
+                <p className="text-center text-custom-text-200">Loading...</p>
+              ) : filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => (
+                  <Combobox.Option
+                    key={option.value}
+                    value={option.value}
+                    className={({ active, selected }) =>
+                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
+                        active ? "bg-custom-background-80" : ""
+                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    }
+                  >
+                    {({ selected }) => (
+                      <>
+                        {option.content}
+                        {selected && (
+                          <div className="flex-shrink-0">
+                            <Check className={`h-3.5 w-3.5`} />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))
+              ) : (
+                <span className="flex items-center gap-2 p-1">
+                  <p className="text-left text-custom-text-200 ">No matching results</p>
+                </span>
+              )}
+            </div>
+          </div>
+        </Combobox.Options>
+      )}
     </Combobox>
   );
 });

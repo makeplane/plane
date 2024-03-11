@@ -1,53 +1,79 @@
-import { useState, Fragment } from "react";
-
-import { useRouter } from "next/router";
+import { useState, Fragment, ReactElement } from "react";
+import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
-
-// headless ui
+import { useRouter } from "next/router";
+import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
+import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
+import { useProjectPages } from "hooks/store/use-project-page";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
-// icons
-import { LayoutGrid, List } from "lucide-react";
+import useSize from "hooks/use-window-size";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
+import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
+import { EmptyState } from "components/empty-state";
 import { PagesHeader } from "components/headers";
+import { PagesLoader } from "components/ui";
+import { PageHead } from "components/core";
 // types
-import { TPageViewProps } from "types";
-import type { NextPage } from "next";
-// fetch-keys
+import { NextPageWithLayout } from "lib/types";
+// constants
+import { PAGE_TABS_LIST } from "constants/page";
+import { EmptyStateType } from "constants/empty-state";
 
-const AllPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.AllPagesList), {
+const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
 });
 
-const FavoritePagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.FavoritePagesList), {
+const FavoritePagesList = dynamic<any>(() => import("components/pages").then((a) => a.FavoritePagesList), {
   ssr: false,
 });
 
-const MyPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.MyPagesList), {
+const PrivatePagesList = dynamic<any>(() => import("components/pages").then((a) => a.PrivatePagesList), {
   ssr: false,
 });
 
-const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.OtherPagesList), {
+const ArchivedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.ArchivedPagesList), {
   ssr: false,
 });
 
-const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
+const SharedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.SharedPagesList), {
+  ssr: false,
+});
 
-const ProjectPages: NextPage = () => {
+const ProjectPagesPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  const [viewType, setViewType] = useState<TPageViewProps>("list");
-
-  const { user } = useUserAuth();
-
+  // store hooks
+  const { currentUser, currentUserLoader } = useUser();
+  const {
+    commandPalette: { toggleCreatePageModal },
+  } = useApplication();
+  const { setTrackElement } = useEventTracker();
+  const { getProjectById } = useProject();
+  const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
+    useProjectPages();
+  // hooks
+  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
+  const [windowWidth] = useSize();
+  // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
+  // fetching pages from API
+  useSWR(
+    workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString()) : null
+  );
+  // fetching archived pages from API
+  useSWR(
+    workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString()) : null
+  );
 
   const currentTabValue = (tab: string | null) => {
     switch (tab) {
@@ -57,111 +83,145 @@ const ProjectPages: NextPage = () => {
         return 1;
       case "Favorites":
         return 2;
-      case "Created by me":
+      case "Private":
         return 3;
-      case "Created by others":
+      case "Shared":
         return 4;
-
+      case "Archived":
+        return 5;
       default:
         return 0;
     }
   };
 
+  // derived values
+  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
+
+  const MobileTabList = () => (
+    <Tab.List as="div" className="flex items-center justify-between border-b border-custom-border-200 px-3 pt-3 mb-4">
+      <div className="flex flex-wrap items-center gap-4">
+        {PAGE_TABS_LIST.map((tab) => (
+          <Tab
+            key={tab.key}
+            className={({ selected }) =>
+              `text-sm outline-none pb-3 ${
+                selected ? "border-custom-primary-100 text-custom-primary-100 border-b" : ""
+              }`
+            }
+          >
+            {tab.title}
+          </Tab>
+        ))}
+      </div>
+    </Tab.List>
+  );
+
+  if (loader || archivedPageLoader) return <PagesLoader />;
+
   return (
-    <AppLayout header={<PagesHeader showButton />} withProjectWrapper>
-      {workspaceSlug && projectId && (
-        <CreateUpdatePageModal
-          isOpen={createUpdatePageModal}
-          handleClose={() => setCreateUpdatePageModal(false)}
-          user={user}
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
+    <>
+      <PageHead title={pageTitle} />
+      {projectPageIds && archivedPageIds && projectPageIds.length + archivedPageIds.length > 0 ? (
+        <>
+          {workspaceSlug && projectId && (
+            <CreateUpdatePageModal
+              isOpen={createUpdatePageModal}
+              handleClose={() => setCreateUpdatePageModal(false)}
+              projectId={projectId.toString()}
+            />
+          )}
+          <div className="flex h-full flex-col md:space-y-5 overflow-hidden md:py-6">
+            <div className="justify-between gap-4 hidden md:flex px-6">
+              <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
+            </div>
+            <Tab.Group
+              as={Fragment}
+              defaultIndex={currentTabValue(pageTab)}
+              onChange={(i) => {
+                switch (i) {
+                  case 0:
+                    return setPageTab("Recent");
+                  case 1:
+                    return setPageTab("All");
+                  case 2:
+                    return setPageTab("Favorites");
+                  case 3:
+                    return setPageTab("Private");
+                  case 4:
+                    return setPageTab("Shared");
+                  case 5:
+                    return setPageTab("Archived");
+                  default:
+                    return setPageTab("All");
+                }
+              }}
+            >
+              {windowWidth < 768 ? (
+                <MobileTabList />
+              ) : (
+                <Tab.List as="div" className="mb-6 items-center justify-between hidden md:flex px-6">
+                  <div className="flex flex-wrap items-center gap-4">
+                    {PAGE_TABS_LIST.map((tab) => (
+                      <Tab
+                        key={tab.key}
+                        className={({ selected }) =>
+                          `rounded-full border px-5 py-1.5 text-sm outline-none ${
+                            selected
+                              ? "border-custom-primary bg-custom-primary text-white"
+                              : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
+                          }`
+                        }
+                      >
+                        {tab.title}
+                      </Tab>
+                    ))}
+                  </div>
+                </Tab.List>
+              )}
+
+              <Tab.Panels as={Fragment}>
+                <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto vertical-scrollbar scrollbar-lg pl-6">
+                  <RecentPagesList />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
+                  <AllPagesList />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
+                  <FavoritePagesList />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
+                  <PrivatePagesList />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
+                  <SharedPagesList />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="h-full overflow-hidden pl-6">
+                  <ArchivedPagesList />
+                </Tab.Panel>
+              </Tab.Panels>
+            </Tab.Group>
+          </div>
+        </>
+      ) : (
+        <EmptyState
+          type={EmptyStateType.PROJECT_PAGE}
+          primaryButtonOnClick={() => {
+            setTrackElement("Pages empty state");
+            toggleCreatePageModal(true);
+          }}
         />
       )}
-      <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
-        <div className="flex gap-4 justify-between">
-          <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
-          <div className="flex gap-x-1">
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                viewType === "list" ? "bg-custom-background-80" : ""
-              }`}
-              onClick={() => setViewType("list")}
-            >
-              <List className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                viewType === "detailed" ? "bg-custom-background-80" : ""
-              }`}
-              onClick={() => setViewType("detailed")}
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-        <Tab.Group
-          as={Fragment}
-          defaultIndex={currentTabValue(pageTab)}
-          onChange={(i) => {
-            switch (i) {
-              case 0:
-                return setPageTab("Recent");
-              case 1:
-                return setPageTab("All");
-              case 2:
-                return setPageTab("Favorites");
-              case 3:
-                return setPageTab("Created by me");
-              case 4:
-                return setPageTab("Created by others");
+    </>
+  );
+});
 
-              default:
-                return setPageTab("Recent");
-            }
-          }}
-        >
-          <Tab.List as="div" className="mb-6 flex items-center justify-between">
-            <div className="flex gap-4 items-center flex-wrap">
-              {tabsList.map((tab, index) => (
-                <Tab
-                  key={`${tab}-${index}`}
-                  className={({ selected }) =>
-                    `rounded-full border px-5 py-1.5 text-sm outline-none ${
-                      selected
-                        ? "border-custom-primary bg-custom-primary text-white"
-                        : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
-                    }`
-                  }
-                >
-                  {tab}
-                </Tab>
-              ))}
-            </div>
-          </Tab.List>
-          <Tab.Panels as={Fragment}>
-            <Tab.Panel as="div" className="h-full overflow-y-auto space-y-5">
-              <RecentPagesList viewType={viewType} />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <AllPagesList viewType={viewType} />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <FavoritePagesList viewType={viewType} />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <MyPagesList viewType={viewType} />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <OtherPagesList viewType={viewType} />
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
-      </div>
+ProjectPagesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<PagesHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectPages;
+export default ProjectPagesPage;

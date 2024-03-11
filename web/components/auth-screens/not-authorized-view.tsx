@@ -1,12 +1,12 @@
 import React from "react";
-// next
-import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-// hooks
-import useUser from "hooks/use-user";
 // images
 import ProjectNotAuthorizedImg from "public/auth/project-not-authorized.svg";
 import WorkspaceNotAuthorizedImg from "public/auth/workspace-not-authorized.svg";
@@ -16,9 +16,11 @@ type Props = {
   type: "project" | "workspace";
 };
 
-export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
-  const { user } = useUser();
-  const { asPath: currentPath } = useRouter();
+export const NotAuthorizedView: React.FC<Props> = observer((props) => {
+  const { actionButton, type } = props;
+  const { currentUser } = useUser();
+  const { query } = useRouter();
+  const { next_path } = query;
 
   return (
     <DefaultLayout>
@@ -31,24 +33,22 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
             alt="ProjectSettingImg"
           />
         </div>
-        <h1 className="text-xl font-medium text-custom-text-100">
-          Oops! You are not authorized to view this page
-        </h1>
+        <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
 
         <div className="w-full max-w-md text-base text-custom-text-200">
-          {user ? (
+          {currentUser ? (
             <p>
-              You have signed in as {user.email}. <br />
-              <Link href={`/?next=${currentPath}`}>
-                <a className="font-medium text-custom-text-100">Sign in</a>
+              You have signed in as {currentUser.email}. <br />
+              <Link href={`/?next_path=${next_path}`}>
+                <span className="font-medium text-custom-text-100">Sign in</span>
               </Link>{" "}
               with different account that has access to this page.
             </p>
           ) : (
             <p>
               You need to{" "}
-              <Link href={`/?next=${currentPath}`}>
-                <a className="font-medium text-custom-text-100">Sign in</a>
+              <Link href={`/?next_path=${next_path}`}>
+                <span className="font-medium text-custom-text-100">Sign in</span>
               </Link>{" "}
               with an account that has access to this page.
             </p>
@@ -59,4 +59,4 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
       </div>
     </DefaultLayout>
   );
-};
+});

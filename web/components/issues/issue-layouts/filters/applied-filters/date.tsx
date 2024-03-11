@@ -1,12 +1,11 @@
 import { observer } from "mobx-react-lite";
-
 // icons
 import { X } from "lucide-react";
 // helpers
-import { renderLongDateFormat } from "helpers/date-time.helper";
+import { DATE_FILTER_OPTIONS } from "constants/filters";
+import { renderFormattedDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // constants
-import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -28,7 +27,7 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
       if (dateParts.length === 2) {
         const [date, time] = dateParts;
 
-        dateLabel = `${capitalizeFirstLetter(time)} ${renderLongDateFormat(date)}`;
+        dateLabel = `${capitalizeFirstLetter(time)} ${renderFormattedDate(date)}`;
       }
     }
 
@@ -36,9 +35,9 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((date) => (
-        <div key={date} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
+        <div key={date} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
           <span className="normal-case">{getDateLabel(date)}</span>
           <button
             type="button"
@@ -49,6 +48,6 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
           </button>
         </div>
       ))}
-    </div>
+    </>
   );
 });

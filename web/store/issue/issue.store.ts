@@ -1,281 +1,126 @@
-import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
+import isEmpty from "lodash/isEmpty";
+import set from "lodash/set";
 // store
-import { RootStore } from "../root";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // types
-import { IIssue } from "types";
-// services
 import { IssueService } from "services/issue";
-import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
-import { IBlockUpdateData } from "components/gantt-chart";
+import { TIssue } from "@plane/types";
+//services
 
-export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
-export type IIssueGroupedStructure = { [group_id: string]: IIssue[] };
-export type IIssueGroupWithSubGroupsStructure = {
-  [group_id: string]: {
-    [sub_group_id: string]: IIssue[];
-  };
+export type IIssueStore = {
+  // observables
+  issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
+  // actions
+  getIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
+  addIssue(issues: TIssue[], shouldReplace?: boolean): void;
+  updateIssue(issueId: string, issue: Partial<TIssue>): void;
+  removeIssue(issueId: string): void;
+  // helper methods
+  getIssueById(issueId: string): undefined | TIssue;
+  getIssuesByIds(issueIds: string[], type: "archived" | "un-archived"): undefined | Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
 };
-export type IIssueUnGroupedStructure = IIssue[];
-
-export interface IIssueStore {
-  loader: boolean;
-  error: any | null;
-  // issues
-  issues: {
-    [project_id: string]: {
-      grouped: IIssueGroupedStructure;
-      groupWithSubGroups: IIssueGroupWithSubGroupsStructure;
-      ungrouped: IIssueUnGroupedStructure;
-    };
-  };
-  // computed
-  getIssueType: IIssueType | null;
-  getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
-  // action
-  fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
-  updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  updateGanttIssueStructure: (workspaceSlug: string, issue: IIssue, payload: IBlockUpdateData) => void;
-}
 
 export class IssueStore implements IIssueStore {
-  loader: boolean = false;
-  error: any | null = null;
-  issues: {
-    [project_id: string]: {
-      grouped: {
-        [group_id: string]: IIssue[];
-      };
-      groupWithSubGroups: {
-        [group_id: string]: {
-          [sub_group_id: string]: IIssue[];
-        };
-      };
-      ungrouped: IIssue[];
-    };
-  } = {};
+  // observables
+  issuesMap: { [issue_id: string]: TIssue } = {};
   // service
   issueService;
-  rootStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observable
-      loader: observable.ref,
-      error: observable.ref,
-      issues: observable.ref,
-      // computed
-      getIssueType: computed,
-      getIssues: computed,
+      issuesMap: observable,
       // actions
-      fetchIssues: action,
-      updateIssueStructure: action,
-      deleteIssue: action,
-      updateGanttIssueStructure: action,
+      addIssue: action,
+      updateIssue: action,
+      removeIssue: action,
     });
 
-    this.rootStore = _rootStore;
     this.issueService = new IssueService();
-
-    autorun(() => {
-      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
-      const projectId = this.rootStore.project.projectId;
-
-      if (
-        workspaceSlug &&
-        projectId &&
-        this.rootStore.issueFilter.userFilters &&
-        this.rootStore.issueFilter.userDisplayFilters
-      )
-        this.fetchIssues(workspaceSlug, projectId);
-    });
   }
 
-  get getIssueType() {
-    const groupedLayouts = ["kanban", "list", "calendar"];
-    const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
-
-    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
-    if (!issueLayout) return null;
-
-    const _issueState = groupedLayouts.includes(issueLayout)
-      ? issueSubGroup
-        ? "groupWithSubGroups"
-        : "grouped"
-      : ungroupedLayouts.includes(issueLayout)
-      ? "ungrouped"
-      : null;
-
-    return _issueState || null;
-  }
-
-  get getIssues() {
-    const projectId: string | null = this.rootStore?.project?.projectId;
-    const issueType = this.getIssueType;
-    if (!projectId || !issueType) return null;
-
-    return this.issues?.[projectId]?.[issueType] || null;
-  }
-
-  updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    const projectId: string | null = issue?.project;
-    const issueType = this.getIssueType;
-    if (!projectId || !issueType) return null;
-
-    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
-      this.getIssues;
-    if (!issues) return null;
-
-    if (issueType === "grouped" && group_id) {
-      issues = issues as IIssueGroupedStructure;
-      issues = {
-        ...issues,
-        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
-      };
-    }
-    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
-      issues = issues as IIssueGroupWithSubGroupsStructure;
-      issues = {
-        ...issues,
-        [sub_group_id]: {
-          ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
-        },
-      };
-    }
-    if (issueType === "ungrouped") {
-      issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
-    }
-
-    const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
-    if (orderBy === "-created_at") {
-      issues = sortArrayByDate(issues as any, "created_at");
-    }
-    if (orderBy === "-updated_at") {
-      issues = sortArrayByDate(issues as any, "updated_at");
-    }
-    if (orderBy === "start_date") {
-      issues = sortArrayByDate(issues as any, "updated_at");
-    }
-    if (orderBy === "priority") {
-      issues = sortArrayByPriority(issues as any, "priority");
-    }
-
+  // actions
+  /**
+   * @description This method will add issues to the issuesMap
+   * @param {TIssue[]} issues
+   * @returns {void}
+   */
+  addIssue = (issues: TIssue[], shouldReplace = false) => {
+    if (issues && issues.length <= 0) return;
     runInAction(() => {
-      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
+      issues.forEach((issue) => {
+        if (!this.issuesMap[issue.id] || shouldReplace) set(this.issuesMap, issue.id, issue);
+      });
     });
   };
 
-  updateGanttIssueStructure = async (workspaceSlug: string, issue: IIssue, payload: IBlockUpdateData) => {
-    if (!issue || !workspaceSlug) return;
-
-    const issues = this.getIssues as IIssueUnGroupedStructure;
-
-    const newIssues = issues.map((i) => ({
-      ...i,
-      ...(i.id === issue.id
-        ? {
-            sort_order: payload.sort_order?.newSortOrder ?? i.sort_order,
-            start_date: payload.start_date,
-            target_date: payload.target_date,
-          }
-        : {}),
-    }));
-
-    if (payload.sort_order) {
-      const removedElement = newIssues.splice(payload.sort_order.sourceIndex, 1)[0];
-      removedElement.sort_order = payload.sort_order.newSortOrder;
-      newIssues.splice(payload.sort_order.destinationIndex, 0, removedElement);
-    }
+  getIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    const issues = await this.issueService.retrieveIssues(workspaceSlug, projectId, issueIds);
 
     runInAction(() => {
-      this.issues = {
-        ...this.issues,
-        [issue.project]: {
-          ...this.issues[issue.project],
-          ungrouped: newIssues,
-        },
-      };
+      issues.forEach((issue) => {
+        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
+      });
     });
 
-    const newPayload: any = { ...payload };
-
-    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
-
-    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
+    return issues;
   };
 
-  deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    const projectId: string | null = issue?.project;
-    const issueType = this.getIssueType;
-    if (!projectId || !issueType) return null;
-
-    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
-      this.getIssues;
-    if (!issues) return null;
-
-    if (issueType === "grouped" && group_id) {
-      issues = issues as IIssueGroupedStructure;
-      issues = {
-        ...issues,
-        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
-      };
-    }
-    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
-      issues = issues as IIssueGroupWithSubGroupsStructure;
-      issues = {
-        ...issues,
-        [sub_group_id]: {
-          ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
-        },
-      };
-    }
-    if (issueType === "ungrouped") {
-      issues = issues as IIssueUnGroupedStructure;
-      issues = issues.filter((i) => i?.id !== issue?.id);
-    }
-
+  /**
+   * @description This method will update the issue in the issuesMap
+   * @param {string} issueId
+   * @param {Partial<TIssue>} issue
+   * @returns {void}
+   */
+  updateIssue = (issueId: string, issue: Partial<TIssue>) => {
+    if (!issue || !issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
     runInAction(() => {
-      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
+      Object.keys(issue).forEach((key) => {
+        set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
+      });
     });
   };
 
-  fetchIssues = async (workspaceSlug: string, projectId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
+  /**
+   * @description This method will remove the issue from the issuesMap
+   * @param {string} issueId
+   * @returns {void}
+   */
+  removeIssue = (issueId: string) => {
+    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
+    runInAction(() => {
+      delete this.issuesMap[issueId];
+    });
+  };
 
-      this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
-      this.rootStore.project.setProjectId(projectId);
+  // helper methods
+  /**
+   * @description This method will return the issue from the issuesMap
+   * @param {string} issueId
+   * @returns {TIssue | undefined}
+   */
+  getIssueById = computedFn((issueId: string) => {
+    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return undefined;
+    return this.issuesMap[issueId];
+  });
 
-      const params = this.rootStore?.issueFilter?.appliedFilters;
-      const issueResponse = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
-
-      const issueType = this.getIssueType;
-      if (issueType != null) {
-        const _issues = {
-          ...this.issues,
-          [projectId]: {
-            ...this.issues[projectId],
-            [issueType]: issueResponse,
-          },
-        };
-        runInAction(() => {
-          this.issues = _issues;
-          this.loader = false;
-          this.error = null;
-        });
+  /**
+   * @description This method will return the issues from the issuesMap
+   * @param {string[]} issueIds
+   * @param {boolean} archivedIssues
+   * @returns {Record<string, TIssue> | undefined}
+   */
+  getIssuesByIds = computedFn((issueIds: string[], type: "archived" | "un-archived") => {
+    if (!issueIds || issueIds.length <= 0 || isEmpty(this.issuesMap)) return undefined;
+    const filteredIssues: { [key: string]: TIssue } = {};
+    Object.values(this.issuesMap).forEach((issue) => {
+      // if type is archived then check archived_at is not null
+      // if type is un-archived then check archived_at is null
+      if ((type === "archived" && issue.archived_at) || (type === "un-archived" && !issue.archived_at)) {
+        if (issueIds.includes(issue.id)) filteredIssues[issue.id] = issue;
       }
-
-      return issueResponse;
-    } catch (error) {
-      console.error("Error: Fetching error in issues", error);
-      this.loader = false;
-      this.error = error;
-      return error;
-    }
-  };
+    });
+    return isEmpty(filteredIssues) ? undefined : filteredIssues;
+  });
 }

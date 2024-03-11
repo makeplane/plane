@@ -1,11 +1,12 @@
 import { useState, Fragment } from "react";
+import { useRouter } from "next/router";
 import { Transition, Dialog } from "@headlessui/react";
-// ui
+// hooks
 import { Button } from "@plane/ui";
+import { useProject, useUser } from "hooks/store";
+// ui
 // types
-import type { IProject } from "types";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
+import type { IProject } from "@plane/types";
 
 // type
 type TJoinProjectModalProps = {
@@ -17,21 +18,26 @@ type TJoinProjectModalProps = {
 
 export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   const { handleClose, isOpen, project, workspaceSlug } = props;
-  // store
-  const { project: projectStore } = useMobxStore();
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
+  // store hooks
+  const {
+    membership: { joinProject },
+  } = useUser();
+  const { fetchProjects } = useProject();
+  // router
+  const router = useRouter();
 
   const handleJoin = () => {
     setIsJoiningLoading(true);
 
-    projectStore
-      .joinProject(workspaceSlug, [project.id])
+    joinProject(workspaceSlug, [project.id])
       .then(() => {
-        setIsJoiningLoading(false);
+        router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+        fetchProjects(workspaceSlug);
         handleClose();
       })
-      .catch(() => {
+      .finally(() => {
         setIsJoiningLoading(false);
       });
   };
@@ -48,7 +54,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -62,21 +68,30 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 border border-custom-border-300 px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                     Join Project?
                   </Dialog.Title>
                   <p>
-                    Are you sure you want to join <span className="font-semibold">{project?.name}</span>?
+                    Are you sure you want to join the project{" "}
+                    <span className="break-words font-semibold">{project?.name}</span>? Please click the &apos;Join
+                    Project&apos; button below to continue.
                   </p>
                   <div className="space-y-3" />
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                  <Button variant="neutral-primary" onClick={handleClose}>
+                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="primary" type="submit" onClick={handleJoin} loading={isJoiningLoading}>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    tabIndex={1}
+                    type="submit"
+                    onClick={handleJoin}
+                    loading={isJoiningLoading}
+                  >
                     {isJoiningLoading ? "Joining..." : "Join Project"}
                   </Button>
                 </div>

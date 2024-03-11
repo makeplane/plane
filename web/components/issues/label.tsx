@@ -9,13 +9,13 @@ type Props = {
 
 export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 }) => (
   <>
-    {labelDetails.length > 0 ? (
+    {labelDetails?.length > 0 ? (
       labelDetails.length <= maxRender ? (
         <>
           {labelDetails.map((label) => (
             <div
               key={label.id}
-              className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
+              className="flex flex-shrink-0 cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
             >
               <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name}>
                 <div className="flex items-center gap-1.5 text-custom-text-200">
@@ -32,7 +32,7 @@ export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 })
           ))}
         </>
       ) : (
-        <div className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
+        <div className="flex flex-shrink-0 cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
           <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labelDetails.map((l) => l.name).join(", ")}>
             <div className="flex items-center gap-1.5 text-custom-text-200">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />

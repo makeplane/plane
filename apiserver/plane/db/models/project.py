@@ -4,9 +4,6 @@ from uuid import uuid4
 # Django imports
 from django.db import models
 from django.conf import settings
-from django.template.defaultfilters import slugify
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Modeule imports
@@ -38,7 +35,7 @@ def get_default_props():
         },
         "display_filters": {
             "group_by": None,
-            "order_by": '-created_at',
+            "order_by": "-created_at",
             "type": None,
             "sub_issue": True,
             "show_empty_groups": True,
@@ -55,16 +52,22 @@ def get_default_preferences():
 class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
-    description = models.TextField(verbose_name="Project Description", blank=True)
+    description = models.TextField(
+        verbose_name="Project Description", blank=True
+    )
     description_text = models.JSONField(
         verbose_name="Project Description RT", blank=True, null=True
     )
     description_html = models.JSONField(
         verbose_name="Project Description HTML", blank=True, null=True
     )
-    network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
+    network = models.PositiveSmallIntegerField(
+        default=2, choices=NETWORK_CHOICES
+    )
     workspace = models.ForeignKey(
-        "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project"
+        "db.WorkSpace",
+        on_delete=models.CASCADE,
+        related_name="workspace_project",
     )
     identifier = models.CharField(
         max_length=12,
@@ -93,7 +96,10 @@ class Project(BaseModel):
     inbox_view = models.BooleanField(default=False)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
-        "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
+        "db.Estimate",
+        on_delete=models.SET_NULL,
+        related_name="projects",
+        null=True,
     )
     archive_in = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
@@ -101,8 +107,12 @@ class Project(BaseModel):
     close_in = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
     )
+    logo_props = models.JSONField(default=dict)
     default_state = models.ForeignKey(
-        "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
+        "db.State",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="default_state",
     )
 
     def __str__(self):
@@ -169,6 +179,7 @@ class ProjectMember(ProjectBaseModel):
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
+    is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if self._state.adding:
@@ -197,7 +208,10 @@ class ProjectMember(ProjectBaseModel):
 # TODO: Remove workspace relation later
 class ProjectIdentifier(AuditModel):
     workspace = models.ForeignKey(
-        "db.Workspace", models.CASCADE, related_name="project_identifiers", null=True
+        "db.Workspace",
+        models.CASCADE,
+        related_name="project_identifiers",
+        null=True,
     )
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
@@ -252,7 +266,10 @@ class ProjectDeployBoard(ProjectBaseModel):
     comments = models.BooleanField(default=False)
     reactions = models.BooleanField(default=False)
     inbox = models.ForeignKey(
-        "db.Inbox", related_name="bord_inbox", on_delete=models.SET_NULL, null=True
+        "db.Inbox",
+        related_name="bord_inbox",
+        on_delete=models.SET_NULL,
+        null=True,
     )
     votes = models.BooleanField(default=False)
     views = models.JSONField(default=get_default_views)

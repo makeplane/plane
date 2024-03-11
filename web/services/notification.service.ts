@@ -1,4 +1,5 @@
 // services
+import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 // types
 import type {
@@ -7,9 +8,8 @@ import type {
   NotificationCount,
   PaginatedUserNotification,
   IMarkAllAsReadPayload,
-} from "types";
+} from "@plane/types";
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
 
 export class NotificationService extends APIService {
   constructor() {

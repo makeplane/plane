@@ -1,16 +1,14 @@
 import React, { Fragment } from "react";
-
-// headless ui
 import { Tab } from "@headlessui/react";
 // hooks
+import { Avatar } from "@plane/ui";
+import { SingleProgressStats } from "components/core";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { SingleProgressStats } from "components/core";
 // ui
-import { Avatar } from "components/ui";
 // types
-import { ICycle } from "types";
-// types
+import { ICycle } from "@plane/types";
+
 type Props = {
   cycle: ICycle;
 };
@@ -48,11 +46,11 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
     >
       <Tab.List
         as="div"
-        className="flex sticky top-0 z-10 bg-custom-background-100 w-full px-4 pt-4 pb-1 flex-wrap items-center justify-start gap-4 text-sm"
+        className="sticky top-0 z-10 flex w-full flex-wrap items-center justify-start gap-4 bg-custom-background-100 px-4 pb-1 pt-4 text-sm"
       >
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-200 ${
+            `rounded-3xl border border-custom-border-200 px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -61,7 +59,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab>
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-200 ${
+            `rounded-3xl border border-custom-border-200 px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -69,29 +67,22 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
           Labels
         </Tab>
       </Tab.List>
-      {cycle.total_issues > 0 ? (
+      {cycle && cycle.total_issues > 0 ? (
         <Tab.Panels as={Fragment}>
           <Tab.Panel
             as="div"
-            className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4"
+            className="flex h-44 w-full flex-col gap-1 overflow-y-auto pt-3.5 p-4 pr-0 text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle.distribution.assignees.map((assignee, index) => {
+            {cycle.distribution?.assignees?.map((assignee, index) => {
               if (assignee.assignee_id)
                 return (
                   <SingleProgressStats
                     key={assignee.assignee_id}
                     title={
                       <div className="flex items-center gap-2">
-                        <Avatar
-                          user={{
-                            id: assignee.assignee_id,
-                            avatar: assignee.avatar ?? "",
-                            first_name: assignee.first_name ?? "",
-                            last_name: assignee.last_name ?? "",
-                            display_name: assignee.display_name ?? "",
-                          }}
-                        />
-                        <span>{assignee.display_name}</span>
+                        <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+
+                        <span>{assignee?.display_name ?? ""}</span>
                       </div>
                     }
                     completed={assignee.completed_issues}
@@ -105,13 +96,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                     title={
                       <div className="flex items-center gap-2">
                         <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                          <img
-                            src="/user.png"
-                            height="100%"
-                            width="100%"
-                            className="rounded-full"
-                            alt="User"
-                          />
+                          <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                         </div>
                         <span>No assignee</span>
                       </div>
@@ -122,11 +107,12 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                 );
             })}
           </Tab.Panel>
+
           <Tab.Panel
             as="div"
-            className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4"
+            className="flex h-44 w-full flex-col gap-1 overflow-y-auto pt-3.5 p-4 pr-0 text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle.distribution.labels.map((label, index) => (
+            {cycle.distribution?.labels?.map((label, index) => (
               <SingleProgressStats
                 key={label.label_id ?? `no-label-${index}`}
                 title={
@@ -147,8 +133,8 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
           </Tab.Panel>
         </Tab.Panels>
       ) : (
-        <div className="grid place-items-center text-custom-text-200 text-sm text-center mt-4">
-          No issues present in the cycle.
+        <div className="mt-4 grid place-items-center text-center text-sm text-custom-text-200">
+          There are no high priority issues present in this cycle.
         </div>
       )}
     </Tab.Group>

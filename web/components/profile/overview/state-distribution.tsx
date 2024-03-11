@@ -1,11 +1,11 @@
 // ui
 import { ProfileEmptyState, PieGraph } from "components/ui";
 // image
+import { STATE_GROUPS } from "constants/state";
 import stateGraph from "public/empty-state/state_graph.svg";
 // types
-import { IUserProfileData, IUserStateDistribution } from "types";
+import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -17,10 +17,10 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">Issues by State</h3>
-      <div className="flex-grow border border-custom-border-100 rounded p-7">
+      <h3 className="text-lg font-medium">Issues by state</h3>
+      <div className="flex-grow rounded border border-custom-border-100 p-7">
         {userProfile.state_distribution.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+          <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
             <div>
               <PieGraph
                 data={
@@ -28,7 +28,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                     id: group.state_group,
                     label: group.state_group,
                     value: group.state_count,
-                    color: STATE_GROUP_COLORS[group.state_group],
+                    color: STATE_GROUPS[group.state_group].color,
                   })) ?? []
                 }
                 height="250px"
@@ -42,9 +42,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 colors={(datum) => datum.data.color}
                 tooltip={(datum) => (
                   <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
-                    <span className="text-custom-text-200 capitalize">
-                      {datum.datum.label} issues:
-                    </span>{" "}
+                    <span className="capitalize text-custom-text-200">{datum.datum.label} issues:</span>{" "}
                     {datum.datum.value}
                   </div>
                 )}
@@ -57,20 +55,17 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
               />
             </div>
             <div className="flex items-center">
-              <div className="space-y-4 w-full">
+              <div className="w-full space-y-4">
                 {stateDistribution.map((group) => (
-                  <div
-                    key={group.state_group}
-                    className="flex items-center justify-between gap-2 text-xs"
-                  >
+                  <div key={group.state_group} className="flex items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-1.5">
                       <div
                         className="h-2.5 w-2.5 rounded-sm"
                         style={{
-                          backgroundColor: STATE_GROUP_COLORS[group.state_group],
+                          backgroundColor: STATE_GROUPS[group.state_group].color,
                         }}
                       />
-                      <div className="capitalize whitespace-nowrap">{group.state_group}</div>
+                      <div className="whitespace-nowrap">{STATE_GROUPS[group.state_group].label}</div>
                     </div>
                     <div>{group.state_count}</div>
                   </div>

@@ -1,110 +1,205 @@
-import Link from "next/link";
-
-// hooks
-import useToast from "hooks/use-toast";
+import { FC } from "react";
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
-import { CustomSelect, FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
-// icons
-import { LinkIcon, MoveRight, Trash2 } from "lucide-react";
+import {
+  ArchiveIcon,
+  CenterPanelIcon,
+  CustomSelect,
+  FullScreenPanelIcon,
+  SidePanelIcon,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
+// components
+import { IssueSubscription, IssueUpdateStatus } from "components/issues";
+import { STATE_GROUPS } from "constants/state";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
-// types
-import { IIssue } from "types";
-import { TPeekOverviewModes } from "./layout";
+import { cn } from "helpers/common.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+// store hooks
+import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+// helpers
+// components
+// helpers
 
-type Props = {
-  handleClose: () => void;
-  handleDeleteIssue: () => void;
-  issue: IIssue | undefined;
-  mode: TPeekOverviewModes;
-  setMode: (mode: TPeekOverviewModes) => void;
-  workspaceSlug: string;
-};
+export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
-const peekModes: {
-  key: TPeekOverviewModes;
-  icon: any;
-  label: string;
-}[] = [
-  { key: "side", icon: SidePeekIcon, label: "Side Peek" },
+const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
   {
-    key: "modal",
-    icon: ModalPeekIcon,
-    label: "Modal Peek",
+    key: "side-peek",
+    icon: SidePanelIcon,
+    title: "Side Peek",
   },
   {
-    key: "full",
-    icon: FullScreenPeekIcon,
-    label: "Full Screen Peek",
+    key: "modal",
+    icon: CenterPanelIcon,
+    title: "Modal",
+  },
+  {
+    key: "full-screen",
+    icon: FullScreenPanelIcon,
+    title: "Full Screen",
   },
 ];
 
-export const PeekOverviewHeader: React.FC<Props> = ({
-  issue,
-  handleClose,
-  handleDeleteIssue,
-  mode,
-  setMode,
-  workspaceSlug,
-}) => {
-  const { setToastAlert } = useToast();
+export type PeekOverviewHeaderProps = {
+  peekMode: TPeekModes;
+  setPeekMode: (value: TPeekModes) => void;
+  removeRoutePeekId: () => void;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  isArchived: boolean;
+  disabled: boolean;
+  toggleDeleteIssueModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (value: boolean) => void;
+  handleRestoreIssue: () => void;
+  isSubmitting: "submitting" | "submitted" | "saved";
+};
 
-  const handleCopyLink = () => {
-    const urlToCopy = window.location.href;
+export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
+  const {
+    peekMode,
+    setPeekMode,
+    workspaceSlug,
+    projectId,
+    issueId,
+    isArchived,
+    disabled,
+    removeRoutePeekId,
+    toggleDeleteIssueModal,
+    toggleArchiveIssueModal,
+    handleRestoreIssue,
+    isSubmitting,
+  } = props;
+  // router
+  const router = useRouter();
+  // store hooks
+  const { currentUser } = useUser();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { getStateById } = useProjectState();
+  // derived values
+  const issueDetails = getIssueById(issueId);
+  const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
+  const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
-    copyTextToClipboard(urlToCopy).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link copied!",
-        message: "Issue link copied to clipboard",
+  const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archived-issues" : "issues"}/${issueId}`;
+
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    copyUrlToClipboard(issueLink).then(() => {
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
       });
     });
   };
-
-  const currentMode = peekModes.find((m) => m.key === mode);
+  const redirectToIssueDetail = () => {
+    router.push({ pathname: `/${issueLink}` });
+    removeRoutePeekId();
+  };
+  // auth
+  const isArchivingAllowed = !isArchived && !disabled;
+  const isInArchivableGroup =
+    !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
+  const isRestoringAllowed = isArchived && !disabled;
 
   return (
-    <div className="flex justify-between items-center">
+    <div
+      className={`relative flex items-center justify-between p-4 ${
+        currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
+      }`}
+    >
       <div className="flex items-center gap-4">
-        {mode === "side" && (
-          <button type="button" onClick={handleClose}>
-            <MoveRight className="h-3.5 w-3.5" />
-          </button>
+        <button onClick={removeRoutePeekId}>
+          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+        </button>
+
+        <button onClick={redirectToIssueDetail}>
+          <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+        </button>
+        {currentMode && (
+          <div className="flex flex-shrink-0 items-center gap-2">
+            <CustomSelect
+              value={currentMode}
+              onChange={(val: any) => setPeekMode(val)}
+              customButton={
+                <button type="button" className="">
+                  <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                </button>
+              }
+            >
+              {PEEK_OPTIONS.map((mode) => (
+                <CustomSelect.Option key={mode.key} value={mode.key}>
+                  <div
+                    className={`flex items-center gap-1.5 ${
+                      currentMode.key === mode.key
+                        ? "text-custom-text-200"
+                        : "text-custom-text-400 hover:text-custom-text-200"
+                    }`}
+                  >
+                    <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
+                    {mode.title}
+                  </div>
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+          </div>
         )}
-        <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
-          <a>
-            <FullScreenPeekIcon className="h-3.5 w-3.5" />
-          </a>
-        </Link>
-        <CustomSelect
-          value={mode}
-          onChange={(val: TPeekOverviewModes) => setMode(val)}
-          customButton={
-            <button type="button" className={`grid place-items-center ${mode === "full" ? "rotate-45" : ""}`}>
-              {currentMode && <currentMode.icon className="h-3.5 w-3.5" />}
-            </button>
-          }
-        >
-          {peekModes.map((mode) => (
-            <CustomSelect.Option key={mode.key} value={mode.key}>
-              <div className="flex items-center gap-1.5">
-                <mode.icon className={`h-4 w-4 flex-shrink-0 -my-1 ${mode.key === "full" ? "rotate-45" : ""}`} />
-                {mode.label}
-              </div>
-            </CustomSelect.Option>
-          ))}
-        </CustomSelect>
       </div>
-      {(mode === "side" || mode === "modal") && (
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button type="button" onClick={handleCopyLink} className="-rotate-45">
-            <LinkIcon className="h-3.5 w-3.5" />
-          </button>
-          <button type="button" onClick={handleDeleteIssue}>
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+      <div className="flex items-center gap-x-4">
+        <IssueUpdateStatus isSubmitting={isSubmitting} />
+        <div className="flex items-center gap-4">
+          {currentUser && !isArchived && (
+            <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+          )}
+          <Tooltip tooltipContent="Copy link">
+            <button type="button" onClick={handleCopyText}>
+              <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+            </button>
+          </Tooltip>
+          {isArchivingAllowed && (
+            <Tooltip
+              tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
+            >
+              <button
+                type="button"
+                className={cn("text-custom-text-300", {
+                  "hover:text-custom-text-200": isInArchivableGroup,
+                  "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
+                })}
+                onClick={() => {
+                  if (!isInArchivableGroup) return;
+                  toggleArchiveIssueModal(true);
+                }}
+              >
+                <ArchiveIcon className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
+          {isRestoringAllowed && (
+            <Tooltip tooltipContent="Restore">
+              <button type="button" onClick={handleRestoreIssue}>
+                <RotateCcw className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              </button>
+            </Tooltip>
+          )}
+          {!disabled && (
+            <Tooltip tooltipContent="Delete">
+              <button type="button" onClick={() => toggleDeleteIssueModal(true)}>
+                <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              </button>
+            </Tooltip>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
-};
+});

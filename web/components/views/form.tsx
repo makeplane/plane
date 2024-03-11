@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
+// hooks
+import { Button, Input, TextArea } from "@plane/ui";
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
-// ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-// types
-import { IProjectView } from "types";
-// constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { useLabel, useMember, useProjectState } from "hooks/store";
+// components
+// ui
+// types
+import { IProjectView, IIssueFilterOptions } from "@plane/types";
+// constants
 
 type Props = {
   data?: IProjectView | null;
@@ -25,14 +24,19 @@ const defaultValues: Partial<IProjectView> = {
   description: "",
 };
 
-export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
-  const { project: projectStore } = useMobxStore();
-
+export const ProjectViewForm: React.FC<Props> = observer((props) => {
+  const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  // store hooks
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
+  // form info
   const {
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
-    register,
     reset,
     setValue,
     watch,
@@ -40,10 +44,48 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
     defaultValues,
   });
 
-  const selectedFilters = watch("query_data");
+  const selectedFilters: IIssueFilterOptions = {};
+  Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+
+    if (Array.isArray(value) && value.length === 0) return;
+
+    selectedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
+  // for removing filters from a key
+  const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
+    // If value is null then remove all the filters of that key
+    if (!value) {
+      setValue("filters", {
+        ...selectedFilters,
+        [key]: null,
+      });
+      return;
+    }
+
+    const newValues = selectedFilters?.[key] ?? [];
+
+    if (Array.isArray(value)) {
+      value.forEach((val) => {
+        if (newValues.includes(val)) newValues.splice(newValues.indexOf(val), 1);
+      });
+    } else {
+      if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+    }
+
+    setValue("filters", {
+      ...selectedFilters,
+      [key]: newValues,
+    });
+  };
 
   const handleCreateUpdateView = async (formData: IProjectView) => {
-    await handleFormSubmit(formData);
+    await handleFormSubmit({
+      name: formData.name,
+      description: formData.description,
+      filters: formData.filters,
+    } as IProjectView);
 
     reset({
       ...defaultValues,
@@ -53,7 +95,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
   const clearAllFilters = () => {
     if (!selectedFilters) return;
 
-    setValue("query_data", {});
+    setValue("filters", {});
   };
 
   useEffect(() => {
@@ -70,40 +112,55 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  id="name"
+                  type="name"
+                  name="name"
+                  value={value}
+                  onChange={onChange}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Title"
+                  className="w-full resize-none text-xl focus:border-blue-400"
+                  tabIndex={1}
+                />
+              )}
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  placeholder="Description"
+                  className="h-24 w-full resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                  value={value}
+                  onChange={onChange}
+                  tabIndex={2}
+                />
+              )}
             />
           </div>
           <div>
             <Controller
               control={control}
-              name="query_data"
+              name="filters"
               render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title="Filters" tabIndex={3}>
                   <FilterSelection
                     filters={filters ?? {}}
                     handleFiltersUpdate={(key, value) => {
@@ -124,9 +181,9 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                       });
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
-                    labels={projectStore.projectLabels ?? undefined}
-                    members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
-                    states={projectStore.projectStatesByGroups ?? undefined}
+                    labels={projectLabels ?? undefined}
+                    memberIds={projectMemberIds ?? undefined}
+                    states={projectStates}
                   />
                 </FiltersDropdown>
               )}
@@ -137,26 +194,27 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
               <AppliedFiltersList
                 appliedFilters={selectedFilters}
                 handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={() => {}}
-                labels={projectStore.projectLabels ?? undefined}
-                members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
-                states={projectStore.projectStatesByGroups ?? undefined}
+                handleRemoveFilter={handleRemoveFilter}
+                labels={projectLabels ?? []}
+                states={projectStates}
               />
             </div>
           )}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
+          Cancel
+        </Button>
+        <Button variant="primary" size="sm" type="submit" tabIndex={5} disabled={isSubmitting}>
           {data
             ? isSubmitting
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
-        </PrimaryButton>
+              ? "Creating View..."
+              : "Create View"}
+        </Button>
       </div>
     </form>
   );

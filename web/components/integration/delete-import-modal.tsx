@@ -7,36 +7,32 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import { IntegrationService } from "services/integrations/integration.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, Input } from "@plane/ui";
-// icons
 import { AlertTriangle } from "lucide-react";
-// types
-import { IUser, IImporterService } from "types";
-// fetch-keys
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+import { IntegrationService } from "services/integrations/integration.service";
+// ui
+// icons
+// types
+import { IUser, IImporterService } from "@plane/types";
+// fetch-keys
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: IUser | undefined;
+  user: IUser | null;
 };
 
 // services
 const integrationService = new IntegrationService();
 
-export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
+export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDeleteImport, setConfirmDeleteImport] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const handleDeletion = () => {
     if (!workspaceSlug || !data) return;
@@ -50,10 +46,10 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
     );
 
     integrationService
-      .deleteImporterService(workspaceSlug as string, data.service, data.id, user)
+      .deleteImporterService(workspaceSlug as string, data.service, data.id)
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         })
@@ -78,7 +74,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -92,7 +88,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -117,7 +113,6 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                       id="typeDelete"
                       type="text"
                       name="typeDelete"
-                      value=""
                       onChange={(e) => {
                         if (e.target.value === "delete import") setConfirmDeleteImport(true);
                         else setConfirmDeleteImport(false);
@@ -127,11 +122,13 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button
                       variant="danger"
+                      size="sm"
+                      tabIndex={1}
                       onClick={handleDeletion}
                       disabled={!confirmDeleteImport}
                       loading={deleteLoading}

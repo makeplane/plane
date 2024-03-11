@@ -1,81 +1,113 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import Link from "next/link";
+import { useRouter } from "next/router";
+// icons
+import { Plus } from "lucide-react";
 // components
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
-// icon
-import { Plus } from "lucide-react";
 // constants
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
+import { GLOBAL_VIEW_OPENED } from "constants/event-tracker";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+// store hooks
+import { useEventTracker, useGlobalView, useUser } from "hooks/store";
 
-export const GlobalViewsHeader: React.FC = observer(() => {
-  const [createViewModal, setCreateViewModal] = useState(false);
-
+const ViewTab = observer((props: { viewId: string }) => {
+  const { viewId } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
+  // store hooks
+  const { getViewDetailsById } = useGlobalView();
 
-  const { globalViews: globalViewsStore } = useMobxStore();
+  const view = getViewDetailsById(viewId);
 
-  useSWR(
-    workspaceSlug ? `GLOBAL_VIEWS_LIST_${workspaceSlug.toString()}` : null,
-    workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
+  if (!view) return null;
+
+  return (
+    <Link key={viewId} id={`global-view-${viewId}`} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
+      <span
+        className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+          viewId === globalViewId
+            ? "border-custom-primary-100 text-custom-primary-100"
+            : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+        }`}
+      >
+        {view.name}
+      </span>
+    </Link>
   );
+});
+
+export const GlobalViewsHeader: React.FC = observer(() => {
+  // states
+  const [createViewModal, setCreateViewModal] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  // router
+  const router = useRouter();
+  const { workspaceSlug, globalViewId } = router.query;
+  // store hooks
+  const { currentWorkspaceViews } = useGlobalView();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { captureEvent } = useEventTracker();
 
   // bring the active view to the centre of the header
   useEffect(() => {
-    if (!globalViewId) return;
+    if (globalViewId && currentWorkspaceViews) {
+      captureEvent(GLOBAL_VIEW_OPENED, {
+        view_id: globalViewId,
+        view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
+          ? "Default"
+          : "Custom",
+      });
+      const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
+      if (activeTabElement && containerRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const activeTabRect = activeTabElement.getBoundingClientRect();
+        const diff = containerRect.right - activeTabRect.right;
+        activeTabElement.scrollIntoView({ behavior: "smooth", inline: diff > 500 ? "center" : "nearest" });
+      }
+    }
+  }, [globalViewId, currentWorkspaceViews, containerRef, captureEvent]);
 
-    const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
-    if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
-  }, [globalViewId]);
-
-  const isTabSelected = (tabKey: string) => router.pathname.includes(tabKey);
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="group flex items-center px-4 w-full overflow-x-scroll relative border-b border-custom-border-200">
-        {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
-          <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
-            <a
-              className={`border-b-2 min-w-min p-3 text-sm font-medium outline-none whitespace-nowrap flex-shrink-0 ${
-                isTabSelected(tab.key)
-                  ? "border-custom-primary-100 text-custom-primary-100"
-                  : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-              }`}
-            >
-              {tab.label}
-            </a>
-          </Link>
-        ))}
-
-        {globalViewsStore.globalViewsList?.map((view) => (
-          <Link key={view.id} href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-            <a
-              id={`global-view-${view.id}`}
-              className={`border-b-2 p-3 text-sm font-medium outline-none whitespace-nowrap flex-shrink-0 ${
-                view.id === globalViewId
-                  ? "border-custom-primary-100 text-custom-primary-100"
-                  : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-              }`}
-            >
-              {view.name}
-            </a>
-          </Link>
-        ))}
-
-        <button
-          type="button"
-          className="flex items-center justify-center flex-shrink-0 sticky -right-4 w-12 py-3 border-transparent bg-custom-background-100 hover:border-custom-border-200 hover:text-custom-text-400"
-          onClick={() => setCreateViewModal(true)}
+      <div className="group relative flex border-b border-custom-border-200">
+        <div
+          ref={containerRef}
+          className="flex w-full items-center overflow-x-auto px-4 horizontal-scrollbar scrollbar-sm"
         >
-          <Plus className="h-4 w-4 text-custom-primary-200" />
-        </button>
+          {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
+            <Link key={tab.key} id={`global-view-${tab.key}`} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
+              <span
+                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
+                  tab.key === globalViewId
+                    ? "border-custom-primary-100 text-custom-primary-100"
+                    : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
+                }`}
+              >
+                {tab.label}
+              </span>
+            </Link>
+          ))}
+
+          {currentWorkspaceViews?.map((viewId) => <ViewTab key={viewId} viewId={viewId} />)}
+        </div>
+
+        {isAuthorizedUser && (
+          <button
+            type="button"
+            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
+            onClick={() => setCreateViewModal(true)}
+          >
+            <Plus className="h-4 w-4 text-custom-primary-200" />
+          </button>
+        )}
       </div>
     </>
   );

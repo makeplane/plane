@@ -6,9 +6,55 @@ from django.conf import settings
 from . import ProjectBaseModel
 
 
+def get_default_filters():
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
+
+
+def get_default_display_filters():
+    return {
+        "group_by": None,
+        "order_by": "-created_at",
+        "type": None,
+        "sub_issue": True,
+        "show_empty_groups": True,
+        "layout": "list",
+        "calendar_date_range": "",
+    }
+
+
+def get_default_display_properties():
+    return {
+        "assignee": True,
+        "attachment_count": True,
+        "created_on": True,
+        "due_date": True,
+        "estimate": True,
+        "key": True,
+        "labels": True,
+        "link": True,
+        "priority": True,
+        "start_date": True,
+        "state": True,
+        "sub_issue_count": True,
+        "updated_on": True,
+    }
+
+
 class Module(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Module Name")
-    description = models.TextField(verbose_name="Module Description", blank=True)
+    description = models.TextField(
+        verbose_name="Module Description", blank=True
+    )
     description_text = models.JSONField(
         verbose_name="Module Description RT", blank=True, null=True
     )
@@ -30,7 +76,10 @@ class Module(ProjectBaseModel):
         max_length=20,
     )
     lead = models.ForeignKey(
-        "db.User", on_delete=models.SET_NULL, related_name="module_leads", null=True
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="module_leads",
+        null=True,
     )
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -41,6 +90,8 @@ class Module(ProjectBaseModel):
     )
     view_props = models.JSONField(default=dict)
     sort_order = models.FloatField(default=65535)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         unique_together = ["name", "project"]
@@ -83,11 +134,12 @@ class ModuleIssue(ProjectBaseModel):
     module = models.ForeignKey(
         "db.Module", on_delete=models.CASCADE, related_name="issue_module"
     )
-    issue = models.OneToOneField(
+    issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_module"
     )
 
     class Meta:
+        unique_together = ["issue", "module"]
         verbose_name = "Module Issue"
         verbose_name_plural = "Module Issues"
         db_table = "module_issues"
@@ -139,3 +191,31 @@ class ModuleFavorite(ProjectBaseModel):
     def __str__(self):
         """Return user and the module"""
         return f"{self.user.email} <{self.module.name}>"
+
+
+class ModuleUserProperties(ProjectBaseModel):
+    module = models.ForeignKey(
+        "db.Module",
+        on_delete=models.CASCADE,
+        related_name="module_user_properties",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="module_user_properties",
+    )
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(
+        default=get_default_display_properties
+    )
+
+    class Meta:
+        unique_together = ["module", "user"]
+        verbose_name = "Module User Property"
+        verbose_name_plural = "Module User Property"
+        db_table = "module_user_properties"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.module.name} {self.user.email}"

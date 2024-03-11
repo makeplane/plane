@@ -1,41 +1,80 @@
+import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-
-import { NextPage } from "next";
 import useSWR from "swr";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { PageHead } from "components/core";
+import { ProjectInboxHeader } from "components/headers";
+import { InboxSidebarRoot, InboxContentRoot } from "components/inbox";
+import { InboxLayoutLoader } from "components/ui";
+import { useProject, useInboxIssues } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { InboxActionsHeader, InboxMainContent, InboxIssuesListSidebar } from "components/inbox";
-import { ProjectInboxHeader } from "components/headers";
+// types
+import { NextPageWithLayout } from "lib/types";
 
-const ProjectInbox: NextPage = () => {
+const ProjectInboxPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
-
-  const { inboxFilters: inboxFiltersStore } = useMobxStore();
-
-  useSWR(
-    workspaceSlug && projectId && inboxId ? `INBOX_FILTERS_${inboxId.toString()}` : null,
-    workspaceSlug && projectId && inboxId
-      ? () => inboxFiltersStore.fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString())
-      : null
+  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
+  // store hooks
+  const { currentProjectDetails } = useProject();
+  const {
+    filters: { fetchInboxFilters },
+    issues: { fetchInboxIssues },
+  } = useInboxIssues();
+  // fetching the Inbox filters and issues
+  const { isLoading } = useSWR(
+    workspaceSlug && projectId && currentProjectDetails && currentProjectDetails?.inbox_view
+      ? `INBOX_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}`
+      : null,
+    async () => {
+      if (workspaceSlug && projectId && inboxId && currentProjectDetails && currentProjectDetails?.inbox_view) {
+        await fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
+        await fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
+      }
+    }
   );
+  // derived values
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
+
+  if (!workspaceSlug || !projectId || !inboxId || !currentProjectDetails?.inbox_view || isLoading)
+    return (
+      <div className="flex h-full flex-col">
+        <InboxLayoutLoader />
+      </div>
+    );
 
   return (
-    <AppLayout header={<ProjectInboxHeader />} withProjectWrapper>
-      <div className="flex flex-col h-full">
-        <InboxActionsHeader />
-        <div className="grid grid-cols-4 flex-1 divide-x divide-custom-border-200 overflow-hidden">
-          <InboxIssuesListSidebar />
-          <div className="col-span-3 h-full overflow-auto">
-            <InboxMainContent />
-          </div>
+    <>
+      <PageHead title={pageTitle} />
+      <div className="relative flex h-full overflow-hidden">
+        <div className="flex-shrink-0 w-[340px] h-full border-r border-custom-border-300">
+          <InboxSidebarRoot
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            inboxId={inboxId.toString()}
+          />
+        </div>
+        <div className="w-full">
+          <InboxContentRoot
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            inboxId={inboxId.toString()}
+            inboxIssueId={inboxIssueId?.toString() || undefined}
+          />
         </div>
       </div>
+    </>
+  );
+});
+
+ProjectInboxPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectInboxHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectInbox;
+export default ProjectInboxPage;

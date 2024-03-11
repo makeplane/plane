@@ -2,20 +2,19 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 
 // components
-import { FilterHeader, FilterOption } from "components/issues";
 import { DateFilterModal } from "components/core";
+import { FilterHeader, FilterOption } from "components/issues";
 // constants
 import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string | string[]) => void;
-  itemsToRender: number;
   searchQuery: string;
 };
 
 export const FilterTargetDate: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, searchQuery } = props;
+  const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
@@ -43,7 +42,7 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
         <div>
           {filteredOptions.length > 0 ? (
             <>
-              {filteredOptions.slice(0, itemsToRender).map((option) => (
+              {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
@@ -55,7 +54,7 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
               <FilterOption isChecked={false} onClick={() => setIsDateFilterModalOpen(true)} title="Custom" multiple />
             </>
           ) : (
-            <p className="text-xs text-custom-text-400 italic">No matches found</p>
+            <p className="text-xs italic text-custom-text-400">No matches found</p>
           )}
         </div>
       )}

@@ -1,75 +1,42 @@
 import { useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useRouter } from "next/router";
+//hooks
+import { useCycle, useIssues } from "hooks/store";
 // components
-import { CalendarChart, CycleIssueQuickActions } from "components/issues";
+import { CycleIssueQuickActions } from "components/issues";
+import { BaseCalendarRoot } from "../base-calendar-root";
 // types
-import { IIssueGroupedStructure } from "store/issue";
-import { IIssue } from "types";
+// constants
+import { EIssuesStoreType } from "constants/issue";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
-  const { cycleIssue: cycleIssueStore, issueFilter: issueFilterStore, issueDetail: issueDetailStore } = useMobxStore();
-
+  const { currentProjectCompletedCycleIds } = useCycle();
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
-  // TODO: add drag and drop functionality
-  const onDragEnd = (result: DropResult) => {
-    if (!result) return;
+  const { issues } = useIssues(EIssuesStoreType.CYCLE);
 
-    // return if not dropped on the correct place
-    if (!result.destination) return;
+  if (!cycleId) return null;
 
-    // return if dropped on the same date
-    if (result.destination.droppableId === result.source.droppableId) return;
+  const isCompletedCycle =
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
 
-    // issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
-  };
-
-  const issues = cycleIssueStore.getIssues;
-
-  const handleIssues = useCallback(
-    (date: string, issue: IIssue, action: "update" | "delete" | "remove") => {
-      if (!workspaceSlug || !cycleId) return;
-
-      if (action === "update") {
-        cycleIssueStore.updateIssueStructure(date, null, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      }
-      if (action === "delete") cycleIssueStore.deleteIssue(date, null, issue);
-      if (action === "remove" && issue.bridge_id) {
-        cycleIssueStore.deleteIssue(date, null, issue);
-        cycleIssueStore.removeIssueFromCycle(
-          workspaceSlug.toString(),
-          issue.project,
-          cycleId.toString(),
-          issue.bridge_id
-        );
-      }
+  const addIssuesToView = useCallback(
+    (issueIds: string[]) => {
+      if (!workspaceSlug || !projectId || !cycleId) throw new Error();
+      return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
     },
-    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
+    [issues?.addIssueToCycle, workspaceSlug, projectId, cycleId]
   );
 
   return (
-    <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarChart
-          issues={issues as IIssueGroupedStructure | null}
-          layout={issueFilterStore.userDisplayFilters.calendar?.layout}
-          showWeekends={issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false}
-          quickActions={(issue) => (
-            <CycleIssueQuickActions
-              issue={issue}
-              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
-              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
-              handleRemoveFromCycle={async () => handleIssues(issue.target_date ?? "", issue, "remove")}
-            />
-          )}
-        />
-      </DragDropContext>
-    </div>
+    <BaseCalendarRoot
+      QuickActions={CycleIssueQuickActions}
+      addIssuesToView={addIssuesToView}
+      viewId={cycleId.toString()}
+      isCompletedCycle={isCompletedCycle}
+      storeType={EIssuesStoreType.CYCLE}
+    />
   );
 });

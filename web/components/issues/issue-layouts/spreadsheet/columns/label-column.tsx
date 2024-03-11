@@ -1,52 +1,39 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 // components
-import { LabelSelect } from "components/project";
 // hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { useLabel } from "hooks/store";
 // types
-import { IIssue, IIssueLabels } from "types";
+import { TIssue } from "@plane/types";
+import { IssuePropertyLabels } from "../../properties";
 
 type Props = {
-  issue: IIssue;
-  onChange: (formData: Partial<IIssue>) => void;
-  labels: IIssueLabels[] | undefined;
-  expandedIssues: string[];
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, labels, expandedIssues, disabled } = props;
+export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled, onClose } = props;
+  // hooks
+  const { labelMap } = useLabel();
 
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
   return (
-    <>
-      <LabelSelect
-        value={issue.labels}
-        onChange={(data) => onChange({ labels_list: data })}
-        labels={labels ?? []}
-        hideDropdownArrow
-        maxRender={1}
-        disabled={disabled}
-      />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetLabelColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            labels={labels}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
-        ))}
-    </>
+    <IssuePropertyLabels
+      projectId={issue.project_id ?? null}
+      value={issue.label_ids}
+      defaultOptions={defaultLabelOptions}
+      onChange={(data) => onChange(issue, { label_ids: data }, { changed_property: "labels", change_details: data })}
+      className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
+      buttonClassName="px-2.5 h-full"
+      hideDropdownArrow
+      maxRender={1}
+      disabled={disabled}
+      placeholderText="Select labels"
+      onClose={onClose}
+    />
   );
-};
+});

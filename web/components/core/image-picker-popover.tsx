@@ -1,19 +1,22 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
-import { Tab, Transition, Popover } from "@headlessui/react";
 import { Control, Controller } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import useSWR from "swr";
+import { Tab, Popover } from "@headlessui/react";
+// hooks
+import { Button, Input, Loader } from "@plane/ui";
+import { MAX_FILE_SIZE } from "constants/common";
+import { useApplication, useWorkspace } from "hooks/store";
+import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 // services
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { FileService } from "services/file.service";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { Button, Input, Loader } from "@plane/ui";
+// constants
 
 const tabOptions = [
   {
@@ -36,30 +39,32 @@ type Props = {
   control: Control<any>;
   onChange: (data: string) => void;
   disabled?: boolean;
+  tabIndex?: number;
 };
 
 // services
 const fileService = new FileService();
 
 export const ImagePickerPopover: React.FC<Props> = observer((props) => {
-  const { label, value, control, onChange, disabled = false } = props;
-
+  const { label, value, control, onChange, disabled = false, tabIndex } = props;
+  // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
   const [searchParams, setSearchParams] = useState("");
   const [formData, setFormData] = useState({
     search: "",
   });
-
+  // refs
   const ref = useRef<HTMLDivElement>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { workspace: workspaceStore } = useMobxStore();
-  const { currentWorkspace: workspaceDetails } = workspaceStore;
+  // store hooks
+  const {
+    config: { envConfig },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
@@ -86,7 +91,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: 5 * 1024 * 1024,
+    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
   });
 
   const handleSubmit = async () => {
@@ -112,10 +117,10 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
         if (isUnsplashImage) return;
 
-        if (oldValue && workspaceDetails) fileService.deleteFile(workspaceDetails.id, oldValue);
+        if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 
@@ -125,30 +130,42 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     onChange(unsplashImages[0].urls.regular);
   }, [value, onChange, unsplashImages]);
 
-  useOutsideClickDetector(imagePickerRef, () => setIsOpen(false));
+  const handleClose = () => {
+    if (isOpen) setIsOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
+
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleDropdown();
+  };
+
+  useOutsideClickDetector(ref, handleClose);
 
   return (
-    <Popover className="relative z-[2]" ref={ref}>
+    <Popover className="relative z-[2]" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
         className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={handleOnClick}
         disabled={disabled}
       >
         {label}
       </Popover.Button>
-      <Transition
-        show={isOpen}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm">
+
+      {isOpen && (
+        <Popover.Panel
+          className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
+          static
+        >
           <div
             ref={imagePickerRef}
-            className="h-96 md:h-[28rem] w-80 md:w-[36rem] flex flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl"
+            className="flex h-96 w-80 flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
           >
             <Tab.Group>
               <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
@@ -160,7 +177,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                     <Tab
                       key={tab.key}
                       className={({ selected }) =>
-                        `rounded py-1 px-4 text-center text-sm outline-none transition-colors ${
+                        `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
                           selected ? "bg-custom-primary text-white" : "text-custom-text-100"
                         }`
                       }
@@ -170,9 +187,9 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                   );
                 })}
               </Tab.List>
-              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
+              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md">
                 {(unsplashImages || !unsplashError) && (
-                  <Tab.Panel className="h-full w-full space-y-4 mt-4">
+                  <Tab.Panel className="mt-4 h-full w-full space-y-4">
                     <div className="flex gap-x-2">
                       <Controller
                         control={control}
@@ -186,7 +203,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                             onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                             ref={ref}
                             placeholder="Search for images"
-                            className="text-sm w-full"
+                            className="w-full text-sm"
                           />
                         )}
                       />
@@ -209,13 +226,13 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                               <img
                                 src={image.urls.small}
                                 alt={image.alt_description}
-                                className="cursor-pointer rounded absolute top-0 left-0 h-full w-full object-cover"
+                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
                               />
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-center text-custom-text-300 text-xs pt-7">No images found.</p>
+                        <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4">
@@ -232,7 +249,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                   </Tab.Panel>
                 )}
                 {(!projectCoverImages || projectCoverImages.length !== 0) && (
-                  <Tab.Panel className="h-full w-full space-y-4 mt-4">
+                  <Tab.Panel className="mt-4 h-full w-full space-y-4">
                     {projectCoverImages ? (
                       projectCoverImages.length > 0 ? (
                         <div className="grid grid-cols-4 gap-4">
@@ -248,13 +265,13 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                               <img
                                 src={image}
                                 alt={`Default project cover image- ${index}`}
-                                className="cursor-pointer rounded absolute top-0 left-0 h-full w-full object-cover"
+                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
                               />
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-center text-custom-text-300 text-xs pt-7">No images found.</p>
+                        <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4 pt-4">
@@ -270,9 +287,9 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                     )}
                   </Tab.Panel>
                 )}
-                <Tab.Panel className="h-full w-full mt-4">
-                  <div className="w-full h-full flex flex-col gap-y-2">
-                    <div className="flex items-center gap-3 w-full flex-1">
+                <Tab.Panel className="mt-4 h-full w-full">
+                  <div className="flex h-full w-full flex-col gap-y-2">
+                    <div className="flex w-full flex-1 items-center gap-3">
                       <div
                         {...getRootProps()}
                         className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
@@ -283,7 +300,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       >
                         <button
                           type="button"
-                          className="absolute top-0 right-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
                         >
                           Edit
                         </button>
@@ -316,11 +333,11 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       </p>
                     )}
 
-                    <p className="text-custom-text-200 text-sm">
+                    <p className="text-sm text-custom-text-200">
                       File formats supported- .jpeg, .jpg, .png, .webp, .svg
                     </p>
 
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex h-12 items-start justify-end gap-2">
                       <Button
                         variant="neutral-primary"
                         onClick={() => {
@@ -346,7 +363,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
             </Tab.Group>
           </div>
         </Popover.Panel>
-      </Transition>
+      )}
     </Popover>
   );
 });

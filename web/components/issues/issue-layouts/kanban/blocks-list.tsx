@@ -1,50 +1,74 @@
-// components
+import { MutableRefObject, memo } from "react";
+//types
 import { KanbanIssueBlock } from "components/issues";
-import { IIssue } from "types";
+import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+// components
 
 interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
-  issues: IIssue[];
+  issuesMap: IIssueMap;
+  peekIssueId?: string;
+  issueIds: string[];
+  displayProperties: IIssueDisplayProperties | undefined;
   isDragDisabled: boolean;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
-export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
-  const { sub_group_id, columnId, issues, isDragDisabled, handleIssues, quickActions, display_properties } = props;
+const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
+  const {
+    sub_group_id,
+    columnId,
+    issuesMap,
+    peekIssueId,
+    issueIds,
+    displayProperties,
+    isDragDisabled,
+    updateIssue,
+    quickActions,
+    canEditProperties,
+    scrollableContainerRef,
+    isDragStarted,
+  } = props;
 
   return (
     <>
-      {issues && issues.length > 0 ? (
+      {issueIds && issueIds.length > 0 ? (
         <>
-          {issues.map((issue, index) => (
-            <KanbanIssueBlock
-              key={`kanban-issue-block-${issue.id}`}
-              index={index}
-              issue={issue}
-              handleIssues={handleIssues}
-              quickActions={quickActions}
-              displayProperties={display_properties}
-              columnId={columnId}
-              sub_group_id={sub_group_id}
-              isDragDisabled={isDragDisabled}
-            />
-          ))}
+          {issueIds.map((issueId, index) => {
+            if (!issueId) return null;
+
+            let draggableId = issueId;
+            if (columnId) draggableId = `${draggableId}__${columnId}`;
+            if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
+
+            return (
+              <KanbanIssueBlock
+                key={draggableId}
+                peekIssueId={peekIssueId}
+                issueId={issueId}
+                issuesMap={issuesMap}
+                displayProperties={displayProperties}
+                updateIssue={updateIssue}
+                quickActions={quickActions}
+                draggableId={draggableId}
+                index={index}
+                isDragDisabled={isDragDisabled}
+                canEditProperties={canEditProperties}
+                scrollableContainerRef={scrollableContainerRef}
+                isDragStarted={isDragStarted}
+                issueIds={issueIds} //passing to force render for virtualization whenever parent rerenders
+              />
+            );
+          })}
         </>
-      ) : (
-        !isDragDisabled && (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-            {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
-          </div>
-        )
-      )}
+      ) : null}
     </>
   );
 };
+
+export const KanbanIssueBlocksList = memo(KanbanIssueBlocksListMemo);

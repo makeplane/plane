@@ -2,12 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const CurrentCycleIcon: React.FC<Props> = ({
-  width = "24",
-  height = "24",
-  className,
-  color = "black",
-}) => (
+export const CurrentCycleIcon: React.FC<Props> = ({ width = "24", height = "24", className, color = "black" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" height={height} width={width} className={className}>
     <path
       d="M15.3 28.3q-.85 0-1.425-.575-.575-.575-.575-1.425 0-.85.575-1.425.575-.575 1.425-.575.85 0 1.425.575.575.575.575 1.425 0 .85-.575 1.425-.575.575-1.425.575Zm8.85 0q-.85 0-1.425-.575-.575-.575-.575-1.425 0-.85.575-1.425.575-.575 1.425-.575.85 0 1.425.575.575.575.575 1.425 0 .85-.575 1.425-.575.575-1.425.575Zm8.5 0q-.85 0-1.425-.575-.575-.575-.575-1.425 0-.85.575-1.425.575-.575 1.425-.575.85 0 1.425.575.575.575.575 1.425 0 .85-.575 1.425-.575.575-1.425.575ZM6 44V7h6.25V4h3.25v3h17V4h3.25v3H42v37Zm3-3h30V19.5H9Zm0-24.5h30V10H9Zm0 0V10v6.5Z"

@@ -1,56 +1,46 @@
 import { useEffect, useState } from "react";
-// next imports
 import { useRouter } from "next/router";
-// swr
-import useSWR from "swr";
-// keys
-import { CURRENT_USER } from "constants/fetch-keys";
 // services
-import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // types
-import type { IWorkspace, IUser } from "types";
+import { IUser } from "@plane/types";
 
-const userService = new UserService();
 const workspaceService = new WorkspaceService();
-
-const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
-  const router = useRouter();
-  const { next_url } = router.query as { next_url: string };
-
+type Props = {
+  routeAuth?: "sign-in" | "onboarding" | "admin" | null;
+  user: IUser | null;
+  isLoading: boolean;
+};
+const useUserAuth = (props: Props) => {
+  const { routeAuth, user, isLoading } = props;
+  // states
   const [isRouteAccess, setIsRouteAccess] = useState(true);
+  // router
+  const router = useRouter();
+  const { next_path } = router.query;
 
-  const {
-    data: user,
-    isLoading,
-    error,
-    mutate,
-  } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
-    refreshInterval: 0,
-    shouldRetryOnError: false,
-  });
+  const isValidURL = (url: string): boolean => {
+    const disallowedSchemes = /^(https?|ftp):\/\//i;
+    return !disallowedSchemes.test(url);
+  };
 
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
       workspaceService.userWorkspaces().then(async (userWorkspaces) => {
-        const lastActiveWorkspace = userWorkspaces.find(
-          (workspace: IWorkspace) => workspace.id === user?.last_workspace_id
-        );
+        if (!user) return;
+
+        const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
+        const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
+
         if (lastActiveWorkspace) {
           router.push(`/${lastActiveWorkspace.slug}`);
           return;
-        } else if (userWorkspaces.length > 0) {
-          router.push(`/${userWorkspaces[0].slug}`);
+        } else if (firstWorkspace) {
+          router.push(`/${firstWorkspace.slug}`);
           return;
         } else {
-          const invitations = await workspaceService.userWorkspaceInvitations();
-          if (invitations.length > 0) {
-            router.push(`/invitations`);
-            return;
-          } else {
-            router.push(`/create-workspace`);
-            return;
-          }
+          router.push(`/profile`);
+          return;
         }
       });
     };
@@ -93,8 +83,15 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
       if (!isLoading) {
         setIsRouteAccess(() => true);
         if (user) {
-          if (next_url) router.push(next_url);
-          else handleUserRouteAuthentication();
+          if (next_path) {
+            if (isValidURL(next_path.toString())) {
+              router.push(next_path.toString());
+              return;
+            } else {
+              router.push("/");
+              return;
+            }
+          } else handleUserRouteAuthentication();
         } else {
           if (routeAuth === "sign-in") {
             setIsRouteAccess(() => false);
@@ -106,12 +103,10 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
         }
       }
     }
-  }, [user, isLoading, routeAuth, router, next_url]);
+  }, [user, isLoading, routeAuth, router, next_path]);
 
   return {
     isLoading: isRouteAccess,
-    user: error ? undefined : user,
-    mutateUser: mutate,
     // assignedIssuesLength: user?.assigned_issues ?? 0,
     // workspaceInvitesLength: user?.workspace_invites ?? 0,
   };

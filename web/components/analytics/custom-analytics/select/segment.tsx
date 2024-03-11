@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 // ui
 import { CustomSelect } from "@plane/ui";
 // types
-import { IAnalyticsParams, TXAxisValues } from "types";
-// constants
 import { ANALYTICS_X_AXIS_VALUES } from "constants/analytics";
+import { IAnalyticsParams, TXAxisValues } from "@plane/types";
+// constants
 
 type Props = {
   value: TXAxisValues | null | undefined;
@@ -28,7 +28,6 @@ export const SelectSegment: React.FC<Props> = ({ value, onChange, params }) => {
         </span>
       }
       onChange={onChange}
-      width="w-full"
       maxHeight="lg"
     >
       <CustomSelect.Option value={null}>No value</CustomSelect.Option>

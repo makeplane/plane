@@ -1,12 +1,10 @@
 # Python imports
-import uuid
 
 # Django imports
 from django.db import models
 
 # Module imports
 from plane.db.models import ProjectBaseModel
-from plane.db.mixins import AuditModel
 
 
 class GithubRepository(ProjectBaseModel):
@@ -37,10 +35,15 @@ class GithubRepositorySync(ProjectBaseModel):
         "db.User", related_name="user_syncs", on_delete=models.CASCADE
     )
     workspace_integration = models.ForeignKey(
-        "db.WorkspaceIntegration", related_name="github_syncs", on_delete=models.CASCADE
+        "db.WorkspaceIntegration",
+        related_name="github_syncs",
+        on_delete=models.CASCADE,
     )
     label = models.ForeignKey(
-        "db.Label", on_delete=models.SET_NULL, null=True, related_name="repo_syncs"
+        "db.Label",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="repo_syncs",
     )
 
     def __str__(self):
@@ -63,7 +66,9 @@ class GithubIssueSync(ProjectBaseModel):
         "db.Issue", related_name="github_syncs", on_delete=models.CASCADE
     )
     repository_sync = models.ForeignKey(
-        "db.GithubRepositorySync", related_name="issue_syncs", on_delete=models.CASCADE
+        "db.GithubRepositorySync",
+        related_name="issue_syncs",
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):
@@ -81,10 +86,14 @@ class GithubIssueSync(ProjectBaseModel):
 class GithubCommentSync(ProjectBaseModel):
     repo_comment_id = models.BigIntegerField()
     comment = models.ForeignKey(
-        "db.IssueComment", related_name="comment_syncs", on_delete=models.CASCADE
+        "db.IssueComment",
+        related_name="comment_syncs",
+        on_delete=models.CASCADE,
     )
     issue_sync = models.ForeignKey(
-        "db.GithubIssueSync", related_name="comment_syncs", on_delete=models.CASCADE
+        "db.GithubIssueSync",
+        related_name="comment_syncs",
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):

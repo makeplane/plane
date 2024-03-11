@@ -1,201 +1,220 @@
 import { useCallback, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { ArrowLeft, Circle, ExternalLink, Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { useRouter } from "next/router";
+import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+// hooks
+import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import {
+  useApplication,
+  useEventTracker,
+  useLabel,
+  useProject,
+  useProjectState,
+  useUser,
+  useMember,
+} from "hooks/store";
+import { useIssues } from "hooks/store/use-issues";
+// components
 // ui
-import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
-import { truncateText } from "helpers/string.helper";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
+  // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  // store hooks
+  const {
+    project: { projectMemberIds },
+  } = useMember();
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const {
+    commandPalette: { toggleCreateIssueModal },
+  } = useApplication();
+  const { setTrackElement } = useEventTracker();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
 
-  const { issueFilter: issueFilterStore, project: projectStore, inbox: inboxStore } = useMobxStore();
-
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
-
-  const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          layout,
-        },
-      });
-    },
-    [issueFilterStore, projectId, workspaceSlug]
-  );
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
-
-      const newValues = issueFilterStore.userFilters?.[key] ?? [];
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (issueFilterStore.userFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        filters: {
-          [key]: newValues,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, issueFilters, updateFilters]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleLayoutChange = useCallback(
+    (layout: TIssueLayouts) => {
+      if (!workspaceSlug || !projectId) return;
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
+    },
+    [workspaceSlug, projectId, updateFilters]
+  );
+
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, updateFilters]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, updateFilters]
   );
 
-  const projectDetails =
-    workspaceSlug && projectId
-      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
-      : undefined;
-
-  const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId.toString()]?.[0] : undefined;
-
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
+  const canUserCreateIssue =
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
       <ProjectAnalyticsModal
         isOpen={analyticsModal}
         onClose={() => setAnalyticsModal(false)}
-        projectDetails={projectDetails ?? undefined}
+        projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
-          <div className="block md:hidden">
-            <button
-              type="button"
-              className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft fontSize={14} strokeWidth={2} />
-            </button>
+      <div className="relative z-[15] items-center gap-x-2 gap-y-4">
+        <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
+          <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+            <SidebarHamburgerToggle />
+            <div>
+              <Breadcrumbs onBack={() => router.back()}>
+                <Breadcrumbs.BreadcrumbItem
+                  type="text"
+                  link={
+                    <BreadcrumbLink
+                      href={`/${workspaceSlug}/projects`}
+                      label={currentProjectDetails?.name ?? "Project"}
+                      icon={
+                        currentProjectDetails ? (
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                            </span>
+                          )
+                        ) : (
+                          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                            <Briefcase className="h-4 w-4" />
+                          </span>
+                        )
+                      }
+                    />
+                  }
+                />
+
+                <Breadcrumbs.BreadcrumbItem
+                  type="text"
+                  link={
+                    <BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+                  }
+                />
+              </Breadcrumbs>
+            </div>
+            {currentProjectDetails?.is_deployed && deployUrl && (
+              <a
+                href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
+                className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+                Public
+                <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+              </a>
+            )}
           </div>
-          <div>
-            <Breadcrumbs onBack={() => router.back()}>
-              <BreadcrumbItem
-                link={
-                  <Link href={`/${workspaceSlug}/projects`}>
-                    <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                      <p>Projects</p>
-                    </a>
-                  </Link>
+          <div className="items-center gap-2 hidden md:flex">
+            <LayoutSelection
+              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+              onChange={(layout) => handleLayoutChange(layout)}
+              selectedLayout={activeLayout}
+            />
+            <FiltersDropdown title="Filters" placement="bottom-end">
+              <FilterSelection
+                filters={issueFilters?.filters ?? {}}
+                handleFiltersUpdate={handleFiltersUpdate}
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
                 }
+                labels={projectLabels}
+                memberIds={projectMemberIds ?? undefined}
+                states={projectStates}
               />
-              <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`} />
-            </Breadcrumbs>
+            </FiltersDropdown>
+            <FiltersDropdown title="Display" placement="bottom-end">
+              <DisplayFiltersSelection
+                layoutDisplayFiltersOptions={
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                }
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
+                displayProperties={issueFilters?.displayProperties ?? {}}
+                handleDisplayPropertiesUpdate={handleDisplayProperties}
+              />
+            </FiltersDropdown>
           </div>
-          {projectDetails?.is_deployed && deployUrl && (
-            <a
-              href={`${deployUrl}/${workspaceSlug}/${projectDetails?.id}`}
-              className="group bg-custom-primary-100/20 text-custom-primary-100 px-2.5 py-1 text-xs flex items-center gap-1.5 rounded font-medium"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-              Public
-              <ExternalLink className="h-3 w-3 hidden group-hover:block" strokeWidth={2} />
-            </a>
+
+          {canUserCreateIssue && (
+            <>
+              <Button
+                className="hidden md:block"
+                onClick={() => setAnalyticsModal(true)}
+                variant="neutral-primary"
+                size="sm"
+              >
+                Analytics
+              </Button>
+              <Button
+                onClick={() => {
+                  setTrackElement("Project issues page");
+                  toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                }}
+                size="sm"
+                prependIcon={<Plus />}
+              >
+                <div className="hidden sm:block">Add</div> Issue
+              </Button>
+            </>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <LayoutSelection
-            layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
-            onChange={(layout) => handleLayoutChange(layout)}
-            selectedLayout={activeLayout}
-          />
-          <FiltersDropdown title="Filters">
-            <FilterSelection
-              filters={issueFilterStore.userFilters}
-              handleFiltersUpdate={handleFiltersUpdate}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
-              members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-              states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
-            />
-          </FiltersDropdown>
-          <FiltersDropdown title="Display">
-            <DisplayFiltersSelection
-              displayFilters={issueFilterStore.userDisplayFilters}
-              displayProperties={issueFilterStore.userDisplayProperties}
-              handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-              handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-            />
-          </FiltersDropdown>
-          {projectId && inboxStore.isInboxEnabled && inboxDetails && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxStore.getInboxId(projectId.toString())}`}>
-              <a>
-                <Button variant="neutral-primary" size="sm" className="relative">
-                  Inbox
-                  <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full text-custom-text-100 bg-custom-sidebar-background-80 border border-custom-sidebar-border-200">
-                    {inboxDetails.pending_issue_count}
-                  </span>
-                </Button>
-              </a>
-            </Link>
-          )}
-          <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-            Analytics
-          </Button>
-          <Button
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
-            Add Issue
-          </Button>
+        <div className="block md:hidden">
+          <IssuesMobileHeader />
         </div>
       </div>
     </>

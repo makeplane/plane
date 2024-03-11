@@ -1,113 +1,135 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useRouter } from "next/router";
+// hooks
+//ui
+import { Button } from "@plane/ui";
 // components
 import { AppliedFiltersList } from "components/issues";
-// ui
-import { Button } from "@plane/ui";
-// helpers
-import { areFiltersDifferent } from "helpers/filter.helper";
 // types
-import { IIssueFilterOptions } from "types";
+import { GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
+// constants
+import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "hooks/store";
+import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 
-export const GlobalViewsAppliedFiltersRoot = observer(() => {
+type Props = {
+  globalViewId: string;
+};
+
+export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
+  const { globalViewId } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
-
+  const { workspaceSlug } = router.query;
+  // store hooks
   const {
-    globalViews: globalViewsStore,
-    globalViewFilters: globalViewFiltersStore,
-    project: projectStore,
-    workspace: workspaceStore,
-  } = useMobxStore();
+    issuesFilter: { filters, updateFilters },
+  } = useIssues(EIssuesStoreType.GLOBAL);
+  const { workspaceLabels } = useLabel();
+  const { globalViewMap, updateGlobalView } = useGlobalView();
+  const { captureEvent } = useEventTracker();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
-  const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
-  const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
+  // derived values
+  const userFilters = filters?.[globalViewId]?.filters;
+  const viewDetails = globalViewMap[globalViewId];
 
   // filters whose value not null or empty array
-  const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(storedFilters ?? {}).forEach(([key, value]) => {
+  let appliedFilters: IIssueFilterOptions | undefined = undefined;
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
-
     if (Array.isArray(value) && value.length === 0) return;
-
+    if (!appliedFilters) appliedFilters = {};
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!globalViewId) return;
+    if (!workspaceSlug || !globalViewId) return;
 
-    // remove all values of the key if value is null
     if (!value) {
-      globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.FILTERS,
+        { [key]: null },
+        globalViewId.toString()
+      );
       return;
     }
 
-    // remove the passed value from the key
-    let newValues = globalViewFiltersStore.storedFilters?.[globalViewId.toString()]?.[key] ?? [];
+    let newValues = userFilters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
-
-    globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug.toString(),
+      undefined,
+      EIssueFilterType.FILTERS,
+      { [key]: newValues },
+      globalViewId.toString()
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!globalViewId || !storedFilters) return;
-
+    if (!workspaceSlug || !globalViewId) return;
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(storedFilters).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+    Object.keys(userFilters ?? {}).forEach((key) => {
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
-
-    globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), {
-      ...newFilters,
-    });
+    updateFilters(
+      workspaceSlug.toString(),
+      undefined,
+      EIssueFilterType.FILTERS,
+      { ...newFilters },
+      globalViewId.toString()
+    );
   };
 
   const handleUpdateView = () => {
-    if (!workspaceSlug || !globalViewId || !viewDetails) return;
+    if (!workspaceSlug || !globalViewId) return;
 
-    globalViewsStore.updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), {
-      query_data: {
-        ...viewDetails.query_data,
-        filters: {
-          ...(storedFilters ?? {}),
-        },
+    updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), {
+      filters: {
+        ...(appliedFilters ?? {}),
       },
+    }).then((res) => {
+      captureEvent(GLOBAL_VIEW_UPDATED, {
+        view_id: res.id,
+        applied_filters: res.filters,
+        state: "SUCCESS",
+        element: "Spreadsheet view",
+      });
     });
   };
 
-  // update stored filters when view details are fetched
-  useEffect(() => {
-    if (!globalViewId || !viewDetails) return;
+  const areFiltersEqual = isEqual(appliedFilters, viewDetails?.filters);
 
-    if (!globalViewFiltersStore.storedFilters[globalViewId.toString()])
-      globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), viewDetails?.query_data?.filters ?? {});
-  }, [globalViewId, globalViewFiltersStore, viewDetails]);
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+
+  const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
 
   // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0) return null;
+  if (!appliedFilters && areFiltersEqual) return null;
 
   return (
     <div className="flex items-start justify-between gap-4 p-4">
       <AppliedFiltersList
-        appliedFilters={storedFilters ?? {}}
+        labels={workspaceLabels ?? undefined}
+        appliedFilters={appliedFilters ?? {}}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={workspaceStore.workspaceLabels ?? undefined}
-        members={workspaceStore.workspaceMembers?.map((m) => m.member)}
-        projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
+        alwaysAllowEditing
       />
-      {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data.filters ?? {}) && (
-        <Button variant="primary" onClick={handleUpdateView}>
-          Update view
-        </Button>
+
+      {!isDefaultView && !areFiltersEqual && isAuthorizedUser && (
+        <>
+          <div />
+          <Button variant="primary" onClick={handleUpdateView}>
+            Update view
+          </Button>
+        </>
       )}
     </div>
   );

@@ -1,39 +1,61 @@
-import React from "react";
-
+import { ReactElement } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
+// hooks
 // services
-import { IntegrationService } from "services/integrations";
 // layouts
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
 // components
-import { SingleIntegrationCard } from "components/integration";
+import { PageHead } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
-import { Loader } from "@plane/ui";
+import { SingleIntegrationCard } from "components/integration";
 // ui
-import { IntegrationAndImportExportBanner } from "components/ui";
+import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "components/ui";
 // types
-import type { NextPage } from "next";
 // fetch-keys
 import { APP_INTEGRATIONS } from "constants/fetch-keys";
-// helper
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
+import { useUser, useWorkspace } from "hooks/store";
+import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { NextPageWithLayout } from "lib/types";
+import { IntegrationService } from "services/integrations";
 
-// services
 const integrationService = new IntegrationService();
 
-const WorkspaceIntegrations: NextPage = () => {
+const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
-  const { data: appIntegrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug ? integrationService.getAppIntegrationsList() : null
+  // derived values
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
+
+  if (!isAdmin)
+    return (
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center p-4">
+          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+        </div>
+      </>
+    );
+
+  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
+    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
   );
 
   return (
-    <WorkspaceSettingLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
-      <section className="pr-9 py-8 w-full overflow-y-auto">
+    <>
+      <PageHead title={pageTitle} />
+      <section className="w-full overflow-y-auto py-8 pr-9">
         <IntegrationAndImportExportBanner bannerName="Integrations" />
         <div>
           {appIntegrations ? (
@@ -41,15 +63,20 @@ const WorkspaceIntegrations: NextPage = () => {
               <SingleIntegrationCard key={integration.id} integration={integration} />
             ))
           ) : (
-            <Loader className="space-y-2.5 mt-4">
-              <Loader.Item height="89px" />
-              <Loader.Item height="89px" />
-            </Loader>
+            <IntegrationsSettingsLoader />
           )}
         </div>
       </section>
-    </WorkspaceSettingLayout>
+    </>
+  );
+});
+
+WorkspaceIntegrationsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="Integrations Settings" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
   );
 };
 
-export default WorkspaceIntegrations;
+export default WorkspaceIntegrationsPage;

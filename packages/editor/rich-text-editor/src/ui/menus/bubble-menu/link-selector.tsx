@@ -1,7 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { Check, Trash } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
-import { cn, isValidHttpUrl, setLinkEditor, unsetLinkEditor, } from "@plane/editor-core";
+import { cn, isValidHttpUrl, setLinkEditor, unsetLinkEditor } from "@plane/editor-core";
 
 interface LinkSelectorProps {
   editor: Editor;
@@ -48,7 +48,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
       </button>
       {isOpen && (
         <div
-          className="fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 dow-xl animate-in fade-in slide-in-from-top-1"
+          className="dow-xl fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 animate-in fade-in slide-in-from-top-1"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -60,7 +60,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             ref={inputRef}
             type="url"
             placeholder="Paste a link"
-            className="flex-1 bg-custom-background-100 border-r border-custom-border-300 p-1 text-sm outline-none placeholder:text-custom-text-400"
+            className="flex-1 border-r border-custom-border-300 bg-custom-background-100 p-1 text-sm outline-none placeholder:text-custom-text-400"
             defaultValue={editor.getAttributes("link").href || ""}
           />
           {editor.getAttributes("link").href ? (

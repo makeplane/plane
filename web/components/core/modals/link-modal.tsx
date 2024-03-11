@@ -7,15 +7,15 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IIssueLink, linkDetails, ModuleLink } from "types";
+import type { IIssueLink, ILinkDetails, ModuleLink } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: linkDetails | null;
+  data?: ILinkDetails | null;
   status: boolean;
-  createIssueLink: (formData: IIssueLink | ModuleLink) => Promise<void>;
-  updateIssueLink: (formData: IIssueLink | ModuleLink, linkId: string) => Promise<void>;
+  createIssueLink: (formData: IIssueLink | ModuleLink) => Promise<ILinkDetails> | Promise<void> | void;
+  updateIssueLink: (formData: IIssueLink | ModuleLink, linkId: string) => Promise<ILinkDetails> | Promise<void> | void;
 };
 
 const defaultValues: IIssueLink | ModuleLink = {
@@ -31,7 +31,7 @@ export const LinkModal: FC<Props> = (props) => {
     handleSubmit,
     control,
     reset,
-  } = useForm<ModuleLink>({
+  } = useForm<IIssueLink | ModuleLink>({
     defaultValues,
   });
 
@@ -76,7 +76,7 @@ export const LinkModal: FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -90,7 +90,7 @@ export const LinkModal: FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 border border-custom-border-200 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
                   <div>
                     <div className="space-y-5">
@@ -99,7 +99,7 @@ export const LinkModal: FC<Props> = (props) => {
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
                         <div>
-                          <label htmlFor="url" className="text-custom-text-200 mb-2">
+                          <label htmlFor="url" className="mb-2 text-custom-text-200">
                             URL
                           </label>
                           <Controller
@@ -118,13 +118,14 @@ export const LinkModal: FC<Props> = (props) => {
                                 ref={ref}
                                 hasError={Boolean(errors.url)}
                                 placeholder="https://..."
+                                pattern="^(https?://).*"
                                 className="w-full"
                               />
                             )}
                           />
                         </div>
                         <div>
-                          <label htmlFor="title" className="text-custom-text-200 mb-2">
+                          <label htmlFor="title" className="mb-2 text-custom-text-200">
                             {`Title (optional)`}
                           </label>
                           <Controller
@@ -149,17 +150,17 @@ export const LinkModal: FC<Props> = (props) => {
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" type="submit" loading={isSubmitting}>
+                    <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                       {status
                         ? isSubmitting
                           ? "Updating Link..."
                           : "Update Link"
                         : isSubmitting
-                        ? "Adding Link..."
-                        : "Add Link"}
+                          ? "Adding Link..."
+                          : "Add Link"}
                     </Button>
                   </div>
                 </form>

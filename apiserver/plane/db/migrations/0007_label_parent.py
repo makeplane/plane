@@ -5,15 +5,20 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0006_alter_cycle_status'),
+        ("db", "0006_alter_cycle_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='label',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='parent_label', to='db.label'),
+            model_name="label",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="parent_label",
+                to="db.label",
+            ),
         ),
     ]

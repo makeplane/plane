@@ -1,11 +1,8 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // types
-import type { IUser, IssueReaction, IssueCommentReaction, IssueReactionForm, IssueCommentReactionForm } from "types";
-
-const trackEventService = new TrackEventService();
+import type { TIssueCommentReaction, TIssueReaction } from "@plane/types";
 
 export class IssueReactionService extends APIService {
   constructor() {
@@ -16,20 +13,16 @@ export class IssueReactionService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: IssueReactionForm,
-    user?: IUser
+    data: Partial<TIssueReaction>
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`, data)
-      .then((response) => {
-        trackEventService.trackReactionEvent(response?.data, "ISSUE_REACTION_CREATE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async listIssueReactions(workspaceSlug: string, projectId: string, issueId: string): Promise<IssueReaction[]> {
+  async listIssueReactions(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueReaction[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -37,20 +30,11 @@ export class IssueReactionService extends APIService {
       });
   }
 
-  async deleteIssueReaction(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    reaction: string,
-    user?: IUser
-  ): Promise<any> {
+  async deleteIssueReaction(workspaceSlug: string, projectId: string, issueId: string, reaction: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/${reaction}/`
     )
-      .then((response) => {
-        trackEventService.trackReactionEvent(response?.data, "ISSUE_REACTION_DELETE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -60,14 +44,10 @@ export class IssueReactionService extends APIService {
     workspaceSlug: string,
     projectId: string,
     commentId: string,
-    data: IssueCommentReactionForm,
-    user?: IUser
+    data: Partial<TIssueCommentReaction>
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`, data)
-      .then((response) => {
-        trackEventService.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_CREATE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -77,7 +57,7 @@ export class IssueReactionService extends APIService {
     workspaceSlug: string,
     projectId: string,
     commentId: string
-  ): Promise<IssueCommentReaction[]> {
+  ): Promise<TIssueCommentReaction[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -89,16 +69,12 @@ export class IssueReactionService extends APIService {
     workspaceSlug: string,
     projectId: string,
     commentId: string,
-    reaction: string,
-    user?: IUser
+    reaction: string
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/${reaction}/`
     )
-      .then((response) => {
-        trackEventService.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_DELETE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

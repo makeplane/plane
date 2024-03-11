@@ -47,16 +47,15 @@ export const Tooltip: React.FC<ITooltipProps> = ({
     hoverCloseDelay={closeDelay}
     content={
       <div
-        className={`relative z-50 max-w-xs gap-1 rounded-md p-2 text-xs shadow-md bg-custom-background-100 text-custom-text-200 break-words overflow-hidden ${className}`}
+        className={`relative z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md ${className}`}
       >
-        {tooltipHeading && (
-          <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>
-        )}
+        {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
         {tooltipContent}
       </div>
     }
     position={position}
     renderTarget={({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       isOpen: isTooltipOpen,
       ref: eleReference,
       ...tooltipProps

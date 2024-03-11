@@ -5,16 +5,17 @@ import { Controller, FieldError, Control } from "react-hook-form";
 // ui
 import { CustomSelect, DoubleCircleIcon, ModuleStatusIcon } from "@plane/ui";
 // types
-import type { IModule } from "types";
-// constants
 import { MODULE_STATUS } from "constants/module";
+import type { IModule } from "@plane/types";
+// constants
 
 type Props = {
   control: Control<IModule, any>;
   error?: FieldError;
+  tabIndex?: number;
 };
 
-export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
+export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }) => (
   <Controller
     control={control}
     rules={{ required: true }}
@@ -35,6 +36,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
           </div>
         }
         onChange={onChange}
+        tabIndex={tabIndex}
         noChevron
       >
         {MODULE_STATUS.map((status) => (

@@ -12,7 +12,7 @@ module.exports = {
       "./pages/**/*.tsx",
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
-      "../packages/editor/**/*.{js,ts,jsx,tsx}",
+      "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
     ],
   },
   theme: {
@@ -27,6 +27,7 @@ module.exports = {
         "custom-shadow-xl": "var(--color-shadow-xl)",
         "custom-shadow-2xl": "var(--color-shadow-2xl)",
         "custom-shadow-3xl": "var(--color-shadow-3xl)",
+        "custom-shadow-4xl": "var(--color-shadow-4xl)",
         "custom-sidebar-shadow-2xs": "var(--color-sidebar-shadow-2xs)",
         "custom-sidebar-shadow-xs": "var(--color-sidebar-shadow-xs)",
         "custom-sidebar-shadow-sm": "var(--color-sidebar-shadow-sm)",
@@ -36,6 +37,8 @@ module.exports = {
         "custom-sidebar-shadow-xl": "var(--color-sidebar-shadow-xl)",
         "custom-sidebar-shadow-2xl": "var(--color-sidebar-shadow-2xl)",
         "custom-sidebar-shadow-3xl": "var(--color-sidebar-shadow-3xl)",
+        "custom-sidebar-shadow-4xl": "var(--color-sidebar-shadow-4xl)",
+        "onboarding-shadow-sm": "var(--color-onboarding-shadow-sm)",
       },
       colors: {
         custom: {
@@ -174,7 +177,51 @@ module.exports = {
               DEFAULT: convertToRGB("--color-sidebar-border-200"),
             },
           },
-          backdrop: "#131313",
+          backdrop: "rgba(0, 0, 0, 0.25)",
+        },
+        onboarding: {
+          background: {
+            100: convertToRGB("--color-onboarding-background-100"),
+            200: convertToRGB("--color-onboarding-background-200"),
+            300: convertToRGB("--color-onboarding-background-300"),
+            400: convertToRGB("--color-onboarding-background-400"),
+          },
+          text: {
+            100: convertToRGB("--color-onboarding-text-100"),
+            200: convertToRGB("--color-onboarding-text-200"),
+            300: convertToRGB("--color-onboarding-text-300"),
+            400: convertToRGB("--color-onboarding-text-400"),
+          },
+          border: {
+            100: convertToRGB("--color-onboarding-border-100"),
+            200: convertToRGB("--color-onboarding-border-200"),
+            300: convertToRGB("--color-onboarding-border-300"),
+          },
+        },
+        toast: {
+          text: {
+            success: convertToRGB("--color-toast-success-text"),
+            error: convertToRGB("--color-toast-error-text"),
+            warning: convertToRGB("--color-toast-warning-text"),
+            info: convertToRGB("--color-toast-info-text"),
+            loading: convertToRGB("--color-toast-loading-text"),
+            secondary: convertToRGB("--color-toast-secondary-text"),
+            tertiary: convertToRGB("--color-toast-tertiary-text"),
+          },
+          background: {
+            success: convertToRGB("--color-toast-success-background"),
+            error: convertToRGB("--color-toast-error-background"),
+            warning: convertToRGB("--color-toast-warning-background"),
+            info: convertToRGB("--color-toast-info-background"),
+            loading: convertToRGB("--color-toast-loading-background"),
+          },
+          border: {
+            success: convertToRGB("--color-toast-success-border"),
+            error: convertToRGB("--color-toast-error-border"),
+            warning: convertToRGB("--color-toast-warning-border"),
+            info: convertToRGB("--color-toast-info-border"),
+            loading: convertToRGB("--color-toast-loading-border"),
+          },
         },
       },
       keyframes: {
@@ -191,7 +238,7 @@ module.exports = {
           to: { left: "100%" },
         },
       },
-      typography: ({ theme }) => ({
+      typography: () => ({
         brand: {
           css: {
             "--tw-prose-body": convertToRGB("--color-text-100"),
@@ -204,16 +251,18 @@ module.exports = {
             "--tw-prose-bullets": convertToRGB("--color-text-100"),
             "--tw-prose-hr": convertToRGB("--color-text-100"),
             "--tw-prose-quotes": convertToRGB("--color-text-100"),
-            "--tw-prose-quote-borders": convertToRGB("--color-border"),
+            "--tw-prose-quote-borders": convertToRGB("--color-border-200"),
             "--tw-prose-code": convertToRGB("--color-text-100"),
             "--tw-prose-pre-code": convertToRGB("--color-text-100"),
             "--tw-prose-pre-bg": convertToRGB("--color-background-100"),
-            "--tw-prose-th-borders": convertToRGB("--color-border"),
-            "--tw-prose-td-borders": convertToRGB("--color-border"),
+            "--tw-prose-th-borders": convertToRGB("--color-border-200"),
+            "--tw-prose-td-borders": convertToRGB("--color-border-200"),
           },
         },
       }),
-
+      screens: {
+        "3xl": "1792px",
+      },
       // scale down font sizes to 90% of default
       fontSize: {
         xs: "0.675rem",
@@ -350,6 +399,11 @@ module.exports = {
         72: "16.2rem",
         80: "18rem",
         96: "21.6rem",
+      },
+      backgroundImage: {
+        "onboarding-gradient-100": "var( --gradient-onboarding-100)",
+        "onboarding-gradient-200": "var( --gradient-onboarding-200)",
+        "onboarding-gradient-300": "var( --gradient-onboarding-300)",
       },
     },
     fontFamily: {

@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
+// hooks
+import { Loader } from "@plane/ui";
+import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
+import { useApplication } from "hooks/store";
+import useIntegrationPopup from "hooks/use-integration-popup";
 // services
 import { AppInstallationService } from "services/app_installation.service";
 // ui
-import { Loader } from "@plane/ui";
-// hooks
-import useIntegrationPopup from "hooks/use-integration-popup";
 // types
-import { IWorkspaceIntegration, ISlackIntegration } from "types";
+import { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // fetch-keys
-import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
 
 type Props = {
   integration: IWorkspaceIntegration;
@@ -18,14 +20,24 @@ type Props = {
 
 const appInstallationService = new AppInstallationService();
 
-export const SelectChannel: React.FC<Props> = ({ integration }) => {
+export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
+  // store hooks
+  const {
+    config: { envConfig },
+  } = useApplication();
+  // states
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { startAuth } = useIntegrationPopup("slackChannel", integration.id);
+  const { startAuth } = useIntegrationPopup({
+    provider: "slackChannel",
+    stateParams: integration.id,
+    github_app_name: envConfig?.github_client_id || "",
+    slack_client_id: envConfig?.slack_client_id || "",
+  });
 
   const { data: projectIntegration } = useSWR(
     workspaceSlug && projectId && integration.id
@@ -54,8 +66,9 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
   }, [projectIntegration, projectId]);
 
   const handleDelete = async () => {
+    if (!workspaceSlug || !projectId) return;
     if (projectIntegration.length === 0) return;
-    mutate(SLACK_CHANNEL_INFO, (prevData: any) => {
+    mutate(SLACK_CHANNEL_INFO(workspaceSlug?.toString(), projectId?.toString()), (prevData: any) => {
       if (!prevData) return;
       return prevData.id !== integration.id;
     }).then(() => {
@@ -64,7 +77,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
     });
     appInstallationService
       .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   const handleAuth = async () => {
@@ -76,7 +89,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       {projectIntegration ? (
         <button
           type="button"
-          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-gray-700`}
+          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none`}
           role="switch"
           aria-checked
           onClick={() => {
@@ -85,7 +98,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
         >
           <span
             aria-hidden="true"
-            className={`self-center inline-block h-2 w-2 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+            className={`inline-block h-2 w-2 transform self-center rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
               slackChannelAvailabilityToggle ? "translate-x-3" : "translate-x-0"
             }`}
           />
@@ -97,4 +110,4 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       )}
     </>
   );
-};
+});

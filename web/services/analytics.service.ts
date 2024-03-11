@@ -1,4 +1,5 @@
 // services
+import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 // types
 import {
@@ -7,9 +8,8 @@ import {
   IDefaultAnalyticsResponse,
   IExportAnalyticsFormData,
   ISaveAnalyticsFormData,
-} from "types";
+} from "@plane/types";
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
 
 export class AnalyticsService extends APIService {
   constructor() {

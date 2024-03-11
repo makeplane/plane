@@ -1,7 +1,8 @@
 name: Bug report
 description: Create a bug report to help us improve Plane
 title: "[bug]: "
-labels: [bug, need testing]
+labels: [🐛bug]
+assignees: [srinivaspendem, pushya22]
 body:
 - type: markdown
   attributes:
@@ -44,7 +45,7 @@ body:
       - Deploy preview
   validations:
     required: true
-  type: dropdown
+- type: dropdown
   id: browser
   attributes:
     label: Browser

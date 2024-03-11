@@ -1,49 +1,41 @@
+import { ReactElement } from "react";
 import Head from "next/head";
-import dynamic from "next/dynamic";
-import Router from "next/router";
+import { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
-import NProgress from "nprogress";
 // styles
 import "styles/globals.css";
-import "styles/editor.css";
 import "styles/command-pallette.css";
 import "styles/nprogress.css";
-import "styles/react-datepicker.css";
-// contexts
-import { ToastContextProvider } from "contexts/toast.context";
-// types
-import type { AppProps } from "next/app";
+import "styles/emoji.css";
+import "styles/react-day-picker.css";
 // constants
 import { THEMES } from "constants/themes";
-// constants
 import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
-import { MobxStoreProvider } from "lib/mobx/store-provider";
-import MobxStoreInit from "lib/mobx/store-init";
+import { StoreProvider } from "contexts/store-context";
 
-const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
+import { AppProvider } from "lib/app-provider";
+// types
+import { NextPageWithLayout } from "lib/types";
 
-// nprogress
-NProgress.configure({ showSpinner: false });
-Router.events.on("routeChangeStart", NProgress.start);
-Router.events.on("routeChangeError", NProgress.done);
-Router.events.on("routeChangeComplete", NProgress.done);
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  // Use the layout defined at the page level, if available
+  const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
+
   return (
     <>
       <Head>
         <title>{SITE_TITLE}</title>
       </Head>
-      <MobxStoreProvider {...pageProps}>
+      <StoreProvider {...pageProps}>
         <ThemeProvider themes={THEMES} defaultTheme="system">
-          <ToastContextProvider>
-            <CrispWithNoSSR />
-            <MobxStoreInit />
-            <Component {...pageProps} />
-          </ToastContextProvider>
+          <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
         </ThemeProvider>
-      </MobxStoreProvider>
+      </StoreProvider>
     </>
   );
 }

@@ -1,38 +1,90 @@
 import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // hooks
+import { ArrowRight, PanelRight, Plus } from "lucide-react";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
+import { ProjectAnalyticsModal } from "components/analytics";
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
+import { ModuleMobileHeader } from "components/modules/module-mobile-header";
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserProjectRoles } from "constants/project";
+import { cn } from "helpers/common.helper";
+import { truncateText } from "helpers/string.helper";
+import {
+  useApplication,
+  useEventTracker,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+  useUser,
+  useIssues,
+} from "hooks/store";
+import { useIssuesActions } from "hooks/use-issues-actions";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ProjectAnalyticsModal } from "components/analytics";
 // ui
-import { Breadcrumbs, Button, CustomMenu } from "@plane/ui";
 // icons
-import { ArrowRight, ContrastIcon, Plus } from "lucide-react";
 // helpers
-import { truncateText } from "helpers/string.helper";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { ProjectLogo } from "components/project";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+
+const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getModuleById } = useModule();
+  // derived values
+  const moduleDetail = getModuleById(moduleId);
+
+  if (!moduleDetail) return null;
+
+  return (
+    <CustomMenu.MenuItem key={moduleDetail.id}>
+      <Link
+        href={`/${workspaceSlug}/projects/${projectId}/modules/${moduleDetail.id}`}
+        className="flex items-center gap-1.5"
+      >
+        <DiceIcon className="h-3 w-3" />
+        {truncateText(moduleDetail.name, 40)}
+      </Link>
+    </CustomMenu.MenuItem>
+  );
+};
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
+  // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
-
+  // store hooks
   const {
-    issueFilter: issueFilterStore,
-    module: moduleStore,
-    moduleFilter: moduleFilterStore,
-    project: projectStore,
-  } = useMobxStore();
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+    issuesFilter: { issueFilters },
+  } = useIssues(EIssuesStoreType.MODULE);
+  const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
+  const { projectModuleIds, getModuleById } = useModule();
+  const {
+    commandPalette: { toggleCreateIssueModal },
+  } = useApplication();
+  const { setTrackElement } = useEventTracker();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
+  const { projectLabels } = useLabel();
+  const { projectStates } = useProjectState();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
 
@@ -41,65 +93,55 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     setValue(`${!isSidebarCollapsed}`);
   };
 
+  const activeLayout = issueFilters?.displayFilters?.layout;
+
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          layout,
-        },
-      });
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectId, moduleId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId || !moduleId) return;
-
-      const newValues = moduleFilterStore.moduleFilters?.[key] ?? [];
+      if (!projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (moduleFilterStore.moduleFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
-        [key]: newValues,
-      });
+      updateFilters(projectId.toString(), EIssueFilterType.FILTERS, { [key]: newValues });
     },
-    [moduleId, moduleFilterStore, projectId, workspaceSlug]
+    [projectId, moduleId, issueFilters, updateFilters]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
-      });
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectId, moduleId, updateFilters]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      if (!projectId) return;
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectId, moduleId, updateFilters]
   );
 
-  const modulesList = projectId ? moduleStore.modules[projectId.toString()] : undefined;
-  const moduleDetails = moduleId ? moduleStore.getModuleById(moduleId.toString()) : undefined;
+  // derived values
+  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const canUserCreateIssue =
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -108,94 +150,142 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         moduleDetails={moduleDetails ?? undefined}
       />
-      <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div className="flex items-center gap-2">
-          <Breadcrumbs onBack={() => router.back()}>
-            <Breadcrumbs.BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects/${projectId}/modules`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(
-                      moduleDetails?.project_detail.name ?? "",
-                      32
-                    )} Modules`}</p>
-                  </a>
-                </Link>
-              }
-            />
-          </Breadcrumbs>
-          <CustomMenu
-            label={
+      <div className="relative z-[15] items-center gap-x-2 gap-y-4">
+        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+          <div className="flex items-center gap-2">
+            <SidebarHamburgerToggle />
+            <Breadcrumbs onBack={router.back}>
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={
+                  <span>
+                    <span className="hidden md:block">
+                      <BreadcrumbLink
+                        label={currentProjectDetails?.name ?? "Project"}
+                        href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                        icon={
+                          currentProjectDetails && (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                              <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                            </span>
+                          )
+                        }
+                      />
+                    </span>
+                    <Link
+                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                      className="block md:hidden pl-2 text-custom-text-300"
+                    >
+                      ...
+                    </Link>
+                  </span>
+                }
+              />
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={
+                  <BreadcrumbLink
+                    href={`/${workspaceSlug}/projects/${projectId}/modules`}
+                    label="Modules"
+                    icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />}
+                  />
+                }
+              />
+              <Breadcrumbs.BreadcrumbItem
+                type="component"
+                component={
+                  <CustomMenu
+                    label={
+                      <>
+                        <DiceIcon className="h-3 w-3" />
+                        <div className="w-auto max-w-[70px] sm:max-w-[200px] inline-block truncate line-clamp-1 overflow-hidden whitespace-nowrap">
+                          {moduleDetails?.name && moduleDetails.name}
+                        </div>
+                      </>
+                    }
+                    className="ml-1.5 flex-shrink-0"
+                    placement="bottom-start"
+                  >
+                    {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}
+                  </CustomMenu>
+                }
+              />
+            </Breadcrumbs>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex gap-2">
+              <LayoutSelection
+                layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+                onChange={(layout) => handleLayoutChange(layout)}
+                selectedLayout={activeLayout}
+              />
+              <FiltersDropdown title="Filters" placement="bottom-end">
+                <FilterSelection
+                  filters={issueFilters?.filters ?? {}}
+                  handleFiltersUpdate={handleFiltersUpdate}
+                  layoutDisplayFiltersOptions={
+                    activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                  }
+                  labels={projectLabels}
+                  memberIds={projectMemberIds ?? undefined}
+                  states={projectStates}
+                />
+              </FiltersDropdown>
+              <FiltersDropdown title="Display" placement="bottom-end">
+                <DisplayFiltersSelection
+                  layoutDisplayFiltersOptions={
+                    activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                  }
+                  displayFilters={issueFilters?.displayFilters ?? {}}
+                  handleDisplayFiltersUpdate={handleDisplayFilters}
+                  displayProperties={issueFilters?.displayProperties ?? {}}
+                  handleDisplayPropertiesUpdate={handleDisplayProperties}
+                  ignoreGroupedFilters={["module"]}
+                />
+              </FiltersDropdown>
+            </div>
+
+            {canUserCreateIssue && (
               <>
-                <ContrastIcon className="h-3 w-3" />
-                {moduleDetails?.name && truncateText(moduleDetails.name, 40)}
+                <Button
+                  className="hidden md:block"
+                  onClick={() => setAnalyticsModal(true)}
+                  variant="neutral-primary"
+                  size="sm"
+                >
+                  Analytics
+                </Button>
+                <Button
+                  className="hidden sm:flex"
+                  onClick={() => {
+                    setTrackElement("Module issues page");
+                    toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
+                  }}
+                  size="sm"
+                  prependIcon={<Plus />}
+                >
+                  Add Issue
+                </Button>
               </>
-            }
-            className="ml-1.5 flex-shrink-0"
-            width="auto"
-          >
-            {modulesList?.map((module) => (
-              <CustomMenu.MenuItem
-                key={module.id}
-                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)}
-              >
-                {truncateText(module.name, 40)}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
+            )}
+            <button
+              type="button"
+              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+              onClick={toggleSidebar}
+            >
+              <ArrowRight
+                className={`h-4 w-4 duration-300 hidden md:block ${isSidebarCollapsed ? "-rotate-180" : ""}`}
+              />
+              <PanelRight
+                className={cn(
+                  "w-4 h-4 block md:hidden",
+                  !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200"
+                )}
+              />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <LayoutSelection
-            layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
-            onChange={(layout) => handleLayoutChange(layout)}
-            selectedLayout={activeLayout}
-          />
-          <FiltersDropdown title="Filters">
-            <FilterSelection
-              filters={moduleFilterStore.moduleFilters}
-              handleFiltersUpdate={handleFiltersUpdate}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
-              members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-              states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
-            />
-          </FiltersDropdown>
-          <FiltersDropdown title="Display">
-            <DisplayFiltersSelection
-              displayFilters={issueFilterStore.userDisplayFilters}
-              displayProperties={issueFilterStore.userDisplayProperties}
-              handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-              handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
-            />
-          </FiltersDropdown>
-          <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-            Analytics
-          </Button>
-          <Button
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
-            Add Issue
-          </Button>
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
-            onClick={toggleSidebar}
-          >
-            <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
-          </button>
-        </div>
+        <ModuleMobileHeader />
       </div>
     </>
   );

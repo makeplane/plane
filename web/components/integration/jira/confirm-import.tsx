@@ -4,7 +4,7 @@ import React from "react";
 import { useFormContext } from "react-hook-form";
 
 // types
-import { IJiraImporterForm } from "types";
+import { IJiraImporterForm } from "@plane/types";
 
 export const JiraConfirmImport: React.FC = () => {
   const { watch } = useFormContext<IJiraImporterForm>();
@@ -37,9 +37,7 @@ export const JiraConfirmImport: React.FC = () => {
             <p className="text-sm text-custom-text-200">Labels</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">
-              {watch("data.users").filter((user) => user.import).length}
-            </h4>
+            <h4 className="mb-2 text-lg font-semibold">{watch("data.users").filter((user) => user.import).length}</h4>
             <p className="text-sm text-custom-text-200">User</p>
           </div>
         </div>

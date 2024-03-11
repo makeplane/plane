@@ -2,10 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const RelatedIcon: React.FC<ISvgIcons> = ({
-  className = "text-current",
-  ...rest
-}) => (
+export const RelatedIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
   <svg
     viewBox="0 0 24 24"
     className={`${className} stroke-2`}
@@ -19,11 +16,7 @@ export const RelatedIcon: React.FC<ISvgIcons> = ({
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path
-      d="M12.125 19.25L9 16.125L12.125 13"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M12.125 19.25L9 16.125L12.125 13" strokeLinecap="round" strokeLinejoin="round" />
     <path
       d="M20 22V18.1818C20 17.6032 19.7366 17.0482 19.2678 16.639C18.7989 16.2299 18.163 16 17.5 16H10"
       strokeLinecap="round"

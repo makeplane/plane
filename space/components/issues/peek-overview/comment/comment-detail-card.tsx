@@ -15,7 +15,9 @@ import { timeAgo } from "helpers/date-time.helper";
 import { Comment } from "types/issue";
 // services
 import fileService from "services/file.service";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
+import { RootStore } from "store/root";
 type Props = {
   workspaceSlug: string;
   comment: Comment;
@@ -23,10 +25,15 @@ type Props = {
 
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { comment, workspaceSlug } = props;
+  const { project }: RootStore = useMobxStore();
+  const workspaceId = project.workspace?.id;
+
   // store
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
+
+  const mentionsConfig = useEditorSuggestions();
 
   const editorRef = React.useRef<any>(null);
 
@@ -100,13 +107,15 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 render={({ field: { onChange, value } }) => (
                   <LiteTextEditorWithRef
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                    deleteFile={fileService.deleteImage}
+                    deleteFile={fileService.getDeleteImageFunction(workspaceId as string)}
+                    restoreFile={fileService.getRestoreImageFunction(workspaceId as string)}
                     ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}
                     customClassName="min-h-[50px] p-3 shadow-sm"
-                    onChange={(comment_json: Object, comment_html: string) => {
+                    onChange={(comment_json: unknown, comment_html: string) => {
                       onChange(comment_html);
                     }}
                   />
@@ -135,6 +144,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
               ref={showEditorRef}
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+              mentionHighlights={mentionsConfig.mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
@@ -146,7 +156,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           <Menu.Button
             type="button"
             onClick={() => {}}
-            className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none cursor-pointer hover:bg-custom-background-80"
+            className="relative grid cursor-pointer place-items-center rounded p-1 text-custom-text-200 outline-none hover:bg-custom-background-80 hover:text-custom-text-100"
           >
             <MoreVertical className="h-4 w-4 text-custom-text-200 duration-300" strokeWidth={2} />
           </Menu.Button>
@@ -160,7 +170,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute z-10 overflow-y-scroll whitespace-nowrap rounded-md max-h-36 border right-0 origin-top-right mt-1 overflow-auto min-w-[8rem] border-custom-border-300 p-1 text-xs shadow-lg focus:outline-none bg-custom-background-90">
+            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-lg focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <div className="py-1">

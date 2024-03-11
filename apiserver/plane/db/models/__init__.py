@@ -9,6 +9,8 @@ from .workspace import (
     WorkspaceMemberInvite,
     TeamMember,
     WorkspaceTheme,
+    WorkspaceUserProperties,
+    WorkspaceBaseModel,
 )
 
 from .project import (
@@ -27,12 +29,12 @@ from .issue import (
     IssueActivity,
     IssueProperty,
     IssueComment,
-    IssueBlocker,
     IssueLabel,
     IssueAssignee,
     Label,
     IssueBlocker,
     IssueRelation,
+    IssueMention,
     IssueLink,
     IssueSequence,
     IssueAttachment,
@@ -48,13 +50,20 @@ from .social_connection import SocialLoginConnection
 
 from .state import State
 
-from .cycle import Cycle, CycleIssue, CycleFavorite
+from .cycle import Cycle, CycleIssue, CycleFavorite, CycleUserProperties
 
 from .view import GlobalView, IssueView, IssueViewFavorite
 
-from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
+from .module import (
+    Module,
+    ModuleMember,
+    ModuleIssue,
+    ModuleLink,
+    ModuleFavorite,
+    ModuleUserProperties,
+)
 
-from .api_token import APIToken
+from .api import APIToken, APIActivityLog
 
 from .integration import (
     WorkspaceIntegration,
@@ -68,7 +77,7 @@ from .integration import (
 
 from .importer import Importer
 
-from .page import Page, PageBlock, PageFavorite, PageLabel
+from .page import Page, PageLog, PageFavorite, PageLabel
 
 from .estimate import Estimate, EstimatePoint
 
@@ -76,6 +85,14 @@ from .inbox import Inbox, InboxIssue
 
 from .analytic import AnalyticView
 
-from .notification import Notification
+from .notification import (
+    Notification,
+    UserNotificationPreference,
+    EmailNotificationLog,
+)
 
 from .exporter import ExporterHistory
+
+from .webhook import Webhook, WebhookLog
+
+from .dashboard import Dashboard, DashboardWidget, Widget

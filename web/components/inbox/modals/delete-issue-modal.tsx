@@ -1,34 +1,27 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useToast from "hooks/use-toast";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
+import { useProject } from "hooks/store";
 // types
-import type { IInboxIssue } from "types";
+import type { TIssue } from "@plane/types";
 
 type Props = {
-  data: IInboxIssue;
+  data: TIssue;
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: () => Promise<void>;
 };
 
-export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
+export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, onSubmit, data }) => {
+  // states
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
-
-  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
-
-  const { setToastAlert } = useToast();
+  const { getProjectById } = useProject();
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -36,39 +29,13 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   };
 
   const handleDelete = () => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
-
     setIsDeleting(true);
-
-    inboxIssueDetailsStore
-      .deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue deleted successfully.",
-        });
-
-        // remove inboxIssueId from the url
-        router.push({
-          pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
-        });
-
-        handleClose();
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be deleted. Please try again.",
-        })
-      )
-      .finally(() => setIsDeleting(false));
+    onSubmit().finally(() => setIsDeleting(false));
   };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -78,7 +45,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -92,7 +59,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -106,16 +73,16 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? The issue will only be deleted from the inbox and this action cannot be undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="danger" onClick={handleDelete} loading={isDeleting}>
+                    <Button variant="danger" size="sm" tabIndex={1} onClick={handleDelete} loading={isDeleting}>
                       {isDeleting ? "Deleting..." : "Delete Issue"}
                     </Button>
                   </div>

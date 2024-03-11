@@ -1,29 +1,50 @@
 import { FC, ReactNode } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// ui
+import useSWRImmutable from "swr/immutable";
+// hooks
 import { Spinner } from "@plane/ui";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useUser, useWorkspace } from "hooks/store";
+// ui
 
 export interface IUserAuthWrapper {
   children: ReactNode;
 }
 
-export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
+export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
-  // store
-  const { user: userStore } = useMobxStore();
+  // store hooks
+  const {
+    currentUser,
+    currentUserError,
+    fetchCurrentUser,
+    fetchCurrentUserInstanceAdminStatus,
+    fetchCurrentUserSettings,
+  } = useUser();
+  const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
   // fetching user information
-  const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser());
+  useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+    shouldRetryOnError: false,
+  });
+  // fetching current user instance admin status
+  useSWRImmutable("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
+    shouldRetryOnError: false,
+  });
   // fetching user settings
-  useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings());
+  useSWR("CURRENT_USER_SETTINGS", () => fetchCurrentUserSettings(), {
+    shouldRetryOnError: false,
+  });
+  // fetching all workspaces
+  useSWR("USER_WORKSPACES_LIST", () => fetchWorkspaces(), {
+    shouldRetryOnError: false,
+  });
 
-  if (!currentUser && !error) {
+  if (!currentUser && !currentUserError) {
     return (
-      <div className="h-screen grid place-items-center p-4">
+      <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <Spinner />
         </div>
@@ -31,11 +52,11 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
     );
   }
 
-  if (error) {
+  if (currentUserError) {
     const redirectTo = router.asPath;
-    router.push(`/?next=${redirectTo}`);
+    router.push(`/?next_path=${redirectTo}`);
     return null;
   }
 
   return <>{children}</>;
-};
+});

@@ -1,37 +1,38 @@
-# Third Party imports
+# Third party imports
 from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .user import UserLiteSerializer
-from .project import ProjectSerializer, ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
-from .issue import IssueStateSerializer
-
 from plane.db.models import (
     User,
     Module,
+    ModuleLink,
     ModuleMember,
     ModuleIssue,
-    ModuleLink,
-    ModuleFavorite,
+    ProjectMember,
 )
 
 
-class ModuleWriteSerializer(BaseSerializer):
-    members_list = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+class ModuleSerializer(BaseSerializer):
+    members = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=User.objects.values_list("id", flat=True)
+        ),
         write_only=True,
         required=False,
     )
-
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Module
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
             "created_by",
@@ -40,26 +41,44 @@ class ModuleWriteSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["members"] = [str(member.id) for member in instance.members.all()]
+        return data
+
     def validate(self, data):
-        if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
-            raise serializers.ValidationError("Start date cannot exceed target date")
-        return data    
+        if (
+            data.get("start_date", None) is not None
+            and data.get("target_date", None) is not None
+            and data.get("start_date", None) > data.get("target_date", None)
+        ):
+            raise serializers.ValidationError(
+                "Start date cannot exceed target date"
+            )
+
+        if data.get("members", []):
+            data["members"] = ProjectMember.objects.filter(
+                project_id=self.context.get("project_id"),
+                member_id__in=data["members"],
+            ).values_list("member_id", flat=True)
+
+        return data
 
     def create(self, validated_data):
-        members = validated_data.pop("members_list", None)
+        members = validated_data.pop("members", None)
 
-        project = self.context["project"]
+        project_id = self.context["project_id"]
+        workspace_id = self.context["workspace_id"]
 
-        module = Module.objects.create(**validated_data, project=project)
-
+        module = Module.objects.create(**validated_data, project_id=project_id)
         if members is not None:
             ModuleMember.objects.bulk_create(
                 [
                     ModuleMember(
                         module=module,
-                        member=member,
-                        project=project,
-                        workspace=project.workspace,
+                        member_id=str(member),
+                        project_id=project_id,
+                        workspace_id=workspace_id,
                         created_by=module.created_by,
                         updated_by=module.updated_by,
                     )
@@ -72,7 +91,7 @@ class ModuleWriteSerializer(BaseSerializer):
         return module
 
     def update(self, instance, validated_data):
-        members = validated_data.pop("members_list", None)
+        members = validated_data.pop("members", None)
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -80,7 +99,7 @@ class ModuleWriteSerializer(BaseSerializer):
                 [
                     ModuleMember(
                         module=instance,
-                        member=member,
+                        member_id=str(member),
                         project=instance.project,
                         workspace=instance.project.workspace,
                         created_by=instance.created_by,
@@ -95,23 +114,7 @@ class ModuleWriteSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
-class ModuleFlatSerializer(BaseSerializer):
-    class Meta:
-        model = Module
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
 class ModuleIssueSerializer(BaseSerializer):
-    module_detail = ModuleFlatSerializer(read_only=True, source="module")
-    issue_detail = ProjectLiteSerializer(read_only=True, source="issue")
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -129,8 +132,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
-
     class Meta:
         model = ModuleLink
         fields = "__all__"
@@ -147,7 +148,8 @@ class ModuleLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
+            url=validated_data.get("url"),
+            module_id=validated_data.get("module_id"),
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
@@ -155,40 +157,7 @@ class ModuleLinkSerializer(BaseSerializer):
         return ModuleLink.objects.create(**validated_data)
 
 
-class ModuleSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    lead_detail = UserLiteSerializer(read_only=True, source="lead")
-    members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
-    link_module = ModuleLinkSerializer(read_only=True, many=True)
-    is_favorite = serializers.BooleanField(read_only=True)
-    total_issues = serializers.IntegerField(read_only=True)
-    cancelled_issues = serializers.IntegerField(read_only=True)
-    completed_issues = serializers.IntegerField(read_only=True)
-    started_issues = serializers.IntegerField(read_only=True)
-    unstarted_issues = serializers.IntegerField(read_only=True)
-    backlog_issues = serializers.IntegerField(read_only=True)
-
+class ModuleLiteSerializer(BaseSerializer):
     class Meta:
         model = Module
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class ModuleFavoriteSerializer(BaseSerializer):
-    module_detail = ModuleFlatSerializer(source="module", read_only=True)
-
-    class Meta:
-        model = ModuleFavorite
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "user",
-        ]

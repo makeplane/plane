@@ -1,29 +1,24 @@
-import { useRouter } from "next/router";
+import { FC } from "react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { Loader } from "@plane/ui";
+import { PagesListView } from "components/pages/pages-list";
+// ui
+import { useProjectPages } from "hooks/store/use-project-specific-pages";
 
-import useSWR from "swr";
+export const AllPagesList: FC = observer(() => {
+  const pageStores = useProjectPages();
+  // subscribing to the projectPageStore
+  const { projectPageIds } = pageStores;
 
-// services
-import { PageService } from "services/page.service";
-// components
-import { PagesView } from "components/pages";
-// types
-import { TPagesListProps } from "./types";
-// fetch-keys
-import { ALL_PAGES_LIST } from "constants/fetch-keys";
-
-// services
-const pageService = new PageService();
-
-export const AllPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { data: pages } = useSWR(
-    workspaceSlug && projectId ? ALL_PAGES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => pageService.getPagesWithParams(workspaceSlug as string, projectId as string, "all")
-      : null
-  );
-
-  return <PagesView pages={pages} viewType={viewType} />;
-};
+  if (!projectPageIds) {
+    return (
+      <Loader className="space-y-4">
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+      </Loader>
+    );
+  }
+  return <PagesListView pageIds={projectPageIds} />;
+});

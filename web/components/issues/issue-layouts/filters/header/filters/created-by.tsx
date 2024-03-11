@@ -1,32 +1,48 @@
-import React, { useState } from "react";
-
-// components
+import { useMemo, useState } from "react";
+import { observer } from "mobx-react-lite";
+import sortBy from "lodash/sortBy";
+// hooks
+import { Avatar, Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
+import { useMember } from "hooks/store";
+// components
 // ui
-import { Avatar } from "components/ui";
-import { Loader } from "@plane/ui";
-// types
-import { IUserLite } from "types";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  itemsToRender: number;
-  members: IUserLite[] | undefined;
+  memberIds: string[] | undefined;
   searchQuery: string;
-  viewButtons: React.ReactNode;
 };
 
-export const FilterCreatedBy: React.FC<Props> = (props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, members, searchQuery, viewButtons } = props;
-
+export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
+  const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
+  // states
+  const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
+  // store hooks
+  const { getUserDetails } = useMember();
+
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (memberIds || []).filter((memberId) =>
+      getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return sortBy(filteredOptions, [
+      (memberId) => !(appliedFilters ?? []).includes(memberId),
+      (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = members?.filter((member) =>
-    member.display_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleViewToggle = () => {
+    if (!sortedOptions) return;
+
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
+  };
 
   return (
     <>
@@ -37,22 +53,35 @@ export const FilterCreatedBy: React.FC<Props> = (props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((member) => (
-                  <FilterOption
-                    key={`created-by-${member.id}`}
-                    isChecked={appliedFilters?.includes(member.id) ? true : false}
-                    onClick={() => handleUpdate(member.id)}
-                    icon={<Avatar user={member} height="18px" width="18px" />}
-                    title={member.display_name}
-                  />
-                ))}
-                {viewButtons}
+                {sortedOptions.slice(0, itemsToRender).map((memberId) => {
+                  const member = getUserDetails(memberId);
+
+                  if (!member) return null;
+                  return (
+                    <FilterOption
+                      key={`created-by-${member.id}`}
+                      isChecked={appliedFilters?.includes(member.id) ? true : false}
+                      onClick={() => handleUpdate(member.id)}
+                      icon={<Avatar name={member.display_name} src={member.avatar} size="md" />}
+                      title={member.display_name}
+                    />
+                  );
+                })}
+                {sortedOptions.length > 5 && (
+                  <button
+                    type="button"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    onClick={handleViewToggle}
+                  >
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
+                  </button>
+                )}
               </>
             ) : (
-              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">
@@ -65,4 +94,4 @@ export const FilterCreatedBy: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

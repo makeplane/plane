@@ -1,6 +1,5 @@
 // Generating the date by using the year, month, and day
-export const generateDate = (day: number, month: number, year: number) =>
-  new Date(year, month, day);
+export const generateDate = (day: number, month: number, year: number) => new Date(year, month, day);
 
 // Getting the number of days in a month
 export const getNumberOfDaysInMonth = (month: number, year: number) => {
@@ -20,8 +19,7 @@ export const getWeekNumberByDate = (date: Date) => {
   const firstWeekStart = firstDayOfYear.getTime() - daysOffset * 24 * 60 * 60 * 1000;
   const weekStart = new Date(firstWeekStart);
 
-  const weekNumber =
-    Math.floor((date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
+  const weekNumber = Math.floor((date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
 
   return weekNumber;
 };
@@ -58,8 +56,8 @@ export const getAllDatesInWeekByWeekNumber = (weekNumber: number, year: number) 
   const startDate = new Date(firstDayOfYear.getTime());
   startDate.setDate(startDate.getDate() + 7 * (weekNumber - 1));
 
-  var datesInWeek = [];
-  for (var i = 0; i < 7; i++) {
+  const datesInWeek = [];
+  for (let i = 0; i < 7; i++) {
     const currentDate = new Date(startDate.getTime());
     currentDate.setDate(currentDate.getDate() + i);
     datesInWeek.push(currentDate);
@@ -86,8 +84,7 @@ export const getDatesBetweenTwoDates = (startDate: Date, endDate: Date) => {
     dates.push(new Date(currentYear, currentMonth));
     currentDate.setMonth(currentDate.getMonth() + 1);
   }
-  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth())
-    dates.push(endDate);
+  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth()) dates.push(endDate);
 
   return dates;
 };

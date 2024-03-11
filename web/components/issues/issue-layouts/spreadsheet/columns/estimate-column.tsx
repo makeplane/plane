@@ -1,41 +1,33 @@
 // components
-import { ViewEstimateSelect } from "components/issues";
-// hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { observer } from "mobx-react-lite";
+import { EstimateDropdown } from "components/dropdowns";
 // types
-import { IIssue } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  onChange: (formData: Partial<IIssue>) => void;
-  expandedIssues: string[];
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, expandedIssues, disabled } = props;
-
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+export const SpreadsheetEstimateColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <>
-      <ViewEstimateSelect issue={issue} onChange={(data) => onChange({ estimate_point: data })} disabled={disabled} />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetEstimateColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
-        ))}
-    </>
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <EstimateDropdown
+        value={issue.estimate_point}
+        onChange={(data) =>
+          onChange(issue, { estimate_point: data }, { changed_property: "estimate_point", change_details: data })
+        }
+        projectId={issue.project_id}
+        disabled={disabled}
+        buttonVariant="transparent-with-text"
+        buttonClassName="rounded-none text-left"
+        buttonContainerClassName="w-full"
+        onClose={onClose}
+      />
+    </div>
   );
-};
+});

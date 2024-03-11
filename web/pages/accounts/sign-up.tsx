@@ -1,90 +1,57 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
-import { useRouter } from "next/router";
-// next-themes
-import { useTheme } from "next-themes";
-// services
-import { AuthService } from "services/auth.service";
 // hooks
-import useUserAuth from "hooks/use-user-auth";
-import useToast from "hooks/use-toast";
+import { Spinner } from "@plane/ui";
+import { SignUpRoot } from "components/account";
+import { PageHead } from "components/core";
+import { useApplication, useUser } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
-import { EmailSignUpForm } from "components/account";
-// images
+// ui
+// assets
+import { NextPageWithLayout } from "lib/types";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import type { NextPage } from "next";
-type EmailPasswordFormValues = {
-  email: string;
-  password?: string;
-  medium?: string;
-};
 
-// services
-const authService = new AuthService();
+const SignUpPage: NextPageWithLayout = observer(() => {
+  // store hooks
+  const {
+    config: { envConfig },
+  } = useApplication();
+  const { currentUser } = useUser();
 
-const SignUp: NextPage = () => {
-  const router = useRouter();
-
-  const { setToastAlert } = useToast();
-
-  const { setTheme } = useTheme();
-
-  const { mutateUser } = useUserAuth("sign-in");
-
-  const handleSignUp = async (formData: EmailPasswordFormValues) => {
-    const payload = {
-      email: formData.email,
-      password: formData.password ?? "",
-    };
-
-    await authService
-      .emailSignUp(payload)
-      .then(async (response) => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Account created successfully.",
-        });
-
-        if (response) await mutateUser();
-        router.push("/onboarding");
-      })
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: err?.error || "Something went wrong. Please try again later or contact the support team.",
-        })
-      );
-  };
-
-  useEffect(() => {
-    setTheme("system");
-  }, [setTheme]);
+  if (currentUser || !envConfig)
+    return (
+      <div className="grid h-screen place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
-    <DefaultLayout>
-      <>
-        <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
-        <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
-          <div className="grid place-items-center bg-custom-background-100">
-            <div className="h-[30px] w-[30px]">
-              <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
-            </div>
+    <>
+      <PageHead title="Sign Up" />
+      <div className="h-full w-full bg-onboarding-gradient-100">
+        <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28">
+          <div className="flex items-center gap-x-2 py-10">
+            <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
+            <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
           </div>
         </div>
-      </>
-      <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
-        <div>
-          <h1 className="text-2xl text-center font-">SignUp on Plane</h1>
-          <EmailSignUpForm onSubmit={handleSignUp} />
+
+        <div className="mx-auto h-full rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3">
+          <div className="h-full overflow-auto rounded-t-md bg-onboarding-gradient-200 px-7 pb-56 pt-24 sm:px-0">
+            <SignUpRoot />
+          </div>
         </div>
       </div>
-    </DefaultLayout>
+    </>
   );
+});
+
+SignUpPage.getLayout = function getLayout(page: React.ReactElement) {
+  return <DefaultLayout>{page}</DefaultLayout>;
 };
 
-export default SignUp;
+export default SignUpPage;

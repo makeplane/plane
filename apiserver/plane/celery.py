@@ -24,9 +24,17 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-day-to-delete-file-asset": {
+        "task": "plane.bgtasks.file_asset_task.delete_file_asset",
+        "schedule": crontab(hour=0, minute=0),
+    },
+    "check-every-five-minutes-to-send-email-notifications": {
+        "task": "plane.bgtasks.email_notification_task.stack_email_notification",
+        "schedule": crontab(minute="*/5"),
+    },
 }
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
-app.conf.beat_scheduler = 'django_celery_beat.schedulers.DatabaseScheduler'
+app.conf.beat_scheduler = "django_celery_beat.schedulers.DatabaseScheduler"

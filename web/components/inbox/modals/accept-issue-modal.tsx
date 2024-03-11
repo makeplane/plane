@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-
 // icons
 import { CheckCircle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IInboxIssue } from "types";
+import { useProject } from "hooks/store";
+import type { TIssue } from "@plane/types";
 
 type Props = {
-  data: IInboxIssue;
+  data: TIssue;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -17,6 +17,8 @@ type Props = {
 
 export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSubmit }) => {
   const [isAccepting, setIsAccepting] = useState(false);
+  // hooks
+  const { getProjectById } = useProject();
 
   const handleClose = () => {
     setIsAccepting(false);
@@ -25,7 +27,6 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
 
   const handleAccept = () => {
     setIsAccepting(true);
-
     onSubmit().finally(() => setIsAccepting(false));
   };
 
@@ -41,7 +42,7 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -55,7 +56,7 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-green-500/20 p-4">
@@ -69,16 +70,16 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSub
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to accept issue{" "}
                       <span className="break-all font-medium text-custom-text-100">
-                        {data?.project_detail?.identifier}-{data?.sequence_id}
+                        {getProjectById(data?.project_id)?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? Once accepted, this issue will be added to the project issues list.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleAccept} loading={isAccepting}>
+                    <Button variant="primary" size="sm" tabIndex={1} onClick={handleAccept} loading={isAccepting}>
                       {isAccepting ? "Accepting..." : "Accept Issue"}
                     </Button>
                   </div>

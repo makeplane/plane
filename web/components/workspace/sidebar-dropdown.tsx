@@ -1,248 +1,278 @@
-import { Fragment } from "react";
-import { useRouter } from "next/router";
+import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
-import { Menu, Transition } from "@headlessui/react";
+import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useUser from "hooks/use-user";
-import useToast from "hooks/use-toast";
-// services
-import { UserService } from "services/user.service";
-import { AuthService } from "services/auth.service";
-// components
-import { Avatar } from "components/ui";
-import { Loader } from "@plane/ui";
+import { usePopper } from "react-popper";
+import { mutate } from "swr";
+// ui
+import { Menu, Transition } from "@headlessui/react";
 // icons
-import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+// plane ui
+import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // types
-import { IWorkspace } from "types";
-
+import { IWorkspace } from "@plane/types";
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
-    name: "Workspace Settings",
-    href: `/${workspaceSlug}/settings`,
-  },
-  {
-    name: "Workspace Invites",
+    key: "workspace_invites",
+    name: "Workspace invites",
     href: "/invitations",
+    icon: Mails,
   },
   {
-    name: "My Profile",
+    key: "my_activity",
+    name: "My activity",
     href: `/${workspaceSlug}/profile/${userId}`,
+    icon: CircleUserRound,
+  },
+  {
+    key: "settings",
+    name: "Settings",
+    href: `/${workspaceSlug}/settings`,
+    icon: Settings,
   },
 ];
-
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
-    name: "View profile",
+    name: "My activity",
     icon: UserCircle2,
     link: `/${workspaceSlug}/profile/${userId}`,
   },
   {
     name: "Settings",
     icon: Settings,
-    link: `/${workspaceSlug}/me/profile`,
+    link: "/profile",
   },
 ];
-
-const userService = new UserService();
-const authService = new AuthService();
-
 export const WorkspaceSidebarDropdown = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { theme: themeStore, workspace: workspaceStore } = useMobxStore();
-
-  const { workspaces, currentWorkspace: activeWorkspace } = workspaceStore;
-
-  const { user, mutateUser } = useUser();
-
+  // store hooks
+  const {
+    theme: { sidebarCollapsed, toggleSidebar },
+  } = useApplication();
+  const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
+  const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   const { setTheme } = useTheme();
-
-  const { setToastAlert } = useToast();
-
-  const handleWorkspaceNavigation = (workspace: IWorkspace) => {
-    userService
-      .updateUser({
-        last_workspace_id: workspace?.id,
-      })
-      .then(() => {
-        mutateUser();
-        router.push(`/${workspace.slug}/`);
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Failed to navigate to the workspace. Please try again.",
-        })
-      );
-  };
-
+  // popper-js refs
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // popper-js init
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "right",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
+  const handleWorkspaceNavigation = (workspace: IWorkspace) =>
+    updateCurrentUser({
+      last_workspace_id: workspace?.id,
+    });
   const handleSignOut = async () => {
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
-        mutateUser(undefined);
-        router.push("/");
+        mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
+        router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
       );
   };
-
+  const handleItemClick = () => {
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
+  const workspacesList = Object.values(workspaces ?? {});
+  // TODO: fix workspaces list scroll
   return (
-    <div className="flex items-center gap-2 px-4 pt-4">
-      <Menu as="div" className="relative col-span-4 text-left flex-grow truncate">
-        <Menu.Button className="text-custom-sidebar-text-200 rounded-sm text-sm font-medium focus:outline-none w-full truncate">
-          <div
-            className={`flex items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 truncate ${
-              themeStore.sidebarCollapsed ? "justify-center" : ""
-            }`}
-          >
-            <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white flex-shrink-0">
-              {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                <img
-                  src={activeWorkspace.logo}
-                  className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                  alt="Workspace Logo"
-                />
-              ) : (
-                activeWorkspace?.name?.charAt(0) ?? "..."
-              )}
-            </div>
-
-            {!themeStore.sidebarCollapsed && (
-              <h4 className="text-custom-text-100 truncate">
-                {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
-              </h4>
-            )}
-          </div>
-        </Menu.Button>
-
-        <Transition
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items
-            className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none"
-          >
-            <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
-              {workspaces ? (
-                <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
-                  {workspaces.length > 0 ? (
-                    workspaces.map((workspace: IWorkspace) => (
-                      <Menu.Item key={workspace.id}>
-                        {() => (
-                          <button
-                            type="button"
-                            onClick={() => handleWorkspaceNavigation(workspace)}
-                            className="flex w-full items-center justify-between gap-1 p-1 rounded-md text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
-                          >
-                            <div className="flex items-center justify-start gap-2.5 truncate">
-                              <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white flex-shrink-0">
-                                {workspace?.logo && workspace.logo !== "" ? (
-                                  <img
-                                    src={workspace.logo}
-                                    className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                                    alt="Workspace Logo"
-                                  />
-                                ) : (
-                                  workspace?.name?.charAt(0) ?? "..."
-                                )}
-                              </span>
-
-                              <h5
-                                className={`text-sm truncate ${
-                                  workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
-                                }`}
-                              >
-                                {workspace.name}
-                              </h5>
-                            </div>
-                            {workspace.id === activeWorkspace?.id && (
-                              <span className="p-1 flex-shrink-0">
-                                <Check className="h-3 w-3.5 text-custom-sidebar-text-100" />
-                              </span>
-                            )}
-                          </button>
-                        )}
-                      </Menu.Item>
-                    ))
-                  ) : (
-                    <p>No workspace found!</p>
-                  )}
-                  <Menu.Item
-                    as="button"
-                    type="button"
-                    onClick={() => {
-                      router.push("/create-workspace");
-                    }}
-                    className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Create Workspace
-                  </Menu.Item>
-                </div>
-              ) : (
-                <div className="w-full">
-                  <Loader className="space-y-2">
-                    <Loader.Item height="30px" />
-                    <Loader.Item height="30px" />
-                  </Loader>
-                </div>
-              )}
-            </div>
-            <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-200 px-3 py-2 text-sm">
-              {userLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map((link, index) => (
-                <Menu.Item
-                  key={index}
-                  as="div"
-                  className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                >
-                  <Link href={link.href}>
-                    <a className="w-full">{link.name}</a>
-                  </Link>
-                </Menu.Item>
-              ))}
-            </div>
-            <div className="w-full border-t border-t-custom-sidebar-border-100 px-3 py-2">
-              <Menu.Item
-                as="button"
-                type="button"
-                className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-red-600 hover:bg-custom-sidebar-background-80"
-                onClick={handleSignOut}
+    <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
+      <Menu as="div" className="relative h-full flex-grow truncate text-left">
+        {({ open }) => (
+          <>
+            <Menu.Button className="group/menu-button h-full w-full truncate rounded-md text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none">
+              <div
+                className={`flex items-center  gap-x-2 truncate rounded p-1 ${
+                  sidebarCollapsed ? "justify-center" : "justify-between"
+                }`}
               >
-                Sign out
-              </Menu.Item>
-            </div>
-          </Menu.Items>
-        </Transition>
+                <div className="flex items-center gap-2 truncate">
+                  <div
+                    className={`relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
+                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
+                    }`}
+                  >
+                    {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                      <img
+                        src={activeWorkspace.logo}
+                        className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                        alt="Workspace Logo"
+                      />
+                    ) : (
+                      activeWorkspace?.name?.charAt(0) ?? "..."
+                    )}
+                  </div>
+                  {!sidebarCollapsed && (
+                    <h4 className="truncate text-base font-medium text-custom-text-100">
+                      {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
+                    </h4>
+                  )}
+                </div>
+                {!sidebarCollapsed && (
+                  <ChevronDown
+                    className={`mx-1 hidden h-4 w-4 flex-shrink-0 group-hover/menu-button:block ${
+                      open ? "rotate-180" : ""
+                    } text-custom-sidebar-text-400 duration-300`}
+                  />
+                )}
+              </div>
+            </Menu.Button>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items as={Fragment}>
+                <div className="fixed left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg divide-y divide-custom-border-100 outline-none">
+                  <div className="flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll mb-2 px-4 vertical-scrollbar scrollbar-sm">
+                    <h6 className="sticky top-0 z-10 h-full w-full pt-3 pb-1 text-sm font-medium text-custom-sidebar-text-400 bg-custom-sidebar-background-100">
+                      {currentUser?.email}
+                    </h6>
+                    {workspacesList ? (
+                      <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
+                        {workspacesList.length > 0 &&
+                          workspacesList.map((workspace) => (
+                            <Link
+                              key={workspace.id}
+                              href={`/${workspace.slug}`}
+                              onClick={() => {
+                                handleWorkspaceNavigation(workspace);
+                                handleItemClick();
+                              }}
+                              className="w-full"
+                            >
+                              <Menu.Item
+                                as="div"
+                                className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
+                              >
+                                <div className="flex items-center justify-start gap-2.5 truncate">
+                                  <span
+                                    className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
+                                      !workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                                    }`}
+                                  >
+                                    {workspace?.logo && workspace.logo !== "" ? (
+                                      <img
+                                        src={workspace.logo}
+                                        className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                                        alt="Workspace Logo"
+                                      />
+                                    ) : (
+                                      workspace?.name?.charAt(0) ?? "..."
+                                    )}
+                                  </span>
+                                  <h5
+                                    className={`truncate text-sm font-medium ${
+                                      workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
+                                    }`}
+                                  >
+                                    {workspace.name}
+                                  </h5>
+                                </div>
+                                {workspace.id === activeWorkspace?.id && (
+                                  <span className="flex-shrink-0 p-1">
+                                    <Check className="h-5 w-5 text-custom-sidebar-text-100" />
+                                  </span>
+                                )}
+                              </Menu.Item>
+                            </Link>
+                          ))}
+                      </div>
+                    ) : (
+                      <div className="w-full">
+                        <Loader className="space-y-2">
+                          <Loader.Item height="30px" />
+                          <Loader.Item height="30px" />
+                        </Loader>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
+                    <Link href="/create-workspace" className="w-full">
+                      <Menu.Item
+                        as="div"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 font-medium"
+                      >
+                        <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
+                        Create workspace
+                      </Menu.Item>
+                    </Link>
+                    {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                      <Link
+                        key={link.key}
+                        href={link.href}
+                        className="w-full"
+                        onClick={() => {
+                          if (index > 0) handleItemClick();
+                        }}
+                      >
+                        <Menu.Item
+                          as="div"
+                          className="flex items-center gap-2 rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 font-medium"
+                        >
+                          <link.icon className="h-4 w-4 flex-shrink-0" />
+                          {link.name}
+                        </Menu.Item>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="w-full px-4 py-2">
+                    <Menu.Item
+                      as="button"
+                      type="button"
+                      className="w-full flex items-center gap-2 rounded px-2 py-1 text-sm text-red-600 hover:bg-custom-sidebar-background-80 font-medium"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="h-4 w-4 flex-shrink-0" />
+                      Sign out
+                    </Menu.Item>
+                  </div>
+                </div>
+              </Menu.Items>
+            </Transition>
+          </>
+        )}
       </Menu>
-
-      {!themeStore.sidebarCollapsed && (
+      {!sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="grid place-items-center outline-none">
-            <Avatar user={user} height="28px" width="28px" fontSize="14px" />
+          <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
+            <Avatar
+              name={currentUser?.display_name}
+              src={currentUser?.avatar}
+              size={24}
+              shape="square"
+              className="!text-base"
+            />
           </Menu.Button>
-
           <Transition
             as={Fragment}
             enter="transition ease-out duration-100"
@@ -253,23 +283,32 @@ export const WorkspaceSidebarDropdown = observer(() => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52  origin-top-left rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
+              className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
+          divide-custom-sidebar-border-200 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
             >
               <div className="flex flex-col gap-2.5 pb-2">
-                <span className="px-2 text-custom-sidebar-text-200">{user?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map((link, index) => (
-                  <Menu.Item key={index} as="button" type="button">
-                    <Link href={link.link}>
-                      <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
+                  <Link
+                    key={index}
+                    href={link.link}
+                    onClick={() => {
+                      if (index == 0) handleItemClick();
+                    }}
+                  >
+                    <Menu.Item key={index} as="div">
+                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />
                         {link.name}
-                      </a>
-                    </Link>
-                  </Menu.Item>
+                      </span>
+                    </Menu.Item>
+                  </Link>
                 ))}
               </div>
-              <div className="pt-2">
+              <div className={`pt-2 ${isUserInstanceAdmin ? "pb-2" : ""}`}>
                 <Menu.Item
                   as="button"
                   type="button"
@@ -280,6 +319,17 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   Sign out
                 </Menu.Item>
               </div>
+              {isUserInstanceAdmin && (
+                <div className="p-2 pb-0">
+                  <Link href="/god-mode">
+                    <Menu.Item as="button" type="button" className="w-full">
+                      <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+                        Enter God Mode
+                      </span>
+                    </Menu.Item>
+                  </Link>
+                </div>
+              )}
             </Menu.Items>
           </Transition>
         </Menu>

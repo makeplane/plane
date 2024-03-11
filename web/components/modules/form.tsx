@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // components
-import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
-// ui
-import { DateSelect } from "components/ui";
 import { Button, Input, TextArea } from "@plane/ui";
+import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "components/dropdowns";
+import { ModuleStatusSelect } from "components/modules";
+// ui
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
-import { IModule } from "types";
-import { IssueProjectSelect } from "components/issues/select";
+import { IModule } from "@plane/types";
 
 type Props = {
-  handleFormSubmit: (values: Partial<IModule>) => Promise<void>;
+  handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
   handleClose: () => void;
   status: boolean;
   projectId: string;
@@ -22,37 +23,31 @@ const defaultValues: Partial<IModule> = {
   name: "",
   description: "",
   status: "backlog",
-  lead: null,
-  members_list: [],
+  lead_id: null,
+  member_ids: [],
 };
 
-export const ModuleForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  projectId,
-  setActiveProject,
-  data,
-}) => {
+export const ModuleForm: React.FC<Props> = (props) => {
+  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data } = props;
+  // form info
   const {
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     handleSubmit,
-    watch,
     control,
     reset,
   } = useForm<IModule>({
     defaultValues: {
-      project: projectId,
+      project_id: projectId,
       name: data?.name || "",
       description: data?.description || "",
       status: data?.status || "backlog",
-      lead: data?.lead || null,
-      members_list: data?.members_list || [],
+      lead_id: data?.lead_id || null,
+      member_ids: data?.member_ids || [],
     },
   });
 
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
-    await handleFormSubmit(formData);
+    await handleFormSubmit(formData, dirtyFields);
 
     reset({
       ...defaultValues,
@@ -66,32 +61,29 @@ export const ModuleForm: React.FC<Props> = ({
     });
   }, [data, reset]);
 
-  const startDate = watch("start_date");
-  const targetDate = watch("target_date");
-
-  const minDate = startDate ? new Date(startDate) : null;
-  minDate?.setDate(minDate.getDate());
-
-  const maxDate = targetDate ? new Date(targetDate) : null;
-  maxDate?.setDate(maxDate.getDate());
-
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
       <div className="space-y-5">
         <div className="flex items-center gap-x-3">
-          <Controller
-            control={control}
-            name="project"
-            render={({ field: { value, onChange } }) => (
-              <IssueProjectSelect
-                value={value}
-                onChange={(val: string) => {
-                  onChange(val);
-                  setActiveProject(val);
-                }}
-              />
-            )}
-          />
+          {!status && (
+            <Controller
+              control={control}
+              name="project_id"
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <ProjectDropdown
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
+                    buttonVariant="border-with-text"
+                    tabIndex={10}
+                  />
+                </div>
+              )}
+            />
+          )}
           <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Module</h3>
         </div>
 
@@ -117,7 +109,8 @@ export const ModuleForm: React.FC<Props> = ({
                   ref={ref}
                   hasError={Boolean(errors.name)}
                   placeholder="Module Title"
-                  className="resize-none w-full placeholder:text-sm placeholder:font-medium focus:border-blue-400"
+                  className="w-full resize-none placeholder:text-sm placeholder:font-medium focus:border-blue-400"
+                  tabIndex={1}
                 />
               )}
             />
@@ -135,6 +128,7 @@ export const ModuleForm: React.FC<Props> = ({
                   placeholder="Description..."
                   className="h-24 w-full resize-none text-sm"
                   hasError={Boolean(errors?.description)}
+                  tabIndex={2}
                 />
               )}
             />
@@ -143,57 +137,83 @@ export const ModuleForm: React.FC<Props> = ({
             <Controller
               control={control}
               name="start_date"
-              render={({ field: { value, onChange } }) => (
-                <DateSelect
-                  label="Start date"
-                  value={value}
-                  onChange={(val) => {
-                    onChange(val);
-                  }}
-                  maxDate={maxDate ?? undefined}
+              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                    <DateRangeDropdown
+                      buttonVariant="border-with-text"
+                      className="h-7"
+                      minDate={new Date()}
+                      value={{
+                        from: startDateValue ? new Date(startDateValue) : undefined,
+                        to: endDateValue ? new Date(endDateValue) : undefined,
+                      }}
+                      onSelect={(val) => {
+                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                      }}
+                      placeholder={{
+                        from: "Start date",
+                        to: "End date",
+                      }}
+                      hideIcon={{
+                        to: true,
+                      }}
+                      tabIndex={3}
+                    />
+                  )}
                 />
+              )}
+            />
+            <div className="h-7">
+              <ModuleStatusSelect control={control} error={errors.status} tabIndex={4} />
+            </div>
+            <Controller
+              control={control}
+              name="lead_id"
+              render={({ field: { value, onChange } }) => (
+                <div className="h-7">
+                  <MemberDropdown
+                    value={value}
+                    onChange={onChange}
+                    projectId={projectId}
+                    multiple={false}
+                    buttonVariant="border-with-text"
+                    placeholder="Lead"
+                    tabIndex={5}
+                  />
+                </div>
               )}
             />
             <Controller
               control={control}
-              name="target_date"
+              name="member_ids"
               render={({ field: { value, onChange } }) => (
-                <DateSelect
-                  label="Target date"
-                  value={value}
-                  onChange={(val) => {
-                    onChange(val);
-                  }}
-                  minDate={minDate ?? undefined}
-                />
+                <div className="h-7">
+                  <MemberDropdown
+                    value={value}
+                    onChange={onChange}
+                    projectId={projectId}
+                    multiple
+                    buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
+                    buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
+                    placeholder="Members"
+                    tabIndex={6}
+                  />
+                </div>
               )}
-            />
-            <ModuleStatusSelect control={control} error={errors.status} />
-            <Controller
-              control={control}
-              name="lead"
-              render={({ field: { value, onChange } }) => <ModuleLeadSelect value={value} onChange={onChange} />}
-            />
-            <Controller
-              control={control}
-              name="members"
-              render={({ field: { value, onChange } }) => <ModuleMembersSelect value={value} onChange={onChange} />}
             />
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2 pt-5 mt-5 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" onClick={handleClose}>
+      <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 pt-5">
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={7}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
-          {status
-            ? isSubmitting
-              ? "Updating Module..."
-              : "Update Module"
-            : isSubmitting
-            ? "Creating Module..."
-            : "Create Module"}
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={8}>
+          {status ? (isSubmitting ? "Updating" : "Update module") : isSubmitting ? "Creating" : "Create module"}
         </Button>
       </div>
     </form>

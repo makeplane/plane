@@ -1,268 +1,264 @@
-import React from "react";
+import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
-import { Droppable } from "@hello-pangea/dnd";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
-import { KanbanIssueBlocksList } from "components/issues";
-// types
-import { IIssue } from "types";
 // constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
+// hooks
+import {
+  useCycle,
+  useIssueDetail,
+  useKanbanView,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+} from "hooks/store";
+// types
+import {
+  GroupByColumnTypes,
+  IGroupByColumn,
+  TGroupedIssues,
+  TIssue,
+  IIssueDisplayProperties,
+  IIssueMap,
+  TSubGroupedIssues,
+  TUnGroupedIssues,
+  TIssueKanbanFilters,
+} from "@plane/types";
+// parent components
+import { getGroupByColumns } from "../utils";
+// components
+import { HeaderGroupByCard } from "./headers/group-by-card";
+import { KanbanGroup } from "./kanban-group";
+import { KanbanStoreType } from "./base-kanban-root";
 
 export interface IGroupByKanBan {
-  issues: any;
+  issuesMap: IIssueMap;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id: string;
-  list: any;
-  listKey: string;
   isDragDisabled: boolean;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
-  kanBanToggle: any;
-  handleKanBanToggle: any;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  kanbanFilters: TIssueKanbanFilters;
+  handleKanbanFilters: any;
+  enableQuickIssueCreate?: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    viewId?: string
+  ) => Promise<TIssue | undefined>;
+  viewId?: string;
+  disableIssueCreation?: boolean;
+  storeType: KanbanStoreType;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const {
-    issues,
+    issuesMap,
+    issueIds,
+    displayProperties,
     sub_group_by,
     group_by,
     sub_group_id = "null",
-    list,
-    listKey,
     isDragDisabled,
-    handleIssues,
+    updateIssue,
     quickActions,
-    display_properties,
-    kanBanToggle,
-    handleKanBanToggle,
+    kanbanFilters,
+    handleKanbanFilters,
+    enableQuickIssueCreate,
+    quickAddCallback,
+    viewId,
+    disableIssueCreation,
+    storeType,
+    addIssuesToView,
+    canEditProperties,
+    scrollableContainerRef,
+    isDragStarted,
+    showEmptyGroup = true,
   } = props;
 
-  const verticalAlignPosition = (_list: any) =>
-    kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
+  const member = useMember();
+  const project = useProject();
+  const label = useLabel();
+  const cycle = useCycle();
+  const moduleInfo = useModule();
+  const projectState = useProjectState();
+  const { peekIssue } = useIssueDetail();
+
+  const list = getGroupByColumns(
+    group_by as GroupByColumnTypes,
+    project,
+    cycle,
+    moduleInfo,
+    label,
+    projectState,
+    member
+  );
+
+  if (!list) return null;
+
+  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)?.[_list.id]?.length > 0);
+
+  const groupList = showEmptyGroup ? list : groupWithIssues;
+
+  const visibilityGroupBy = (_list: IGroupByColumn) => {
+    if (sub_group_by) {
+      if (kanbanFilters?.sub_group_by.includes(_list.id)) return true;
+      return false;
+    } else {
+      if (kanbanFilters?.group_by.includes(_list.id)) return true;
+      return false;
+    }
+  };
+
+  const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className="relative w-full h-full flex">
-      {list &&
-        list.length > 0 &&
-        list.map((_list: any) => (
-          <div className={`flex-shrink-0 flex flex-col ${!verticalAlignPosition(_list) ? `w-[340px]` : ``}`}>
-            {sub_group_by === null && (
-              <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky top-0 z-[2]">
-                <KanBanGroupByHeaderRoot
-                  column_id={getValueFromObject(_list, listKey) as string}
-                  column_value={_list}
+    <div className={`relative flex w-full gap-2 ${sub_group_by ? "h-full" : "h-full"}`}>
+      {groupList &&
+        groupList.length > 0 &&
+        groupList.map((_list: IGroupByColumn) => {
+          const groupByVisibilityToggle = visibilityGroupBy(_list);
+
+          return (
+            <div
+              key={_list.id}
+              className={`group relative flex flex-shrink-0 flex-col ${groupByVisibilityToggle ? `` : `w-[350px]`}`}
+            >
+              {sub_group_by === null && (
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                  <HeaderGroupByCard
+                    sub_group_by={sub_group_by}
+                    group_by={group_by}
+                    column_id={_list.id}
+                    icon={_list.icon}
+                    title={_list.name}
+                    count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
+                    issuePayload={_list.payload}
+                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
+                    storeType={storeType}
+                    addIssuesToView={addIssuesToView}
+                    kanbanFilters={kanbanFilters}
+                    handleKanbanFilters={handleKanbanFilters}
+                  />
+                </div>
+              )}
+
+              {!groupByVisibilityToggle && (
+                <KanbanGroup
+                  groupId={_list.id}
+                  issuesMap={issuesMap}
+                  issueIds={issueIds}
+                  peekIssueId={peekIssue?.issueId ?? ""}
+                  displayProperties={displayProperties}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
-                  issues_count={issues?.[getValueFromObject(_list, listKey) as string]?.length || 0}
-                  kanBanToggle={kanBanToggle}
-                  handleKanBanToggle={handleKanBanToggle}
+                  sub_group_id={sub_group_id}
+                  isDragDisabled={isDragDisabled}
+                  updateIssue={updateIssue}
+                  quickActions={quickActions}
+                  enableQuickIssueCreate={enableQuickIssueCreate}
+                  quickAddCallback={quickAddCallback}
+                  viewId={viewId}
+                  disableIssueCreation={disableIssueCreation}
+                  canEditProperties={canEditProperties}
+                  groupByVisibilityToggle={groupByVisibilityToggle}
+                  scrollableContainerRef={scrollableContainerRef}
+                  isDragStarted={isDragStarted}
                 />
-              </div>
-            )}
-
-            <div
-              className={`min-h-[150px] h-full ${
-                verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
-              }`}
-            >
-              <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
-                {(provided: any, snapshot: any) => (
-                  <div
-                    className={`w-full h-full relative transition-all ${
-                      snapshot.isDraggingOver ? `bg-custom-background-80` : ``
-                    }`}
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    {issues ? (
-                      <KanbanIssueBlocksList
-                        sub_group_id={sub_group_id}
-                        columnId={getValueFromObject(_list, listKey) as string}
-                        issues={issues[getValueFromObject(_list, listKey) as string]}
-                        isDragDisabled={isDragDisabled}
-                        handleIssues={handleIssues}
-                        quickActions={quickActions}
-                        display_properties={display_properties}
-                      />
-                    ) : (
-                      isDragDisabled && (
-                        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                          {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
-                        </div>
-                      )
-                    )}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
     </div>
   );
 });
 
 export interface IKanBan {
-  issues: any;
+  issuesMap: IIssueMap;
+  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;
-  handleDragDrop?: (result: any) => void | undefined;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
-  kanBanToggle: any;
-  handleKanBanToggle: any;
-
-  states: any;
-  stateGroups: any;
-  priorities: any;
-  labels: any;
-  members: any;
-  projects: any;
-  estimates: any;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  kanbanFilters: TIssueKanbanFilters;
+  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  showEmptyGroup: boolean;
+  enableQuickIssueCreate?: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    viewId?: string
+  ) => Promise<TIssue | undefined>;
+  viewId?: string;
+  disableIssueCreation?: boolean;
+  storeType: KanbanStoreType;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isDragStarted?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
   const {
-    issues,
+    issuesMap,
+    issueIds,
+    displayProperties,
     sub_group_by,
     group_by,
     sub_group_id = "null",
-    handleIssues,
+    updateIssue,
     quickActions,
-    display_properties,
-    kanBanToggle,
-    handleKanBanToggle,
-    states,
-    stateGroups,
-    priorities,
-    labels,
-    members,
-    projects,
-    estimates,
+    kanbanFilters,
+    handleKanbanFilters,
+    enableQuickIssueCreate,
+    quickAddCallback,
+    viewId,
+    disableIssueCreation,
+    storeType,
+    addIssuesToView,
+    canEditProperties,
+    scrollableContainerRef,
+    isDragStarted,
+    showEmptyGroup,
   } = props;
 
-  const { project: projectStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
+  const issueKanBanView = useKanbanView();
 
   return (
-    <div className="relative w-full h-full">
-      {group_by && group_by === "state" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectStates}
-          listKey={`id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-        />
-      )}
-
-      {group_by && group_by === "state_detail.group" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={ISSUE_STATE_GROUPS}
-          listKey={`key`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-        />
-      )}
-
-      {group_by && group_by === "priority" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={ISSUE_PRIORITIES}
-          listKey={`key`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-        />
-      )}
-
-      {group_by && group_by === "labels" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectLabels}
-          listKey={`id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-        />
-      )}
-
-      {group_by && group_by === "assignees" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-        />
-      )}
-
-      {group_by && group_by === "created_by" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          display_properties={display_properties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-        />
-      )}
-    </div>
+    <GroupByKanBan
+      issuesMap={issuesMap}
+      issueIds={issueIds}
+      displayProperties={displayProperties}
+      group_by={group_by}
+      sub_group_by={sub_group_by}
+      sub_group_id={sub_group_id}
+      isDragDisabled={!issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by)}
+      updateIssue={updateIssue}
+      quickActions={quickActions}
+      kanbanFilters={kanbanFilters}
+      handleKanbanFilters={handleKanbanFilters}
+      enableQuickIssueCreate={enableQuickIssueCreate}
+      quickAddCallback={quickAddCallback}
+      viewId={viewId}
+      disableIssueCreation={disableIssueCreation}
+      storeType={storeType}
+      addIssuesToView={addIssuesToView}
+      canEditProperties={canEditProperties}
+      scrollableContainerRef={scrollableContainerRef}
+      isDragStarted={isDragStarted}
+      showEmptyGroup={showEmptyGroup}
+    />
   );
 });

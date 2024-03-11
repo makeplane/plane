@@ -1,66 +1,27 @@
-import React from "react";
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import useSWR from "swr";
-import { observer } from "mobx-react-lite";
-// contexts
-import { ProfileIssuesContextProvider } from "contexts/profile-issues-context";
+import React, { ReactElement } from "react";
 // layouts
-import { ProfileAuthWrapper } from "layouts/profile-layout";
+import { PageHead } from "components/core";
+import { UserProfileHeader } from "components/headers";
+import { ProfileIssuesPage } from "components/profile/profile-issues";
+import { AppLayout } from "layouts/app-layout";
+import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
-import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/profile-issues-root";
-import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/profile-issues-root";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
-
 // types
+import { NextPageWithLayout } from "lib/types";
 
-const ProfileAssignedIssues: NextPage = observer(() => {
-  const {
-    workspace: workspaceStore,
-    project: projectStore,
-    profileIssueFilters: profileIssueFiltersStore,
-    profileIssues: profileIssuesStore,
-  }: RootStore = useMobxStore();
+const ProfileAssignedIssuesPage: NextPageWithLayout = () => (
+  <>
+    <PageHead title="Profile - Assigned" />
+    <ProfileIssuesPage type="assigned" />
+  </>
+);
 
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query as {
-    workspaceSlug: string;
-    userId: string;
-  };
-
-  useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
-    if (workspaceSlug && userId) {
-      // workspace labels
-      workspaceStore.setWorkspaceSlug(workspaceSlug);
-      await workspaceStore.fetchWorkspaceLabels(workspaceSlug);
-      await projectStore.fetchProjects(workspaceSlug);
-
-      //profile issues
-      await profileIssuesStore.fetchIssues(workspaceSlug, userId, "assigned");
-    }
-  });
-
-  const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
-
+ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <ProfileIssuesContextProvider>
-      <ProfileAuthWrapper>
-        {profileIssuesStore.loader ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="w-full h-full relative overflow-auto -z-1">
-            {activeLayout === "list" ? (
-              <ProfileIssuesListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProfileIssuesKanBanLayout />
-            ) : null}
-          </div>
-        )}
-      </ProfileAuthWrapper>
-    </ProfileIssuesContextProvider>
+    <AppLayout header={<UserProfileHeader type="Assigned" />}>
+      <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
+    </AppLayout>
   );
-});
+};
 
-export default ProfileAssignedIssues;
+export default ProfileAssignedIssuesPage;

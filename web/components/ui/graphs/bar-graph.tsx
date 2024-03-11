@@ -1,11 +1,11 @@
 // nivo
 import { ResponsiveBar, BarSvgProps } from "@nivo/bar";
 // helpers
+import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 import { generateYAxisTickValues } from "helpers/graph.helper";
 // types
 import { TGraph } from "./types";
 // constants
-import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 
 type Props = {
   indexBy: string;
@@ -32,9 +32,7 @@ export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height"
       axisLeft={{
         tickSize: 0,
         tickPadding: 10,
-        tickValues: customYAxisTickValues
-          ? generateYAxisTickValues(customYAxisTickValues)
-          : undefined,
+        tickValues: customYAxisTickValues ? generateYAxisTickValues(customYAxisTickValues) : undefined,
       }}
       axisBottom={{
         tickSize: 0,
@@ -43,7 +41,7 @@ export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height"
       }}
       labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
-      animate={true}
+      animate
       enableLabel={rest.enableLabel ?? false}
       {...rest}
     />

@@ -1,12 +1,12 @@
 import { FC, ReactNode } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// icons
-import { Spinner, PrimaryButton, SecondaryButton } from "components/ui";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Button, Spinner } from "@plane/ui";
+import { useLabel, useMember, useProject, useUser } from "hooks/store";
+// icons
 
 export interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -14,38 +14,44 @@ export interface IWorkspaceAuthWrapper {
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
-  // store
-  const { user: userStore, project: projectStore, workspace: workspaceStore } = useMobxStore();
+  // store hooks
+  const { membership } = useUser();
+  const { fetchProjects } = useProject();
+  const {
+    workspace: { fetchWorkspaceMembers },
+  } = useMember();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // fetching all workspaces
-  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces());
   // fetching user workspace information
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
-    workspaceSlug ? () => userStore.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
+    workspaceSlug ? () => membership.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
-    workspaceSlug ? () => workspaceStore.fetchWorkspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
-  // fetch workspace labels
+  // fetch workspace user projects role
   useSWR(
-    workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
-    workspaceSlug ? () => workspaceStore.fetchWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
+    workspaceSlug ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // while data is being loaded
-  if (!userStore.workspaceMemberInfo && userStore.hasPermissionToWorkspace === null) {
+  if (!membership.currentWorkspaceMemberInfo && membership.hasPermissionToCurrentWorkspace === undefined) {
     return (
-      <div className="grid h-screen place-items-center p-4 bg-custom-background-100">
+      <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <Spinner />
         </div>
@@ -53,7 +59,10 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   }
   // while user does not have access to view that workspace
-  if (userStore.hasPermissionToWorkspace !== null && userStore.hasPermissionToWorkspace === false) {
+  if (
+    membership.hasPermissionToCurrentWorkspace !== undefined &&
+    membership.hasPermissionToCurrentWorkspace === false
+  ) {
     return (
       <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
         <div className="grid h-full place-items-center p-4">
@@ -67,14 +76,18 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             </div>
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
-                <a>
-                  <SecondaryButton>Check pending invites</SecondaryButton>
-                </a>
+                <span>
+                  <Button variant="neutral-primary" size="sm">
+                    Check pending invites
+                  </Button>
+                </span>
               </Link>
               <Link href="/create-workspace">
-                <a>
-                  <PrimaryButton>Create new workspace</PrimaryButton>
-                </a>
+                <span>
+                  <Button variant="primary" size="sm">
+                    Create new workspace
+                  </Button>
+                </span>
               </Link>
             </div>
           </div>

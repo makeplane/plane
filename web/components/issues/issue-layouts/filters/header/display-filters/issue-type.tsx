@@ -4,9 +4,9 @@ import { observer } from "mobx-react-lite";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
-import { TIssueTypeFilters } from "types";
-// constants
 import { ISSUE_FILTER_OPTIONS } from "constants/issue";
+import { TIssueTypeFilters } from "@plane/types";
+// constants
 
 type Props = {
   selectedIssueType: TIssueTypeFilters | undefined;

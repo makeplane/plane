@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 // layouts
+import { Button } from "@plane/ui";
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Button } from "@plane/ui";
 
 export const NotAWorkspaceMember = () => (
   <DefaultLayout>
@@ -18,14 +18,14 @@ export const NotAWorkspaceMember = () => (
         </div>
         <div className="flex items-center justify-center gap-2">
           <Link href="/invitations">
-            <a>
+            <span>
               <Button variant="neutral-primary">Check pending invites</Button>
-            </a>
+            </span>
           </Link>
           <Link href="/create-workspace">
-            <a>
+            <span>
               <Button variant="primary">Create new workspace</Button>
-            </a>
+            </span>
           </Link>
         </div>
       </div>

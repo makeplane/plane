@@ -1,32 +1,28 @@
-import React from "react";
-
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
-
-// hooks
-import useToast from "hooks/use-toast";
-
+import { Menu } from "@headlessui/react";
 // icons
-import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
-
-// helper
-import { stripHTML, replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
-import {
-  formatDateDistance,
-  render12HourFormatTime,
-  renderLongDateFormat,
-  renderShortDate,
-  renderShortDateWithYearFormat,
-} from "helpers/date-time.helper";
-
-// type
-import type { IUserNotification } from "types";
+import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
+// ui
+import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 import { snoozeOptions } from "constants/notification";
+// helper
+import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
+// hooks
+import { useEventTracker } from "hooks/store";
+// type
+import type { IUserNotification, NotificationType } from "@plane/types";
 
 type NotificationCardProps = {
+  selectedTab: NotificationType;
   notification: IUserNotification;
+  isSnoozedTabOpen: boolean;
+  closePopover: () => void;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
   markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
   markNotificationArchivedStatus: (notificationId: string) => Promise<void>;
@@ -36,41 +32,117 @@ type NotificationCardProps = {
 
 export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
+    selectedTab,
     notification,
+    isSnoozedTabOpen,
+    closePopover,
     markNotificationReadStatus,
     markNotificationReadStatusToggle,
     markNotificationArchivedStatus,
     setSelectedNotificationForSnooze,
     markSnoozeNotification,
   } = props;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // states
+  const [showSnoozeOptions, setShowSnoozeOptions] = React.useState(false);
+  // refs
+  const snoozeRef = useRef<HTMLDivElement | null>(null);
 
-  const { setToastAlert } = useToast();
+  const moreOptions = [
+    {
+      id: 1,
+      name: notification.read_at ? "Mark as unread" : "Mark as read",
+      icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
+      onClick: () => {
+        markNotificationReadStatusToggle(notification.id).then(() => {
+          setToast({
+            title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
+            type: TOAST_TYPE.SUCCESS,
+          });
+        });
+      },
+    },
+    {
+      id: 2,
+      name: notification.archived_at ? "Unarchive" : "Archive",
+      icon: notification.archived_at ? (
+        <ArchiveRestore className="h-3.5 w-3.5 text-custom-text-300" />
+      ) : (
+        <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-300" />
+      ),
+      onClick: () => {
+        markNotificationArchivedStatus(notification.id).then(() => {
+          setToast({
+            title: notification.archived_at ? "Notification un-archived" : "Notification archived",
+            type: TOAST_TYPE.SUCCESS,
+          });
+        });
+      },
+    },
+  ];
+
+  const snoozeOptionOnClick = (date: Date | null) => {
+    if (!date) {
+      setSelectedNotificationForSnooze(notification.id);
+      return;
+    }
+    markSnoozeNotification(notification.id, date).then(() => {
+      setToast({
+        title: `Notification snoozed till ${renderFormattedDate(date)}`,
+        type: TOAST_TYPE.SUCCESS,
+      });
+    });
+  };
+
+  // close snooze options on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (snoozeRef.current && !snoozeRef.current?.contains(event.target)) {
+        setShowSnoozeOptions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside, true);
+    document.addEventListener("touchend", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, true);
+      document.removeEventListener("touchend", handleClickOutside, true);
+    };
+  }, []);
+
+  const notificationField = notification.data.issue_activity.field;
+  const notificationTriggeredBy = notification.triggered_by_details;
+
+  if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
 
   return (
-    <div
+    <Link
       onClick={() => {
         markNotificationReadStatus(notification.id);
-        router.push(
-          `/${workspaceSlug}/projects/${notification.project}/${
-            notification.data.issue_activity.field === "archived_at" ? "archived-issues" : "issues"
-          }/${notification.data.issue.id}`
-        );
+        captureEvent(ISSUE_OPENED, {
+          issue_id: notification.data.issue.id,
+          element: "notification",
+        });
+        closePopover();
       }}
-      className={`group w-full flex items-center gap-4 p-3 pl-6 relative cursor-pointer ${
+      href={`/${workspaceSlug}/projects/${notification.project}/${
+        notificationField === "archived_at" ? "archived-issues" : "issues"
+      }/${notification.data.issue.id}`}
+      className={`group relative flex w-full cursor-pointer items-center gap-4 p-3 pl-6 ${
         notification.read_at === null ? "bg-custom-primary-70/5" : "hover:bg-custom-background-200"
       }`}
     >
       {notification.read_at === null && (
-        <span className="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 bg-custom-primary-100 rounded-full" />
+        <span className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-custom-primary-100" />
       )}
-      <div className="relative w-12 h-12 rounded-full">
-        {notification.triggered_by_details.avatar && notification.triggered_by_details.avatar !== "" ? (
+      <div className="relative h-12 w-12 rounded-full">
+        {notificationTriggeredBy.avatar && notificationTriggeredBy.avatar !== "" ? (
           <div className="h-12 w-12 rounded-full">
             <Image
-              src={notification.triggered_by_details.avatar}
+              src={notificationTriggeredBy.avatar}
               alt="Profile Image"
               layout="fill"
               objectFit="cover"
@@ -78,12 +150,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             />
           </div>
         ) : (
-          <div className="w-12 h-12 bg-custom-background-80 rounded-full flex justify-center items-center">
-            <span className="text-custom-text-100 font-medium text-lg">
-              {notification.triggered_by_details.is_bot ? (
-                notification.triggered_by_details.first_name?.[0]?.toUpperCase()
-              ) : notification.triggered_by_details.display_name?.[0] ? (
-                notification.triggered_by_details.display_name?.[0]?.toUpperCase()
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-custom-background-80">
+            <span className="text-lg font-medium text-custom-text-100">
+              {notificationTriggeredBy.is_bot ? (
+                notificationTriggeredBy.first_name?.[0]?.toUpperCase()
+              ) : notificationTriggeredBy.display_name?.[0] ? (
+                notificationTriggeredBy.display_name?.[0]?.toUpperCase()
               ) : (
                 <User2 className="h-4 w-4" />
               )}
@@ -91,70 +163,159 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </div>
         )}
       </div>
-      <div className="space-y-2.5 w-full overflow-hidden">
-        <div className="text-sm w-full break-words">
-          <span className="font-semibold">
-            {notification.triggered_by_details.is_bot
-              ? notification.triggered_by_details.first_name
-              : notification.triggered_by_details.display_name}{" "}
-          </span>
-          {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.verb}{" "}
-          {notification.data.issue_activity.field === "comment"
-            ? "commented"
-            : notification.data.issue_activity.field === "None"
-            ? null
-            : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
-          {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
-            ? "to"
-            : ""}
-          <span className="font-semibold">
-            {" "}
-            {notification.data.issue_activity.field !== "None" ? (
-              notification.data.issue_activity.field !== "comment" ? (
-                notification.data.issue_activity.field === "target_date" ? (
-                  renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
-                ) : notification.data.issue_activity.field === "attachment" ? (
-                  "the issue"
-                ) : stripHTML(notification.data.issue_activity.new_value).length > 55 ? (
-                  stripHTML(notification.data.issue_activity.new_value).slice(0, 50) + "..."
+      <div className="w-full space-y-2.5 overflow-hidden">
+        <div className="flex items-start">
+          {!notification.message ? (
+            <div className="w-full break-words text-sm">
+              <span className="font-semibold">
+                {notificationTriggeredBy.is_bot
+                  ? notificationTriggeredBy.first_name
+                  : notificationTriggeredBy.display_name}{" "}
+              </span>
+              {!["comment", "archived_at"].includes(notificationField) && notification.data.issue_activity.verb}{" "}
+              {notificationField === "comment"
+                ? "commented"
+                : notificationField === "archived_at"
+                  ? notification.data.issue_activity.new_value === "restore"
+                    ? "restored the issue"
+                    : "archived the issue"
+                  : notificationField === "None"
+                    ? null
+                    : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
+              {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
+              <span className="font-semibold">
+                {" "}
+                {notificationField !== "None" ? (
+                  notificationField !== "comment" ? (
+                    notificationField === "target_date" ? (
+                      renderFormattedDate(notification.data.issue_activity.new_value)
+                    ) : notificationField === "attachment" ? (
+                      "the issue"
+                    ) : notificationField === "description" ? (
+                      stripAndTruncateHTML(notification.data.issue_activity.new_value, 55)
+                    ) : notificationField === "archived_at" ? null : (
+                      notification.data.issue_activity.new_value
+                    )
+                  ) : (
+                    <span>
+                      {`"`}
+                      {notification.data.issue_activity.new_value.length > 55
+                        ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
+                        : notification.data.issue_activity.issue_comment}
+                      {`"`}
+                    </span>
+                  )
                 ) : (
-                  stripHTML(notification.data.issue_activity.new_value)
-                )
-              ) : (
-                <span>
-                  {`"`}
-                  {notification.data.issue_activity.new_value.length > 55
-                    ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
-                    : notification.data.issue_activity.issue_comment}
-                  {`"`}
-                </span>
-              )
-            ) : (
-              "the issue and assigned it to you."
+                  "the issue and assigned it to you."
+                )}
+              </span>
+            </div>
+          ) : (
+            <div className="w-full break-words text-sm">
+              <span className="semi-bold">{notification.message}</span>
+            </div>
+          )}
+          <div className="flex items-start md:hidden">
+            <Menu as="div" className={" w-min text-left"}>
+              {({ open }) => (
+                <>
+                  <Menu.Button as={React.Fragment}>
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex w-full items-center gap-x-2 rounded p-0.5 text-sm"
+                    >
+                      <MoreVertical className="h-3.5 w-3.5 text-custom-text-300" />
+                    </button>
+                  </Menu.Button>
+                  {open && (
+                    <Menu.Items className={"absolute right-0 z-10"} static>
+                      <div
+                        className={
+                          "my-1 min-w-[12rem] overflow-y-scroll whitespace-nowrap rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+                        }
+                      >
+                        {moreOptions.map((item) => (
+                          <Menu.Item as="div" key={item.id}>
+                            {({ close }) => (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  item.onClick();
+                                  close();
+                                }}
+                                className="flex items-center gap-x-2 p-1.5"
+                              >
+                                {item.icon}
+                                {item.name}
+                              </button>
+                            )}
+                          </Menu.Item>
+                        ))}
+                        <Menu.Item as="div">
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setShowSnoozeOptions(true);
+                            }}
+                            className="flex items-center gap-x-2 p-1.5"
+                          >
+                            <Clock className="h-3.5 w-3.5 text-custom-text-300" />
+                            Snooze
+                          </div>
+                        </Menu.Item>
+                      </div>
+                    </Menu.Items>
+                  )}
+                </>
+              )}
+            </Menu>
+            {showSnoozeOptions && (
+              <div
+                ref={snoozeRef}
+                className="absolute right-36 top-24 z-20 my-1 min-w-[12rem] overflow-y-scroll whitespace-nowrap rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+              >
+                {snoozeOptions.map((item) => (
+                  <p
+                    key={item.label}
+                    className="p-1.5"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setShowSnoozeOptions(false);
+                      snoozeOptionOnClick(item.value);
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                ))}
+              </div>
             )}
-          </span>
+          </div>
         </div>
 
         <div className="flex justify-between gap-2 text-xs">
-          <p className="text-custom-text-300">
+          <p className="line-clamp-1 text-custom-text-300">
             {truncateText(
               `${notification.data.issue.identifier}-${notification.data.issue.sequence_id} ${notification.data.issue.name}`,
               50
             )}
           </p>
           {notification.snoozed_till ? (
-            <p className="text-custom-text-300 flex items-center justify-end gap-x-1 flex-shrink-0">
+            <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
               <Clock className="h-4 w-4" />
               <span>
-                Till {renderShortDate(notification.snoozed_till)}, {render12HourFormatTime(notification.snoozed_till)}
+                Till {renderFormattedDate(notification.snoozed_till)},{" "}
+                {renderFormattedTime(notification.snoozed_till, "12-hour")}
               </span>
             </p>
           ) : (
-            <p className="text-custom-text-300 flex-shrink-0">{formatDateDistance(notification.created_at)}</p>
+            <p className="mt-auto flex-shrink-0 text-custom-text-300">{calculateTimeAgo(notification.created_at)}</p>
           )}
         </div>
       </div>
-      <div className="absolute py-1 gap-x-3 right-3 top-3 hidden group-hover:flex">
+      <div className="absolute right-3 top-3 hidden gap-x-3 py-1 group-hover:flex">
         {[
           {
             id: 1,
@@ -162,9 +323,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
             onClick: () => {
               markNotificationReadStatusToggle(notification.id).then(() => {
-                setToastAlert({
-                  title: notification.read_at ? "Notification marked as unread" : "Notification marked as read",
-                  type: "success",
+                captureEvent(NOTIFICATIONS_READ, {
+                  issue_id: notification.data.issue.id,
+                  tab: selectedTab,
+                  state: "SUCCESS",
+                });
+                setToast({
+                  title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
@@ -179,37 +345,39 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             ),
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
-                setToastAlert({
+                captureEvent(NOTIFICATION_ARCHIVED, {
+                  issue_id: notification.data.issue.id,
+                  tab: selectedTab,
+                  state: "SUCCESS",
+                });
+                setToast({
                   title: notification.archived_at ? "Notification un-archived" : "Notification archived",
-                  type: "success",
+                  type: TOAST_TYPE.SUCCESS,
                 });
               });
             },
           },
         ].map((item) => (
-          <Tooltip tooltipContent={item.name}>
+          <Tooltip tooltipContent={item.name} key={item.id}>
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 item.onClick();
               }}
               key={item.id}
-              className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded outline-none"
+              className="flex w-full items-center gap-x-2 rounded bg-custom-background-80 p-0.5 text-sm outline-none hover:bg-custom-background-100"
             >
               {item.icon}
             </button>
           </Tooltip>
         ))}
-
         <Tooltip tooltipContent="Snooze">
           <CustomMenu
             className="flex items-center"
-            menuButtonOnClick={(e: { stopPropagation: () => void }) => {
-              e.stopPropagation();
-            }}
             customButton={
-              <div className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded">
+              <div className="flex w-full items-center gap-x-2 rounded bg-custom-background-80 p-0.5 text-sm hover:bg-custom-background-100">
                 <Clock className="h-3.5 w-3.5 text-custom-text-300" />
               </div>
             }
@@ -220,6 +388,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 key={item.label}
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
 
                   if (!item.value) {
                     setSelectedNotificationForSnooze(notification.id);
@@ -227,9 +396,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   }
 
                   markSnoozeNotification(notification.id, item.value).then(() => {
-                    setToastAlert({
-                      title: `Notification snoozed till ${renderLongDateFormat(item.value)}`,
-                      type: "success",
+                    captureEvent(NOTIFICATION_SNOOZED, {
+                      issue_id: notification.data.issue.id,
+                      tab: selectedTab,
+                      state: "SUCCESS",
+                    });
+                    setToast({
+                      title: `Notification snoozed till ${renderFormattedDate(item.value)}`,
+                      type: TOAST_TYPE.SUCCESS,
                     });
                   });
                 }}
@@ -240,6 +414,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </CustomMenu>
         </Tooltip>
       </div>
-    </div>
+    </Link>
   );
 };

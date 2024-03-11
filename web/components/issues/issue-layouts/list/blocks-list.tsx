@@ -1,43 +1,50 @@
-import { FC } from "react";
+import { FC, MutableRefObject } from "react";
 // components
+import RenderIfVisible from "components/core/render-if-visible-HOC";
 import { IssueBlock } from "components/issues";
 // types
-import { IIssue } from "types";
+import { TGroupedIssues, TIssue, IIssueDisplayProperties, TIssueMap, TUnGroupedIssues } from "@plane/types";
 
 interface Props {
-  columnId: string;
-  issues: IIssue[];
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
-  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  priorities: any;
+  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issuesMap: TIssueMap;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  quickActions: (issue: TIssue) => React.ReactNode;
+  displayProperties: IIssueDisplayProperties | undefined;
+  containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issues, handleIssues, quickActions, display_properties, states, labels, members, priorities } =
-    props;
+  const { issueIds, issuesMap, updateIssue, quickActions, displayProperties, canEditProperties, containerRef } = props;
 
   return (
-    <>
-      {issues &&
-        issues?.length > 0 &&
-        issues.map((issue) => (
-          <IssueBlock
-            key={issue.id}
-            columnId={columnId}
-            issue={issue}
-            handleIssues={handleIssues}
-            quickActions={quickActions}
-            display_properties={display_properties}
-            states={states}
-            labels={labels}
-            members={members}
-            priorities={priorities}
-          />
-        ))}
-    </>
+    <div className="relative h-full w-full">
+      {issueIds && issueIds.length > 0 ? (
+        issueIds.map((issueId: string) => {
+          if (!issueId) return null;
+          return (
+            <RenderIfVisible
+              key={`${issueId}`}
+              defaultHeight="3rem"
+              root={containerRef}
+              classNames={"relative border border-transparent border-b-custom-border-200 last:border-b-transparent"}
+              changingReference={issueIds}
+            >
+              <IssueBlock
+                issueId={issueId}
+                issuesMap={issuesMap}
+                updateIssue={updateIssue}
+                quickActions={quickActions}
+                canEditProperties={canEditProperties}
+                displayProperties={displayProperties}
+              />
+            </RenderIfVisible>
+          );
+        })
+      ) : (
+        <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues</div>
+      )}
+    </div>
   );
 };

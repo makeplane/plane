@@ -1,10 +1,10 @@
-import React from "react";
-import { useRouter } from "next/router";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
+// ui
+import { Spinner } from "@plane/ui";
 import {
   ListLayout,
   CalendarLayout,
@@ -12,40 +12,78 @@ import {
   KanBanLayout,
   ProjectAppliedFiltersRoot,
   ProjectSpreadsheetLayout,
+  ProjectEmptyState,
+  IssuePeekOverview,
 } from "components/issues";
+// hooks
+// helpers
+import { ActiveLoader } from "components/ui";
+// constants
+import { EIssuesStoreType } from "constants/issue";
+import { useIssues } from "hooks/store";
 
-export const ProjectLayoutRoot: React.FC = observer(() => {
+export const ProjectLayoutRoot: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+        await issues?.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issues?.groupedIssueIds ? "mutation" : "init-loader"
+        );
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
-      await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
-    }
-  });
+  if (!workspaceSlug || !projectId) return <></>;
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
+    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
+  }
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
-      <div className="w-full h-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ListLayout />
-        ) : activeLayout === "kanban" ? (
-          <KanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <CalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <GanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ProjectSpreadsheetLayout />
-        ) : null}
-      </div>
+
+      {issues?.groupedIssueIds?.length === 0 ? (
+        <ProjectEmptyState />
+      ) : (
+        <Fragment>
+          <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+            {/* mutation loader */}
+            {issues?.loader === "mutation" && (
+              <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+                <Spinner className="w-4 h-4" />
+              </div>
+            )}
+            {activeLayout === "list" ? (
+              <ListLayout />
+            ) : activeLayout === "kanban" ? (
+              <KanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <CalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <GanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectSpreadsheetLayout />
+            ) : null}
+          </div>
+
+          {/* peek overview */}
+          <IssuePeekOverview />
+        </Fragment>
+      )}
     </div>
   );
 });

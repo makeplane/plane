@@ -1,64 +1,46 @@
-import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 // components
+import { EmptyState } from "components/empty-state";
 import { ProjectCard } from "components/project";
-import { EmptyState } from "components/common";
-import { Loader } from "@plane/ui";
-// images
-import emptyProject from "public/empty-state/project.svg";
-// icons
-import { Plus } from "lucide-react";
+import { ProjectsLoader } from "components/ui";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
-export interface IProjectCardList {
-  workspaceSlug: string;
-}
+export const ProjectCardList = observer(() => {
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
 
-export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
-  const { workspaceSlug } = props;
-  // store
-  const { project: projectStore } = useMobxStore();
+  const { workspaceProjectIds, searchedProjects, getProjectById } = useProject();
 
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
-
-  if (!projects) {
-    return (
-      <Loader className="grid grid-cols-3 gap-4">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-      </Loader>
-    );
-  }
+  if (!workspaceProjectIds) return <ProjectsLoader />;
 
   return (
     <>
-      {projects.length > 0 ? (
-        <div className="h-full p-8 overflow-y-auto">
-          <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-            {projectStore.searchedProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
+      {workspaceProjectIds.length > 0 ? (
+        <div className="h-full w-full overflow-y-auto p-8 vertical-scrollbar scrollbar-lg">
+          {searchedProjects.length == 0 ? (
+            <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
+          ) : (
+            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              {searchedProjects.map((projectId) => {
+                const projectDetails = getProjectById(projectId);
+
+                if (!projectDetails) return;
+
+                return <ProjectCard key={projectDetails.id} project={projectDetails} />;
+              })}
+            </div>
+          )}
         </div>
       ) : (
         <EmptyState
-          image={emptyProject}
-          title="No projects yet"
-          description="Get started by creating your first project"
-          primaryButton={{
-            icon: <Plus className="h-4 w-4" />,
-            text: "New Project",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
-            },
+          type={EmptyStateType.WORKSPACE_PROJECTS}
+          primaryButtonOnClick={() => {
+            setTrackElement("Project empty state");
+            commandPaletteStore.toggleCreateProjectModal(true);
           }}
         />
       )}

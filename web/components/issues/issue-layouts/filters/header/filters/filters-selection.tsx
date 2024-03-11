@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
-
-// components
+import { Search, X } from "lucide-react";
+// hooks
 import {
   FilterAssignees,
+  FilterMentions,
   FilterCreatedBy,
   FilterLabels,
   FilterPriority,
@@ -12,156 +13,44 @@ import {
   FilterState,
   FilterStateGroup,
   FilterTargetDate,
+  FilterCycle,
+  FilterModule,
 } from "components/issues";
-// icons
-import { Search, X } from "lucide-react";
-// helpers
-import { getStatesList } from "helpers/state.helper";
+import { ILayoutDisplayFiltersOptions } from "constants/issue";
+import { useApplication } from "hooks/store";
+// components
 // types
-import { IIssueFilterOptions, IIssueLabels, IProject, IStateResponse, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
-import { ILayoutDisplayFiltersOptions, ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
-import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   filters: IIssueFilterOptions;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
-  labels?: IIssueLabels[] | undefined;
-  members?: IUserLite[] | undefined;
-  projects?: IProject[] | undefined;
-  states?: IStateResponse | undefined;
+  labels?: IIssueLabel[] | undefined;
+  memberIds?: string[] | undefined;
+  states?: IState[] | undefined;
 };
-
-type ViewButtonProps = {
-  handleLess: () => void;
-  handleMore: () => void;
-  isViewLessVisible: boolean;
-  isViewMoreVisible: boolean;
-};
-
-const ViewButtons = ({ handleLess, handleMore, isViewLessVisible, isViewMoreVisible }: ViewButtonProps) => (
-  <div className="flex items-center gap-2 ml-7 mt-1">
-    {/* TODO: handle view more and less in a better way */}
-    {isViewMoreVisible && (
-      <button className="text-custom-primary-100 text-xs font-medium" onClick={handleMore}>
-        View more
-      </button>
-    )}
-    {isViewLessVisible && (
-      <button className="text-custom-primary-100 text-xs font-medium" onClick={handleLess}>
-        View less
-      </button>
-    )}
-  </div>
-);
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, members, projects, states } = props;
-
+  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, memberIds, states } = props;
+  // hooks
+  const {
+    router: { moduleId, cycleId },
+  } = useApplication();
+  // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
-
-  const statesList = getStatesList(states);
-
-  const [filtersToRender, setFiltersToRender] = useState<{
-    [key in keyof IIssueFilterOptions]: {
-      currentLength: number;
-      totalLength: number;
-    };
-  }>({
-    assignees: {
-      currentLength: 5,
-      totalLength: members?.length ?? 0,
-    },
-    created_by: {
-      currentLength: 5,
-      totalLength: members?.length ?? 0,
-    },
-    labels: {
-      currentLength: 5,
-      totalLength: labels?.length ?? 0,
-    },
-    priority: {
-      currentLength: 5,
-      totalLength: ISSUE_PRIORITIES.length,
-    },
-    project: {
-      currentLength: 5,
-      totalLength: projects?.length ?? 0,
-    },
-    state_group: {
-      currentLength: 5,
-      totalLength: ISSUE_STATE_GROUPS.length,
-    },
-    state: {
-      currentLength: 5,
-      totalLength: statesList?.length ?? 0,
-    },
-    start_date: {
-      currentLength: 5,
-      totalLength: DATE_FILTER_OPTIONS.length + 1,
-    },
-    target_date: {
-      currentLength: 5,
-      totalLength: DATE_FILTER_OPTIONS.length + 1,
-    },
-  });
-
-  const handleViewMore = (filterName: keyof IIssueFilterOptions) => {
-    const filterDetails = filtersToRender[filterName];
-
-    if (!filterDetails) return;
-
-    if (filterDetails.currentLength <= filterDetails.totalLength)
-      setFiltersToRender((prev) => ({
-        ...prev,
-        [filterName]: {
-          ...prev[filterName],
-          currentLength: filterDetails.currentLength + 5,
-        },
-      }));
-  };
-
-  const handleViewLess = (filterName: keyof IIssueFilterOptions) => {
-    const filterDetails = filtersToRender[filterName];
-
-    if (!filterDetails) return;
-
-    setFiltersToRender((prev) => ({
-      ...prev,
-      [filterName]: {
-        ...prev[filterName],
-        currentLength: 5,
-      },
-    }));
-  };
-
-  const isViewMoreVisible = (filterName: keyof IIssueFilterOptions): boolean => {
-    const filterDetails = filtersToRender[filterName];
-
-    if (!filterDetails) return false;
-
-    return filterDetails.currentLength < filterDetails.totalLength;
-  };
-
-  const isViewLessVisible = (filterName: keyof IIssueFilterOptions): boolean => {
-    const filterDetails = filtersToRender[filterName];
-
-    if (!filterDetails) return false;
-
-    return filterDetails.currentLength > 5;
-  };
 
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="p-2.5 pb-0 bg-custom-background-100">
-        <div className="bg-custom-background-90 border-[0.5px] border-custom-border-200 text-xs rounded flex items-center gap-1.5 px-1.5 py-1">
+    <div className="flex h-full w-full flex-col overflow-hidden">
+      <div className="bg-custom-background-100 p-2.5 pb-0">
+        <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
           <Search className="text-custom-text-400" size={12} strokeWidth={2} />
           <input
             type="text"
-            className="bg-custom-background-90 placeholder:text-custom-text-400 w-full outline-none"
+            className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
@@ -174,23 +63,14 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="w-full h-full divide-y divide-custom-border-200 px-2.5 overflow-y-auto">
+      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">
             <FilterPriority
               appliedFilters={filters.priority ?? null}
               handleUpdate={(val) => handleFiltersUpdate("priority", val)}
-              itemsToRender={filtersToRender.priority?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
-              viewButtons={
-                <ViewButtons
-                  isViewLessVisible={isViewLessVisible("priority")}
-                  isViewMoreVisible={isViewMoreVisible("priority")}
-                  handleLess={() => handleViewLess("priority")}
-                  handleMore={() => handleViewMore("priority")}
-                />
-              }
             />
           </div>
         )}
@@ -201,16 +81,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterStateGroup
               appliedFilters={filters.state_group ?? null}
               handleUpdate={(val) => handleFiltersUpdate("state_group", val)}
-              itemsToRender={filtersToRender.state_group?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
-              viewButtons={
-                <ViewButtons
-                  isViewLessVisible={isViewLessVisible("state_group")}
-                  isViewMoreVisible={isViewMoreVisible("state_group")}
-                  handleLess={() => handleViewLess("state_group")}
-                  handleMore={() => handleViewMore("state_group")}
-                />
-              }
             />
           </div>
         )}
@@ -221,17 +92,8 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterState
               appliedFilters={filters.state ?? null}
               handleUpdate={(val) => handleFiltersUpdate("state", val)}
-              itemsToRender={filtersToRender.state?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
               states={states}
-              viewButtons={
-                <ViewButtons
-                  isViewLessVisible={isViewLessVisible("state")}
-                  isViewMoreVisible={isViewMoreVisible("state")}
-                  handleLess={() => handleViewLess("state")}
-                  handleMore={() => handleViewMore("state")}
-                />
-              }
             />
           </div>
         )}
@@ -242,17 +104,42 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterAssignees
               appliedFilters={filters.assignees ?? null}
               handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
-              itemsToRender={filtersToRender.assignees?.currentLength ?? 0}
-              members={members}
+              memberIds={memberIds}
               searchQuery={filtersSearchQuery}
-              viewButtons={
-                <ViewButtons
-                  isViewLessVisible={isViewLessVisible("assignees")}
-                  isViewMoreVisible={isViewMoreVisible("assignees")}
-                  handleLess={() => handleViewLess("assignees")}
-                  handleMore={() => handleViewMore("assignees")}
-                />
-              }
+            />
+          </div>
+        )}
+
+        {/* cycle */}
+        {isFilterEnabled("cycle") && !cycleId && (
+          <div className="py-2">
+            <FilterCycle
+              appliedFilters={filters.cycle ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("cycle", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
+        {/* module */}
+        {isFilterEnabled("module") && !moduleId && (
+          <div className="py-2">
+            <FilterModule
+              appliedFilters={filters.module ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("module", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
+        {/* assignees */}
+        {isFilterEnabled("mentions") && (
+          <div className="py-2">
+            <FilterMentions
+              appliedFilters={filters.mentions ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("mentions", val)}
+              memberIds={memberIds}
+              searchQuery={filtersSearchQuery}
             />
           </div>
         )}
@@ -263,17 +150,8 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterCreatedBy
               appliedFilters={filters.created_by ?? null}
               handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
-              itemsToRender={filtersToRender.created_by?.currentLength ?? 0}
-              members={members}
+              memberIds={memberIds}
               searchQuery={filtersSearchQuery}
-              viewButtons={
-                <ViewButtons
-                  isViewLessVisible={isViewLessVisible("created_by")}
-                  isViewMoreVisible={isViewMoreVisible("created_by")}
-                  handleLess={() => handleViewLess("created_by")}
-                  handleMore={() => handleViewMore("created_by")}
-                />
-              }
             />
           </div>
         )}
@@ -284,17 +162,8 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterLabels
               appliedFilters={filters.labels ?? null}
               handleUpdate={(val) => handleFiltersUpdate("labels", val)}
-              itemsToRender={filtersToRender.labels?.currentLength ?? 0}
               labels={labels}
               searchQuery={filtersSearchQuery}
-              viewButtons={
-                <ViewButtons
-                  isViewLessVisible={isViewLessVisible("labels")}
-                  isViewMoreVisible={isViewMoreVisible("labels")}
-                  handleLess={() => handleViewLess("labels")}
-                  handleMore={() => handleViewMore("labels")}
-                />
-              }
             />
           </div>
         )}
@@ -304,18 +173,8 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           <div className="py-2">
             <FilterProjects
               appliedFilters={filters.project ?? null}
-              projects={projects}
               handleUpdate={(val) => handleFiltersUpdate("project", val)}
-              itemsToRender={filtersToRender.project?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
-              viewButtons={
-                <ViewButtons
-                  isViewLessVisible={isViewLessVisible("project")}
-                  isViewMoreVisible={isViewMoreVisible("project")}
-                  handleLess={() => handleViewLess("project")}
-                  handleMore={() => handleViewMore("project")}
-                />
-              }
             />
           </div>
         )}
@@ -326,7 +185,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterStartDate
               appliedFilters={filters.start_date ?? null}
               handleUpdate={(val) => handleFiltersUpdate("start_date", val)}
-              itemsToRender={filtersToRender.start_date?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
             />
           </div>
@@ -338,7 +196,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterTargetDate
               appliedFilters={filters.target_date ?? null}
               handleUpdate={(val) => handleFiltersUpdate("target_date", val)}
-              itemsToRender={filtersToRender.target_date?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
             />
           </div>

@@ -1,5 +1,5 @@
 // types
-import { WeekMonthDataType, ChartDataType } from "../types";
+import { WeekMonthDataType, ChartDataType, TGanttViews } from "../types";
 
 // constants
 export const weeks: WeekMonthDataType[] = [
@@ -27,8 +27,7 @@ export const months: WeekMonthDataType[] = [
   { key: 11, shortTitle: "dec", title: "december" },
 ];
 
-export const charCapitalize = (word: string) =>
-  `${word.charAt(0).toUpperCase()}${word.substring(1)}`;
+export const charCapitalize = (word: string) => `${word.charAt(0).toUpperCase()}${word.substring(1)}`;
 
 export const bindZero = (value: number) => (value > 9 ? `${value}` : `0${value}`);
 
@@ -50,13 +49,11 @@ export const datePreview = (date: Date, includeTime: boolean = false) => {
   month = months[month as number] as WeekMonthDataType;
   const year = date.getFullYear();
 
-  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${
-    includeTime ? `, ${timePreview(date)}` : ``
-  }`;
+  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${includeTime ? `, ${timePreview(date)}` : ``}`;
 };
 
 // context data
-export const allViewsWithData: ChartDataType[] = [
+export const VIEWS_LIST: ChartDataType[] = [
   // {
   //   key: "hours",
   //   title: "Hours",
@@ -136,9 +133,5 @@ export const allViewsWithData: ChartDataType[] = [
   // },
 ];
 
-export const currentViewDataWithView = (view: string = "month") => {
-  const currentView: ChartDataType | undefined = allViewsWithData.find(
-    (_viewData) => _viewData.key === view
-  );
-  return currentView;
-};
+export const currentViewDataWithView = (view: TGanttViews = "month") =>
+  VIEWS_LIST.find((_viewData) => _viewData.key === view);

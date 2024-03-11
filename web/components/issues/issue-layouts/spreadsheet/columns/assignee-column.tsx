@@ -1,51 +1,45 @@
 import React from "react";
-
+import { observer } from "mobx-react-lite";
 // components
-import { MembersSelect } from "components/project";
-// hooks
-import useSubIssue from "hooks/use-sub-issue";
+import { MemberDropdown } from "components/dropdowns";
 // types
-import { IIssue, IUserLite } from "types";
+import { TIssue } from "@plane/types";
 
 type Props = {
-  issue: IIssue;
-  members: IUserLite[] | undefined;
-  onChange: (data: Partial<IIssue>) => void;
-  expandedIssues: string[];
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
   disabled: boolean;
 };
 
-export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onChange, expandedIssues, disabled }) => {
-  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
-
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props) => {
+  const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <>
-      <MembersSelect
-        value={issue.assignees}
-        onChange={(data) => onChange({ assignees_list: data })}
-        members={members ?? []}
-        buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
-        hideDropdownArrow
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+      <MemberDropdown
+        value={issue?.assignee_ids ?? []}
+        onChange={(data) => {
+          onChange(
+            issue,
+            { assignee_ids: data },
+            {
+              changed_property: "assignees",
+              change_details: data,
+            }
+          );
+        }}
+        projectId={issue?.project_id}
         disabled={disabled}
         multiple
+        placeholder="Assignees"
+        buttonVariant={
+          issue?.assignee_ids && issue.assignee_ids.length > 0 ? "transparent-without-text" : "transparent-with-text"
+        }
+        buttonClassName="text-left"
+        buttonContainerClassName="w-full"
+        onClose={onClose}
       />
-
-      {isExpanded &&
-        !isLoading &&
-        subIssues &&
-        subIssues.length > 0 &&
-        subIssues.map((subIssue) => (
-          <SpreadsheetAssigneeColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            expandedIssues={expandedIssues}
-            members={members}
-            disabled={disabled}
-          />
-        ))}
-    </>
+    </div>
   );
-};
+});

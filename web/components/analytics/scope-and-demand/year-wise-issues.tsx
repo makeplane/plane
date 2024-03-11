@@ -1,18 +1,18 @@
 // ui
 import { LineGraph, ProfileEmptyState } from "components/ui";
 // image
+import { MONTHS_LIST } from "constants/calendar";
 import emptyGraph from "public/empty-state/empty_graph.svg";
 // types
-import { IDefaultAnalyticsResponse } from "types";
+import { IDefaultAnalyticsResponse } from "@plane/types";
 // constants
-import { MONTHS_LIST } from "constants/calendar";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;
 };
 
 export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="py-3 border border-custom-border-200 rounded-[10px]">
+  <div className="rounded-[10px] border border-custom-border-200 py-3">
     <h1 className="px-3 text-base font-medium">Issues closed in a year</h1>
     {defaultAnalytics.issue_completed_month_wise.length > 0 ? (
       <LineGraph

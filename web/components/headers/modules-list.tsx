@@ -1,86 +1,133 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useLocalStorage from "hooks/use-local-storage";
+import { useRouter } from "next/router";
+// icons
+import { GanttChartSquare, LayoutGrid, List, Plus } from "lucide-react";
 // ui
-import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
-import { Icon } from "components/ui";
-// helper
-import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
-
-const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
-  {
-    type: "gantt_chart",
-    icon: "view_timeline",
-  },
-  {
-    type: "grid",
-    icon: "table_rows",
-  },
-];
+import { Breadcrumbs, Button, Tooltip, DiceIcon, CustomMenu } from "@plane/ui";
+// components
+import { BreadcrumbLink } from "components/common";
+import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+// constants
+import { MODULE_VIEW_LAYOUTS } from "constants/module";
+import { EUserProjectRoles } from "constants/project";
+// hooks
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
+import useLocalStorage from "hooks/use-local-storage";
+import { ProjectLogo } from "components/project";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { project: projectStore } = useMobxStore();
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+  const { workspaceSlug } = router.query;
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { setTrackElement } = useEventTracker();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 
+  const canUserCreateModule =
+    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
   return (
-    <div
-      className={`relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-    >
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p>Projects</p>
-                  </a>
-                </Link>
-              }
-            />
-            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Modules`} />
-          </Breadcrumbs>
+    <div>
+      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+          <SidebarHamburgerToggle />
+          <div>
+            <Breadcrumbs onBack={router.back}>
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={
+                  <BreadcrumbLink
+                    href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+                    label={currentProjectDetails?.name ?? "Project"}
+                    icon={
+                      currentProjectDetails && (
+                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                          <ProjectLogo logo={currentProjectDetails?.logo_props} className="text-sm" />
+                        </span>
+                      )
+                    }
+                  />
+                }
+              />
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={<BreadcrumbLink label="Modules" icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />}
+              />
+            </Breadcrumbs>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="items-center gap-1 rounded bg-custom-background-80 p-1 hidden md:flex">
+            {MODULE_VIEW_LAYOUTS.map((layout) => (
+              <Tooltip key={layout.key} tooltipContent={layout.title}>
+                <button
+                  type="button"
+                  className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
+                    modulesView == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                  }`}
+                  onClick={() => setModulesView(layout.key)}
+                >
+                  <layout.icon
+                    strokeWidth={2}
+                    className={`h-3.5 w-3.5 ${
+                      modulesView == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                    }`}
+                  />
+                </button>
+              </Tooltip>
+            ))}
+          </div>
+          {canUserCreateModule && (
+            <Button
+              variant="primary"
+              size="sm"
+              prependIcon={<Plus />}
+              onClick={() => {
+                setTrackElement("Modules page");
+                commandPaletteStore.toggleCreateModuleModal(true);
+              }}
+            >
+              <div className="hidden sm:block">Add</div> Module
+            </Button>
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        {moduleViewOptions.map((option) => (
-          <Tooltip
-            key={option.type}
-            tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>}
-            position="bottom"
-          >
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-                modulesView === option.type ? "bg-custom-sidebar-background-80" : "text-custom-sidebar-text-200"
-              }`}
-              onClick={() => setModulesView(option.type)}
-            >
-              <Icon iconName={option.icon} className={`!text-base ${option.type === "grid" ? "rotate-90" : ""}`} />
-            </button>
-          </Tooltip>
-        ))}
-        <Button
-          variant="primary"
-          prependIcon={<Plus />}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "m" });
-            document.dispatchEvent(e);
-          }}
+      <div className="flex justify-center md:hidden">
+        <CustomMenu
+          maxHeight={"md"}
+          className="flex flex-grow justify-center text-custom-text-200 text-sm py-2 border-b border-custom-border-200 bg-custom-sidebar-background-100"
+          // placement="bottom-start"
+          customButton={
+            <span className="flex items-center gap-2">
+              {modulesView === "gantt_chart" ? (
+                <GanttChartSquare className="w-3 h-3" />
+              ) : modulesView === "grid" ? (
+                <LayoutGrid className="w-3 h-3" />
+              ) : (
+                <List className="w-3 h-3" />
+              )}
+              <span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>
+            </span>
+          }
+          customButtonClassName="flex flex-grow justify-center items-center text-custom-text-200 text-sm"
+          closeOnSelect
         >
-          Add Module
-        </Button>
+          {MODULE_VIEW_LAYOUTS.map((layout) => (
+            <CustomMenu.MenuItem
+              key={layout.key}
+              onClick={() => setModulesView(layout.key)}
+              className="flex items-center gap-2"
+            >
+              <layout.icon className="w-3 h-3" />
+              <div className="text-custom-text-300">{layout.title}</div>
+            </CustomMenu.MenuItem>
+          ))}
+        </CustomMenu>
       </div>
     </div>
   );

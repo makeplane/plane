@@ -1,18 +1,39 @@
 import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
 // icons
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useCalendarView } from "hooks/store/use-calendar-view";
+import { ICycleIssuesFilter } from "store/issue/cycle";
+import { IModuleIssuesFilter } from "store/issue/module";
+import { IProjectIssuesFilter } from "store/issue/project";
+import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { EIssueFilterType } from "constants/issue";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssueKanbanFilters,
+} from "@plane/types";
 
-export const CalendarHeader: React.FC = observer(() => {
-  const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
+interface ICalendarHeader {
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  updateFilters?: (
+    projectId: string,
+    filterType: EIssueFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  ) => Promise<void>;
+}
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
+  const { issuesFilterStore, updateFilters } = props;
 
-  const { activeMonthDate, activeWeekDate } = calendarStore.calendarFilters;
+  const issueCalendarView = useCalendarView();
+
+  const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
+
+  const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
 
   const handlePrevious = () => {
     if (calendarLayout === "month") {
@@ -22,7 +43,7 @@ export const CalendarHeader: React.FC = observer(() => {
 
       const previousMonthFirstDate = new Date(previousMonthYear, previousMonthMonth, 1);
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeMonthDate: previousMonthFirstDate,
       });
     } else {
@@ -32,7 +53,7 @@ export const CalendarHeader: React.FC = observer(() => {
         activeWeekDate.getDate() - 7
       );
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeWeekDate: previousWeekDate,
       });
     }
@@ -46,7 +67,7 @@ export const CalendarHeader: React.FC = observer(() => {
 
       const nextMonthFirstDate = new Date(nextMonthYear, nextMonthMonth, 1);
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeMonthDate: nextMonthFirstDate,
       });
     } else {
@@ -56,7 +77,7 @@ export const CalendarHeader: React.FC = observer(() => {
         activeWeekDate.getDate() + 7
       );
 
-      calendarStore.updateCalendarFilters({
+      issueCalendarView.updateCalendarFilters({
         activeWeekDate: nextWeekDate,
       });
     }
@@ -66,14 +87,14 @@ export const CalendarHeader: React.FC = observer(() => {
     const today = new Date();
     const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    calendarStore.updateCalendarFilters({
+    issueCalendarView.updateCalendarFilters({
       activeMonthDate: firstDayOfCurrentMonth,
       activeWeekDate: today,
     });
   };
 
   return (
-    <div className="flex items-center justify-between gap-2 px-3 mb-4">
+    <div className="mb-4 flex items-center justify-between gap-2 px-3">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
           <ChevronLeft size={16} strokeWidth={2} />
@@ -81,17 +102,17 @@ export const CalendarHeader: React.FC = observer(() => {
         <button type="button" className="grid place-items-center" onClick={handleNext}>
           <ChevronRight size={16} strokeWidth={2} />
         </button>
-        <CalendarMonthsDropdown />
+        <CalendarMonthsDropdown issuesFilterStore={issuesFilterStore} />
       </div>
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="px-2.5 py-1 text-xs bg-custom-background-80 rounded font-medium text-custom-text-200 hover:text-custom-text-100"
+          className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
           onClick={handleToday}
         >
           Today
         </button>
-        <CalendarOptionsDropdown />
+        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
       </div>
     </div>
   );

@@ -18,13 +18,13 @@ type Props = {
 };
 
 export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyStateMessage, workspaceSlug }) => (
-  <div className="p-3 border border-custom-border-200 rounded-[10px]">
+  <div className="rounded-[10px] border border-custom-border-200 p-3">
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (
       <div className="mt-3 space-y-3">
         {users.map((user) => (
           <a
-            key={user.display_name ?? "None"}
+            key={user?.display_name ?? "None"}
             href={`/${workspaceSlug}/profile/${user.id}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -32,20 +32,20 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
           >
             <div className="flex items-center gap-2">
               {user && user.avatar && user.avatar !== "" ? (
-                <div className="relative rounded-full h-4 w-4 flex-shrink-0">
+                <div className="relative h-4 w-4 flex-shrink-0 rounded-full">
                   <img
                     src={user.avatar}
-                    className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
-                    alt={user.display_name ?? "None"}
+                    className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                    alt={user?.display_name ?? "None"}
                   />
                 </div>
               ) : (
-                <div className="grid place-items-center flex-shrink-0 rounded-full bg-gray-700 text-[11px] capitalize text-white h-4 w-4">
-                  {user.display_name !== "" ? user?.display_name?.[0] : "?"}
+                <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 text-[11px] capitalize text-white">
+                  {user?.display_name !== "" ? user?.display_name?.[0] : "?"}
                 </div>
               )}
               <span className="break-words text-custom-text-200">
-                {user.display_name !== "" ? `${user.display_name}` : "No assignee"}
+                {user?.display_name !== "" ? `${user?.display_name}` : "No assignee"}
               </span>
             </div>
             <span className="flex-shrink-0">{user.count}</span>

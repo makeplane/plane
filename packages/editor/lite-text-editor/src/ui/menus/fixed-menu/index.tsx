@@ -1,28 +1,29 @@
 import { Editor } from "@tiptap/react";
-import { BoldIcon, LucideIcon } from "lucide-react";
 
 import {
   BoldItem,
   BulletListItem,
   cn,
   CodeItem,
+  findTableAncestor,
   ImageItem,
+  isCellSelection,
   ItalicItem,
+  LucideIconType,
   NumberedListItem,
   QuoteItem,
   StrikeThroughItem,
   TableItem,
   UnderLineItem,
+  UploadImage,
 } from "@plane/editor-core";
-import { Icon } from "./icon";
-import { Tooltip } from "../../tooltip";
-import { UploadImage } from "../..";
+import { Tooltip } from "@plane/ui";
 
 export interface BubbleMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIconType;
 }
 
 type EditorBubbleMenuProps = {
@@ -40,148 +41,158 @@ type EditorBubbleMenuProps = {
       | undefined;
   };
   uploadFile: UploadImage;
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved"
-  ) => void;
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
+  submitButton: React.ReactNode;
 };
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {
-  const basicMarkItems: BubbleMenuItem[] = [
+  const basicTextFormattingItems: BubbleMenuItem[] = [
     BoldItem(props.editor),
     ItalicItem(props.editor),
     UnderLineItem(props.editor),
     StrikeThroughItem(props.editor),
   ];
 
-  const listItems: BubbleMenuItem[] = [
-    BulletListItem(props.editor),
-    NumberedListItem(props.editor),
-  ];
+  const listFormattingItems: BubbleMenuItem[] = [BulletListItem(props.editor), NumberedListItem(props.editor)];
 
-  const userActionItems: BubbleMenuItem[] = [
-    QuoteItem(props.editor),
-    CodeItem(props.editor),
-  ];
+  const userActionItems: BubbleMenuItem[] = [QuoteItem(props.editor), CodeItem(props.editor)];
 
-  const complexItems: BubbleMenuItem[] = [
-    TableItem(props.editor),
-    ImageItem(props.editor, props.uploadFile, props.setIsSubmitting),
-  ];
+  function getComplexItems(): BubbleMenuItem[] {
+    const items: BubbleMenuItem[] = [TableItem(props.editor)];
+
+    items.push(ImageItem(props.editor, props.uploadFile, props.setIsSubmitting));
+
+    return items;
+  }
+
+  const complexItems: BubbleMenuItem[] = getComplexItems();
 
   const handleAccessChange = (accessKey: string) => {
     props.commentAccessSpecifier?.onAccessChange(accessKey);
   };
 
   return (
-    <div className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl">
+    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll">
       {props.commentAccessSpecifier && (
-        <div className="flex border border-custom-border-300 mt-0 divide-x divide-custom-border-300 rounded overflow-hidden">
+        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
           {props?.commentAccessSpecifier.commentAccess?.map((access) => (
             <Tooltip key={access.key} tooltipContent={access.label}>
               <button
                 type="button"
                 onClick={() => handleAccessChange(access.key)}
-                className={`grid place-basicMarkItems-center p-1 hover:bg-custom-background-80 ${
-                  props.commentAccessSpecifier?.accessValue === access.key
-                    ? "bg-custom-background-80"
-                    : ""
+                className={`grid aspect-square place-items-center rounded-sm p-1 hover:bg-custom-background-90 ${
+                  props.commentAccessSpecifier?.accessValue === access.key ? "bg-custom-background-90" : ""
                 }`}
               >
                 <access.icon
-                  className={`w-4 h-4 ${
+                  className={`h-3.5 w-3.5 ${
                     props.commentAccessSpecifier?.accessValue === access.key
-                      ? "!text-custom-text-100"
-                      : "!text-custom-text-400"
+                      ? "text-custom-text-100"
+                      : "text-custom-text-400"
                   }`}
+                  strokeWidth={2}
                 />
               </button>
             </Tooltip>
           ))}
         </div>
       )}
-      <div className="flex">
-        {basicMarkItems.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={item.command}
-            className={cn(
-              "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
-              {
-                "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
-            )}
-          >
-            <item.icon
-              className={cn("h-4 w-4", {
-                "text-custom-text-100": item.isActive(),
-              })}
-            />
-          </button>
-        ))}
-      </div>
-      <div className="flex">
-        {listItems.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={item.command}
-            className={cn(
-              "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
-              {
-                "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
-            )}
-          >
-            <item.icon
-              className={cn("h-4 w-4", {
-                "text-custom-text-100": item.isActive(),
-              })}
-            />
-          </button>
-        ))}
-      </div>
-      <div className="flex">
-        {userActionItems.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={item.command}
-            className={cn(
-              "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
-              {
-                "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
-            )}
-          >
-            <item.icon
-              className={cn("h-4 w-4", {
-                "text-custom-text-100": item.isActive(),
-              })}
-            />
-          </button>
-        ))}
-      </div>
-      <div className="flex">
-        {complexItems.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={item.command}
-            className={cn(
-              "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
-              {
-                "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
-            )}
-          >
-            <item.icon
-              className={cn("h-4 w-4", {
-                "text-custom-text-100": item.isActive(),
-              })}
-            />
-          </button>
-        ))}
+      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 p-1">
+        <div className="flex items-stretch">
+          <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 pr-2.5">
+            {basicTextFormattingItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
+                <button
+                  type="button"
+                  onClick={item.command}
+                  className={cn(
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    {
+                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                    }
+                  )}
+                >
+                  <item.icon
+                    className={cn("h-3.5 w-3.5", {
+                      "text-custom-text-100": item.isActive(),
+                    })}
+                    strokeWidth={2.5}
+                  />
+                </button>
+              </Tooltip>
+            ))}
+          </div>
+          <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5">
+            {listFormattingItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
+                <button
+                  type="button"
+                  onClick={item.command}
+                  className={cn(
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    {
+                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                    }
+                  )}
+                >
+                  <item.icon
+                    className={cn("h-3.5 w-3.5", {
+                      "text-custom-text-100": item.isActive(),
+                    })}
+                    strokeWidth={2.5}
+                  />
+                </button>
+              </Tooltip>
+            ))}
+          </div>
+          <div className="flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5">
+            {userActionItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
+                <button
+                  type="button"
+                  onClick={item.command}
+                  className={cn(
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    {
+                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                    }
+                  )}
+                >
+                  <item.icon
+                    className={cn("h-3.5 w-3.5", {
+                      "text-custom-text-100": item.isActive(),
+                    })}
+                    strokeWidth={2.5}
+                  />
+                </button>
+              </Tooltip>
+            ))}
+          </div>
+          <div className="flex items-stretch gap-0.5 pl-2.5">
+            {complexItems.map((item) => (
+              <Tooltip key={item.name} tooltipContent={<span className="capitalize">{item.name}</span>}>
+                <button
+                  type="button"
+                  onClick={item.command}
+                  className={cn(
+                    "grid aspect-square place-items-center rounded-sm p-1 text-custom-text-400 hover:bg-custom-background-80",
+                    {
+                      "bg-custom-background-80 text-custom-text-100": item.isActive(),
+                    }
+                  )}
+                >
+                  <item.icon
+                    className={cn("h-3.5 w-3.5", {
+                      "text-custom-text-100": item.isActive(),
+                    })}
+                    strokeWidth={2.5}
+                  />
+                </button>
+              </Tooltip>
+            ))}
+          </div>
+        </div>
+        <div className="sticky right-1">{props.submitButton}</div>
       </div>
     </div>
   );

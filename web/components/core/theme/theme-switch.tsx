@@ -1,8 +1,8 @@
 import { FC } from "react";
 // constants
+import { CustomSelect } from "@plane/ui";
 import { THEME_OPTIONS, I_THEME_OPTION } from "constants/themes";
 // ui
-import { CustomSelect } from "@plane/ui";
 
 type Props = {
   value: I_THEME_OPTION | null;
@@ -46,7 +46,6 @@ export const ThemeSwitch: FC<Props> = (props) => {
       }
       onChange={onChange}
       input
-      width="w-full"
     >
       {THEME_OPTIONS.map((themeOption) => (
         <CustomSelect.Option key={themeOption.value} value={themeOption}>

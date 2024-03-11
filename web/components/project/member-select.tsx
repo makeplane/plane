@@ -1,18 +1,10 @@
 import React from "react";
-
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
-// services
-import { ProjectService } from "services/project";
-// ui
-import { Avatar } from "components/ui";
-import { CustomSearchSelect } from "@plane/ui";
-// icon
+import { observer } from "mobx-react-lite";
 import { Ban } from "lucide-react";
-// fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// hooks
+import { Avatar, CustomSearchSelect } from "@plane/ui";
+import { useMember } from "hooks/store";
+// ui
 
 type Props = {
   value: any;
@@ -20,45 +12,51 @@ type Props = {
   isDisabled?: boolean;
 };
 
-// services
-const projectService = new ProjectService();
+export const MemberSelect: React.FC<Props> = observer((props) => {
+  const { value, onChange, isDisabled = false } = props;
+  // store hooks
+  const {
+    project: { projectMemberIds, getProjectMemberDetails },
+  } = useMember();
 
-export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = false }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const options = projectMemberIds
+    ?.map((userId) => {
+      const memberDetails = getProjectMemberDetails(userId);
 
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
+      if (!memberDetails?.member) return;
 
-  const options = members?.map((member) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
-
-  const selectedOption = members?.find((m) => m.member.id === value)?.member;
+      return {
+        value: `${memberDetails?.member.id}`,
+        query: `${memberDetails?.member.display_name}`,
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+            {memberDetails?.member.display_name}
+          </div>
+        ),
+      };
+    })
+    .filter((option) => !!option) as
+    | {
+        value: string;
+        query: string;
+        content: React.JSX.Element;
+      }[]
+    | undefined;
+  const selectedOption = getProjectMemberDetails(value);
 
   return (
     <CustomSearchSelect
       value={value}
       label={
-        <div className="flex items-center gap-2">
-          {selectedOption && <Avatar user={selectedOption} />}
+        <div className="flex items-center gap-2 h-5">
+          {selectedOption && <Avatar name={selectedOption.member?.display_name} src={selectedOption.member?.avatar} />}
           {selectedOption ? (
-            selectedOption?.display_name
+            selectedOption.member?.display_name
           ) : (
             <div className="flex items-center gap-2">
-              <Ban className="h-3.5 w-3.5 text-custom-sidebar-text-400 rotate-90" />
-              <span className="text-sm py-0.5 text-custom-sidebar-text-400">None</span>
+              <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
+              <span className="text-sm text-custom-sidebar-text-400">None</span>
             </div>
           )}
         </div>
@@ -73,17 +71,16 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
             query: "none",
             content: (
               <div className="flex items-center gap-2">
-                <Ban className="h-3.5 w-3.5 text-custom-sidebar-text-400 rotate-90" />
-                <span className="text-sm py-0.5 text-custom-sidebar-text-400">None</span>
+                <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
+                <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
               </div>
             ),
           },
         ]
       }
       maxHeight="md"
-      width="w-full"
       onChange={onChange}
       disabled={isDisabled}
     />
   );
-};
+});

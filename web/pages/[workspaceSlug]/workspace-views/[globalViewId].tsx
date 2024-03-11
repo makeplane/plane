@@ -1,40 +1,52 @@
+import { ReactElement } from "react";
+import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-// components
-import { GlobalViewsHeader } from "components/workspace";
-import { GlobalViewLayoutRoot } from "components/issues";
+import { PageHead } from "components/core";
 import { GlobalIssuesHeader } from "components/headers";
+import { AllIssueLayoutRoot } from "components/issues";
+import { GlobalViewsHeader } from "components/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
+import { useGlobalView, useWorkspace } from "hooks/store";
+import { AppLayout } from "layouts/app-layout";
+// hooks
+// components
 // types
-import { NextPage } from "next";
+import { NextPageWithLayout } from "lib/types";
+// constants
 
-const GlobalViewIssues: NextPage = () => {
+const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
-
-  const { globalViews: globalViewsStore } = useMobxStore();
-
-  useSWR(
-    workspaceSlug && globalViewId ? `GLOBAL_VIEW_DETAILS_${globalViewId.toString()}` : null,
-    workspaceSlug && globalViewId
-      ? () => globalViewsStore.fetchGlobalViewDetails(workspaceSlug.toString(), globalViewId.toString())
-      : null
-  );
+  const { globalViewId } = router.query;
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { getViewDetailsById } = useGlobalView();
+  // derived values
+  const globalViewDetails = globalViewId ? getViewDetailsById(globalViewId.toString()) : undefined;
+  const defaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
+  const pageTitle =
+    currentWorkspace?.name && defaultView?.label
+      ? `${currentWorkspace?.name} - ${defaultView?.label}`
+      : currentWorkspace?.name && globalViewDetails?.name
+        ? `${currentWorkspace?.name} - ${globalViewDetails?.name}`
+        : undefined;
 
   return (
-    <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" />}>
+    <>
+      <PageHead title={pageTitle} />
       <div className="h-full overflow-hidden bg-custom-background-100">
-        <div className="h-full w-full flex flex-col border-b border-custom-border-300">
+        <div className="flex h-full w-full flex-col border-b border-custom-border-300">
           <GlobalViewsHeader />
-          <GlobalViewLayoutRoot />
+          <AllIssueLayoutRoot />
         </div>
       </div>
-    </AppLayout>
+    </>
   );
+});
+
+GlobalViewIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" />}>{page}</AppLayout>;
 };
 
-export default GlobalViewIssues;
+export default GlobalViewIssuesPage;

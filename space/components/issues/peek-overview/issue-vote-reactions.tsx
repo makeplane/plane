@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
-import { Tooltip } from "components/ui";
+// ui
+import { Tooltip } from "@plane/ui";
 
 export const IssueVotes: React.FC = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +55,7 @@ export const IssueVotes: React.FC = observer(() => {
   const VOTES_LIMIT = 1000;
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex items-center gap-2">
       {/* upvote button 👇 */}
       <Tooltip
         tooltipContent={
@@ -81,11 +82,11 @@ export const IssueVotes: React.FC = observer(() => {
               handleVote(e, 1);
             });
           }}
-          className={`flex items-center justify-center overflow-hidden px-2 gap-x-1 border rounded focus:outline-none ${
+          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
             isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
           }`}
         >
-          <span className="material-symbols-rounded text-base !p-0 !m-0">arrow_upward_alt</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_upward_alt</span>
           <span className="text-sm font-normal transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
@@ -116,11 +117,11 @@ export const IssueVotes: React.FC = observer(() => {
               handleVote(e, -1);
             });
           }}
-          className={`flex items-center justify-center overflow-hidden px-2 gap-x-1 border rounded focus:outline-none ${
+          className={`flex items-center justify-center gap-x-1 overflow-hidden rounded border px-2 focus:outline-none ${
             isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"
           }`}
         >
-          <span className="material-symbols-rounded text-base !p-0 !m-0">arrow_downward_alt</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>
           <span className="text-sm font-normal transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>

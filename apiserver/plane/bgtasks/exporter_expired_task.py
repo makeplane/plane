@@ -19,9 +19,10 @@ from plane.db.models import ExporterHistory
 def delete_old_s3_link():
     # Get a list of keys and IDs to process
     expired_exporter_history = ExporterHistory.objects.filter(
-        Q(url__isnull=False) & Q(created_at__lte=timezone.now() - timedelta(days=8))
+        Q(url__isnull=False)
+        & Q(created_at__lte=timezone.now() - timedelta(days=8))
     ).values_list("key", "id")
-    if settings.DOCKERIZED and settings.USE_MINIO:
+    if settings.USE_MINIO:
         s3 = boto3.client(
             "s3",
             endpoint_url=settings.AWS_S3_ENDPOINT_URL,
@@ -41,9 +42,13 @@ def delete_old_s3_link():
     for file_name, exporter_id in expired_exporter_history:
         # Delete object from S3
         if file_name:
-            if settings.DOCKERIZED and settings.USE_MINIO:
-                s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name)
+            if settings.USE_MINIO:
+                s3.delete_object(
+                    Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name
+                )
             else:
-                s3.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=file_name)
+                s3.delete_object(
+                    Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name
+                )
 
         ExporterHistory.objects.filter(id=exporter_id).update(url=None)

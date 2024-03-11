@@ -1,32 +1,19 @@
 import React, { useEffect, useState } from "react";
-
-import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// services
-import { ProjectService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
-import useIssuesView from "hooks/use-issues-view";
-import useDebounce from "hooks/use-debounce";
-// ui
-import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// icons
 import { Rocket, Search, X } from "lucide-react";
+// services
+import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+
+import useDebounce from "hooks/use-debounce";
+
+import { ProjectService } from "services/project";
+// ui
 // types
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
-// fetch-keys
-import {
-  CYCLE_DETAILS,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_DETAILS,
-  MODULE_ISSUES_WITH_PARAMS,
-} from "constants/fetch-keys";
+import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
 type Props = {
+  workspaceSlug: string | undefined;
+  projectId: string | undefined;
   isOpen: boolean;
   handleClose: () => void;
   searchParams: Partial<TProjectIssuesSearchParams>;
@@ -36,28 +23,25 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = ({
-  isOpen,
-  handleClose: onClose,
-  searchParams,
-  handleOnSubmit,
-  workspaceLevelToggle = false,
-}) => {
+export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+  const {
+    workspaceSlug,
+    projectId,
+    isOpen,
+    handleClose: onClose,
+    searchParams,
+    handleOnSubmit,
+    workspaceLevelToggle = false,
+  } = props;
+  // states
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<ISearchIssueResponse[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
 
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const { params } = useIssuesView();
 
   const handleClose = () => {
     onClose();
@@ -68,8 +52,8 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 
   const onSubmit = async () => {
     if (selectedIssues.length === 0) {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Please select at least one issue.",
       });
@@ -81,29 +65,11 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
 
-    if (cycleId) {
-      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-      mutate(CYCLE_DETAILS(cycleId as string));
-    }
-
-    if (moduleId) {
-      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-      mutate(MODULE_DETAILS(moduleId as string));
-    }
-
     handleClose();
-
-    setToastAlert({
-      title: "Success",
-      type: "success",
-      message: `Issue${selectedIssues.length > 1 ? "s" : ""} added successfully`,
-    });
   };
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
-
-    setIsSearching(true);
 
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
@@ -128,7 +94,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -141,7 +107,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <Combobox
                   as="div"
                   onChange={(val: ISearchIssueResponse) => {
@@ -152,24 +118,24 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                 >
                   <div className="relative m-1">
                     <Search
-                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 text-sm placeholder:text-custom-text-400"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
 
-                  <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4 text-custom-text-200 text-[0.825rem] p-2">
+                  <div className="flex flex-col-reverse gap-4 p-2 text-[0.825rem] text-custom-text-200 sm:flex-row sm:items-center sm:justify-between">
                     {selectedIssues.length > 0 ? (
-                      <div className="flex items-center gap-2 flex-wrap mt-1">
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 text-xs border border-custom-border-200 bg-custom-background-80 pl-2 py-1 rounded-md text-custom-text-100 whitespace-nowrap"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
                           >
                             {issue.project__identifier}-{issue.sequence_id}
                             <button
@@ -183,14 +149,14 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min text-xs border border-custom-border-200 bg-custom-background-80 p-2 rounded-md whitespace-nowrap">
+                      <div className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
                         No issues selected
                       </div>
                     )}
                     {workspaceLevelToggle && (
                       <Tooltip tooltipContent="Toggle workspace level search">
                         <div
-                          className={`flex-shrink-0 flex items-center gap-1 text-xs cursor-pointer ${
+                          className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
                             isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
                           }`}
                         >
@@ -210,9 +176,12 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                     )}
                   </div>
 
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                  <Combobox.Options
+                    static
+                    className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+                  >
                     {searchTerm !== "" && (
-                      <h5 className="text-[0.825rem] text-custom-text-200 mx-2">
+                      <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}
                         <span className="text-custom-text-100">
                           {'"'}
@@ -252,7 +221,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                               htmlFor={`issue-${issue.id}`}
                               value={issue}
                               className={({ active }) =>
-                                `group flex items-center justify-between gap-2 w-full cursor-pointer select-none rounded-md px-3 py-2 text-custom-text-200 ${
+                                `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
                                   active ? "bg-custom-background-80 text-custom-text-100" : ""
                                 } ${selected ? "text-custom-text-100" : ""}`
                               }
@@ -273,7 +242,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                               <a
                                 href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                                 target="_blank"
-                                className="group-hover:block hidden relative z-1 text-custom-text-200 hover:text-custom-text-100"
+                                className="z-1 relative hidden text-custom-text-200 hover:text-custom-text-100 group-hover:block"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
                               >
@@ -286,16 +255,16 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                     )}
                   </Combobox.Options>
                 </Combobox>
-                {selectedIssues.length > 0 && (
-                  <div className="flex items-center justify-end gap-2 p-3">
-                    <Button variant="neutral-primary" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button variant="primary" onClick={onSubmit} loading={isSubmitting}>
+                <div className="flex items-center justify-end gap-2 p-3">
+                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  {selectedIssues.length > 0 && (
+                    <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
                       {isSubmitting ? "Adding..." : "Add selected issues"}
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

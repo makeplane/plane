@@ -1,52 +1,44 @@
 import React, { useEffect } from "react";
-
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
-import { useForm, Controller } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
-// headless ui
+import { useForm, Controller } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
-// services
-import { ProjectStateService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
-// types
-import type { IUser, IState, IStateResponse } from "types";
-// fetch-keys
-import { STATES_LIST } from "constants/fetch-keys";
+import { Button, CustomSelect, Input, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+import { STATE_CREATED, STATE_UPDATED } from "constants/event-tracker";
 import { GROUP_CHOICES } from "constants/project";
+// hooks
+import { useEventTracker, useProjectState } from "hooks/store";
+// types
+import type { IState } from "@plane/types";
 
 type Props = {
   data: IState | null;
   onClose: () => void;
-  selectedGroup: StateGroup | null;
-  user: IUser | undefined;
   groupLength: number;
+  selectedGroup: StateGroup | null;
 };
 
 export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled" | null;
 
 const defaultValues: Partial<IState> = {
   name: "",
+  description: "",
   color: "rgb(var(--color-text-200))",
   group: "backlog",
 };
 
-const projectStateService = new ProjectStateService();
-
-export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, selectedGroup, user, groupLength }) => {
+export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
+  const { data, onClose, selectedGroup, groupLength } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { setToastAlert } = useToast();
-
+  // store hooks
+  const { captureProjectStateEvent, setTrackElement } = useEventTracker();
+  const { createState, updateState } = useProjectState();
+  // form info
   const {
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -57,15 +49,19 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
     defaultValues,
   });
 
+  /**
+   * @description pre-populate form with data if data is present
+   */
   useEffect(() => {
     if (!data) return;
-
     reset(data);
   }, [data, reset]);
 
+  /**
+   * @description pre-populate form with default values if data is not present
+   */
   useEffect(() => {
     if (data) return;
-
     reset({
       ...defaultValues,
       group: selectedGroup ?? "backlog",
@@ -77,93 +73,104 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
     reset({ name: "", color: "#000000", group: "backlog" });
   };
 
-  const onSubmit = async (formData: IState) => {
+  const handleCreate = async (formData: IState) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    const payload: IState = {
-      ...formData,
-    };
-
-    if (!data) {
-      await projectStateService
-        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload }, user)
-        .then((res) => {
-          mutate<IStateResponse>(
-            STATES_LIST(projectId.toString()),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              return {
-                ...prevData,
-                [res.group]: [...prevData[res.group], res],
-              };
-            },
-            false
-          );
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "State created successfully.",
-          });
-        })
-        .catch((err) => {
-          if (err.status === 400)
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message: "State with that name already exists. Please try again with another name.",
-            });
-          else
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message: "State could not be created. Please try again.",
-            });
+    await createState(workspaceSlug.toString(), projectId.toString(), formData)
+      .then((res) => {
+        handleClose();
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "State created successfully.",
         });
-    } else {
-      await projectStateService
-        .updateState(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          data.id,
-          {
-            ...payload,
+        captureProjectStateEvent({
+          eventName: STATE_CREATED,
+          payload: {
+            ...res,
+            state: "SUCCESS",
+            element: "Project settings states page",
           },
-          user
-        )
-        .then(() => {
-          mutate(STATES_LIST(projectId.toString()));
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "State updated successfully.",
-          });
-        })
-        .catch((err) => {
-          if (err.status === 400)
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message: "Another state exists with the same name. Please try again with another name.",
-            });
-          else
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message: "State could not be updated. Please try again.",
-            });
         });
-    }
+      })
+      .catch((error) => {
+        if (error.status === 400)
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "State with that name already exists. Please try again with another name.",
+          });
+        else
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "State could not be created. Please try again.",
+          });
+
+        captureProjectStateEvent({
+          eventName: STATE_CREATED,
+          payload: {
+            ...formData,
+            state: "FAILED",
+            element: "Project settings states page",
+          },
+        });
+      });
+  };
+
+  const handleUpdate = async (formData: IState) => {
+    if (!workspaceSlug || !projectId || !data || isSubmitting) return;
+
+    await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
+      .then((res) => {
+        handleClose();
+        captureProjectStateEvent({
+          eventName: STATE_UPDATED,
+          payload: {
+            ...res,
+            state: "SUCCESS",
+            element: "Project settings states page",
+          },
+        });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "State updated successfully.",
+        });
+      })
+      .catch((error) => {
+        if (error.status === 400)
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Another state exists with the same name. Please try again with another name.",
+          });
+        else
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "State could not be updated. Please try again.",
+          });
+        captureProjectStateEvent({
+          eventName: STATE_UPDATED,
+          payload: {
+            ...formData,
+            state: "FAILED",
+            element: "Project settings states page",
+          },
+        });
+      });
+  };
+
+  const onSubmit = async (formData: IState) => {
+    if (data) await handleUpdate(formData);
+    else await handleCreate(formData);
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 p-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 py-5"
     >
       <div className="flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center">
@@ -193,7 +200,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
+                <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                   <Controller
                     name="color"
                     control={control}
@@ -273,12 +280,20 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           />
         )}
       />
-      <Button variant="neutral-primary" onClick={handleClose}>
+      <Button variant="neutral-primary" onClick={handleClose} size="sm">
         Cancel
       </Button>
-      <Button variant="primary" type="submit" loading={isSubmitting}>
-        {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
+      <Button
+        variant="primary"
+        type="submit"
+        loading={isSubmitting}
+        onClick={() => {
+          setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+        }}
+        size="sm"
+      >
+        {data ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
       </Button>
     </form>
   );
-};
+});

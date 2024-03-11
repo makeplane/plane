@@ -1,29 +1,25 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
-import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
+import { Controller, useForm } from "react-hook-form";
 import { Dialog, Popover, Transition } from "@headlessui/react";
-// services
-import { ProjectStateService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // icons
 import { ChevronDown } from "lucide-react";
-// types
-import type { IUser, IState, IStateResponse } from "types";
-// fetch keys
-import { STATES_LIST } from "constants/fetch-keys";
+// ui
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+// hooks
+import { useProjectState } from "hooks/store";
+// types
+import type { IState } from "@plane/types";
+
 // types
 type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -33,14 +29,14 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-const projectStateService = new ProjectStateService();
-
-export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
+export const CreateStateModal: React.FC<Props> = observer((props) => {
+  const { isOpen, projectId, handleClose } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
-
+  // store hooks
+  const { createState } = useProjectState();
+  // form info
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -63,36 +59,31 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
       ...formData,
     };
 
-    await projectStateService
-      .createState(workspaceSlug as string, projectId, payload, user)
-      .then((res) => {
-        mutate<IStateResponse>(
-          STATES_LIST(projectId.toString()),
-          (prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-              ...prevData,
-              [res.group]: [...prevData[res.group], res],
-            };
-          },
-          false
-        );
+    await createState(workspaceSlug.toString(), projectId.toString(), payload)
+      .then(() => {
         onClose();
       })
       .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Another state exists with the same name. Please try again with another name.",
+        const error = err.response;
+
+        if (typeof error === "object") {
+          Object.keys(error).forEach((key) => {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: "Error!",
+              message: Array.isArray(error[key]) ? error[key].join(", ") : error[key],
+            });
           });
-        else
-          setToastAlert({
-            type: "error",
+        } else {
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "State could not be created. Please try again.",
+            message:
+              error ?? err.status === 400
+                ? "Another state exists with the same name. Please try again with another name."
+                : "State could not be created. Please try again.",
           });
+        }
       });
   };
 
@@ -108,7 +99,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -122,7 +113,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -138,7 +129,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                           }}
                           render={({ field: { value, onChange, ref } }) => (
                             <>
-                              <label htmlFor="name" className="text-custom-text-200 mb-2">
+                              <label htmlFor="name" className="mb-2 text-custom-text-200">
                                 Name
                               </label>
                               <Input
@@ -166,7 +157,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                               value={value}
                               label={GROUP_CHOICES[value as keyof typeof GROUP_CHOICES]}
                               onChange={onChange}
-                              width="w-full"
+                              optionsClassName="w-full"
                               input
                             >
                               {Object.keys(GROUP_CHOICES).map((key) => (
@@ -183,7 +174,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                           {({ open }) => (
                             <>
                               <Popover.Button
-                                className={`group inline-flex items-center rounded-md bg-custom-background-80 text-base font-medium hover:text-custom-text-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                className={`group inline-flex items-center rounded-md bg-custom-background-100 text-base font-medium hover:text-custom-text-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                                   open ? "text-custom-text-100" : "text-custom-text-200"
                                 }`}
                               >
@@ -249,10 +240,10 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" type="submit" loading={isSubmitting}>
+                    <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Creating State..." : "Create State"}
                     </Button>
                   </div>
@@ -264,4 +255,4 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
       </Dialog>
     </Transition.Root>
   );
-};
+});
