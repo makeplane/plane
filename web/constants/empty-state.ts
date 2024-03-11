@@ -69,7 +69,7 @@ export enum EmptyStateType {
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
   PROJECT_PAGE_ALL = "project-page-all",
-  PROJECT_PAGE_FAVORITE = "project-page-favorite",
+  PROJECT_PAGE_FAVORITE = "project-page-favorites",
   PROJECT_PAGE_PRIVATE = "project-page-private",
   PROJECT_PAGE_SHARED = "project-page-shared",
   PROJECT_PAGE_ARCHIVED = "project-page-archived",
@@ -475,8 +475,8 @@ const emptyStateDetails = {
       "Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely!",
     path: "/empty-state/pages/all",
   },
-  "project-page-favorite": {
-    key: "project-page-favorite",
+  "project-page-favorites": {
+    key: "project-page-favorites",
     title: "No favorite pages yet",
     description: "Favorites for quick access? mark them and find them right here.",
     path: "/empty-state/pages/favorites",

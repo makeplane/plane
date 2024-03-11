@@ -116,9 +116,14 @@ export const ProjectSidebarList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={cn("h-full space-y-2 overflow-y-auto px-4 vertical-scrollbar scrollbar-md", {
-          "border-t border-custom-sidebar-border-300": isScrolled,
-        })}
+        className={cn(
+          "h-full space-y-2 !overflow-y-scroll pl-4 vertical-scrollbar",
+          isCollapsed ? "scrollbar-sm" : "scrollbar-md",
+          {
+            "border-t border-custom-sidebar-border-300": isScrolled,
+            "pr-1": !isCollapsed,
+          }
+        )}
       >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
