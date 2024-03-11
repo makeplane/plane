@@ -212,7 +212,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                               } in this cycle`}
                               position="bottom"
                             >
-                              <span className="flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                              <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
                                 {issueCount}
                               </span>
                             </Tooltip>

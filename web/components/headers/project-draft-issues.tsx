@@ -115,7 +115,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
               tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's draft`}
               position="bottom"
             >
-              <span className="flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+              <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
                 {issueCount}
               </span>
             </Tooltip>
