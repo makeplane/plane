@@ -9,7 +9,7 @@ import { AlertTriangleIcon } from "lucide-react";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
+import { PROJECT_MEMBER_LEFT } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
 // types
@@ -64,7 +64,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
             .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
-              captureEvent(PROJECT_MEMBER_LEAVE, {
+              captureEvent(PROJECT_MEMBER_LEFT, {
                 state: "SUCCESS",
                 element: "Project settings members page",
               });
@@ -75,7 +75,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
-              captureEvent(PROJECT_MEMBER_LEAVE, {
+              captureEvent(PROJECT_MEMBER_LEFT, {
                 state: "FAILED",
                 element: "Project settings members page",
               });

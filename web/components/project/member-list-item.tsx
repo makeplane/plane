@@ -9,7 +9,7 @@ import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
 // constants
-import { PM_ROLE_CHANGED, PROJECT_MEMBER_LEAVE, PROJECT_MEMBER_REMOVED } from "constants/event-tracker";
+import { PM_ROLE_CHANGED, PROJECT_MEMBER_LEFT, PROJECT_MEMBER_REMOVED } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 import { ROLE } from "constants/workspace";
 // hooks
@@ -49,7 +49,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     if (userDetails.member?.id === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
-          captureEvent(PROJECT_MEMBER_LEAVE, {
+          captureEvent(PROJECT_MEMBER_LEFT, {
             state: "SUCCESS",
             element: "Project settings members page",
           });

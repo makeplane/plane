@@ -9,11 +9,13 @@ import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { csvDownload } from "helpers/download.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // hooks
-import { useWebhook, useWorkspace } from "hooks/store";
+import { useEventTracker, useWebhook, useWorkspace } from "hooks/store";
 // types
 import { IWebhook } from "@plane/types";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
+// constants
+import { WEBHOOK_KEY_REGEN } from "constants/event-tracker";
 
 type Props = {
   data: Partial<IWebhook>;
@@ -30,6 +32,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
+  const { captureEvent } = useEventTracker();
 
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
@@ -62,6 +65,9 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "New key regenerated successfully.",
+        });
+        captureEvent(WEBHOOK_KEY_REGEN, {
+          webhook_id: data.id,
         });
 
         if (currentWebhook && webhookSecretKey) {

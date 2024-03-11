@@ -8,8 +8,10 @@ import { ChevronDown, Dot, XCircle } from "lucide-react";
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 // constants
-import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
+import { WM_ROLE_CHANGED, WORKSPACE_MEMBER_REMOVED, WORKSPACE_MEMBER_LEFT } from "constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
@@ -43,7 +45,9 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
 
     await leaveWorkspace(workspaceSlug.toString())
       .then(() => {
-        captureEvent(WORKSPACE_MEMBER_lEAVE, {
+        captureEvent(WORKSPACE_MEMBER_LEFT, {
+          member_id: currentUser?.id,
+          role: currentWorkspaceRole ? getUserRole(currentWorkspaceRole as number) : undefined,
           state: "SUCCESS",
           element: "Workspace settings members page",
         });
@@ -61,13 +65,23 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const handleRemoveMember = async () => {
     if (!workspaceSlug || !memberDetails) return;
 
-    await removeMemberFromWorkspace(workspaceSlug.toString(), memberDetails.member.id).catch((err) =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: err?.error || "Something went wrong. Please try again.",
-      })
-    );
+    await removeMemberFromWorkspace(workspaceSlug.toString(), memberDetails.member.id)
+      .then(() =>
+        captureEvent(WORKSPACE_MEMBER_REMOVED, {
+          member_id: memberDetails.member.id,
+          removed_by_role: currentWorkspaceRole ? getUserRole(currentWorkspaceRole as number) : undefined,
+          role: memberDetails.role ? getUserRole(memberDetails.role as number) : undefined,
+          state: "SUCCESS",
+          element: "Workspace settings members page",
+        })
+      )
+      .catch((err) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error",
+          message: err?.error || "Something went wrong. Please try again.",
+        })
+      );
   };
 
   const handleRemove = async () => {
@@ -162,13 +176,22 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
 
               updateMember(workspaceSlug.toString(), memberDetails.member.id, {
                 role: value,
-              }).catch(() => {
-                setToast({
-                  type: TOAST_TYPE.ERROR,
-                  title: "Error!",
-                  message: "An error occurred while updating member role. Please try again.",
+              })
+                .then(() =>
+                  captureEvent(WM_ROLE_CHANGED, {
+                    member_id: memberDetails.member.id,
+                    changed_role: value ? getUserRole(value as number) : undefined,
+                    state: "SUCCESS",
+                    element: "Workspace settings members page",
+                  })
+                )
+                .catch(() => {
+                  setToast({
+                    type: TOAST_TYPE.ERROR,
+                    title: "Error!",
+                    message: "An error occurred while updating member role. Please try again.",
+                  });
                 });
-              });
             }}
             disabled={!hasRoleChangeAccess}
             placement="bottom-end"

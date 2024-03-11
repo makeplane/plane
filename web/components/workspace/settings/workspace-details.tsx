@@ -48,7 +48,7 @@ export const WorkspaceDetails: FC = observer(() => {
     control,
     reset,
     watch,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...currentWorkspace },
   });
@@ -70,6 +70,7 @@ export const WorkspaceDetails: FC = observer(() => {
           eventName: WORKSPACE_UPDATED,
           payload: {
             ...res,
+            change_details: Object.keys(dirtyFields),
             state: "SUCCESS",
             element: "Workspace general settings page",
           },

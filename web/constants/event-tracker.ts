@@ -19,6 +19,7 @@ export const getWorkspaceEventPayload = (payload: any) => ({
   organization_size: payload.organization_size,
   first_time: payload.first_time,
   state: payload.state,
+  change_details: payload.change_details,
   element: payload.element,
 });
 
@@ -172,7 +173,9 @@ export const elementFromPath = (routePath?: string) => {
 
   return {
     element: element,
-    element_id: ["Project", "Draft", "Archive"].includes(element) ? routePath.split("/")?.at(-2) : routePath.split("/")?.at(-1),
+    element_id: ["Project", "Draft", "Archive"].includes(element)
+      ? routePath.split("/")?.at(-2)
+      : routePath.split("/")?.at(-1),
   };
 };
 
@@ -265,14 +268,34 @@ export const PAGE_RESTORED = "Page restored";
 export const AI_TRIGGERED = "AI triggered";
 export const AI_RES_USED = "AI response used";
 export const AI_RES_REGENERATED = "AI response regenerated";
-// Member Events
-export const MEMBER_INVITED = "Member invited";
-export const MEMBER_ACCEPTED = "Member accepted";
+// Project Member Events
 export const PROJECT_MEMBER_ADDED = "Project member added";
-export const PROJECT_MEMBER_LEAVE = "Project member leave";
+export const PROJECT_MEMBER_LEFT = "Project member left";
 export const PROJECT_MEMBER_REMOVED = "Project member removed";
 export const PM_ROLE_CHANGED = "Project member role changed";
-export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
+// Workspace Member Events
+export const MEMBER_INVITED = "Member invited";
+export const MEMBER_ACCEPTED = "Member accepted";
+export const WORKSPACE_MEMBER_REMOVED = "Workspace member removed";
+export const WORKSPACE_MEMBER_LEFT = "Workspace member left";
+export const WM_ROLE_CHANGED = "Workspace member role changed";
+// Issues Export Events
+export const ISSUES_EXPORTED = "Issues exported";
+// Issues Import Events
+export const GITHUB_ISSUES_IMPORTED = "Github issues imported";
+export const JIRA_ISSUES_IMPORTED = "Jira issues imported";
+// Webhook Events
+export const WEBHOOK_CREATED = "Webhook created";
+export const WEBHOOK_UPDATED = "Webhook updated";
+export const WEBHOOK_DELETED = "Webhook deleted";
+export const WEBHOOK_ENABLED = "Webhook enabled";
+export const WEBHOOK_DISABLED = "Webhook diabled";
+export const WEBHOOK_KEY_REGEN = "Webhook secret key regenerated";
+// API Token Events
+export const API_TOKEN_CREATED = "API token created";
+export const API_TOKEN_UPDATED = "API token updated";
+export const API_TOKEN_DELETED = "API token deleted";
+export const API_TOKEN_REGEN = "API token regenerated";
 // Sign-in & Sign-up Events
 export const NAVIGATE_TO_SIGNUP = "Navigate to sign-up page";
 export const NAVIGATE_TO_SIGNIN = "Navigate to sign-in page";

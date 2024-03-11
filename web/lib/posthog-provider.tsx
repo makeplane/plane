@@ -26,7 +26,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     currentWorkspaceId,
     posthogAPIKey,
     posthogHost,
-    isCloud = false,
+    isCloud = true,
     telemetryEnabled = false,
   } = props;
   // states
