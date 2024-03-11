@@ -142,8 +142,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       if (!memberDetails?.member) return;
       return {
         value: `${memberDetails?.member.id}`,
-        query: `${memberDetails?.member.first_name} ${memberDetails?.member
-          .last_name} ${memberDetails?.member.display_name.toLowerCase()}`,
+        query: `${memberDetails?.member.first_name} ${
+          memberDetails?.member.last_name
+        } ${memberDetails?.member.display_name.toLowerCase()}`,
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="flex-shrink-0 pt-0.5">
@@ -211,9 +212,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
                                 const selectedMember = getWorkspaceMemberDetails(value);
-
-                                if (!selectedMember?.member) return <></>;
-
                                 return (
                                   <CustomSearchSelect
                                     value={value}
