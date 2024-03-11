@@ -44,7 +44,10 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
     handleClose();
   };
 
-  const isInvalid = watch("filterType") === "range" ? new Date(watch("date1")) > new Date(watch("date2")) : false;
+  const date1 = watch("date1");
+  const date2 = watch("date2");
+
+  const isInvalid = watch("filterType") === "range" ? new Date(date1) > new Date(date2) : false;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -91,7 +94,10 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         <DayPicker
                           selected={value ? new Date(value) : undefined}
                           defaultMonth={value ? new Date(value) : undefined}
-                          onSelect={(date) => onChange(date)}
+                          onSelect={(date) => {
+                            if (!date) return;
+                            onChange(date);
+                          }}
                           mode="single"
                           disabled={[{ after: new Date(watch("date2")) }]}
                           className="border border-custom-border-200 p-3 rounded-md"
@@ -106,7 +112,10 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           <DayPicker
                             selected={value ? new Date(value) : undefined}
                             defaultMonth={value ? new Date(value) : undefined}
-                            onSelect={(date) => onChange(date)}
+                            onSelect={(date) => {
+                              if (!date) return;
+                              onChange(date);
+                            }}
                             mode="single"
                             disabled={[{ before: new Date(watch("date1")) }]}
                             className="border border-custom-border-200 p-3 rounded-md"
