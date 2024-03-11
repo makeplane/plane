@@ -494,13 +494,6 @@ function install() {
                     update_env "CORS_ALLOWED_ORIGINS" "http://$MY_IP"
 
                     update_config "INSTALLATION_DATE" "$(date '+%Y-%m-%d')"
-                    
-                    if command -v crontab &> /dev/null; then
-                        sudo touch /etc/cron.daily/makeplane
-                        sudo chmod +x /etc/cron.daily/makeplane
-                        sudo echo "0 2 * * * root /usr/local/bin/plane-app --upgrade" > /etc/cron.daily/makeplane
-                        sudo crontab /etc/cron.daily/makeplane 
-                    fi
 
                     show_message "Plane Installed Successfully ✅"
                     show_message ""
@@ -606,11 +599,6 @@ function uninstall() {
             sudo rm $PLANE_INSTALL_DIR/variables-upgrade.env &> /dev/null
             sudo rm $PLANE_INSTALL_DIR/config.env &> /dev/null
             sudo rm $PLANE_INSTALL_DIR/docker-compose.yaml &> /dev/null
-
-            if command -v crontab &> /dev/null; then
-                sudo crontab -r &> /dev/null
-                sudo rm /etc/cron.daily/makeplane &> /dev/null
-            fi
             
             # rm -rf $PLANE_INSTALL_DIR &> /dev/null
             show_message "- Configuration Cleaned ✅"
