@@ -4,7 +4,7 @@ import { Search, X } from "lucide-react";
 // components
 import { FilterEndDate, FilterStartDate, FilterStatus } from "components/cycles";
 // types
-import { TCycleFilters } from "@plane/types";
+import { TCycleFilters, TCycleGroups } from "@plane/types";
 
 type Props = {
   filters: TCycleFilters;
@@ -40,7 +40,7 @@ export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
         {/* cycle status */}
         <div className="py-2">
           <FilterStatus
-            appliedFilters={filters.status ?? null}
+            appliedFilters={(filters.status as TCycleGroups[]) ?? null}
             handleUpdate={(val) => handleFiltersUpdate("status", val)}
             searchQuery={filtersSearchQuery}
           />

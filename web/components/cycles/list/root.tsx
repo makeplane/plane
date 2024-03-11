@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Disclosure } from "@headlessui/react";
 import { ChevronRight } from "lucide-react";
 // components
-import { CyclePeekOverview, CyclesListItem } from "components/cycles";
+import { CyclePeekOverview, CyclesListMap } from "components/cycles";
 // helpers
 import { cn } from "helpers/common.helper";
 
@@ -21,9 +21,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
     <div className="h-full overflow-y-auto">
       <div className="flex h-full w-full justify-between">
         <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
-          {cycleIds.map((cycleId) => (
-            <CyclesListItem key={cycleId} cycleId={cycleId} workspaceSlug={workspaceSlug} projectId={projectId} />
-          ))}
+          <CyclesListMap cycleIds={cycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
           {completedCycleIds.length !== 0 && (
             <Disclosure as="div" className="mt-4 space-y-4">
               <Disclosure.Button className="bg-custom-background-80 font-semibold text-sm py-1 px-2 rounded ml-5 flex items-center gap-1">
@@ -39,9 +37,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                 )}
               </Disclosure.Button>
               <Disclosure.Panel>
-                {completedCycleIds.map((cycleId) => (
-                  <CyclesListItem key={cycleId} cycleId={cycleId} workspaceSlug={workspaceSlug} projectId={projectId} />
-                ))}
+                <CyclesListMap cycleIds={completedCycleIds} projectId={projectId} workspaceSlug={workspaceSlug} />
               </Disclosure.Panel>
             </Disclosure>
           )}

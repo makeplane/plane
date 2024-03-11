@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
+// types
+import { TCycleGroups } from "@plane/types";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
 
 type Props = {
-  appliedFilters: string[] | null;
+  appliedFilters: TCycleGroups[] | null;
   handleUpdate: (val: string) => void;
   searchQuery: string;
 };
