@@ -111,7 +111,7 @@ TEMPLATES = [
 SESSION_COOKIE_SECURE = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = 1800
-SESSION_COOKIE_NAME = "session-id"
+SESSION_COOKIE_NAME = "plane-session-id"
 SESSION_COOKIE_DOMAIN = None
 
 # CSRF cookies

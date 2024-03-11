@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 # Module imports
 from plane.authentication.adapter.base import AuthenticationException
-from plane.authentication.provider.credentials.magic_code_adapter import (
+from plane.authentication.provider.credentials.magic_code import (
     MagicCodeProvider,
 )
 from plane.authentication.utils.login import user_login
@@ -39,7 +39,7 @@ class MagicGenerateEndpoint(APIView):
             return Response({"error": "Instance is not configured"})
 
         origin = request.META.get("HTTP_ORIGIN", "/")
-        email = request.POST.get("email", False)
+        email = request.data.get("email", False)
         try:
             # Clean up the email
             email = email.strip().lower()
