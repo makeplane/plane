@@ -216,15 +216,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-        ? "0 Issue"
-        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+      ? "0 Issue"
+      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <>
+    <div className="relative">
       {cycleDetails && workspaceSlug && projectId && (
         <CycleDeleteModal
           cycle={cycleDetails}
@@ -236,7 +236,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       )}
 
       <>
-        <div className="flex w-full items-center justify-between">
+        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
@@ -505,6 +505,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </>
-    </>
+    </div>
   );
 });
