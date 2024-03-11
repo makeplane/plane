@@ -109,6 +109,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}
+        maxHeight="lg"
         closeOnSelect
         ellipsis
       >
