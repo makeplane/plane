@@ -42,10 +42,10 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
           <ProjectLogo logo={projectDetails.logo_props} className="text-xl" />
         </div>
       </div>
-      <div className="flex-grow truncate">
-        <h6 className="text-sm text-custom-text-300 font-medium group-hover:underline group-hover:text-custom-text-100 truncate">
+      <div className="w-full overflow-hidden">
+        <div className="text-sm text-custom-text-300 group-hover:underline group-hover:text-custom-text-100 overflow-hidden line-clamp-2">
           {projectDetails.name}
-        </h6>
+        </div>
         <div className="mt-2">
           <AvatarGroup>
             {projectDetails.members?.map((member) => (

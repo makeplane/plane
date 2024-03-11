@@ -22,7 +22,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
             Top eight active members in your project by last activity
           </p>
         </div>
-        <div className="flex min-w-72 items-center justify-start gap-2 rounded-md border border-custom-border-200 px-2.5 py-1.5 placeholder:text-custom-text-400">
+        <div className="flex md:min-w-72 items-center justify-start gap-2 rounded-md border border-custom-border-200 px-2.5 py-1.5 placeholder:text-custom-text-400">
           <Search className="h-3.5 w-3.5 text-custom-text-400" />
           <input
             className="w-full border-none bg-transparent text-sm focus:outline-none"

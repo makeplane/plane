@@ -35,15 +35,16 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
       {activity?.issue_detail ? (
         <a
           aria-disabled={activity.issue === null}
-          href={`${`/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
-            activity.issue
-          }`}`}
+          href={`${`/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${activity.issue
+            }`}`}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
-          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          className="border border-red-500 relative w-full overflow-hidden"
         >
-          <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
-          <span className="font-normal">{activity.issue_detail?.name}</span>
+          <div className="border border-red-500 overflow-hidden relative inline-flex w-full items-center gap-1 font-medium text-custom-text-100 hover:underline">
+            <div className="whitespace-nowrap break-all">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</div>{" "}
+            <div className="relative whitespace-nowrap break-all overflow-hidden w-full font-normal truncate line-clamp-1">{activity.issue_detail?.name}</div>
+          </div>
         </a>
       ) : (
         <span className="inline-flex items-center gap-1 font-medium text-custom-text-100 whitespace-nowrap">
@@ -60,9 +61,8 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 
   return (
     <a
-      href={`/${workspaceSlug ?? activity.workspace_detail?.slug}/profile/${
-        activity.new_identifier ?? activity.old_identifier
-      }`}
+      href={`/${workspaceSlug ?? activity.workspace_detail?.slug}/profile/${activity.new_identifier ?? activity.old_identifier
+        }`}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center font-medium text-custom-text-100 hover:underline"
@@ -591,7 +591,7 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        {/* set the state to <span className="border border-green-500 font-medium text-custom-text-100">{activity.new_value}</span> */}
         {showIssue && (
           <>
             {" "}
@@ -678,12 +678,12 @@ export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessage
   const { workspaceSlug } = router.query;
 
   return (
-    <>
+    <div className="w-full border border-red-500 overflow-hidden">
       {activityDetails[activity.field as keyof typeof activityDetails]?.message(
         activity,
         showIssue,
         workspaceSlug ? workspaceSlug.toString() : activity.workspace_detail?.slug ?? ""
       )}
-    </>
+    </div>
   );
 };
