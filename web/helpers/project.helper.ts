@@ -1,7 +1,8 @@
+import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "helpers/filter.helper";
 // types
-import { IProject, TProjectFilters } from "@plane/types";
+import { IProject, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 
 /**
  * Updates the sort order of the project.
@@ -75,4 +76,25 @@ export const shouldFilterProject = (project: IProject, filter: TProjectFilters):
   });
 
   return fallsInFilters;
+};
+
+/**
+ * @description orders projects based on the orderByKey
+ * @param {IProject[]} projects
+ * @param {TProjectOrderByOptions | undefined} orderByKey
+ * @returns {IProject[]}
+ */
+export const orderProjects = (projects: IProject[], orderByKey: TProjectOrderByOptions | undefined): IProject[] => {
+  let orderedProjects: IProject[] = [];
+  if (projects.length === 0) return orderedProjects;
+
+  if (orderByKey === "sort_order") orderedProjects = sortBy(projects, [(p) => p.sort_order]);
+  if (orderByKey === "name") orderedProjects = sortBy(projects, [(p) => p.name.toLowerCase()]);
+  if (orderByKey === "-name") orderedProjects = sortBy(projects, [(p) => p.name.toLowerCase()]).reverse();
+  if (orderByKey === "created_at") orderedProjects = sortBy(projects, [(p) => p.created_at]);
+  if (orderByKey === "-created_at") orderedProjects = sortBy(projects, [(p) => !p.created_at]);
+  if (orderByKey === "members_length") orderedProjects = sortBy(projects, [(p) => p.members.length]);
+  if (orderByKey === "-members_length") orderedProjects = sortBy(projects, [(p) => p.members.length]).reverse();
+
+  return orderedProjects;
 };

@@ -7,7 +7,7 @@ import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
 import { IProject } from "@plane/types";
 import { RootStore } from "../root.store";
-import { shouldFilterProject } from "helpers/project.helper";
+import { orderProjects, shouldFilterProject } from "helpers/project.helper";
 // services
 export interface IProjectStore {
   // observables
@@ -25,15 +25,15 @@ export interface IProjectStore {
   getProjectIdentifierById: (projectId: string) => string;
   // fetch actions
   fetchProjects: (workspaceSlug: string) => Promise<IProject[]>;
-  fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
+  fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<IProject>;
   // favorites actions
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   // project-view action
   updateProjectView: (workspaceSlug: string, projectId: string, viewProps: any) => Promise<any>;
   // CRUD actions
-  createProject: (workspaceSlug: string, data: any) => Promise<any>;
-  updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<any>;
+  createProject: (workspaceSlug: string, data: Partial<IProject>) => Promise<IProject>;
+  updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<IProject>;
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
@@ -92,13 +92,14 @@ export class ProjectStore implements IProjectStore {
       searchQuery,
     } = this.rootStore.projectRoot.projectFilter;
     if (!workspaceDetails || !displayFilters || !filters) return;
-    const workspaceProjects = Object.values(this.projectMap).filter(
+    let workspaceProjects = Object.values(this.projectMap).filter(
       (p) =>
         p.workspace === workspaceDetails.id &&
         (p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.identifier.toLowerCase().includes(searchQuery.toLowerCase())) &&
         shouldFilterProject(p, filters)
     );
+    workspaceProjects = orderProjects(workspaceProjects, displayFilters.order_by);
     return workspaceProjects.map((p) => p.id);
   }
 

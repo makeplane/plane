@@ -13,7 +13,7 @@ import { cn } from "helpers/common.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { FiltersDropdown } from "components/issues";
-import { ProjectFiltersSelection } from "components/project";
+import { ProjectFiltersSelection, ProjectOrderByDropdown } from "components/project";
 import { TProjectFilters } from "@plane/types";
 
 export const ProjectsHeader = observer(() => {
@@ -31,7 +31,14 @@ export const ProjectsHeader = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { workspaceProjectIds } = useProject();
-  const { currentWorkspaceFilters, updateFilters, searchQuery, updateSearchQuery } = useProjectFilter();
+  const {
+    currentWorkspaceDisplayFilters: displayFilters,
+    currentWorkspaceFilters: filters,
+    updateFilters,
+    updateDisplayFilters,
+    searchQuery,
+    updateSearchQuery,
+  } = useProjectFilter();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
@@ -41,20 +48,20 @@ export const ProjectsHeader = observer(() => {
   const handleFilters = useCallback(
     (key: keyof TProjectFilters, value: string | string[]) => {
       if (!workspaceSlug) return;
-      const newValues = currentWorkspaceFilters?.[key] ?? [];
+      const newValues = filters?.[key] ?? [];
 
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       else {
-        if (currentWorkspaceFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
       updateFilters(workspaceSlug, { [key]: newValues });
     },
-    [currentWorkspaceFilters, updateFilters, workspaceSlug]
+    [filters, updateFilters, workspaceSlug]
   );
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -124,9 +131,18 @@ export const ProjectsHeader = observer(() => {
             </div>
           </div>
         )}
+        <ProjectOrderByDropdown
+          value={displayFilters?.order_by}
+          onChange={(val) => {
+            if (!workspaceSlug || val === displayFilters?.order_by) return;
+            updateDisplayFilters(workspaceSlug, {
+              order_by: val,
+            });
+          }}
+        />
         <FiltersDropdown title="Filters" placement="bottom-end">
           <ProjectFiltersSelection
-            filters={currentWorkspaceFilters ?? {}}
+            filters={filters ?? {}}
             handleFiltersUpdate={handleFilters}
             memberIds={workspaceMemberIds ?? undefined}
           />
@@ -139,9 +155,9 @@ export const ProjectsHeader = observer(() => {
               setTrackElement("Projects page");
               commandPaletteStore.toggleCreateProjectModal(true);
             }}
-            className="items-center"
+            className="items-center gap-1"
           >
-            <div className="hidden sm:block">Add</div> Project
+            <span className="hidden sm:inline-block">Add</span> Project
           </Button>
         )}
       </div>

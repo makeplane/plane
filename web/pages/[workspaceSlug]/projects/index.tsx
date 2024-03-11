@@ -5,7 +5,7 @@ import { PageHead } from "components/core";
 import { ProjectsHeader } from "components/headers";
 import { ProjectAppliedFiltersList, ProjectCardList } from "components/project";
 // layouts
-import { useApplication, useProjectFilter, useWorkspace } from "hooks/store";
+import { useApplication, useProject, useProjectFilter, useWorkspace } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 // helpers
 import { calculateTotalFilters } from "helpers/filter.helper";
@@ -19,6 +19,7 @@ const ProjectsPage: NextPageWithLayout = observer(() => {
     router: { workspaceSlug },
   } = useApplication();
   const { currentWorkspace } = useWorkspace();
+  const { workspaceProjectIds, filteredProjectIds } = useProject();
   const { currentWorkspaceFilters, clearAllFilters, updateFilters } = useProjectFilter();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
@@ -46,6 +47,8 @@ const ProjectsPage: NextPageWithLayout = observer(() => {
               appliedFilters={currentWorkspaceFilters ?? {}}
               handleClearAllFilters={() => clearAllFilters(`${workspaceSlug}`)}
               handleRemoveFilter={handleRemoveFilter}
+              filteredProjects={filteredProjectIds?.length ?? 0}
+              totalProjects={workspaceProjectIds?.length ?? 0}
               alwaysAllowEditing
             />
           </div>
