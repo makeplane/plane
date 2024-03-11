@@ -9,12 +9,12 @@ import { useUser } from "hooks/store";
 import { Button, TButtonVariant } from "@plane/ui";
 import { ComicBoxButton } from "./comic-box-button";
 // constant
-import { EMPTY_STATE_DETAILS, EmptyStateKeys } from "constants/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
 // helpers
 import { cn } from "helpers/common.helper";
 
 export type EmptyStateProps = {
-  type: EmptyStateKeys;
+  type: EmptyStateType;
   size?: "sm" | "md" | "lg";
   layout?: "widget-simple" | "screen-detailed" | "screen-simple";
   additionalPath?: string;
