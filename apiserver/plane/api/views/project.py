@@ -279,7 +279,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(
                         name="Triage",
-                        group="backlog",
+                        group="triage",
                         description="Default state for managing all Inbox Issues",
                         project_id=project_id,
                         color="#ff7700",

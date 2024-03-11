@@ -170,14 +170,14 @@ class Issue(ProjectBaseModel):
                 from plane.db.models import State
 
                 default_state = State.objects.filter(
-                    ~models.Q(name="Triage"),
+                    ~models.Q(group="Triage"),
                     project=self.project,
                     default=True,
                 ).first()
                 # if there is no default state assign any random state
                 if default_state is None:
                     random_state = State.objects.filter(
-                        ~models.Q(name="Triage"), project=self.project
+                        ~models.Q(group="Triage"), project=self.project
                     ).first()
                     self.state = random_state
                 else:

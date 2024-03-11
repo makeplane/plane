@@ -34,7 +34,7 @@ class StateViewSet(BaseViewSet):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
-            .filter(~Q(name="Triage"))
+            .filter(~Q(group="triage"))
             .select_related("project")
             .select_related("workspace")
             .distinct()
@@ -75,7 +75,7 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
-            ~Q(name="Triage"),
+            ~Q(group="Triage"),
             pk=pk,
             project_id=project_id,
             workspace__slug=slug,
