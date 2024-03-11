@@ -1,6 +1,6 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Module imports
 from plane.db.models import BaseModel
@@ -21,6 +21,7 @@ class Instance(BaseModel):
     namespace = models.CharField(max_length=50, blank=True, null=True)
     # telemetry and support
     is_telemetry_enabled = models.BooleanField(default=True)
+    is_telemetry_anonymous = models.BooleanField(default=False)
     is_support_required = models.BooleanField(default=True)
     # is setup done
     is_setup_done = models.BooleanField(default=False)
