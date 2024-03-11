@@ -17,13 +17,13 @@ type TInboxIssueFilterSelection = { workspaceSlug: string; projectId: string };
 export const InboxIssueFilterSelection: FC<TInboxIssueFilterSelection> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // hooks'
-  const { inboxFilters, inboxIssuesFiltersLength, updateInboxIssuePriorityFilters, updateInboxIssueStatusFilters } =
+  const { inboxFilters, inboxIssuesFiltersLength, updateInboxIssuePriorityFilter, updateInboxIssueStatusFilter } =
     useProjectInbox();
 
   const handleSelect = (option: { key: string; value: string }) => {
     if (!projectId) return;
-    if (option.key === "priority") updateInboxIssuePriorityFilters(workspaceSlug, projectId, option.value);
-    if (option.key === "inbox_status") updateInboxIssueStatusFilters(workspaceSlug, projectId, parseInt(option.value));
+    if (option.key === "priority") updateInboxIssuePriorityFilter(workspaceSlug, projectId, option.value);
+    if (option.key === "inbox_status") updateInboxIssueStatusFilter(workspaceSlug, projectId, parseInt(option.value));
   };
 
   return (
