@@ -1,7 +1,11 @@
-from django.core.cache import cache
-# from django.utils.encoding import force_bytes
-# import hashlib
+# Python imports
 from functools import wraps
+
+# Django imports
+from django.conf import settings
+from django.core.cache import cache
+
+# Third party imports
 from rest_framework.response import Response
 
 
@@ -22,21 +26,20 @@ def cache_response(timeout=60 * 60, path=None, user=True):
         def _wrapped_view(instance, request, *args, **kwargs):
             # Function to generate cache key
             auth_header = (
-                None if request.user.is_anonymous else str(request.user.id) if user else None
+                None
+                if request.user.is_anonymous
+                else str(request.user.id) if user else None
             )
             custom_path = path if path is not None else request.get_full_path()
             key = generate_cache_key(custom_path, auth_header)
             cached_result = cache.get(key)
             if cached_result is not None:
-                print("Cache Hit")
                 return Response(
                     cached_result["data"], status=cached_result["status"]
                 )
-
-            print("Cache Miss")
             response = view_func(instance, request, *args, **kwargs)
 
-            if response.status_code == 200:
+            if response.status_code == 200 and not settings.DEBUG:
                 cache.set(
                     key,
                     {"data": response.data, "status": response.status_code},
@@ -71,11 +74,12 @@ def invalidate_cache(path=None, url_params=False, user=True):
                 )
 
             auth_header = (
-                None if request.user.is_anonymous else str(request.user.id) if user else None
+                None
+                if request.user.is_anonymous
+                else str(request.user.id) if user else None
             )
             key = generate_cache_key(custom_path, auth_header)
             cache.delete(key)
-            print("Invalidating cache")
             # Execute the view function
             return view_func(instance, request, *args, **kwargs)
 

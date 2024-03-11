@@ -1,5 +1,6 @@
 export * from "./dropdowns";
 export * from "./empty-states";
+export * from "./error-states";
 export * from "./issue-panels";
 export * from "./loaders";
 export * from "./assigned-issues";

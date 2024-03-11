@@ -18,6 +18,7 @@ import { IStateStore, StateStore } from "./state.store";
 import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
+import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -29,6 +30,7 @@ export class RootStore {
   projectRoot: IProjectRootStore;
   memberRoot: IMemberRootStore;
   cycle: ICycleStore;
+  cycleFilter: ICycleFilterStore;
   module: IModuleStore;
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
@@ -50,6 +52,7 @@ export class RootStore {
     this.memberRoot = new MemberRootStore(this);
     // independent stores
     this.cycle = new CycleStore(this);
+    this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
@@ -69,6 +72,7 @@ export class RootStore {
     this.memberRoot = new MemberRootStore(this);
     // independent stores
     this.cycle = new CycleStore(this);
+    this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);

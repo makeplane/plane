@@ -8,6 +8,7 @@ interface ICoreReadOnlyEditor {
   borderOnFocus?: boolean;
   customClassName?: string;
   mentionHighlights: string[];
+  tabIndex?: number;
 }
 
 interface EditorCoreProps extends ICoreReadOnlyEditor {
@@ -27,6 +28,7 @@ const LiteReadOnlyEditor = ({
   value,
   forwardedRef,
   mentionHighlights,
+  tabIndex,
 }: EditorCoreProps) => {
   const editor = useReadOnlyEditor({
     value,
@@ -45,7 +47,11 @@ const LiteReadOnlyEditor = ({
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+        <EditorContentWrapper
+          tabIndex={tabIndex}
+          editor={editor}
+          editorContentCustomClassNames={editorContentCustomClassNames}
+        />
       </div>
     </EditorContainer>
   );

@@ -29,11 +29,13 @@ type IPageRenderer = {
   editorContentCustomClassNames?: string;
   hideDragHandle?: () => void;
   readonly: boolean;
+  tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
   const {
     documentDetails,
+    tabIndex,
     editor,
     editorClassNames,
     editorContentCustomClassNames,
@@ -169,7 +171,11 @@ export const PageRenderer = (props: IPageRenderer) => {
       )}
       <div className="flex relative h-full w-full flex-col pr-5 editor-renderer" onMouseOver={handleLinkHover}>
         <EditorContainer hideDragHandle={hideDragHandle} editor={editor} editorClassNames={editorClassNames}>
-          <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+          <EditorContentWrapper
+            tabIndex={tabIndex}
+            editor={editor}
+            editorContentCustomClassNames={editorContentCustomClassNames}
+          />
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (

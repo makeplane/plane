@@ -7,7 +7,7 @@ export interface EmptyStateDetails {
   description?: string;
   path?: string;
   primaryButton?: {
-    icon?: any;
+    icon?: React.ReactNode;
     text: string;
     comicBox?: {
       title?: string;
@@ -15,7 +15,7 @@ export interface EmptyStateDetails {
     };
   };
   secondaryButton?: {
-    icon?: any;
+    icon?: React.ReactNode;
     text: string;
     comicBox?: {
       title?: string;
@@ -49,9 +49,7 @@ export enum EmptyStateType {
   PROJECT_CYCLES = "project-cycles",
   PROJECT_CYCLE_NO_ISSUES = "project-cycle-no-issues",
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
-  PROJECT_CYCLE_UPCOMING = "project-cycle-upcoming",
-  PROJECT_CYCLE_COMPLETED = "project-cycle-completed",
-  PROJECT_CYCLE_DRAFT = "project-cycle-draft",
+  PROJECT_CYCLE_ALL = "project-cycle-all",
   PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
@@ -287,28 +285,10 @@ const emptyStateDetails = {
   },
   [EmptyStateType.PROJECT_CYCLE_ACTIVE]: {
     key: EmptyStateType.PROJECT_CYCLE_ACTIVE,
-    title: "No active cycles",
+    title: "No active cycle",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
-  },
-  [EmptyStateType.PROJECT_CYCLE_UPCOMING]: {
-    key: EmptyStateType.PROJECT_CYCLE_UPCOMING,
-    title: "No upcoming cycles",
-    description: "Upcoming cycles on deck! Just add dates to cycles in draft, and they'll show up right here.",
-    path: "/empty-state/cycle/upcoming",
-  },
-  [EmptyStateType.PROJECT_CYCLE_COMPLETED]: {
-    key: EmptyStateType.PROJECT_CYCLE_COMPLETED,
-    title: "No completed cycles",
-    description: "Any cycle with a past due date is considered completed. Explore all completed cycles here.",
-    path: "/empty-state/cycle/completed",
-  },
-  [EmptyStateType.PROJECT_CYCLE_DRAFT]: {
-    key: EmptyStateType.PROJECT_CYCLE_DRAFT,
-    title: "No draft cycles",
-    description: "No dates added in cycles? Find them here as drafts.",
-    path: "/empty-state/cycle/draft",
   },
   [EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES,
@@ -316,6 +296,13 @@ const emptyStateDetails = {
     description:
       "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
     path: "/empty-state/cycle/completed-no-issues",
+  },
+  [EmptyStateType.PROJECT_CYCLE_ALL]: {
+    key: EmptyStateType.PROJECT_CYCLE_ALL,
+    title: "No cycles",
+    description:
+      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+    path: "/empty-state/cycle/active",
   },
   // empty filters
   [EmptyStateType.PROJECT_EMPTY_FILTER]: {
