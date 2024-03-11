@@ -8,6 +8,7 @@ export type TProjectOrderByOptions =
   | "-members_length";
 
 export type TProjectDisplayFilters = {
+  my_projects?: boolean;
   order_by?: TProjectOrderByOptions;
 };
 

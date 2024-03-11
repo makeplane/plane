@@ -1,4 +1,4 @@
-import { ArrowDownUp, Check, ChevronDown } from "lucide-react";
+import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
@@ -22,7 +22,7 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
     <CustomMenu
       customButton={
         <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-          <ArrowDownUp className="h-3 w-3" />
+          <ArrowDownWideNarrow className="h-3 w-3" />
           {orderByDetails?.label}
           <ChevronDown className="h-3 w-3" strokeWidth={2} />
         </div>

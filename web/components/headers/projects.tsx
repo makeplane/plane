@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Search, Plus, Briefcase, X } from "lucide-react";
+import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "hooks/store";
 // components
@@ -140,10 +140,15 @@ export const ProjectsHeader = observer(() => {
             });
           }}
         />
-        <FiltersDropdown title="Filters" placement="bottom-end">
+        <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
           <ProjectFiltersSelection
+            displayFilters={displayFilters ?? {}}
             filters={filters ?? {}}
             handleFiltersUpdate={handleFilters}
+            handleDisplayFiltersUpdate={(val) => {
+              if (!workspaceSlug) return;
+              updateDisplayFilters(workspaceSlug, val);
+            }}
             memberIds={workspaceMemberIds ?? undefined}
           />
         </FiltersDropdown>

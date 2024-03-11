@@ -97,7 +97,7 @@ export class ProjectStore implements IProjectStore {
         p.workspace === workspaceDetails.id &&
         (p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.identifier.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        shouldFilterProject(p, filters)
+        shouldFilterProject(p, displayFilters, filters)
     );
     workspaceProjects = orderProjects(workspaceProjects, displayFilters.order_by);
     return workspaceProjects.map((p) => p.id);

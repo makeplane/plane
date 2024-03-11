@@ -4,16 +4,19 @@ import { Search, X } from "lucide-react";
 // components
 import { FilterAccess, FilterCreatedDate, FilterLead, FilterMembers } from "components/project";
 // types
-import { TProjectFilters } from "@plane/types";
+import { TProjectDisplayFilters, TProjectFilters } from "@plane/types";
+import { FilterOption } from "components/issues";
 
 type Props = {
+  displayFilters: TProjectDisplayFilters;
   filters: TProjectFilters;
   handleFiltersUpdate: (key: keyof TProjectFilters, value: string | string[]) => void;
+  handleDisplayFiltersUpdate: (updatedDisplayProperties: Partial<TProjectDisplayFilters>) => void;
   memberIds?: string[] | undefined;
 };
 
 export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, memberIds } = props;
+  const { displayFilters, filters, handleFiltersUpdate, handleDisplayFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -38,6 +41,18 @@ export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+        <div className="py-2">
+          <FilterOption
+            isChecked={!!displayFilters.my_projects}
+            onClick={() =>
+              handleDisplayFiltersUpdate({
+                my_projects: !displayFilters.my_projects,
+              })
+            }
+            title="My projects"
+          />
+        </div>
+
         {/* access */}
         <div className="py-2">
           <FilterAccess

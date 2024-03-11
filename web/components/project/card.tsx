@@ -115,7 +115,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
-          <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-end gap-3 px-4">
+          <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-end gap-3 px-4">
             <div className="h-full flex-shrink-0 flex items-center gap-2">
               <button
                 type="button"

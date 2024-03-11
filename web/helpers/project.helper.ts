@@ -2,7 +2,7 @@ import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "helpers/filter.helper";
 // types
-import { IProject, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
+import { IProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 
 /**
  * Updates the sort order of the project.
@@ -54,26 +54,32 @@ export const projectIdentifierSanitizer = (identifier: string): string =>
 /**
  * @description filters projects based on the filter
  * @param {IProject} project
- * @param {TProjectFilters} filter
+ * @param {TProjectFilters} filters
+ * @param {TProjectDisplayFilters} displayFilters
  * @returns {boolean}
  */
-export const shouldFilterProject = (project: IProject, filter: TProjectFilters): boolean => {
+export const shouldFilterProject = (
+  project: IProject,
+  displayFilters: TProjectDisplayFilters,
+  filters: TProjectFilters
+): boolean => {
   let fallsInFilters = true;
-  Object.keys(filter).forEach((key) => {
+  Object.keys(filters).forEach((key) => {
     const filterKey = key as keyof TProjectFilters;
-    if (filterKey === "access" && filter.access && filter.access.length > 0)
-      fallsInFilters = fallsInFilters && filter.access.includes(`${project.network}`);
-    if (filterKey === "lead" && filter.lead && filter.lead.length > 0)
-      fallsInFilters = fallsInFilters && filter.lead.includes(`${project.project_lead}`);
-    if (filterKey === "members" && filter.members && filter.members.length > 0)
-      fallsInFilters = fallsInFilters && filter.members.includes(`${project.project_lead}`);
-    if (filterKey === "created_at" && filter.created_at && filter.created_at.length > 0) {
-      filter.created_at.forEach((dateFilter) => {
+    if (filterKey === "access" && filters.access && filters.access.length > 0)
+      fallsInFilters = fallsInFilters && filters.access.includes(`${project.network}`);
+    if (filterKey === "lead" && filters.lead && filters.lead.length > 0)
+      fallsInFilters = fallsInFilters && filters.lead.includes(`${project.project_lead}`);
+    if (filterKey === "members" && filters.members && filters.members.length > 0)
+      fallsInFilters = fallsInFilters && filters.members.includes(`${project.project_lead}`);
+    if (filterKey === "created_at" && filters.created_at && filters.created_at.length > 0) {
+      filters.created_at.forEach((dateFilter) => {
         fallsInFilters =
           fallsInFilters && !!project.created_at && satisfiesDateFilter(new Date(project.created_at), dateFilter);
       });
     }
   });
+  if (displayFilters.my_projects && !project.is_member) fallsInFilters = false;
 
   return fallsInFilters;
 };
