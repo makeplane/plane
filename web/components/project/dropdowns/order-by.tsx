@@ -13,10 +13,15 @@ type Props = {
   value: TProjectOrderByOptions | undefined;
 };
 
+const DISABLED_ORDERING_OPTIONS = ["sort_order"];
+
 export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
   const { onChange, value } = props;
 
   const orderByDetails = PROJECT_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
+
+  const isDescending = value?.[0] === "-";
+  const isOrderingDisabled = !!value && DISABLED_ORDERING_OPTIONS.includes(value);
 
   return (
     <CustomMenu
@@ -34,7 +39,10 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
         <CustomMenu.MenuItem
           key={option.key}
           className="flex items-center justify-between gap-2"
-          onClick={() => onChange(option.key)}
+          onClick={() => {
+            if (isDescending) onChange(`-${option.key}` as TProjectOrderByOptions);
+            else onChange(option.key);
+          }}
         >
           {option.label}
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
@@ -44,22 +52,22 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
-          if (value?.[0] === "-") onChange(value.slice(1) as TProjectOrderByOptions);
+          if (isDescending) onChange(value.slice(1) as TProjectOrderByOptions);
         }}
-        disabled={value === "sort_order"}
+        disabled={isOrderingDisabled}
       >
         Ascending
-        {value?.[0] !== "-" && <Check className="h-3 w-3" />}
+        {!isOrderingDisabled && !isDescending && <Check className="h-3 w-3" />}
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
-          if (value?.[0] !== "-") onChange(`-${value}` as TProjectOrderByOptions);
+          if (!isDescending) onChange(`-${value}` as TProjectOrderByOptions);
         }}
-        disabled={value === "sort_order"}
+        disabled={isOrderingDisabled}
       >
         Descending
-        {value?.[0] === "-" && <Check className="h-3 w-3" />}
+        {!isOrderingDisabled && isDescending && <Check className="h-3 w-3" />}
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
