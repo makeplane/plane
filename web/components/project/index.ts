@@ -3,6 +3,8 @@ export * from "./settings";
 export * from "./card-list";
 export * from "./card";
 export * from "./create-project-modal";
+export * from "./create-project-form";
+export * from "./project-feature-update";
 export * from "./delete-project-modal";
 export * from "./form-loader";
 export * from "./form";

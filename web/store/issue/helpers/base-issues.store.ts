@@ -168,27 +168,27 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
     if (!this.issues) return;
 
-    const _issues = this.rootIssueStore.issues.getIssuesByIds(
+    const currentIssues = this.rootIssueStore.issues.getIssuesByIds(
       this.issues,
       this.isArchived ? "archived" : "un-archived"
     );
-    if (!_issues) return {};
+    if (!currentIssues) return {};
 
     let groupedIssues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = {};
 
     if (layout === "list" && orderBy) {
-      if (groupBy) groupedIssues = this.groupedIssues(groupBy, orderBy, _issues, this.groupedIssueCount);
-      else groupedIssues = this.unGroupedIssues(orderBy, _issues, this.issueCount);
+      if (groupBy) groupedIssues = this.groupedIssues(groupBy, orderBy, currentIssues, this.groupedIssueCount);
+      else groupedIssues = this.unGroupedIssues(orderBy, currentIssues, this.issueCount);
     } else if (layout === "kanban" && groupBy && orderBy) {
       if (subGroupBy)
-        groupedIssues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, _issues, this.groupedIssueCount);
-      else groupedIssues = this.groupedIssues(groupBy, orderBy, _issues, this.groupedIssueCount);
+        groupedIssues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, currentIssues, this.groupedIssueCount);
+      else groupedIssues = this.groupedIssues(groupBy, orderBy, currentIssues, this.groupedIssueCount);
     } else if (layout === "calendar")
-      groupedIssues = this.groupedIssues("target_date", "target_date", _issues, this.groupedIssueCount, true);
+      groupedIssues = this.groupedIssues("target_date", "target_date", currentIssues, this.groupedIssueCount, true);
     else if (layout === "spreadsheet")
-      groupedIssues = this.unGroupedIssues(orderBy ?? "-created_at", _issues, this.issueCount);
+      groupedIssues = this.unGroupedIssues(orderBy ?? "-created_at", currentIssues, this.issueCount);
     else if (layout === "gantt_chart")
-      groupedIssues = this.unGroupedIssues(orderBy ?? "sort_order", _issues, this.issueCount);
+      groupedIssues = this.unGroupedIssues(orderBy ?? "sort_order", currentIssues, this.issueCount);
 
     return groupedIssues;
   }
@@ -319,7 +319,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       throw error;
     } finally {
       if (!this.issues) return;
-      const quickAddIssueIndex = this.issues.findIndex((_issueId) => _issueId === data.id);
+      const quickAddIssueIndex = this.issues.findIndex((currentIssueId) => currentIssueId === data.id);
       if (quickAddIssueIndex >= 0)
         runInAction(() => {
           this.issues!.splice(quickAddIssueIndex, 1);
@@ -377,35 +377,35 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     groupedIssueCount: Record<string, number> | undefined,
     isCalendarIssues: boolean = false
   ) => {
-    const _issues: TGroupedIssues = {};
-    if (!groupBy || !groupedIssueCount) return _issues;
+    const currentIssues: TGroupedIssues = {};
+    if (!groupBy || !groupedIssueCount) return currentIssues;
 
     this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
-      _issues[group] = { issueIds: [], issueCount: groupedIssueCount[group] };
+      currentIssues[group] = { issueIds: [], issueCount: groupedIssueCount[group] };
     });
 
     const projectIssues = this.issuesSortWithOrderBy(issues, orderBy);
 
     for (const issue in projectIssues) {
-      const _issue = projectIssues[issue];
+      const currentIssue = projectIssues[issue];
       let groupArray = [];
 
-      if (groupBy === "state_detail.group") {
-        const state_group =
-          this.rootIssueStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+      if (groupBy === "state_detail.group" && currentIssue?.state_id) {
+        // if groupBy state_detail.group is coming from the project level the we are using stateDetails from root store else we are looping through the stateMap
+        const state_group = (this.rootIssueStore?.stateMap || {})?.[currentIssue?.state_id]?.group || "None";
         groupArray = [state_group];
       } else {
-        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
-        groupArray = groupValue !== undefined ? this.getGroupArray(groupValue, isCalendarIssues) : [];
+        const groupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+        groupArray = groupValue !== undefined ? this.getGroupArray(groupValue, isCalendarIssues) : ["None"];
       }
 
       for (const group of groupArray) {
-        if (group && _issues[group]) _issues[group].issueIds.push(_issue.id);
-        else if (group) _issues[group].issueIds = [_issue.id];
+        if (group && currentIssues[group]) currentIssues[group].issueIds.push(currentIssue.id);
+        else if (group) currentIssues[group].issueIds = [currentIssue.id];
       }
     }
 
-    return _issues;
+    return currentIssues;
   };
 
   subGroupedIssues = (
@@ -415,46 +415,47 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     issues: TIssueMap,
     groupedIssueCount: Record<string, number> | undefined
   ) => {
-    const _issues: TSubGroupedIssues = {};
-    if (!subGroupBy || !groupBy || !groupedIssueCount) return _issues;
+    const currentIssues: TSubGroupedIssues = {};
+    if (!subGroupBy || !groupBy|| !groupedIssueCount) return currentIssues;
 
-    this.issueDisplayFiltersDefaultData(subGroupBy).forEach((sub_group: any) => {
+    this.issueDisplayFiltersDefaultData(subGroupBy).forEach((sub_group) => {
       const groupByIssues: TGroupedIssues = {};
       this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
         groupByIssues[group] = { issueIds: [], issueCount: groupedIssueCount[group] };
       });
-      _issues[sub_group] = groupByIssues;
+      currentIssues[sub_group] = groupByIssues;
     });
 
     const projectIssues = this.issuesSortWithOrderBy(issues, orderBy);
 
     for (const issue in projectIssues) {
-      const _issue = projectIssues[issue];
+      const currentIssue = projectIssues[issue];
       let subGroupArray = [];
       let groupArray = [];
-      if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
-        const state_group =
-          this.rootIssueStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+      if ((subGroupBy === "state_detail.group" || groupBy === "state_detail.group") && currentIssue?.state_id) {
+        const state_group = (this.rootIssueStore?.stateMap || {})?.[currentIssue?.state_id]?.group || "None";
+
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
-        const subGroupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]);
-        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
-        subGroupArray = subGroupValue != undefined ? this.getGroupArray(subGroupValue) : [];
-        groupArray = groupValue != undefined ? this.getGroupArray(groupValue) : [];
+        const subGroupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]);
+        const groupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+
+        subGroupArray = subGroupValue != undefined ? this.getGroupArray(subGroupValue) : ["None"];
+        groupArray = groupValue != undefined ? this.getGroupArray(groupValue) : ["None"];
       }
 
       for (const subGroup of subGroupArray) {
         for (const group of groupArray) {
-          if (subGroup && group && _issues?.[subGroup]?.[group]) _issues[subGroup][group].issueIds.push(_issue.id);
-          else if (subGroup && group && _issues[subGroup]) _issues[subGroup][group].issueIds = [_issue.id];
+          if (subGroup && group && currentIssues?.[subGroup]?.[group]) currentIssues[subGroup][group].issueIds.push(currentIssue.id);
+          else if (subGroup && group && currentIssues[subGroup]) currentIssues[subGroup][group].issueIds = [currentIssue.id];
           else if (subGroup && group)
-            _issues[subGroup] = { [group]: { issueIds: [_issue.id], issueCount: groupedIssueCount[group] } };
+            currentIssues[subGroup] = { [group]: { issueIds: [currentIssue.id], issueCount: groupedIssueCount[group] } };
         }
       }
     }
 
-    return _issues;
+    return currentIssues;
   };
 
   unGroupedIssues = (orderBy: TIssueOrderByOptions, issues: TIssueMap, count: number | undefined) => {
@@ -531,8 +532,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
         const moduleMap = this.rootIssueStore?.moduleMap;
         if (!moduleMap) break;
         for (const dataId of dataIdsArray) {
-          const _module = moduleMap[dataId];
-          if (_module && _module.name) dataValues.push(_module.name.toLocaleLowerCase());
+          const currentModule = moduleMap[dataId];
+          if (currentModule && currentModule.name) dataValues.push(currentModule.name.toLocaleLowerCase());
         }
         break;
       case "cycle_id":
@@ -603,11 +604,11 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       // custom
       case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return orderBy(array, (_issue: TIssue) => indexOf(sortArray, _issue.priority), ["desc"]);
+        return orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority), ["desc"]);
       }
       case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return orderBy(array, (_issue: TIssue) => indexOf(sortArray, _issue.priority));
+        return orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue.priority));
       }
 
       // number
@@ -704,7 +705,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   getGroupArray(value: boolean | number | string | string[] | null, isDate: boolean = false): string[] {
     if (!value || value === null || value === undefined) return ["None"];
     if (Array.isArray(value))
-      if (value.length) return value;
+      if (value && value.length) return value;
       else return ["None"];
     else if (typeof value === "boolean") return [value ? "True" : "False"];
     else if (typeof value === "number") return [value.toString()];

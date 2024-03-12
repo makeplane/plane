@@ -30,6 +30,7 @@ export interface IModule {
   name: string;
   project_id: string;
   sort_order: number;
+  sub_issues: number;
   start_date: string | null;
   started_issues: number;
   status: TModuleStatus;

@@ -1,8 +1,11 @@
-# from django.utils.encoding import force_bytes
-# import hashlib
+# Python imports
 from functools import wraps
 
+# Django imports
+from django.conf import settings
 from django.core.cache import cache
+
+# Third party imports
 from rest_framework.response import Response
 
 
@@ -36,7 +39,7 @@ def cache_response(timeout=60 * 60, path=None, user=True):
                 )
             response = view_func(instance, request, *args, **kwargs)
 
-            if response.status_code == 200:
+            if response.status_code == 200 and not settings.DEBUG:
                 cache.set(
                     key,
                     {"data": response.data, "status": response.status_code},

@@ -46,8 +46,10 @@ from plane.db.models import (
     Inbox,
     ProjectDeployBoard,
     IssueProperty,
+    Issue,
 )
 from plane.utils.cache import cache_response
+
 
 class ProjectViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ProjectListSerializer
@@ -170,6 +172,73 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             projects, many=True, fields=fields if fields else None
         ).data
         return Response(projects, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, slug, pk):
+        project = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .annotate(
+                total_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("pk"),
+                    parent__isnull=True,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("pk"),
+                    parent__isnull=False,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                archived_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("pk"),
+                    archived_at__isnull=False,
+                    parent__isnull=True,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                archived_sub_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("pk"),
+                    archived_at__isnull=False,
+                    parent__isnull=False,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                draft_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("pk"),
+                    is_draft=True,
+                    parent__isnull=True,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                draft_sub_issues=Issue.objects.filter(
+                    project_id=self.kwargs.get("pk"),
+                    is_draft=True,
+                    parent__isnull=False,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        ).first()
+
+        serializer = ProjectListSerializer(project)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, slug):
         try:
@@ -471,6 +540,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
+
     # Cache the below api for 24 hours
     @cache_response(60 * 60 * 24, user=False)
     def get(self, request):
