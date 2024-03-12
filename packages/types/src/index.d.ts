@@ -5,7 +5,7 @@ export * from "./dashboard";
 export * from "./project";
 export * from "./state";
 export * from "./issues";
-export * from "./modules";
+export * from "./module";
 export * from "./views";
 export * from "./integration";
 export * from "./pages";
