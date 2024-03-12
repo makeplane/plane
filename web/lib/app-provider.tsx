@@ -36,6 +36,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { currentWorkspace, workspaces } = useWorkspace();
   const {
     config: { envConfig },
+    instance: { instance },
   } = useApplication();
   // themes
   const { resolvedTheme } = useTheme();
@@ -51,6 +52,8 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
               user={currentUser}
               currentWorkspaceId={currentWorkspace?.id}
               workspaceIds={Object.keys(workspaces)}
+              isCloud={!instance?.is_telemetry_anonymous || false}
+              telemetryEnabled={instance?.is_telemetry_enabled || false}
               posthogAPIKey={envConfig?.posthog_api_key || null}
               posthogHost={envConfig?.posthog_host || null}
             >

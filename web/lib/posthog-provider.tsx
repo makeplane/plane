@@ -19,16 +19,8 @@ export interface IPosthogWrapper {
 }
 
 const PostHogProvider: FC<IPosthogWrapper> = (props) => {
-  const {
-    children,
-    user,
-    workspaceIds,
-    currentWorkspaceId,
-    posthogAPIKey,
-    posthogHost,
-    isCloud = true,
-    telemetryEnabled = false,
-  } = props;
+  const { children, user, workspaceIds, currentWorkspaceId, posthogAPIKey, posthogHost, isCloud, telemetryEnabled } =
+    props;
   // states
   const [lastWorkspaceId, setLastWorkspaceId] = useState(currentWorkspaceId);
   // router
