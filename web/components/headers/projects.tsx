@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
@@ -42,6 +43,10 @@ export const ProjectsHeader = observer(() => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+  // outside click detector hook
+  useOutsideClickDetector(inputRef, () => {
+    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+  });
   // auth
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 

@@ -120,7 +120,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
-          <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
+          <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
               <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/90">
                 <ProjectLogo logo={project.logo_props} />
