@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 import { List, PlusIcon, Sheet } from "lucide-react";
 import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 import { BreadcrumbLink } from "components/common";
@@ -55,6 +56,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     workspace: { workspaceMemberIds },
   } = useMember();
   const { captureIssuesFilterEvent, captureIssuesDisplayFilterEvent } = useEventTracker();
+  const { isMobile } = usePlatformOS();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
@@ -171,7 +173,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             {GLOBAL_VIEW_LAYOUTS.map((layout) => (
               <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
                 <span>
-                  <Tooltip tooltipContent={layout.title}>
+                  <Tooltip tooltipContent={layout.title} isMobile={isMobile}>
                     <div
                       className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
                         activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""

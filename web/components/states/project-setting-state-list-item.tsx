@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
 import { Tooltip, StateGroupIcon } from "@plane/ui";
@@ -30,6 +31,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { markStateAsDefault, moveStatePosition } = useProjectState();
+  const { isMobile } = usePlatformOS();
   // derived values
   const groupStates = statesList.filter((s) => s.group === state.group);
   const groupLength = groupStates.length;
@@ -109,11 +111,11 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
             disabled={state.default || groupLength === 1}
           >
             {state.default ? (
-              <Tooltip tooltipContent="Cannot delete the default state.">
+              <Tooltip tooltipContent="Cannot delete the default state." isMobile={isMobile}>
                 <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : groupLength === 1 ? (
-              <Tooltip tooltipContent="Cannot have an empty group.">
+              <Tooltip tooltipContent="Cannot have an empty group." isMobile={isMobile}>
                 <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : (

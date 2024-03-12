@@ -4,6 +4,7 @@ import { Network } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
 import { useIssueDetail } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 // components
 import { IssueUser } from "../";
@@ -25,7 +26,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
   } = useIssueDetail();
 
   const activity = getActivityById(activityId);
-
+  const { isMobile } = usePlatformOS();
   if (!activity) return <></>;
   return (
     <div
@@ -42,6 +43,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
         <span> {children} </span>
         <span>
           <Tooltip
+            isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
             <span className="whitespace-nowrap"> {calculateTimeAgo(activity.created_at)}</span>

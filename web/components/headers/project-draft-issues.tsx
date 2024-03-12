@@ -2,6 +2,7 @@ import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 import { BreadcrumbLink } from "components/common";
@@ -28,7 +29,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-
+  const { isMobile } = usePlatformOS();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
@@ -112,6 +113,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
           </Breadcrumbs>
           {issueCount && issueCount > 0 ? (
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's draft`}
               position="bottom"
             >

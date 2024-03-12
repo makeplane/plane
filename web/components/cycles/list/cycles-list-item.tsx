@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 import { Check, Info, Star, User2 } from "lucide-react";
 import { Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar, setPromiseToast } from "@plane/ui";
 import { CycleQuickActions } from "components/cycles";
@@ -33,6 +34,8 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const { cycleId, workspaceSlug, projectId } = props;
   // router
   const router = useRouter();
+  // hooks
+  const { isMobile } = usePlatformOS();
   // store hooks
   const { captureEvent } = useEventTracker();
   const {
@@ -164,7 +167,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
               <div className="relative flex items-center gap-2.5 overflow-hidden">
                 <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5 flex-shrink-0" />
-                <Tooltip tooltipContent={cycleDetails.name} position="top">
+                <Tooltip tooltipContent={cycleDetails.name} position="top" isMobile={isMobile}>
                   <span className="line-clamp-1 inline-block overflow-hidden truncate text-base font-medium">
                     {cycleDetails.name}
                   </span>
@@ -196,7 +199,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
             </div>
 
             <div className="relative flex flex-shrink-0 items-center gap-3">
-              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`}>
+              <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
                 <div className="flex w-10 cursor-default items-center justify-center">
                   {cycleDetails.assignee_ids?.length > 0 ? (
                     <AvatarGroup showTooltip={false}>

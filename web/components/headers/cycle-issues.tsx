@@ -3,6 +3,8 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
+// components
 import { ArrowRight, Plus, PanelRight } from "lucide-react";
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
@@ -26,7 +28,6 @@ import {
   useIssues,
 } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
-// components
 // ui
 // icons
 // helpers
@@ -53,6 +54,7 @@ const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   const { getCycleById } = useCycle();
   // derived values
   const cycle = getCycleById(cycleId);
+  //
 
   if (!cycle) return null;
 
@@ -95,6 +97,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
+  const { isMobile } = usePlatformOS()
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -253,6 +256,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                           <p className="truncate">{cycleDetails?.name && cycleDetails.name}</p>
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
+                              isMobile={isMobile}
                               tooltipContent={`There are ${issueCount} ${
                                 issueCount > 1 ? "issues" : "issue"
                               } in this cycle`}

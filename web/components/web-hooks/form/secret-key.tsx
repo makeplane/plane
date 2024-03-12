@@ -10,6 +10,7 @@ import { csvDownload } from "helpers/download.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // hooks
 import { useEventTracker, useWebhook, useWorkspace } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // types
 import { IWebhook } from "@plane/types";
 // utils
@@ -34,6 +35,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
   const { captureEvent } = useEventTracker();
 
+  const { isMobile } = usePlatformOS();
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
 
@@ -114,7 +116,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
               {webhookSecretKey && (
                 <div className="flex items-center gap-2">
                   {SECRET_KEY_OPTIONS.map((option) => (
-                    <Tooltip key={option.key} tooltipContent={option.label}>
+                    <Tooltip key={option.key} tooltipContent={option.label} isMobile={isMobile}>
                       <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
                         <option.Icon className="h-3 w-3 text-custom-text-400" />
                       </button>
