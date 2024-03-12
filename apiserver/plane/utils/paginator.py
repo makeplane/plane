@@ -145,7 +145,7 @@ class OffsetPaginator:
             results=results,
             next=next_cursor,
             prev=prev_cursor,
-            hits=None,
+            hits=count,
             max_hits=max_hits,
         )
 
@@ -197,9 +197,6 @@ class GroupedOffsetPaginator(OffsetPaginator):
         if offset < 0:
             raise BadPaginationError("Pagination offset cannot be negative")
 
-        # Get the queryset
-        queryset = self.queryset
-
         # Compute the results
         results = {}
         queryset = queryset.annotate(
@@ -211,7 +208,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
         )
 
         # Filter the results
-        results = queryset.filter(row_number__gte=offset, row_number__lt=stop)
+        results = queryset.filter(row_number__gt=offset, row_number__lt=stop)
 
         # Adjust cursors based on the grouped results for pagination
         next_cursor = Cursor(
@@ -226,6 +223,8 @@ class GroupedOffsetPaginator(OffsetPaginator):
             True,
             page > 0,
         )
+
+        count = queryset.count()
 
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
@@ -243,7 +242,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
             results=results,
             next=next_cursor,
             prev=prev_cursor,
-            hits=None,
+            hits=count,
             max_hits=max_hits,
         )
 
@@ -417,6 +416,7 @@ class BasePaginator:
         response = Response(
             {
                 "grouped_by": group_by_field_name,
+                "total_count": (cursor_result.hits),
                 "next_cursor": str(cursor_result.next),
                 "prev_cursor": str(cursor_result.prev),
                 "next_page_results": cursor_result.next.has_results,
