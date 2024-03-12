@@ -12,7 +12,6 @@ services:
     command: /usr/local/bin/start.sh web/server.js web
     depends_on:
       - api
-      - worker
 
   godmode:
     container_name: godmode
@@ -25,7 +24,6 @@ services:
     command: /usr/local/bin/start.sh godmode/server.js godmode
     depends_on:
       - api
-      - worker
       - web
 
   space:
@@ -39,7 +37,6 @@ services:
     command: /usr/local/bin/start.sh space/server.js space
     depends_on:
       - api
-      - worker
       - web
 
   api:
@@ -99,9 +96,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${PGUSER}
-      POSTGRES_DB: ${PGDATABASE}
-      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
 
   plane-redis:
@@ -137,7 +134,7 @@ services:
     depends_on:
       - web
       - api
-      - space
+      - plane-minio
 
 volumes:
   pgdata:
