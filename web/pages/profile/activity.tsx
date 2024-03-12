@@ -49,7 +49,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
           <SidebarHamburgerToggle onClick={() => themeStore.toggleSidebar()} />
           <h3 className="text-xl font-medium">Activity</h3>
         </div>
-        <div className="h-full flex flex-col overflow-y-auto">
+        <div className="h-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-md">
           {activityPages}
           {pageCount < totalPages && resultsCount !== 0 && (
             <div className="flex items-center justify-center text-xs w-full">

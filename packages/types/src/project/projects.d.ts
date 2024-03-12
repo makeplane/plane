@@ -23,6 +23,8 @@ export type TProjectLogoProps = {
 
 export interface IProject {
   archive_in: number;
+  archived_issues: number;
+  archived_sub_issues: number;
   close_in: number;
   created_at: Date;
   created_by: string;
@@ -35,6 +37,8 @@ export interface IProject {
   default_assignee: IUser | string | null;
   default_state: string | null;
   description: string;
+  draft_issues: number;
+  draft_sub_issues: number;
   estimate: string | null;
   id: string;
   identifier: string;
@@ -48,7 +52,9 @@ export interface IProject {
   network: number;
   project_lead: IUserLite | string | null;
   sort_order: number | null;
+  sub_issues: number;
   total_cycles: number;
+  total_issues: number;
   total_members: number;
   total_modules: number;
   updated_at: Date;
