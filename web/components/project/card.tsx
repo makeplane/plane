@@ -2,36 +2,38 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import { Check, LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // components
 import { DeleteProjectModal, JoinProjectModal, ProjectLogo } from "components/project";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { renderFormattedDate } from "helpers/date-time.helper";
 // hooks
 import { useProject } from "hooks/store";
 // types
 import type { IProject } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
 // constants
+import { EUserProjectRoles } from "constants/project";
 
-export type ProjectCardProps = {
+type Props = {
   project: IProject;
 };
 
-export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
+export const ProjectCard: React.FC<Props> = observer((props) => {
   const { project } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
-
-  project.member_role;
+  // derived values
+  const projectMembersIds = project.members?.map((member) => member.member_id);
+  // auth
   const isOwner = project.member_role === EUserProjectRoles.ADMIN;
   const isMember = project.member_role === EUserProjectRoles.MEMBER;
 
@@ -53,7 +55,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !project) return;
+    if (!workspaceSlug) return;
 
     const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(removeFromFavoritePromise, {
@@ -69,23 +71,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     });
   };
 
-  const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${project.id}/issues`).then(() => {
+  const handleCopyText = () =>
+    copyUrlToClipboard(`${workspaceSlug}/projects/${project.id}/issues`).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
-      });
-    });
-  };
-
-  const projectMembersIds = project.members?.map((member) => member.member_id);
+      })
+    );
 
   return (
     <>
-      {/* Delete Project Modal  */}
+      {/* Delete Project Modal */}
       <DeleteProjectModal
         project={project}
         isOpen={deleteProjectModalOpen}
@@ -94,20 +91,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
       {/* Join Project Modal */}
       {workspaceSlug && (
         <JoinProjectModal
-          workspaceSlug={workspaceSlug?.toString()}
+          workspaceSlug={workspaceSlug.toString()}
           project={project}
           isOpen={joinProjectModalOpen}
           handleClose={() => setJoinProjectModal(false)}
         />
       )}
-
-      {/* Card Information */}
-      <div
-        onClick={() => {
-          if (project.is_member) router.push(`/${workspaceSlug?.toString()}/projects/${project.id}/issues`);
-          else setJoinProjectModal(true);
+      <Link
+        href={`/${workspaceSlug}/projects/${project.id}/issues`}
+        onClick={(e) => {
+          if (!project.is_member) {
+            e.preventDefault();
+            e.stopPropagation();
+            setJoinProjectModal(true);
+          }
         }}
-        className="flex cursor-pointer flex-col rounded border border-custom-border-200 bg-custom-background-100"
+        className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
@@ -121,12 +120,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
-          <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
+          <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="flex item-center justify-center h-9 w-9 flex-shrink-0 rounded bg-white/90">
-                <span className="grid place-items-center">
-                  <ProjectLogo logo={project.logo_props} />
-                </span>
+              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/90">
+                <ProjectLogo logo={project.logo_props} />
               </div>
 
               <div className="flex w-full flex-col justify-between gap-0.5 truncate">
@@ -152,15 +149,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               <button
                 className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                 onClick={(e) => {
-                  if (project.is_favorite) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleRemoveFromFavorites();
-                  } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleAddToFavorites();
-                  }
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (project.is_favorite) handleRemoveFromFavorites();
+                  else handleAddToFavorites();
                 }}
               >
                 <Star
@@ -172,7 +164,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
         </div>
 
         <div className="flex h-[104px] w-full flex-col justify-between rounded-b p-4">
-          <p className="line-clamp-2 break-words text-sm text-custom-text-300">{project.description}</p>
+          <p className="line-clamp-2 break-words text-sm text-custom-text-300">
+            {project.description && project.description.trim() !== ""
+              ? project.description
+              : `Created on ${renderFormattedDate(project.created_at)}`}
+          </p>
           <div className="item-center flex justify-between">
             <Tooltip
               tooltipHeading="Members"
@@ -197,19 +193,24 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 <span className="text-sm italic text-custom-text-400">No Member Yet</span>
               )}
             </Tooltip>
-            {(isOwner || isMember) && (
-              <Link
-                className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                href={`/${workspaceSlug}/projects/${project.id}/settings`}
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Link>
-            )}
-
-            {!project.is_member ? (
+            {project.is_member &&
+              (isOwner || isMember ? (
+                <Link
+                  className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  href={`/${workspaceSlug}/projects/${project.id}/settings`}
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Link>
+              ) : (
+                <span className="flex items-center gap-1 text-custom-text-400 text-sm">
+                  <Check className="h-3.5 w-3.5" />
+                  Joined
+                </span>
+              ))}
+            {!project.is_member && (
               <div className="flex items-center">
                 <Button
                   variant="link-primary"
@@ -223,10 +224,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   Join
                 </Button>
               </div>
-            ) : null}
+            )}
           </div>
         </div>
-      </div>
+      </Link>
     </>
   );
 });

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-
 // components
 import { DateFilterModal } from "components/core";
 import { FilterHeader, FilterOption } from "components/issues";
 // constants
-import { DATE_AFTER_FILTER_OPTIONS } from "constants/filters";
+import { DATE_BEFORE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -13,7 +12,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterEndDate: React.FC<Props> = observer((props) => {
+export const FilterCreatedDate: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -21,7 +20,7 @@ export const FilterEndDate: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = DATE_AFTER_FILTER_OPTIONS.filter((d) =>
+  const filteredOptions = DATE_BEFORE_FILTER_OPTIONS.filter((d) =>
     d.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -32,11 +31,11 @@ export const FilterEndDate: React.FC<Props> = observer((props) => {
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={(val) => handleUpdate(val)}
-          title="Due date"
+          title="Created date"
         />
       )}
       <FilterHeader
-        title={`Due date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Created date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
