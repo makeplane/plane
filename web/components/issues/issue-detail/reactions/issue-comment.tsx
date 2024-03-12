@@ -82,6 +82,9 @@ export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) 
       })
       .filter((displayName): displayName is string => !!displayName);
 
+    if (reactionUsers.length === 4) return `${reactionUsers.slice(0, 3).join(", ")}, and ${reactionUsers[3]}`;
+    if (reactionUsers.length > 3)
+      return `${reactionUsers.slice(0, 3).join(", ")}, and +${reactionUsers.length - 3} more`;
     return reactionUsers.join(", ");
   };
 
