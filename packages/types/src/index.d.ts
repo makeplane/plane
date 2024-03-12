@@ -2,7 +2,7 @@ export * from "./users";
 export * from "./workspace";
 export * from "./cycle";
 export * from "./dashboard";
-export * from "./projects";
+export * from "./project";
 export * from "./state";
 export * from "./issues";
 export * from "./modules";

@@ -62,8 +62,8 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPages = new ProjectPageStore(this);
   }
 
   resetOnSignout() {
@@ -82,7 +82,7 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPages = new ProjectPageStore(this);
   }
 }
