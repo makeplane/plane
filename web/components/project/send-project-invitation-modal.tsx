@@ -212,9 +212,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
                                 const selectedMember = getWorkspaceMemberDetails(value);
-
-                                if (!selectedMember?.member) return <></>;
-
                                 return (
                                   <CustomSearchSelect
                                     value={value}

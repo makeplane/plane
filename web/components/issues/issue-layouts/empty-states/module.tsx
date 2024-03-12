@@ -77,8 +77,8 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
             isEmptyFilters
               ? undefined
               : () => {
-                  setTrackElement("Cycle issue empty state");
-                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                  setTrackElement("Module issue empty state");
+                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }
           }
           secondaryButtonOnClick={isEmptyFilters ? handleClearAllFilters : () => setModuleIssuesListModal(true)}

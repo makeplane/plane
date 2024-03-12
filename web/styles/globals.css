@@ -602,6 +602,9 @@ div.web-view-spinner div.bar12 {
 .horizontal-scrollbar::-webkit-scrollbar-corner {
   background-color: transparent;
 }
+.vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
+  margin-top: 44px;
+}
 
 /* scrollbar sm size */
 .scrollbar-sm::-webkit-scrollbar {

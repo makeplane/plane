@@ -11,7 +11,7 @@ import { CycleService } from "services/cycle.service";
 // components
 // ui
 // types
-import type { CycleDateCheckData, ICycle, TCycleView } from "@plane/types";
+import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // constants
 
 type CycleModalProps = {
@@ -34,7 +34,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
 
-  const { setValue: setCycleTab } = useLocalStorage<TCycleView>("cycle_tab", "active");
+  const { setValue: setCycleTab } = useLocalStorage<TCycleTabOptions>("cycle_tab", "active");
 
   const handleCreateCycle = async (payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;

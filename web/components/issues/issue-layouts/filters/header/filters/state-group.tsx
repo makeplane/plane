@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import sortBy from "lodash/sortBy";
 // components
 import { StateGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
