@@ -9,7 +9,8 @@ import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // services
 import { IntegrationService } from "services/integrations";
@@ -48,8 +49,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
@@ -58,8 +59,8 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
 
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,
-    github_app_name: appConfig?.github_app_name || "",
-    slack_client_id: appConfig?.slack_client_id || "",
+    github_app_name: instance?.config?.github_app_name || "",
+    slack_client_id: instance?.config?.slack_client_id || "",
   });
 
   const { data: workspaceIntegrations } = useSWR(

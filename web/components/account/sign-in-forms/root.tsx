@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // hooks
+import { useEventTracker } from "hooks/store";
+import { useStore } from "hooks";
+import useSignInRedirection from "hooks/use-sign-in-redirection";
+// components
 import {
   SignInEmailForm,
   SignInUniqueCodeForm,
@@ -10,11 +14,8 @@ import {
   SignInOptionalSetPasswordForm,
 } from "components/account";
 import { LatestFeatureBlock } from "components/common";
-import { NAVIGATE_TO_SIGNUP } from "constants/event-tracker";
-import { useApplication, useEventTracker } from "hooks/store";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
-// components
 // constants
+import { NAVIGATE_TO_SIGNUP } from "constants/event-tracker";
 
 export enum ESignInSteps {
   EMAIL = "EMAIL",
@@ -30,13 +31,13 @@ export const SignInRoot = observer(() => {
   const [email, setEmail] = useState("");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
-  // mobx store
+  // hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const { captureEvent } = useEventTracker();
   // derived values
-  const isSmtpConfigured = appConfig?.is_smtp_configured;
+  const isSmtpConfigured = instance?.config?.is_smtp_configured;
 
   // step 1 submit handler- email verification
   const handleEmailVerification = (isPasswordAutoset: boolean) => {
@@ -55,7 +56,8 @@ export const SignInRoot = observer(() => {
     await handleRedirection();
   };
 
-  const isOAuthEnabled = envConfig && (appConfig.google_client_id || appConfig.github_client_id);
+  const isOAuthEnabled =
+    instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
 
   useEffect(() => {
     if (isSmtpConfigured) setSignInStep(ESignInSteps.EMAIL);
@@ -111,7 +113,7 @@ export const SignInRoot = observer(() => {
       {isOAuthEnabled &&
         (signInStep === ESignInSteps.EMAIL || (!isSmtpConfigured && signInStep === ESignInSteps.PASSWORD)) && (
           <>
-            <OAuthOptions type="sign_in" />
+            <OAuthOptions />
             <p className="mt-6 text-center text-xs text-onboarding-text-300">
               Don{"'"}t have an account?{" "}
               <Link

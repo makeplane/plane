@@ -24,6 +24,7 @@ import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.help
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useMember, usePage, useUser } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
+import { useStore } from "hooks";
 import { IIssueLabel } from "@plane/types";
 
 export interface IPagesListItem {
@@ -46,7 +47,9 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   const [deletePageModal, setDeletePageModal] = useState(false);
 
   const {
-    currentUser,
+    user: { data: currentUser },
+  } = useStore();
+  const {
     membership: { currentProjectRole },
   } = useUser();
 

@@ -3,7 +3,12 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import useSWR from "swr";
 // hooks
-import { useEventTracker, useUser, useUserProfile, useWorkspace } from "hooks/store";
+import {
+  // useEventTracker,
+  useUser,
+  useUserProfile,
+  useWorkspace,
+} from "hooks/store";
 // hooks
 import { Spinner } from "@plane/ui";
 import { PageHead } from "components/core";
@@ -14,7 +19,7 @@ import {
   SwitchOrDeleteAccountModal,
   UserDetails,
 } from "components/onboarding";
-import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
+// import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { UserAuthWrapper } from "layouts/auth-layout";
@@ -35,9 +40,13 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const { captureEvent } = useEventTracker();
+  // const { captureEvent } = useEventTracker();
   const { data: user, isLoading: currentUserLoader, updateCurrentUser } = useUser();
-  const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
+  const {
+    data: profile,
+    // updateUserOnBoard,
+    updateUserProfile,
+  } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
   // custom hooks
   const {} = useUserAuth({ routeAuth: "onboarding", user: user || null, isLoading: currentUserLoader });
@@ -68,18 +77,18 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const finishOnboarding = async () => {
     if (!user || !workspacesList) return;
 
-    await updateUserOnBoard()
-      .then(() => {
-        captureEvent(USER_ONBOARDING_COMPLETED, {
-          // user_role: user.role,
-          email: user.email,
-          user_id: user.id,
-          status: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        console.log("Failed to update onboarding status");
-      });
+    // await updateUserOnBoard()
+    //   .then(() => {
+    //     captureEvent(USER_ONBOARDING_COMPLETED, {
+    //       // user_role: user.role,
+    //       email: user.email,
+    //       user_id: user.id,
+    //       status: "SUCCESS",
+    //     });
+    //   })
+    //   .catch(() => {
+    //     console.log("Failed to update onboarding status");
+    //   });
 
     router.replace(`/${workspacesList[0]?.slug}`);
   };

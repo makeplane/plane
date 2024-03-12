@@ -4,7 +4,8 @@ import { FileText, Inbox } from "lucide-react";
 // ui
 import { ContrastIcon, DiceIcon, PhotoFilterIcon, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // hooks
-import { useEventTracker, useProject, useUser } from "hooks/store";
+import { useEventTracker, useProject } from "hooks/store";
+import { useStore } from "hooks";
 // types
 import { IProject } from "@plane/types";
 
@@ -51,7 +52,9 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { getProjectById, updateProject } = useProject();
   // derived values
   const currentProjectDetails = getProjectById(projectId);

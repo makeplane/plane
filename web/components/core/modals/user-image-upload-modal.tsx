@@ -7,9 +7,9 @@ import { UserCircle2 } from "lucide-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 
 import { MAX_FILE_SIZE } from "constants/common";
-import { useApplication } from "hooks/store";
 // services
 import { FileService } from "services/file.service";
+import { useStore } from "hooks";
 // ui
 // icons
 // constants
@@ -33,8 +33,8 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   const [isImageUploading, setIsImageUploading] = useState(false);
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
@@ -43,7 +43,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: appConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
   });
 

@@ -6,7 +6,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
-import { useApplication } from "hooks/store";
+// import { useApplication } from "hooks/store";
 
 export interface IInstanceGoogleConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -20,7 +20,7 @@ export interface GoogleConfigFormValues {
 export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) => {
   const { config } = props;
   // store hooks
-  const { instance: instanceStore } = useApplication();
+  // const { instance: instanceStore } = useApplication();
   // form data
   const {
     handleSubmit,
@@ -35,17 +35,18 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
 
   const onSubmit = async (formData: GoogleConfigFormValues) => {
     const payload: Partial<GoogleConfigFormValues> = { ...formData };
+    console.log(payload);
 
-    await instanceStore
-      .updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          title: "Success",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Google Configuration Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    // await instanceStore
+    //   .updateInstanceConfigurations(payload)
+    //   .then(() =>
+    //     setToast({
+    //       title: "Success",
+    //       type: TOAST_TYPE.SUCCESS,
+    //       message: "Google Configuration Settings updated successfully",
+    //     })
+    //   )
+    //   .catch((err) => console.error(err));
   };
 
   const originURL = typeof window !== "undefined" ? window.location.origin : "";

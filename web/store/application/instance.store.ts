@@ -9,6 +9,10 @@ import { IInstance } from "@plane/types";
 type TError = {
   status: string;
   message: string;
+  data?: {
+    is_activated: boolean;
+    is_setup_done: boolean;
+  };
 };
 
 export interface IInstanceStore {
@@ -50,10 +54,24 @@ export class InstanceStore implements IInstanceStore {
         this.error = undefined;
       });
       const instance = await this.instanceService.getInstanceInfo();
-      runInAction(() => {
-        this.isLoading = false;
-        this.instance = instance;
-      });
+
+      if (instance.hasOwnProperty("is_activated") && instance.hasOwnProperty("is_setup_done"))
+        runInAction(() => {
+          this.isLoading = false;
+          this.error = {
+            status: "success",
+            message: "Instance is not created in the backend",
+            data: {
+              is_activated: instance.is_activated,
+              is_setup_done: instance.is_setup_done,
+            },
+          };
+        });
+      else
+        runInAction(() => {
+          this.isLoading = false;
+          this.instance = instance;
+        });
     } catch (error) {
       console.log("Failed to fetch instance info", error);
       runInAction(() => {

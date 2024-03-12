@@ -5,7 +5,7 @@ import useSWR, { mutate } from "swr";
 // hooks
 import { Loader } from "@plane/ui";
 import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
-import { useApplication } from "hooks/store";
+import { useStore } from "hooks";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // services
 import { AppInstallationService } from "services/app_installation.service";
@@ -23,8 +23,8 @@ const appInstallationService = new AppInstallationService();
 export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   // states
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
@@ -32,11 +32,12 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  // FIXME:
   const { startAuth } = useIntegrationPopup({
     provider: "slackChannel",
     stateParams: integration.id,
-    github_app_name: appConfig?.github_client_id || "",
-    slack_client_id: appConfig?.slack_client_id || "",
+    // github_app_name: instance?.config?.github_client_id || "",
+    slack_client_id: instance?.config?.slack_client_id || "",
   });
 
   const { data: projectIntegration } = useSWR(

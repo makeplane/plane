@@ -7,7 +7,7 @@ import { ActivityMessage, IssueLink } from "components/core";
 import { ProfileEmptyState } from "components/ui";
 import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
 import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 // services
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 import { UserService } from "services/user.service";
@@ -24,7 +24,9 @@ export const ProfileActivity = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   const { data: userProfileActivity } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString(), {}) : null,

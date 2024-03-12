@@ -7,7 +7,8 @@ import { Combobox } from "@headlessui/react";
 import { Check, Search } from "lucide-react";
 import { Avatar } from "@plane/ui";
 //store
-import { useApplication, useMember, useUser } from "hooks/store";
+import { useApplication, useMember } from "hooks/store";
+import { useStore } from "hooks";
 //hooks
 //icon
 //types
@@ -35,8 +36,9 @@ export const MemberOptions = observer((props: Props) => {
     project: { getProjectMemberIds, fetchProjectMembers },
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { currentUser } = useUser();
-
+  const {
+    user: { data: currentUser },
+  } = useStore();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",

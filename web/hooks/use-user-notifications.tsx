@@ -16,7 +16,7 @@ const PER_PAGE = 30;
 
 const userNotificationServices = new NotificationService();
 
-const useUserNotification = () => {
+const useUserNotification = (): any => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

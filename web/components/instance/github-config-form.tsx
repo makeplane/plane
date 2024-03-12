@@ -6,7 +6,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
-import { useApplication } from "hooks/store";
+// import { useApplication } from "hooks/store";
 
 export interface IInstanceGithubConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -22,7 +22,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
   // states
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
-  const { instance: instanceStore } = useApplication();
+  // const { instance: instanceStore } = useApplication();
   // form data
   const {
     handleSubmit,
@@ -37,17 +37,18 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
 
   const onSubmit = async (formData: GithubConfigFormValues) => {
     const payload: Partial<GithubConfigFormValues> = { ...formData };
+    console.log(payload);
 
-    await instanceStore
-      .updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          title: "Success",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Github Configuration Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    // await instanceStore
+    //   .updateInstanceConfigurations(payload)
+    //   .then(() =>
+    //     setToast({
+    //       title: "Success",
+    //       type: TOAST_TYPE.SUCCESS,
+    //       message: "Github Configuration Settings updated successfully",
+    //     })
+    //   )
+    //   .catch((err) => console.error(err));
   };
 
   const originURL = typeof window !== "undefined" ? window.location.origin : "";

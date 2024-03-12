@@ -62,7 +62,9 @@ export const NotificationPopover = observer(() => {
         isOpen={selectedNotificationForSnooze !== null}
         onClose={() => setSelectedNotificationForSnooze(null)}
         onSubmit={markSnoozeNotification}
-        notification={notifications?.find((notification) => notification.id === selectedNotificationForSnooze) || null}
+        notification={
+          notifications?.find((notification: any) => notification.id === selectedNotificationForSnooze) || null
+        }
         onSuccess={() => setSelectedNotificationForSnooze(null)}
       />
       <Popover ref={notificationPopoverRef} className="md:relative w-full">
@@ -127,7 +129,7 @@ export const NotificationPopover = observer(() => {
                 notifications.length > 0 ? (
                   <div className="h-full overflow-y-auto vertical-scrollbar scrollbar-md">
                     <div className="divide-y divide-custom-border-100">
-                      {notifications.map((notification) => (
+                      {notifications.map((notification: any) => (
                         <NotificationCard
                           selectedTab={selectedTab}
                           key={notification.id}
@@ -172,7 +174,7 @@ export const NotificationPopover = observer(() => {
                         className="my-6 flex w-full items-center justify-center text-sm font-medium text-custom-primary-100"
                         disabled={isLoadingMore}
                         onClick={() => {
-                          setSize((prev) => prev + 1);
+                          setSize((prev: any) => prev + 1);
                         }}
                       >
                         Load More

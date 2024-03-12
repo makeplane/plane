@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 // hooks
-import { useUser } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import { IntegrationService } from "services/integrations";
@@ -22,6 +21,7 @@ import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 import { EXPORTERS_LIST } from "constants/workspace";
 import { EmptyStateType } from "constants/empty-state";
+import { useStore } from "hooks";
 
 // services
 const integrationService = new IntegrationService();
@@ -35,9 +35,11 @@ const IntegrationGuide = observer(() => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
   // store hooks
-  const { currentUser, currentUserLoader } = useUser();
+  const {
+    user: { data: currentUser, isLoading: currentUserLoader },
+  } = useStore();
   // custom hooks
-  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
+  const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -155,7 +157,7 @@ const IntegrationGuide = observer(() => {
             isOpen
             handleClose={() => handleCsvClose()}
             data={null}
-            user={currentUser}
+            user={currentUser || null}
             provider={provider}
             mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`))}
           />

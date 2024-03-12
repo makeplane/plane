@@ -59,6 +59,13 @@ export class UserService extends APIService {
         throw error?.response;
       });
   }
+  async updateCurrentUserProfile(data: any): Promise<any> {
+    return this.patch("/api/users/me/profile/", data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 
   async getCurrentUserAccounts(): Promise<any> {
     return this.get("/api/users/me/accounts/")

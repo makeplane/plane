@@ -3,7 +3,7 @@ import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import { Button, InputColorPicker } from "@plane/ui";
-import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 // ui
 // types
 import { IUserTheme } from "@plane/types";
@@ -25,8 +25,13 @@ const inputRules = {
 };
 
 export const CustomThemeSelector: React.FC = observer(() => {
-  const { currentUser, updateCurrentUser } = useUser();
-  const userTheme = currentUser?.theme;
+  const {
+    user: {
+      profile: { data: userProfile },
+    },
+  } = useStore();
+
+  const userTheme: any = userProfile?.theme;
   // hooks
   const { setTheme } = useTheme();
 
@@ -61,7 +66,9 @@ export const CustomThemeSelector: React.FC = observer(() => {
 
     setTheme("custom");
 
-    return updateCurrentUser({ theme: payload });
+    console.log(payload);
+
+    // return updateUserProfile({ theme: payload });
   };
 
   const handleValueChange = (val: string | undefined, onChange: any) => {

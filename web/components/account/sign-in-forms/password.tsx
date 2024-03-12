@@ -4,19 +4,19 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // services
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { ESignInSteps, ForgotPasswordPopover } from "components/account";
-import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
-import { checkEmailValidity } from "helpers/string.helper";
-import { useApplication, useEventTracker } from "hooks/store";
 import { AuthService } from "services/auth.service";
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { useEventTracker } from "hooks/store";
+import { useStore } from "hooks";
 // components
-// ui
+import { ESignInSteps, ForgotPasswordPopover } from "components/account";
+// constants
+import { FORGOT_PASSWORD, SIGN_IN_WITH_PASSWORD } from "constants/event-tracker";
 // helpers
+import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "@plane/types";
-// constants
 
 type Props = {
   email: string;
@@ -43,11 +43,11 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
   const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const { captureEvent } = useEventTracker();
   // derived values
-  const isSmtpConfigured = appConfig?.is_smtp_configured;
+  const isSmtpConfigured = instance?.config?.is_smtp_configured;
   // form info
   const {
     control,
@@ -211,9 +211,9 @@ export const SignInPasswordForm: React.FC<Props> = observer((props) => {
             disabled={!isValid}
             loading={isSubmitting}
           >
-            {appConfig?.is_smtp_configured ? "Continue" : "Go to workspace"}
+            {instance?.config?.is_smtp_configured ? "Continue" : "Go to workspace"}
           </Button>
-          {envConfig && appConfig.is_smtp_configured && (
+          {instance && instance?.config?.is_smtp_configured && (
             <Button
               type="button"
               onClick={handleSendUniqueCode}

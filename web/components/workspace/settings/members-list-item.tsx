@@ -13,6 +13,7 @@ import { WORKSPACE_MEMBER_lEAVE } from "constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
+import { useStore } from "hooks";
 
 type Props = {
   memberId: string;
@@ -27,10 +28,13 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    currentUser,
-    currentUserSettings,
+    // currentUser,
+    // currentUserSettings,
     membership: { currentWorkspaceRole, leaveWorkspace },
   } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
@@ -39,7 +43,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const memberDetails = getWorkspaceMemberDetails(memberId);
 
   const handleLeaveWorkspace = async () => {
-    if (!workspaceSlug || !currentUserSettings) return;
+    if (!workspaceSlug || !currentUser) return;
 
     await leaveWorkspace(workspaceSlug.toString())
       .then(() => {

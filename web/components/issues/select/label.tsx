@@ -178,7 +178,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                         );
                     } else
                       return (
-                        <div className="border-y border-custom-border-200">
+                        <div key={label.id} className="border-y border-custom-border-200">
                           <div className="flex select-none items-center gap-2 truncate p-2 text-custom-text-100">
                             <Component className="h-3 w-3" /> {label.name}
                           </div>

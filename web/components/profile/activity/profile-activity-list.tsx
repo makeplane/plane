@@ -9,7 +9,7 @@ import { ActivityIcon, ActivityMessage, IssueLink } from "components/core";
 import { ActivitySettingsLoader } from "components/ui";
 import { USER_ACTIVITY } from "constants/fetch-keys";
 import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 // services
 import { UserService } from "services/user.service";
 // editor
@@ -31,7 +31,9 @@ type Props = {
 export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   const { data: userProfileActivity } = useSWR(
     USER_ACTIVITY({

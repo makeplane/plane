@@ -14,6 +14,7 @@ import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // ui
 // types
 import { NextPageWithLayout } from "lib/types";
+import { useStore } from "hooks";
 // constants
 
 const PER_PAGE = 100;
@@ -28,7 +29,9 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
   const { userId } = router.query;
   // store hooks
   const {
-    currentUser,
+    user: { data: currentUser },
+  } = useStore();
+  const {
     membership: { currentWorkspaceRole },
   } = useUser();
 

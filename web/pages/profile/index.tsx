@@ -27,7 +27,7 @@ import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-ham
 import { TIME_ZONES } from "constants/timezones";
 import { USER_ROLES } from "constants/workspace";
 // hooks
-import { useApplication, useUser } from "hooks/store";
+import { useApplication } from "hooks/store";
 import useUserAuth from "hooks/use-user-auth";
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // layouts
@@ -37,6 +37,7 @@ import { FileService } from "services/file.service";
 // services
 // types
 import type { IUser } from "@plane/types";
+import { useStore } from "hooks";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -66,14 +67,20 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     formState: { errors },
   } = useForm<IUser>({ defaultValues });
   // store hooks
-  const { currentUser: myProfile, updateCurrentUser, currentUserLoader } = useUser();
+  const {
+    user: {
+      data: currentUser,
+      updateCurrentUser,
+      profile: { isLoading: currentUserLoader },
+    },
+  } = useStore();
   // custom hooks
-  const {} = useUserAuth({ user: myProfile, isLoading: currentUserLoader });
+  const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
   const { theme: themeStore } = useApplication();
 
   useEffect(() => {
-    reset({ ...defaultValues, ...myProfile });
-  }, [myProfile, reset]);
+    reset({ ...defaultValues, ...currentUser });
+  }, [currentUser, reset]);
 
   const onSubmit = async (formData: IUser) => {
     setIsLoading(true);
@@ -138,7 +145,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
     content: timeZone.label,
   }));
 
-  if (!myProfile)
+  if (!currentUser)
     return (
       <div className="grid h-full w-full place-items-center px-4 sm:px-0">
         <Spinner />
@@ -161,7 +168,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                 isOpen={isImageUploadModalOpen}
                 onClose={() => setIsImageUploadModalOpen(false)}
                 isRemoving={isRemoving}
-                handleDelete={() => handleDelete(myProfile?.avatar, true)}
+                handleDelete={() => handleDelete(currentUser?.avatar, true)}
                 onSuccess={(url) => {
                   onChange(url);
                   handleSubmit(onSubmit)();
@@ -179,7 +186,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                   <img
                     src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                     className="h-44 w-full rounded-lg object-cover"
-                    alt={myProfile?.first_name ?? "Cover image"}
+                    alt={currentUser?.first_name ?? "Cover image"}
                   />
                   <div className="absolute -bottom-6 left-8 flex items-end justify-between">
                     <div className="flex gap-3">
@@ -192,10 +199,10 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                           ) : (
                             <div className="relative h-16 w-16 overflow-hidden">
                               <img
-                                src={watch("avatar")}
+                                src={watch("avatar") || undefined}
                                 className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
                                 onClick={() => setIsImageUploadModalOpen(true)}
-                                alt={myProfile?.display_name}
+                                alt={currentUser?.display_name}
                                 role="button"
                               />
                             </div>
@@ -229,7 +236,7 @@ const ProfileSettingsPage: NextPageWithLayout = observer(() => {
                     <span className="text-sm tracking-tight">{watch("email")}</span>
                   </div>
 
-                  {/* <Link href={`/profile/${myProfile.id}`}>
+                  {/* <Link href={`/profile/${currentUser.id}`}>
               <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
                 <ExternalLink className="h-4 w-4" />
                 Activity Overview

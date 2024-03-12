@@ -72,7 +72,7 @@ export const SidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none">
             <Avatar
               name={currentUser.display_name}
-              src={currentUser.avatar}
+              src={currentUser.avatar || undefined}
               size={24}
               shape="square"
               className="!text-base"

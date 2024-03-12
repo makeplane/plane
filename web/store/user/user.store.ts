@@ -24,6 +24,8 @@ export interface IUserStore {
   fetchCurrentUser: () => Promise<IUser>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
   fetchUserAccounts: () => Promise<void>;
+  deactivateAccount: () => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 export class UserStore implements IUserStore {

@@ -6,7 +6,7 @@ import { useDropzone } from "react-dropzone";
 import { MAX_FILE_SIZE } from "constants/common";
 // helpers
 import { generateFileName } from "helpers/attachment.helper";
-import { useApplication } from "hooks/store";
+import { useStore } from "hooks";
 // types
 import { TAttachmentOperations } from "./root";
 
@@ -22,8 +22,8 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
   const { workspaceSlug, disabled = false, handleAttachmentOperations } = props;
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   // states
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,12 +48,12 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     onDrop,
-    maxSize: appConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
   });
 
-  const maxFileSize = appConfig?.file_size_limit ?? MAX_FILE_SIZE;
+  const maxFileSize = instance?.config?.file_size_limit ?? MAX_FILE_SIZE;
 
   const fileError =
     fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;

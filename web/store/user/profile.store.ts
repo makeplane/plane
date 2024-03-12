@@ -16,6 +16,7 @@ export interface IProfileStore {
   error: TError | undefined;
   // actions
   fetchUserProfile: () => Promise<void>;
+  updateUserProfile: (data: Partial<TUserProfile>) => Promise<void>;
 }
 
 export class ProfileStore implements IProfileStore {
@@ -62,6 +63,7 @@ export class ProfileStore implements IProfileStore {
       error: observable,
       // actions
       fetchUserProfile: action,
+      updateUserProfile: action,
     });
     // services
     this.userService = new UserService();
@@ -75,6 +77,29 @@ export class ProfileStore implements IProfileStore {
         this.error = undefined;
       });
       const userProfile = await this.userService.getCurrentUserProfile();
+      runInAction(() => {
+        this.isLoading = false;
+        this.data = userProfile;
+      });
+    } catch (error) {
+      console.log("Failed to fetch profile details");
+      runInAction(() => {
+        this.isLoading = true;
+        this.error = {
+          status: "error",
+          message: "Failed to fetch instance info",
+        };
+      });
+    }
+  };
+
+  updateUserProfile = async (data: Partial<TUserProfile>) => {
+    try {
+      runInAction(() => {
+        this.isLoading = true;
+        this.error = undefined;
+      });
+      const userProfile = await this.userService.updateCurrentUserProfile(data);
       runInAction(() => {
         this.isLoading = false;
         this.data = userProfile;

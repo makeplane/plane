@@ -1,16 +1,17 @@
 import { observer } from "mobx-react";
 // hooks
-import { useApplication } from "hooks/store";
+import { useStore } from "hooks";
 // components
 import { GithubOAuthButton, GoogleOAuthButton } from "components/account";
 
 export const OAuthOptions: React.FC = observer(() => {
-  // mobx store
+  // hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
+
   // derived values
-  const areBothOAuthEnabled = appConfig?.google_client_id && appConfig?.github_client_id;
+  const areBothOAuthEnabled = instance?.config?.is_google_enabled && instance?.config?.is_github_enabled;
 
   return (
     <div className="border border-red-500">
@@ -20,12 +21,12 @@ export const OAuthOptions: React.FC = observer(() => {
         <hr className="w-full border-onboarding-border-100" />
       </div>
       <div className={`mx-auto mt-7 grid gap-4 overflow-hidden sm:w-96 ${areBothOAuthEnabled ? "grid-cols-2" : ""}`}>
-        {appConfig?.google_client_id && (
+        {instance?.config?.is_google_enabled && (
           <div className="flex h-[42px] items-center !overflow-hidden">
             <GoogleOAuthButton text="SignIn with Google" />
           </div>
         )}
-        {appConfig?.github_client_id && <GithubOAuthButton text="SignIn with Github" />}
+        {instance?.config?.is_github_enabled && <GithubOAuthButton text="SignIn with Github" />}
       </div>
     </div>
   );

@@ -2,11 +2,15 @@ import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import {
+  Button,
+  Input,
+  // TOAST_TYPE, setToast
+} from "@plane/ui";
 // types
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
-import { useApplication } from "hooks/store";
+// import { useApplication } from "hooks/store";
 
 export interface IInstanceAIForm {
   config: IFormattedInstanceConfiguration;
@@ -22,7 +26,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
   // states
   const [showPassword, setShowPassword] = useState(false);
   // store
-  const { instance: instanceStore } = useApplication();
+  // const { instance: instanceStore } = useApplication();
   // form data
   const {
     handleSubmit,
@@ -36,18 +40,18 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
   });
 
   const onSubmit = async (formData: AIFormValues) => {
-    const payload: Partial<AIFormValues> = { ...formData };
-
-    await instanceStore
-      .updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          title: "Success",
-          type: TOAST_TYPE.SUCCESS,
-          message: "AI Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    console.log("formData", formData);
+    // const payload: Partial<AIFormValues> = { ...formData };
+    // await instanceStore
+    //   .updateInstanceConfigurations(payload)
+    //   .then(() =>
+    //     setToast({
+    //       title: "Success",
+    //       type: TOAST_TYPE.SUCCESS,
+    //       message: "AI Settings updated successfully",
+    //     })
+    //   )
+    //   .catch((err) => console.error(err));
   };
 
   return (

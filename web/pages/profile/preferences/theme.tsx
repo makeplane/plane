@@ -2,7 +2,10 @@ import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // ui
-import { Spinner, setPromiseToast } from "@plane/ui";
+import {
+  Spinner,
+  // setPromiseToast
+} from "@plane/ui";
 // components
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "components/core";
 // constants
@@ -13,14 +16,23 @@ import { useUser } from "hooks/store";
 import { ProfilePreferenceSettingsLayout } from "layouts/settings-layout/profile/preferences";
 // type
 import { NextPageWithLayout } from "lib/types";
+import { useStore } from "hooks";
 
 const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
   // store hooks
-  const { currentUser, updateCurrentUserTheme } = useUser();
+  const {
+    // updateCurrentUserTheme
+  } = useUser();
+  const {
+    user: {
+      data: currentUser,
+      profile: { data: userProfile },
+    },
+  } = useStore();
   // computed
-  const userTheme = currentUser?.theme;
+  const userTheme = userProfile?.theme;
   // hooks
   const { setTheme } = useTheme();
 
@@ -35,19 +47,19 @@ const ProfilePreferencesThemePage: NextPageWithLayout = observer(() => {
 
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
     setTheme(themeOption.value);
-    const updateCurrentUserThemePromise = updateCurrentUserTheme(themeOption.value);
+    // const updateCurrentUserThemePromise = updateCurrentUserTheme(themeOption.value);
 
-    setPromiseToast(updateCurrentUserThemePromise, {
-      loading: "Updating theme...",
-      success: {
-        title: "Success!",
-        message: () => "Theme updated successfully!",
-      },
-      error: {
-        title: "Error!",
-        message: () => "Failed to Update the theme",
-      },
-    });
+    // setPromiseToast(updateCurrentUserThemePromise, {
+    //   loading: "Updating theme...",
+    //   success: {
+    //     title: "Success!",
+    //     message: () => "Theme updated successfully!",
+    //   },
+    //   error: {
+    //     title: "Error!",
+    //     message: () => "Failed to Update the theme",
+    //   },
+    // });
   };
 
   return (

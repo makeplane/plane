@@ -4,9 +4,10 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
 // hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
+// import { TOAST_TYPE, setToast } from "@plane/ui";
 import { THEME_OPTIONS } from "constants/themes";
-import { useUser } from "hooks/store";
+
+// import { useStore } from "hooks";
 // ui
 // constants
 
@@ -19,19 +20,23 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
   // states
   const [mounted, setMounted] = useState(false);
   // store
-  const { updateCurrentUserTheme } = useUser();
+  // const {
+  //   user: {
+  //     profile: { updateUserProfile },
+  //   },
+  // } = useStore();
   // hooks
   const { setTheme } = useTheme();
 
   const updateUserTheme = async (newTheme: string) => {
     setTheme(newTheme);
 
-    return updateCurrentUserTheme(newTheme).catch(() => {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Failed to save user theme settings!",
-      });
-    });
+    // return updateUserProfile({ theme: newTheme }).catch(() => {
+    //   setToast({
+    //     type: TOAST_TYPE.ERROR,
+    //     title: "Failed to save user theme settings!",
+    //   });
+    // });
   };
 
   // useEffect only runs on the client, so now we can safely show the UI

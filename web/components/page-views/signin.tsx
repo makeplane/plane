@@ -16,7 +16,7 @@ export type AuthType = "sign-in" | "sign-up";
 export const SignInView = observer(() => {
   // store hooks
   const {
-    config: { appConfig },
+    instance: { instance },
     user: { data: currentUser },
   } = useStore();
   // sign in redirection hook
@@ -26,7 +26,7 @@ export const SignInView = observer(() => {
     handleRedirection();
   }, [handleRedirection]);
 
-  if (isRedirecting || currentUser || !appConfig)
+  if (isRedirecting || currentUser || !instance?.config)
     return (
       <div className="grid h-screen place-items-center">
         <Spinner />

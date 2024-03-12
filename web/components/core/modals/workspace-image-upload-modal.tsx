@@ -7,7 +7,8 @@ import { Transition, Dialog } from "@headlessui/react";
 import { UserCircle2 } from "lucide-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { MAX_FILE_SIZE } from "constants/common";
-import { useApplication, useWorkspace } from "hooks/store";
+import { useWorkspace } from "hooks/store";
+import { useStore } from "hooks";
 // services
 import { FileService } from "services/file.service";
 // ui
@@ -36,8 +37,8 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const { currentWorkspace } = useWorkspace();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
@@ -47,7 +48,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: appConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
   });
 

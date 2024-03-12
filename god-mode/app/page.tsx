@@ -25,16 +25,20 @@ const GeneralSettingsPage = observer(() => {
       {/* <PageHead title="God Mode - General Settings" /> */}
       <div className="flex h-full w-full flex-col gap-8">
         <div className="mb-2 border-b border-custom-border-100 pb-3">
-        <div className="pb-1 text-xl font-medium text-custom-text-100">
-          ID your instance easily
+          <div className="pb-1 text-xl font-medium text-custom-text-100">
+            ID your instance easily
+          </div>
+          <div className="text-sm font-normal text-custom-text-300">
+            Change the name of your instance and instance admin e-mail
+            addresses. If you have a paid subscription, you will find your
+            license key here.
+          </div>
         </div>
-        <div className="text-sm font-normal text-custom-text-300">
-          Change the name of your instance and instance admin e-mail addresses.
-          If you have a paid subscription, you will find your license key here.
-        </div>
-      </div>
         {instance && instanceAdmins ? (
-          <InstanceGeneralForm instance={instance} instanceAdmins={instanceAdmins} />
+          <InstanceGeneralForm
+            instance={instance}
+            instanceAdmins={instanceAdmins}
+          />
         ) : (
           <Loader className="space-y-4">
             <div className="grid grid-cols-2 gap-x-8 gap-y-4">

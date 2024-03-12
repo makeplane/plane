@@ -12,7 +12,7 @@ import { GptAssistantPopover, PageHead } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
 import { IssuePeekOverview } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
+import { usePage, useUser, useWorkspace } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // services
@@ -26,6 +26,7 @@ import { FileService } from "services/file.service";
 // helpers
 // types
 import { IPage } from "@plane/types";
+import { useStore } from "hooks";
 // fetch-keys
 // constants
 
@@ -46,10 +47,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+    user: { data: currentUser },
+  } = useStore();
+
   const {
-    currentUser,
     membership: { currentProjectRole },
   } = useUser();
 
@@ -326,7 +328,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   />
                 )}
               />
-              {projectId && appConfig?.has_openai_configured && (
+              {projectId && instance?.config?.has_openai_configured && (
                 <div className="absolute right-[68px] top-2.5">
                   <GptAssistantPopover
                     isOpen={gptModalOpen}

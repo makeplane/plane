@@ -32,6 +32,7 @@ import { MEMBER_ACCEPTED } from "constants/event-tracker";
 // components
 import { EmptyState } from "components/common";
 import { PageHead } from "components/core";
+import { useStore } from "hooks";
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
@@ -42,7 +43,12 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   // store hooks
   const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
-  const { currentUser, currentUserSettings } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
+  const {
+    // currentUserSettings
+  } = useUser();
   // router
   const router = useRouter();
   // next-themes
@@ -51,8 +57,8 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS", () => workspaceService.userWorkspaceInvitations());
 
   const redirectWorkspaceSlug =
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    // currentUserSettings?.workspace?.last_workspace_slug ||
+    // currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
   const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {

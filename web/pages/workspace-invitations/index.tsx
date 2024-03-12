@@ -7,7 +7,7 @@ import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
 import { Spinner } from "@plane/ui";
 import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
-import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 // services
 // layouts
 import DefaultLayout from "layouts/default-layout";
@@ -26,7 +26,9 @@ const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { invitation_id, email, slug } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   const { data: invitationDetail, error } = useSWR(
     invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),

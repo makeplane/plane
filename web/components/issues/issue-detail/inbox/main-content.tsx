@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // hooks
 import { StateGroupIcon } from "@plane/ui";
 import { IssueUpdateStatus, TIssueOperations } from "components/issues";
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import { useIssueDetail, useProjectState } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { InboxIssueStatus } from "../../../inbox/inbox-issue-status";
@@ -11,6 +11,7 @@ import { IssueDescriptionInput } from "../../description-input";
 import { IssueTitleInput } from "../../title-input";
 import { IssueActivity } from "../issue-activity";
 import { IssueReaction } from "../reactions";
+import { useStore } from "hooks";
 // ui
 
 type Props = {
@@ -27,7 +28,9 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },

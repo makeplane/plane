@@ -8,7 +8,7 @@ import { observer } from "mobx-react-lite";
 import { Settings } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // icons
-import { BreadcrumbLink } from "components/common";
+// import { BreadcrumbLink } from "components/common";
 
 export const InstanceHeader: FC = observer(() => {
   const pathName = usePathname();
@@ -38,7 +38,7 @@ export const InstanceHeader: FC = observer(() => {
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         {title && (
           <div>
-            <Breadcrumbs>
+            {/* <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={
@@ -53,7 +53,7 @@ export const InstanceHeader: FC = observer(() => {
                 type="text"
                 link={<BreadcrumbLink label={title} />}
               />
-            </Breadcrumbs>
+            </Breadcrumbs> */}
           </div>
         )}
       </div>

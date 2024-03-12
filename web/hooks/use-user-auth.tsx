@@ -25,55 +25,55 @@ const useUserAuth = (props: Props) => {
   };
 
   useEffect(() => {
-    const handleWorkSpaceRedirection = async () => {
-      workspaceService.userWorkspaces().then(async (userWorkspaces) => {
-        if (!user) return;
+    // const handleWorkSpaceRedirection = async () => {
+    //   workspaceService.userWorkspaces().then(async (userWorkspaces) => {
+    //     if (!user) return;
 
-        const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
-        const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
+    //     const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
+    //     const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
 
-        if (lastActiveWorkspace) {
-          router.push(`/${lastActiveWorkspace.slug}`);
-          return;
-        } else if (firstWorkspace) {
-          router.push(`/${firstWorkspace.slug}`);
-          return;
-        } else {
-          router.push(`/profile`);
-          return;
-        }
-      });
-    };
+    //     if (lastActiveWorkspace) {
+    //       router.push(`/${lastActiveWorkspace.slug}`);
+    //       return;
+    //     } else if (firstWorkspace) {
+    //       router.push(`/${firstWorkspace.slug}`);
+    //       return;
+    //     } else {
+    //       router.push(`/profile`);
+    //       return;
+    //     }
+    //   });
+    // };
 
     const handleUserRouteAuthentication = async () => {
-      if (user && user.is_active) {
-        if (routeAuth === "sign-in") {
-          if (user.is_onboarded) handleWorkSpaceRedirection();
-          else {
-            router.push("/onboarding");
-            return;
-          }
-        } else if (routeAuth === "onboarding") {
-          if (user.is_onboarded) handleWorkSpaceRedirection();
-          else {
-            setIsRouteAccess(() => false);
-            return;
-          }
-        } else {
-          if (!user.is_onboarded) {
-            router.push("/onboarding");
-            return;
-          } else {
-            setIsRouteAccess(() => false);
-            return;
-          }
-        }
-      } else {
-        // user is not active and we can redirect to no access page
-        // router.push("/no-access");
-        // remove token
-        return;
-      }
+      // if (user && user.is_active) {
+      //   if (routeAuth === "sign-in") {
+      //     if (user.is_onboarded) handleWorkSpaceRedirection();
+      //     else {
+      //       router.push("/onboarding");
+      //       return;
+      //     }
+      //   } else if (routeAuth === "onboarding") {
+      //     if (user.is_onboarded) handleWorkSpaceRedirection();
+      //     else {
+      //       setIsRouteAccess(() => false);
+      //       return;
+      //     }
+      //   } else {
+      //     if (!user.is_onboarded) {
+      //       router.push("/onboarding");
+      //       return;
+      //     } else {
+      //       setIsRouteAccess(() => false);
+      //       return;
+      //     }
+      //   }
+      // } else {
+      //   // user is not active and we can redirect to no access page
+      //   // router.push("/no-access");
+      //   // remove token
+      //   return;
+      // }
     };
 
     if (routeAuth === null) {

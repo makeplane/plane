@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
-import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
+import { useApplication, useEventTracker, useProject } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-page";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
@@ -23,6 +23,7 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
 import { EmptyStateType } from "constants/empty-state";
+import { useStore } from "hooks";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -51,7 +52,9 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   // store hooks
-  const { currentUser, currentUserLoader } = useUser();
+  const {
+    user: { data: currentUser, isLoading: currentUserLoader },
+  } = useStore();
   const {
     commandPalette: { toggleCreatePageModal },
   } = useApplication();
@@ -60,7 +63,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const { fetchProjectPages, fetchArchivedProjectPages, loader, archivedPageLoader, projectPageIds, archivedPageIds } =
     useProjectPages();
   // hooks
-  const {} = useUserAuth({ user: currentUser, isLoading: currentUserLoader });
+  const {} = useUserAuth({ user: currentUser || null, isLoading: currentUserLoader });
   const [windowWidth] = useSize();
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");

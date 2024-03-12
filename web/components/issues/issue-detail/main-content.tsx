@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // hooks
 import { StateGroupIcon } from "@plane/ui";
 import { IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import { useIssueDetail, useProjectState } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { IssueDescriptionInput } from "../description-input";
@@ -15,6 +15,7 @@ import { IssueReaction } from "./reactions";
 // ui
 // types
 import { TIssueOperations } from "./root";
+import { useStore } from "hooks";
 
 type Props = {
   workspaceSlug: string;
@@ -29,7 +30,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },

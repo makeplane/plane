@@ -1,35 +1,14 @@
-import { ReactElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-// hooks
 import { Button, Input, Spinner, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { PageHead } from "components/core";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { useApplication } from "hooks/store";
-import { useStore } from "hooks";
-// services
-// components
-// layout
-import { ProfileSettingsLayout } from "layouts/settings-layout";
-// ui
-// types
 import { NextPageWithLayout } from "lib/types";
-import { UserService } from "services/user.service";
-
-export interface FormValues {
-  old_password: string;
-  new_password: string;
-  confirm_password: string;
-}
-
-const defaultValues: FormValues = {
-  old_password: "",
-  new_password: "",
-  confirm_password: "",
-};
-
-export const userService = new UserService();
+import { FormValues, userService } from "./change-password";
+import { useStore } from "hooks";
 
 const ChangePasswordPage: NextPageWithLayout = observer(() => {
   const [isPageLoading, setIsPageLoading] = useState(true);
@@ -46,7 +25,8 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ defaultValues });
+  } = useForm<FormValues>({});
+  // FIXME: defaultValues
 
   const handleChangePassword = async (formData: FormValues) => {
     if (formData.new_password !== formData.confirm_password) {
@@ -86,7 +66,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
     );
 
   return (
-    <>
+    <div>
       <PageHead title="Profile - Change Password" />
       <div className="flex h-full flex-col">
         <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
@@ -177,12 +157,8 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
           </div>
         </form>
       </div>
-    </>
+    </div>
   );
 });
-
-ChangePasswordPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
-};
 
 export default ChangePasswordPage;

@@ -4,7 +4,8 @@ import Link from "next/link";
 import useSWR from "swr";
 // store hooks
 import { Avatar } from "@plane/ui";
-import { useDashboard, useMember, useUser } from "hooks/store";
+import { useDashboard, useMember } from "hooks/store";
+import { useStore } from "hooks";
 // components
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 import { WidgetLoader } from "../loaders";
@@ -20,7 +21,9 @@ type CollaboratorListItemProps = {
 const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((props) => {
   const { issueCount, userId, workspaceSlug } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { getUserDetails } = useMember();
   // derived values
   const userDetails = getUserDetails(userId);

@@ -18,12 +18,16 @@ import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-l
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
 import { IWorkspace } from "@plane/types";
+import { useStore } from "hooks";
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   // store hooks
-  const { currentUser, updateCurrentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
+  const { updateCurrentUser } = useUser();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",

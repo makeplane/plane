@@ -22,7 +22,8 @@ import { ParentIssuesListModal } from "components/issues";
 import { IssueLabelSelect } from "components/issues/select";
 import { CreateLabelModal } from "components/labels";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+import { useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
+import { useStore } from "hooks";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
@@ -117,8 +118,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const { getProjectById } = useProject();
   const { areEstimatesEnabledForProject } = useEstimate();
   const { mentionHighlights, mentionSuggestions } = useMention();
@@ -397,7 +398,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 ) : (
                   <Fragment>
                     <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex items-center gap-2">
-                      {issueName && issueName.trim() !== "" && appConfig?.has_openai_configured && (
+                      {issueName && issueName.trim() !== "" && instance?.config?.has_openai_configured && (
                         <button
                           type="button"
                           className={`flex items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs ${
@@ -416,7 +417,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           )}
                         </button>
                       )}
-                      {appConfig?.has_openai_configured && (
+                      {instance?.config?.has_openai_configured && (
                         <GptAssistantPopover
                           isOpen={gptAssistantModal}
                           projectId={projectId}

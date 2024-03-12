@@ -13,6 +13,7 @@ import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Setting
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useStore } from "hooks";
 // types
 import { IWorkspace } from "@plane/types";
 // Static Data
@@ -56,7 +57,15 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
-  const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
+  const {
+    updateCurrentUser,
+    // isUserInstanceAdmin,
+    signOut,
+  } = useUser();
+  const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   const { setTheme } = useTheme();
   // popper-js refs
@@ -267,7 +276,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
             <Avatar
               name={currentUser?.display_name}
-              src={currentUser?.avatar}
+              src={currentUser?.avatar || undefined}
               size={24}
               shape="square"
               className="!text-base"
@@ -308,7 +317,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   </Link>
                 ))}
               </div>
-              <div className={`pt-2 ${isUserInstanceAdmin ? "pb-2" : ""}`}>
+              <div className={`pt-2 ${isUserInstanceAdmin || false ? "pb-2" : ""}`}>
                 <Menu.Item
                   as="button"
                   type="button"

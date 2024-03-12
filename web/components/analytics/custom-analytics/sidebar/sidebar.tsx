@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
 // hooks
+import { useStore } from "hooks";
 // components
 // ui
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
@@ -16,7 +17,7 @@ import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from
 import { ANALYTICS } from "constants/fetch-keys";
 import { cn } from "helpers/common.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
-import { useCycle, useModule, useProject, useUser, useWorkspace } from "hooks/store";
+import { useCycle, useModule, useProject, useWorkspace } from "hooks/store";
 import { AnalyticsService } from "services/analytics.service";
 import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IWorkspace } from "@plane/types";
 
@@ -34,7 +35,9 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { workspaceProjectIds, getProjectById } = useProject();
   const { getWorkspaceById } = useWorkspace();
 

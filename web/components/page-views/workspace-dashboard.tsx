@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useDashboard, useProject } from "hooks/store";
 // components
 import { DashboardWidgets } from "components/dashboard";
 import { EmptyState } from "components/empty-state";
@@ -11,31 +11,38 @@ import { UserGreetingsView } from "components/user";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
-import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
+// import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
 import { EmptyStateType } from "constants/empty-state";
+import { useStore } from "hooks";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
-  const { captureEvent, setTrackElement } = useEventTracker();
+  const {
+    //  captureEvent,
+    setTrackElement,
+  } = useEventTracker();
   const {
     commandPalette: { toggleCreateProjectModal },
     router: { workspaceSlug },
   } = useApplication();
-  const { currentUser, updateTourCompleted } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
+  // const { currentUser, updateTourCompleted } = useUser();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
 
   const handleTourCompleted = () => {
-    updateTourCompleted()
-      .then(() => {
-        captureEvent(PRODUCT_TOUR_COMPLETED, {
-          user_id: currentUser?.id,
-          state: "SUCCESS",
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    // updateTourCompleted()
+    //   .then(() => {
+    //     captureEvent(PRODUCT_TOUR_COMPLETED, {
+    //       user_id: currentUser?.id,
+    //       state: "SUCCESS",
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
   };
 
   // fetch home dashboard widgets on workspace change

@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // hooks
-import { useUser, useWorkspace } from "hooks/store";
+import { useWorkspace } from "hooks/store";
+import { useStore } from "hooks";
 // types
 import projectEmoji from "public/emoji/project-emoji.svg";
 import { IWorkspace } from "@plane/types";
@@ -93,7 +94,9 @@ let lastWorkspaceName: string = "";
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { workspaces } = useWorkspace();
   const workspaceDetails = Object.values(workspaces ?? {})?.[0];
 
@@ -183,7 +186,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
                   <div className="flex flex-shrink-0">
                     <Avatar
                       name={currentUser?.email}
-                      src={currentUser?.avatar}
+                      src={currentUser?.avatar || undefined}
                       size={24}
                       shape="square"
                       fallbackBackgroundColor="#FCBE1D"
@@ -213,7 +216,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
             <div className="flex flex-shrink-0">
               <Avatar
                 name={userFullName ?? currentUser?.email}
-                src={currentUser?.avatar}
+                src={currentUser?.avatar || undefined}
                 size={24}
                 shape="square"
                 fallbackBackgroundColor="#FCBE1D"

@@ -11,7 +11,10 @@ import useToast from "hooks/use-toast";
 // ui
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
-import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/forms";
+import {
+  InstanceGithubConfigForm,
+  InstanceGoogleConfigForm,
+} from "components/forms";
 
 const InstanceAuthorizationPage = observer(() => {
   // store
@@ -127,7 +130,7 @@ const InstanceAuthorizationPage = observer(() => {
               </div>
             </div>
           </div>
-          
+
           <div className="flex flex-col gap-y-6 py-2">
             <div className="w-full">
               <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
@@ -137,7 +140,9 @@ const InstanceAuthorizationPage = observer(() => {
               </div>
               <div className="w-full">
                 <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
-                  <span className="text-lg font-medium tracking-tight">Github</span>
+                  <span className="text-lg font-medium tracking-tight">
+                    Github
+                  </span>
                 </div>
                 <div className="px-2 py-6">
                   <InstanceGithubConfigForm config={formattedConfig} />
@@ -156,8 +161,7 @@ const InstanceAuthorizationPage = observer(() => {
             </div>
           </div>
         </>
-        )}
-      
+      )}
     </div>
   );
 });

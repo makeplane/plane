@@ -112,7 +112,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
   get publicProjectPageIds() {
     const projectId = this.rootStore.app.router.projectId;
-    const userId = this.rootStore.user.currentUser?.id;
+    const userId = this.rootStore.user.data?.id;
     if (!this.projectPageIds || !projectId || !userId) return [];
 
     const publicPages: string[] = this.projectPageIds.filter(

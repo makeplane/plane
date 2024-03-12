@@ -6,7 +6,8 @@ import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 import { DoubleCircleIcon, UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
-import { useApplication, useUser, useIssues } from "hooks/store";
+import { useApplication, useIssues } from "hooks/store";
+import { useStore } from "hooks";
 // ui
 // helpers
 // types
@@ -33,7 +34,9 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const {
     commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
   } = useApplication();
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;

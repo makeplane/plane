@@ -6,7 +6,8 @@ import { X } from "lucide-react";
 import { Button } from "@plane/ui";
 import { TourSidebar } from "components/onboarding";
 import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "constants/event-tracker";
-import { useApplication, useEventTracker, useUser } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
+import { useStore } from "hooks";
 // components
 // ui
 // assets
@@ -16,6 +17,7 @@ import ModulesTour from "public/onboarding/modules.webp";
 import PagesTour from "public/onboarding/pages.webp";
 import ViewsTour from "public/onboarding/views.webp";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
+
 // constants
 
 type Props = {
@@ -82,7 +84,9 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement, captureEvent } = useEventTracker();
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
   const currentStep = TOUR_STEPS[currentStepIndex];

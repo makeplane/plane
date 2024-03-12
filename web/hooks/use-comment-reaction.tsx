@@ -5,7 +5,7 @@ import { COMMENT_REACTION_LIST } from "constants/fetch-keys";
 import { groupReactions } from "helpers/emoji.helper";
 import { IssueReactionService } from "services/issue";
 // helpers
-import { useUser } from "./store";
+import { useStore } from "./use-store";
 // hooks
 
 // services
@@ -34,7 +34,9 @@ const useCommentReaction = (
       : null
   );
 
-  const user = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   const groupedReactions = groupReactions(commentReactions || [], "reaction");
 
@@ -67,8 +69,7 @@ const useCommentReaction = (
     if (!workspaceSlug || !projectId || !commendId) return;
 
     mutateCommentReactions(
-      (prevData: any) =>
-        prevData?.filter((r: any) => r.actor !== user?.currentUser?.id || r.reaction !== reaction) || [],
+      (prevData: any) => prevData?.filter((r: any) => r.actor !== currentUser?.id || r.reaction !== reaction) || [],
       false
     );
 

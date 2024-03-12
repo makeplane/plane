@@ -83,7 +83,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    */
   get workspacesCreatedByCurrentUser() {
     if (!this.workspaces) return null;
-    const user = this.user.currentUser;
+    const user = this.user.data;
     if (!user) return null;
     const userWorkspaces = Object.values(this.workspaces ?? {})?.filter((w) => w.created_by === user?.id);
     return userWorkspaces || null;

@@ -34,7 +34,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        use_case: user.use_case,
+        // use_case: user.use_case, FIXME:
         workspace_role: workspaceRole ? getUserRole(workspaceRole) : undefined,
         project_role: projectRole ? getUserRole(projectRole) : undefined,
       });

@@ -14,8 +14,9 @@ import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 // hooks
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useStore } from "hooks";
 // services
 import { UserService } from "services/user.service";
 // components
@@ -32,7 +33,9 @@ export const ProfileSidebar = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { theme: themeStore } = useApplication();
   const { getProjectById } = useProject();
 

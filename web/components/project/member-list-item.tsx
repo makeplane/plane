@@ -14,6 +14,7 @@ import { EUserProjectRoles } from "constants/project";
 import { ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
+import { useStore } from "hooks";
 
 type Props = {
   userId: string;
@@ -28,9 +29,11 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const {
-    currentUser,
     membership: { currentProjectRole, leaveProject },
   } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { fetchProjects } = useProject();
   const {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },

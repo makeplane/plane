@@ -28,7 +28,7 @@ const InstanceAIPage = observer(() => {
           for all your workspaces.
         </div>
       </div>
-      {formattedConfig ? (
+      {formattedConfig && (
         <>
           <div>
             <div className="pb-1 text-xl font-medium text-custom-text-100">
@@ -47,11 +47,10 @@ const InstanceAIPage = observer(() => {
                 with us.
               </div>
             </div>
-            <Loader.Item height="50px" />
-          </Loader>
-        )}
-      </div>
-    </>
+          </div>
+        </>
+      )}
+    </div>
   );
 });
 

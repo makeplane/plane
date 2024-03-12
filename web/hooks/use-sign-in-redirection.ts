@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // hooks
 import { useUser } from "hooks/store";
 // types
-import { IUser, IUserSettings } from "@plane/types";
+// import { IUser, IUserSettings } from "@plane/types";
 
 type UseSignInRedirectionProps = {
   error: any | null;
@@ -19,7 +19,10 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const router = useRouter();
   const { next_path } = router.query;
   // mobx store
-  const { fetchCurrentUser, fetchCurrentUserSettings } = useUser();
+  const {
+    fetchCurrentUser,
+    // fetchCurrentUserSettings
+  } = useUser();
 
   const isValidURL = (url: string): boolean => {
     const disallowedSchemes = /^(https?|ftp):\/\//i;
@@ -27,7 +30,7 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   };
 
   const handleSignInRedirection = useCallback(
-    async (user: IUser) => {
+    async (user: any) => {
       try {
         // if the user is not onboarded, redirect them to the onboarding page
         if (!user.is_onboarded) {
@@ -45,22 +48,24 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
           }
         }
 
+        // FIXME:
+
         // Fetch the current user settings
-        const userSettings: IUserSettings = await fetchCurrentUserSettings();
+        // const userSettings: IUserSettings = await fetchCurrentUserSettings();
 
         // Extract workspace details
-        const workspaceSlug =
-          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+        // const workspaceSlug =
+        //   userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
 
         // Redirect based on workspace details or to profile if not available
-        if (workspaceSlug) router.push(`/${workspaceSlug}`);
-        else router.push("/profile");
+        // if (workspaceSlug) router.push(`/${workspaceSlug}`);
+        // else router.push("/profile");
       } catch (error) {
         console.error("Error in handleSignInRedirection:", error);
         setError(error);
       }
     },
-    [fetchCurrentUserSettings, router, next_path]
+    [router, next_path]
   );
 
   const updateUserInfo = useCallback(async () => {

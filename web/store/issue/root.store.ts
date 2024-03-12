@@ -156,7 +156,7 @@ export class IssueRootStore implements IIssueRootStore {
     this.rootStore = rootStore;
 
     autorun(() => {
-      if (rootStore.user.currentUser?.id) this.currentUserId = rootStore.user.currentUser?.id;
+      if (rootStore?.user?.data?.id) this.currentUserId = rootStore?.user?.data?.id;
       if (rootStore.app.router.workspaceSlug) this.workspaceSlug = rootStore.app.router.workspaceSlug;
       if (rootStore.app.router.projectId) this.projectId = rootStore.app.router.projectId;
       if (rootStore.app.router.cycleId) this.cycleId = rootStore.app.router.cycleId;

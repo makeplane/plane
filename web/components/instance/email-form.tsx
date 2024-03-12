@@ -2,11 +2,16 @@ import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
 import { Eye, EyeOff } from "lucide-react";
-import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import {
+  Button,
+  Input,
+  ToggleSwitch,
+  //  TOAST_TYPE, setToast
+} from "@plane/ui";
 // types
 import { IFormattedInstanceConfiguration } from "@plane/types";
 // hooks
-import { useApplication } from "hooks/store";
+// import { useApplication } from "hooks/store";
 
 export interface IInstanceEmailForm {
   config: IFormattedInstanceConfiguration;
@@ -27,7 +32,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   // states
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
-  const { instance: instanceStore } = useApplication();
+  // const { instance: instanceStore } = useApplication();
   // form data
   const {
     handleSubmit,
@@ -47,18 +52,18 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   });
 
   const onSubmit = async (formData: EmailFormValues) => {
-    const payload: Partial<EmailFormValues> = { ...formData };
-
-    await instanceStore
-      .updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          title: "Success",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Email Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    console.log(formData);
+    // const payload: Partial<EmailFormValues> = { ...formData };
+    // await instanceStore
+    //   .updateInstanceConfigurations(payload)
+    //   .then(() =>
+    //     setToast({
+    //       title: "Success",
+    //       type: TOAST_TYPE.SUCCESS,
+    //       message: "Email Settings updated successfully",
+    //     })
+    //   )
+    //   .catch((err) => console.error(err));
   };
 
   return (

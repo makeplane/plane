@@ -48,7 +48,7 @@ export class MentionStore implements IMentionStore {
   }
 
   get mentionHighlights() {
-    const user = this.rootStore.user.currentUser;
+    const user = this.rootStore.user.data;
     return user ? [user.id] : [];
   }
 }

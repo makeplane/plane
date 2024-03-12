@@ -21,7 +21,7 @@ import { IUser } from "@plane/types";
 const defaultValues: Partial<IUser> = {
   first_name: "",
   avatar: "",
-  use_case: undefined,
+  // use_case: undefined,
 };
 
 type Props = {
@@ -29,16 +29,16 @@ type Props = {
   setUserName: (name: string) => void;
 };
 
-const USE_CASES = [
-  "Build Products",
-  "Manage Feedbacks",
-  "Service delivery",
-  "Field force management",
-  "Code Repository Integration",
-  "Bug Tracking",
-  "Test Case Management",
-  "Resource allocation",
-];
+// const USE_CASES = [
+//   "Build Products",
+//   "Manage Feedbacks",
+//   "Service delivery",
+//   "Field force management",
+//   "Code Repository Integration",
+//   "Bug Tracking",
+//   "Test Case Management",
+//   "Resource allocation",
+// ];
 
 const fileService = new FileService();
 
@@ -73,7 +73,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
       ...formData,
       first_name: formData.first_name.split(" ")[0],
       last_name: formData.first_name.split(" ")[1],
-      use_case: formData.use_case,
+      // use_case: formData.use_case,
       onboarding_step: {
         ...user.onboarding_step,
         profile_complete: true,
@@ -83,14 +83,14 @@ export const UserDetails: React.FC<Props> = observer((props) => {
     await updateCurrentUser(payload)
       .then(() => {
         captureEvent(USER_DETAILS, {
-          use_case: formData.use_case,
+          // use_case: formData.use_case,
           state: "SUCCESS",
           element: "Onboarding",
         });
       })
       .catch(() => {
         captureEvent(USER_DETAILS, {
-          use_case: formData.use_case,
+          // use_case: formData.use_case,
           state: "FAILED",
           element: "Onboarding",
         });
@@ -157,7 +157,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                 ) : (
                   <div className="relative mr-3 h-16 w-16 overflow-hidden">
                     <img
-                      src={watch("avatar")}
+                      src={watch("avatar") || undefined}
                       className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
                       onClick={() => setIsImageUploadModalOpen(true)}
                       alt={user?.display_name}
@@ -214,7 +214,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
 
               <p className="my-3 text-sm font-medium text-onboarding-text-300">Choose just one</p>
 
-              <Controller
+              {/* <Controller
                 control={control}
                 name="use_case"
                 render={({ field: { value, onChange } }) => (
@@ -232,7 +232,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                     ))}
                   </div>
                 )}
-              />
+              /> */}
             </div>
 
             <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>

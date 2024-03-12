@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Spinner } from "@plane/ui";
 import { SignUpRoot } from "components/account";
 import { PageHead } from "components/core";
-import { useApplication, useUser } from "hooks/store";
+import { useStore } from "hooks";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
@@ -18,11 +18,11 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 const SignUpPage: NextPageWithLayout = observer(() => {
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
-  const { currentUser } = useUser();
+    instance: { instance },
+    user: { data: currentUser },
+  } = useStore();
 
-  if (currentUser || !appConfig)
+  if (currentUser || !instance?.config)
     return (
       <div className="grid h-screen place-items-center">
         <Spinner />

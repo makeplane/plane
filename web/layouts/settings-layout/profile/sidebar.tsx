@@ -12,6 +12,7 @@ import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROFILE_ACTION_LINKS } from "constants/profile";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useStore } from "hooks";
 
 const WORKSPACE_ACTION_LINKS = [
   {
@@ -39,15 +40,19 @@ export const ProfileLayoutSidebar = observer(() => {
   const {
     theme: { sidebarCollapsed, toggleSidebar },
   } = useApplication();
-  const { currentUser, currentUserSettings, signOut } = useUser();
+  const {
+    user: { data: currentUser, signOut },
+  } = useStore();
+  // const { currentUserSettings } = useUser();
   const { workspaces } = useWorkspace();
 
   const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
+  // FIXME:
   const redirectWorkspaceSlug =
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    // currentUserSettings?.workspace?.last_workspace_slug ||
+    // currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
   const ref = useRef<HTMLDivElement>(null);

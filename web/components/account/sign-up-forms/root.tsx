@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// hooks
 import Link from "next/link";
+// hooks
+import { useEventTracker } from "hooks/store";
+import useSignInRedirection from "hooks/use-sign-in-redirection";
+import { useStore } from "hooks";
+// components
 import {
   OAuthOptions,
   SignUpEmailForm,
@@ -9,11 +13,8 @@ import {
   SignUpPasswordForm,
   SignUpUniqueCodeForm,
 } from "components/account";
-import { NAVIGATE_TO_SIGNIN } from "constants/event-tracker";
-import { useApplication, useEventTracker } from "hooks/store";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
-// components
 // constants
+import { NAVIGATE_TO_SIGNIN } from "constants/event-tracker";
 
 export enum ESignUpSteps {
   EMAIL = "EMAIL",
@@ -32,8 +33,8 @@ export const SignUpRoot = observer(() => {
   const { handleRedirection } = useSignInRedirection();
   // mobx store
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const { captureEvent } = useEventTracker();
 
   // step 1 submit handler- email verification
@@ -50,12 +51,13 @@ export const SignUpRoot = observer(() => {
     await handleRedirection();
   };
 
-  const isOAuthEnabled = envConfig && (appConfig.google_client_id || appConfig.github_client_id);
+  const isOAuthEnabled =
+    instance?.config && (instance?.config?.is_google_enabled || instance?.config?.is_github_enabled);
 
   useEffect(() => {
-    if (appConfig?.is_smtp_configured) setSignInStep(ESignUpSteps.EMAIL);
+    if (instance?.config?.is_smtp_configured) setSignInStep(ESignUpSteps.EMAIL);
     else setSignInStep(ESignUpSteps.PASSWORD);
-  }, [appConfig?.is_smtp_configured]);
+  }, [instance?.config?.is_smtp_configured]);
 
   return (
     <>
@@ -86,7 +88,7 @@ export const SignUpRoot = observer(() => {
       </div>
       {isOAuthEnabled && signInStep && OAUTH_ENABLED_STEPS.includes(signInStep) && (
         <>
-          <OAuthOptions handleSignInRedirection={handleRedirection} type="sign_up" />
+          <OAuthOptions />
           <p className="text-xs text-onboarding-text-300 text-center mt-6">
             Already using Plane?{" "}
             <Link

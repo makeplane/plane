@@ -5,7 +5,7 @@ import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // hooks
 import { CustomMenu } from "@plane/ui";
 import { isEmptyHtmlString } from "helpers/string.helper";
-import { useIssueDetail, useMention, useUser, useWorkspace } from "hooks/store";
+import { useIssueDetail, useMention, useWorkspace } from "hooks/store";
 // components
 // ui
 // services
@@ -15,6 +15,7 @@ import { TIssueComment } from "@plane/types";
 import { IssueCommentReaction } from "../../reactions/issue-comment";
 import { TActivityOperations } from "../root";
 import { IssueCommentBlock } from "./comment-block";
+import { useStore } from "hooks";
 // helpers
 
 const fileService = new FileService();
@@ -33,7 +34,9 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
   const {
     comment: { getCommentById },
   } = useIssueDetail();
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { mentionHighlights, mentionSuggestions } = useMention();
   // refs
   const editorRef = useRef<any>(null);

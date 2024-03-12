@@ -2,36 +2,39 @@ import { IUserLite } from "./users";
 
 export interface IInstance {
   id: string;
-  namespace: string | undefined;
-  instance_id: string | undefined;
+  created_at: string;
+  updated_at: string;
   instance_name: string | undefined;
+  whitelist_emails: string | undefined;
+  instance_id: string | undefined;
   license_key: string | undefined;
   api_key: string | undefined;
   version: string | undefined;
   last_checked_at: string | undefined;
-  whitelist_emails: string | undefined;
+  namespace: string | undefined;
   is_telemetry_enabled: boolean;
   is_support_required: boolean;
   is_activated: boolean;
   is_setup_done: boolean;
   is_signup_screen_visited: boolean;
-  is_verified: boolean;
   user_count: number | undefined;
-  created_at: string;
-  updated_at: string;
+  is_verified: boolean;
   created_by: string | undefined;
   updated_by: string | undefined;
+  workspaces_exist: boolean;
   config: {
-    file_size_limit: number | undefined;
-    github_app_name: string | undefined;
-    has_openai_configured: boolean;
-    has_unsplash_configured: boolean;
-    is_github_enabled: boolean;
     is_google_enabled: boolean;
-    is_smtp_configured: boolean;
+    is_github_enabled: boolean;
+    is_magic_login_enabled: boolean;
+    is_email_password_enabled: boolean;
+    github_app_name: string | undefined;
+    slack_client_id: string | undefined;
     posthog_api_key: string | undefined;
     posthog_host: string | undefined;
-    slack_client_id: string | undefined;
+    has_unsplash_configured: boolean;
+    has_openai_configured: boolean;
+    file_size_limit: number | undefined;
+    is_smtp_configured: boolean;
   };
 }
 

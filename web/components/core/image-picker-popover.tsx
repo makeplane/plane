@@ -9,11 +9,12 @@ import { Tab, Popover } from "@headlessui/react";
 // hooks
 import { Button, Input, Loader } from "@plane/ui";
 import { MAX_FILE_SIZE } from "constants/common";
-import { useApplication, useWorkspace } from "hooks/store";
+import { useWorkspace } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 // services
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { FileService } from "services/file.service";
+import { useStore } from "hooks";
 // hooks
 // components
 // constants
@@ -62,8 +63,8 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
@@ -91,7 +92,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: appConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: instance?.config?.file_size_limit ?? MAX_FILE_SIZE,
   });
 
   const handleSubmit = async () => {

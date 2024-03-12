@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // hooks
 import { Button } from "@plane/ui";
-import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 // ui
 // types
 import { IUserLite } from "@plane/types";
@@ -21,7 +21,9 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   const handleClose = () => {
     onClose();

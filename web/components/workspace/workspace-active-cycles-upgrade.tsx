@@ -10,20 +10,24 @@ import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "constants/cycle";
 // helper
 import { cn } from "helpers/common.helper";
 // hooks
-import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: {
+      profile: { data: userProfile },
+    },
+  } = useStore();
 
-  const isDarkMode = currentUser?.theme.theme === "dark";
+  const isDarkMode = userProfile?.theme.theme === "dark";
 
   return (
     <div className="flex flex-col gap-10 pt-8 px-8 rounded-xl h-full vertical-scrollbar scrollbar-lg">
       <div
         className={cn("flex item-center justify-between rounded-xl min-h-[25rem]", {
-          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": currentUser?.theme.theme === "dark",
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": currentUser?.theme.theme === "light",
+          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
+          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
         })}
       >
         <div className="relative px-14 flex flex-col gap-7 justify-center lg:w-1/2">

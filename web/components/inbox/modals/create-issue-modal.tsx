@@ -10,7 +10,7 @@ import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "components/core";
 import { PriorityDropdown } from "components/dropdowns";
 import { ISSUE_CREATED } from "constants/event-tracker";
-import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
+import { useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
@@ -18,6 +18,7 @@ import { FileService } from "services/file.service";
 // ui
 // types
 import { TIssue } from "@plane/types";
+import { useStore } from "hooks";
 // constants
 
 type Props = {
@@ -62,8 +63,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     issues: { createInboxIssue },
   } = useInboxIssues();
   const {
-    config: { appConfig },
-  } = useApplication();
+    instance: { instance },
+  } = useStore();
   const { captureIssueEvent } = useEventTracker();
 
   const {
@@ -239,7 +240,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                               </button>
                             )}
 
-                            {appConfig?.has_openai_configured && (
+                            {instance?.config?.has_openai_configured && (
                               <GptAssistantPopover
                                 isOpen={gptAssistantModal}
                                 projectId={projectId}

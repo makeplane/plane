@@ -1,11 +1,15 @@
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import {
+  Button,
+  Input,
+  //  TOAST_TYPE, setToast
+} from "@plane/ui";
 // types
 import { IInstance, IInstanceAdmin } from "@plane/types";
 // hooks
-import { useApplication } from "hooks/store";
+// import { useApplication } from "hooks/store";
 
 export interface IInstanceGeneralForm {
   instance: IInstance;
@@ -20,7 +24,7 @@ export interface GeneralFormValues {
 export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
   const { instance, instanceAdmins } = props;
   // store hooks
-  const { instance: instanceStore } = useApplication();
+  // const { instance: instanceStore } = useApplication();
   // form data
   const {
     handleSubmit,
@@ -35,17 +39,18 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
 
   const onSubmit = async (formData: GeneralFormValues) => {
     const payload: Partial<GeneralFormValues> = { ...formData };
+    console.log(payload);
 
-    await instanceStore
-      .updateInstanceInfo(payload)
-      .then(() =>
-        setToast({
-          title: "Success",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    // await instanceStore
+    //   .updateInstanceInfo(payload)
+    //   .then(() =>
+    //     setToast({
+    //       title: "Success",
+    //       type: TOAST_TYPE.SUCCESS,
+    //       message: "Settings updated successfully",
+    //     })
+    //   )
+    //   .catch((err) => console.error(err));
   };
 
   return (

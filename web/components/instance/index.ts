@@ -12,3 +12,5 @@ export * from "./not-ready-view";
 export * from "./setup-view";
 export * from "./setup-done-view";
 export * from "./setup-form";
+
+export * from "./mini-god-mode";

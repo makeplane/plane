@@ -20,6 +20,7 @@ import { EUserProjectRoles } from "constants/project";
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
 // types
 import type { TInboxDetailedStatus } from "@plane/types";
+import { useStore } from "hooks";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -47,9 +48,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     issue: { getIssueById },
   } = useIssueDetail();
   const {
-    currentUser,
     membership: { currentProjectRole },
   } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
 
   // states
   const [date, setDate] = useState(new Date());

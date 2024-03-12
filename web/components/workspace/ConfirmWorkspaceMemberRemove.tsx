@@ -2,20 +2,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// hooks
-import { useStore } from "hooks";
-// ui
 import { Button } from "@plane/ui";
-
-export type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: () => Promise<void>;
-  userDetails: {
-    id: string;
-    display_name: string;
-  };
-};
+import { Props } from "./confirm-workspace-member-remove";
+import { useStore } from "hooks";
 
 export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, onSubmit, userDetails } = props;

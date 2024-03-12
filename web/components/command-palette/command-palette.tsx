@@ -21,8 +21,9 @@ import { CreateUpdateProjectViewModal } from "components/views";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
-import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useIssues } from "hooks/store";
 import { IssueService } from "services/issue";
+import { useStore } from "hooks";
 
 // services
 const issueService = new IssueService();
@@ -36,7 +37,9 @@ export const CommandPalette: FC = observer(() => {
     theme: { toggleSidebar },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const {
     issues: { removeIssue },
   } = useIssues(EIssuesStoreType.PROJECT);

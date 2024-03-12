@@ -20,7 +20,8 @@ import { STATE_GROUPS } from "constants/state";
 import { cn } from "helpers/common.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // store hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import { useIssueDetail, useProjectState } from "hooks/store";
+import { useStore } from "hooks";
 // helpers
 // components
 // helpers
@@ -78,7 +79,9 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   // router
   const router = useRouter();
   // store hooks
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const {
     issue: { getIssueById },
   } = useIssueDetail();

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { useUser } from "hooks/store";
+import { useStore } from "hooks";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // images
@@ -18,7 +18,9 @@ type Props = {
 
 export const NotAuthorizedView: React.FC<Props> = observer((props) => {
   const { actionButton, type } = props;
-  const { currentUser } = useUser();
+  const {
+    user: { data: currentUser },
+  } = useStore();
   const { query } = useRouter();
   const { next_path } = query;
 
