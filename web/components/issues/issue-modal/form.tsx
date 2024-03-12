@@ -425,7 +425,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                             // this is done so that the title do not reset after gpt popover closed
                             reset(getValues());
                           }}
-                          onResponse={(response) => {
+                          onResponse={(_,response) => {
                             handleAiAssistance(response);
                           }}
                           placement="top-end"

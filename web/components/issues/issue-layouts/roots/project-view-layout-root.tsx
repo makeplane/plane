@@ -33,16 +33,16 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && viewId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), viewId.toString());
-        captureIssuesListOpenedEvent({
-          routePath: router.asPath,
-          filters: issuesFilter?.issueFilters?.filters,
-        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),
           issues?.groupedIssueIds ? "mutation" : "init-loader",
           viewId.toString()
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -81,7 +81,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
           </div>
 
           {/* peek overview */}
-          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters}/>
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} />
         </Fragment>
       )}
     </div>

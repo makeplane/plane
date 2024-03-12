@@ -191,14 +191,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     };
 
     try {
-      await createPage(formData).then(() => {
+      await createPage(formData).then(() =>
         captureEvent(PAGE_DUPLICATED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
           element: "Pages detail page",
           state: "SUCCESS",
-        });
-      });
+        })
+      );
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be duplicated`,
@@ -211,14 +211,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const archivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await archivePageAction(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+      await archivePageAction(workspaceSlug as string, projectId as string, pageId as string).then(() =>
         captureEvent(PAGE_ARCHIVED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
           element: "Pages detail page",
           state: "SUCCESS",
-        });
-      });
+        })
+      );
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be archived`,
@@ -231,14 +231,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const unArchivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await restorePageAction(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+      await restorePageAction(workspaceSlug as string, projectId as string, pageId as string).then(() =>
         captureEvent(PAGE_RESTORED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
           element: "Pages detail page",
           state: "SUCCESS",
-        });
-      });
+        })
+      );
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be restored`,
@@ -251,14 +251,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const lockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await lockPageAction().then(() => {
+      await lockPageAction().then(() =>
         captureEvent(PAGE_LOCKED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
           element: "Pages detail page",
           state: "SUCCESS",
-        });
-      });
+        })
+      );
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be locked`,
@@ -271,14 +271,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const unlockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
     try {
-      await unlockPageAction().then(() => {
+      await unlockPageAction().then(() =>
         captureEvent(PAGE_UNLOCKED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
           element: "Pages detail page",
           state: "SUCCESS",
-        });
-      });
+        })
+      );
     } catch (error) {
       actionCompleteAlert({
         title: `Page could not be unlocked`,
@@ -389,21 +389,21 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       reset(getValues());
                     }}
                     onResponse={handleAiAssistance}
-                    onGenerateResponse={(question) => {
+                    onGenerateResponse={(question) =>
                       captureEvent(AI_TRIGGERED, {
                         page_id: pageId,
                         element: "Pages detail page",
                         question: question,
-                      });
-                    }}
-                    onReGenerateResponse={(question, response) => {
+                      })
+                    }
+                    onReGenerateResponse={(question, response) =>
                       captureEvent(AI_RES_REGENERATED, {
                         page_id: pageId,
                         element: "Pages detail page",
                         question: question,
                         prev_answer: response,
-                      });
-                    }}
+                      })
+                    }
                     placement="top-end"
                     button={
                       <button

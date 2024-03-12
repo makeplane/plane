@@ -44,7 +44,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
       element_id: tab,
       mode: "peek",
       filters: {
-        due_date: issue.target_date,
+        target_date: issue.target_date,
       },
     });
   };

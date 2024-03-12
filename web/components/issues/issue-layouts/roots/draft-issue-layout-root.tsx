@@ -28,15 +28,15 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-        captureIssuesListOpenedEvent({
-          routePath: router.asPath,
-          filters: issuesFilter?.issueFilters?.filters,
-        });
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }

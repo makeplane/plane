@@ -70,22 +70,19 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
       const newValues = issueFilters?.filters?.[key] ?? [];
-      let isFilterRemoved = false;
+
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
-          else isFilterRemoved = true;
         });
       } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) {
-          newValues.splice(newValues.indexOf(value), 1);
-          isFilterRemoved = true;
-        } else newValues.push(value);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
       }
 
       updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }).then(() =>
         captureIssuesFilterEvent({
-          eventName: isFilterRemoved ? FILTER_REMOVED : FILTER_APPLIED,
+          eventName: (issueFilters?.filters?.[key] ?? []).length > newValues.length ? FILTER_REMOVED : FILTER_APPLIED,
           payload: {
             routePath: router.asPath,
             filters: issueFilters,

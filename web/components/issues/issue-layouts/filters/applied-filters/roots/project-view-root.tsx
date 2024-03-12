@@ -92,14 +92,14 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
       filters: {
         ...(appliedFilters ?? {}),
       },
-    }).then((res) => {
+    }).then((res) =>
       captureEvent(VIEW_UPDATED, {
         view_id: res.id,
         filters: res.filters,
         element: "View Navbar",
         state: "SUCCESS",
-      });
-    });
+      })
+    );
   };
 
   return (

@@ -16,9 +16,9 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  onResponse: (question: string, response: any) => void;
-  onGenerateResponse?: (question: string, response: any) => void;
-  onReGenerateResponse?: (question: string, response: any) => void;
+  onResponse: (query: string, response: any) => void;
+  onGenerateResponse?: (query: string, response: any) => void;
+  onReGenerateResponse?: (query: string, response: any) => void;
   onError?: (error: any) => void;
   placement?: Placement;
   prompt?: string;

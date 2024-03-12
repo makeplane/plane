@@ -37,16 +37,16 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && moduleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
-        captureIssuesListOpenedEvent({
-          routePath: router.asPath,
-          filters: issuesFilter?.issueFilters?.filters,
-        })
         await issues?.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),
           issues?.groupedIssueIds ? "mutation" : "init-loader",
           moduleId.toString()
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -116,7 +116,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
             ) : null}
           </div>
           {/* peek overview */}
-          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters}/>
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} />
         </Fragment>
       )}
     </div>

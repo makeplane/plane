@@ -92,11 +92,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       if (workspaceSlug && globalViewId) {
         await fetchAllGlobalViews(workspaceSlug.toString());
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
-        captureIssuesListOpenedEvent({
-          routePath: router.asPath,
-        });
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();
+        captureIssuesListOpenedEvent({
+          filters: globalViewId ? filters?.[globalViewId.toString()] : undefined,
+          routePath: router.asPath,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
