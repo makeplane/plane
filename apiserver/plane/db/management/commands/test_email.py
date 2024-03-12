@@ -35,8 +35,10 @@ class Command(BaseCommand):
             timeout=30,
         )
         # Prepare email details
-        subject = "Test Email from Plane"
-        message = "This is a test email sent from a Plane application."
+        subject = "Email Notification from Plane"
+        message = (
+            "This is a sample email notification sent from Plane application."
+        )
 
         self.stdout.write(self.style.SUCCESS("Trying to send test email..."))
 
