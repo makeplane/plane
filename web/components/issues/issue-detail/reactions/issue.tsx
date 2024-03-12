@@ -6,7 +6,7 @@ import { useIssueDetail, useMember } from "hooks/store";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-import { formatUserList } from "helpers/issue.helper";
+import { formatTextList } from "helpers/issue.helper";
 // types
 import { IUser } from "@plane/types";
 import { ReactionSelector } from "./reaction-selector";
@@ -83,7 +83,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
       })
       .filter((displayName): displayName is string => !!displayName);
 
-    const formattedUsers = formatUserList(reactionUsers);
+    const formattedUsers = formatTextList(reactionUsers);
     return formattedUsers;
   };
 
