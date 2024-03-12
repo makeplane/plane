@@ -14,6 +14,8 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { useProject } from "hooks/store";
 // types
 import type { IProject } from "@plane/types";
+// hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -31,6 +33,9 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
+  // hooks
+  const { isMobile } = usePlatformOS();
+  project.member_role;
   // derived values
   const projectMembersIds = project.members?.map((member) => member.member_id);
   // auth
@@ -171,6 +176,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           </p>
           <div className="item-center flex justify-between">
             <Tooltip
+              isMobile={isMobile}
               tooltipHeading="Members"
               tooltipContent={
                 project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"

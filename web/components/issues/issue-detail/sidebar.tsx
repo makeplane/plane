@@ -15,6 +15,7 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import {
   ArchiveIcon,
@@ -81,7 +82,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-
+  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
@@ -141,7 +142,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
             )}
             <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
-              <Tooltip tooltipContent="Copy link">
+              <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
                 <button
                   type="button"
                   className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
@@ -152,6 +153,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </Tooltip>
               {isArchivingAllowed && (
                 <Tooltip
+                  isMobile={isMobile}
                   tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
                 >
                   <button
@@ -173,7 +175,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 </Tooltip>
               )}
               {is_editable && (
-                <Tooltip tooltipContent="Delete">
+                <Tooltip tooltipContent="Delete" isMobile={isMobile}>
                   <button
                     type="button"
                     className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"

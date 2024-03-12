@@ -14,6 +14,7 @@ import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
 import { useStore } from "hooks";
+import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   memberId: string;
@@ -39,6 +40,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     workspace: { updateMember, removeMemberFromWorkspace, getWorkspaceMemberDetails },
   } = useMember();
   const { captureEvent } = useEventTracker();
+  const { isMobile } = usePlatformOS();
   // derived values
   const memberDetails = getWorkspaceMemberDetails(memberId);
 
@@ -189,6 +191,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
             })}
           </CustomSelect>
           <Tooltip
+            isMobile={isMobile}
             tooltipContent={isCurrentUser ? "Leave workspace" : "Remove member"}
             disabled={!isAdmin && !isCurrentUser}
           >

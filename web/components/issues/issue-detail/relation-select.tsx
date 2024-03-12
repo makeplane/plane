@@ -7,6 +7,7 @@ import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { cn } from "helpers/common.helper";
 import { useIssueDetail, useIssues, useProject } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 // ui
 // helpers
@@ -59,7 +60,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
     toggleRelationModal,
   } = useIssueDetail();
   const { issueMap } = useIssues();
-
+  const { isMobile } = usePlatformOS();
   const relationIssueIds = getRelationByIssueIdRelationType(issueId, relationKey);
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
@@ -124,7 +125,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                     key={relationIssueId}
                     className={`group flex items-center gap-1 rounded px-1.5 pb-1 pt-1 leading-3 hover:bg-custom-background-90 ${issueRelationObject[relationKey].className}`}
                   >
-                    <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name}>
+                    <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link
                         href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${currentIssue.id}`}
                         target="_blank"
@@ -136,7 +137,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                       </Link>
                     </Tooltip>
                     {!disabled && (
-                      <Tooltip tooltipContent="Remove" position="bottom">
+                      <Tooltip tooltipContent="Remove" position="bottom" isMobile={isMobile}>
                         <span
                           onClick={(e) => {
                             e.preventDefault();

@@ -15,6 +15,7 @@ import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "help
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
 // hooks
 import { useEventTracker } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
 
@@ -44,7 +45,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   } = props;
   // store hooks
   const { captureEvent } = useEventTracker();
-
+  const { isMobile } = usePlatformOS();
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // states
@@ -358,7 +359,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             },
           },
         ].map((item) => (
-          <Tooltip tooltipContent={item.name} key={item.id}>
+          <Tooltip tooltipContent={item.name} key={item.id} isMobile={isMobile}>
             <button
               type="button"
               onClick={(e) => {
@@ -373,7 +374,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             </button>
           </Tooltip>
         ))}
-        <Tooltip tooltipContent="Snooze">
+        <Tooltip tooltipContent="Snooze" isMobile={isMobile}>
           <CustomMenu
             className="flex items-center"
             customButton={

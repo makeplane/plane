@@ -10,6 +10,7 @@ import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
 // hooks
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
 // assets
 import packageJson from "package.json";
 
@@ -41,6 +42,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
     theme: { sidebarCollapsed, toggleSidebar },
     commandPalette: { toggleShortcutModal },
   } = useApplication();
+  const { isMobile } = usePlatformOS();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
@@ -69,7 +71,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           </div>
         )}
         <div className={`flex items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "w-1/2 justify-evenly"}`}>
-          <Tooltip tooltipContent="Shortcuts">
+          <Tooltip tooltipContent="Shortcuts" isMobile={isMobile}>
             <button
               type="button"
               className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
@@ -80,7 +82,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
               <Zap className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
-          <Tooltip tooltipContent="Help">
+          <Tooltip tooltipContent="Help" isMobile={isMobile}>
             <button
               type="button"
               className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
@@ -100,7 +102,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             <MoveLeft className="h-3.5 w-3.5" />
           </button>
 
-          <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`}>
+          <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`} isMobile={isMobile}>
             <button
               type="button"
               className={`hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
