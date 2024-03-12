@@ -126,7 +126,7 @@ export class ModulesStore implements IModuleStore {
       (m) =>
         m.project_id === projectId &&
         m.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        shouldFilterModule(m, filters ?? {})
+        shouldFilterModule(m, displayFilters ?? {}, filters ?? {})
     );
     modules = orderModules(modules, displayFilters?.order_by);
     const moduleIds = modules.map((m) => m.id);

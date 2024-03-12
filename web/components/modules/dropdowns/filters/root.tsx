@@ -3,18 +3,21 @@ import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // components
 import { FilterLead, FilterMembers, FilterStartDate, FilterStatus, FilterTargetDate } from "components/modules";
+import { FilterOption } from "components/issues";
 // types
-import { TModuleFilters } from "@plane/types";
+import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 import { TModuleStatus } from "@plane/ui";
 
 type Props = {
+  displayFilters: TModuleDisplayFilters;
   filters: TModuleFilters;
+  handleDisplayFiltersUpdate: (updatedDisplayProperties: Partial<TModuleDisplayFilters>) => void;
   handleFiltersUpdate: (key: keyof TModuleFilters, value: string | string[]) => void;
   memberIds?: string[] | undefined;
 };
 
 export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, memberIds } = props;
+  const { displayFilters, filters, handleDisplayFiltersUpdate, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -39,6 +42,18 @@ export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+        <div className="py-2">
+          <FilterOption
+            isChecked={!!displayFilters.favorites}
+            onClick={() =>
+              handleDisplayFiltersUpdate({
+                favorites: !displayFilters.favorites,
+              })
+            }
+            title="Favorites"
+          />
+        </div>
+
         {/* status */}
         <div className="py-2">
           <FilterStatus

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
@@ -7,6 +8,9 @@ import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttCha
 import { EmptyState } from "components/empty-state";
 // ui
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
+// assets
+import NameFilterImage from "public/empty-state/module/name-filter.svg";
+import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 // constants
 import { EmptyStateType } from "constants/empty-state";
 
@@ -18,7 +22,7 @@ export const ModulesListView: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
   const { getFilteredModuleIds, loader } = useModule();
-  const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
+  const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
   // derived values
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
 
@@ -29,6 +33,25 @@ export const ModulesListView: React.FC = observer(() => {
         {displayFilters?.layout === "board" && <CycleModuleBoardLayout />}
         {displayFilters?.layout === "gantt" && <GanttLayoutLoader />}
       </>
+    );
+
+  if (filteredModuleIds.length === 0)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <div className="text-center">
+          <Image
+            src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
+            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            alt="No matching modules"
+          />
+          <h5 className="text-xl font-medium mt-7 mb-1">No matching modules</h5>
+          <p className="text-custom-text-400 text-base">
+            {searchQuery.trim() === ""
+              ? "Remove the filters to see all modules"
+              : "Remove the search criteria to see all modules"}
+          </p>
+        </div>
+      </div>
     );
 
   return (

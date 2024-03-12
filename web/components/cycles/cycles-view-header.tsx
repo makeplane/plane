@@ -62,7 +62,10 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else setIsSearchOpen(false);
+      else {
+        setIsSearchOpen(false);
+        inputRef.current?.blur();
+      }
     }
   };
 
@@ -107,7 +110,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
             <Search className="h-3.5 w-3.5" />
             <input
               ref={inputRef}
-              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
+              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => updateSearchQuery(e.target.value)}

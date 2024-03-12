@@ -2,7 +2,7 @@ import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "helpers/filter.helper";
 // types
-import { IModule, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
+import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
 
 /**
  * @description orders modules based on their status
@@ -12,43 +12,23 @@ import { IModule, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
  */
 export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptions | undefined): IModule[] => {
   let orderedModules: IModule[] = [];
-  if (modules.length === 0) return [];
+  if (modules.length === 0 || !orderByKey) return [];
 
   if (orderByKey === "name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]);
   if (orderByKey === "-name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]).reverse();
-  if (orderByKey === "progress")
+  if (["progress", "-progress"].includes(orderByKey))
     orderedModules = sortBy(modules, [
       (m) => {
-        const totalIssues =
-          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
-        const progress = (m.unstarted_issues + m.started_issues) / totalIssues;
-        return progress;
+        let progress = (m.completed_issues + m.cancelled_issues) / m.total_issues;
+        if (isNaN(progress)) progress = 0;
+        return orderByKey === "progress" ? progress : !progress;
       },
+      "name",
     ]);
-  if (orderByKey === "-progress")
+  if (["issues_length", "-issues_length"].includes(orderByKey))
     orderedModules = sortBy(modules, [
-      (m) => {
-        const totalIssues =
-          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
-        const progress = (m.unstarted_issues + m.started_issues) / totalIssues;
-        return !progress;
-      },
-    ]);
-  if (orderByKey === "issues_length")
-    orderedModules = sortBy(modules, [
-      (m) => {
-        const totalIssues =
-          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
-        return totalIssues;
-      },
-    ]);
-  if (orderByKey === "-issues_length")
-    orderedModules = sortBy(modules, [
-      (m) => {
-        const totalIssues =
-          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
-        return !totalIssues;
-      },
+      (m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues),
+      "name",
     ]);
   if (orderByKey === "target_date") orderedModules = sortBy(modules, [(m) => m.target_date]);
   if (orderByKey === "-target_date") orderedModules = sortBy(modules, [(m) => !m.target_date]);
@@ -61,10 +41,15 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
 /**
  * @description filters modules based on the filters
  * @param {IModule} module
+ * @param {TModuleDisplayFilters} displayFilters
  * @param {TModuleFilters} filters
  * @returns {boolean}
  */
-export const shouldFilterModule = (module: IModule, filters: TModuleFilters): boolean => {
+export const shouldFilterModule = (
+  module: IModule,
+  displayFilters: TModuleDisplayFilters,
+  filters: TModuleFilters
+): boolean => {
   let fallsInFilters = true;
   Object.keys(filters).forEach((key) => {
     const filterKey = key as keyof TModuleFilters;
@@ -89,6 +74,7 @@ export const shouldFilterModule = (module: IModule, filters: TModuleFilters): bo
       });
     }
   });
+  if (displayFilters.favorites && !module.is_favorite) fallsInFilters = false;
 
   return fallsInFilters;
 };

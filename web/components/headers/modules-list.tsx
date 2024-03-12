@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { GanttChartSquare, LayoutGrid, List, ListFilter, Plus, Search, X } from "lucide-react";
 // hooks
 import { useApplication, useEventTracker, useMember, useModuleFilter, useProject, useUser } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
@@ -46,6 +47,10 @@ export const ModulesListHeader: React.FC = observer(() => {
     updateFilters,
     updateSearchQuery,
   } = useModuleFilter();
+  // outside click detector hook
+  useOutsideClickDetector(inputRef, () => {
+    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+  });
 
   const handleFilters = useCallback(
     (key: keyof TModuleFilters, value: string | string[]) => {
@@ -69,7 +74,10 @@ export const ModulesListHeader: React.FC = observer(() => {
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else setIsSearchOpen(false);
+      else {
+        setIsSearchOpen(false);
+        inputRef.current?.blur();
+      }
     }
   };
 
@@ -132,7 +140,7 @@ export const ModulesListHeader: React.FC = observer(() => {
               <Search className="h-3.5 w-3.5" />
               <input
                 ref={inputRef}
-                className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
+                className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
                 placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => updateSearchQuery(e.target.value)}
@@ -189,7 +197,12 @@ export const ModulesListHeader: React.FC = observer(() => {
           />
           <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
             <ModuleFiltersSelection
+              displayFilters={displayFilters ?? {}}
               filters={filters ?? {}}
+              handleDisplayFiltersUpdate={(val) => {
+                if (!projectId) return;
+                updateDisplayFilters(projectId.toString(), val);
+              }}
               handleFiltersUpdate={handleFilters}
               memberIds={workspaceMemberIds ?? undefined}
             />
