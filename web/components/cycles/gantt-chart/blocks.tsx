@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
@@ -33,12 +34,12 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-              ? "#f7ae59"
-              : cycleStatus === "completed"
-                ? "#3f76ff"
-                : cycleStatus === "draft"
-                  ? "rgb(var(--color-text-200))"
-                  : "",
+            ? "#f7ae59"
+            : cycleStatus === "completed"
+            ? "#3f76ff"
+            : cycleStatus === "draft"
+            ? "rgb(var(--color-text-200))"
+            : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
     >
@@ -63,8 +64,6 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
 
 export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { cycleId } = props;
-  // router
-  const router = useRouter();
   // store hooks
   const {
     router: { workspaceSlug },
@@ -76,9 +75,9 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
 
   return (
-    <div
+    <Link
       className="relative flex h-full w-full items-center gap-2"
-      onClick={() => router.push(`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`)}
+      href={`/${workspaceSlug}/projects/${cycleDetails?.project_id}/cycles/${cycleDetails?.id}`}
     >
       <ContrastIcon
         className="h-5 w-5 flex-shrink-0"
@@ -86,15 +85,15 @@ export const CycleGanttSidebarBlock: React.FC<Props> = observer((props) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-              ? "#f7ae59"
-              : cycleStatus === "completed"
-                ? "#3f76ff"
-                : cycleStatus === "draft"
-                  ? "rgb(var(--color-text-200))"
-                  : ""
+            ? "#f7ae59"
+            : cycleStatus === "completed"
+            ? "#3f76ff"
+            : cycleStatus === "draft"
+            ? "rgb(var(--color-text-200))"
+            : ""
         }`}
       />
       <h6 className="flex-grow truncate text-sm font-medium">{cycleDetails?.name}</h6>
-    </div>
+    </Link>
   );
 });
