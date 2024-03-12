@@ -354,6 +354,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             "external_id",
             "progress_snapshot",
             # meta fields
+            "total_issues",
             "is_favorite",
             "cancelled_issues",
             "completed_issues",
