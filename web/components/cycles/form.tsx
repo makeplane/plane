@@ -8,6 +8,7 @@ import { DateRangeDropdown, ProjectDropdown } from "components/dropdowns";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "@plane/types";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
@@ -66,6 +67,9 @@ export const CycleForm: React.FC<Props> = (props) => {
                     setActiveProject(val);
                   }}
                   buttonVariant="background-with-text"
+                  renderCondition={(project) =>
+                    !!project.member_role && project.member_role >= EUserProjectRoles.MEMBER
+                  }
                   tabIndex={7}
                 />
               )}
