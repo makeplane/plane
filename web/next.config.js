@@ -17,20 +17,6 @@ const nextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return {
-      fallback: [
-        {
-          source: "/api/:slug*",
-          destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/:slug*/`,
-        },
-        {
-          source: "/god-mode",
-          destination: `${process.env.NEXT_PUBLIC_GOD_MODE_BASE_URL}/`,
-        },
-      ],
-    };
-  },
   reactStrictMode: false,
   swcMinify: true,
   images: {
