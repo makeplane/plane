@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Check, Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import { Check, LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // components
 import { DeleteProjectModal, JoinProjectModal, ProjectLogo } from "components/project";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { cn } from "helpers/common.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
 // hooks
 import { useProject } from "hooks/store";
@@ -17,7 +16,6 @@ import { useProject } from "hooks/store";
 import type { IProject } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { differenceInCalendarDays } from "date-fns";
 
 type Props = {
   project: IProject;
@@ -108,9 +106,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             setJoinProjectModal(true);
           }
         }}
-        className="flex cursor-pointer flex-col rounded bg-custom-background-100 hover:shadow-custom-shadow-4xl transition-all"
+        className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
-        <div className="relative h-16 w-full rounded-t">
+        <div className="relative h-[118px] w-full rounded-t ">
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
+
           <img
             src={
               project.cover_image ??
@@ -120,11 +120,24 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
-          <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-end gap-3 px-4">
-            <div className="h-full flex-shrink-0 flex items-center gap-2">
+          <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
+            <div className="flex flex-grow items-center gap-2.5 truncate">
+              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/90">
+                <ProjectLogo logo={project.logo_props} />
+              </div>
+
+              <div className="flex w-full flex-col justify-between gap-0.5 truncate">
+                <h3 className="truncate font-semibold text-white">{project.name}</h3>
+                <span className="flex items-center gap-1.5">
+                  <p className="text-xs font-medium text-white">{project.identifier} </p>
+                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex h-full flex-shrink-0 items-center gap-2">
               <button
-                type="button"
-                className="h-6 w-6 flex items-center justify-center rounded bg-white/10"
+                className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -134,7 +147,6 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 <LinkIcon className="h-3 w-3 text-white" />
               </button>
               <button
-                type="button"
                 className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                 onClick={(e) => {
                   e.preventDefault();
@@ -144,73 +156,51 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 }}
               >
                 <Star
-                  className={cn("h-3 w-3 text-white", {
-                    "fill-amber-400 text-transparent": project.is_favorite,
-                  })}
+                  className={`h-3 w-3 ${project.is_favorite ? "fill-amber-400 text-transparent" : "text-white"} `}
                 />
               </button>
             </div>
           </div>
-
-          <div className="absolute left-4 -bottom-5 h-10 w-10 flex-shrink-0 grid place-items-center rounded bg-amber-50">
-            <ProjectLogo logo={project.logo_props} />
-          </div>
         </div>
 
-        <div className="h-44 w-full flex flex-col justify-between rounded-b border border-custom-border-200 border-t-0">
-          <div className="flex flex-col flex-grow gap-3 text-custom-text-200 px-4 pt-10">
-            <div className="flex flex-col gap-1">
-              <h3 className="truncate font-semibold">{project.name}</h3>
-              <span className="flex items-center gap-1 text-custom-text-400 text-sm">
-                <span className="text-xs font-medium mr-1">{project.identifier}</span>
-                {project.network === 0 ? (
-                  <>
-                    <Lock className="h-2.5 w-2.5" />
-                    Private
-                  </>
-                ) : (
-                  <>
-                    <Globe2 className="h-2.5 w-2.5" />
-                    Public
-                  </>
-                )}
-                {`${differenceInCalendarDays(new Date(project.created_at), new Date()) <= -7}`}
-              </span>
-            </div>
-            <p className="line-clamp-2 break-words text-sm text-custom-text-300">
-              {project.description && project.description.trim() !== ""
-                ? project.description
-                : `Created on ${renderFormattedDate(project.created_at)}`}
-            </p>
-          </div>
-          <div className="flex px-4 py-2.5 items-center justify-between border-t-[0.5px] border-custom-border-200">
+        <div className="flex h-[104px] w-full flex-col justify-between rounded-b p-4">
+          <p className="line-clamp-2 break-words text-sm text-custom-text-300">
+            {project.description && project.description.trim() !== ""
+              ? project.description
+              : `Created on ${renderFormattedDate(project.created_at)}`}
+          </p>
+          <div className="item-center flex justify-between">
             <Tooltip
               tooltipHeading="Members"
               tooltipContent={
-                project.members && project.members.length > 0 ? `${project.members.length} members` : "No member"
+                project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"
               }
               position="top"
             >
               {projectMembersIds && projectMembersIds.length > 0 ? (
-                <div>
+                <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
                   <AvatarGroup showTooltip={false}>
                     {projectMembersIds.map((memberId) => {
                       const member = project.members?.find((m) => m.member_id === memberId);
+
                       if (!member) return null;
+
                       return <Avatar key={member.id} name={member.member__display_name} src={member.member__avatar} />;
                     })}
                   </AvatarGroup>
                 </div>
               ) : (
-                <span className="text-sm italic text-custom-text-400">No member yet</span>
+                <span className="text-sm italic text-custom-text-400">No Member Yet</span>
               )}
             </Tooltip>
             {project.is_member &&
               (isOwner || isMember ? (
                 <Link
-                  href={`/${workspaceSlug}/projects/${project.id}/settings`}
                   className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  href={`/${workspaceSlug}/projects/${project.id}/settings`}
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </Link>
@@ -221,17 +211,19 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 </span>
               ))}
             {!project.is_member && (
-              <Button
-                variant="link-primary"
-                className="!p-0 font-semibold"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setJoinProjectModal(true);
-                }}
-              >
-                Join
-              </Button>
+              <div className="flex items-center">
+                <Button
+                  variant="link-primary"
+                  className="!p-0 font-semibold"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setJoinProjectModal(true);
+                  }}
+                >
+                  Join
+                </Button>
+              </div>
             )}
           </div>
         </div>
