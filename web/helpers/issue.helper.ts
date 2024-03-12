@@ -184,3 +184,21 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
 
   return changedFields;
 }
+
+export const formatUserList = (users: string[]): string => {
+  const userCount = users.length;
+  switch (userCount) {
+    case 0:
+      return "";
+    case 1:
+      return users[0];
+    case 2:
+      return `${users[0]} and ${users[1]}`;
+    case 3:
+      return `${users.slice(0, 2).join(", ")}, and ${users[2]}`;
+    case 4:
+      return `${users.slice(0, 3).join(", ")}, and ${users[3]}`;
+    default:
+      return `${users.slice(0, 3).join(", ")}, and +${userCount - 3} more`;
+  }
+};
