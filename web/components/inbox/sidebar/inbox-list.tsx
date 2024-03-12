@@ -10,22 +10,27 @@ export type InboxIssueListProps = {
   projectId: string;
   projectIdentifier?: string;
   inboxIssues: IInboxIssueStore[];
+  type?: "all" | "pending" | "resolved";
 };
 
 export const InboxIssueList: FC<InboxIssueListProps> = observer((props) => {
-  const { workspaceSlug, projectId, projectIdentifier, inboxIssues } = props;
+  const { workspaceSlug, projectId, projectIdentifier, inboxIssues, type = "all" } = props;
+  const pendingInboxIssues = inboxIssues.filter((inboxIssue) => inboxIssue.status === -2);
+  const resolvedInboxIssues = inboxIssues.filter((inboxIssue) => inboxIssue.status !== -2);
 
   return (
     <>
-      {inboxIssues.map((inboxIssue) => (
-        <InboxIssueListItem
-          key={inboxIssue.id}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          projectIdentifier={projectIdentifier}
-          inboxIssue={inboxIssue}
-        />
-      ))}
+      {(type === "pending" ? pendingInboxIssues : type === "resolved" ? resolvedInboxIssues : inboxIssues).map(
+        (inboxIssue) => (
+          <InboxIssueListItem
+            key={inboxIssue.id}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            projectIdentifier={projectIdentifier}
+            inboxIssue={inboxIssue}
+          />
+        )
+      )}
     </>
   );
 });
