@@ -1,52 +1,50 @@
 # Python imports
 import boto3
+from django.conf import settings
 
 # Django imports
 from django.db import IntegrityError
 from django.db.models import (
-    Prefetch,
-    Q,
     Exists,
-    OuterRef,
     F,
     Func,
+    OuterRef,
+    Prefetch,
+    Q,
     Subquery,
 )
-from django.conf import settings
+from rest_framework import serializers, status
+from rest_framework.permissions import AllowAny
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import serializers
-from rest_framework.permissions import AllowAny
-
-# Module imports
-from plane.app.views.base import BaseViewSet, BaseAPIView, WebhookMixin
-from plane.app.serializers import (
-    ProjectSerializer,
-    ProjectListSerializer,
-    ProjectFavoriteSerializer,
-    ProjectDeployBoardSerializer,
-)
 
 from plane.app.permissions import (
     ProjectBasePermission,
     ProjectMemberPermission,
 )
+from plane.app.serializers import (
+    ProjectDeployBoardSerializer,
+    ProjectFavoriteSerializer,
+    ProjectListSerializer,
+    ProjectSerializer,
+)
 
+# Module imports
+from plane.app.views.base import BaseAPIView, BaseViewSet, WebhookMixin
 from plane.db.models import (
-    Project,
-    ProjectMember,
-    Workspace,
-    State,
-    ProjectFavorite,
-    ProjectIdentifier,
-    Module,
     Cycle,
     Inbox,
-    ProjectDeployBoard,
-    IssueProperty,
     Issue,
+    IssueProperty,
+    Module,
+    Project,
+    ProjectDeployBoard,
+    ProjectFavorite,
+    ProjectIdentifier,
+    ProjectMember,
+    State,
+    Workspace,
 )
 from plane.utils.cache import cache_response
 
@@ -162,6 +160,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
             "cursor", False
         ):
             return self.paginate(
+                order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=(projects),
                 on_results=lambda projects: ProjectListSerializer(

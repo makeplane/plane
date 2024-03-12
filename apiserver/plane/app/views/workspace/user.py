@@ -1,59 +1,60 @@
 # Python imports
 from datetime import date
+
 from dateutil.relativedelta import relativedelta
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    F,
+    Func,
+    IntegerField,
+    Max,
+    OuterRef,
+    Q,
+    UUIDField,
+    Value,
+    When,
+)
+from django.db.models.fields import DateField
+from django.db.models.functions import Cast, Coalesce, ExtractWeek
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Count,
-    Case,
-    Value,
-    CharField,
-    When,
-    Max,
-    IntegerField,
-    UUIDField,
-)
-from django.db.models.functions import ExtractWeek, Cast
-from django.db.models.fields import DateField
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Coalesce
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
+from plane.app.permissions import (
+    WorkspaceEntityPermission,
+    WorkspaceViewerPermission,
+)
+
 # Module imports
 from plane.app.serializers import (
-    WorkSpaceSerializer,
-    ProjectMemberSerializer,
     IssueActivitySerializer,
     IssueSerializer,
+    ProjectMemberSerializer,
+    WorkSpaceSerializer,
     WorkspaceUserPropertiesSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from plane.db.models import (
-    User,
-    Workspace,
-    ProjectMember,
-    IssueActivity,
+    CycleIssue,
     Issue,
-    IssueLink,
+    IssueActivity,
     IssueAttachment,
+    IssueLink,
     IssueSubscriber,
     Project,
+    ProjectMember,
+    User,
+    Workspace,
     WorkspaceMember,
-    CycleIssue,
     WorkspaceUserProperties,
-)
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-    WorkspaceViewerPermission,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -394,6 +395,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             queryset = queryset.filter(project__in=projects)
 
         return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=queryset,
             on_results=lambda issue_activities: IssueActivitySerializer(

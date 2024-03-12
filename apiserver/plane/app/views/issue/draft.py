@@ -112,6 +112,7 @@ class IssueDraftViewSet(BaseViewSet):
         # List Paginate
         if not group_by:
             return self.paginate(
+                order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
@@ -121,6 +122,7 @@ class IssueDraftViewSet(BaseViewSet):
 
         # Group paginate
         return self.paginate(
+            order_by=order_by_param,
             request=request,
             queryset=issue_queryset,
             on_results=lambda issues: issue_on_results(
