@@ -29,7 +29,7 @@ export const PagesListView: FC<IPagesListView> = (props) => {
 
   // here we are only observing the projectPageStore, so that we can re-render the component when the projectPageStore changes
 
-  const emptyStateType = pageTab ? `project-page-${pageTab}` : EmptyStateType.PROJECT_PAGE_ALL;
+  const emptyStateType = pageTab ? `project-page-${pageTab.toLowerCase()}` : EmptyStateType.PROJECT_PAGE_ALL;
   const isButtonVisible = pageTab !== "archived" && pageTab !== "favorites";
 
   return (
