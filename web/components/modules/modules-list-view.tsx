@@ -1,8 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { useApplication, useEventTracker, useModule } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { useApplication, useEventTracker, useModule, useModuleFilter } from "hooks/store";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 import { EmptyState } from "components/empty-state";
@@ -18,29 +17,29 @@ export const ModulesListView: React.FC = observer(() => {
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
   const { setTrackElement } = useEventTracker();
+  const { getFilteredModuleIds, loader } = useModule();
+  const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
+  // derived values
+  const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
 
-  const { projectModuleIds, loader } = useModule();
-
-  const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
-
-  if (loader || !projectModuleIds)
+  if (loader || !filteredModuleIds)
     return (
       <>
-        {modulesView === "list" && <CycleModuleListLayout />}
-        {modulesView === "grid" && <CycleModuleBoardLayout />}
-        {modulesView === "gantt_chart" && <GanttLayoutLoader />}
+        {displayFilters?.layout === "list" && <CycleModuleListLayout />}
+        {displayFilters?.layout === "board" && <CycleModuleBoardLayout />}
+        {displayFilters?.layout === "gantt" && <GanttLayoutLoader />}
       </>
     );
 
   return (
     <>
-      {projectModuleIds.length > 0 ? (
+      {filteredModuleIds.length > 0 ? (
         <>
-          {modulesView === "list" && (
+          {displayFilters?.layout === "list" && (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
                 <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
-                  {projectModuleIds.map((moduleId) => (
+                  {filteredModuleIds.map((moduleId) => (
                     <ModuleListItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>
@@ -51,7 +50,7 @@ export const ModulesListView: React.FC = observer(() => {
               </div>
             </div>
           )}
-          {modulesView === "grid" && (
+          {displayFilters?.layout === "board" && (
             <div className="h-full w-full">
               <div className="flex h-full w-full justify-between">
                 <div
@@ -61,7 +60,7 @@ export const ModulesListView: React.FC = observer(() => {
                       : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
                   } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
                 >
-                  {projectModuleIds.map((moduleId) => (
+                  {filteredModuleIds.map((moduleId) => (
                     <ModuleCardItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>
@@ -72,7 +71,7 @@ export const ModulesListView: React.FC = observer(() => {
               </div>
             </div>
           )}
-          {modulesView === "gantt_chart" && <ModulesListGanttChartView />}
+          {displayFilters?.layout === "gantt" && <ModulesListGanttChartView />}
         </>
       ) : (
         <EmptyState
