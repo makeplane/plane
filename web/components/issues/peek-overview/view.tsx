@@ -93,7 +93,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           isOpen={isDeleteIssueModalOpen}
           handleClose={() => {
             toggleDeleteIssueModal(false);
-            removeRoutePeekId();
           }}
           data={issue}
           onSubmit={() => issueOperations.remove(workspaceSlug, projectId, issueId)}

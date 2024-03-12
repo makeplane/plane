@@ -184,3 +184,21 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
 
   return changedFields;
 }
+
+export const formatTextList = (TextArray: string[]): string => {
+  const count = TextArray.length;
+  switch (count) {
+    case 0:
+      return "";
+    case 1:
+      return TextArray[0];
+    case 2:
+      return `${TextArray[0]} and ${TextArray[1]}`;
+    case 3:
+      return `${TextArray.slice(0, 2).join(", ")}, and ${TextArray[2]}`;
+    case 4:
+      return `${TextArray.slice(0, 3).join(", ")}, and ${TextArray[3]}`;
+    default:
+      return `${TextArray.slice(0, 3).join(", ")}, and +${count - 3} more`;
+  }
+};

@@ -71,7 +71,6 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         hideIcon
         dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-        showTooltip
         multiple
       />
     </div>
