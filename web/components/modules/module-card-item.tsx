@@ -12,6 +12,7 @@ import { EUserProjectRoles } from "constants/project";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 // ui
 // helpers
@@ -39,7 +40,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-
+  const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -179,7 +180,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
-              <Tooltip tooltipContent={moduleDetails.name} position="top">
+              <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
                 <span className="truncate text-base font-medium">{moduleDetails.name}</span>
               </Tooltip>
               <div className="flex items-center gap-2">
@@ -208,7 +209,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
               </div>
               {moduleDetails.member_ids?.length > 0 && (
-                <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`}>
+                <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`} isMobile={isMobile}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
                       {moduleDetails.member_ids.map((member_id) => {
@@ -222,6 +223,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             </div>
 
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
               position="top-left"
             >

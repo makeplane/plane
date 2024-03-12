@@ -6,6 +6,8 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IApiToken } from "@plane/types";
+// hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   handleClose: () => void;
@@ -14,7 +16,7 @@ type Props = {
 
 export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   const { handleClose, tokenDetails } = props;
-
+  const { isMobile } = usePlatformOS();
   const copyApiToken = (token: string) => {
     copyTextToClipboard(token).then(() =>
       setToast({
@@ -40,7 +42,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
         className="mt-4 flex w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none"
       >
         {tokenDetails.token}
-        <Tooltip tooltipContent="Copy secret key">
+        <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
           <Copy className="h-4 w-4 text-custom-text-400" />
         </Tooltip>
       </button>

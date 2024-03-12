@@ -8,6 +8,7 @@ import { Tooltip, ControlLink } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
 // helpers
 // types
 import { TIssue, TIssueMap } from "@plane/types";
@@ -29,6 +30,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { getProjectIdentifierById } = useProject();
   const { getProjectStates } = useProjectState();
   const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
@@ -110,7 +112,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                         <div className="flex-shrink-0 text-xs text-custom-text-300">
                           {getProjectIdentifierById(issue?.project_id)}-{issue.sequence_id}
                         </div>
-                        <Tooltip tooltipContent={issue.name}>
+                        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                           <div className="truncate text-xs">{issue.name}</div>
                         </Tooltip>
                       </div>

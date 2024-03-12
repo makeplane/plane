@@ -7,6 +7,7 @@ import { mutate } from "swr";
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // hooks
 import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
@@ -41,7 +42,7 @@ export const ProfileLayoutSidebar = observer(() => {
   } = useApplication();
   const { currentUser, currentUserSettings, signOut } = useUser();
   const { workspaces } = useWorkspace();
-
+  const { isMobile } = usePlatformOS();
   const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
@@ -132,7 +133,7 @@ export const ProfileLayoutSidebar = observer(() => {
 
               return (
                 <Link key={link.key} href={link.href} className="block w-full" onClick={handleItemClick}>
-                  <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+                  <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed} isMobile={isMobile}>
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                         link.highlight(router.pathname)
@@ -195,7 +196,7 @@ export const ProfileLayoutSidebar = observer(() => {
           <div className="mt-1.5">
             {WORKSPACE_ACTION_LINKS.map((link) => (
               <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
-                <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+                <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed} isMobile={isMobile}>
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
                       sidebarCollapsed ? "justify-center" : ""

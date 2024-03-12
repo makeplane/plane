@@ -9,6 +9,11 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { ProjectLogo } from "components/project";
+// constants
+import { MODULE_VIEW_LAYOUTS } from "constants/module";
+import { EUserProjectRoles } from "constants/project";
+// hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "components/modules";
 import { FiltersDropdown } from "components/issues";
 // ui
@@ -17,9 +22,6 @@ import { Breadcrumbs, Button, Tooltip, DiceIcon, CustomMenu } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // types
 import { TModuleFilters } from "@plane/types";
-// constants
-import { MODULE_VIEW_LAYOUTS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // states
@@ -36,6 +38,7 @@ export const ModulesListHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
+  const { isMobile } = usePlatformOS();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
@@ -162,7 +165,7 @@ export const ModulesListHeader: React.FC = observer(() => {
           </div>
           <div className="hidden md:flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {MODULE_VIEW_LAYOUTS.map((layout) => (
-              <Tooltip key={layout.key} tooltipContent={layout.title}>
+              <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
                 <button
                   type="button"
                   className={cn(

@@ -11,6 +11,7 @@ import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 // hooks
 import { useApplication, useUser } from "hooks/store";
 import useIntegrationPopup from "hooks/use-integration-popup";
+import { usePlatformOS } from "hooks/use-platform-os";
 // services
 import { IntegrationService } from "services/integrations";
 // icons
@@ -55,7 +56,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
   } = useUser();
 
   const isUserAdmin = currentWorkspaceRole === 20;
-
+  const { isMobile } = usePlatformOS();
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,
     github_app_name: envConfig?.github_app_name || "",
@@ -129,6 +130,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
       {workspaceIntegrations ? (
         isInstalled ? (
           <Tooltip
+            isMobile={isMobile}
             disabled={isUserAdmin}
             tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
           >
@@ -147,6 +149,7 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
           </Tooltip>
         ) : (
           <Tooltip
+            isMobile={isMobile}
             disabled={isUserAdmin}
             tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
           >

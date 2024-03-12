@@ -5,6 +5,7 @@ import { ListFilter, Search, X } from "lucide-react";
 // hooks
 import { useCycleFilter } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { CycleFiltersSelection } from "components/cycles";
 import { FiltersDropdown } from "components/issues";
@@ -36,6 +37,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
     updateFilters,
     updateSearchQuery,
   } = useCycleFilter();
+  const { isMobile } = usePlatformOS();
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
@@ -134,7 +136,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
           </FiltersDropdown>
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {CYCLE_VIEW_LAYOUTS.map((layout) => (
-              <Tooltip key={layout.key} tooltipContent={layout.title}>
+              <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
                 <button
                   type="button"
                   className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${

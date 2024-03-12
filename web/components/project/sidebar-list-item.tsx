@@ -36,6 +36,7 @@ import { getNumberCount } from "helpers/string.helper";
 // hooks
 import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
 // helpers
 
 // components
@@ -95,6 +96,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { getInboxesByProjectId, getInboxById } = useInbox();
+  const { isMobile } = usePlatformOS();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
@@ -185,6 +187,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
             >
               {provided && !disableDrag && (
                 <Tooltip
+                  isMobile={isMobile}
                   tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
                   position="top-right"
                 >
@@ -205,7 +208,13 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   </button>
                 </Tooltip>
               )}
-              <Tooltip tooltipContent={`${project.name}`} position="right" className="ml-2" disabled={!isCollapsed}>
+              <Tooltip
+                tooltipContent={`${project.name}`}
+                position="right"
+                className="ml-2"
+                disabled={!isCollapsed}
+                isMobile={isMobile}
+              >
                 <Disclosure.Button
                   as="div"
                   className={cn(
@@ -353,6 +362,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     <Link key={item.name} href={item.href} onClick={handleProjectClick}>
                       <span className="block w-full">
                         <Tooltip
+                          isMobile={isMobile}
                           tooltipContent={`${project?.name}: ${item.name}`}
                           position="right"
                           className="ml-2"

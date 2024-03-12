@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 import { ArrowRight, PanelRight, Plus } from "lucide-react";
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
@@ -66,6 +67,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+  // hooks
+  const { isMobile } = usePlatformOS();
   // store hooks
   const {
     issuesFilter: { issueFilters },
@@ -208,6 +211,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                           <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
+                            isMobile={isMobile}
                               tooltipContent={`There are ${issueCount} ${
                                 issueCount > 1 ? "issues" : "issue"
                               } in this module`}
