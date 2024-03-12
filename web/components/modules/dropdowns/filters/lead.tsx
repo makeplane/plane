@@ -34,8 +34,7 @@ export const FilterLead: React.FC<Props> = observer((props: Props) => {
       (memberId) => !(appliedFilters ?? []).includes(memberId),
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
+  }, [appliedFilters, getUserDetails, memberIds, , searchQuery]);
 
   const handleViewToggle = () => {
     if (!sortedOptions) return;
