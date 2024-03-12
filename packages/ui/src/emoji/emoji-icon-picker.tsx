@@ -103,7 +103,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
               style={styles.popper}
               {...attributes.popper}
               className={cn(
-                "h-80 w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
+                "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
                 dropdownClassName
               )}
             >
@@ -146,7 +146,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                       }}
                     />
                   </Tab.Panel>
-                  <Tab.Panel>
+                  <Tab.Panel className="h-80 w-full">
                     <IconsList
                       defaultColor={defaultIconColor}
                       onChange={(val) => {

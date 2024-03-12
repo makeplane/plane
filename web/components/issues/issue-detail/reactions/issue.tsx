@@ -1,10 +1,12 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { TOAST_TYPE, setToast } from "@plane/ui";
-import { renderEmoji } from "helpers/emoji.helper";
-import { useIssueDetail } from "hooks/store";
+// hooks
+import { useIssueDetail, useMember } from "hooks/store";
 // ui
+import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// helpers
+import { renderEmoji } from "helpers/emoji.helper";
+import { formatTextList } from "helpers/issue.helper";
 // types
 import { IUser } from "@plane/types";
 import { ReactionSelector } from "./reaction-selector";
@@ -20,10 +22,11 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
   const { workspaceSlug, projectId, issueId, currentUser } = props;
   // hooks
   const {
-    reaction: { getReactionsByIssueId, reactionsByUser },
+    reaction: { getReactionsByIssueId, reactionsByUser, getReactionById },
     createReaction,
     removeReaction,
   } = useIssueDetail();
+  const { getUserDetails } = useMember();
 
   const reactionIds = getReactionsByIssueId(issueId);
   const userReactions = reactionsByUser(issueId, currentUser.id).map((r) => r.reaction);
@@ -72,6 +75,18 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
     [workspaceSlug, projectId, issueId, currentUser, createReaction, removeReaction, userReactions]
   );
 
+  const getReactionUsers = (reaction: string): string => {
+    const reactionUsers = (reactionIds?.[reaction] || [])
+      .map((reactionId) => {
+        const reactionDetails = getReactionById(reactionId);
+        return reactionDetails ? getUserDetails(reactionDetails.actor_id)?.display_name : null;
+      })
+      .filter((displayName): displayName is string => !!displayName);
+
+    const formattedUsers = formatTextList(reactionUsers);
+    return formattedUsers;
+  };
+
   return (
     <div className="mt-4 relative flex items-center gap-1.5">
       <ReactionSelector size="md" position="top" value={userReactions} onSelect={issueReactionOperations.react} />
@@ -81,19 +96,21 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
           (reaction) =>
             reactionIds[reaction]?.length > 0 && (
               <>
-                <button
-                  type="button"
-                  onClick={() => issueReactionOperations.react(reaction)}
-                  key={reaction}
-                  className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                    userReactions.includes(reaction) ? "bg-custom-primary-100/10" : "bg-custom-background-80"
-                  }`}
-                >
-                  <span>{renderEmoji(reaction)}</span>
-                  <span className={userReactions.includes(reaction) ? "text-custom-primary-100" : ""}>
-                    {(reactionIds || {})[reaction].length}{" "}
-                  </span>
-                </button>
+                <Tooltip tooltipContent={getReactionUsers(reaction)}>
+                  <button
+                    type="button"
+                    onClick={() => issueReactionOperations.react(reaction)}
+                    key={reaction}
+                    className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
+                      userReactions.includes(reaction) ? "bg-custom-primary-100/10" : "bg-custom-background-80"
+                    }`}
+                  >
+                    <span>{renderEmoji(reaction)}</span>
+                    <span className={userReactions.includes(reaction) ? "text-custom-primary-100" : ""}>
+                      {(reactionIds || {})[reaction].length}{" "}
+                    </span>
+                  </button>
+                </Tooltip>
               </>
             )
         )}
