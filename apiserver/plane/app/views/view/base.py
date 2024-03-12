@@ -166,6 +166,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
         # List Paginate
         if not group_by:
             return self.paginate(
+                order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
@@ -175,6 +176,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
 
         # Group paginate
         return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=issue_queryset,
             on_results=lambda issues: issue_on_results(
