@@ -11,6 +11,7 @@ import { STATE_CREATED, STATE_UPDATED } from "constants/event-tracker";
 import { GROUP_CHOICES } from "constants/project";
 // hooks
 import { useEventTracker, useProjectState } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // types
 import type { IState } from "@plane/types";
 
@@ -38,6 +39,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureProjectStateEvent, setTrackElement } = useEventTracker();
   const { createState, updateState } = useProjectState();
+  const { isMobile } = usePlatformOS();
   // form info
   const {
     handleSubmit,
@@ -239,7 +241,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           name="group"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}>
+            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"} isMobile={isMobile}>
               <div>
                 <CustomSelect
                   disabled={groupLength === 1}

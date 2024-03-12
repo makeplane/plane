@@ -7,13 +7,14 @@ import { Breadcrumbs, Button, Tooltip, DiceIcon, CustomMenu } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { ProjectLogo } from "components/project";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
 // hooks
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
-import { ProjectLogo } from "components/project";
+import { usePlatformOS } from "hooks/use-platform-os";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
@@ -26,7 +27,7 @@ export const ModulesListHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
-
+  const { isMobile } = usePlatformOS();
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 
   const canUserCreateModule =
@@ -64,7 +65,7 @@ export const ModulesListHeader: React.FC = observer(() => {
         <div className="flex items-center gap-2">
           <div className="items-center gap-1 rounded bg-custom-background-80 p-1 hidden md:flex">
             {MODULE_VIEW_LAYOUTS.map((layout) => (
-              <Tooltip key={layout.key} tooltipContent={layout.title}>
+              <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
                 <button
                   type="button"
                   className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${

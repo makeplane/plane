@@ -14,7 +14,8 @@ import { useProject } from "hooks/store";
 // types
 import type { IProject } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
-// constants
+// hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -30,7 +31,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
-
+  // hooks
+  const { isMobile } = usePlatformOS();
   project.member_role;
   const isOwner = project.member_role === EUserProjectRoles.ADMIN;
   const isMember = project.member_role === EUserProjectRoles.MEMBER;
@@ -175,6 +177,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
           <p className="line-clamp-2 break-words text-sm text-custom-text-300">{project.description}</p>
           <div className="item-center flex justify-between">
             <Tooltip
+              isMobile={isMobile}
               tooltipHeading="Members"
               tooltipContent={
                 project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"

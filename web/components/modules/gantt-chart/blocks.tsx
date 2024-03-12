@@ -2,6 +2,7 @@ import Link from "next/link";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 // helpers
@@ -25,6 +26,8 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
   const { getModuleById } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   return (
     <div
@@ -36,6 +39,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+      isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
             <h5>{moduleDetails?.name}</h5>

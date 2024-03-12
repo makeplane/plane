@@ -7,6 +7,7 @@ import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { calculateTimeAgo } from "helpers/date-time.helper";
 // hooks
 import { useMember } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // types
 import { ILinkDetails, UserAuth } from "@plane/types";
 
@@ -19,7 +20,7 @@ type Props = {
 
 export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth }) => {
   const { getUserDetails } = useMember();
-
+  const { isMobile } = usePlatformOS();
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   const copyToClipboard = (text: string) => {
@@ -42,7 +43,7 @@ export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, h
                 <span className="py-1">
                   <LinkIcon className="h-3 w-3 flex-shrink-0" />
                 </span>
-                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
                   <span
                     className="cursor-pointer truncate text-xs"
                     onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
