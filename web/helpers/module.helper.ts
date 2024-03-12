@@ -16,16 +16,52 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
 
   if (orderByKey === "name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]);
   if (orderByKey === "-name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]).reverse();
+  if (orderByKey === "progress")
+    orderedModules = sortBy(modules, [
+      (m) => {
+        const totalIssues =
+          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
+        const progress = (m.unstarted_issues + m.started_issues) / totalIssues;
+        return progress;
+      },
+    ]);
+  if (orderByKey === "-progress")
+    orderedModules = sortBy(modules, [
+      (m) => {
+        const totalIssues =
+          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
+        const progress = (m.unstarted_issues + m.started_issues) / totalIssues;
+        return !progress;
+      },
+    ]);
+  if (orderByKey === "issues_length")
+    orderedModules = sortBy(modules, [
+      (m) => {
+        const totalIssues =
+          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
+        return totalIssues;
+      },
+    ]);
+  if (orderByKey === "-issues_length")
+    orderedModules = sortBy(modules, [
+      (m) => {
+        const totalIssues =
+          m.backlog_issues + m.unstarted_issues + m.started_issues + m.completed_issues + m.cancelled_issues;
+        return !totalIssues;
+      },
+    ]);
+  if (orderByKey === "target_date") orderedModules = sortBy(modules, [(m) => m.target_date]);
+  if (orderByKey === "-target_date") orderedModules = sortBy(modules, [(m) => !m.target_date]);
   if (orderByKey === "created_at") orderedModules = sortBy(modules, [(m) => m.created_at]);
-  if (orderByKey === "-created_at") orderedModules = sortBy(modules, [(m) => m.created_at]);
+  if (orderByKey === "-created_at") orderedModules = sortBy(modules, [(m) => !m.created_at]);
 
   return orderedModules;
 };
 
 /**
- * @description filters modules based on the filter
+ * @description filters modules based on the filters
  * @param {IModule} module
- * @param {TModuleFilters} filter
+ * @param {TModuleFilters} filters
  * @returns {boolean}
  */
 export const shouldFilterModule = (module: IModule, filters: TModuleFilters): boolean => {
