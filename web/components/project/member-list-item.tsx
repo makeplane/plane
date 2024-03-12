@@ -69,7 +69,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           captureEvent(PROJECT_MEMBER_REMOVED, {
             member_id: userDetails.member.id,
             role: getUserRole(userDetails.role as number),
-            removed_by_role: getUserRole(currentProjectRole as number),
+            removed_by_role: currentProjectRole ? getUserRole(currentProjectRole as number) : undefined,
             state: "SUCCESS",
             element: "Project settings members page",
           });

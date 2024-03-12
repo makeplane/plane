@@ -101,7 +101,9 @@ export class EventTrackerStore implements IEventTrackerStore {
     return {
       workspace_id: currentWorkspaceDetails?.id,
       project_id: currentProjectDetails?.id,
-      user_project_role: getUserRole(currentProjectDetails?.member_role as number),
+      user_project_role: currentProjectDetails?.member_role
+        ? getUserRole(currentProjectDetails?.member_role as number)
+        : undefined,
       user_workspace_role: getUserRole(currentWorkspaceRole as number),
     };
   }

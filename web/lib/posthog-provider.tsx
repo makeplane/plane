@@ -26,24 +26,17 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
   // router
   const router = useRouter();
 
-  if (!isCloud && !telemetryEnabled) return <>{children}</>;
-
   useEffect(() => {
     if (user) {
       // Identify sends an event, so you want may want to limit how often you call it
-      posthog?.identify(
-        isCloud ? user.email : user.id,
-        isCloud
-          ? {
-              id: user.id,
-              first_name: user.first_name,
-              last_name: user.last_name,
-              email: user.email,
-              use_case: user.use_case,
-              workspaces: workspaceIds,
-            }
-          : undefined
-      );
+      posthog?.identify(isCloud ? user.email : user.id, {
+        id: user.id,
+        first_name: isCloud ? user.first_name : undefined,
+        last_name: isCloud ? user.last_name : undefined,
+        email: isCloud ? user.email : undefined,
+        use_case: user.use_case,
+        workspaces: workspaceIds,
+      });
     }
   }, [user, workspaceIds, isCloud]);
 
@@ -55,6 +48,7 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
+      posthog?.opt_in_capturing();
     }
   }, [posthogAPIKey, posthogHost, isCloud, telemetryEnabled]);
 
@@ -79,6 +73,11 @@ const PostHogProvider: FC<IPosthogWrapper> = (props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!isCloud && !telemetryEnabled) {
+    posthog?.opt_out_capturing();
+    return <>{children}</>;
+  }
 
   if (posthogAPIKey) {
     return <PHProvider client={posthog}>{children}</PHProvider>;

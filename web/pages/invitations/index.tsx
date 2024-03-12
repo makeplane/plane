@@ -85,8 +85,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          role: getUserRole(invitation?.role!),
+          role: invitation?.role ? getUserRole(invitation?.role) : undefined,
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",

@@ -25,7 +25,7 @@ import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 // hooks
-import { useEventTracker } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // assets
 import userDark from "public/onboarding/user-dark.svg";
@@ -271,6 +271,9 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { captureEvent } = useEventTracker();
+  const {
+    instance: { instance },
+  } = useApplication();
 
   const {
     control,
@@ -310,12 +313,14 @@ export const InviteMembers: React.FC<Props> = (props) => {
       })
       .then(async () => {
         captureEvent(MEMBER_INVITED, {
-          emails: [
-            ...payload.emails.map((email) => ({
-              email: email.email,
-              role: getUserRole(email.role),
-            })),
-          ],
+          emails: !instance?.is_telemetry_anonymous
+            ? [
+                ...payload.emails.map((email) => ({
+                  email: email.email,
+                  role: getUserRole(email.role),
+                })),
+              ]
+            : undefined,
           project_id: undefined,
           state: "SUCCESS",
           element: "Onboarding",
