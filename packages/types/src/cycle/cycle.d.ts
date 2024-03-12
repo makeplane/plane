@@ -1,10 +1,6 @@
 import type { TIssue, IIssueFilterOptions } from "@plane/types";
 
-export type TCycleView = "all" | "active" | "upcoming" | "completed" | "draft";
-
 export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
-
-export type TCycleLayout = "list" | "board" | "gantt";
 
 export interface ICycle {
   backlog_issues: number;
@@ -30,6 +26,7 @@ export interface ICycle {
   sort_order: number;
   start_date: string | null;
   started_issues: number;
+  sub_issues: number;
   total_issues: number;
   unstarted_issues: number;
   updated_at: Date;

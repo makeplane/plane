@@ -73,7 +73,6 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
     reset,
     watch,
     getValues,
-    setValue,
   } = useForm({ defaultValues });
 
   const handleClose = () => {

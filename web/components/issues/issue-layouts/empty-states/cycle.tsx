@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+import isEmpty from "lodash/isEmpty";
 // hooks
-import { useApplication, useEventTracker, useIssues } from "hooks/store";
+import { useApplication, useCycle, useEventTracker, useIssues } from "hooks/store";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
@@ -27,11 +28,14 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   // store hooks
+  const { getCycleById } = useCycle();
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
+
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -56,8 +60,14 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
       );
   };
 
-  const emptyStateType = isEmptyFilters ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
-  const additionalPath = activeLayout ?? "list";
+  const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
+
+  const emptyStateType = isCompletedCycleSnapshotAvailable
+    ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
+    : isEmptyFilters
+    ? EmptyStateType.PROJECT_EMPTY_FILTER
+    : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
+  const additionalPath = isCompletedCycleSnapshotAvailable ? undefined : activeLayout ?? "list";
   const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
@@ -76,14 +86,18 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
           additionalPath={additionalPath}
           size={emptyStateSize}
           primaryButtonOnClick={
-            isEmptyFilters
-              ? undefined
-              : () => {
+            !isCompletedCycleSnapshotAvailable && !isEmptyFilters
+              ? () => {
                   setTrackElement("Cycle issue empty state");
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }
+              : undefined
           }
-          secondaryButtonOnClick={isEmptyFilters ? handleClearAllFilters : () => setCycleIssuesListModal(true)}
+          secondaryButtonOnClick={
+            !isCompletedCycleSnapshotAvailable && isEmptyFilters
+              ? handleClearAllFilters
+              : () => setCycleIssuesListModal(true)
+          }
         />
       </div>
     </>
