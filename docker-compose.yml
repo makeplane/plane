@@ -21,7 +21,7 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: /bin/sh
+    command: node god-mode/server.js
     depends_on:
       - api
       - web

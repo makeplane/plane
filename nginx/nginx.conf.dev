@@ -32,7 +32,7 @@ http {
         }
 
         location /auth/ {
-            proxy_pass http://api:8000/auth/
+            proxy_pass http://api:8000/auth/;
         }
 
         location /spaces/ {
