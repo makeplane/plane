@@ -2,12 +2,12 @@
 
 Deployment methods for Plane have improved significantly to make self-managing super-easy. One of those is a single-line-command installation of Plane.
 
-This short guide will guide you through the process, the background tasks that run with the command for the Community, One, and Entprise editions, and the post-deployment configuration options available to you.
+This short guide will guide you through the process, the background tasks that run with the command for the Community, One, and Enterprise editions, and the post-deployment configuration options available to you.
 
 ### Requirements
 
 - Operating systems: Debian, Ubuntu, CentOS
-- Supported CPU architechtures: AMD64, ARM64, x86_64, aarch64
+- Supported CPU architectures: AMD64, ARM64, x86_64, AArch64
 
 ### Download the latest stable release
 
@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/makeplane/plane/master/deploy/1-cli
 
 ### Download the Preview release
 
-`Preview` builds do not support ARM64/AARCH64 CPU architecture
+`Preview` builds do not support ARM64, AArch64 CPU architectures
 
 Run ↓ on any CLI.
 
@@ -75,7 +75,7 @@ Use `plane-app` [OPERATOR] to manage your Plane instance easily. Get a list of a
 
 3. Version operators
 
-   1. `plane-app --upgrade` gets the latest stable version of docker-compose.yaml, .env, and Docker images
+   1. `plane-app --upgrade` gets the latest stable version of `docker-compose.yaml`, `.env`, and Docker images
 
    2. `plane-app --update-installer` updates the installer and the `plane-app` utility.
 
