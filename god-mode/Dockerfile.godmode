@@ -40,7 +40,7 @@ COPY --from=installer /app/god-mode/package.json .
 
 COPY --from=installer --chown=captain:plane /app/god-mode/.next/standalone ./
 
-COPY --from=installer --chown=captain:plane /app/god-mode/.next ./god-mode/.next
+COPY --from=installer --chown=captain:plane /app/god-mode/.next/static ./god-mode/.next/static
 COPY --from=installer --chown=captain:plane /app/god-mode/public ./god-mode/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""

@@ -2595,7 +2595,7 @@
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
 
-"@types/js-cookie@^3.0.2", "@types/js-cookie@^3.0.3":
+"@types/js-cookie@^3.0.2", "@types/js-cookie@^3.0.3", "@types/js-cookie@^3.0.6":
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.6.tgz#a04ca19e877687bd449f5ad37d33b104b71fdf95"
   integrity sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==
@@ -2772,7 +2772,7 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
   integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
 
-"@types/uuid@^9.0.1":
+"@types/uuid@^9.0.1", "@types/uuid@^9.0.8":
   version "9.0.8"
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.8.tgz#7545ba4fc3c003d6c756f651f3bf163d8f0f29ba"
   integrity sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==
@@ -7203,7 +7203,7 @@ react-fast-compare@^3.0.1:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.2.tgz#929a97a532304ce9fee4bcae44234f1ce2c21d49"
   integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
 
-react-hook-form@^7.38.0:
+react-hook-form@^7.38.0, react-hook-form@^7.51.0:
   version "7.51.0"
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.51.0.tgz#757ae71b37c26e00590bd3788508287dcc5ecdaf"
   integrity sha512-BggOy5j58RdhdMzzRUHGOYhSz1oeylFAv6jUSG86OvCIvlAvS7KvnRY7yoAf2pfEiPN7BesnR0xx73nEk3qIiw==
