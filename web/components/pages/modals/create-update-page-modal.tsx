@@ -1,29 +1,42 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // components
+import { PageForm } from "./";
 import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
 import { useEventTracker } from "hooks/store";
 // hooks
-// types
-// import { IPage } from "@plane/types";
-// import { usePage } from "hooks/store/";
 // import { IPageStore } from "store/pages/page.store";
-// constants
+// import { usePage } from "hooks/store/";
+// types
+import { TPage } from "@plane/types";
 
-type Props = {
-  // data?: IPage | null;
-  pageStore?: any;
-  handleClose: () => void;
-  isOpen: boolean;
+type TCreateUpdatePageModal = {
+  workspaceSlug: string;
   projectId: string;
+  isModalOpen: boolean;
+  handleModalClose: () => void;
+  data?: Partial<TPage> | undefined;
 };
 
-export const CreateUpdatePageModal: FC<Props> = (props) => {
-  const { isOpen, handleClose, projectId, pageStore } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
+  const { workspaceSlug, projectId, isModalOpen, handleModalClose, data: pageData } = props;
+  // hooks
+  // states
+  const [pageFormData, setPageFormData] = useState<Partial<TPage>>({ name: "" });
+  const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
+    setPageFormData((prev) => ({ ...prev, [key]: value }));
+
+  useEffect(() => {
+    if (pageData) {
+      setPageFormData({
+        id: pageData.id || undefined,
+        name: pageData.name || undefined,
+        access: pageData.access || undefined,
+      });
+    }
+  }, [pageData]);
+
   // store hooks
   // const { createPage } = useProjectPages();
   // const { capturePageEvent } = useEventTracker();
@@ -50,8 +63,21 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
     //   });
   };
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async () => {
     if (!workspaceSlug || !projectId) return;
+
+    if (pageFormData.id) {
+      try {
+      } catch {
+        console.log("something went wrong. Please try again later");
+      }
+    } else {
+      try {
+      } catch {
+        console.log("something went wrong. Please try again later");
+      }
+    }
+
     // try {
     //   if (pageStore) {
     //     if (pageStore.name !== formData.name) {
@@ -70,15 +96,15 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
     //   } else {
     //     await createProjectPage(formData);
     //   }
-    //   handleClose();
+    //   handleModalClose();
     // } catch (error) {
     //   console.log(error);
     // }
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+    <Transition.Root show={isModalOpen} as={React.Fragment}>
+      <Dialog as="div" className="relative z-20" onClose={handleModalClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -103,7 +129,12 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all w-full sm:max-w-2xl">
-                <PageForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} pageStore={pageStore} />
+                <PageForm
+                  formData={pageFormData}
+                  handleFormData={handlePageFormData}
+                  handleModalClose={handleModalClose}
+                  handleFormSubmit={handleFormSubmit}
+                />
               </Dialog.Panel>
             </Transition.Child>
           </div>

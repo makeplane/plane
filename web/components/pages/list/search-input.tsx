@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
-import { usePage } from "hooks/store";
+import { useProjectPages } from "hooks/store";
 import useDebounce from "hooks/use-debounce";
 
 export type TPageSearchInput = { projectId: string };
@@ -13,7 +13,7 @@ export const PageSearchInput: FC<TPageSearchInput> = observer((props) => {
   const {
     filters: { search },
     updateFilters,
-  } = usePage(projectId);
+  } = useProjectPages(projectId);
   // states
   const [searchElement, setSearchElement] = useState(search);
   // debounce state

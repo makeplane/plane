@@ -1,29 +1,43 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { useRouter } from "next/router";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { PagesHeader } from "components/headers";
-import { PageLayout } from "components/pages";
+import { PageView, PagesListRoot, CreateUpdatePageModal } from "components/pages";
 // types
 import { NextPageWithLayout } from "lib/types";
+import { TPageNavigationTabs } from "@plane/types";
 // constants
 
 const ProjectPagesPage: NextPageWithLayout = () => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, pageType } = router.query;
+  const { workspaceSlug, projectId, type } = router.query;
+  // state
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const currentPageType = (): TPageNavigationTabs => {
+    if (!type) return "public";
+    const pageType = type.toString();
+    if (pageType === "private") return "private";
+    if (pageType === "archived") return "archived";
+    return "public";
+  };
 
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <>
-      <PageLayout
+      <PageView workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} pageType={currentPageType()}>
+        <PagesListRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+      </PageView>
+
+      <CreateUpdatePageModal
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
-        pageType={pageType ? (pageType === "private" ? "private" : "public") : "public"}
-      >
-        <div>Pages Init</div>
-      </PageLayout>
+        isModalOpen={modalOpen}
+        handleModalClose={() => setModalOpen(false)}
+      />
     </>
   );
 };

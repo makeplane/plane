@@ -11,7 +11,7 @@ export const pageSorting: { key: TPageFiltersSortKey; label: string }[] = [
   { key: "updated_at", label: "Last Modified" },
 ];
 
-export const pageSortingBy: Record<TPageFiltersSortBy, { label: String }> = {
-  asc: { label: "Ascending" },
-  desc: { label: "Descending" },
-};
+export const pageSortingBy: { key: TPageFiltersSortBy; label: string }[] = [
+  { key: "asc", label: "Ascending" },
+  { key: "desc", label: "Descending" },
+];

@@ -26,10 +26,10 @@ export interface IProjectPageStore {
   pageById: (pageId: string) => IPageStore | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   // actions
-  fetch: (_loader?: TLoader) => Promise<TPage[] | undefined>;
-  fetchById: (pageId: string) => Promise<TPage | undefined>;
-  create: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
-  delete: (pageId: string) => Promise<void>;
+  getAllPages: (_loader?: TLoader) => Promise<TPage[] | undefined>;
+  getPageById: (pageId: string) => Promise<TPage | undefined>;
+  createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
+  removePage: (pageId: string) => Promise<void>;
 }
 
 export class ProjectPageStore implements IProjectPageStore {
@@ -38,7 +38,7 @@ export class ProjectPageStore implements IProjectPageStore {
   data: Record<string, Record<string, IPageStore>> = {}; // projectId => pageId => PageStore
   error: TError | undefined = undefined;
   filters: TPageFilters = {
-    search: "",
+    searchQuery: "",
     sortKey: "name",
     sortBy: "asc",
   };
@@ -57,10 +57,10 @@ export class ProjectPageStore implements IProjectPageStore {
       // helper actions
       updateFilters: action,
       // actions
-      fetch: action,
-      fetchById: action,
-      create: action,
-      delete: action,
+      getAllPages: action,
+      getPageById: action,
+      createPage: action,
+      removePage: action,
     });
 
     this.service = new PageService();
@@ -70,9 +70,7 @@ export class ProjectPageStore implements IProjectPageStore {
     const { projectId } = this.store.app.router;
     if (!projectId) return undefined;
 
-    // TODO: filter the pages based on the filter
-
-    const pages = Object.keys(this.data?.[projectId]) || undefined;
+    const pages = Object.keys(this?.data?.[projectId] || {}) || undefined;
     if (!pages) return undefined;
 
     return pages;
@@ -93,24 +91,27 @@ export class ProjectPageStore implements IProjectPageStore {
   };
 
   // actions
-  fetch = async () => {
+  getAllPages = async () => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId) return undefined;
 
+      console.log("hello");
+
       const currentPageIds = this.pageIds;
+      console.log("currentPageIds", currentPageIds);
       runInAction(() => {
-        this.loader = currentPageIds ? `mutation-loader` : `init-loader`;
+        this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
         this.error = undefined;
       });
 
-      const _pages = await this.service.fetchAll(workspaceSlug, projectId);
+      const pages = await this.service.fetchAll(workspaceSlug, projectId);
       runInAction(() => {
-        for (const page of _pages) if (page?.id) set(this.data, [projectId, page.id], new PageStore(this.store, page));
+        for (const page of pages) if (page?.id) set(this.data, [projectId, page.id], new PageStore(this.store, page));
         this.loader = undefined;
       });
 
-      return _pages;
+      return pages;
     } catch {
       runInAction(() => {
         this.loader = undefined;
@@ -122,7 +123,7 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
-  fetchById = async (pageId: string) => {
+  getPageById = async (pageId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
@@ -133,13 +134,13 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const _page = await this.service.fetchById(workspaceSlug, projectId, pageId);
+      const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
       runInAction(() => {
-        if (_page?.id) set(this.data, [projectId, _page.id], new PageStore(this.store, _page));
+        if (page?.id) set(this.data, [projectId, page.id], new PageStore(this.store, page));
         this.loader = undefined;
       });
 
-      return _page;
+      return page;
     } catch {
       runInAction(() => {
         this.loader = undefined;
@@ -151,7 +152,7 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
-  create = async (pageData: Partial<TPage>) => {
+  createPage = async (pageData: Partial<TPage>) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId) return undefined;
@@ -161,13 +162,13 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const _page = await this.service.create(workspaceSlug, projectId, pageData);
+      const page = await this.service.create(workspaceSlug, projectId, pageData);
       runInAction(() => {
-        if (_page?.id) set(this.data, [projectId, _page.id], new PageStore(this.store, _page));
+        if (page?.id) set(this.data, [projectId, page.id], new PageStore(this.store, page));
         this.loader = undefined;
       });
 
-      return _page;
+      return page;
     } catch {
       runInAction(() => {
         this.loader = undefined;
@@ -179,7 +180,7 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
-  delete = async (pageId: string) => {
+  removePage = async (pageId: string) => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;

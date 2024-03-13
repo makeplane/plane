@@ -2,21 +2,22 @@ import { useContext } from "react";
 import useSWR from "swr";
 // context
 import { StoreContext } from "contexts/store-context";
+// hooks
+import { useProjectPages } from "./use-project-page";
 // mobx store
-import { IProjectPageStore } from "store/pages/project-page.store";
+import { IPageStore } from "store/pages/page.store";
 
-export const usePage = (projectId: string | undefined): IProjectPageStore => {
+export const usePage = (projectId: string, pageId: string): IPageStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useProjectPublish must be used within StoreProvider");
 
-  if (!projectId) throw new Error("projectId must be passed as a property");
+  if (!projectId || !pageId) throw new Error("projectId, pageId must be passed as a property");
 
-  const projectPage = context.projectPage;
-  const { fetch } = projectPage;
+  const { fetchById } = useProjectPages(projectId);
 
-  useSWR(projectId ? `PROJECT_PAGES_${projectId}` : null, async () => {
-    projectId && (await fetch());
+  useSWR(projectId && pageId ? `PROJECT_PAGE_DETAIL_${projectId}_${pageId}` : null, async () => {
+    projectId && pageId && (await fetchById(pageId));
   });
 
-  return context.projectPage;
+  return context.projectPage.data?.[projectId]?.[pageId] ?? {};
 };

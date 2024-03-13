@@ -4,16 +4,15 @@ import { RootStore } from "../root.store";
 // service
 import { PageService } from "services/page.service";
 // types
-import { TPage } from "@plane/types";
+import { TPage, TPageAccess } from "@plane/types";
 // constants
 import { EPageAccess } from "constants/page";
 
 export type TLoader = "submitting" | "submitted" | "saved" | undefined;
 
-export interface IPageStore {
+export interface IPageStore extends TPage {
   // observables
   loader: TLoader;
-  data: TPage;
   // computed
   isContentEditable: boolean;
   // helper actions
@@ -28,16 +27,48 @@ export interface IPageStore {
 }
 
 export class PageStore implements IPageStore {
+  id: string | undefined;
+  name: string | undefined;
+  description_html: string | undefined;
+  color: string | undefined;
+  labels: string[] | undefined;
+  owned_by: string | undefined;
+  access: TPageAccess | undefined;
+  is_favorite: boolean;
+  is_locked: boolean;
+  archived_at: string | undefined;
+  workspace: string | undefined;
+  project: string | undefined;
+  created_by: string | undefined;
+  updated_by: string | undefined;
+  created_at: Date | undefined;
+  updated_at: Date | undefined;
+
   loader: TLoader = undefined;
-  data: TPage;
   // service
   pageService: PageService;
 
   constructor(private store: RootStore, page: TPage) {
+    this.id = page?.id || undefined;
+    this.name = page?.name || undefined;
+    this.description_html = page?.description_html || undefined;
+    this.color = page?.color || undefined;
+    this.labels = page?.labels || undefined;
+    this.owned_by = page?.owned_by || undefined;
+    this.access = page?.access || EPageAccess.PUBLIC;
+    this.is_favorite = page?.is_favorite || false;
+    this.is_locked = page?.is_locked || false;
+    this.archived_at = page?.archived_at || undefined;
+    this.workspace = page?.workspace || undefined;
+    this.project = page?.project || undefined;
+    this.created_by = page?.created_by || undefined;
+    this.updated_by = page?.updated_by || undefined;
+    this.created_at = page?.created_at || undefined;
+    this.updated_at = page?.updated_at || undefined;
+
     makeObservable(this, {
       // observables
       loader: observable.ref,
-      data: observable,
       // computed
       isContentEditable: computed,
       // helper actions
@@ -51,25 +82,6 @@ export class PageStore implements IPageStore {
       removeFromFavorites: action,
     });
 
-    this.data = {
-      id: page?.id || undefined,
-      name: page?.name || undefined,
-      description_html: page?.description_html || undefined,
-      color: page?.color || undefined,
-      labels: page?.labels || undefined,
-      owned_by: page?.owned_by || undefined,
-      access: page?.access || EPageAccess.PUBLIC,
-      is_favorite: page?.is_favorite || false,
-      is_locked: page?.is_locked || false,
-      archived_at: page?.archived_at || undefined,
-      workspace: page?.workspace || undefined,
-      project: page?.project || undefined,
-      created_by: page?.created_by || undefined,
-      updated_by: page?.updated_by || undefined,
-      created_at: page?.created_at || undefined,
-      updated_at: page?.updated_at || undefined,
-    };
-
     this.pageService = new PageService();
   }
 
@@ -78,9 +90,9 @@ export class PageStore implements IPageStore {
     const currentUserId = this.store.user.currentUser?.id;
     if (!currentUserId) return false;
 
-    const isOwner = this.data.owned_by === currentUserId;
-    const isPublic = this.data.access === EPageAccess.PUBLIC;
-    const isLocked = this.data.is_locked;
+    const isOwner = this.owned_by === currentUserId;
+    const isPublic = this.access === EPageAccess.PUBLIC;
+    const isLocked = this.is_locked;
 
     if (isOwner) return true;
     if (!isOwner && isPublic) return true;
@@ -93,81 +105,81 @@ export class PageStore implements IPageStore {
 
   makePublic = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.data.id) return undefined;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
 
-    const _access = this.data.access;
-    runInAction(() => (this.data.access = EPageAccess.PUBLIC));
+    const pageAccess = this.access;
+    runInAction(() => (this.access = EPageAccess.PUBLIC));
 
     await this.pageService
-      .update(workspaceSlug, projectId, this.data.id, {
+      .update(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PUBLIC,
       })
       .catch(() => {
-        runInAction(() => (this.data.access = _access));
+        runInAction(() => (this.access = pageAccess));
       });
   };
 
   makePrivate = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.data.id) return undefined;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
 
-    const _access = this.data.access;
-    runInAction(() => (this.data.access = EPageAccess.PRIVATE));
+    const pageAccess = this.access;
+    runInAction(() => (this.access = EPageAccess.PRIVATE));
 
     await this.pageService
-      .update(workspaceSlug, projectId, this.data.id, {
+      .update(workspaceSlug, projectId, this.id, {
         access: EPageAccess.PRIVATE,
       })
       .catch(() => {
-        runInAction(() => (this.data.access = _access));
+        runInAction(() => (this.access = pageAccess));
       });
   };
 
   lock = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.data.id) return undefined;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
 
-    const _is_locked = this.data.is_locked;
-    runInAction(() => (this.data.is_locked = true));
+    const pageIsLocked = this.is_locked;
+    runInAction(() => (this.is_locked = true));
 
-    await this.pageService.lock(workspaceSlug, projectId, this.data.id).catch(() => {
-      runInAction(() => (this.data.is_locked = _is_locked));
+    await this.pageService.lock(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => (this.is_locked = pageIsLocked));
     });
   };
 
   unlock = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.data.id) return undefined;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
 
-    const _is_locked = this.data.is_locked;
-    runInAction(() => (this.data.is_locked = false));
+    const pageIsLocked = this.is_locked;
+    runInAction(() => (this.is_locked = false));
 
-    await this.pageService.unlock(workspaceSlug, projectId, this.data.id).catch(() => {
-      runInAction(() => (this.data.is_locked = _is_locked));
+    await this.pageService.unlock(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => (this.is_locked = pageIsLocked));
     });
   };
 
   addToFavorites = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.data.id) return undefined;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
 
-    const _is_favorite = this.data.is_favorite;
-    runInAction(() => (this.data.is_favorite = true));
+    const pageIsFavorite = this.is_favorite;
+    runInAction(() => (this.is_favorite = true));
 
-    await this.pageService.makeFavorite(workspaceSlug, projectId, this.data.id).catch(() => {
-      runInAction(() => (this.data.is_favorite = _is_favorite));
+    await this.pageService.makeFavorite(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => (this.is_favorite = pageIsFavorite));
     });
   };
 
   removeFromFavorites = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;
-    if (!workspaceSlug || !projectId || !this.data.id) return undefined;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
 
-    const _is_favorite = this.data.is_favorite;
-    runInAction(() => (this.data.is_favorite = false));
+    const pageIsFavorite = this.is_favorite;
+    runInAction(() => (this.is_favorite = false));
 
-    await this.pageService.removeFavorite(workspaceSlug, projectId, this.data.id).catch(() => {
-      runInAction(() => (this.data.is_favorite = _is_favorite));
+    await this.pageService.removeFavorite(workspaceSlug, projectId, this.id).catch(() => {
+      runInAction(() => (this.is_favorite = pageIsFavorite));
     });
   };
 }

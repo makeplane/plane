@@ -11,8 +11,8 @@ export * from "./use-member";
 export * from "./use-mention";
 export * from "./use-module";
 
+export * from "./pages/use-project-page";
 export * from "./pages/use-page";
-export * from "./pages/use-page-detail";
 
 export * from "./use-module-filter";
 export * from "./use-project-filter";

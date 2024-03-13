@@ -1,13 +1,16 @@
 // empty states
-export * from "./empty-states/page";
-export * from "./empty-states/page-detail";
+export * from "./empty-states/page-empty-state";
+export * from "./empty-states/page-detail-empty-state";
 
 // loaders
-export * from "./loaders/page";
-export * from "./loaders/page-detail";
+export * from "./loaders/page-loader";
+export * from "./loaders/page-detail-loader";
 
 // layouts
-export * from "./layouts/page";
+export * from "./views/page-layout";
+
+// modals
+export * from "./modals";
 
 // pages list components
 export * from "./list";

@@ -25,12 +25,14 @@ export type TPage = {
 };
 
 // page filters
+export type TPageNavigationTabs = "public" | "private" | "archived";
+
 export type TPageFiltersSortKey = "name" | "created_at" | "updated_at";
 
 export type TPageFiltersSortBy = "asc" | "desc";
 
 export type TPageFilters = {
-  search: string;
+  searchQuery: string;
   sortKey: TPageFiltersSortKey;
   sortBy: TPageFiltersSortBy;
 };
