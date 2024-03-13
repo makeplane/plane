@@ -1,11 +1,22 @@
 # Python imports
 import os
 import uuid
+from smtplib import (
+    SMTPAuthenticationError,
+    SMTPConnectError,
+    SMTPRecipientsRefused,
+    SMTPServerDisconnected,
+)
 from urllib.parse import urlencode
 
 # Django imports
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
+from django.core.mail import (
+    BadHeaderError,
+    EmailMultiAlternatives,
+    get_connection,
+)
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.utils import timezone
@@ -30,7 +41,10 @@ from plane.license.api.serializers import (
 )
 from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
 from plane.license.utils.encryption import encrypt_data
-from plane.license.utils.instance_value import get_configuration_value
+from plane.license.utils.instance_value import (
+    get_configuration_value,
+    get_email_configuration,
+)
 from plane.utils.cache import cache_response, invalidate_cache
 
 
@@ -396,3 +410,97 @@ class SignUpScreenVisitedEndpoint(BaseAPIView):
         instance.is_signup_screen_visited = True
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class EmailCredentialCheckEndpoint(BaseAPIView):
+
+    def post(self, request):
+        receiver_email = request.data.get("receiver_email", False)
+        if not receiver_email:
+            return Response(
+                {"error": "Receiver email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        (
+            EMAIL_HOST,
+            EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD,
+            EMAIL_PORT,
+            EMAIL_USE_TLS,
+            EMAIL_FROM,
+        ) = get_email_configuration()
+
+        # Configure all the connections
+        connection = get_connection(
+            host=EMAIL_HOST,
+            port=int(EMAIL_PORT),
+            username=EMAIL_HOST_USER,
+            password=EMAIL_HOST_PASSWORD,
+            use_tls=EMAIL_USE_TLS == "1",
+        )
+        # Prepare email details
+        subject = "Email Notification from Plane"
+        message = (
+            "This is a sample email notification sent from Plane application."
+        )
+        # Send the email
+        try:
+            msg = EmailMultiAlternatives(
+                subject=subject,
+                body=message,
+                from_email=EMAIL_FROM,
+                to=[receiver_email],
+                connection=connection,
+            )
+            msg.send(fail_silently=False)
+            return Response(
+                {"message": "Email successfully sent."},
+                status=status.HTTP_200_OK,
+            )
+        except BadHeaderError:
+            return Response(
+                {"error": "Invalid email header."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except SMTPAuthenticationError:
+            return Response(
+                {"error": "Invalid credentials provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except SMTPConnectError:
+            return Response(
+                {"error": "Could not connect with the SMTP server."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except SMTPServerDisconnected:
+            return Response(
+                {"error": "SMTP server disconnected unexpectedly."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except SMTPRecipientsRefused:
+            return Response(
+                {"error": "All recipient addresses were refused."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except TimeoutError:
+            return Response(
+                {
+                    "error": "Timeout error while trying to connect to the SMTP server."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except ConnectionError:
+            return Response(
+                {
+                    "error": "Network connection error. Please check your internet connection."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception:
+            return Response(
+                {
+                    "error": "Could not send email. Please check your configuration"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )

@@ -1,10 +1,11 @@
 from django.urls import path
 
 from plane.license.api.views import (
-    InstanceEndpoint,
+    EmailCredentialCheckEndpoint,
     InstanceAdminEndpoint,
-    InstanceConfigurationEndpoint,
     InstanceAdminSignInEndpoint,
+    InstanceConfigurationEndpoint,
+    InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
 )
 
@@ -38,5 +39,10 @@ urlpatterns = [
         "admins/sign-up-screen-visited/",
         SignUpScreenVisitedEndpoint.as_view(),
         name="instance-sign-up",
+    ),
+    path(
+        "email-credentials-check/",
+        EmailCredentialCheckEndpoint.as_view(),
+        name="email-credential-check",
     ),
 ]
