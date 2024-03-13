@@ -15,7 +15,6 @@ Run ↓ on any CLI.
 
 ```
 curl -fsSL https://raw.githubusercontent.com/makeplane/plane/master/deploy/1-click/install.sh | sh -
-
 ```
 
 ### Download the Preview release
@@ -26,9 +25,7 @@ Run ↓ on any CLI.
 
 ```
 export BRANCH=preview
-
 curl -fsSL https://raw.githubusercontent.com/makeplane/plane/preview/deploy/1-click/install.sh | sh -
-
 ```
 
 ---
