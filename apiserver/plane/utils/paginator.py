@@ -203,7 +203,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
             row_number=Window(
                 expression=RowNumber(),
                 partition_by=[F(self.group_by_field_name)],
-                order_by=F(self.group_by_field_name).asc(),
+                order_by=(*self.key,),
             )
         )
 
