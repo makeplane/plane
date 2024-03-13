@@ -12,6 +12,9 @@ export * from "./views/page-layout";
 // modals
 export * from "./modals";
 
+// dropdowns
+export * from "./dropdowns";
+
 // pages list components
 export * from "./list";
 

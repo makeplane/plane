@@ -14,7 +14,7 @@ export const PagesListRoot: FC<TPagesListRoot> = (props) => {
   console.log("projectId", projectId);
 
   return (
-    <div className="relative w-full h-full overflow-hidden overflow-y-auto">
+    <div className="relative w-full h-full overflow-hidden overflow-y-auto divide-y-[0.5px] divide-custom-border-200">
       <PageListBlock />
     </div>
   );
