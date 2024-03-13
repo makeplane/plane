@@ -1,78 +1,73 @@
-# 1-Click Self-Hosting
+# One-click deploy
 
-In this guide, we will walk you through the process of setting up a 1-click self-hosted environment. Self-hosting allows you to have full control over your applications and data. It's a great way to ensure privacy, control, and customization.
+Deployment methods for Plane have improved significantly to make self-managing super-easy. One of those is a single-line-command installation of Plane.
 
-Let's get started!
+This short guide will guide you through the process, the background tasks that run with the command for the Community, One, and Entprise editions, and the post-deployment configuration options available to you.
 
-## Installing Plane
+### Requirements
 
-Installing Plane is a very easy and minimal step process.
+- Operating systems: Debian, Ubuntu, CentOS
+- Supported CPU architechtures: AMD64, ARM64, x86_64, aarch64
 
-### Prerequisite
-
-- Operating System (latest): Debian / Ubuntu / Centos
-- Supported CPU Architechture: AMD64 / ARM64 / x86_64 / aarch64
-
-### Downloading Latest Stable Release
-
+### Download the latest stable release
+Run ↓ on any CLI.
 ```
 curl -fsSL https://raw.githubusercontent.com/makeplane/plane/master/deploy/1-click/install.sh | sh -
 
 ```
 
-<details>
-    <summary>Downloading Preview Release</summary>
 
+### Download the Preview release
+`Preview` builds do not support ARM64/AARCH64 CPU architecture
+
+Run ↓ on any CLI.
 ```
 export BRANCH=preview
 
 curl -fsSL https://raw.githubusercontent.com/makeplane/plane/preview/deploy/1-click/install.sh | sh -
 
 ```
-
-NOTE: `Preview` builds do not support ARM64/AARCH64 CPU architecture
-</details>
-
---
-
-
-Expect this after a successful install
+---
+### Successful installation
+You should see ↓ if there are no hitches. That output will also list the IP address you can use to access your Plane instance.
 
 ![Install Output](images/install.png)
 
-Access the application on a browser via http://server-ip-address
-
 ---
+### Manage your Plane instance
 
-### Get Control of your Plane Server Setup
-
-Plane App is available via the command `plane-app`. Running the command `plane-app --help` helps you to manage Plane
+Use `plane-app` [OPERATOR] to manage your Plane instance easily. Get a list of all operators with `plane-app ---help`.
 
 ![Plane Help](images/help.png)
 
-<ins>Basic Operations</ins>: 
-1. Start Server using `plane-app start`
-1. Stop Server using `plane-app stop`
-1. Restart Server using `plane-app restart`
+1. Basic operators
+    1. `plane-app start` starts the Plane server.
+    2. `plane-app restart` restarts the Plane server.
+    3. `plane-app stop`  stops the Plane server.
 
-<ins>Advanced Operations</ins>:
-1. Configure Plane using `plane-app --configure`. This will give you options to modify
-    - NGINX Port (default 80)
-    - Domain Name (default is the local server public IP address)
-    - File Upload Size (default 5MB) 
-    - External Postgres DB Url (optional - default empty)
-    - External Redis URL (optional - default empty)
-    - AWS S3 Bucket (optional - to be configured only in case the user wants to use an S3 Bucket)
+2. Advanced operations
+    1. `plane-app --configure` will show advanced configurators.
+        - Change your proxy or listening port
+          <br>Default: 80
+        - Change your domain name
+          <br>Default: Deployed server's public IP address
+        - File upload size
+          <br>Default: 5MB
+        - Specify external database address when using an external database
+          <br>Default: `Empty`
+          <br>`Default folder: /opt/plane/data/postgres`
+        - Specify external Redis URL when using external Redis
+          <br>Default: `Empty`
+          <br>`Default folder: /opt/plane/data/redis`
+        - Configure AWS S3 bucket
+          <br>Use only when you or your users want to use S3
+          <br>`Default folder: /opt/plane/data/minio`
 
-1. Upgrade Plane using `plane-app --upgrade`. This will get the latest stable version of Plane files (docker-compose.yaml, .env, and docker images)
+3. Version operators
+    1. `plane-app --upgrade` gets the latest stable version of docker-compose.yaml, .env, and Docker images
 
-1. Updating Plane App installer using `plane-app --update-installer` will update the `plane-app` utility. 
+    2. `plane-app --update-installer` updates the installer and the `plane-app` utility.
 
-1. Uninstall Plane using `plane-app --uninstall`. This will uninstall the Plane application from the server and all docker containers but do not remove the data stored in Postgres, Redis, and Minio. 
-
-1. Plane App can be reinstalled using `plane-app --install`. 
-
-<ins>Application Data is stored in the mentioned folders</ins>: 
-1. DB Data: /opt/plane/data/postgres
-1. Redis Data: /opt/plane/data/redis
-1. Minio Data: /opt/plane/data/minio
+    3. `plane-app --uninstall` uninstalls the Plane application and all Docker containers from the server but leaves the data stored in
+        Postgres, Redis, and Minio alone.
+    4. `plane-app --install` installs the Plane app again.
