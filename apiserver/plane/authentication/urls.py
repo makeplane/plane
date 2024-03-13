@@ -56,7 +56,7 @@ urlpatterns = [
         name="google-initiate",
     ),
     path(
-        "callback/google/",
+        "google/callback/",
         GoogleCallbackEndpoint.as_view(),
         name="google-callback",
     ),
@@ -67,7 +67,7 @@ urlpatterns = [
         name="github-initiate",
     ),
     path(
-        "callback/github/",
+        "github/callback/",
         GitHubCallbackEndpoint.as_view(),
         name="github-callback",
     ),
