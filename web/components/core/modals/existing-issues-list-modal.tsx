@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Rocket, Search, X } from "lucide-react";
 // services
-import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-
+import { ProjectService } from "services/project";
+// hooks
 import useDebounce from "hooks/use-debounce";
 import { usePlatformOS } from "hooks/use-platform-os";
-import { ProjectService } from "services/project";
+// components
+import { EmptyState } from "components/empty-state";
 // ui
+import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
-import { EmptyState } from "components/empty-state";
+// constants
 import { EmptyStateType } from "constants/empty-state";
 
 type Props = {
@@ -42,7 +44,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-  const  { isMobile } = usePlatformOS();
+  const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const handleClose = () => {
@@ -194,16 +196,17 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </h5>
                     )}
 
-                    {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      // <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                      //   <LayersIcon height="52" width="52" />
-                      //   <h3 className="text-custom-text-200">
-                      //     No issues found. Create a new issue with{" "}
-                      //     <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
-                      //   </h3>
-                      // </div>
-                      <EmptyState type={EmptyStateType.NO_ISSUES_FOUND} layout="widget-simple" />
-                    )}
+                    {issues.length === 0 ? (
+                      searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching ? (
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState type={EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE} layout="screen-simple" />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState type={EmptyStateType.ISSUE_RELATION_EMPTY_STATE} layout="screen-simple" />
+                        </div>
+                      )
+                    ) : null}
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">

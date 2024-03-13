@@ -3,16 +3,20 @@ import { useRouter } from "next/router";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import { Rocket, Search } from "lucide-react";
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-import useDebounce from "hooks/use-debounce";
 import { ProjectService } from "services/project";
 // hooks
+import useDebounce from "hooks/use-debounce";
 import { usePlatformOS } from "hooks/use-platform-os";
+// components
+import { EmptyState } from "components/empty-state";
 // ui
+import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
+import { Rocket, Search } from "lucide-react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 type Props = {
   isOpen: boolean;
@@ -151,15 +155,17 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       </h5>
                     )}
 
-                    {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayersIcon height="52" width="52" />
-                        <h3 className="text-custom-text-200">
-                          No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
-                        </h3>
-                      </div>
-                    )}
+                    {issues.length === 0 ? (
+                      searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching ? (
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState type={EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE} layout="screen-simple" />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState type={EmptyStateType.ISSUE_RELATION_EMPTY_STATE} layout="screen-simple" />
+                        </div>
+                      )
+                    ) : null}
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">
