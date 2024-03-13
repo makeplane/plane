@@ -10,6 +10,7 @@ import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useMember, useUser } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   invitationId: string;
@@ -29,6 +30,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
+  const { isMobile } = usePlatformOS();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
 
@@ -134,7 +136,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
               );
             })}
           </CustomSelect>
-          <Tooltip tooltipContent="Remove member" disabled={!isAdmin}>
+          <Tooltip tooltipContent="Remove member" disabled={!isAdmin} isMobile={isMobile}>
             <button
               type="button"
               onClick={() => setRemoveMemberModal(true)}

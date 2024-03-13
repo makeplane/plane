@@ -25,6 +25,8 @@ import { useStore } from "hooks";
 // helpers
 // components
 // helpers
+// hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -86,6 +88,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
+  const { isMobile } = usePlatformOS();
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
@@ -163,13 +166,14 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <Tooltip tooltipContent="Copy link">
+          <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
             </button>
           </Tooltip>
           {isArchivingAllowed && (
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
             >
               <button
@@ -188,14 +192,14 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             </Tooltip>
           )}
           {isRestoringAllowed && (
-            <Tooltip tooltipContent="Restore">
+            <Tooltip tooltipContent="Restore" isMobile={isMobile}>
               <button type="button" onClick={handleRestoreIssue}>
                 <RotateCcw className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
             </Tooltip>
           )}
           {!disabled && (
-            <Tooltip tooltipContent="Delete">
+            <Tooltip tooltipContent="Delete" isMobile={isMobile}>
               <button type="button" onClick={() => toggleDeleteIssueModal(true)}>
                 <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>

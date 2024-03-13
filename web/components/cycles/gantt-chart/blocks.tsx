@@ -2,6 +2,7 @@ import Link from "next/link";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, ContrastIcon } from "@plane/ui";
 // helpers
@@ -23,7 +24,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
   const { getCycleById } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-
+  const { isMobile } = usePlatformOS();
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
 
   return (
@@ -45,6 +46,7 @@ export const CycleGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+        isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
             <h5>{cycleDetails?.name}</h5>

@@ -9,6 +9,7 @@ import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { calculateTimeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useIssueDetail, useMember } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {
@@ -33,7 +34,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
     toggleIssueLinkModalStore(modalToggle);
     setIsIssueLinkModalOpen(modalToggle);
   };
-
+  const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
@@ -64,7 +65,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
             <span className="py-1">
               <LinkIcon className="h-3 w-3 flex-shrink-0" />
             </span>
-            <Tooltip tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}>
+            <Tooltip tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url} isMobile={isMobile}>
               <span className="truncate text-xs">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
               </span>

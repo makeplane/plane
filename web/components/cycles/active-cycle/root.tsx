@@ -4,6 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 // hooks
 import { useCycle, useCycleFilter, useIssues, useMember, useProject } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -46,6 +47,8 @@ interface IActiveCycleDetails {
 export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
+  // hooks
+  const { isMobile } = usePlatformOS();
   // store hooks
   const {
     issues: { fetchActiveCycleIssues },
@@ -197,7 +200,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                   <span className="h-5 w-5">
                     <CycleGroupIcon cycleGroup={cycleStatus} className="h-4 w-4" />
                   </span>
-                  <Tooltip tooltipContent={activeCycle.name} position="top-left">
+                  <Tooltip tooltipContent={activeCycle.name} position="top-left" isMobile={isMobile}>
                     <h3 className="break-words text-lg font-semibold">{truncateText(activeCycle.name, 70)}</h3>
                   </Tooltip>
                 </span>
@@ -325,6 +328,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                       <PriorityIcon priority={issue.priority} withContainer size={12} />
 
                       <Tooltip
+                        isMobile={isMobile}
                         tooltipHeading="Issue ID"
                         tooltipContent={`${currentProjectDetails?.identifier}-${issue.sequence_id}`}
                       >
@@ -332,7 +336,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                           {currentProjectDetails?.identifier}-{issue.sequence_id}
                         </span>
                       </Tooltip>
-                      <Tooltip position="top-left" tooltipContent={issue.name}>
+                      <Tooltip position="top-left" tooltipContent={issue.name} isMobile={isMobile}>
                         <span className="text-[0.825rem] text-custom-text-100">{truncateText(issue.name, 30)}</span>
                       </Tooltip>
                     </div>
@@ -345,7 +349,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                         buttonVariant="background-with-text"
                       />
                       {issue.target_date && (
-                        <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)}>
+                        <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)} isMobile={isMobile}>
                           <div className="flex h-full cursor-not-allowed items-center gap-1.5 rounded bg-custom-background-80 px-2 py-0.5 text-xs">
                             <CalendarCheck className="h-3 w-3 flex-shrink-0" />
                             <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>
