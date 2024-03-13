@@ -6,7 +6,6 @@ import { useApplication, useEventTracker, useMember, useProject, useProjectFilte
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
@@ -77,9 +76,8 @@ export const ProjectsHeader = observer(() => {
   };
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <SidebarHamburgerToggle />
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem

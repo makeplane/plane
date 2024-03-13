@@ -8,9 +8,7 @@ import { ArrowRight, PanelRight, Plus } from "lucide-react";
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
@@ -160,9 +158,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         moduleDetails={moduleDetails ?? undefined}
       />
       <div className="relative z-[15] items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -211,10 +208,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                           <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
-                            isMobile={isMobile}
-                              tooltipContent={`There are ${issueCount} ${
-                                issueCount > 1 ? "issues" : "issue"
-                              } in this module`}
+                              isMobile={isMobile}
+                              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"
+                                } in this module`}
                               position="bottom"
                             >
                               <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
@@ -309,7 +305,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             </button>
           </div>
         </div>
-        <ModuleMobileHeader />
       </div>
     </>
   );

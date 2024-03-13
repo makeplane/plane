@@ -7,7 +7,6 @@ import { usePlatformOS } from "hooks/use-platform-os";
 import { List, PlusIcon, Sheet } from "lucide-react";
 import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 // components
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
@@ -109,9 +108,8 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
         <div className="relative flex gap-2">
-          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -137,9 +135,8 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                 <span>
                   <Tooltip tooltipContent={layout.title} isMobile={isMobile}>
                     <div
-                      className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                        activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                      }`}
+                      className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                        }`}
                     >
                       <layout.icon
                         size={14}
