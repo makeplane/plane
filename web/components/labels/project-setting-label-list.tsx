@@ -71,17 +71,19 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     if (result.reason == "DROP" && childLabel != parentLabel) {
       const childLabelData = getLabelById(childLabel);
       captureLabelDragNDropEvent(childLabelData?.parent, parentLabel, childLabel, projectLabelsTree);
+      if (workspaceSlug && projectId) {
+        updateLabelPosition(
+          workspaceSlug?.toString(),
+          projectId?.toString(),
+          childLabel,
+          parentLabel,
+          index,
+          prevParentLabel == parentLabel,
+          prevIndex
+        );
+        return;
+      }
     }
-    updateLabelPosition(
-      workspaceSlug?.toString()!,
-      projectId?.toString()!,
-      childLabel,
-      parentLabel,
-      index,
-      prevParentLabel == parentLabel,
-      prevIndex
-    );
-    return;
   };
 
   return (
