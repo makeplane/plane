@@ -32,6 +32,7 @@ import { FileService } from "services/file.service";
 import { getChangedIssuefields } from "helpers/issue.helper";
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
+import { EUserProjectRoles } from "constants/project";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -304,7 +305,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                       }}
                       buttonVariant="border-with-text"
-                      // TODO: update tabIndex logic
+                      renderCondition={(project) =>
+                        !!project.member_role && project.member_role >= EUserProjectRoles.MEMBER
+                      }
                       tabIndex={getTabIndex("project_id")}
                     />
                   </div>

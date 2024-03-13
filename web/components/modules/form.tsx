@@ -9,6 +9,7 @@ import { ModuleStatusSelect } from "components/modules";
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { IModule } from "@plane/types";
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
@@ -78,6 +79,9 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       setActiveProject(val);
                     }}
                     buttonVariant="border-with-text"
+                    renderCondition={(project) =>
+                      !!project.member_role && project.member_role >= EUserProjectRoles.MEMBER
+                    }
                     tabIndex={10}
                   />
                 </div>
