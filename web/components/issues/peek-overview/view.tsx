@@ -191,7 +191,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     ) : (
                       <div className="vertical-scrollbar flex h-full w-full overflow-auto">
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
-                          <div>
+                          <div className="space-y-3">
                             <PeekOverviewIssueDetails
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
@@ -200,6 +200,23 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               disabled={disabled || is_archived}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}
+                            />
+
+                            {currentUser && (
+                              <SubIssuesRoot
+                                workspaceSlug={workspaceSlug}
+                                projectId={projectId}
+                                parentIssueId={issueId}
+                                currentUser={currentUser}
+                                disabled={disabled || is_archived}
+                              />
+                            )}
+
+                            <PeekOverviewIssueAttachments
+                              disabled={disabled || is_archived}
+                              issueId={issueId}
+                              projectId={projectId}
+                              workspaceSlug={workspaceSlug}
                             />
 
                             <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
