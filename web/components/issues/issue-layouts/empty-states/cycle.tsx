@@ -9,33 +9,30 @@ import { ExistingIssuesListModal } from "components/core";
 // components
 import { EmptyState } from "components/empty-state";
 // types
-import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
+import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { EmptyStateType } from "constants/empty-state";
+import size from "lodash/size";
+import { useRouter } from "next/router";
 
-type Props = {
-  workspaceSlug: string | undefined;
-  projectId: string | undefined;
-  cycleId: string | undefined;
-  activeLayout: TIssueLayouts | undefined;
-  handleClearAllFilters: () => void;
-  isEmptyFilters?: boolean;
-};
-
-export const CycleEmptyState: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, cycleId, activeLayout, handleClearAllFilters, isEmptyFilters = false } = props;
+export const CycleEmptyState: React.FC = observer(() => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, cycleId } = router.query;
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   // store hooks
   const { getCycleById } = useCycle();
-  const { issues } = useIssues(EIssuesStoreType.CYCLE);
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const userFilters = issuesFilter?.issueFilters?.filters;
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -43,7 +40,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
     const issueIds = data.map((i) => i.id);
 
     await issues
-      .addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds)
+      .addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds)
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -59,9 +56,32 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
         })
       );
   };
+  const issueFilterCount = size(
+    Object.fromEntries(
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
+    )
+  );
 
   const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
 
+  const handleClearAllFilters = () => {
+    if (!workspaceSlug || !projectId || !cycleId) return;
+    const newFilters: IIssueFilterOptions = {};
+    Object.keys(userFilters ?? {}).forEach((key) => {
+      newFilters[key as keyof IIssueFilterOptions] = null;
+    });
+    issuesFilter.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      {
+        ...newFilters,
+      },
+      cycleId.toString()
+    );
+  };
+
+  const isEmptyFilters = issueFilterCount > 0;
   const emptyStateType = isCompletedCycleSnapshotAvailable
     ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
     : isEmptyFilters
@@ -71,10 +91,10 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
-    <>
+    <div className="relative h-full w-full overflow-y-auto">
       <ExistingIssuesListModal
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
+        workspaceSlug={workspaceSlug?.toString()}
+        projectId={projectId?.toString()}
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
         searchParams={{ cycle: true }}
@@ -100,6 +120,6 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
           }
         />
       </div>
-    </>
+    </div>
   );
 });

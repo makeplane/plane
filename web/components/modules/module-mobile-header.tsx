@@ -4,9 +4,15 @@ import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  ISSUE_LAYOUTS,
+} from "constants/issue";
 import { useIssues, useLabel, useMember, useModule, useProjectState } from "hooks/store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 
 export const ModuleMobileHeader = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -34,7 +40,7 @@ export const ModuleMobileHeader = () => {
   } = useMember();
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
     },

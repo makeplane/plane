@@ -10,7 +10,12 @@ import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+} from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
 import { truncateText } from "helpers/string.helper";
@@ -31,7 +36,7 @@ import useLocalStorage from "hooks/use-local-storage";
 // icons
 // helpers
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { ProjectLogo } from "components/project";
 // constants
 
@@ -95,7 +100,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   };
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
@@ -233,7 +238,13 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           </div>
           <div className="hidden md:flex items-center gap-2 ">
             <LayoutSelection
-              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+              layouts={[
+                EIssueLayoutTypes.LIST,
+                EIssueLayoutTypes.KANBAN,
+                EIssueLayoutTypes.CALENDAR,
+                EIssueLayoutTypes.SPREADSHEET,
+                EIssueLayoutTypes.GANTT,
+              ]}
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />

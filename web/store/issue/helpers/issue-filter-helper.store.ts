@@ -209,19 +209,6 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     cycle: displayProperties?.cycle ?? true,
   });
 
-  /**
-   * This Method returns true if the display properties changed requires a server side update
-   * @param displayFilters
-   * @returns
-   */
-  requiresServerUpdate = (displayFilters: IIssueDisplayFilterOptions) => {
-    const SERVER_DISPLAY_FILTERS = ["sub_issue", "type"];
-    const displayFilterKeys = Object.keys(displayFilters);
-
-    return SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>
-      displayFilterKeys.includes(serverDisplayfilter)
-    );
-  };
 
   handleIssuesLocalFilters = {
     fetchFiltersFromStorage: () => {

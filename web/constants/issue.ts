@@ -6,7 +6,6 @@ import {
   IIssueDisplayProperties,
   TIssueExtraOptions,
   TIssueGroupByOptions,
-  TIssueLayouts,
   TIssueOrderByOptions,
   TIssuePriorities,
   TIssueTypeFilters,
@@ -22,6 +21,14 @@ export enum EIssuesStoreType {
   ARCHIVED = "ARCHIVED",
   DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
+}
+
+export enum EIssueLayoutTypes {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  GANTT = "gantt_chart",
+  SPREADSHEET = "spreadsheet",
 }
 
 export type TCreateModalStoreTypes =
@@ -115,15 +122,15 @@ export const ISSUE_EXTRA_OPTIONS: {
 ];
 
 export const ISSUE_LAYOUTS: {
-  key: TIssueLayouts;
+  key: EIssueLayoutTypes;
   title: string;
   icon: any;
 }[] = [
-  { key: "list", title: "List Layout", icon: List },
-  { key: "kanban", title: "Kanban Layout", icon: Kanban },
-  { key: "calendar", title: "Calendar Layout", icon: Calendar },
-  { key: "spreadsheet", title: "Spreadsheet Layout", icon: Sheet },
-  { key: "gantt_chart", title: "Gantt Chart Layout", icon: GanttChartSquare },
+  { key: EIssueLayoutTypes.LIST, title: "List Layout", icon: List },
+  { key: EIssueLayoutTypes.KANBAN, title: "Kanban Layout", icon: Kanban },
+  { key: EIssueLayoutTypes.CALENDAR, title: "Calendar Layout", icon: Calendar },
+  { key: EIssueLayoutTypes.SPREADSHEET, title: "Spreadsheet Layout", icon: Sheet },
+  { key: EIssueLayoutTypes.GANTT, title: "Gantt Chart Layout", icon: GanttChartSquare },
 ];
 
 export interface ILayoutDisplayFiltersOptions {

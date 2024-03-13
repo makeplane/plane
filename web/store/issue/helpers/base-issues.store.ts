@@ -24,7 +24,7 @@ import {
 import { IIssueRootStore } from "../root.store";
 import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 // constants
-import { ISSUE_PRIORITIES } from "constants/issue";
+import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
@@ -43,6 +43,9 @@ export interface IBaseIssuesStore {
   prevCursor: string | undefined;
   issueCount: number | undefined;
   pageCount: number | undefined;
+
+  next_page_results: boolean;
+  prev_page_results: boolean;
 
   groupedIssueCount: Record<string, number> | undefined;
 
@@ -96,6 +99,9 @@ export class BaseIssuesStore implements IBaseIssuesStore {
   issueCount: number | undefined = undefined;
   pageCount: number | undefined = undefined;
 
+  next_page_results: boolean = true;
+  prev_page_results: boolean = false;
+
   paginationOptions: IssuePaginationOptions | undefined = undefined;
 
   isArchived: boolean;
@@ -119,6 +125,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       prevCursor: observable.ref,
       issueCount: observable.ref,
       pageCount: observable.ref,
+      next_page_results: observable.ref,
+      prev_page_results: observable.ref,
 
       paginationOptions: observable,
       // computed
@@ -134,7 +142,6 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       updateIssue: action,
       removeIssue: action,
       archiveIssue: action,
-      quickAddIssue: action,
       removeBulkIssues: action,
     });
     this.rootIssueStore = _rootStore;
@@ -155,6 +162,9 @@ export class BaseIssuesStore implements IBaseIssuesStore {
 
     this.issueCount = issuesResponse.count;
     this.pageCount = issuesResponse.total_pages;
+
+    this.next_page_results = issuesResponse.next_page_results;
+    this.prev_page_results = issuesResponse.prev_page_results;
   };
 
   get groupedIssueIds() {
@@ -172,22 +182,22 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       this.issues,
       this.isArchived ? "archived" : "un-archived"
     );
-    if (!currentIssues) return {};
+    if (!currentIssues) return { "All Issues": { issueIds: [], issueCount: 0 } };
 
     let groupedIssues: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues = {};
 
-    if (layout === "list" && orderBy) {
+    if (layout === EIssueLayoutTypes.LIST && orderBy) {
       if (groupBy) groupedIssues = this.groupedIssues(groupBy, orderBy, currentIssues, this.groupedIssueCount);
       else groupedIssues = this.unGroupedIssues(orderBy, currentIssues, this.issueCount);
-    } else if (layout === "kanban" && groupBy && orderBy) {
+    } else if (layout === EIssueLayoutTypes.KANBAN && groupBy && orderBy) {
       if (subGroupBy)
         groupedIssues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, currentIssues, this.groupedIssueCount);
       else groupedIssues = this.groupedIssues(groupBy, orderBy, currentIssues, this.groupedIssueCount);
-    } else if (layout === "calendar")
+    } else if (layout === EIssueLayoutTypes.CALENDAR)
       groupedIssues = this.groupedIssues("target_date", "target_date", currentIssues, this.groupedIssueCount, true);
-    else if (layout === "spreadsheet")
+    else if (layout === EIssueLayoutTypes.SPREADSHEET)
       groupedIssues = this.unGroupedIssues(orderBy ?? "-created_at", currentIssues, this.issueCount);
-    else if (layout === "gantt_chart")
+    else if (layout === EIssueLayoutTypes.GANTT)
       groupedIssues = this.unGroupedIssues(orderBy ?? "sort_order", currentIssues, this.issueCount);
 
     return groupedIssues;
@@ -308,7 +318,7 @@ export class BaseIssuesStore implements IBaseIssuesStore {
     }
   }
 
-  async quickAddIssue(workspaceSlug: string, projectId: string, data: TIssue) {
+  async issueQuickAdd(workspaceSlug: string, projectId: string, data: TIssue) {
     if (!this.issues) this.issues = [];
     try {
       this.addIssue(data);
@@ -400,8 +410,8 @@ export class BaseIssuesStore implements IBaseIssuesStore {
       }
 
       for (const group of groupArray) {
-        if (group && currentIssues[group]) currentIssues[group].issueIds.push(currentIssue.id);
-        else if (group) currentIssues[group].issueIds = [currentIssue.id];
+        if (!currentIssues[group]) currentIssues[group] = { issueIds: [], issueCount: groupedIssueCount[group] };
+        if (group) currentIssues[group].issueIds.push(currentIssue.id);
       }
     }
 

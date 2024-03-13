@@ -28,7 +28,7 @@ export interface IProjectIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
-    cursor?: string
+    cursor: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -105,6 +105,10 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
 
     if (options.groupedBy) {
       paginationOptions.group_by = options.groupedBy;
+    }
+
+    if (options.after && options.before) {
+      paginationOptions["target_date"] = `${options.after};after,${options.before};before`;
     }
 
     return paginationOptions;
@@ -217,8 +221,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
 
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
             display_filters: _filters.displayFilters,

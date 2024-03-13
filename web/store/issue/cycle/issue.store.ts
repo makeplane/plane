@@ -80,11 +80,15 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       cycleId: observable.ref,
       // action
       fetchIssues: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
 
       addIssueToCycle: action,
       removeIssueFromCycle: action,
       transferIssuesFromCycle: action,
       fetchActiveCycleIssues: action,
+
+      quickAddIssue: action,
     });
     // service
     this.cycleService = new CycleService();
@@ -107,7 +111,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
       this.cycleId = cycleId;
 
-      const params = this.issueFilterStore?.getFilterParams(options);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined);
       const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
       this.onfetchIssues(response, options);
@@ -119,11 +123,11 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
   };
 
   fetchNextIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    if (!this.paginationOptions) return;
+    if (!this.paginationOptions || !this.next_page_results) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions);
+      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
       const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
 
       this.onfetchNexIssues(response);
@@ -241,4 +245,6 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       throw error;
     }
   };
+
+  quickAddIssue = this.issueQuickAdd;
 }

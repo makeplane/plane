@@ -13,13 +13,17 @@ import {
   TIssueMap,
   TUnGroupedIssues,
   IGroupByColumn,
+  TIssueGroup,
 } from "@plane/types";
 import { getGroupByColumns } from "../utils";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { EIssuesStoreType } from "constants/issue";
+import { ArrowDown } from "lucide-react";
+import { ListLoaderItemRow } from "components/ui";
+import { useIntersectionObserver } from "hooks/use-intersection-observer";
 
 export interface IGroupByList {
-  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issueIds: TGroupedIssues;
   issuesMap: TIssueMap;
   group_by: string | null;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -39,6 +43,8 @@ export interface IGroupByList {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   viewId?: string;
   isCompletedCycle?: boolean;
+  shouldLoadMore: boolean;
+  loadMoreIssues: () => void;
 }
 
 const GroupByList: React.FC<IGroupByList> = (props) => {
@@ -57,7 +63,9 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     disableIssueCreation,
     storeType,
     addIssuesToView,
+    shouldLoadMore,
     isCompletedCycle = false,
+    loadMoreIssues,
   } = props;
   // store hooks
   const member = useMember();
@@ -67,7 +75,10 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   const cycle = useCycle();
   const projectModule = useModule();
 
+  const intersectionRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useIntersectionObserver(containerRef, intersectionRef, loadMoreIssues, `50% 0% 50% 0%`);
 
   const groups = getGroupByColumns(
     group_by as GroupByColumnTypes,
@@ -112,13 +123,11 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     return preloadedData;
   };
 
-  const validateEmptyIssueGroups = (issues: TIssue[]) => {
-    const issuesCount = issues?.length || 0;
+  const validateEmptyIssueGroups = (issues: TIssueGroup) => {
+    const issuesCount = issues?.issueCount || 0;
     if (!showEmptyGroup && issuesCount <= 0) return false;
     return true;
   };
-
-  const is_list = group_by === null ? true : false;
 
   const isGroupByCreatedBy = group_by === "created_by";
 
@@ -129,15 +138,18 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     >
       {groups &&
         groups.length > 0 &&
-        groups.map(
-          (_list: IGroupByColumn) =>
-            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[_list.id]) && (
+        groups.map((_list: IGroupByColumn) => {
+          const issueGroup = issueIds?.[_list.id] as TIssueGroup;
+
+          return (
+            issueGroup &&
+            validateEmptyIssueGroups(issueGroup) && (
               <div key={_list.id} className={`flex flex-shrink-0 flex-col`}>
                 <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
                   <HeaderGroupByCard
                     icon={_list.icon}
                     title={_list.name || ""}
-                    count={is_list ? issueIds?.length || 0 : issueIds?.[_list.id]?.length || 0}
+                    count={issueGroup.issueCount}
                     issuePayload={_list.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
                     storeType={storeType}
@@ -147,7 +159,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 
                 {issueIds && (
                   <IssueBlocksList
-                    issueIds={is_list ? issueIds || 0 : issueIds?.[_list.id] || 0}
+                    issueIds={issueGroup.issueIds}
                     issuesMap={issuesMap}
                     updateIssue={updateIssue}
                     quickActions={quickActions}
@@ -156,6 +168,21 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                     containerRef={containerRef}
                   />
                 )}
+                {/* &&
+                  issueGroup.issueIds?.length <= issueGroup.issueCount */}
+                {shouldLoadMore &&
+                  (group_by ? (
+                    <div
+                      className={
+                        "h-11 relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm text-custom-primary-100 hover:underline cursor-pointer"
+                      }
+                      onClick={loadMoreIssues}
+                    >
+                      Load more &darr;
+                    </div>
+                  ) : (
+                    <ListLoaderItemRow ref={intersectionRef} />
+                  ))}
 
                 {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
                   <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
@@ -168,13 +195,14 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                 )}
               </div>
             )
-        )}
+          );
+        })}
     </div>
   );
 };
 
 export interface IList {
-  issueIds: TGroupedIssues | TUnGroupedIssues | any;
+  issueIds: TGroupedIssues | TUnGroupedIssues;
   issuesMap: TIssueMap;
   group_by: string | null;
   updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -183,6 +211,7 @@ export interface IList {
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
+  shouldLoadMore: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -193,6 +222,7 @@ export interface IList {
   disableIssueCreation?: boolean;
   storeType: EIssuesStoreType;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
+  loadMoreIssues: () => void;
   isCompletedCycle?: boolean;
 }
 
@@ -212,15 +242,19 @@ export const List: React.FC<IList> = (props) => {
     disableIssueCreation,
     storeType,
     addIssuesToView,
+    shouldLoadMore,
+    loadMoreIssues,
     isCompletedCycle = false,
   } = props;
 
   return (
     <div className="relative h-full w-full">
       <GroupByList
-        issueIds={issueIds as TUnGroupedIssues}
+        issueIds={issueIds}
         issuesMap={issuesMap}
         group_by={group_by}
+        shouldLoadMore={shouldLoadMore}
+        loadMoreIssues={loadMoreIssues}
         updateIssue={updateIssue}
         quickActions={quickActions}
         displayProperties={displayProperties}

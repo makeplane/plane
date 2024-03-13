@@ -13,7 +13,12 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 // helpers
 // types
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  EIssuesStoreType,
+  EIssueFilterType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  EIssueLayoutTypes,
+} from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { truncateText } from "helpers/string.helper";
 import {
@@ -27,7 +32,7 @@ import {
   useProjectView,
   useUser,
 } from "hooks/store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { ProjectLogo } from "components/project";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
@@ -56,7 +61,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId || !viewId) return;
       updateFilters(
         workspaceSlug.toString(),
@@ -195,7 +200,13 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
       </div>
       <div className="flex items-center gap-2">
         <LayoutSelection
-          layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+          layouts={[
+            EIssueLayoutTypes.LIST,
+            EIssueLayoutTypes.KANBAN,
+            EIssueLayoutTypes.CALENDAR,
+            EIssueLayoutTypes.SPREADSHEET,
+            EIssueLayoutTypes.GANTT,
+          ]}
           onChange={(layout) => handleLayoutChange(layout)}
           selectedLayout={activeLayout}
         />

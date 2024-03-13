@@ -24,9 +24,12 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
     loadType: TLoader
   ) => Promise<TIssuesResponse | undefined>;
   fetchNextIssues: (workspaceSlug: string, viewId: string) => Promise<TIssuesResponse | undefined>;
+
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+
+  quickAddIssue: undefined;
 }
 
 export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues {
@@ -46,6 +49,8 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     makeObservable(this, {
       // action
       fetchIssues: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
     });
     // services
     this.workspaceService = new WorkspaceService();
@@ -90,4 +95,6 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     if (!this.paginationOptions) return;
     return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions);
   };
+
+  quickAddIssue = undefined;
 }

@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, useRef } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 // hooks
 import { useProjectState } from "hooks/store";
@@ -13,6 +13,8 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from ".";
+import { KanbanIssueBlockLoader } from "components/ui/loader";
+import { useIntersectionObserver } from "hooks/use-intersection-observer";
 
 interface IKanbanGroup {
   groupId: string;
@@ -33,6 +35,7 @@ interface IKanbanGroup {
     data: TIssue,
     viewId?: string
   ) => Promise<TIssue | undefined>;
+  loadMoreIssues: (() => void) | undefined;
   viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -55,6 +58,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
     updateIssue,
     quickActions,
     canEditProperties,
+    loadMoreIssues,
     enableQuickIssueCreate,
     disableIssueCreation,
     quickAddCallback,
@@ -64,6 +68,10 @@ export const KanbanGroup = (props: IKanbanGroup) => {
   } = props;
   // hooks
   const projectState = useProjectState();
+
+  const intersectionRef = useRef<HTMLSpanElement | null>(null);
+
+  useIntersectionObserver(scrollableContainerRef, intersectionRef, loadMoreIssues, `50% 0% 50% 0%`);
 
   const prePopulateQuickAddData = (
     groupByKey: string | null,
@@ -131,7 +139,7 @@ export const KanbanGroup = (props: IKanbanGroup) => {
               columnId={groupId}
               issuesMap={issuesMap}
               peekIssueId={peekIssueId}
-              issueIds={(issueIds as TGroupedIssues)?.[groupId] || []}
+              issueIds={(issueIds as TGroupedIssues)?.[groupId]?.issueIds || []}
               displayProperties={displayProperties}
               isDragDisabled={isDragDisabled}
               updateIssue={updateIssue}
@@ -142,6 +150,8 @@ export const KanbanGroup = (props: IKanbanGroup) => {
             />
 
             {provided.placeholder}
+
+            {loadMoreIssues && <KanbanIssueBlockLoader ref={intersectionRef} />}
 
             {enableQuickIssueCreate && !disableIssueCreation && (
               <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">

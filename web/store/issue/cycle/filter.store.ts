@@ -28,7 +28,7 @@ export interface ICycleIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
-    cursor?: string
+    cursor: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
@@ -222,13 +222,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
-              workspaceSlug,
-              projectId,
-              "mutation",
-              cycleId
-            );
+          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
+            workspaceSlug,
+            projectId,
+            "mutation",
+            cycleId
+          );
 
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
             display_filters: _filters.displayFilters,

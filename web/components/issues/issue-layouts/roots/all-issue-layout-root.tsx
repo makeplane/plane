@@ -30,21 +30,16 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useApplication();
   const {
     issuesFilter: { filters, fetchFilters, updateFilters },
-    issues: { loader, groupedIssueIds, fetchIssues },
+    issues: { loader, issueCount: totalIssueCount, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
 
-  const { dataViewId, issueIds } = groupedIssueIds;
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const { workspaceProjectIds } = useProject();
   const { setTrackElement } = useEventTracker();
-
-  const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
-  const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
-
   // filter init from the query params
 
   const routerFilterParams = () => {
@@ -76,6 +71,10 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
     }
   };
 
+  const fetchNextPages = useCallback(() => {
+    if (workspaceSlug && globalViewId) fetchNextIssues(workspaceSlug.toString(), globalViewId.toString());
+  }, [fetchNextIssues, workspaceSlug, globalViewId]);
+
   useSWR(
     workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
     async () => {
@@ -92,7 +91,15 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
       if (workspaceSlug && globalViewId) {
         await fetchAllGlobalViews(workspaceSlug.toString());
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
-        await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
+        await fetchIssues(
+          workspaceSlug.toString(),
+          globalViewId.toString(),
+          groupedIssueIds ? "mutation" : "init-loader",
+          {
+            canGroup: false,
+            perPageCount: 100,
+          }
+        );
         routerFilterParams();
       }
     },
@@ -136,30 +143,34 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
-        readOnly={!canEditProperties(issue.project_id)}
+        readOnly={!canEditProperties(issue.project_id ?? undefined)}
       />
     ),
     [canEditProperties, removeIssue, updateIssue, archiveIssue]
   );
 
-  if (loader === "init-loader" || !globalViewId || globalViewId !== dataViewId || !issueIds) {
+  if (loader === "init-loader" || !globalViewId || !groupedIssueIds) {
     return <SpreadsheetLayoutLoader />;
   }
 
+  const {
+    "All Issues": { issueIds, issueCount },
+  } = groupedIssueIds;
+
   const emptyStateType =
-    (workspaceProjectIds ?? []).length > 0 ? `workspace-${currentView}` : EmptyStateType.WORKSPACE_NO_PROJECTS;
+    (workspaceProjectIds ?? []).length > 0 ? `workspace-${globalViewId}` : EmptyStateType.WORKSPACE_NO_PROJECTS;
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <div className="relative h-full w-full flex flex-col">
-        <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId} />
-        {issueIds.length === 0 ? (
+        <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId.toString()} />
+        {!totalIssueCount ? (
           <EmptyState
             type={emptyStateType as keyof typeof EMPTY_STATE_DETAILS}
             size="sm"
             primaryButtonOnClick={
               (workspaceProjectIds ?? []).length > 0
-                ? currentView !== "custom-view" && currentView !== "subscribed"
+                ? globalViewId !== "custom-view" && globalViewId !== "subscribed"
                   ? () => {
                       setTrackElement("All issues empty state");
                       commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
@@ -177,11 +188,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               displayProperties={issueFilters?.displayProperties ?? {}}
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-              issueIds={issueIds}
+              issueIds={Array.isArray(issueIds) ? issueIds : []}
               quickActions={renderQuickActions}
               updateIssue={updateIssue}
               canEditProperties={canEditProperties}
-              viewId={globalViewId}
+              viewId={globalViewId.toString()}
+              onEndOfListTrigger={fetchNextPages}
             />
             {/* peek overview */}
             <IssuePeekOverview />

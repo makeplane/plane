@@ -19,7 +19,9 @@ type Props = {
     customActionButton?: React.ReactElement,
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -29,6 +31,7 @@ type Props = {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
+  onEndOfListTrigger: () => void;
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
 };
@@ -46,6 +49,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     canEditProperties,
     enableQuickCreateIssue,
     disableIssueCreation,
+    onEndOfListTrigger,
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
@@ -77,6 +81,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           updateIssue={updateIssue}
           canEditProperties={canEditProperties}
           containerRef={containerRef}
+          onEndOfListTrigger={onEndOfListTrigger}
         />
       </div>
       <div className="border-t border-custom-border-100">

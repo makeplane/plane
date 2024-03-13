@@ -32,6 +32,8 @@ export interface IProfileIssues extends IBaseIssuesStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+
+  quickAddIssue: undefined;
 }
 
 export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
@@ -51,6 +53,8 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       // action
       setViewId: action.bound,
       fetchIssues: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
     });
     // filter store
     this.issueFilterStore = issueFilterStore;
@@ -91,7 +95,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
       this.setViewId(view);
 
-      let params = this.issueFilterStore?.getFilterParams(options);
+      let params = this.issueFilterStore?.getFilterParams(options, undefined);
       params = {
         ...params,
         assignees: undefined,
@@ -113,7 +117,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
   };
 
   fetchNextIssues = async (workspaceSlug: string, userId: string) => {
-    if (!this.paginationOptions || !this.currentView) return;
+    if (!this.paginationOptions || !this.currentView || !this.next_page_results) return;
     try {
       this.loader = "pagination";
 
@@ -142,4 +146,6 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     if (!this.paginationOptions || !this.currentView) return;
     return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView);
   };
+
+  quickAddIssue = undefined;
 }

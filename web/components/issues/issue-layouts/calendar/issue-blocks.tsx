@@ -16,12 +16,11 @@ type Props = {
   issues: TIssueMap | undefined;
   issueIdList: string[] | null;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  showAllIssues?: boolean;
   isDragDisabled?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
-  const { issues, issueIdList, quickActions, showAllIssues = false, isDragDisabled = false } = props;
+  const { issues, issueIdList, quickActions, isDragDisabled = false } = props;
   // hooks
   const {
     router: { workspaceSlug, projectId },
@@ -57,7 +56,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {issueIdList?.slice(0, showAllIssues ? issueIdList.length : 4).map((issueId, index) => {
+      {issueIdList?.map((issueId, index) => {
         if (!issues?.[issueId]) return null;
 
         const issue = issues?.[issueId];

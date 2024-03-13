@@ -9,9 +9,14 @@ import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-ham
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
 // helper
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+} from "constants/issue";
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { ProjectLogo } from "components/project";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
@@ -51,7 +56,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   );
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
@@ -124,7 +129,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
 
         <div className="ml-auto flex items-center gap-2">
           <LayoutSelection
-            layouts={["list", "kanban"]}
+            layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]}
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />

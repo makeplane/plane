@@ -19,6 +19,7 @@ type Props = {
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
+  loadMoreIssues: () => void;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
@@ -39,6 +40,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     date,
     issues,
     groupedIssueIds,
+    loadMoreIssues,
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -47,14 +49,13 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     viewId,
     readOnly = false,
   } = props;
-  const [showAllIssues, setShowAllIssues] = useState(false);
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const formattedDatePayload = renderFormattedPayloadDate(date.date);
   if (!formattedDatePayload) return null;
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : null;
 
-  const totalIssues = issueIdList?.length ?? 0;
+  const totalIssues = issueIdList?.issueCount ?? 0;
 
   const isToday = date.date.toDateString() === new Date().toDateString();
 
@@ -100,9 +101,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               >
                 <CalendarIssueBlocks
                   issues={issues}
-                  issueIdList={issueIdList}
+                  issueIdList={issueIdList?.issueIds ?? []}
                   quickActions={quickActions}
-                  showAllIssues={showAllIssues}
                   isDragDisabled={readOnly}
                 />
 
@@ -117,19 +117,18 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                       quickAddCallback={quickAddCallback}
                       addIssuesToView={addIssuesToView}
                       viewId={viewId}
-                      onOpen={() => setShowAllIssues(true)}
                     />
                   </div>
                 )}
 
-                {totalIssues > 4 && (
+                {totalIssues > (issueIdList?.issueIds?.length ?? 0) && (
                   <div className="flex items-center px-2.5 py-1">
                     <button
                       type="button"
                       className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
-                      onClick={() => setShowAllIssues((prevData) => !prevData)}
+                      onClick={loadMoreIssues}
                     >
-                      {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
+                      Load More
                     </button>
                   </div>
                 )}

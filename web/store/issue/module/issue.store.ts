@@ -79,12 +79,16 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       moduleId: observable.ref,
       // action
       fetchIssues: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
 
       addIssuesToModule: action,
       removeIssuesFromModule: action,
       addModulesToIssue: action,
       removeModulesFromIssue: action,
       removeIssueFromModule: action,
+
+      quickAddIssue: action,
     });
     // filter store
     this.issueFilterStore = issueFilterStore;
@@ -107,7 +111,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
 
       this.moduleId = moduleId;
 
-      const params = this.issueFilterStore?.getFilterParams(options);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined);
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
       this.onfetchIssues(response, options);
@@ -119,11 +123,11 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
   };
 
   fetchNextIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
-    if (!this.paginationOptions) return;
+    if (!this.paginationOptions || !this.next_page_results) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions);
+      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
       const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
       this.onfetchNexIssues(response);
@@ -295,4 +299,6 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       throw error;
     }
   };
+
+  quickAddIssue = this.issueQuickAdd;
 }

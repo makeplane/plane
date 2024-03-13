@@ -3,14 +3,13 @@ import React from "react";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { ISSUE_LAYOUTS } from "constants/issue";
-import { TIssueLayouts } from "@plane/types";
 // constants
+import { EIssueLayoutTypes, ISSUE_LAYOUTS } from "constants/issue";
 
 type Props = {
-  layouts: TIssueLayouts[];
-  onChange: (layout: TIssueLayouts) => void;
-  selectedLayout: TIssueLayouts | undefined;
+  layouts: EIssueLayoutTypes[];
+  onChange: (layout: EIssueLayoutTypes) => void;
+  selectedLayout: EIssueLayoutTypes | undefined;
 };
 
 export const LayoutSelection: React.FC<Props> = (props) => {

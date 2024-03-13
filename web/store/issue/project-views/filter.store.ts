@@ -28,7 +28,7 @@ export interface IProjectViewIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
-    cursor?: string
+    cursor: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
@@ -216,12 +216,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
-              workspaceSlug,
-              projectId,
-              "mutation"
-            );
+          this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
 
           await this.issueFilterService.patchView(workspaceSlug, projectId, viewId, {
             display_filters: _filters.displayFilters,

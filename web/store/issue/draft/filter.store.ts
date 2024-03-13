@@ -28,7 +28,7 @@ export interface IDraftIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
-    cursor?: string
+    cursor: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -105,6 +105,10 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
 
     if (options.groupedBy) {
       paginationOptions.group_by = options.groupedBy;
+    }
+
+    if (options.after && options.before) {
+      paginationOptions["target_date"] = `${options.after};after,${options.before};before`;
     }
 
     return paginationOptions;
@@ -205,8 +209,7 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
-            this.rootIssueStore.draftIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+          this.rootIssueStore.draftIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
 
           this.handleIssuesLocalFilters.set(EIssuesStoreType.DRAFT, type, workspaceSlug, projectId, undefined, {
             display_filters: _filters.displayFilters,

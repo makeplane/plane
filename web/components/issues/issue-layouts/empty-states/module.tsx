@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import size from "lodash/size";
 // hooks
 import { useApplication, useEventTracker, useIssues } from "hooks/store";
 // ui
@@ -9,30 +11,26 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { EmptyState } from "components/empty-state";
 // types
-import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
+import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { EmptyStateType } from "constants/empty-state";
 
-type Props = {
-  workspaceSlug: string | undefined;
-  projectId: string | undefined;
-  moduleId: string | undefined;
-  activeLayout: TIssueLayouts | undefined;
-  handleClearAllFilters: () => void;
-  isEmptyFilters?: boolean;
-};
-
-export const ModuleEmptyState: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, moduleId, activeLayout, handleClearAllFilters, isEmptyFilters = false } = props;
+export const ModuleEmptyState: React.FC = observer(() => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, moduleId } = router.query;
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // store hooks
-  const { issues } = useIssues(EIssuesStoreType.MODULE);
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
+
+  const userFilters = issuesFilter?.issueFilters?.filters;
+  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -56,14 +54,38 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
       );
   };
 
+  const issueFilterCount = size(
+    Object.fromEntries(
+      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
+    )
+  );
+
+  const handleClearAllFilters = () => {
+    if (!workspaceSlug || !projectId || !moduleId) return;
+    const newFilters: IIssueFilterOptions = {};
+    Object.keys(userFilters ?? {}).forEach((key) => {
+      newFilters[key as keyof IIssueFilterOptions] = null;
+    });
+    issuesFilter.updateFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      EIssueFilterType.FILTERS,
+      {
+        ...newFilters,
+      },
+      moduleId.toString()
+    );
+  };
+
+  const isEmptyFilters = issueFilterCount > 0;
   const emptyStateType = isEmptyFilters ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_MODULE_ISSUES;
   const additionalPath = activeLayout ?? "list";
 
   return (
-    <>
+    <div className="relative h-full w-full overflow-y-auto">
       <ExistingIssuesListModal
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
+        workspaceSlug={workspaceSlug?.toString()}
+        projectId={projectId?.toString()}
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
         searchParams={{ module: moduleId != undefined ? moduleId.toString() : "" }}
@@ -84,6 +106,6 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
           secondaryButtonOnClick={isEmptyFilters ? handleClearAllFilters : () => setModuleIssuesListModal(true)}
         />
       </div>
-    </>
+    </div>
   );
 });

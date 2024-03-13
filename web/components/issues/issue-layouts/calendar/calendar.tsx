@@ -24,6 +24,7 @@ import { ICycleIssuesFilter } from "store/issue/cycle";
 import { IModuleIssuesFilter } from "store/issue/module";
 import { IProjectIssuesFilter } from "store/issue/project";
 import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { ICalendarStore } from "store/issue/issue_calendar_view.store";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -31,6 +32,8 @@ type Props = {
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
+  issueCalendarView: ICalendarStore;
+  loadMoreIssues: () => void;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -55,6 +58,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     groupedIssueIds,
     layout,
     showWeekends,
+    issueCalendarView,
+    loadMoreIssues,
     quickActions,
     quickAddCallback,
     addIssuesToView,
@@ -66,7 +71,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const {
     issues: { viewFlags },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const issueCalendarView = useCalendarView();
+
   const {
     membership: { currentProjectRole },
   } = useUser();
@@ -102,6 +107,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                       week={week}
                       issues={issues}
                       groupedIssueIds={groupedIssueIds}
+                      loadMoreIssues={loadMoreIssues}
                       enableQuickIssueCreate
                       disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                       quickActions={quickActions}
@@ -119,6 +125,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 week={issueCalendarView.allDaysOfActiveWeek}
                 issues={issues}
                 groupedIssueIds={groupedIssueIds}
+                loadMoreIssues={loadMoreIssues}
                 enableQuickIssueCreate
                 disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
                 quickActions={quickActions}

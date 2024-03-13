@@ -26,6 +26,8 @@ export interface IArchivedIssues extends IBaseIssuesStore {
   fetchNextIssues: (workspaceSlug: string, projectId: string) => Promise<TIssuesResponse | undefined>;
 
   restoreIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+
+  quickAddIssue: undefined;
 }
 
 export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
@@ -44,6 +46,9 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     makeObservable(this, {
       // action
       fetchIssues: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
+
       restoreIssue: action,
     });
     // filter store
@@ -61,7 +66,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
         this.loader = loadType;
       });
       this.clear();
-      const params = this.issueFilterStore?.getFilterParams(options);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined);
       const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params);
 
       this.onfetchIssues(response, options);
@@ -73,11 +78,11 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
   };
 
   fetchNextIssues = async (workspaceSlug: string, projectId: string) => {
-    if (!this.paginationOptions) return;
+    if (!this.paginationOptions || !this.next_page_results) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions);
+      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       this.onfetchNexIssues(response);
@@ -113,4 +118,6 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       throw error;
     }
   };
+
+  quickAddIssue = undefined;
 }

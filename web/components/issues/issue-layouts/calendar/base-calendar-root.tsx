@@ -1,20 +1,22 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { TGroupedIssues } from "@plane/types";
+import useSWR from "swr";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "components/issues";
 // hooks
-import { useIssues, useUser } from "hooks/store";
+import { useCalendarView, useIssues, useUser } from "hooks/store";
 import { useIssuesActions } from "hooks/use-issues-actions";
 // ui
 // types
-import { TGroupedIssues } from "@plane/types";
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType, IssueGroupByOptions } from "constants/issue";
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
 import { EUserProjectRoles } from "constants/project";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 type CalendarStoreType =
   | EIssuesStoreType.PROJECT
@@ -42,14 +44,45 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     membership: { currentProjectRole },
   } = useUser();
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
-  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
-    useIssuesActions(storeType);
+  const {
+    fetchIssues,
+    fetchNextIssues,
+    updateIssue,
+    removeIssue,
+    removeIssueFromView,
+    archiveIssue,
+    restoreIssue,
+    updateFilters,
+  } = useIssuesActions(storeType);
+
+  const issueCalendarView = useCalendarView();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const displayFilters = issuesFilter.issueFilters?.displayFilters;
 
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
+
+  const layout = displayFilters?.calendar?.layout ?? "month";
+  const { startDate, endDate } = issueCalendarView.getStartAndEndDate(layout) ?? {};
+
+  useSWR(
+    startDate && endDate && layout ? `ISSUE_CALENDAR_LAYOUT_${storeType}_${startDate}_${endDate}_${layout}` : null,
+    startDate && endDate
+      ? () =>
+          fetchIssues("init-loader", {
+            canGroup: true,
+            perPageCount: layout === "month" ? 4 : 30,
+            before: endDate,
+            after: startDate,
+            groupedBy: IssueGroupByOptions["target_date"],
+          })
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   const onDragEnd = async (result: DropResult) => {
     if (!result) return;
@@ -79,8 +112,12 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     }
   };
 
+  const loadMoreIssues = useCallback(() => {
+    fetchNextIssues();
+  }, [fetchNextIssues]);
+
   return (
-    <>
+    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.CALENDAR}>
       <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <CalendarChart
@@ -89,6 +126,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             groupedIssueIds={groupedIssueIds}
             layout={displayFilters?.calendar?.layout}
             showWeekends={displayFilters?.calendar?.show_weekends ?? false}
+            issueCalendarView={issueCalendarView}
             quickActions={(issue, customActionButton) => (
               <QuickActions
                 customActionButton={customActionButton}
@@ -103,6 +141,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
                 readOnly={!isEditingAllowed || isCompletedCycle}
               />
             )}
+            loadMoreIssues={loadMoreIssues}
             addIssuesToView={addIssuesToView}
             quickAddCallback={issues.quickAddIssue}
             viewId={viewId}
@@ -111,6 +150,6 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           />
         </DragDropContext>
       </div>
-    </>
+    </IssueLayoutHOC>
   );
 });

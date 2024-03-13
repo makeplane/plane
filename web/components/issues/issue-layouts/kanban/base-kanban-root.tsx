@@ -2,11 +2,12 @@ import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import useSWR from "swr";
 // hooks
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { DeleteIssueModal } from "components/issues";
 import { ISSUE_DELETED } from "constants/event-tracker";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useIssues, useUser } from "hooks/store";
 import { useIssuesActions } from "hooks/use-issues-actions";
@@ -18,6 +19,8 @@ import { IQuickActionProps } from "../list/list-view-types";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { handleDragDrop } from "./utils";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
+import debounce from "lodash/debounce";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -61,10 +64,31 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = useUser();
   const { captureIssueEvent } = useEventTracker();
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
-  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
-    useIssuesActions(storeType);
+  const {
+    fetchIssues,
+    fetchNextIssues,
+    updateIssue,
+    removeIssue,
+    removeIssueFromView,
+    archiveIssue,
+    restoreIssue,
+    updateFilters,
+  } = useIssuesActions(storeType);
 
-  const issueIds = issues?.groupedIssueIds || [];
+  useSWR(`ISSUE_KANBAN_LAYOUT_${storeType}`, () => fetchIssues("init-loader", { canGroup: true, perPageCount: 30 }), {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+
+  const fetchMoreIssues = useCallback(() => {
+    if (issues.loader !== "pagination") {
+      fetchNextIssues();
+    }
+  }, [fetchNextIssues]);
+
+  const debouncedFetchMoreIssues = debounce(() => fetchMoreIssues(), 300, { leading: true, trailing: false });
+
+  const issueIds = issues?.groupedIssueIds;
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
@@ -207,19 +231,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <>
+    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.KANBAN}>
       <DeleteIssueModal
         dataId={dragState.draggedIssueId}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDeleteIssue}
       />
-
-      {showLoader && issues?.loader === "init-loader" && (
-        <div className="fixed right-2 top-16 z-30 flex h-10 w-10 items-center justify-center rounded bg-custom-background-80 shadow-custom-shadow-sm">
-          <Spinner className="h-5 w-5" />
-        </div>
-      )}
 
       <div
         className="vertical-scrollbar horizontal-scrollbar scrollbar-lg relative flex h-full w-full overflow-auto bg-custom-background-90"
@@ -253,7 +271,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
             <div className="h-max w-max">
               <KanBanView
                 issuesMap={issueMap}
-                issueIds={issueIds}
+                issueIds={issueIds!}
                 displayProperties={displayProperties}
                 sub_group_by={sub_group_by}
                 group_by={group_by}
@@ -271,11 +289,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 addIssuesToView={addIssuesToView}
                 scrollableContainerRef={scrollableContainerRef}
                 isDragStarted={isDragStarted}
+                loadMoreIssues={debouncedFetchMoreIssues}
               />
             </div>
           </DragDropContext>
         </div>
       </div>
-    </>
+    </IssueLayoutHOC>
   );
 });

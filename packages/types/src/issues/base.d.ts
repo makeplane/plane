@@ -12,15 +12,16 @@ export * from "./activity/base";
 
 export type TLoader = "init-loader" | "mutation" | "pagination" | undefined;
 
+export type TIssueGroup = { issueIds: string[]; issueCount: number };
 export type TGroupedIssues = {
-  [group_id: string]: { issueIds: string[]; issueCount: number };
+  [group_id: string]: TIssueGroup;
 };
 
 export type TSubGroupedIssues = {
   [sub_grouped_id: string]: TGroupedIssues;
 };
 export type TUnGroupedIssues = {
-  "All Issues": { issueIds: string[]; issueCount: number };
+  "All Issues": TIssueGroup;
 };
 
 export type TIssues = TGroupedIssues | TUnGroupedIssues;

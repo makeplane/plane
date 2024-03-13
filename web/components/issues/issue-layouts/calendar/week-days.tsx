@@ -17,6 +17,7 @@ type Props = {
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  loadMoreIssues: () => void;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
   quickAddCallback?: (
@@ -36,6 +37,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     issues,
     groupedIssueIds,
     week,
+    loadMoreIssues,
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
@@ -66,6 +68,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             date={date}
             issues={issues}
             groupedIssueIds={groupedIssueIds}
+            loadMoreIssues={loadMoreIssues}
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
             disableIssueCreation={disableIssueCreation}

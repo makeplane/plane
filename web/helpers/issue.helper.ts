@@ -4,17 +4,10 @@ import { v4 as uuidv4 } from "uuid";
 // types
 import { IGanttBlock } from "components/gantt-chart";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
 import { orderArrayBy } from "helpers/array.helper";
-import {
-  TIssue,
-  TIssueGroupByOptions,
-  TIssueLayouts,
-  TIssueOrderByOptions,
-  TIssueParams,
-  TStateGroups,
-} from "@plane/types";
+import { TIssue, TIssueGroupByOptions, TIssueOrderByOptions, TIssueParams, TStateGroups } from "@plane/types";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -89,7 +82,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 };
 
 export const handleIssueQueryParamsByLayout = (
-  layout: TIssueLayouts | undefined,
+  layout: EIssueLayoutTypes | undefined,
   viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues"
 ): TIssueParams[] | null => {
   const queryParams: TIssueParams[] = [];

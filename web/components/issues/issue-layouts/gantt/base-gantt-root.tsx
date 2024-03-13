@@ -13,7 +13,8 @@ import { useIssuesActions } from "hooks/use-issues-actions";
 // types
 import { TIssue, TUnGroupedIssues } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 type GanttStoreType =
   | EIssuesStoreType.PROJECT
@@ -57,7 +58,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
-    <>
+    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.GANTT}>
       <div className="h-full w-full">
         <GanttChartRoot
           border={false}
@@ -80,6 +81,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           showAllBlocks
         />
       </div>
-    </>
+    </IssueLayoutHOC>
   );
 });

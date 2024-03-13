@@ -6,6 +6,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@pl
 //components
 import { SpreadsheetIssueRow } from "./issue-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
+import { useIntersectionObserver } from "hooks/use-intersection-observer";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -18,10 +19,13 @@ type Props = {
     customActionButton?: React.ReactElement,
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
+  onEndOfListTrigger: () => void;
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -36,10 +40,12 @@ export const SpreadsheetTable = observer((props: Props) => {
     updateIssue,
     canEditProperties,
     containerRef,
+    onEndOfListTrigger,
   } = props;
 
   // states
   const isScrolled = useRef(false);
+  const intersectionRef = useRef<HTMLTableSectionElement | null>(null);
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -74,6 +80,28 @@ export const SpreadsheetTable = observer((props: Props) => {
     };
   }, [handleScroll, containerRef]);
 
+  // useEffect(() => {
+  //   if (intersectionRef.current) {
+  //     const observer = new IntersectionObserver(
+  //       (entries) => {
+  //         if (entries[0].isIntersecting) onEndOfListTrigger();
+  //       },
+  //       {
+  //         root: containerRef?.current,
+  //         rootMargin: `50% 0% 50% 0%`,
+  //       }
+  //     );
+  //     observer.observe(intersectionRef.current);
+  //     return () => {
+  //       if (intersectionRef.current) {
+  //         // eslint-disable-next-line react-hooks/exhaustive-deps
+  //         observer.unobserve(intersectionRef.current);
+  //       }
+  //     };
+  //   }
+  // }, [intersectionRef, containerRef]);
+  useIntersectionObserver(containerRef, intersectionRef, onEndOfListTrigger, `50% 0% 50% 0%`);
+
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
   return (
@@ -102,6 +130,7 @@ export const SpreadsheetTable = observer((props: Props) => {
           />
         ))}
       </tbody>
+      <tfoot ref={intersectionRef}>Loading...</tfoot>
     </table>
   );
 });

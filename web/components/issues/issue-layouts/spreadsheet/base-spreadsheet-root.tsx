@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useIssues, useUser } from "hooks/store";
 import { useIssuesActions } from "hooks/use-issues-actions";
@@ -12,6 +12,8 @@ import { useIssuesActions } from "hooks/use-issues-actions";
 import { TIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
+import useSWR from "swr";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
 
 export type SpreadsheetStoreType =
   | EIssuesStoreType.PROJECT
@@ -36,12 +38,29 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     membership: { currentProjectRole },
   } = useUser();
   const { issues, issuesFilter } = useIssues(storeType);
-  const { updateIssue, removeIssue, removeIssueFromView, archiveIssue, restoreIssue, updateFilters } =
-    useIssuesActions(storeType);
+  const {
+    fetchIssues,
+    fetchNextIssues,
+    updateIssue,
+    removeIssue,
+    removeIssueFromView,
+    archiveIssue,
+    restoreIssue,
+    updateFilters,
+  } = useIssuesActions(storeType);
   // derived values
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
   // user role validation
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+
+  useSWR(
+    `ISSUE_SPREADSHEET_LAYOUT_${storeType}`,
+    () => fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
@@ -53,7 +72,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
   );
 
-  const issueIds = (issues.groupedIssueIds ?? []) as TUnGroupedIssues;
+  const issueIds = issues.groupedIssueIds?.["All Issues"]?.issueIds ?? [];
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
@@ -83,19 +102,24 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
+  if (!Array.isArray(issueIds)) return null;
+
   return (
-    <SpreadsheetView
-      displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
-      displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
-      handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-      issueIds={issueIds}
-      quickActions={renderQuickActions}
-      updateIssue={updateIssue}
-      canEditProperties={canEditProperties}
-      quickAddCallback={issues.quickAddIssue}
-      viewId={viewId}
-      enableQuickCreateIssue={enableQuickAdd}
-      disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-    />
+    <IssueLayoutHOC storeType={storeType} layout={EIssueLayoutTypes.SPREADSHEET}>
+      <SpreadsheetView
+        displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
+        displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
+        handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+        issueIds={issueIds}
+        quickActions={renderQuickActions}
+        updateIssue={updateIssue}
+        canEditProperties={canEditProperties}
+        quickAddCallback={issues.quickAddIssue}
+        viewId={viewId}
+        enableQuickCreateIssue={enableQuickAdd}
+        disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+        onEndOfListTrigger={fetchNextIssues}
+      />
+    </IssueLayoutHOC>
   );
 });

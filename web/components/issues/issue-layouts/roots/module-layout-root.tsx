@@ -1,5 +1,4 @@
-import React, { Fragment } from "react";
-import size from "lodash/size";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -9,18 +8,32 @@ import {
   IssuePeekOverview,
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
-  ModuleEmptyState,
   ModuleGanttLayout,
   ModuleKanBanLayout,
   ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
-import { ActiveLoader } from "components/ui";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
 import { useIssues } from "hooks/store";
 // types
-import { IIssueFilterOptions } from "@plane/types";
+
+const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+  switch (props.activeLayout) {
+    case EIssueLayoutTypes.LIST:
+      return <ModuleListLayout />;
+    case EIssueLayoutTypes.KANBAN:
+      return <ModuleKanBanLayout />;
+    case EIssueLayoutTypes.CALENDAR:
+      return <ModuleCalendarLayout />;
+    case EIssueLayoutTypes.GANTT:
+      return <ModuleGanttLayout />;
+    case EIssueLayoutTypes.SPREADSHEET:
+      return <ModuleSpreadsheetLayout />;
+    default:
+      return null;
+  }
+};
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   // router
@@ -36,84 +49,23 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && moduleId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
-        await issues?.fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issues?.groupedIssueIds ? "mutation" : "init-loader",
-          moduleId.toString()
-        );
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const userFilters = issuesFilter?.issueFilters?.filters;
-
-  const issueFilterCount = size(
-    Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
-    )
-  );
-
-  const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
-    const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = [];
-    });
-    issuesFilter.updateFilters(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      EIssueFilterType.FILTERS,
-      {
-        ...newFilters,
-      },
-      moduleId.toString()
-    );
-  };
-
   if (!workspaceSlug || !projectId || !moduleId) return <></>;
 
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
 
-  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return <>{activeLayout && <ActiveLoader layout={activeLayout} />}</>;
-  }
-
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
-
-      {issues?.groupedIssueIds?.length === 0 ? (
-        <div className="relative h-full w-full overflow-y-auto">
-          <ModuleEmptyState
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            moduleId={moduleId.toString()}
-            activeLayout={activeLayout}
-            handleClearAllFilters={handleClearAllFilters}
-            isEmptyFilters={issueFilterCount > 0}
-          />
-        </div>
-      ) : (
-        <Fragment>
-          <div className="h-full w-full overflow-auto">
-            {activeLayout === "list" ? (
-              <ModuleListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ModuleKanBanLayout />
-            ) : activeLayout === "calendar" ? (
-              <ModuleCalendarLayout />
-            ) : activeLayout === "gantt_chart" ? (
-              <ModuleGanttLayout />
-            ) : activeLayout === "spreadsheet" ? (
-              <ModuleSpreadsheetLayout />
-            ) : null}
-          </div>
-          {/* peek overview */}
-          <IssuePeekOverview />
-        </Fragment>
-      )}
+      <div className="h-full w-full overflow-auto">
+        <ModuleIssueLayout activeLayout={activeLayout} />
+      </div>
+      {/* peek overview */}
+      <IssuePeekOverview />
     </div>
   );
 });

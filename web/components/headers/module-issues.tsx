@@ -10,7 +10,12 @@ import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ModuleMobileHeader } from "components/modules/module-mobile-header";
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  EIssuesStoreType,
+  EIssueFilterType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  EIssueLayoutTypes,
+} from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
 import { truncateText } from "helpers/string.helper";
@@ -32,7 +37,7 @@ import useLocalStorage from "hooks/use-local-storage";
 // icons
 // helpers
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { ProjectLogo } from "components/project";
 // constants
 
@@ -96,7 +101,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!projectId) return;
       updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
@@ -235,7 +240,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           <div className="flex items-center gap-2">
             <div className="hidden md:flex gap-2">
               <LayoutSelection
-                layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+                layouts={[
+                  EIssueLayoutTypes.LIST,
+                  EIssueLayoutTypes.KANBAN,
+                  EIssueLayoutTypes.CALENDAR,
+                  EIssueLayoutTypes.SPREADSHEET,
+                  EIssueLayoutTypes.GANTT,
+                ]}
                 onChange={(layout) => handleLayoutChange(layout)}
                 selectedLayout={activeLayout}
               />

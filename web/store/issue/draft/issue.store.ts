@@ -27,6 +27,8 @@ export interface IDraftIssues extends IBaseIssuesStore {
   fetchNextIssues: (workspaceSlug: string, projectId: string) => Promise<TIssuesResponse | undefined>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+
+  quickAddIssue: undefined;
 }
 
 export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
@@ -43,9 +45,8 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
     makeObservable(this, {
       // action
       fetchIssues: action,
-      createIssue: action,
-      updateIssue: action,
-      removeIssue: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
     });
     // filter store
     this.issueFilterStore = issueFilterStore;
@@ -62,7 +63,7 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
         this.loader = loadType;
       });
       this.clear();
-      const params = this.issueFilterStore?.getFilterParams(options);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined);
       const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params);
 
       this.onfetchIssues(response, options);
@@ -74,11 +75,11 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
   };
 
   fetchNextIssues = async (workspaceSlug: string, projectId: string) => {
-    if (!this.paginationOptions) return;
+    if (!this.paginationOptions || !this.next_page_results) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions);
+      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       this.onfetchNexIssues(response);
@@ -100,4 +101,6 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
 
   createIssue = this.createDraftIssue;
   updateIssue = this.updateDraftIssue;
+
+  quickAddIssue = undefined;
 }

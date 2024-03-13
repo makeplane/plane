@@ -43,6 +43,7 @@ export interface IGroupByKanBan {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: any;
+  loadMoreIssues: (() => void) | undefined;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -75,6 +76,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     handleKanbanFilters,
     enableQuickIssueCreate,
     quickAddCallback,
+    loadMoreIssues,
     viewId,
     disableIssueCreation,
     storeType,
@@ -105,7 +107,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   if (!list) return null;
 
-  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)?.[_list.id]?.length > 0);
+  const groupWithIssues = list.filter((_list) => (issueIds as TGroupedIssues)?.[_list.id]?.issueCount > 0);
 
   const groupList = showEmptyGroup ? list : groupWithIssues;
 
@@ -141,7 +143,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     column_id={_list.id}
                     icon={_list.icon}
                     title={_list.name}
-                    count={(issueIds as TGroupedIssues)?.[_list.id]?.length || 0}
+                    count={(issueIds as TGroupedIssues)?.[_list.id]?.issueCount || 0}
                     issuePayload={_list.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     storeType={storeType}
@@ -173,6 +175,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   groupByVisibilityToggle={groupByVisibilityToggle}
                   scrollableContainerRef={scrollableContainerRef}
                   isDragStarted={isDragStarted}
+                  loadMoreIssues={loadMoreIssues}
                 />
               )}
             </div>
@@ -184,7 +187,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
 export interface IKanBan {
   issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
@@ -193,6 +196,7 @@ export interface IKanBan {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  loadMoreIssues: (() => void) | undefined;
   showEmptyGroup: boolean;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
@@ -222,6 +226,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
+    loadMoreIssues,
     enableQuickIssueCreate,
     quickAddCallback,
     viewId,
@@ -249,6 +254,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       quickActions={quickActions}
       kanbanFilters={kanbanFilters}
       handleKanbanFilters={handleKanbanFilters}
+      loadMoreIssues={loadMoreIssues}
       enableQuickIssueCreate={enableQuickIssueCreate}
       quickAddCallback={quickAddCallback}
       viewId={viewId}

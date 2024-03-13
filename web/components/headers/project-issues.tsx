@@ -9,7 +9,12 @@ import { BreadcrumbLink } from "components/common";
 import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+} from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import {
   useApplication,
@@ -24,7 +29,7 @@ import { useIssues } from "hooks/store/use-issues";
 // components
 // ui
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { ProjectLogo } from "components/project";
 // constants
 // helper
@@ -75,7 +80,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   );
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
@@ -177,7 +182,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </div>
           <div className="items-center gap-2 hidden md:flex">
             <LayoutSelection
-              layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
+              layouts={[
+                EIssueLayoutTypes.LIST,
+                EIssueLayoutTypes.KANBAN,
+                EIssueLayoutTypes.CALENDAR,
+                EIssueLayoutTypes.SPREADSHEET,
+                EIssueLayoutTypes.GANTT,
+              ]}
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />

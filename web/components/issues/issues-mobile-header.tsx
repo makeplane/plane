@@ -6,11 +6,17 @@ import { CustomMenu } from "@plane/ui";
 // icons
 // constants
 import { ProjectAnalyticsModal } from "components/analytics";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  ISSUE_LAYOUTS,
+} from "constants/issue";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
 // layouts
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "./issue-layouts";
 
 export const IssuesMobileHeader = () => {
@@ -38,7 +44,7 @@ export const IssuesMobileHeader = () => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },

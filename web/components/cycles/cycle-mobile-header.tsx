@@ -8,9 +8,15 @@ import { CustomMenu } from "@plane/ui";
 // constants
 import { ProjectAnalyticsModal } from "components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  ISSUE_LAYOUTS,
+} from "constants/issue";
 import { useIssues, useCycle, useProjectState, useLabel, useMember } from "hooks/store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 
 export const CycleMobileHeader = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -30,7 +36,7 @@ export const CycleMobileHeader = () => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
+    (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
       updateFilters(
         workspaceSlug.toString(),

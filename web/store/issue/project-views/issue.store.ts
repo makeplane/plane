@@ -44,6 +44,8 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
     makeObservable(this, {
       // action
       fetchIssues: action,
+      fetchNextIssues: action,
+      fetchIssuesWithExistingPagination: action,
     });
     //filter store
     this.issueFilterStore = issueFilterStore;
@@ -60,7 +62,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
         this.loader = loadType;
       });
       this.clear();
-      const params = this.issueFilterStore?.getFilterParams(options);
+      const params = this.issueFilterStore?.getFilterParams(options, undefined);
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       this.onfetchIssues(response, options);
@@ -72,11 +74,11 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
   };
 
   fetchNextIssues = async (workspaceSlug: string, projectId: string) => {
-    if (!this.paginationOptions) return;
+    if (!this.paginationOptions || !this.next_page_results) return;
     try {
       this.loader = "pagination";
 
-      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions);
+      const params = this.issueFilterStore?.getFilterParams(this.paginationOptions, this.nextCursor);
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       this.onfetchNexIssues(response);
@@ -91,4 +93,6 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
     if (!this.paginationOptions) return;
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions);
   };
+
+  quickAddIssue = this.issueQuickAdd;
 }

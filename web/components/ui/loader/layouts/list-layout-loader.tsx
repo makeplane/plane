@@ -1,7 +1,8 @@
+import { forwardRef } from "react";
 import { getRandomInt, getRandomLength } from "../utils";
 
-const ListItemRow = () => (
-  <div className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
+export const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
+  <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
     <div className="flex items-center gap-3">
       <span className="h-5 w-10 bg-custom-background-80 rounded" />
       <span className={`h-5 w-${getRandomLength(["32", "52", "72"])} bg-custom-background-80 rounded`} />
@@ -18,7 +19,7 @@ const ListItemRow = () => (
       ))}
     </div>
   </div>
-);
+));
 
 const ListSection = ({ itemCount }: { itemCount: number }) => (
   <div className="flex flex-shrink-0 flex-col">
@@ -30,7 +31,7 @@ const ListSection = ({ itemCount }: { itemCount: number }) => (
     </div>
     <div className="relative h-full w-full">
       {[...Array(itemCount)].map((_, index) => (
-        <ListItemRow key={index} />
+        <ListLoaderItemRow key={index} />
       ))}
     </div>
   </div>

@@ -22,7 +22,7 @@ import { KanbanStoreType } from "./base-kanban-root";
 // constants
 
 interface ISubGroupSwimlaneHeader {
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues;
   sub_group_by: string | null;
   group_by: string | null;
   list: IGroupByColumn[];
@@ -34,7 +34,7 @@ interface ISubGroupSwimlaneHeader {
 const getSubGroupHeaderIssuesCount = (issueIds: TSubGroupedIssues, groupById: string) => {
   let headerCount = 0;
   Object.keys(issueIds).map((groupState) => {
-    headerCount = headerCount + (issueIds?.[groupState]?.[groupById]?.length || 0);
+    headerCount = headerCount + (issueIds?.[groupState]?.[groupById]?.issueCount || 0);
   });
   return headerCount;
 };
@@ -93,6 +93,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   ) => Promise<TIssue | undefined>;
   viewId?: string;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  loadMoreIssues: (() => void) | undefined;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
@@ -107,6 +108,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     displayProperties,
     kanbanFilters,
     handleKanbanFilters,
+    loadMoreIssues,
     showEmptyGroup,
     enableQuickIssueCreate,
     canEditProperties,
@@ -122,7 +124,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     const subGroupedIds = issueIds as TSubGroupedIssues;
     subGroupedIds?.[column_id] &&
       Object.keys(subGroupedIds?.[column_id])?.forEach((_list: any) => {
-        issueCount += subGroupedIds?.[column_id]?.[_list]?.length || 0;
+        issueCount += subGroupedIds?.[column_id]?.[_list]?.issueCount || 0;
       });
     return issueCount;
   };
@@ -131,56 +133,60 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     <div className="relative h-max min-h-full w-full">
       {list &&
         list.length > 0 &&
-        list.map((_list: any) => (
-          <div key={_list.id} className="flex flex-shrink-0 flex-col">
-            <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
-              <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
-                <HeaderSubGroupByCard
-                  column_id={_list.id}
-                  icon={_list.Icon}
-                  title={_list.name || ""}
-                  count={calculateIssueCount(_list.id)}
-                  kanbanFilters={kanbanFilters}
-                  handleKanbanFilters={handleKanbanFilters}
-                />
+        list.map((_list: any, index: number) => {
+          const isLastSubGroup = index === list.length - 1;
+          return (
+            <div key={_list.id} className="flex flex-shrink-0 flex-col">
+              <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
+                <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
+                  <HeaderSubGroupByCard
+                    column_id={_list.id}
+                    icon={_list.Icon}
+                    title={_list.name || ""}
+                    count={calculateIssueCount(_list.id)}
+                    kanbanFilters={kanbanFilters}
+                    handleKanbanFilters={handleKanbanFilters}
+                  />
+                </div>
+                <div className="w-full border-b border-dashed border-custom-border-400" />
               </div>
-              <div className="w-full border-b border-dashed border-custom-border-400" />
-            </div>
 
-            {!kanbanFilters?.sub_group_by.includes(_list.id) && (
-              <div className="relative">
-                <KanBan
-                  issuesMap={issuesMap}
-                  issueIds={(issueIds as TSubGroupedIssues)?.[_list.id]}
-                  displayProperties={displayProperties}
-                  sub_group_by={sub_group_by}
-                  group_by={group_by}
-                  sub_group_id={_list.id}
-                  updateIssue={updateIssue}
-                  quickActions={quickActions}
-                  kanbanFilters={kanbanFilters}
-                  handleKanbanFilters={handleKanbanFilters}
-                  showEmptyGroup={showEmptyGroup}
-                  enableQuickIssueCreate={enableQuickIssueCreate}
-                  canEditProperties={canEditProperties}
-                  addIssuesToView={addIssuesToView}
-                  quickAddCallback={quickAddCallback}
-                  viewId={viewId}
-                  scrollableContainerRef={scrollableContainerRef}
-                  isDragStarted={isDragStarted}
-                  storeType={storeType}
-                />
-              </div>
-            )}
-          </div>
-        ))}
+              {!kanbanFilters?.sub_group_by.includes(_list.id) && (
+                <div className="relative">
+                  <KanBan
+                    issuesMap={issuesMap}
+                    issueIds={(issueIds as TSubGroupedIssues)?.[_list.id]}
+                    displayProperties={displayProperties}
+                    sub_group_by={sub_group_by}
+                    group_by={group_by}
+                    sub_group_id={_list.id}
+                    updateIssue={updateIssue}
+                    quickActions={quickActions}
+                    kanbanFilters={kanbanFilters}
+                    handleKanbanFilters={handleKanbanFilters}
+                    showEmptyGroup={showEmptyGroup}
+                    enableQuickIssueCreate={enableQuickIssueCreate}
+                    canEditProperties={canEditProperties}
+                    addIssuesToView={addIssuesToView}
+                    quickAddCallback={quickAddCallback}
+                    viewId={viewId}
+                    scrollableContainerRef={scrollableContainerRef}
+                    isDragStarted={isDragStarted}
+                    storeType={storeType}
+                    loadMoreIssues={isLastSubGroup ? loadMoreIssues : undefined}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
     </div>
   );
 });
 
 export interface IKanBanSwimLanes {
   issuesMap: IIssueMap;
-  issueIds: TGroupedIssues | TSubGroupedIssues | TUnGroupedIssues;
+  issueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: string | null;
   group_by: string | null;
@@ -188,6 +194,7 @@ export interface IKanBanSwimLanes {
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   kanbanFilters: TIssueKanbanFilters;
   handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  loadMoreIssues: (() => void) | undefined;
   showEmptyGroup: boolean;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
@@ -217,6 +224,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     quickActions,
     kanbanFilters,
     handleKanbanFilters,
+    loadMoreIssues,
     showEmptyGroup,
     isDragStarted,
     disableIssueCreation,
@@ -282,6 +290,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           quickActions={quickActions}
           kanbanFilters={kanbanFilters}
           handleKanbanFilters={handleKanbanFilters}
+          loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}

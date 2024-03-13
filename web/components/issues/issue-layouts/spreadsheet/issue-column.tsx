@@ -14,7 +14,9 @@ type Props = {
   issueDetail: TIssue;
   disableUserActions: boolean;
   property: keyof IIssueDisplayProperties;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   isEstimateEnabled: boolean;
 };
 

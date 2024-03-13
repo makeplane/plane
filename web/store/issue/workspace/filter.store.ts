@@ -237,7 +237,6 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
             this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
 
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))

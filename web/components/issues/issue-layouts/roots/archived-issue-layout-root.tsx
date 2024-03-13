@@ -4,13 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 // components
-import {
-  ArchivedIssueListLayout,
-  ArchivedIssueAppliedFiltersRoot,
-  ProjectArchivedEmptyState,
-  IssuePeekOverview,
-} from "components/issues";
-import { ListLayoutLoader } from "components/ui";
+import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "components/issues";
 import { EIssuesStoreType } from "constants/issue";
 // ui
 import { useIssues } from "hooks/store";
@@ -27,37 +21,19 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
-        await issues?.fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issues?.groupedIssueIds ? "mutation" : "init-loader"
-        );
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (issues?.loader === "init-loader" || !issues?.groupedIssueIds) {
-    return <ListLayoutLoader />;
-  }
-
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ArchivedIssueAppliedFiltersRoot />
-
-      {issues?.groupedIssueIds?.length === 0 ? (
-        <div className="relative h-full w-full overflow-y-auto">
-          <ProjectArchivedEmptyState />
-        </div>
-      ) : (
-        <Fragment>
-          <div className="relative h-full w-full overflow-auto">
-            <ArchivedIssueListLayout />
-          </div>
-          <IssuePeekOverview is_archived />
-        </Fragment>
-      )}
+      <div className="relative h-full w-full overflow-auto">
+        <ArchivedIssueListLayout />
+      </div>
+      <IssuePeekOverview is_archived />
     </div>
   );
 });

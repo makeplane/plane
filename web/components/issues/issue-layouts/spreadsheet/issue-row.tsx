@@ -29,7 +29,9 @@ interface Props {
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -115,7 +117,9 @@ interface IssueRowDetailsProps {
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
-  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
+    | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -163,7 +167,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
   const handleToggleExpand = () => {
     setExpanded((prevState) => {
-      if (!prevState && workspaceSlug && issueDetail)
+      if (!prevState && workspaceSlug && issueDetail && issueDetail.project_id)
         subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
       return !prevState;
     });
@@ -182,7 +186,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   );
   if (!issueDetail) return null;
 
-  const disableUserActions = !canEditProperties(issueDetail.project_id);
+  const disableUserActions = !canEditProperties(issueDetail.project_id ?? undefined);
 
   return (
     <>
