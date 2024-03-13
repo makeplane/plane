@@ -76,9 +76,7 @@ Use `plane-app` [OPERATOR] to manage your Plane instance easily. Get a list of a
 3. Version operators
 
    1. `plane-app --upgrade` gets the latest stable version of `docker-compose.yaml`, `.env`, and Docker images
-
    2. `plane-app --update-installer` updates the installer and the `plane-app` utility.
-
    3. `plane-app --uninstall` uninstalls the Plane application and all Docker containers from the server but leaves the data stored in
       Postgres, Redis, and Minio alone.
    4. `plane-app --install` installs the Plane app again.
