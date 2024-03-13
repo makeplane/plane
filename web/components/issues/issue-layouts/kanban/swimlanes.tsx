@@ -64,39 +64,37 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   kanbanFilters,
   handleKanbanFilters,
   showEmptyGroup,
-}) => {
-  return (
-    <div className="relative flex gap-2 h-max min-h-full w-full items-center">
-      {list &&
-        list.length > 0 &&
-        list.map((_list: IGroupByColumn) => {
-          const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(
-            issueIds as TSubGroupedIssues,
-            _list,
-            showEmptyGroup
-          );
+}) => (
+  <div className="relative flex gap-2 h-max min-h-full w-full items-center">
+    {list &&
+      list.length > 0 &&
+      list.map((_list: IGroupByColumn) => {
+        const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(
+          issueIds as TSubGroupedIssues,
+          _list,
+          showEmptyGroup
+        );
 
-          if (subGroupByVisibilityToggle === false) return <></>;
+        if (subGroupByVisibilityToggle === false) return <></>;
 
-          return (
-            <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-              <HeaderGroupByCard
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                column_id={_list.id}
-                icon={_list.icon}
-                title={_list.name}
-                count={getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, _list?.id)}
-                kanbanFilters={kanbanFilters}
-                handleKanbanFilters={handleKanbanFilters}
-                issuePayload={_list.payload}
-              />
-            </div>
-          );
-        })}
-    </div>
-  );
-};
+        return (
+          <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={_list.id}
+              icon={_list.icon}
+              title={_list.name}
+              count={getSubGroupHeaderIssuesCount(issueIds as TSubGroupedIssues, _list?.id)}
+              kanbanFilters={kanbanFilters}
+              handleKanbanFilters={handleKanbanFilters}
+              issuePayload={_list.payload}
+            />
+          </div>
+        );
+      })}
+  </div>
+);
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issuesMap: IIssueMap;
@@ -155,7 +153,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   };
 
   const visibilitySubGroupBy = (_list: IGroupByColumn): { showGroup: boolean; showIssues: boolean } => {
-    let subGroupVisibility = {
+    const subGroupVisibility = {
       showGroup: true,
       showIssues: true,
     };

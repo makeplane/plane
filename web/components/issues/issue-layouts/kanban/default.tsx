@@ -101,7 +101,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   const visibilityGroupBy = (_list: IGroupByColumn): { showGroup: boolean; showIssues: boolean } => {
     if (sub_group_by) {
-      let groupVisibility = {
+      const groupVisibility = {
         showGroup: true,
         showIssues: true,
       };
@@ -110,7 +110,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
       }
       return groupVisibility;
     } else {
-      let groupVisibility = {
+      const groupVisibility = {
         showGroup: true,
         showIssues: true,
       };
