@@ -10,6 +10,8 @@ import { ProjectService } from "services/project";
 // ui
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+import { EmptyState } from "components/empty-state";
+import { EmptyStateType } from "constants/empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -193,13 +195,14 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
 
                     {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayersIcon height="52" width="52" />
-                        <h3 className="text-custom-text-200">
-                          No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
-                        </h3>
-                      </div>
+                      // <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                      //   <LayersIcon height="52" width="52" />
+                      //   <h3 className="text-custom-text-200">
+                      //     No issues found. Create a new issue with{" "}
+                      //     <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
+                      //   </h3>
+                      // </div>
+                      <EmptyState type={EmptyStateType.NO_ISSUES_FOUND} layout="widget-simple" />
                     )}
 
                     {isSearching ? (
