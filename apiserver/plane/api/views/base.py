@@ -1,6 +1,5 @@
 # Python imports
 import zoneinfo
-import json
 from urllib.parse import urlparse
 
 
@@ -115,13 +114,13 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if isinstance(e, ObjectDoesNotExist):
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
                 return Response(
-                    {"error": f" The required key does not exist."},
+                    {"error": " The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 

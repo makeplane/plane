@@ -159,7 +159,7 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
         )
         # Retry logic
         if self.request.retries >= self.max_retries:
-            Webhook.objects.filter(pk=webhook.id).update(is_active=False)   
+            Webhook.objects.filter(pk=webhook.id).update(is_active=False)
             if webhook:
                 # send email for the deactivation of the webhook
                 send_webhook_deactivation_email(
@@ -215,9 +215,11 @@ def send_webhook(event, payload, kw, action, slug, bulk, current_site):
                     event_data = [
                         get_model_data(
                             event=event,
-                            event_id=payload.get("id")
-                            if isinstance(payload, dict)
-                            else None,
+                            event_id=(
+                                payload.get("id")
+                                if isinstance(payload, dict)
+                                else None
+                            ),
                             many=False,
                         )
                     ]
@@ -244,7 +246,9 @@ def send_webhook(event, payload, kw, action, slug, bulk, current_site):
 
 
 @shared_task
-def send_webhook_deactivation_email(webhook_id, receiver_id, current_site, reason):
+def send_webhook_deactivation_email(
+    webhook_id, receiver_id, current_site, reason
+):
     # Get email configurations
     (
         EMAIL_HOST,
@@ -256,15 +260,17 @@ def send_webhook_deactivation_email(webhook_id, receiver_id, current_site, reaso
     ) = get_email_configuration()
 
     receiver = User.objects.get(pk=receiver_id)
-    webhook = Webhook.objects.get(pk=webhook_id) 
-    subject="Webhook Deactivated"
-    message=f"Webhook {webhook.url} has been deactivated due to failed requests."
+    webhook = Webhook.objects.get(pk=webhook_id)
+    subject = "Webhook Deactivated"
+    message = (
+        f"Webhook {webhook.url} has been deactivated due to failed requests."
+    )
 
     # Send the mail
     context = {
         "email": receiver.email,
         "message": message,
-        "webhook_url":f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
+        "webhook_url": f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
     }
     html_content = render_to_string(
         "emails/notifications/webhook-deactivate.html", context

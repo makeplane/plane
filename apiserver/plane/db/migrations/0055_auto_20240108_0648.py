@@ -62,7 +62,7 @@ def create_dashboards(apps, schema_editor):
                 type_identifier="home",
                 is_default=True,
             )
-            for user_id in User.objects.values_list('id', flat=True)
+            for user_id in User.objects.values_list("id", flat=True)
         ],
         batch_size=2000,
     )
@@ -78,11 +78,13 @@ def create_dashboard_widgets(apps, schema_editor):
             widget_id=widget_id,
             dashboard_id=dashboard_id,
         )
-        for widget_id in Widget.objects.values_list('id', flat=True)
-        for dashboard_id in Dashboard.objects.values_list('id', flat=True)
+        for widget_id in Widget.objects.values_list("id", flat=True)
+        for dashboard_id in Dashboard.objects.values_list("id", flat=True)
     ]
 
-    DashboardWidget.objects.bulk_create(updated_dashboard_widget, batch_size=2000)
+    DashboardWidget.objects.bulk_create(
+        updated_dashboard_widget, batch_size=2000
+    )
 
 
 class Migration(migrations.Migration):

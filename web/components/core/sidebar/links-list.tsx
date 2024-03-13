@@ -1,16 +1,15 @@
-// ui
-import { ExternalLinkIcon, Tooltip } from "@plane/ui";
+import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
+// ui
+import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { calculateTimeAgo } from "helpers/date-time.helper";
+// hooks
+import { useMember } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // types
 import { ILinkDetails, UserAuth } from "@plane/types";
-// hooks
-import useToast from "hooks/use-toast";
-import { observer } from "mobx-react";
-import { useMeasure } from "@nivo/core";
-import { useMember } from "hooks/store";
 
 type Props = {
   links: ILinkDetails[];
@@ -20,18 +19,16 @@ type Props = {
 };
 
 export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth }) => {
-  // toast
-  const { setToastAlert } = useToast();
   const { getUserDetails } = useMember();
-
+  const { isMobile } = usePlatformOS();
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    setToastAlert({
-      message: "The URL has been successfully copied to your clipboard",
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Copied to clipboard",
+      message: "The URL has been successfully copied to your clipboard",
     });
   };
 
@@ -46,7 +43,7 @@ export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, h
                 <span className="py-1">
                   <LinkIcon className="h-3 w-3 flex-shrink-0" />
                 </span>
-                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
                   <span
                     className="cursor-pointer truncate text-xs"
                     onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}

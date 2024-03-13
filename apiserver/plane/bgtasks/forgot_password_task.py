@@ -1,7 +1,4 @@
 # Python import
-import os
-import requests
-import json
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -20,9 +17,7 @@ from plane.license.utils.instance_value import get_email_configuration
 @shared_task
 def forgot_password(first_name, email, uidb64, token, current_site):
     try:
-        relative_link = (
-            f"/accounts/reset-password/?uidb64={uidb64}&token={token}&email={email}"
-        )
+        relative_link = f"/accounts/reset-password/?uidb64={uidb64}&token={token}&email={email}"
         abs_url = str(current_site) + relative_link
 
         (

@@ -2,8 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
-// components
 import {
   FilterAssignees,
   FilterMentions,
@@ -18,10 +16,12 @@ import {
   FilterCycle,
   FilterModule,
 } from "components/issues";
+import { ILayoutDisplayFiltersOptions } from "constants/issue";
+import { useApplication } from "hooks/store";
+// components
 // types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // constants
-import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -63,7 +63,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5">
+      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">

@@ -1,20 +1,21 @@
 import React, { Fragment } from "react";
+import { observer } from "mobx-react-lite";
 import { Popover, Transition } from "@headlessui/react";
 import { Bell } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
-import useUserNotification from "hooks/use-user-notifications";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
+import { Tooltip } from "@plane/ui";
 import { EmptyState } from "components/common";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
-import { Tooltip } from "@plane/ui";
 import { NotificationsLoader } from "components/ui";
+import { getNumberCount } from "helpers/string.helper";
+import { useApplication } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useUserNotification from "hooks/use-user-notifications";
+import { usePlatformOS } from "hooks/use-platform-os";
+// components
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
-import { getNumberCount } from "helpers/string.helper";
 
 export const NotificationPopover = observer(() => {
   // states
@@ -23,6 +24,8 @@ export const NotificationPopover = observer(() => {
   const { theme: themeStore } = useApplication();
   // refs
   const notificationPopoverRef = React.useRef<HTMLDivElement | null>(null);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   const {
     notifications,
@@ -67,7 +70,7 @@ export const NotificationPopover = observer(() => {
       />
       <Popover ref={notificationPopoverRef} className="md:relative w-full">
         <>
-          <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed}>
+          <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed} isMobile={isMobile}>
             <button
               className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                 isActive

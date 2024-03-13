@@ -5,9 +5,9 @@ import { Controller, FieldError, Control } from "react-hook-form";
 // ui
 import { CustomSelect, DoubleCircleIcon, ModuleStatusIcon } from "@plane/ui";
 // types
+import { MODULE_STATUS } from "constants/module";
 import type { IModule } from "@plane/types";
 // constants
-import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   control: Control<IModule, any>;

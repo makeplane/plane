@@ -1,3 +1,5 @@
+import { TProjectLogoProps } from "@plane/types";
+
 export interface IWorkspace {
   id: string;
   name: string;
@@ -9,10 +11,8 @@ export interface IProject {
   identifier: string;
   name: string;
   description: string;
-  icon: string;
   cover_image: string | null;
-  icon_prop: string | null;
-  emoji: string | null;
+  logo_props: TProjectLogoProps;
 }
 
 export interface IProjectSettings {

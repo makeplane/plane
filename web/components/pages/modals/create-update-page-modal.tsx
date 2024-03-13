@@ -2,15 +2,14 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // components
-import { PageForm } from "./page-form";
-// hooks
+import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
 import { useEventTracker } from "hooks/store";
+// hooks
 // types
 // import { IPage } from "@plane/types";
 // import { usePage } from "hooks/store/";
 // import { IPageStore } from "store/pages/page.store";
 // constants
-import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   // data?: IPage | null;

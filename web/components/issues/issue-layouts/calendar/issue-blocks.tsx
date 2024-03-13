@@ -1,16 +1,17 @@
 import { useState, useRef } from "react";
-import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
 import { MoreHorizontal } from "lucide-react";
 // components
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
 import { cn } from "helpers/common.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
+// helpers
 // types
 import { TIssue, TIssueMap } from "@plane/types";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 type Props = {
   issues: TIssueMap | undefined;
@@ -29,6 +30,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { getProjectIdentifierById } = useProject();
   const { getProjectStates } = useProjectState();
   const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
 
@@ -110,7 +112,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                         <div className="flex-shrink-0 text-xs text-custom-text-300">
                           {getProjectIdentifierById(issue?.project_id)}-{issue.sequence_id}
                         </div>
-                        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                           <div className="truncate text-xs">{issue.name}</div>
                         </Tooltip>
                       </div>

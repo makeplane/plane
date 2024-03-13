@@ -6,8 +6,6 @@ from plane.db.models import (
     Project,
     ProjectIdentifier,
     WorkspaceMember,
-    State,
-    Estimate,
 )
 from .base import BaseSerializer
 

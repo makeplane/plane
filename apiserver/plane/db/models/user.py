@@ -138,13 +138,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
 
 
-
 @receiver(post_save, sender=User)
 def create_user_notification(sender, instance, created, **kwargs):
     # create preferences
     if created and not instance.is_bot:
         # Module imports
         from plane.db.models import UserNotificationPreference
+
         UserNotificationPreference.objects.create(
             user=instance,
             property_change=False,

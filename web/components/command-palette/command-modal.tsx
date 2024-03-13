@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Command } from "cmdk";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Command } from "cmdk";
 import { Dialog, Transition } from "@headlessui/react";
-import { observer } from "mobx-react-lite";
 import { FolderPlus, Search, Settings } from "lucide-react";
 // hooks
-import { useApplication, useEventTracker, useProject } from "hooks/store";
-// services
-import { WorkspaceService } from "services/workspace.service";
-import { IssueService } from "services/issue";
-// hooks
-import useDebounce from "hooks/use-debounce";
-// components
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import {
   CommandPaletteThemeActions,
   ChangeIssueAssignee,
@@ -24,11 +18,16 @@ import {
   CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
 } from "components/command-palette";
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { useApplication, useEventTracker, useProject } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
+// services
+import useDebounce from "hooks/use-debounce";
+import { IssueService } from "services/issue";
+import { WorkspaceService } from "services/workspace.service";
 // types
 import { IWorkspaceSearchResults } from "@plane/types";
 // fetch-keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 // services
 const workspaceService = new WorkspaceService();
@@ -37,6 +36,7 @@ const issueService = new IssueService();
 export const CommandModal: React.FC = observer(() => {
   // hooks
   const { getProjectById } = useProject();
+  const { isMobile } = usePlatformOS();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -197,7 +197,7 @@ export const CommandModal: React.FC = observer(() => {
                         </div>
                       )}
                       {projectId && (
-                        <Tooltip tooltipContent="Toggle workspace level search">
+                        <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                           <div className="flex flex-shrink-0 cursor-pointer items-center gap-1 self-end text-xs sm:self-center">
                             <button
                               type="button"

@@ -1,14 +1,10 @@
 import { useCallback, useMemo } from "react";
+import xor from "lodash/xor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
-import xor from "lodash/xor";
 // hooks
-import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
-// components
-import { IssuePropertyLabels } from "../properties/labels";
 import { Tooltip } from "@plane/ui";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import {
   DateDropdown,
   EstimateDropdown,
@@ -18,19 +14,24 @@ import {
   CycleDropdown,
   StateDropdown,
 } from "components/dropdowns";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { cn } from "helpers/common.helper";
-// types
-import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
-// constants
 import { ISSUE_UPDATED } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
+import { cn } from "helpers/common.helper";
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
+// components
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
+import { IssuePropertyLabels } from "../properties/labels";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// helpers
+// types
+// constants
 
 export interface IIssueProperties {
   issue: TIssue;
-  handleIssues: (issue: TIssue) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
@@ -38,7 +39,7 @@ export interface IIssueProperties {
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, handleIssues, displayProperties, activeLayout, isReadOnly, className } = props;
+  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
   // store hooks
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
@@ -50,9 +51,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   } = useIssues(EIssuesStoreType.CYCLE);
   const { areEstimatesEnabledForCurrentProject } = useEstimate();
   const { getStateById } = useProjectState();
+  const { isMobile } = usePlatformOS();
   // router
   const router = useRouter();
-  const { workspaceSlug, cycleId, moduleId } = router.query;
+  const { workspaceSlug } = router.query;
   const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
@@ -80,59 +82,63 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleState = (stateId: string) => {
-    handleIssues({ ...issue, state_id: stateId }).then(() => {
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
-        updates: {
-          changed_property: "state",
-          change_details: stateId,
-        },
+    updateIssue &&
+      updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
+        captureIssueEvent({
+          eventName: ISSUE_UPDATED,
+          payload: { ...issue, state: "SUCCESS", element: currentLayout },
+          path: router.asPath,
+          updates: {
+            changed_property: "state",
+            change_details: stateId,
+          },
+        });
       });
-    });
   };
 
   const handlePriority = (value: TIssuePriorities) => {
-    handleIssues({ ...issue, priority: value }).then(() => {
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
-        updates: {
-          changed_property: "priority",
-          change_details: value,
-        },
+    updateIssue &&
+      updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
+        captureIssueEvent({
+          eventName: ISSUE_UPDATED,
+          payload: { ...issue, state: "SUCCESS", element: currentLayout },
+          path: router.asPath,
+          updates: {
+            changed_property: "priority",
+            change_details: value,
+          },
+        });
       });
-    });
   };
 
   const handleLabel = (ids: string[]) => {
-    handleIssues({ ...issue, label_ids: ids }).then(() => {
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
-        updates: {
-          changed_property: "labels",
-          change_details: ids,
-        },
+    updateIssue &&
+      updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
+        captureIssueEvent({
+          eventName: ISSUE_UPDATED,
+          payload: { ...issue, state: "SUCCESS", element: currentLayout },
+          path: router.asPath,
+          updates: {
+            changed_property: "labels",
+            change_details: ids,
+          },
+        });
       });
-    });
   };
 
   const handleAssignee = (ids: string[]) => {
-    handleIssues({ ...issue, assignee_ids: ids }).then(() => {
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
-        updates: {
-          changed_property: "assignees",
-          change_details: ids,
-        },
+    updateIssue &&
+      updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
+        captureIssueEvent({
+          eventName: ISSUE_UPDATED,
+          payload: { ...issue, state: "SUCCESS", element: currentLayout },
+          path: router.asPath,
+          updates: {
+            changed_property: "assignees",
+            change_details: ids,
+          },
+        });
       });
-    });
   };
 
   const handleModule = useCallback(
@@ -175,45 +181,52 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleStartDate = (date: Date | null) => {
-    handleIssues({ ...issue, start_date: date ? renderFormattedPayloadDate(date) : null }).then(() => {
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
-        updates: {
-          changed_property: "start_date",
-          change_details: date ? renderFormattedPayloadDate(date) : null,
-        },
-      });
-    });
+    updateIssue &&
+      updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
+        () => {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { ...issue, state: "SUCCESS", element: currentLayout },
+            path: router.asPath,
+            updates: {
+              changed_property: "start_date",
+              change_details: date ? renderFormattedPayloadDate(date) : null,
+            },
+          });
+        }
+      );
   };
 
   const handleTargetDate = (date: Date | null) => {
-    handleIssues({ ...issue, target_date: date ? renderFormattedPayloadDate(date) : null }).then(() => {
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
-        updates: {
-          changed_property: "target_date",
-          change_details: date ? renderFormattedPayloadDate(date) : null,
-        },
-      });
-    });
+    updateIssue &&
+      updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
+        () => {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { ...issue, state: "SUCCESS", element: currentLayout },
+            path: router.asPath,
+            updates: {
+              changed_property: "target_date",
+              change_details: date ? renderFormattedPayloadDate(date) : null,
+            },
+          });
+        }
+      );
   };
 
   const handleEstimate = (value: number | null) => {
-    handleIssues({ ...issue, estimate_point: value }).then(() => {
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: router.asPath,
-        updates: {
-          changed_property: "estimate_point",
-          change_details: value,
-        },
+    updateIssue &&
+      updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
+        captureIssueEvent({
+          eventName: ISSUE_UPDATED,
+          payload: { ...issue, state: "SUCCESS", element: currentLayout },
+          path: router.asPath,
+          updates: {
+            changed_property: "estimate_point",
+            change_details: value,
+          },
+        });
       });
-    });
   };
 
   const redirectToIssueDetail = () => {
@@ -240,7 +253,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5">
+        <div className="h-5 truncate">
           <StateDropdown
             value={issue.state_id}
             onChange={handleState}
@@ -328,38 +341,34 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* modules */}
-      {moduleId === undefined && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5">
-            <ModuleDropdown
-              projectId={issue?.project_id}
-              value={issue?.module_ids ?? []}
-              onChange={handleModule}
-              disabled={isReadOnly}
-              multiple
-              buttonVariant="border-with-text"
-              showCount={true}
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+        <div className="h-5">
+          <ModuleDropdown
+            projectId={issue?.project_id}
+            value={issue?.module_ids ?? []}
+            onChange={handleModule}
+            disabled={isReadOnly}
+            multiple
+            buttonVariant="border-with-text"
+            showCount
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
 
       {/* cycles */}
-      {cycleId === undefined && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5 truncate">
-            <CycleDropdown
-              projectId={issue?.project_id}
-              value={issue?.cycle_id}
-              onChange={handleCycle}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+        <div className="h-5 truncate">
+          <CycleDropdown
+            projectId={issue?.project_id}
+            value={issue?.cycle_id}
+            onChange={handleCycle}
+            disabled={isReadOnly}
+            buttonVariant="border-with-text"
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
 
       {/* estimates */}
       {areEstimatesEnabledForCurrentProject && (
@@ -384,7 +393,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         displayPropertyKey="sub_issue_count"
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
       >
-        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
+        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`} isMobile={isMobile}>
           <div
             onClick={issue.sub_issues_count ? redirectToIssueDetail : () => {}}
             className={cn(
@@ -406,7 +415,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         displayPropertyKey="attachment_count"
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
-        <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
+        <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`} isMobile={isMobile}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.attachment_count}</div>
@@ -420,7 +429,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         displayPropertyKey="link"
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
-        <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
+        <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`} isMobile={isMobile}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.link_count}</div>

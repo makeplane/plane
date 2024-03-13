@@ -1,7 +1,8 @@
 export * from "./use-application";
-export * from "./use-event-tracker";
 export * from "./use-calendar-view";
+export * from "./use-cycle-filter";
 export * from "./use-cycle";
+export * from "./use-event-tracker";
 export * from "./use-dashboard";
 export * from "./use-estimate";
 export * from "./use-global-view";
@@ -13,6 +14,8 @@ export * from "./use-module";
 export * from "./pages/use-page";
 export * from "./pages/use-page-detail";
 
+export * from "./use-module-filter";
+export * from "./use-project-filter";
 export * from "./use-project-publish";
 export * from "./use-project-state";
 export * from "./use-project-view";

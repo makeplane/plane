@@ -1,14 +1,14 @@
 import { Fragment } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { DayPicker } from "react-day-picker";
+import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
 // components
-import { DateFilterSelect } from "./date-filter-select";
 // ui
 import { Button } from "@plane/ui";
 // helpers
 import { renderFormattedPayloadDate, renderFormattedDate } from "helpers/date-time.helper";
+import { DateFilterSelect } from "./date-filter-select";
 
 type Props = {
   title: string;
@@ -37,13 +37,17 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
   const handleFormSubmit = (formData: TFormValues) => {
     const { filterType, date1, date2 } = formData;
 
-    if (filterType === "range") onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
+    if (filterType === "range")
+      onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
     else onSelect([`${renderFormattedPayloadDate(date1)};${filterType}`]);
 
     handleClose();
   };
 
-  const isInvalid = watch("filterType") === "range" ? new Date(watch("date1")) > new Date(watch("date2")) : false;
+  const date1 = watch("date1");
+  const date2 = watch("date2");
+
+  const isInvalid = watch("filterType") === "range" ? new Date(date1) > new Date(date2) : false;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -90,11 +94,12 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         <DayPicker
                           selected={value ? new Date(value) : undefined}
                           defaultMonth={value ? new Date(value) : undefined}
-                          onSelect={(date) => onChange(date)}
+                          onSelect={(date) => {
+                            if (!date) return;
+                            onChange(date);
+                          }}
                           mode="single"
-                          disabled={[
-                            { after: new Date(watch("date2")) }
-                          ]}
+                          disabled={[{ after: new Date(watch("date2")) }]}
                           className="border border-custom-border-200 p-3 rounded-md"
                         />
                       )}
@@ -107,11 +112,12 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           <DayPicker
                             selected={value ? new Date(value) : undefined}
                             defaultMonth={value ? new Date(value) : undefined}
-                            onSelect={(date) => onChange(date)}
+                            onSelect={(date) => {
+                              if (!date) return;
+                              onChange(date);
+                            }}
                             mode="single"
-                            disabled={[
-                              { before: new Date(watch("date1")) }
-                            ]}
+                            disabled={[{ before: new Date(watch("date1")) }]}
                             className="border border-custom-border-200 p-3 rounded-md"
                           />
                         )}

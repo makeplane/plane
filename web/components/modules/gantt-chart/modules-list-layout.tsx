@@ -1,20 +1,22 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // mobx store
-import { useModule, useProject } from "hooks/store";
 // components
 import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
 import { ModuleGanttBlock } from "components/modules";
+import { useModule, useProject } from "hooks/store";
 // types
 import { IModule } from "@plane/types";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // store
   const { currentProjectDetails } = useProject();
-  const { projectModuleIds, moduleMap, updateModuleDetails } = useModule();
+  const { getFilteredModuleIds, moduleMap, updateModuleDetails } = useModule();
+  // derived values
+  const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
 
   const handleModuleUpdate = async (module: IModule, data: IBlockUpdateData) => {
     if (!workspaceSlug || !module) return;
@@ -44,7 +46,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
       <GanttChartRoot
         title="Modules"
         loaderTitle="Modules"
-        blocks={projectModuleIds ? blockFormat(projectModuleIds) : null}
+        blocks={filteredModuleIds ? blockFormat(filteredModuleIds) : null}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
         blockToRender={(data: IModule) => <ModuleGanttBlock moduleId={data.id} />}

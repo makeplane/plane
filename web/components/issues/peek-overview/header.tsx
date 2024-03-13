@@ -1,20 +1,28 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
-import { ArchiveIcon, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-// hooks
-import useToast from "hooks/use-toast";
-// store hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
-// helpers
-import { cn } from "helpers/common.helper";
+import {
+  ArchiveIcon,
+  CenterPanelIcon,
+  CustomSelect,
+  FullScreenPanelIcon,
+  SidePanelIcon,
+  Tooltip,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
 // components
 import { IssueSubscription, IssueUpdateStatus } from "components/issues";
 import { STATE_GROUPS } from "constants/state";
+// helpers
+import { cn } from "helpers/common.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+// store hooks
+import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+// hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -74,8 +82,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  // hooks
-  const { setToastAlert } = useToast();
+  const { isMobile } = usePlatformOS();
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
@@ -87,8 +94,8 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(issueLink).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });
@@ -153,13 +160,14 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <Tooltip tooltipContent="Copy link">
+          <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
             </button>
           </Tooltip>
           {isArchivingAllowed && (
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
             >
               <button
@@ -178,14 +186,14 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             </Tooltip>
           )}
           {isRestoringAllowed && (
-            <Tooltip tooltipContent="Restore">
+            <Tooltip tooltipContent="Restore" isMobile={isMobile}>
               <button type="button" onClick={handleRestoreIssue}>
                 <RotateCcw className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
             </Tooltip>
           )}
           {!disabled && (
-            <Tooltip tooltipContent="Delete">
+            <Tooltip tooltipContent="Delete" isMobile={isMobile}>
               <button type="button" onClick={() => toggleDeleteIssueModal(true)}>
                 <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
