@@ -85,6 +85,19 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       .finally(() => setIsSearching(false));
   }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
 
+  const renderEmptyState = (type: EmptyStateType) => (
+    <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+      <EmptyState type={type} layout="screen-simple" />
+    </div>
+  );
+
+  const emptyState =
+    issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching
+      ? renderEmptyState(EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE)
+      : issues.length === 0
+      ? renderEmptyState(EmptyStateType.ISSUE_RELATION_EMPTY_STATE)
+      : null;
+
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
@@ -196,17 +209,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </h5>
                     )}
 
-                    {issues.length === 0 ? (
-                      searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching ? (
-                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <EmptyState type={EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE} layout="screen-simple" />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <EmptyState type={EmptyStateType.ISSUE_RELATION_EMPTY_STATE} layout="screen-simple" />
-                        </div>
-                      )
-                    ) : null}
+                    {emptyState}
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">
