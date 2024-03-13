@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 // mobx
 import { observer } from "mobx-react-lite";
 // ui
-import { Settings } from "lucide-react";
-import { Breadcrumbs } from "@plane/ui";
+// import { Settings } from "lucide-react";
+// import { Breadcrumbs } from "@plane/ui";
 // icons
 // import { BreadcrumbLink } from "components/common";
 

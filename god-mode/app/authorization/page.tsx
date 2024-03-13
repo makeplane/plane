@@ -9,20 +9,13 @@ import useInstance from "hooks/use-instance";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 // components
-import {
-  InstanceGithubConfigForm,
-  InstanceGoogleConfigForm,
-} from "components/forms";
+import { InstanceGithubConfigForm } from "components/forms";
 
 const InstanceAuthorizationPage = observer(() => {
   // store
-  const {
-    fetchInstanceConfigurations,
-    formattedConfig,
-    updateInstanceConfigurations,
-  } = useInstance();
+  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
 
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
@@ -69,12 +62,10 @@ const InstanceAuthorizationPage = observer(() => {
   return (
     <div className="flex flex-col gap-8">
       <div className="mb-2 border-b border-custom-border-100 pb-3">
-        <div className="pb-1 text-xl font-medium text-custom-text-100">
-          Single sign-on and OAuth
-        </div>
+        <div className="pb-1 text-xl font-medium text-custom-text-100">Single sign-on and OAuth</div>
         <div className="text-sm font-normal text-custom-text-300">
-          Make your teams life easy by letting them sign-up with their Google
-          and GitHub accounts, and below are the settings.
+          Make your teams life easy by letting them sign-up with their Google and GitHub accounts, and below are the
+          settings.
         </div>
       </div>
       {formattedConfig && (
@@ -83,16 +74,13 @@ const InstanceAuthorizationPage = observer(() => {
             <div className="pointer-events-none mr-4 flex items-center gap-14 opacity-50">
               <div className="grow">
                 <div className="text-sm font-medium text-custom-text-100">
-                  Turn Magic Links{" "}
-                  {Boolean(parseInt(enableMagicLogin)) ? "off" : "on"}
+                  Turn Magic Links {Boolean(parseInt(enableMagicLogin)) ? "off" : "on"}
                 </div>
                 <div className="text-xs font-normal text-custom-text-300">
                   <p>Slack-like emails for authentication.</p>
                   You need to have set up email{" "}
                   <Link href="email">
-                    <span className="text-custom-primary-100 hover:underline">
-                      here
-                    </span>
+                    <span className="text-custom-primary-100 hover:underline">here</span>
                   </Link>{" "}
                   to enable this.
                 </div>
@@ -112,8 +100,8 @@ const InstanceAuthorizationPage = observer(() => {
                   Let your users log in via the methods below
                 </div>
                 <div className="text-xs font-normal text-custom-text-300">
-                  Toggling this off will disable all previous configs. Users
-                  will only be able to login with an e-mail and password combo.
+                  Toggling this off will disable all previous configs. Users will only be able to login with an e-mail
+                  and password combo.
                 </div>
               </div>
               <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
@@ -134,15 +122,11 @@ const InstanceAuthorizationPage = observer(() => {
           <div className="flex flex-col gap-y-6 py-2">
             <div className="w-full">
               <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
-                <span className="text-lg font-medium tracking-tight">
-                  Google
-                </span>
+                <span className="text-lg font-medium tracking-tight">Google</span>
               </div>
               <div className="w-full">
                 <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
-                  <span className="text-lg font-medium tracking-tight">
-                    Github
-                  </span>
+                  <span className="text-lg font-medium tracking-tight">Github</span>
                 </div>
                 <div className="px-2 py-6">
                   <InstanceGithubConfigForm config={formattedConfig} />
@@ -151,9 +135,7 @@ const InstanceAuthorizationPage = observer(() => {
             </div>
             <div className="w-full">
               <div className="flex items-center justify-between border-b border-custom-border-100 py-2">
-                <span className="text-lg font-medium tracking-tight">
-                  Github
-                </span>
+                <span className="text-lg font-medium tracking-tight">Github</span>
               </div>
               <div className="px-2 py-6">
                 <InstanceGithubConfigForm config={formattedConfig} />

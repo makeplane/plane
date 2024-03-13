@@ -11,10 +11,10 @@ let instanceStore = new InstanceStore();
 export const InstanceContext = createContext<InstanceStore>(instanceStore);
 
 const initializeStore = () => {
-  const _instanceStore = instanceStore ?? new InstanceStore();
-  if (typeof window === "undefined") return _instanceStore;
-  if (!instanceStore) instanceStore = _instanceStore;
-  return _instanceStore;
+  const store = instanceStore ?? new InstanceStore();
+  if (typeof window === "undefined") return store;
+  if (!instanceStore) instanceStore = store;
+  return store;
 };
 
 export function InstanceProvider({ children, ...props }: ThemeProviderProps) {

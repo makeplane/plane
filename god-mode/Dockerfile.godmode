@@ -5,7 +5,7 @@ WORKDIR /app
 RUN yarn global add turbo
 COPY . .
 
-RUN turbo prune --scope=godmode --docker
+RUN turbo prune --scope=god-mode --docker
 
 FROM node:18-alpine AS installer
 
@@ -35,13 +35,13 @@ RUN addgroup --system --gid 1001 plane
 RUN adduser --system --uid 1001 captain
 USER captain
 
-COPY --from=installer /app/godmode/next.config.js .
-COPY --from=installer /app/godmode/package.json .
+COPY --from=installer /app/god-mode/next.config.js .
+COPY --from=installer /app/god-mode/package.json .
 
-COPY --from=installer --chown=captain:plane /app/godmode/.next/standalone ./
+COPY --from=installer --chown=captain:plane /app/god-mode/.next/standalone ./
 
-COPY --from=installer --chown=captain:plane /app/godmode/.next ./godmode/.next
-COPY --from=installer --chown=captain:plane /app/godmode/public ./godmode/public
+COPY --from=installer --chown=captain:plane /app/god-mode/.next ./god-mode/.next
+COPY --from=installer --chown=captain:plane /app/god-mode/public ./god-mode/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 
@@ -54,5 +54,6 @@ RUN chmod +x /usr/local/bin/start.sh
 USER captain
 
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED 1
 
 EXPOSE 3000

@@ -13,10 +13,10 @@ let themeStore = new ThemeStore();
 export const ThemeContext = createContext<ThemeStore>(themeStore);
 
 const initializeStore = () => {
-  const _themeStore = themeStore ?? new ThemeStore();
-  if (typeof window === "undefined") return _themeStore;
-  if (!themeStore) themeStore = _themeStore;
-  return _themeStore;
+  const store = themeStore ?? new ThemeStore();
+  if (typeof window === "undefined") return store;
+  if (!themeStore) themeStore = store;
+  return store;
 };
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {

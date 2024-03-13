@@ -11,10 +11,10 @@ let userStore = new UserStore();
 export const UserContext = createContext<UserStore>(userStore);
 
 const initializeStore = () => {
-  const _userStore = userStore ?? new UserStore();
-  if (typeof window === "undefined") return _userStore;
-  if (!userStore) userStore = _userStore;
-  return _userStore;
+  const store = userStore ?? new UserStore();
+  if (typeof window === "undefined") return store;
+  if (!userStore) userStore = store;
+  return store;
 };
 
 export function UserProvider({ children, ...props }: ThemeProviderProps) {
