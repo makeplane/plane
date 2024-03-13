@@ -54,6 +54,7 @@ Use `plane-app` [OPERATOR] to manage your Plane instance easily. Get a list of a
    3. `plane-app stop` stops the Plane server.
 
 2. Advanced operators
+
    `plane-app --configure` will show advanced configurators.
 
    - Change your proxy or listening port
