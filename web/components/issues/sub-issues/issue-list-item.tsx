@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader }
 // components
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 import { useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 import { TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
@@ -46,7 +47,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
-
+  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const currentIssueStateDetail =
@@ -117,7 +118,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
             >
-              <Tooltip tooltipContent={issue.name}>
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                 <span>{issue.name}</span>
               </Tooltip>
             </ControlLink>

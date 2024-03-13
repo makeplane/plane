@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { ArrowLeft } from "lucide-react";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // constants
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
@@ -31,10 +32,10 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-
   // for archived issues list layout is the only option
   const activeLayout = "list";
-
+  // hooks
+  const { isMobile } = usePlatformOS();
   const handleFiltersUpdate = (key: keyof IIssueFilterOptions, value: string | string[]) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -119,6 +120,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
           </Breadcrumbs>
           {issueCount && issueCount > 0 ? (
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's archived`}
               position="bottom"
             >

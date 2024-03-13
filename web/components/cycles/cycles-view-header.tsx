@@ -5,6 +5,7 @@ import { ListFilter, Search, X } from "lucide-react";
 // hooks
 import { useCycleFilter } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { CycleFiltersSelection } from "components/cycles";
 import { FiltersDropdown } from "components/issues";
@@ -36,6 +37,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
     updateFilters,
     updateSearchQuery,
   } = useCycleFilter();
+  const { isMobile } = usePlatformOS();
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
@@ -62,7 +64,10 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else setIsSearchOpen(false);
+      else {
+        setIsSearchOpen(false);
+        inputRef.current?.blur();
+      }
     }
   };
 
@@ -107,7 +112,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
             <Search className="h-3.5 w-3.5" />
             <input
               ref={inputRef}
-              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 focus:outline-none"
+              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => updateSearchQuery(e.target.value)}
@@ -131,7 +136,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
           </FiltersDropdown>
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {CYCLE_VIEW_LAYOUTS.map((layout) => (
-              <Tooltip key={layout.key} tooltipContent={layout.title}>
+              <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
                 <button
                   type="button"
                   className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${

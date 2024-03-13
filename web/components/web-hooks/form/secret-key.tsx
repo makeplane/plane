@@ -14,6 +14,8 @@ import { useWebhook, useWorkspace } from "hooks/store";
 import { IWebhook } from "@plane/types";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
+// hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   data: Partial<IWebhook>;
@@ -30,7 +32,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
-
+  const { isMobile } = usePlatformOS();
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
 
@@ -108,7 +110,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
               {webhookSecretKey && (
                 <div className="flex items-center gap-2">
                   {SECRET_KEY_OPTIONS.map((option) => (
-                    <Tooltip key={option.key} tooltipContent={option.label}>
+                    <Tooltip key={option.key} tooltipContent={option.label} isMobile={isMobile}>
                       <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
                         <option.Icon className="h-3 w-3 text-custom-text-400" />
                       </button>

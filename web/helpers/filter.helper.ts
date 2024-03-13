@@ -1,15 +1,22 @@
-import { differenceInCalendarDays } from "date-fns";
-// types
-import { IIssueFilterOptions } from "@plane/types";
+import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 
-export const calculateTotalFilters = (filters: IIssueFilterOptions): number =>
+type TFilters = {
+  [key: string]: string[] | null;
+};
+
+/**
+ * @description calculates the total number of filters applied
+ * @param {TFilters} filters
+ * @returns {number}
+ */
+export const calculateTotalFilters = (filters: TFilters): number =>
   filters && Object.keys(filters).length > 0
     ? Object.keys(filters)
         .map((key) =>
-          filters[key as keyof IIssueFilterOptions] !== null
-            ? isNaN((filters[key as keyof IIssueFilterOptions] as string[]).length)
+          filters[key as keyof TFilters] !== null
+            ? isNaN((filters[key as keyof TFilters] as string[]).length)
               ? 0
-              : (filters[key as keyof IIssueFilterOptions] as string[]).length
+              : (filters[key as keyof TFilters] as string[]).length
             : 0
         )
         .reduce((curr, prev) => curr + prev, 0)
@@ -30,6 +37,12 @@ export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
   }
 
   if (from === "fromnow") {
+    if (operator === "before") {
+      if (value === "1_weeks") return differenceInCalendarDays(date, new Date()) <= -7;
+      if (value === "2_weeks") return differenceInCalendarDays(date, new Date()) <= -14;
+      if (value === "1_months") return differenceInCalendarDays(date, new Date()) <= -30;
+    }
+
     if (operator === "after") {
       if (value === "1_weeks") return differenceInCalendarDays(date, new Date()) >= 7;
       if (value === "2_weeks") return differenceInCalendarDays(date, new Date()) >= 14;

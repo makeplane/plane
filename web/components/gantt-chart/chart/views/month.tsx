@@ -19,7 +19,7 @@ export const MonthChartView: FC<any> = observer(() => {
       {monthBlocks?.map((block, rootIndex) => (
         <div key={`month-${block?.month}-${block?.year}`} className="relative flex flex-col">
           <div
-            className="w-full sticky top-0 z-[5] bg-custom-background-100"
+            className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0"
             style={{
               height: `${HEADER_HEIGHT}px`,
             }}
@@ -55,7 +55,7 @@ export const MonthChartView: FC<any> = observer(() => {
               ))}
             </div>
           </div>
-          <div className="h-full w-full flex divide-x divide-custom-border-100/50">
+          <div className="h-full w-full flex-grow flex divide-x divide-custom-border-100/50">
             {block?.children?.map((monthDay, index) => (
               <div
                 key={`column-${rootIndex}-${index}`}

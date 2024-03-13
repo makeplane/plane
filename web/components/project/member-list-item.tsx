@@ -14,6 +14,7 @@ import { EUserProjectRoles } from "constants/project";
 import { ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   userId: string;
@@ -36,7 +37,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     project: { removeMemberFromProject, getProjectMemberDetails, updateMember },
   } = useMember();
   const { captureEvent } = useEventTracker();
-
+  const { isMobile } = usePlatformOS();
   // derived values
   const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
   const userDetails = getProjectMemberDetails(userId);
@@ -171,7 +172,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             })}
           </CustomSelect>
           {(isAdmin || userDetails.member?.id === currentUser?.id) && (
-            <Tooltip tooltipContent={userDetails.member?.id === currentUser?.id ? "Leave project" : "Remove member"}>
+            <Tooltip tooltipContent={userDetails.member?.id === currentUser?.id ? "Leave project" : "Remove member"} isMobile={isMobile}>
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}

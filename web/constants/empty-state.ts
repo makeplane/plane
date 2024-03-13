@@ -2,7 +2,7 @@ import { EUserProjectRoles } from "./project";
 import { EUserWorkspaceRoles } from "./workspace";
 
 export interface EmptyStateDetails {
-  key: string;
+  key: EmptyStateType;
   title?: string;
   description?: string;
   path?: string;
@@ -25,8 +25,6 @@ export interface EmptyStateDetails {
   accessType?: "workspace" | "project";
   access?: EUserWorkspaceRoles | EUserProjectRoles;
 }
-
-export type EmptyStateKeys = keyof typeof emptyStateDetails;
 
 export enum EmptyStateType {
   WORKSPACE_DASHBOARD = "workspace-dashboard",
@@ -52,6 +50,7 @@ export enum EmptyStateType {
   PROJECT_CYCLE_NO_ISSUES = "project-cycle-no-issues",
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
   PROJECT_CYCLE_ALL = "project-cycle-all",
+  PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
   PROJECT_DRAFT_EMPTY_FILTER = "project-draft-empty-filter",
@@ -67,7 +66,7 @@ export enum EmptyStateType {
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
   PROJECT_PAGE_ALL = "project-page-all",
-  PROJECT_PAGE_FAVORITE = "project-page-favorites",
+  PROJECT_PAGE_FAVORITES = "project-page-favorites",
   PROJECT_PAGE_PRIVATE = "project-page-private",
   PROJECT_PAGE_SHARED = "project-page-shared",
   PROJECT_PAGE_ARCHIVED = "project-page-archived",
@@ -76,8 +75,8 @@ export enum EmptyStateType {
 
 const emptyStateDetails = {
   // workspace
-  "workspace-dashboard": {
-    key: "workspace-dashboard",
+  [EmptyStateType.WORKSPACE_DASHBOARD]: {
+    key: EmptyStateType.WORKSPACE_DASHBOARD,
     title: "Overview of your projects, activity, and metrics",
     description:
       " Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
@@ -94,8 +93,8 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: EUserWorkspaceRoles.MEMBER,
   },
-  "workspace-analytics": {
-    key: "workspace-analytics",
+  [EmptyStateType.WORKSPACE_ANALYTICS]: {
+    key: EmptyStateType.WORKSPACE_ANALYTICS,
     title: "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
     description:
       "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
@@ -111,8 +110,8 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: EUserWorkspaceRoles.MEMBER,
   },
-  "workspace-projects": {
-    key: "workspace-projects",
+  [EmptyStateType.WORKSPACE_PROJECTS]: {
+    key: EmptyStateType.WORKSPACE_PROJECTS,
     title: "Start a Project",
     description:
       "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal.",
@@ -128,8 +127,8 @@ const emptyStateDetails = {
     access: EUserWorkspaceRoles.MEMBER,
   },
   // all-issues
-  "workspace-all-issues": {
-    key: "workspace-all-issues",
+  [EmptyStateType.WORKSPACE_ALL_ISSUES]: {
+    key: EmptyStateType.WORKSPACE_ALL_ISSUES,
     title: "No issues in the project",
     description: "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
     path: "/empty-state/all-issues/all-issues",
@@ -139,8 +138,8 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: EUserWorkspaceRoles.MEMBER,
   },
-  "workspace-assigned": {
-    key: "workspace-assigned",
+  [EmptyStateType.WORKSPACE_ASSIGNED]: {
+    key: EmptyStateType.WORKSPACE_ASSIGNED,
     title: "No issues yet",
     description: "Issues assigned to you can be tracked from here.",
     path: "/empty-state/all-issues/assigned",
@@ -150,8 +149,8 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: EUserWorkspaceRoles.MEMBER,
   },
-  "workspace-created": {
-    key: "workspace-created",
+  [EmptyStateType.WORKSPACE_CREATED]: {
+    key: EmptyStateType.WORKSPACE_CREATED,
     title: "No issues yet",
     description: "All issues created by you come here, track them here directly.",
     path: "/empty-state/all-issues/created",
@@ -161,20 +160,20 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: EUserWorkspaceRoles.MEMBER,
   },
-  "workspace-subscribed": {
-    key: "workspace-subscribed",
+  [EmptyStateType.WORKSPACE_SUBSCRIBED]: {
+    key: EmptyStateType.WORKSPACE_SUBSCRIBED,
     title: "No issues yet",
     description: "Subscribe to issues you are interested in, track all of them here.",
     path: "/empty-state/all-issues/subscribed",
   },
-  "workspace-custom-view": {
-    key: "workspace-custom-view",
+  [EmptyStateType.WORKSPACE_CUSTOM_VIEW]: {
+    key: EmptyStateType.WORKSPACE_CUSTOM_VIEW,
     title: "No issues yet",
     description: "Issues that applies to the filters, track all of them here.",
     path: "/empty-state/all-issues/custom-view",
   },
-  "workspace-no-projects": {
-    key: "workspace-no-projects",
+  [EmptyStateType.WORKSPACE_NO_PROJECTS]: {
+    key: EmptyStateType.WORKSPACE_NO_PROJECTS,
     title: "No project",
     description: "To create issues or manage your work, you need to create a project or be a part of one.",
     path: "/empty-state/onboarding/projects",
@@ -189,72 +188,72 @@ const emptyStateDetails = {
     access: EUserWorkspaceRoles.MEMBER,
   },
   // workspace settings
-  "workspace-settings-api-tokens": {
-    key: "workspace-settings-api-tokens",
+  [EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS]: {
+    key: EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS,
     title: "No API tokens created",
     description:
       "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
     path: "/empty-state/workspace-settings/api-tokens",
   },
-  "workspace-settings-webhooks": {
-    key: "workspace-settings-webhooks",
+  [EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS]: {
+    key: EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS,
     title: "No webhooks added",
     description: "Create webhooks to receive real-time updates and automate actions.",
     path: "/empty-state/workspace-settings/webhooks",
   },
-  "workspace-settings-export": {
-    key: "workspace-settings-export",
+  [EmptyStateType.WORKSPACE_SETTINGS_EXPORT]: {
+    key: EmptyStateType.WORKSPACE_SETTINGS_EXPORT,
     title: "No previous exports yet",
     description: "Anytime you export, you will also have a copy here for reference.",
     path: "/empty-state/workspace-settings/exports",
   },
-  "workspace-settings-import": {
-    key: "workspace-settings-import",
+  [EmptyStateType.WORKSPACE_SETTINGS_IMPORT]: {
+    key: EmptyStateType.WORKSPACE_SETTINGS_IMPORT,
     title: "No previous imports yet",
     description: "Find all your previous imports here and download them.",
     path: "/empty-state/workspace-settings/imports",
   },
   // profile
-  "profile-assigned": {
-    key: "profile-assigned",
+  [EmptyStateType.PROFILE_ASSIGNED]: {
+    key: EmptyStateType.PROFILE_ASSIGNED,
     title: "No issues are assigned to you",
     description: "Issues assigned to you can be tracked from here.",
     path: "/empty-state/profile/assigned",
   },
-  "profile-created": {
-    key: "profile-created",
+  [EmptyStateType.PROFILE_CREATED]: {
+    key: EmptyStateType.PROFILE_CREATED,
     title: "No issues yet",
     description: "All issues created by you come here, track them here directly.",
     path: "/empty-state/profile/created",
   },
-  "profile-subscribed": {
-    key: "profile-subscribed",
+  [EmptyStateType.PROFILE_SUBSCRIBED]: {
+    key: EmptyStateType.PROFILE_SUBSCRIBED,
     title: "No issues yet",
     description: "Subscribe to issues you are interested in, track all of them here.",
     path: "/empty-state/profile/subscribed",
   },
   // project settings
-  "project-settings-labels": {
-    key: "project-settings-labels",
+  [EmptyStateType.PROJECT_SETTINGS_LABELS]: {
+    key: EmptyStateType.PROJECT_SETTINGS_LABELS,
     title: "No labels yet",
     description: "Create labels to help organize and filter issues in you project.",
     path: "/empty-state/project-settings/labels",
   },
-  "project-settings-integrations": {
-    key: "project-settings-integrations",
+  [EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS]: {
+    key: EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS,
     title: "No integrations configured",
     description: "Configure GitHub and other integrations to sync your project issues.",
     path: "/empty-state/project-settings/integrations",
   },
-  "project-settings-estimate": {
-    key: "project-settings-estimate",
+  [EmptyStateType.PROJECT_SETTINGS_ESTIMATE]: {
+    key: EmptyStateType.PROJECT_SETTINGS_ESTIMATE,
     title: "No estimates added",
     description: "Create a set of estimates to communicate the amount of work per issue.",
     path: "/empty-state/project-settings/estimates",
   },
   // project cycles
-  "project-cycles": {
-    key: "project-cycles",
+  [EmptyStateType.PROJECT_CYCLES]: {
+    key: EmptyStateType.PROJECT_CYCLES,
     title: "Group and timebox your work in Cycles.",
     description:
       "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
@@ -270,8 +269,8 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: EUserWorkspaceRoles.MEMBER,
   },
-  "project-cycle-no-issues": {
-    key: "project-cycle-no-issues",
+  [EmptyStateType.PROJECT_CYCLE_NO_ISSUES]: {
+    key: EmptyStateType.PROJECT_CYCLE_NO_ISSUES,
     title: "No issues added to the cycle",
     description: "Add or create issues you wish to timebox and deliver within this cycle",
     path: "/empty-state/cycle-issues/",
@@ -284,23 +283,30 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  "project-cycle-active": {
-    key: "project-cycle-active",
+  [EmptyStateType.PROJECT_CYCLE_ACTIVE]: {
+    key: EmptyStateType.PROJECT_CYCLE_ACTIVE,
     title: "No active cycle",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
   },
-  "project-cycle-all": {
-    key: "project-cycle-all",
+  [EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES]: {
+    key: EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES,
+    title: "No issues in the cycle",
+    description:
+      "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
+    path: "/empty-state/cycle/completed-no-issues",
+  },
+  [EmptyStateType.PROJECT_CYCLE_ALL]: {
+    key: EmptyStateType.PROJECT_CYCLE_ALL,
     title: "No cycles",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
   },
   // empty filters
-  "project-empty-filter": {
-    key: "project-empty-filter",
+  [EmptyStateType.PROJECT_EMPTY_FILTER]: {
+    key: EmptyStateType.PROJECT_EMPTY_FILTER,
     title: "No issues found matching the filters applied",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
@@ -309,8 +315,8 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  "project-archived-empty-filter": {
-    key: "project-archived-empty-filter",
+  [EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER,
     title: "No issues found matching the filters applied",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
@@ -319,8 +325,8 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  "project-draft-empty-filter": {
-    key: "project-draft-empty-filter",
+  [EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER]: {
+    key: EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER,
     title: "No issues found matching the filters applied",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
@@ -330,8 +336,8 @@ const emptyStateDetails = {
     access: EUserProjectRoles.MEMBER,
   },
   //  project issues
-  "project-no-issues": {
-    key: "project-no-issues",
+  [EmptyStateType.PROJECT_NO_ISSUES]: {
+    key: EmptyStateType.PROJECT_NO_ISSUES,
     title: "Create an issue and assign it to someone, even yourself",
     description:
       "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
@@ -347,8 +353,8 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  "project-archived-no-issues": {
-    key: "project-archived-no-issues",
+  [EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES,
     title: "No archived issues yet",
     description:
       "Archived issues help you remove issues you completed or cancelled from focus. You can set automation to auto archive issues and find them here.",
@@ -359,39 +365,39 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  "project-draft-no-issues": {
-    key: "project-draft-no-issues",
+  [EmptyStateType.PROJECT_DRAFT_NO_ISSUES]: {
+    key: EmptyStateType.PROJECT_DRAFT_NO_ISSUES,
     title: "No draft issues yet",
     description:
       "Quickly stepping away but want to keep your place? No worries – save a draft now. Your issues will be right here waiting for you.",
     path: "/empty-state/draft/draft-issues-empty",
   },
-  "views-empty-search": {
-    key: "views-empty-search",
+  [EmptyStateType.VIEWS_EMPTY_SEARCH]: {
+    key: EmptyStateType.VIEWS_EMPTY_SEARCH,
     title: "No matching views",
     description: "No views match the search criteria. Create a new view instead.",
     path: "/empty-state/search/search",
   },
-  "projects-empty-search": {
-    key: "projects-empty-search",
+  [EmptyStateType.PROJECTS_EMPTY_SEARCH]: {
+    key: EmptyStateType.PROJECTS_EMPTY_SEARCH,
     title: "No matching projects",
     description: "No projects detected with the matching criteria. Create a new project instead.",
     path: "/empty-state/search/project",
   },
-  "commandK-empty-search": {
-    key: "commandK-empty-search",
+  [EmptyStateType.COMMANDK_EMPTY_SEARCH]: {
+    key: EmptyStateType.COMMANDK_EMPTY_SEARCH,
     title: "No results found. ",
     path: "/empty-state/search/search",
   },
-  "members-empty-search": {
-    key: "members-empty-search",
+  [EmptyStateType.MEMBERS_EMPTY_SEARCH]: {
+    key: EmptyStateType.MEMBERS_EMPTY_SEARCH,
     title: "No matching members",
     description: "Add them to the project if they are already a part of the workspace",
     path: "/empty-state/search/member",
   },
   // project module
-  "project-module-issues": {
-    key: "project-modules-issues",
+  [EmptyStateType.PROJECT_MODULE_ISSUES]: {
+    key: EmptyStateType.PROJECT_MODULE_ISSUES,
     title: "No issues in the module",
     description: "Create or add issues which you want to accomplish as part of this module",
     path: "/empty-state/module-issues/",
@@ -404,8 +410,8 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  "project-module": {
-    key: "project-module",
+  [EmptyStateType.PROJECT_MODULE]: {
+    key: EmptyStateType.PROJECT_MODULE,
     title: "Map your project milestones to Modules and track aggregated work easily.",
     description:
       "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
@@ -421,8 +427,8 @@ const emptyStateDetails = {
     access: EUserProjectRoles.MEMBER,
   },
   // project views
-  "project-view": {
-    key: "project-view",
+  [EmptyStateType.PROJECT_VIEW]: {
+    key: EmptyStateType.PROJECT_VIEW,
     title: "Save filtered views for your project. Create as many as you need",
     description:
       "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
@@ -438,8 +444,8 @@ const emptyStateDetails = {
     access: EUserProjectRoles.MEMBER,
   },
   // project pages
-  "project-page": {
-    key: "pages",
+  [EmptyStateType.PROJECT_PAGE]: {
+    key: EmptyStateType.PROJECT_PAGE,
     title: "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started",
     description:
       "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
@@ -455,39 +461,39 @@ const emptyStateDetails = {
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
   },
-  "project-page-all": {
-    key: "project-page-all",
+  [EmptyStateType.PROJECT_PAGE_ALL]: {
+    key: EmptyStateType.PROJECT_PAGE_ALL,
     title: "Write a note, a doc, or a full knowledge base",
     description:
       "Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely!",
     path: "/empty-state/pages/all",
   },
-  "project-page-favorites": {
-    key: "project-page-favorites",
+  [EmptyStateType.PROJECT_PAGE_FAVORITES]: {
+    key: EmptyStateType.PROJECT_PAGE_FAVORITES,
     title: "No favorite pages yet",
     description: "Favorites for quick access? mark them and find them right here.",
     path: "/empty-state/pages/favorites",
   },
-  "project-page-private": {
-    key: "project-page-private",
+  [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
+    key: EmptyStateType.PROJECT_PAGE_PRIVATE,
     title: "No private pages yet",
     description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
     path: "/empty-state/pages/private",
   },
-  "project-page-shared": {
-    key: "project-page-shared",
+  [EmptyStateType.PROJECT_PAGE_SHARED]: {
+    key: EmptyStateType.PROJECT_PAGE_SHARED,
     title: "No shared pages yet",
     description: "See pages shared with everyone in your project right here.",
     path: "/empty-state/pages/shared",
   },
-  "project-page-archived": {
-    key: "project-page-archived",
+  [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
+    key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
     title: "No archived pages yet",
     description: "Archive pages not on your radar. Access them here when needed.",
     path: "/empty-state/pages/archived",
   },
-  "project-page-recent": {
-    key: "project-page-recent",
+  [EmptyStateType.PROJECT_PAGE_RECENT]: {
+    key: EmptyStateType.PROJECT_PAGE_RECENT,
     title: "Write a note, a doc, or a full knowledge base",
     description:
       "Pages help you organise your thoughts to create wikis, discussions or even document heated takes for your project. Use it wisely! Pages will be sorted and grouped by last updated",
@@ -500,4 +506,4 @@ const emptyStateDetails = {
   },
 } as const;
 
-export const EMPTY_STATE_DETAILS: Record<EmptyStateKeys, EmptyStateDetails> = emptyStateDetails;
+export const EMPTY_STATE_DETAILS: Record<EmptyStateType, EmptyStateDetails> = emptyStateDetails;

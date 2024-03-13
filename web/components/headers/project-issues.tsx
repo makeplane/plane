@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { BreadcrumbLink } from "components/common";
@@ -52,7 +53,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
-
+  const { isMobile } = usePlatformOS();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
@@ -153,6 +154,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Breadcrumbs>
               {issueCount && issueCount > 0 ? (
                 <Tooltip
+                  isMobile={isMobile}
                   tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in this project`}
                   position="bottom"
                 >
