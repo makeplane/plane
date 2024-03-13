@@ -59,7 +59,7 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
         <h3 className="text-lg font-medium">Recent activity</h3>
         {canDownloadActivity && <DownloadActivityButton />}
       </div>
-      <div className="h-full flex flex-col overflow-y-auto">
+      <div className="h-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-md">
         {activityPages}
         {pageCount < totalPages && resultsCount !== 0 && (
           <div className="flex items-center justify-center text-xs w-full">
