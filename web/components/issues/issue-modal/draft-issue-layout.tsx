@@ -48,14 +48,17 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
 
   const handleClose = () => {
-    if (changesMade && changesMade.name?.trim() !== "") setIssueDiscardModal(true);
+    if (changesMade) setIssueDiscardModal(true);
     else onClose(false);
   };
 
   const handleCreateDraftIssue = async () => {
     if (!changesMade || !workspaceSlug || !projectId) return;
 
-    const payload = { ...changesMade };
+    const payload = {
+      ...changesMade,
+      name: changesMade.name === "" ? "Untitled" : changesMade.name,
+    };
 
     await issueDraftService
       .createDraftIssue(workspaceSlug.toString(), projectId.toString(), payload)
