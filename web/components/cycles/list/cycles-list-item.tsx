@@ -178,7 +178,11 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                 <Info className="h-4 w-4 text-custom-text-400" />
               </button>
             </div>
-
+            <div className="text-xs text-custom-text-300 flex-shrink-0">
+              {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
+            </div>
+          </div>
+          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 overflow-hidden md:w-auto md:flex-shrink-0 md:justify-end">
             {currentCycle && (
               <div
                 className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
@@ -192,11 +196,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
                   : `${currentCycle.label}`}
               </div>
             )}
-          </div>
-          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 overflow-hidden md:w-auto md:flex-shrink-0 md:justify-end">
-            <div className="text-xs text-custom-text-300">
-              {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
-            </div>
 
             <div className="relative flex flex-shrink-0 items-center gap-3">
               <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
