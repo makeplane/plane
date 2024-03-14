@@ -1,4 +1,5 @@
 import { FC, useMemo } from "react";
+import { observer } from "mobx-react";
 // components
 import { ViewAppliedFiltersItem } from "./";
 // hooks
@@ -13,7 +14,7 @@ type TViewAppliedFiltersItemMap = {
   filterValue: string[];
 };
 
-export const ViewAppliedFiltersItemMap: FC<TViewAppliedFiltersItemMap> = (props) => {
+export const ViewAppliedFiltersItemMap: FC<TViewAppliedFiltersItemMap> = observer((props) => {
   const { workspaceSlug, projectId, filterKey, filterValue } = props;
   // hooks
   const viewFilterStore = useViewFilter(workspaceSlug, projectId);
@@ -23,7 +24,7 @@ export const ViewAppliedFiltersItemMap: FC<TViewAppliedFiltersItemMap> = (props)
     [viewFilterStore, filterKey]
   );
 
-  const propertyVisibleCount = 5;
+  const propertyVisibleCount = 3;
 
   if (!filterValue) return <></>;
 
@@ -54,4 +55,4 @@ export const ViewAppliedFiltersItemMap: FC<TViewAppliedFiltersItemMap> = (props)
       </div>
     </div>
   );
-};
+});
