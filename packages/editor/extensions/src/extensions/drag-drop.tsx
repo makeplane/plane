@@ -227,9 +227,9 @@ function DragHandle(options: DragHandleOptions) {
         wheel: () => {
           hideDragHandle();
         },
-        // dragging className is used for CSS
-        dragstart: (view) => {
+        dragenter: (view) => {
           view.dom.classList.add("dragging");
+          hideDragHandle();
         },
         drop: (view) => {
           view.dom.classList.remove("dragging");
