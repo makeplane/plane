@@ -254,6 +254,7 @@ export const ESTIMATE_DELETED = "Estimate deleted";
 export const ESTIMATE_USED = "Estimate used";
 export const ESTIMATE_DISABLED = "Estimate disabled";
 // Project Page Events
+export const PAGE_VIEWED = "Page viewed";
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";
 export const PAGE_DELETED = "Page deleted";
@@ -334,3 +335,5 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+// Elements
+export const E_PROJECT_PAGES = "Project pages page";

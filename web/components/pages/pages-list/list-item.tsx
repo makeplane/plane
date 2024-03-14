@@ -20,7 +20,15 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { PAGE_ARCHIVED, PAGE_FAVORITED, PAGE_RESTORED, PAGE_UNFAVORITED, PAGE_UPDATED } from "constants/event-tracker";
+import {
+  E_PROJECT_PAGES,
+  PAGE_ARCHIVED,
+  PAGE_FAVORITED,
+  PAGE_RESTORED,
+  PAGE_UNFAVORITED,
+  PAGE_UPDATED,
+  PAGE_VIEWED,
+} from "constants/event-tracker";
 import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
@@ -56,7 +64,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   const {
     project: { getProjectMemberDetails },
   } = useMember();
-  const { captureEvent } = useEventTracker();
+  const { captureEvent, capturePageEvent } = useEventTracker();
 
   if (!pageStore) return null;
 
@@ -88,7 +96,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     addToFavorites().then(() => {
       captureEvent(PAGE_FAVORITED, {
         page_id: pageId,
-        element: "Project pages page",
+        element: E_PROJECT_PAGES,
         state: "SUCCESS",
       });
     });
@@ -101,6 +109,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     removeFromFavorites().then(() => {
       captureEvent(PAGE_UNFAVORITED, {
         page_id: pageId,
+        element: E_PROJECT_PAGES,
         state: "SUCCESS",
       });
     });
@@ -114,7 +123,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_UPDATED, {
         page_id: pageId,
         access: "public",
-        element: "Project pages page",
+        element: E_PROJECT_PAGES,
         state: "SUCCESS",
       });
     });
@@ -128,7 +137,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_UPDATED, {
         page_id: pageId,
         access: "private",
-        element: "Project pages page",
+        element: E_PROJECT_PAGES,
         state: "SUCCESS",
       });
     });
@@ -142,7 +151,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_ARCHIVED, {
         page_id: pageId,
         access: access == 1 ? "private" : "public",
-        element: "Project pages page",
+        element: E_PROJECT_PAGES,
         state: "SUCCESS",
       });
     });
@@ -156,7 +165,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_RESTORED, {
         page_id: pageId,
         access: access == 1 ? "private" : "public",
-        element: "Project pages page",
+        element: E_PROJECT_PAGES,
         state: "SUCCESS",
       });
     });
@@ -197,7 +206,18 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       />
       <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
       <li>
-        <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}>
+        <Link
+          href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
+          onClick={() =>
+            capturePageEvent({
+              eventName: PAGE_VIEWED,
+              payload: {
+                ...pageStore,
+                element: E_PROJECT_PAGES,
+              },
+            })
+          }
+        >
           <div className="relative rounded p-3 md:p-4 text-custom-text-200 hover:bg-custom-background-80">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 overflow-hidden">
