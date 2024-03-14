@@ -7,6 +7,8 @@ import useToast from "hooks/use-toast";
 import { usePopper } from "react-popper";
 // ui
 import { Button, Input } from "@plane/ui";
+// icons
+import { AlertCircle } from "lucide-react";
 // components
 import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 import { Popover, Transition } from "@headlessui/react";
@@ -250,8 +252,17 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               />
             )}
           />
-          <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
-            {responseActionButton}
+          <div className="flex gap-2 justify-between">
+            {responseActionButton ? (
+              <>{responseActionButton}</>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-2 text-sm text-custom-primary">
+                  <AlertCircle className="h-4 w-4" />
+                  <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
+                </div>
+              </>
+            )}
             <div className="flex items-center gap-2">
               <Button variant="neutral-primary" size="sm" onClick={onClose}>
                 Close
