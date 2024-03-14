@@ -54,7 +54,20 @@ const Command = Extension.create<SlashCommandOptions>({
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
-          return !editor.isActive("table");
+          const { selection } = editor.state;
+
+          const parentNode = selection.$from.node(selection.$from.depth);
+          const blockType = parentNode.type.name;
+
+          if (blockType === "codeBlock") {
+            return false;
+          }
+
+          if (editor.isActive("table")) {
+            return false;
+          }
+
+          return true;
         },
         allowSpaces: true,
       },
