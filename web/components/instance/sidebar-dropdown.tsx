@@ -9,6 +9,7 @@ import { Menu, Transition } from "@headlessui/react";
 // icons
 import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { useApplication, useUser } from "hooks/store";
 // ui
@@ -34,7 +35,7 @@ export const InstanceSidebarDropdown = observer(() => {
   const { signOut, currentUser, currentUserSettings } = useUser();
   // hooks
   const { setTheme } = useTheme();
-
+  const { isMobile } = usePlatformOS();
   // redirect url for normal mode
   const redirectWorkspaceSlug =
     workspaceSlug ||
@@ -73,7 +74,7 @@ export const InstanceSidebarDropdown = observer(() => {
           {!sidebarCollapsed && (
             <div className="flex w-full gap-2">
               <h4 className="grow truncate text-base font-medium text-custom-text-200">Instance admin</h4>
-              <Tooltip position="bottom-left" tooltipContent="Exit God Mode">
+              <Tooltip position="bottom-left" tooltipContent="Exit God Mode" isMobile={isMobile}>
                 <div className="flex-shrink-0">
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>

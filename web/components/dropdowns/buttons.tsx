@@ -4,7 +4,7 @@ import { cn } from "helpers/common.helper";
 // types
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
 import { TButtonVariants } from "./types";
-// constants
+import { usePlatformOS } from "hooks/use-platform-os";
 
 export type DropdownButtonProps = {
   children: React.ReactNode;
@@ -27,7 +27,6 @@ type ButtonProps = {
 
 export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
   const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip, variant } = props;
-
   const ButtonToRender: React.FC<ButtonProps> = BORDER_BUTTON_VARIANTS.includes(variant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(variant)
@@ -49,9 +48,10 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
 
 const BorderButton: React.FC<ButtonProps> = (props) => {
   const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
+  const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip}>
+    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip} isMobile={isMobile}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
@@ -67,9 +67,9 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
 
 const BackgroundButton: React.FC<ButtonProps> = (props) => {
   const { children, className, tooltipContent, tooltipHeading, showTooltip } = props;
-
+  const { isMobile } = usePlatformOS();
   return (
-    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip}>
+    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip} isMobile={isMobile}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
@@ -84,9 +84,9 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
 
 const TransparentButton: React.FC<ButtonProps> = (props) => {
   const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
-
+  const { isMobile } = usePlatformOS();
   return (
-    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip}>
+    <Tooltip tooltipHeading={tooltipHeading} tooltipContent={tooltipContent} disabled={!showTooltip} isMobile={isMobile}>
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",

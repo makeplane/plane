@@ -21,6 +21,7 @@ import { EUserProjectRoles } from "constants/project";
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 // ui
 // helpers
@@ -48,7 +49,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-
+  const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -194,7 +195,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                     )}
                   </CircularProgressIndicator>
                 </span>
-                <Tooltip tooltipContent={moduleDetails.name} position="top">
+                <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
                   <span className="truncate text-base font-medium">{moduleDetails.name}</span>
                 </Tooltip>
               </div>
@@ -227,7 +228,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </div>
 
             <div className="relative flex flex-shrink-0 items-center gap-3">
-              <Tooltip tooltipContent={`${moduleDetails?.member_ids?.length || 0} Members`}>
+              <Tooltip tooltipContent={`${moduleDetails?.member_ids?.length || 0} Members`} isMobile={isMobile}>
                 <div className="flex w-10 cursor-default items-center justify-center gap-1">
                   {moduleDetails.member_ids.length > 0 ? (
                     <AvatarGroup showTooltip={false}>

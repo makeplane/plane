@@ -8,6 +8,7 @@ import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import useDebounce from "hooks/use-debounce";
 import { ProjectService } from "services/project";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 // icons
 // types
@@ -37,7 +38,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-
+  const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const router = useRouter();
@@ -113,7 +114,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                     />
                   </div>
                   <div className="flex p-2 sm:justify-end">
-                    <Tooltip tooltipContent="Toggle workspace level search">
+                    <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                       <div
                         className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
                           isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"

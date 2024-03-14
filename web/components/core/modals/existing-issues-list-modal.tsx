@@ -5,7 +5,7 @@ import { Rocket, Search, X } from "lucide-react";
 import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 
 import useDebounce from "hooks/use-debounce";
-
+import { usePlatformOS } from "hooks/use-platform-os";
 import { ProjectService } from "services/project";
 // ui
 // types
@@ -40,7 +40,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-
+  const  { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const handleClose = () => {
@@ -154,7 +154,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </div>
                     )}
                     {workspaceLevelToggle && (
-                      <Tooltip tooltipContent="Toggle workspace level search">
+                      <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                         <div
                           className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
                             isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"

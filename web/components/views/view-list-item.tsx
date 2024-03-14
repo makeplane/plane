@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal, ViewAppliedFilters } from "components/views";
 // constants
 import { EUserProjectRoles } from "constants/project";
 // helpers
-// import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
 import { useProjectView, useUser } from "hooks/store";
@@ -58,8 +57,6 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
       });
     });
   };
-
-  // const totalFilters = calculateTotalFilters(view.filters ?? {});
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

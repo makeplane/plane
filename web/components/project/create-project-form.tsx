@@ -27,6 +27,7 @@ import { cn } from "helpers/common.helper";
 import { projectIdentifierSanitizer } from "helpers/project.helper";
 // hooks
 import { useEventTracker, useProject } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // types
 import { IProject } from "@plane/types";
 
@@ -71,7 +72,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
     defaultValues,
     reValidateMode: "onChange",
   });
-
+  const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
@@ -283,6 +284,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
                 )}
               />
               <Tooltip
+                isMobile={isMobile}
                 tooltipContent="Helps you identify issues in the project uniquely, (e.g. APP-123). Max 5 characters."
                 className="text-sm"
                 position="right-top"
