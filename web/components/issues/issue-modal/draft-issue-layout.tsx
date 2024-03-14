@@ -48,7 +48,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
 
   const handleClose = () => {
-    if (changesMade) setIssueDiscardModal(true);
+    if (changesMade && changesMade.name?.trim() !== "") setIssueDiscardModal(true);
     else onClose(false);
   };
 
