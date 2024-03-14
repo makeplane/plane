@@ -19,6 +19,7 @@ RUN yarn install --network-timeout 500000
 
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+COPY god-mode/nginx.conf nginx.conf
 USER root
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
@@ -28,32 +29,18 @@ ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 RUN yarn turbo run build --filter=god-mode
 
-FROM node:18-alpine AS runner
+FROM nginx:1.25.0-alpine AS runner
 WORKDIR /app
 
-RUN addgroup --system --gid 1001 plane
 RUN adduser --system --uid 1001 captain
 USER captain
 
-COPY --from=installer /app/god-mode/next.config.js .
-COPY --from=installer /app/god-mode/package.json .
-
-COPY --from=installer --chown=captain:plane /app/god-mode/.next/standalone ./
-
-COPY --from=installer --chown=captain:plane /app/god-mode/.next ./god-mode/.next
-COPY --from=installer --chown=captain:plane /app/god-mode/public ./god-mode/public
-
 ARG NEXT_PUBLIC_API_BASE_URL=""
-
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL 
-
-USER root
-COPY start.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/start.sh
-
-USER captain
-
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV TURBO_TELEMETRY_DISABLED 1
 
-EXPOSE 3000
+COPY --from=installer /app/god-mode/out /usr/share/nginx/html
+COPY --from=installer app/nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
