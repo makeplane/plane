@@ -161,38 +161,42 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               />
             )}
           </div>
-          <div className="md:hidden">
-            <p className="p-4 text-xl font-semibold">
-              {`${selectedDate.getDate()} ${
-                MONTHS_LIST[selectedDate.getMonth() + 1].title
-              }, ${selectedDate.getFullYear()}`}
-            </p>
-            {issueIdList &&
-              issueIdList?.length > 0 &&
-              issueIdList?.map((issueId) => {
-                if (!issues?.[issueId]) return null;
-                const issue = issues?.[issueId];
-                return (
-                  <div className="border-b border-custom-border-200 px-4">
-                    <CalendarIssueBlock issue={issue} quickActions={quickActions} />
-                  </div>
-                );
-              })}
-          </div>
 
-          {enableIssueCreation && isEditingAllowed && !readOnly && (
-            <div className="flex-shrink-0 px-2 border-b border-custom-border-200 !h-10 flex items-center md:hidden">
-              <CalendarQuickAddIssueForm
-                formKey="target_date"
-                groupId={formattedDatePayload}
-                prePopulatedData={{
-                  target_date: renderFormattedPayloadDate(selectedDate) ?? undefined,
-                }}
-                quickAddCallback={quickAddCallback}
-                viewId={viewId}
-              />
+          {/* mobile view */}
+          <>
+            <div className="md:hidden">
+              <p className="p-4 text-xl font-semibold">
+                {`${selectedDate.getDate()} ${
+                  MONTHS_LIST[selectedDate.getMonth() + 1].title
+                }, ${selectedDate.getFullYear()}`}
+              </p>
+              {issueIdList &&
+                issueIdList?.length > 0 &&
+                issueIdList?.map((issueId) => {
+                  if (!issues?.[issueId]) return null;
+                  const issue = issues?.[issueId];
+                  return (
+                    <div className="border-b border-custom-border-200 px-4">
+                      <CalendarIssueBlock issue={issue} quickActions={quickActions} />
+                    </div>
+                  );
+                })}
             </div>
-          )}
+            {enableIssueCreation && isEditingAllowed && !readOnly && (
+              <div className="flex-shrink-0 px-2 border-b border-custom-border-200 !h-10 flex items-center md:hidden">
+                <CalendarQuickAddIssueForm
+                  formKey="target_date"
+                  groupId={formattedDatePayload}
+                  prePopulatedData={{
+                    target_date: renderFormattedPayloadDate(selectedDate) ?? undefined,
+                  }}
+                  quickAddCallback={quickAddCallback}
+                  addIssuesToView={addIssuesToView}
+                  viewId={viewId}
+                />
+              </div>
+            )}
+          </>
         </div>
       </div>
     </>
