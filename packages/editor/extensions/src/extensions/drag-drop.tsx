@@ -233,6 +233,7 @@ function DragHandle(options: DragHandleOptions) {
         },
         drop: (view) => {
           view.dom.classList.remove("dragging");
+          hideDragHandle();
         },
         dragend: (view) => {
           view.dom.classList.remove("dragging");
