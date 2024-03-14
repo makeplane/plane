@@ -7,13 +7,11 @@ import { ProjectService } from "services/project";
 import useDebounce from "hooks/use-debounce";
 import { usePlatformOS } from "hooks/use-platform-os";
 // components
-import { EmptyState } from "components/empty-state";
+import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
-// constants
-import { EmptyStateType } from "constants/empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -84,19 +82,6 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       .then((res) => setIssues(res))
       .finally(() => setIsSearching(false));
   }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, searchParams, workspaceSlug]);
-
-  const renderEmptyState = (type: EmptyStateType) => (
-    <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-      <EmptyState type={type} layout="screen-simple" />
-    </div>
-  );
-
-  const emptyState =
-    issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching
-      ? renderEmptyState(EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE)
-      : issues.length === 0
-      ? renderEmptyState(EmptyStateType.ISSUE_RELATION_EMPTY_STATE)
-      : null;
 
   return (
     <>
@@ -209,7 +194,12 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </h5>
                     )}
 
-                    {emptyState}
+                    <IssueSearchModalEmptyState
+                      debouncedSearchTerm={debouncedSearchTerm}
+                      isSearching={isSearching}
+                      issues={issues}
+                      searchTerm={searchTerm}
+                    />
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">
