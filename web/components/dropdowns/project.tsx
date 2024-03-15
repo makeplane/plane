@@ -15,6 +15,7 @@ import { ProjectLogo } from "components/project";
 // types
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
+import { IProject } from "@plane/types";
 // constants
 
 type Props = TDropdownProps & {
@@ -23,6 +24,7 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
   onClose?: () => void;
+  renderCondition?: (project: IProject) => boolean;
   value: string | null;
 };
 
@@ -41,6 +43,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     onClose,
     placeholder = "Project",
     placement,
+    renderCondition,
     showTooltip = false,
     tabIndex,
     value,
@@ -71,7 +74,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
 
   const options = joinedProjectIds?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
-
+    if (renderCondition && projectDetails && !renderCondition(projectDetails)) return;
     return {
       value: projectId,
       query: `${projectDetails?.name}`,
@@ -89,7 +92,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
   });
 
   const filteredOptions =
-    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase()));
 
   const selectedProject = value ? getProjectById(value) : null;
 
@@ -205,24 +208,27 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
               {filteredOptions ? (
                 filteredOptions.length > 0 ? (
-                  filteredOptions.map((option) => (
-                    <Combobox.Option
-                      key={option.value}
-                      value={option.value}
-                      className={({ active, selected }) =>
-                        `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                      }
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span className="flex-grow truncate">{option.content}</span>
-                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                        </>
-                      )}
-                    </Combobox.Option>
-                  ))
+                  filteredOptions.map((option) => {
+                    if (!option) return;
+                    return (
+                      <Combobox.Option
+                        key={option.value}
+                        value={option.value}
+                        className={({ active, selected }) =>
+                          `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
+                            active ? "bg-custom-background-80" : ""
+                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        }
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span className="flex-grow truncate">{option.content}</span>
+                            {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                          </>
+                        )}
+                      </Combobox.Option>
+                    );
+                  })
                 ) : (
                   <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
                 )

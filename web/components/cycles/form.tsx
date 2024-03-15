@@ -6,6 +6,7 @@ import { DateRangeDropdown, ProjectDropdown } from "components/dropdowns";
 // ui
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldRenderProject } from "helpers/project.helper";
 // types
 import { ICycle } from "@plane/types";
 
@@ -66,6 +67,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     setActiveProject(val);
                   }}
                   buttonVariant="background-with-text"
+                  renderCondition={(project) => shouldRenderProject(project)}
                   tabIndex={7}
                 />
               )}

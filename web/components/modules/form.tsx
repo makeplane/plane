@@ -7,6 +7,7 @@ import { ModuleStatusSelect } from "components/modules";
 // ui
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { shouldRenderProject } from "helpers/project.helper";
 // types
 import { IModule } from "@plane/types";
 
@@ -78,6 +79,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       setActiveProject(val);
                     }}
                     buttonVariant="border-with-text"
+                    renderCondition={(project) => shouldRenderProject(project)}
                     tabIndex={10}
                   />
                 </div>
