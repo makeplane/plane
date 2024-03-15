@@ -113,9 +113,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           updateFilters={updateFilters}
         />
         <div
-          className={cn("flex md:h-full w-full flex-col", {
+          className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
             "vertical-scrollbar scrollbar-lg": windowWidth > 768,
-            "overflow-y-auto": windowWidth <= 768,
           })}
         >
           <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
