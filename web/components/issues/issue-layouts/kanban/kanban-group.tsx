@@ -36,7 +36,7 @@ interface IKanbanGroup {
   viewId?: string;
   disableIssueCreation?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
-  groupByVisibilityToggle: boolean;
+  groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   isDragStarted?: boolean;
 }
