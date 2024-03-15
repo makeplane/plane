@@ -73,13 +73,7 @@ const removePlaceholder = (view: EditorView, id: {}) => {
   view.dispatch(removePlaceholderTr);
 };
 
-export async function startImageUpload(
-  file: File,
-  view: EditorView,
-  pos: number,
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
-) {
+export async function startImageUpload(file: File, view: EditorView, pos: number, uploadFile: UploadImage) {
   if (!file) {
     alert("No file selected. Please select a file to upload.");
     return;
@@ -120,7 +114,7 @@ export async function startImageUpload(
     return;
   };
 
-  setIsSubmitting?.("submitting");
+  // setIsSubmitting?.("submitting");
 
   try {
     const src = await UploadImageHandler(file, uploadFile);

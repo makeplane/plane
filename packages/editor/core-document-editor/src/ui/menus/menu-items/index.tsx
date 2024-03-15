@@ -132,13 +132,9 @@ export const TableItem = (editor: Editor): EditorMenuItem => ({
   icon: TableIcon,
 });
 
-export const ImageItem = (
-  editor: Editor,
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
-): EditorMenuItem => ({
+export const ImageItem = (editor: Editor, uploadFile: UploadImage): EditorMenuItem => ({
   name: "image",
   isActive: () => editor?.isActive("image"),
-  command: () => insertImageCommand(editor, uploadFile, setIsSubmitting),
+  command: () => insertImageCommand(editor, uploadFile),
   icon: ImageIcon,
 });

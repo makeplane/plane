@@ -6,10 +6,9 @@ import { UploadImage } from "@plane/editor-document-core";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
-  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  setHideDragHandle?: (hideDragHandlerFromDragDrop: () => void) => void
 ) => [
-  SlashCommand(uploadFile, setIsSubmitting),
+  SlashCommand(uploadFile),
   DragAndDrop(setHideDragHandle),
   Placeholder.configure({
     placeholder: ({ node }) => {

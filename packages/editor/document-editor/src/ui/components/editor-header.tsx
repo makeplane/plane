@@ -19,7 +19,6 @@ interface IEditorHeader {
   archivedAt?: Date;
   readonly: boolean;
   uploadFile?: UploadImage;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   documentDetails: DocumentDetails;
   isSubmitting?: "submitting" | "submitted" | "saved";
 }
@@ -34,7 +33,6 @@ export const EditorHeader = (props: IEditorHeader) => {
     setSidePeekVisible,
     markings,
     uploadFile,
-    setIsSubmitting,
     KanbanMenuOptions,
     isArchived,
     isLocked,
@@ -53,9 +51,7 @@ export const EditorHeader = (props: IEditorHeader) => {
       </div>
 
       <div className="flex-shrink-0 hidden md:flex">
-        {!readonly && uploadFile && (
-          <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />
-        )}
+        {!readonly && uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} />}
       </div>
 
       <div className="flex flex-grow items-center justify-end gap-3">

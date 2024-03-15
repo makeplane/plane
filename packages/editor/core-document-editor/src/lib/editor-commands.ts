@@ -109,12 +109,7 @@ export const setLinkEditor = (editor: Editor, url: string) => {
   editor.chain().focus().setLink({ href: url }).run();
 };
 
-export const insertImageCommand = (
-  editor: Editor,
-  uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-  range?: Range
-) => {
+export const insertImageCommand = (editor: Editor, uploadFile: UploadImage, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).run();
   const input = document.createElement("input");
   input.type = "file";
@@ -123,7 +118,7 @@ export const insertImageCommand = (
     if (input.files?.length) {
       const file = input.files[0];
       const pos = editor.view.state.selection.from;
-      startImageUpload(file, editor.view, pos, uploadFile, setIsSubmitting);
+      startImageUpload(file, editor.view, pos, uploadFile);
     }
   };
   input.click();

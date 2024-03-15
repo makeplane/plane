@@ -104,7 +104,6 @@ const DocumentEditor = ({
     },
     debouncedUpdatesEnabled,
     restoreFile,
-    setIsSubmitting,
     setShouldShowAlert,
     value,
     uploadFile,
@@ -112,7 +111,7 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction, setIsSubmitting),
+    extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction),
   });
 
   if (!editor) {
@@ -146,7 +145,6 @@ const DocumentEditor = ({
         setSidePeekVisible={(val) => setSidePeekVisible(val)}
         markings={markings}
         uploadFile={uploadFile}
-        setIsSubmitting={setIsSubmitting}
         isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
         isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
@@ -154,7 +152,7 @@ const DocumentEditor = ({
         isSubmitting={isSubmitting}
       />
       <div className="flex-shrink-0 md:hidden border-b border-custom-border-200 pl-3 py-2">
-        {uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
+        {uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} />}
       </div>
       <div className="flex h-full w-full overflow-y-auto frame-renderer">
         <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72 hidden md:block">

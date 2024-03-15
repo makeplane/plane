@@ -33,7 +33,7 @@ export function CoreEditorProps(uploadFile: UploadImage): EditorProps {
         event.preventDefault();
         const file = event.clipboardData.files[0];
         const pos = view.state.selection.from;
-        startImageUpload(file, view, pos, uploadFile, setIsSubmitting);
+        startImageUpload(file, view, pos, uploadFile);
         return true;
       }
       return false;
@@ -47,7 +47,7 @@ export function CoreEditorProps(uploadFile: UploadImage): EditorProps {
           top: event.clientY,
         });
         if (coordinates) {
-          startImageUpload(file, view, coordinates.pos - 1, uploadFile, setIsSubmitting);
+          startImageUpload(file, view, coordinates.pos - 1, uploadFile);
         }
         return true;
       }
