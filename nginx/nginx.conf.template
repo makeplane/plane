@@ -9,14 +9,11 @@ http {
         root /www/data/;
         access_log /var/log/nginx/access.log;
 
-        client_max_body_size $ {
-            FILE_SIZE_LIMI
-        }
-        ;
+        client_max_body_size ${FILE_SIZE_LIMIT};
 
-        add_header X-Content-Type-Options "nosniff" always;
-        add_header Referrer-Policy "no-referrer-when-downgrade" always;
-        add_header Permissions-Policy "interest-cohort=()" always;
+        add_header X-Content-Type-Options    "nosniff" always;
+        add_header Referrer-Policy           "no-referrer-when-downgrade" always;
+        add_header Permissions-Policy        "interest-cohort=()" always;
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
         location / {
@@ -27,27 +24,16 @@ http {
             proxy_pass http://api:8000/api/;
         }
 
-        location /auth/ {
-            proxy_pass http://api:8000/auth/;
-        }
-
         location /spaces/ {
             rewrite ^/spaces/?$ /spaces/login break;
             proxy_pass http://space:3000/spaces/;
         }
-
+        
         location /god-mode/ {
-            proxy_pass http://god-mode:80;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://godmode/;
         }
 
-        location /$ {
-            BUCKET_NAM
-        }
-        / {
+        location /${BUCKET_NAME}/ {
             proxy_pass http://plane-minio:9000/uploads/;
         }
     }
