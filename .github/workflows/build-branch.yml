@@ -2,6 +2,27 @@ name: Branch Build
 
 on:
   workflow_dispatch:
+    inputs:
+      build-web:
+        required: false
+        description: "Build Web"
+        type: boolean
+        default: false
+      build-space:
+        required: false
+        description: "Build Space"
+        type: boolean
+        default: false
+      build-api:
+        required: false
+        description: "Build API"
+        type: boolean
+        default: false
+      build-proxy:
+        required: false
+        description: "Build Proxy"
+        type: boolean
+        default: false
   push:
     branches:
       - master
@@ -18,7 +39,7 @@ jobs:
     name: Build-Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-latest
     outputs:
-      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }} 
+      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
@@ -74,7 +95,7 @@ jobs:
               - nginx/**
 
   branch_build_push_frontend:
-    if: ${{ needs.branch_build_setup.outputs.build_frontend == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    if: ${{ needs.branch_build_setup.outputs.build_frontend == 'true' || github.event.inputs.build-web=='true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -126,7 +147,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_space:
-    if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event.inputs.build-space=='true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -178,7 +199,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_backend:
-    if: ${{ needs.branch_build_setup.outputs.build_backend == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    if: ${{ needs.branch_build_setup.outputs.build_backend == 'true' || github.event.inputs.build-api=='true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -230,7 +251,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_proxy:
-    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event.inputs.build-web=='true' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -280,4 +301,3 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-

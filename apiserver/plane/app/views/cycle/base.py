@@ -101,15 +101,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
             .annotate(is_favorite=Exists(favorite_subquery))
             .annotate(
-                total_issues=Count(
-                    "issue_cycle",
-                    filter=Q(
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
                 completed_issues=Count(
                     "issue_cycle__issue__state__group",
                     filter=Q(
@@ -195,7 +186,15 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().annotate(
+            total_issues=Count(
+                "issue_cycle",
+                filter=Q(
+                    issue_cycle__issue__archived_at__isnull=True,
+                    issue_cycle__issue__is_draft=False,
+                ),
+            )
+        )
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Update the order by
@@ -349,8 +348,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             "external_id",
             "progress_snapshot",
             # meta fields
-            "is_favorite",
             "total_issues",
+            "is_favorite",
             "cancelled_issues",
             "completed_issues",
             "started_issues",
@@ -396,7 +395,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         "progress_snapshot",
                         # meta fields
                         "is_favorite",
-                        "total_issues",
                         "cancelled_issues",
                         "completed_issues",
                         "started_issues",
@@ -468,7 +466,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "progress_snapshot",
                 # meta fields
                 "is_favorite",
-                "total_issues",
                 "cancelled_issues",
                 "completed_issues",
                 "started_issues",
@@ -481,10 +478,42 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk):
-        queryset = self.get_queryset().filter(pk=pk)
+        queryset = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle",
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
+            )
+        )
         data = (
             self.get_queryset()
             .filter(pk=pk)
+            .annotate(
+                total_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=True,
+                    issue_cycle__cycle_id=pk,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues=Issue.issue_objects.filter(
+                    project_id=self.kwargs.get("project_id"),
+                    parent__isnull=False,
+                    issue_cycle__cycle_id=pk,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .values(
                 # necessary fields
                 "id",
@@ -501,6 +530,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                 "external_source",
                 "external_id",
                 "progress_snapshot",
+                "sub_issues",
                 # meta fields
                 "is_favorite",
                 "total_issues",

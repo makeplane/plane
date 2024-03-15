@@ -20,12 +20,11 @@ import {
 } from "components/command-palette";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { useApplication, useEventTracker, useProject } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // services
 import useDebounce from "hooks/use-debounce";
 import { IssueService } from "services/issue";
 import { WorkspaceService } from "services/workspace.service";
-// hooks
-// components
 // types
 import { IWorkspaceSearchResults } from "@plane/types";
 // fetch-keys
@@ -37,6 +36,7 @@ const issueService = new IssueService();
 export const CommandModal: React.FC = observer(() => {
   // hooks
   const { getProjectById } = useProject();
+  const { isMobile } = usePlatformOS();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -197,7 +197,7 @@ export const CommandModal: React.FC = observer(() => {
                         </div>
                       )}
                       {projectId && (
-                        <Tooltip tooltipContent="Toggle workspace level search">
+                        <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                           <div className="flex flex-shrink-0 cursor-pointer items-center gap-1 self-end text-xs sm:self-center">
                             <button
                               type="button"
