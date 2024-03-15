@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { UploadImage, DeleteImage, RestoreImage, getEditorClassNames, useEditor } from "@plane/editor-core";
+import { UploadImage, DeleteImage, RestoreImage, getEditorClassNames, useEditor } from "@plane/editor-document-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
 import { EditorHeader } from "src/ui/components/editor-header";
@@ -64,7 +64,6 @@ const DocumentEditor = ({
   documentDetails,
   onChange,
   debouncedUpdatesEnabled,
-  setIsSubmitting,
   setShouldShowAlert,
   editorContentCustomClassNames,
   value,

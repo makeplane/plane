@@ -1,4 +1,4 @@
-import { LucideIconType } from "@plane/editor-core";
+import { LucideIconType } from "@plane/editor-document-core";
 import { CustomMenu } from "@plane/ui";
 import { MoreVertical } from "lucide-react";
 

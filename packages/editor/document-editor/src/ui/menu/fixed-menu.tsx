@@ -1,10 +1,12 @@
-import { Editor } from "@tiptap/react";
 import {
   BoldItem,
   BulletListItem,
-  isCellSelection,
   cn,
   CodeItem,
+  EditorMenuItem,
+  HeadingOneItem,
+  HeadingThreeItem,
+  HeadingTwoItem,
   ImageItem,
   ItalicItem,
   NumberedListItem,
@@ -12,13 +14,9 @@ import {
   StrikeThroughItem,
   TableItem,
   UnderLineItem,
-  HeadingOneItem,
-  HeadingTwoItem,
-  HeadingThreeItem,
-  findTableAncestor,
-  EditorMenuItem,
   UploadImage,
-} from "@plane/editor-core";
+} from "@plane/editor-document-core";
+import { Editor } from "@tiptap/react";
 
 export type BubbleMenuItem = EditorMenuItem;
 

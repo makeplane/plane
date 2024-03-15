@@ -30,6 +30,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
     "@plane/editor-core": "*",
+    "@plane/editor-document-core": "*",
     "@plane/editor-extensions": "*",
     "@plane/ui": "*",
     "@tippyjs/react": "^4.2.6",

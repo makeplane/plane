@@ -2,7 +2,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { IssueWidgetPlaceholder } from "src/ui/extensions/widgets/issue-embed-widget";
 
 import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
-import { UploadImage } from "@plane/editor-core";
+import { UploadImage } from "@plane/editor-document-core";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,

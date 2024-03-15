@@ -2,7 +2,7 @@ import { Editor } from "@tiptap/react";
 import { Archive, RefreshCw, Lock } from "lucide-react";
 import { IMarking, DocumentDetails } from "src/types/editor-types";
 import { FixedMenu } from "src/ui/menu";
-import { UploadImage } from "@plane/editor-core";
+import { UploadImage } from "@plane/editor-document-core";
 import { AlertLabel } from "src/ui/components/alert-label";
 import { IVerticalDropdownItemProps, VerticalDropdownMenu } from "src/ui/components/vertical-dropdown-menu";
 import { SummaryPopover } from "src/ui/components/summary-popover";

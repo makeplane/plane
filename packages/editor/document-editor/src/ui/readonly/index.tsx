@@ -1,4 +1,4 @@
-import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
+import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-core";
 import { useRouter } from "next/router";
 import { useState, forwardRef, useEffect } from "react";
 import { EditorHeader } from "src/ui/components/editor-header";

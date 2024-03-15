@@ -1,4 +1,4 @@
-import { cn } from "@plane/editor-core";
+import { cn } from "@plane/editor-document-core";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
 import { ReactRenderer } from "@tiptap/react";

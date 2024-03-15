@@ -1,4 +1,4 @@
-import { isValidHttpUrl } from "@plane/editor-core";
+import { isValidHttpUrl } from "@plane/editor-document-core";
 import { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

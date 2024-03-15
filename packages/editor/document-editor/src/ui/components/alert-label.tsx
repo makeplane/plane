@@ -1,4 +1,4 @@
-import { LucideIconType } from "@plane/editor-core";
+import { LucideIconType } from "@plane/editor-document-core";
 
 interface IAlertLabelProps {
   Icon?: LucideIconType;
