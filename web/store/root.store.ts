@@ -19,6 +19,7 @@ import { IUserRootStore, UserRootStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IProjectPageStore, ProjectPageStore } from "./project-page.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
+import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -32,6 +33,7 @@ export class RootStore {
   cycle: ICycleStore;
   cycleFilter: ICycleFilterStore;
   module: IModuleStore;
+  moduleFilter: IModuleFilterStore;
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
   issue: IIssueRootStore;
@@ -54,6 +56,7 @@ export class RootStore {
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
+    this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
@@ -62,8 +65,8 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPages = new ProjectPageStore(this);
   }
 
   resetOnSignout() {
@@ -74,6 +77,7 @@ export class RootStore {
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
+    this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this);
@@ -82,7 +86,7 @@ export class RootStore {
     this.label = new LabelStore(this);
     this.estimate = new EstimateStore(this);
     this.mention = new MentionStore(this);
-    this.projectPages = new ProjectPageStore(this);
     this.dashboard = new DashboardStore(this);
+    this.projectPages = new ProjectPageStore(this);
   }
 }

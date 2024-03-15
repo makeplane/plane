@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip } from "@plane/ui";
 // components
@@ -34,7 +35,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
   } = useIssueDetail();
   // states
   const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
-
+  const { isMobile } = usePlatformOS();
   const attachment = attachmentId && getAttachmentById(attachmentId);
 
   if (!attachment) return <></>;
@@ -56,10 +57,11 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
             <div className="h-7 w-7">{getFileIcon(getFileExtension(attachment.asset))}</div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Tooltip tooltipContent={getFileName(attachment.attributes.name)}>
+                <Tooltip tooltipContent={getFileName(attachment.attributes.name)} isMobile={isMobile}>
                   <span className="text-sm">{truncateText(`${getFileName(attachment.attributes.name)}`, 10)}</span>
                 </Tooltip>
                 <Tooltip
+                  isMobile={isMobile}
                   tooltipContent={`${
                     getUserDetails(attachment.updated_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}

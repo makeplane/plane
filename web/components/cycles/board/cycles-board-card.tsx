@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { Info, Star } from "lucide-react";
 import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
@@ -38,6 +39,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const { getUserDetails } = useMember();
   // computed
   const cycleDetails = getCycleById(cycleId);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   if (!cycleDetails) return null;
 
@@ -145,7 +148,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
               <span className="flex-shrink-0">
                 <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />
               </span>
-              <Tooltip tooltipContent={cycleDetails.name} position="top">
+              <Tooltip tooltipContent={cycleDetails.name} position="top" isMobile={isMobile}>
                 <span className="truncate text-base font-medium">{cycleDetails.name}</span>
               </Tooltip>
             </div>
@@ -176,7 +179,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
                 <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
               {cycleDetails.assignee_ids.length > 0 && (
-                <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`}>
+                <Tooltip tooltipContent={`${cycleDetails.assignee_ids.length} Members`} isMobile={isMobile}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
                       {cycleDetails.assignee_ids.map((assigne_id) => {
@@ -190,6 +193,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
             </div>
 
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
               position="top-left"
             >

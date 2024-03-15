@@ -80,6 +80,15 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 )
             )
             .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                ),
+            )
+            .annotate(
                 completed_issues=Count(
                     "issue_module__issue__state__group",
                     filter=Q(
@@ -214,6 +223,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                 "external_source",
                 "external_id",
                 # computed fields
+                "total_issues",
                 "is_favorite",
                 "cancelled_issues",
                 "completed_issues",

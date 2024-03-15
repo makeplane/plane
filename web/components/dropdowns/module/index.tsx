@@ -8,6 +8,7 @@ import { cn } from "helpers/common.helper";
 import { useModule } from "hooks/store";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { DropdownButton } from "../buttons";
 // icons
@@ -47,6 +48,7 @@ type ButtonContentProps = {
   onChange: (moduleIds: string[]) => void;
   placeholder: string;
   showCount: boolean;
+  showTooltip?: boolean;
   value: string | string[] | null;
 };
 
@@ -60,10 +62,12 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     onChange,
     placeholder,
     showCount,
+    showTooltip = false,
     value,
   } = props;
   // store hooks
   const { getModuleById } = useModule();
+  const { isMobile } = usePlatformOS();
 
   if (Array.isArray(value))
     return (
@@ -90,12 +94,12 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
-                    <Tooltip tooltipHeading="Title" tooltipContent={moduleDetails?.name}>
+                    <Tooltip tooltipHeading="Title" tooltipContent={moduleDetails?.name} disabled={!showTooltip} isMobile={isMobile}>
                       <span className="max-w-40 flex-grow truncate text-xs font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}
                   {!disabled && (
-                    <Tooltip tooltipContent="Remove">
+                    <Tooltip tooltipContent="Remove" disabled={!showTooltip} isMobile={isMobile}>
                       <button
                         type="button"
                         className="flex-shrink-0"
@@ -265,6 +269,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
                 hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
                 placeholder={placeholder}
                 showCount={showCount}
+                showTooltip={showTooltip}
                 value={value}
                 onChange={onChange as any}
               />

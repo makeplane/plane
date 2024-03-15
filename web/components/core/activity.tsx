@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { usePlatformOS } from "hooks/use-platform-os";
 // store hooks
 // icons
 import {
@@ -29,9 +30,13 @@ import { IIssueActivity } from "@plane/types";
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
+    <Tooltip
+      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}
+      isMobile={isMobile}
+    >
       {activity?.issue_detail ? (
         <a
           aria-disabled={activity.issue === null}
