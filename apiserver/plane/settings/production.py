@@ -6,7 +6,7 @@ from .common import *  # noqa
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", 0)) == 1
-
+DEBUG = True
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -42,27 +42,33 @@ LOGGING = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "json",
+            "formatter": "verbose",
+            "level": "INFO",
         },
         "file": {
             "class": "plane.utils.logging.SizedTimedRotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "plane.log"),  # noqa
-            "when": "midnight",
+            "filename": (
+                os.path.join(BASE_DIR, "logs", "plane-debug.log")  # noqa
+                if DEBUG
+                else os.path.join(BASE_DIR, "logs", "plane-error.log")  # noqa
+            ),
+            "when": "s",
             "maxBytes": 1024 * 1024 * 1,
             "interval": 1,
             "backupCount": 5,
             "formatter": "json",
+            "level": "DEBUG" if DEBUG else "ERROR",
         },
     },
     "loggers": {
         "django": {
             "handlers": ["console", "file"],
-            "level": "DEBUG" if DEBUG else "ERROR",
+            "level": "INFO",
             "propagate": True,
         },
         "django.request": {
             "handlers": ["console", "file"],
-            "level": "DEBUG" if DEBUG else "ERROR",
+            "level": "INFO",
             "propagate": False,
         },
         "plane": {
