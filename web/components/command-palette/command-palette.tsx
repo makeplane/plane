@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, FC } from "react";
+import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -23,24 +23,29 @@ import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 import { IssueService } from "services/issue";
+import { EUserProjectRoles } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 // services
 const issueService = new IssueService();
 
 export const CommandPalette: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
-
+  // store hooks
   const {
     commandPalette,
     theme: { toggleSidebar },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const { currentUser } = useUser();
+  const {
+    currentUser,
+    membership: { currentWorkspaceRole, currentProjectRole },
+  } = useUser();
   const {
     issues: { removeIssue },
   } = useIssues(EIssuesStoreType.PROJECT);
-
   const {
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,
@@ -91,6 +96,105 @@ export const CommandPalette: FC = observer(() => {
       });
   }, [issueId]);
 
+  // auth
+  const canPerformProjectCreateActions = useCallback(
+    (showToast: boolean = true) => {
+      const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+      if (!isAllowed && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+
+      return isAllowed;
+    },
+    [currentProjectRole]
+  );
+  const canPerformWorkspaceCreateActions = useCallback(
+    (showToast: boolean = true) => {
+      const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+      console.log("currentWorkspaceRole", currentWorkspaceRole);
+      console.log("isAllowed", isAllowed);
+      if (!isAllowed && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+      return isAllowed;
+    },
+    [currentWorkspaceRole]
+  );
+
+  const shortcutsList: {
+    global: Record<string, { title: string; description: string; action: () => void }>;
+    workspace: Record<string, { title: string; description: string; action: () => void }>;
+    project: Record<string, { title: string; description: string; action: () => void }>;
+  } = useMemo(
+    () => ({
+      global: {
+        c: {
+          title: "Create a new issue",
+          description: "Create a new issue in the current project",
+          action: () => toggleCreateIssueModal(true),
+        },
+        h: {
+          title: "Show shortcuts",
+          description: "Show all the available shortcuts",
+          action: () => toggleShortcutModal(true),
+        },
+      },
+      workspace: {
+        p: {
+          title: "Create a new project",
+          description: "Create a new project in the current workspace",
+          action: () => toggleCreateProjectModal(true),
+        },
+      },
+      project: {
+        d: {
+          title: "Create a new page",
+          description: "Create a new page in the current project",
+          action: () => toggleCreatePageModal(true),
+        },
+        m: {
+          title: "Create a new module",
+          description: "Create a new module in the current project",
+          action: () => toggleCreateModuleModal(true),
+        },
+        q: {
+          title: "Create a new cycle",
+          description: "Create a new cycle in the current project",
+          action: () => toggleCreateCycleModal(true),
+        },
+        v: {
+          title: "Create a new view",
+          description: "Create a new view in the current project",
+          action: () => toggleCreateViewModal(true),
+        },
+        backspace: {
+          title: "Bulk delete issues",
+          description: "Bulk delete issues in the current project",
+          action: () => toggleBulkDeleteIssueModal(true),
+        },
+        delete: {
+          title: "Bulk delete issues",
+          description: "Bulk delete issues in the current project",
+          action: () => toggleBulkDeleteIssueModal(true),
+        },
+      },
+    }),
+    [
+      toggleBulkDeleteIssueModal,
+      toggleCreateCycleModal,
+      toggleCreateIssueModal,
+      toggleCreateModuleModal,
+      toggleCreatePageModal,
+      toggleCreateProjectModal,
+      toggleCreateViewModal,
+      toggleShortcutModal,
+    ]
+  );
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       const { key, ctrlKey, metaKey, altKey } = e;
@@ -102,7 +206,7 @@ export const CommandPalette: FC = observer(() => {
       if (
         e.target instanceof HTMLTextAreaElement ||
         e.target instanceof HTMLInputElement ||
-        (e.target as Element).classList?.contains("ProseMirror")
+        (e.target as Element)?.classList?.contains("ProseMirror")
       )
         return;
 
@@ -119,42 +223,37 @@ export const CommandPalette: FC = observer(() => {
         }
       } else if (!isAnyModalOpen) {
         setTrackElement("Shortcut key");
-        if (keyPressed === "c") {
-          toggleCreateIssueModal(true);
-        } else if (keyPressed === "p") {
-          toggleCreateProjectModal(true);
-        } else if (keyPressed === "h") {
-          toggleShortcutModal(true);
-        } else if (keyPressed === "v" && workspaceSlug && projectId) {
-          toggleCreateViewModal(true);
-        } else if (keyPressed === "d" && workspaceSlug && projectId) {
-          toggleCreatePageModal(true);
-        } else if (keyPressed === "q" && workspaceSlug && projectId) {
-          toggleCreateCycleModal(true);
-        } else if (keyPressed === "m" && workspaceSlug && projectId) {
-          toggleCreateModuleModal(true);
-        } else if (keyPressed === "backspace" || keyPressed === "delete") {
+        if (Object.keys(shortcutsList.global).includes(keyPressed)) shortcutsList.global[keyPressed].action();
+        // workspace authorized actions
+        else if (
+          Object.keys(shortcutsList.workspace).includes(keyPressed) &&
+          workspaceSlug &&
+          canPerformWorkspaceCreateActions()
+        )
+          shortcutsList.workspace[keyPressed].action();
+        // project authorized actions
+        else if (
+          Object.keys(shortcutsList.project).includes(keyPressed) &&
+          projectId &&
+          canPerformProjectCreateActions()
+        ) {
           e.preventDefault();
-          toggleBulkDeleteIssueModal(true);
+          // actions that can be performed only inside a project
+          shortcutsList.project[keyPressed].action();
         }
       }
     },
     [
+      canPerformProjectCreateActions,
+      canPerformWorkspaceCreateActions,
       copyIssueUrlToClipboard,
-      toggleCreateProjectModal,
-      toggleCreateViewModal,
-      toggleCreatePageModal,
-      toggleShortcutModal,
-      toggleCreateCycleModal,
-      toggleCreateModuleModal,
-      toggleBulkDeleteIssueModal,
+      isAnyModalOpen,
+      projectId,
+      setTrackElement,
+      shortcutsList,
       toggleCommandPaletteModal,
       toggleSidebar,
-      toggleCreateIssueModal,
-      projectId,
       workspaceSlug,
-      isAnyModalOpen,
-      setTrackElement,
     ]
   );
 
@@ -169,18 +268,11 @@ export const CommandPalette: FC = observer(() => {
 
   return (
     <>
-      <ShortcutsModal
-        isOpen={isShortcutModalOpen}
-        onClose={() => {
-          toggleShortcutModal(false);
-        }}
-      />
+      <ShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />
       {workspaceSlug && (
         <CreateProjectModal
           isOpen={isCreateProjectModalOpen}
-          onClose={() => {
-            toggleCreateProjectModal(false);
-          }}
+          onClose={() => toggleCreateProjectModal(false)}
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
@@ -194,9 +286,7 @@ export const CommandPalette: FC = observer(() => {
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
-            onClose={() => {
-              toggleCreateModuleModal(false);
-            }}
+            onClose={() => toggleCreateModuleModal(false)}
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
@@ -236,9 +326,7 @@ export const CommandPalette: FC = observer(() => {
 
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssueModalOpen}
-        onClose={() => {
-          toggleBulkDeleteIssueModal(false);
-        }}
+        onClose={() => toggleBulkDeleteIssueModal(false)}
         user={currentUser}
       />
       <CommandModal />

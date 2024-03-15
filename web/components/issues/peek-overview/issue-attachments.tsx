@@ -1,37 +1,30 @@
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 // hooks
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { useEventTracker, useIssueDetail } from "hooks/store";
-// ui
 // components
-import { IssueAttachmentUpload } from "./attachment-upload";
-import { IssueAttachmentsList } from "./attachments-list";
+import { IssueAttachmentUpload, IssueAttachmentsList, TAttachmentOperations } from "components/issues";
+// ui
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 
-export type TIssueAttachmentRoot = {
-  workspaceSlug: string;
-  projectId: string;
+type Props = {
+  disabled: boolean;
   issueId: string;
-  disabled?: boolean;
+  projectId: string;
+  workspaceSlug: string;
 };
 
-export type TAttachmentOperations = {
-  create: (data: FormData) => Promise<void>;
-  remove: (linkId: string) => Promise<void>;
-};
-
-export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
-  // props
-  const { workspaceSlug, projectId, issueId, disabled = false } = props;
-  // hooks
-  const { createAttachment, removeAttachment } = useIssueDetail();
+export const PeekOverviewIssueAttachments: React.FC<Props> = (props) => {
+  const { disabled, issueId, projectId, workspaceSlug } = props;
+  // store hooks
   const { captureIssueEvent } = useEventTracker();
+  const {
+    attachment: { createAttachment, removeAttachment },
+  } = useIssueDetail();
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
     () => ({
       create: async (data: FormData) => {
         try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-
           const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, data);
           setPromiseToast(attachmentUploadPromise, {
             loading: "Uploading attachment...",
@@ -95,13 +88,13 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
+    [workspaceSlug, projectId, issueId, captureIssueEvent, createAttachment, removeAttachment]
   );
 
   return (
-    <div className="relative py-3 space-y-3">
-      <h3 className="text-lg">Attachments</h3>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+    <div>
+      <h6 className="text-sm font-medium">Attachments</h6>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 mt-3">
         <IssueAttachmentUpload
           workspaceSlug={workspaceSlug}
           disabled={disabled}
