@@ -1,6 +1,6 @@
 import { FC } from "react";
+import Link from "next/link";
 import { observer } from "mobx-react";
-import { useRouter } from "next/router";
 import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
 import {
@@ -78,8 +78,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     handleRestoreIssue,
     isSubmitting,
   } = props;
-  // router
-  const router = useRouter();
   // store hooks
   const {
     user: { data: currentUser },
@@ -107,10 +105,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       });
     });
   };
-  const redirectToIssueDetail = () => {
-    router.push({ pathname: `/${issueLink}` });
-    removeRoutePeekId();
-  };
   // auth
   const isArchivingAllowed = !isArchived && !disabled;
   const isInArchivableGroup =
@@ -128,9 +122,9 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
         </button>
 
-        <button onClick={redirectToIssueDetail}>
+        <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
           <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-        </button>
+        </Link>
         {currentMode && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <CustomSelect

@@ -3,14 +3,16 @@ import { useRouter } from "next/router";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import { Rocket, Search } from "lucide-react";
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-import useDebounce from "hooks/use-debounce";
 import { ProjectService } from "services/project";
 // hooks
+import useDebounce from "hooks/use-debounce";
 import { usePlatformOS } from "hooks/use-platform-os";
+// components
+import { IssueSearchModalEmptyState } from "components/core";
 // ui
+import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
+import { Rocket, Search } from "lucide-react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 
@@ -151,15 +153,12 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       </h5>
                     )}
 
-                    {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayersIcon height="52" width="52" />
-                        <h3 className="text-custom-text-200">
-                          No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
-                        </h3>
-                      </div>
-                    )}
+                    <IssueSearchModalEmptyState
+                      debouncedSearchTerm={debouncedSearchTerm}
+                      isSearching={isSearching}
+                      issues={issues}
+                      searchTerm={searchTerm}
+                    />
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">

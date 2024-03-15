@@ -45,7 +45,7 @@ const InstanceLayout: FC<TInstanceLayout> = observer((props) => {
   if (error && !error?.data?.is_activated) return <InstanceNotReady isGodModeEnabled={false} />;
 
   // instance is not ready and setup is not done
-  if (instance === undefined || !instance?.is_setup_done)
+  if (instance?.instance?.is_setup_done === false)
     if (isGodModeEnabled) return <MiniGodModeForm />;
     else return <InstanceNotReady isGodModeEnabled handleGodModeStateChange={handleGodModeStateChange} />;
 

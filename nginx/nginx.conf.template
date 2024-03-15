@@ -24,13 +24,13 @@ http {
             proxy_pass http://api:8000/api/;
         }
 
-        location /auth/ {
-            proxy_pass http://api:8000/auth/;
-        }
-
         location /spaces/ {
             rewrite ^/spaces/?$ /spaces/login break;
             proxy_pass http://space:3000/spaces/;
+        }
+        
+        location /god-mode/ {
+            proxy_pass http://godmode/;
         }
 
         location /${BUCKET_NAME}/ {
