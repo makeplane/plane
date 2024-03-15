@@ -176,7 +176,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                   if (!issues?.[issueId]) return null;
                   const issue = issues?.[issueId];
                   return (
-                    <div className="border-b border-custom-border-200 px-4">
+                    <div key={issue.id} className="border-b border-custom-border-200 px-4">
                       <CalendarIssueBlock issue={issue} quickActions={quickActions} />
                     </div>
                   );

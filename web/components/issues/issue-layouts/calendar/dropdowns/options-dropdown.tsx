@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
+import useSize from "hooks/use-window-size";
 // ui
 // icons
 import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
@@ -41,6 +42,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const { projectId } = router.query;
 
   const issueCalendarView = useCalendarView();
+  const [windowWidth] = useSize();
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -60,7 +62,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
-  const handleLayoutChange = (layout: TCalendarLayouts) => {
+  const handleLayoutChange = (layout: TCalendarLayouts, closePopover: any) => {
     if (!projectId || !updateFilters) return;
 
     updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
@@ -75,6 +77,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
         ? issueCalendarView.calendarFilters.activeMonthDate
         : issueCalendarView.calendarFilters.activeWeekDate
     );
+    if (windowWidth <= 768) closePopover(); // close the popover on mobile
   };
 
   const handleToggleWeekends = () => {
@@ -92,7 +95,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
 
   return (
     <Popover className="relative">
-      {({ open }) => (
+      {({ open, close: closePopover }) => (
         <>
           <Popover.Button as={React.Fragment}>
             <button type="button" ref={setReferenceElement}>
@@ -135,7 +138,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                       key={layout}
                       type="button"
                       className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
-                      onClick={() => handleLayoutChange(layoutDetails.key)}
+                      onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
                       {calendarLayout === layout && <Check size={12} strokeWidth={2} />}
@@ -147,7 +150,12 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                     onClick={handleToggleWeekends}
                   >
                     Show weekends
-                    <ToggleSwitch value={showWeekends} onChange={() => {}} />
+                    <ToggleSwitch
+                      value={showWeekends}
+                      onChange={() => {
+                        if (windowWidth <= 768) closePopover(); // close the popover on mobile
+                      }}
+                    />
                   </button>
                 </div>
               </div>
