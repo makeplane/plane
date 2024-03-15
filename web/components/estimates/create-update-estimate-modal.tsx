@@ -188,16 +188,16 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       reset({
         ...defaultValues,
         ...data,
-        value1: data.points[0]?.value,
-        value2: data.points[1]?.value,
-        value3: data.points[2]?.value,
-        value4: data.points[3]?.value,
-        value5: data.points[4]?.value,
-        value6: data.points[5]?.value,
+        value1: data.points.find(point => point.key === 0)?.value,
+        value2: data.points.find(point => point.key === 1)?.value,
+        value3: data.points.find(point => point.key === 2)?.value,
+        value4: data.points.find(point => point.key === 3)?.value,
+        value5: data.points.find(point => point.key === 4)?.value,
+        value6: data.points.find(point => point.key === 5)?.value,
       });
     else reset({ ...defaultValues });
-  }, [data, reset]);
-
+  }, [data, reset])
+  
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment}>
@@ -315,8 +315,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
+                            ? "Creating Estimate..."
+                            : "Create Estimate"}
                       </Button>
                     </div>
                   </form>
