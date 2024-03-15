@@ -37,7 +37,7 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
   // Check if code block is active then toggle code block
   if (editor.isActive("codeBlock")) {
     if (range) {
-      editor.chain().focus().clearNodes().deleteRange(range).toggleCodeBlock().run();
+      editor.chain().focus().deleteRange(range).clearNodes().toggleCodeBlock().run();
       return;
     }
     editor.chain().focus().clearNodes().toggleCodeBlock().run();
@@ -49,13 +49,13 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
 
   if (isSelectionEmpty) {
     if (range) {
-      editor.chain().focus().clearNodes().deleteRange(range).toggleCodeBlock().run();
+      editor.chain().focus().deleteRange(range).clearNodes().toggleCodeBlock().run();
       return;
     }
     editor.chain().focus().clearNodes().toggleCodeBlock().run();
   } else {
     if (range) {
-      editor.chain().focus().clearNodes().deleteRange(range).toggleCode().run();
+      editor.chain().focus().deleteRange(range).clearNodes().toggleCode().run();
       return;
     }
     editor.chain().focus().clearNodes().toggleCode().run();
