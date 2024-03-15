@@ -175,7 +175,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
         self.group_by_fields = group_by_fields
         self.count_filter = count_filter
 
-    def get_result(self, limit=100, cursor=None):
+    def get_result(self, limit=50, cursor=None):
         # offset is page #
         # value is page limit
         if cursor is None:
@@ -337,6 +337,235 @@ class GroupedOffsetPaginator(OffsetPaginator):
         return processed_results
 
 
+class SubGroupedOffsetPaginator(OffsetPaginator):
+    FIELD_MAPPER = {
+        "labels__id": "label_ids",
+        "assignees__id": "assignee_ids",
+        "modules__id": "module_ids",
+    }
+
+    def __init__(
+        self,
+        queryset,
+        group_by_field_name,
+        sub_group_by_field_name,
+        group_by_fields,
+        sub_group_by_fields,
+        count_filter,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(queryset, *args, **kwargs)
+        self.group_by_field_name = group_by_field_name
+        self.group_by_fields = group_by_fields
+        self.sub_group_by_field_name = sub_group_by_field_name
+        self.sub_group_by_fields = sub_group_by_fields
+        self.count_filter = count_filter
+
+    def get_result(self, limit=30, cursor=None):
+        # offset is page #
+        # value is page limit
+        if cursor is None:
+            cursor = Cursor(0, 0, 0)
+
+        limit = min(limit, self.max_limit)
+
+        # Adjust the initial offset and stop based on the cursor and limit
+        queryset = self.queryset
+        if self.key:
+            queryset = queryset.order_by(*self.key)
+
+        page = cursor.offset
+        offset = cursor.offset * cursor.value
+        stop = offset + (cursor.value or limit) + 1
+
+        if self.max_offset is not None and offset >= self.max_offset:
+            raise BadPaginationError("Pagination offset too large")
+        if offset < 0:
+            raise BadPaginationError("Pagination offset cannot be negative")
+
+        # Compute the results
+        results = {}
+        queryset = queryset.annotate(
+            row_number=Window(
+                expression=RowNumber(),
+                partition_by=[F(self.sub_group_by_field_name)],
+                order_by=(*self.key,),
+            )
+        )
+
+        # Filter the results
+        results = queryset.filter(row_number__gt=offset, row_number__lt=stop)
+
+        # Adjust cursors based on the grouped results for pagination
+        next_cursor = Cursor(
+            limit,
+            page + 1,
+            False,
+            queryset.filter(row_number__gte=stop).exists(),
+        )
+        prev_cursor = Cursor(
+            limit,
+            page - 1,
+            True,
+            page > 0,
+        )
+
+        count = queryset.count()
+
+        # Optionally, calculate the total count and max_hits if needed
+        # This might require adjustments based on specific use cases
+        max_hits = math.ceil(
+            queryset.values(self.group_by_field_name)
+            .annotate(
+                count=Count(
+                    self.group_by_field_name,
+                )
+            )
+            .order_by("-count")[0]["count"]
+            / limit
+        )
+        return CursorResult(
+            results=results,
+            next=next_cursor,
+            prev=prev_cursor,
+            hits=count,
+            max_hits=max_hits,
+        )
+
+    def __get_group_total_queryset(self):
+        return (
+            self.queryset.order_by(self.group_by_field_name)
+            .values(self.group_by_field_name)
+            .annotate(
+                count=Count(
+                    self.group_by_field_name,
+                    filter=self.count_filter,
+                )
+            )
+            .distinct()
+        )
+
+    def __get_subgroup_total_queryset(self):
+        return self.queryset.values(self.sub_group_by_field_name).annotate(
+            count=Count(
+                self.sub_group_by_field_name,
+                filter=self.count_filter,
+            )
+        )
+
+    def __get_total_dict(self):
+        total_group_dict = {}
+        total_sub_group_dict = {}
+        for group in self.__get_group_total_queryset():
+            total_group_dict[str(group.get(self.group_by_field_name))] = (
+                total_group_dict.get(
+                    str(group.get(self.group_by_field_name)), 0
+                )
+                + (1 if group.get("count") == 0 else group.get("count"))
+            )
+        for sub_group in self.__get_subgroup_total_queryset():
+            total_sub_group_dict[
+                str(sub_group.get(self.sub_group_by_field_name))
+            ] = total_sub_group_dict.get(
+                str(sub_group.get(self.sub_group_by_field_name)), 0
+            ) + (
+                1 if sub_group.get("count") == 0 else sub_group.get("count")
+            )
+
+        return total_group_dict, total_sub_group_dict
+
+    def __get_field_dict(self):
+        total_group_dict, total_sub_group_dict = self.__get_total_dict()
+        return {
+            str(group): {
+                "results": {
+                    str(sub_group): {
+                        "results": [],
+                        "total_results": total_sub_group_dict.get(
+                            str(sub_group), 0
+                        ),
+                    }
+                    for sub_group in total_sub_group_dict
+                },
+                "total_results": total_group_dict.get(str(group), 0),
+            }
+            for group in self.group_by_fields
+        }
+
+    def __result_already_added(self, result, group):
+        for existing_issue in group:
+            if existing_issue["id"] == result["id"]:
+                return True
+        return False
+
+    def __query_multi_grouper(self, results):
+        processed_results = self.__get_field_dict()
+        # Preparing a dict to keep track of group IDs associated with each label ID
+        result_group_mapping = defaultdict(set)
+        result_sub_group_mapping = defaultdict(set)
+
+        # Iterate over results to fill the above dictionaries
+        if self.group_by_field_name in self.FIELD_MAPPER:
+            for result in results:
+                result_id = result["id"]
+                group_id = result[self.group_by_field_name]
+                result_group_mapping[str(result_id)].add(str(group_id))
+        if self.sub_group_by_field_name in self.FIELD_MAPPER:
+            for result in results:
+                result_id = result["id"]
+                sub_group_id = result[self.sub_group_by_field_name]
+                result_sub_group_mapping[str(result_id)].add(str(sub_group_id))
+
+        for result in results:
+            group_value = str(result.get(self.group_by_field_name))
+            sub_group_value = str(result.get(self.sub_group_by_field_name))
+            if (
+                group_value in processed_results
+                and sub_group_value
+                in processed_results[str(group_value)]["results"]
+            ):
+                if self.group_by_field_name in self.FIELD_MAPPER:
+                    group_ids = list(result_group_mapping[str(result_id)])
+                    result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
+                        [] if "None" in group_ids else group_ids
+                    )
+                if self.sub_group_by_field_name in self.FIELD_MAPPER:
+                    sub_group_ids = list(result_group_mapping[str(result_id)])
+                    result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
+                        [] if "None" in sub_group_ids else sub_group_ids
+                    )
+                processed_results[str(group_value)]["results"][
+                    str(sub_group_value)
+                ]["results"].append(result)
+        return processed_results
+
+    def __query_grouper(self, results):
+        processed_results = self.__get_field_dict()
+        for result in results:
+            group_value = str(result.get(self.group_by_field_name))
+            sub_group_value = str(result.get(self.sub_group_by_field_name))
+            if (
+                group_value in processed_results
+                and sub_group_value
+                in processed_results[str(group_value)]["results"]
+            ):
+                processed_results[str(group_value)]["results"][
+                    str(sub_group_value)
+                ]["results"].append(result)
+        return processed_results
+
+    def process_results(self, results):
+        if (
+            self.group_by_field_name in self.FIELD_MAPPER
+            or self.sub_group_by_field_name in self.FIELD_MAPPER
+        ):
+            processed_results = self.__query_multi_grouper(results=results)
+        else:
+            processed_results = self.__query_grouper(results=results)
+        return processed_results
+
+
 class BasePaginator:
     """BasePaginator class can be inherited by any View to return a paginated view"""
 
@@ -371,6 +600,8 @@ class BasePaginator:
         controller=None,
         group_by_field_name=None,
         group_by_fields=None,
+        sub_group_by_field_name=None,
+        sub_group_by_fields=None,
         count_filter=None,
         **paginator_kwargs,
     ):
@@ -391,6 +622,15 @@ class BasePaginator:
                 paginator_kwargs["group_by_field_name"] = group_by_field_name
                 paginator_kwargs["group_by_fields"] = group_by_fields
                 paginator_kwargs["count_filter"] = count_filter
+
+                if sub_group_by_field_name:
+                    paginator_kwargs["sub_group_by_field_name"] = (
+                        sub_group_by_field_name
+                    )
+                    paginator_kwargs["sub_group_by_fields"] = (
+                        sub_group_by_fields
+                    )
+
             paginator = paginator_cls(**paginator_kwargs)
 
         try:
@@ -416,6 +656,7 @@ class BasePaginator:
         response = Response(
             {
                 "grouped_by": group_by_field_name,
+                "sub_grouped_by": sub_group_by_field_name,
                 "total_count": (cursor_result.hits),
                 "next_cursor": str(cursor_result.next),
                 "prev_cursor": str(cursor_result.prev),

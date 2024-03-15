@@ -17,98 +17,49 @@ from plane.db.models import (
 )
 
 
-def issue_queryset_grouper(field, queryset):
-    if field == "assignees__id":
-        return queryset.annotate(
-            label_ids=Coalesce(
-                ArrayAgg(
-                    "labels__id",
-                    distinct=True,
-                    filter=~Q(labels__id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            module_ids=Coalesce(
-                ArrayAgg(
-                    "issue_module__module_id",
-                    distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-        )
+def issue_queryset_grouper(queryset, group_by, sub_group_by):
 
-    elif field == "labels__id":
-        return queryset.annotate(
-            assignee_ids=Coalesce(
-                ArrayAgg(
-                    "assignees__id",
-                    distinct=True,
-                    filter=~Q(assignees__id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            module_ids=Coalesce(
-                ArrayAgg(
-                    "issue_module__module_id",
-                    distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-        )
+    FIELD_MAPPER = {
+        "label_ids": "labels__id",
+        "assignee_ids": "assignees__id",
+        "module_ids": "modules__id",
+    }
 
-    elif field == "modules__id":
-        return queryset.annotate(
-            modules__id=F("issue_module__module_id")
-        ).annotate(
-            label_ids=Coalesce(
-                ArrayAgg(
-                    "labels__id",
-                    distinct=True,
-                    filter=~Q(labels__id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
+    annotations_map = {
+        "label_ids": ("assignees__id", ~Q(assignees__id__isnull=True)),
+        "assignee_ids": ("labels__id", ~Q(labels__id__isnull=True)),
+        "module_ids": (
+            "issue_module__module_id",
+            ~Q(issue_module__module_id__isnull=True),
+        ),
+    }
+    default_annotations = {
+        key: Coalesce(
+            ArrayAgg(
+                field,
+                distinct=True,
+                filter=condition,
             ),
-            assignee_ids=Coalesce(
-                ArrayAgg(
-                    "assignees__id",
-                    distinct=True,
-                    filter=~Q(assignees__id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
+            Value([], output_field=ArrayField(UUIDField())),
         )
-    else:
-        return queryset.annotate(
-            label_ids=Coalesce(
-                ArrayAgg(
-                    "labels__id",
-                    distinct=True,
-                    filter=~Q(labels__id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            module_ids=Coalesce(
-                ArrayAgg(
-                    "issue_module__module_id",
-                    distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            assignee_ids=Coalesce(
-                ArrayAgg(
-                    "assignees__id",
-                    distinct=True,
-                    filter=~Q(assignees__id__isnull=True),
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-        )
+        for key, (field, condition) in annotations_map.items()
+        if FIELD_MAPPER.get(key) != group_by
+        or FIELD_MAPPER.get(key) != sub_group_by
+    }
+
+    return queryset.annotate(**default_annotations)
 
 
-def issue_on_results(issues, group_by):
+def issue_on_results(issues, group_by, sub_group_by):
+
+    FIELD_MAPPER = {
+        "labels__id": "label_ids",
+        "assignees__id": "assignee_ids",
+        "modules__id": "module_ids",
+    }
+
+    original_list = ["assignee_ids", "label_ids", "module_ids"]
+
     required_fields = [
         "id",
         "name",
@@ -134,14 +85,16 @@ def issue_on_results(issues, group_by):
         "archived_at",
         "state__group",
     ]
-    if group_by == "assignees__id":
-        required_fields.extend(["label_ids", "module_ids", "assignees__id"])
-    elif group_by == "labels__id":
-        required_fields.extend(["assignee_ids", "module_ids", "labels__id"])
-    elif group_by == "modules__id":
-        required_fields.extend(["assignee_ids", "label_ids", "modules__id"])
-    else:
-        required_fields.extend(["assignee_ids", "label_ids", "module_ids"])
+
+    if group_by in FIELD_MAPPER:
+        original_list.remove(FIELD_MAPPER[group_by])
+        original_list.append(group_by)
+
+    if sub_group_by in FIELD_MAPPER:
+        original_list.remove(FIELD_MAPPER[sub_group_by])
+        original_list.append(sub_group_by)
+
+    required_fields.extend(original_list)
     return issues.values(*required_fields)
 
 
