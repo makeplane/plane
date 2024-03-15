@@ -57,7 +57,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
 
     const payload = {
       ...changesMade,
-      name: changesMade.name?.trim() === "" ? "Untitled" : changesMade.name,
+      name: changesMade.name?.trim() === "" ? "Untitled" : changesMade.name?.trim(),
     };
 
     await issueDraftService
