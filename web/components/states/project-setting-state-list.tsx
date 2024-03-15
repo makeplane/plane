@@ -10,6 +10,8 @@ import { STATES_LIST } from "constants/fetch-keys";
 import { sortByField } from "helpers/array.helper";
 import { orderStateGroups } from "helpers/state.helper";
 import { useEventTracker, useProjectState } from "hooks/store";
+// constants
+import { E_STATES } from "constants/event-tracker";
 // components
 // ui
 // icons
@@ -55,7 +57,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                     type="button"
                     className="flex items-center gap-2 px-2 text-custom-primary-100 outline-none hover:text-custom-primary-200"
                     onClick={() => {
-                      PROJECT_SETTINGS_STATES_PAGE");
+                      setTrackElement(E_STATES);
                       setActiveGroup(group as keyof StateGroup);
                     }}
                   >
