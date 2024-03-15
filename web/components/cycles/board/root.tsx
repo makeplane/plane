@@ -22,12 +22,14 @@ export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
     <div className="h-full w-full">
       <div className="flex h-full w-full justify-between">
         <div className="h-full w-full flex flex-col p-8 space-y-8 vertical-scrollbar scrollbar-lg">
-          <CyclesBoardMap
-            cycleIds={cycleIds}
-            peekCycle={peekCycle}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
+          {cycleIds.length > 0 && (
+            <CyclesBoardMap
+              cycleIds={cycleIds}
+              peekCycle={peekCycle}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
           {completedCycleIds.length !== 0 && (
             <Disclosure as="div" className="space-y-4">
               <Disclosure.Button className="bg-custom-background-80 font-semibold text-sm py-1 px-2 rounded flex items-center gap-1">

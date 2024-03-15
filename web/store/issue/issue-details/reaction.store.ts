@@ -84,7 +84,7 @@ export class IssueReactionStore implements IIssueReactionStore {
       if (reactions?.[reaction])
         reactions?.[reaction].map((reactionId) => {
           const currentReaction = this.getReactionById(reactionId);
-          if (currentReaction && currentReaction.actor_id === userId) _userReactions.push(currentReaction);
+          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
         });
     });
 
@@ -151,7 +151,7 @@ export class IssueReactionStore implements IIssueReactionStore {
   ) => {
     try {
       const userReactions = this.reactionsByUser(issueId, userId);
-      const currentReaction = find(userReactions, { actor_id: userId, reaction: reaction });
+      const currentReaction = find(userReactions, { actor: userId, reaction: reaction });
 
       if (currentReaction && currentReaction.id) {
         runInAction(() => {
