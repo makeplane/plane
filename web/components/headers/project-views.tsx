@@ -11,6 +11,7 @@ import { EUserProjectRoles } from "constants/project";
 // constants
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import { ProjectLogo } from "components/project";
+import { E_VIEWS } from "constants/event-tracker";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
@@ -69,7 +70,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
                 size="sm"
                 prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
                 onClick={() => {
-                  setTrackElement("Views page");
+                  setTrackElement(E_VIEWS);
                   toggleCreateViewModal(true);
                 }}
               >

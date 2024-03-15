@@ -12,6 +12,8 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { useEventTracker, useProjectState } from "hooks/store";
 // types
 import { IState } from "@plane/types";
+// constants
+import { E_STATES } from "constants/event-tracker";
 
 type Props = {
   index: number;
@@ -105,7 +107,7 @@ export const StatesListItem: React.FC<Props> = observer((props) => {
               state.default || groupLength === 1 ? "cursor-not-allowed" : ""
             } grid place-items-center`}
             onClick={() => {
-              setTrackElement("Project settings states page");
+              setTrackElement(E_STATES);
               handleDeleteState();
             }}
             disabled={state.default || groupLength === 1}

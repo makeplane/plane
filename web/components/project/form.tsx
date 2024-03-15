@@ -16,7 +16,7 @@ import {
 // components
 import { ImagePickerPopover } from "components/core";
 // constants
-import { PROJECT_UPDATED } from "constants/event-tracker";
+import { E_PROJECT_GENERAL, PROJECT_UPDATED } from "constants/event-tracker";
 import { NETWORK_CHOICES } from "constants/project";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -86,7 +86,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             ...res,
             changed_properties: changed_properties,
             state: "SUCCESS",
-            element: "Project general settings",
+            element: E_PROJECT_GENERAL,
           },
         });
         setToast({
@@ -98,7 +98,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       .catch((error) => {
         captureProjectEvent({
           eventName: PROJECT_UPDATED,
-          payload: { ...payload, state: "FAILED", element: "Project general settings" },
+          payload: { ...payload, state: "FAILED", element: E_PROJECT_GENERAL },
         });
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -31,6 +31,7 @@ import { ProjectLogo } from "components/project";
 import {
   DP_APPLIED,
   DP_REMOVED,
+  E_PROJECT_ISSUES,
   elementFromPath,
   FILTER_APPLIED,
   FILTER_REMOVED,
@@ -275,7 +276,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Button>
               <Button
                 onClick={() => {
-                  setTrackElement("Project issues page");
+                  setTrackElement(E_PROJECT_ISSUES);
                   toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                 }}
                 size="sm"

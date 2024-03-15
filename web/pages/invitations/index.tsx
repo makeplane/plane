@@ -28,7 +28,7 @@ import { NextPageWithLayout } from "lib/types";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // constants
 import { ROLE } from "constants/workspace";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
+import { E_WORKSPACE_INVITATION, MEMBER_ACCEPTED } from "constants/event-tracker";
 // components
 import { EmptyState } from "components/common";
 import { PageHead } from "components/core";
@@ -89,7 +89,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",
-          element: "Workspace invitations page",
+          element: E_WORKSPACE_INVITATION,
         });
         userService
           .updateUser({ last_workspace_id: redirectWorkspace?.id })
@@ -111,7 +111,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
           project_id: undefined,
           accepted_from: "App",
           state: "FAILED",
-          element: "Workspace invitations page",
+          element: E_WORKSPACE_INVITATION,
         });
         setToast({
           type: TOAST_TYPE.ERROR,

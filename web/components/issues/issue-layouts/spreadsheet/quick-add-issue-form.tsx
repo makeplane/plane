@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // hooks
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { ISSUE_CREATED } from "constants/event-tracker";
+import { E_SPREADSHEET_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
 import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject, useWorkspace } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
@@ -182,14 +182,14 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
         .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
+            payload: { ...res, state: "SUCCESS", element: E_SPREADSHEET_QUICK_ADD },
             routePath: router.asPath,
           });
         })
         .catch((err) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
+            payload: { ...payload, state: "FAILED", element: E_SPREADSHEET_QUICK_ADD },
             routePath: router.asPath,
           });
           console.error(err);

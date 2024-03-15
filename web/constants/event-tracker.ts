@@ -335,5 +335,79 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
 // Elements
-export const E_PROJECT_PAGES = "Project pages page";
+// Cycle Elements
+export const E_CYCLES = "Cycles page";
+export const E_CYCLES_LIST_LAYOUT = "Cycles page list layout";
+export const E_CYCLES_GRID_LAYOUT = "Cycles page grid layout";
+export const E_CYCLE_SIDEBAR = "Cycle sidebar";
+export const E_CYCLE_ISSUES = "Cycle issues page";
+export const E_CYCLES_EMPTY_STATE = "Cycles empty state";
+export const E_CYCLE_ISSUES_EMPTY_STATE = "Cycle issues empty state";
+// Module Elements
+export const E_MODULES_LIST_LAYOUT = "Modules page list layout";
+export const E_MODULES_GRID_LAYOUT = "Modules page grid layout";
+export const E_MODULES = "Modules page";
+export const E_MODULE_SIDEBAR = "Module sidebar";
+export const E_MODULE_ISSUES = "Module issues page";
+export const E_MODULES_EMPTY_STATE = "Modules empty state";
+export const E_MODULES_ISSUES_EMPTY_STATE = "Module issues empty state";
+// Project Elements
+export const E_PROJECTS = "Projects page";
+export const E_PROJECT_EMPTY_STATE = "Project empty state";
+export const E_PROJECT_ISSUES_EMPTY_STATE = "Project issues empty state";
+export const E_PROJECT_ISSUES = "Project issues page";
+// Project Page Elements
+export const E_PAGES = "Project pages page";
+export const E_PAGE_DETAILS = "Project page details";
+export const E_PAGES_EMPTY_STATE = "Pages empty state";
+// Project Views Elements
+export const E_VIEWS = "Project views page";
+export const E_VIEWS_EMPTY_STATE = "Views empty state";
+export const E_VIEW_ISSUES_EMPTY_STATE = "View issues empty state";
+// Dashboard Elements
+export const E_DASHBOARD = "Dashboard";
+export const E_DASHBOARD_EMPTY_STATE = "Dashboard empty state";
+// Global Issues Elements
+export const E_GLOBAL_ISSUES_EMPTY_STATE = "Global issues empty state";
+export const E_GLOBAL_ISSUES = "Global issues page";
+// Issue Details Elements
+export const E_ISSUE_DETAILS = "Issue details page";
+// Layout Elements
+export const E_LIST_LAYOUT = "List layout";
+export const E_KANBAN_LAYOUT = "Kanban layout";
+export const E_GRID_LAYOUT = "Grid layout";
+export const E_SPREADSHEET_LAYOUT = "Spreadsheet layout";
+// Project Settings Elements
+export const E_PROJECT_GENERAL = "Project settings general page";
+export const E_PROJECT_MEMBERS = "Project settings members page";
+export const E_LABELS = "Project settings labels page";
+export const E_STATES = "Project settings states page";
+export const E_FEATURES = "Project settings features page";
+// Analytics Elements
+export const E_ANALYTICS_EMPTY_STATE = "Analytics empty state";
+// Onboarding Elements
+export const E_ONBOARDING = "Onboarding";
+export const E_PRODUCT_TOUR = "Product tour";
+// Workspace Settings Elements
+export const E_WORKSPACE_GENERAL = "Workspace settings general page";
+export const E_WORKSPACE_MEMBERS = "Workspace settings members page";
+export const E_WORKSPACE_INVITATION = "Workspace invitations page";
+export const E_CREATE_WORKSPACE = "Create workspace page";
+export const E_JIRA_IMPORT = "Jira import detail page";
+// Inbox Elements
+export const E_INBOX = "Inbox page";
+// Notifications Elements
+export const E_Notifications = "Notifications";
+// Core Elements
+export const E_SIDEBAR = "Sidebar";
+export const E_ISSUE_PEEK_VIEW = "Issue peek view";
+export const E_COMMAND_PALETTE = "Command palette";
+export const E_SHORTCUT_KEY = "Shortcut key";
+// Quick Add Elements
+export const E_KANBAN_QUICK_ADD = "Kanban quick add";
+export const E_LIST_QUICK_ADD = "List quick add";
+export const E_CALENDAR_QUICK_ADD = "Calendar quick add";
+export const E_SPREADSHEET_QUICK_ADD = "Spreadsheet quick add";
+export const E_Gantt_QUICK_ADD = "Gantt quick add";

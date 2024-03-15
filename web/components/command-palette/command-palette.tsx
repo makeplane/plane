@@ -23,6 +23,8 @@ import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 import { IssueService } from "services/issue";
+// constants
+import { E_SHORTCUT_KEY } from "constants/event-tracker";
 
 // services
 const issueService = new IssueService();
@@ -118,7 +120,7 @@ export const CommandPalette: FC = observer(() => {
           toggleSidebar();
         }
       } else if (!isAnyModalOpen) {
-        setTrackElement("Shortcut key");
+        setTrackElement(E_SHORTCUT_KEY);
         if (keyPressed === "c") {
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {

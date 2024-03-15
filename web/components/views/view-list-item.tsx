@@ -17,7 +17,7 @@ import { useEventTracker, useProjectView, useUser } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
 // constants
-import { VIEW_FAVORITED, VIEW_UNFAVORITED } from "constants/event-tracker";
+import { E_VIEWS, VIEW_FAVORITED, VIEW_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   view: IProjectView;
@@ -44,7 +44,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
       captureEvent(VIEW_FAVORITED, {
         view_id: view.id,
-        element: "Views page",
+        element: E_VIEWS,
         state: "SUCCESS",
       });
     });
@@ -56,7 +56,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
       captureEvent(VIEW_UNFAVORITED, {
         view_id: view.id,
-        element: "Views page",
+        element: E_VIEWS,
         state: "SUCCESS",
       });
     });

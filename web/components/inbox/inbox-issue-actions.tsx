@@ -14,7 +14,7 @@ import {
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
-import { ISSUE_DELETED } from "constants/event-tracker";
+import { E_INBOX, ISSUE_DELETED } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 // hooks
 import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
@@ -89,7 +89,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             payload: {
               id: inboxIssueId,
               state: "SUCCESS",
-              element: "Inbox page",
+              element: E_INBOX,
             },
           });
           router.push({
@@ -106,7 +106,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             payload: {
               id: inboxIssueId,
               state: "FAILED",
-              element: "Inbox page",
+              element: E_INBOX,
             },
           });
         }

@@ -11,6 +11,7 @@ import { ProjectViewListItem } from "components/views";
 import { Input } from "@plane/ui";
 // constants
 import { EmptyStateType } from "constants/empty-state";
+import { E_VIEWS_EMPTY_STATE } from "constants/event-tracker";
 
 export const ProjectViewsList = observer(() => {
   // states
@@ -56,7 +57,7 @@ export const ProjectViewsList = observer(() => {
         <EmptyState
           type={EmptyStateType.PROJECT_VIEW}
           primaryButtonOnClick={() => {
-            setTrackElement("Views empty state");
+            setTrackElement(E_VIEWS_EMPTY_STATE);
             toggleCreateViewModal(true);
           }}
         />

@@ -13,7 +13,7 @@ import { useEventTracker, useLabel } from "hooks/store";
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // constants
-import { LABEL_CREATED } from "constants/event-tracker";
+import { E_LABELS, LABEL_CREATED } from "constants/event-tracker";
 
 // types
 type Props = {
@@ -74,7 +74,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
           label_id: res.id,
           color: res.color,
           parent: res.parent,
-          element: "Project settings labels page",
+          element: E_LABELS,
           state: "SUCCESS",
         });
         onClose();

@@ -15,7 +15,7 @@ import {
   setPromiseToast,
 } from "@plane/ui";
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { E_GRID_LAYOUT, E_MODULES_LIST_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -59,7 +59,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
       () => {
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
-          element: "Grid layout",
+          element: E_GRID_LAYOUT,
           state: "SUCCESS",
         });
       }
@@ -90,7 +90,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     ).then(() => {
       captureEvent(MODULE_UNFAVORITED, {
         module_id: moduleId,
-        element: "Grid layout",
+        element: E_GRID_LAYOUT,
         state: "SUCCESS",
       });
     });
@@ -123,14 +123,14 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Modules page list layout");
+    setTrackElement(E_MODULES_LIST_LAYOUT);
     setEditModal(true);
   };
 
   const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Modules page list layout");
+    setTrackElement(E_MODULES_LIST_LAYOUT);
     setDeleteModal(true);
   };
 

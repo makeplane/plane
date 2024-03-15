@@ -37,6 +37,8 @@ import { getNumberCount } from "helpers/string.helper";
 import { useApplication, useEventTracker, useInbox, useProject } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { usePlatformOS } from "hooks/use-platform-os";
+// constants
+import { E_SIDEBAR } from "constants/event-tracker";
 // helpers
 
 // components
@@ -151,7 +153,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   };
 
   const handleLeaveProject = () => {
-    setTrackElement("APP_SIDEBAR_PROJECT_DROPDOWN");
+    setTrackElement(E_SIDEBAR);
     setLeaveProjectModal(true);
   };
 

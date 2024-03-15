@@ -9,7 +9,7 @@ import { Sparkle } from "lucide-react";
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { GptAssistantPopover } from "components/core";
 import { PriorityDropdown } from "components/dropdowns";
-import { ISSUE_CREATED } from "constants/event-tracker";
+import { E_INBOX, ISSUE_CREATED } from "constants/event-tracker";
 import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
 // services
 import { AIService } from "services/ai.service";
@@ -96,7 +96,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           payload: {
             ...formData,
             state: "SUCCESS",
-            element: "Inbox page",
+            element: E_INBOX,
           },
           routePath: router.pathname,
         });
@@ -108,7 +108,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           payload: {
             ...formData,
             state: "FAILED",
-            element: "Inbox page",
+            element: E_INBOX,
           },
           routePath: router.pathname,
         });
@@ -248,7 +248,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                   // this is done so that the title do not reset after gpt popover closed
                                   reset(getValues());
                                 }}
-                                onResponse={(_,response) => {
+                                onResponse={(_, response) => {
                                   handleAiAssistance(response);
                                 }}
                                 button={

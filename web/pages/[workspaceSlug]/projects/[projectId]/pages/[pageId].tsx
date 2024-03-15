@@ -32,6 +32,7 @@ import {
   AI_RES_REGENERATED,
   AI_RES_USED,
   AI_TRIGGERED,
+  E_PAGE_DETAILS,
   PAGE_ARCHIVED,
   PAGE_DUPLICATED,
   PAGE_LOCKED,
@@ -144,7 +145,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     editorRef.current?.setEditorValueAtCursorPosition(response);
     captureEvent(AI_RES_USED, {
       page_id: pageId,
-      element: "Pages detail page",
+      element: E_PAGE_DETAILS,
       question: question,
       answer: response,
     });
@@ -195,7 +196,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         captureEvent(PAGE_DUPLICATED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
-          element: "Pages detail page",
+          element: E_PAGE_DETAILS,
           state: "SUCCESS",
         })
       );
@@ -215,7 +216,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         captureEvent(PAGE_ARCHIVED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
-          element: "Pages detail page",
+          element: E_PAGE_DETAILS,
           state: "SUCCESS",
         })
       );
@@ -235,7 +236,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         captureEvent(PAGE_RESTORED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
-          element: "Pages detail page",
+          element: E_PAGE_DETAILS,
           state: "SUCCESS",
         })
       );
@@ -255,7 +256,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         captureEvent(PAGE_LOCKED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
-          element: "Pages detail page",
+          element: E_PAGE_DETAILS,
           state: "SUCCESS",
         })
       );
@@ -275,7 +276,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         captureEvent(PAGE_UNLOCKED, {
           page_id: pageId,
           access: access == 1 ? "private" : "public",
-          element: "Pages detail page",
+          element: E_PAGE_DETAILS,
           state: "SUCCESS",
         })
       );
@@ -392,14 +393,14 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     onGenerateResponse={(question) =>
                       captureEvent(AI_TRIGGERED, {
                         page_id: pageId,
-                        element: "Pages detail page",
+                        element: E_PAGE_DETAILS,
                         question: question,
                       })
                     }
                     onReGenerateResponse={(question, response) =>
                       captureEvent(AI_RES_REGENERATED, {
                         page_id: pageId,
-                        element: "Pages detail page",
+                        element: E_PAGE_DETAILS,
                         question: question,
                         prev_answer: response,
                       })

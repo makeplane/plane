@@ -18,6 +18,7 @@ import { useEventTracker, useProjectState } from "hooks/store";
 import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
+import { E_GLOBAL_ISSUES } from "constants/event-tracker";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
@@ -106,7 +107,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         {isEditingAllowed && (
           <CustomMenu.MenuItem
             onClick={() => {
-              setTrackElement("Global issues");
+              setTrackElement(E_GLOBAL_ISSUES);
               setIssueToEdit(issue);
               setCreateUpdateIssueModal(true);
             }}
@@ -132,7 +133,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         {isEditingAllowed && (
           <CustomMenu.MenuItem
             onClick={() => {
-              setTrackElement("Global issues");
+              setTrackElement(E_GLOBAL_ISSUES);
               setCreateUpdateIssueModal(true);
             }}
           >
@@ -167,7 +168,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         {isEditingAllowed && (
           <CustomMenu.MenuItem
             onClick={() => {
-              setTrackElement("Global issues");
+              setTrackElement(E_GLOBAL_ISSUES);
               setDeleteIssueModal(true);
             }}
           >

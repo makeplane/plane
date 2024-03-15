@@ -9,7 +9,7 @@ import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
 // constants
-import { PM_ROLE_CHANGED, PROJECT_MEMBER_LEFT, PROJECT_MEMBER_REMOVED } from "constants/event-tracker";
+import { E_PROJECT_MEMBERS, PM_ROLE_CHANGED, PROJECT_MEMBER_LEFT, PROJECT_MEMBER_REMOVED } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 import { ROLE } from "constants/workspace";
 // hooks
@@ -52,7 +52,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         .then(async () => {
           captureEvent(PROJECT_MEMBER_LEFT, {
             state: "SUCCESS",
-            element: "Project settings members page",
+            element: E_PROJECT_MEMBERS,
           });
           await fetchProjects(workspaceSlug.toString());
           router.push(`/${workspaceSlug}/projects`);
@@ -72,7 +72,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             role: getUserRole(userDetails.role as number),
             removed_by_role: currentProjectRole ? getUserRole(currentProjectRole as number) : undefined,
             state: "SUCCESS",
-            element: "Project settings members page",
+            element: E_PROJECT_MEMBERS,
           });
         })
         .catch((err) =>
@@ -162,7 +162,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
                     member_id: userDetails.member.id,
                     changed_role: getUserRole(value as number),
                     state: "SUCCESS",
-                    element: "Project settings members page",
+                    element: E_PROJECT_MEMBERS,
                   });
                 })
                 .catch((err) => {

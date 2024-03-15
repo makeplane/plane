@@ -3,7 +3,7 @@ import useSWR, { mutate } from "swr";
 // hooks
 import { CheckCircle2, Search } from "lucide-react";
 import { Button } from "@plane/ui";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
+import { E_WORKSPACE_INVITATION, MEMBER_ACCEPTED } from "constants/event-tracker";
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
 import { truncateText } from "helpers/string.helper";
@@ -72,7 +72,7 @@ export const Invitations: React.FC<Props> = (props) => {
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",
-          element: "Workspace invitations page",
+          element: E_WORKSPACE_INVITATION,
         });
         await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
@@ -88,7 +88,7 @@ export const Invitations: React.FC<Props> = (props) => {
           project_id: undefined,
           accepted_from: "App",
           state: "FAILED",
-          element: "Workspace invitations page",
+          element: E_WORKSPACE_INVITATION,
         });
       })
       .finally(() => setIsJoiningWorkspaces(false));

@@ -11,6 +11,8 @@ import { checkEmailValidity } from "helpers/string.helper";
 import { useApplication, useEventTracker, useProject } from "hooks/store";
 // types
 import { IJiraImporterForm } from "@plane/types";
+// constants
+import { E_JIRA_IMPORT } from "constants/event-tracker";
 
 export const JiraGetImportDetail: React.FC = observer(() => {
   // store hooks
@@ -200,7 +202,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                   <button
                     type="button"
                     onClick={() => {
-                      setTrackElement("Jira import detail page");
+                      setTrackElement(E_JIRA_IMPORT);
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"

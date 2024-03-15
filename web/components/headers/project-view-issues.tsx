@@ -33,6 +33,7 @@ import { ProjectLogo } from "components/project";
 import {
   DP_APPLIED,
   DP_REMOVED,
+  E_VIEWS,
   elementFromPath,
   FILTER_APPLIED,
   FILTER_REMOVED,
@@ -282,7 +283,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         {canUserCreateIssue && (
           <Button
             onClick={() => {
-              setTrackElement("PROJECT_VIEW_PAGE_HEADER");
+              setTrackElement(E_VIEWS);
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"

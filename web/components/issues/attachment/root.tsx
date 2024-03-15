@@ -6,6 +6,8 @@ import { useEventTracker, useIssueDetail } from "hooks/store";
 // components
 import { IssueAttachmentUpload } from "./attachment-upload";
 import { IssueAttachmentsList } from "./attachments-list";
+// constants
+import { E_ISSUE_DETAILS } from "constants/event-tracker";
 
 export type TIssueAttachmentRoot = {
   workspaceSlug: string;
@@ -48,7 +50,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
           const res = await attachmentUploadPromise;
           captureIssueEvent({
             eventName: "Issue attachment added",
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "attachment",
               change_details: res.id,
@@ -57,7 +59,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
         } catch (error) {
           captureIssueEvent({
             eventName: "Issue attachment added",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
           });
         }
       },
@@ -72,7 +74,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
           });
           captureIssueEvent({
             eventName: "Issue attachment deleted",
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "attachment",
               change_details: "",
@@ -81,7 +83,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
         } catch (error) {
           captureIssueEvent({
             eventName: "Issue attachment deleted",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "attachment",
               change_details: "",

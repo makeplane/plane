@@ -11,7 +11,7 @@ import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 // constants
-import { WM_ROLE_CHANGED, WORKSPACE_MEMBER_REMOVED, WORKSPACE_MEMBER_LEFT } from "constants/event-tracker";
+import { WM_ROLE_CHANGED, WORKSPACE_MEMBER_REMOVED, WORKSPACE_MEMBER_LEFT, E_WORKSPACE_MEMBERS } from "constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useUser } from "hooks/store";
@@ -51,7 +51,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
           member_id: currentUser?.id,
           role: currentWorkspaceRole ? getUserRole(currentWorkspaceRole as number) : undefined,
           state: "SUCCESS",
-          element: "Workspace settings members page",
+          element: E_WORKSPACE_MEMBERS,
         });
         router.push("/profile");
       })
@@ -74,7 +74,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
           removed_by_role: currentWorkspaceRole ? getUserRole(currentWorkspaceRole as number) : undefined,
           role: memberDetails.role ? getUserRole(memberDetails.role as number) : undefined,
           state: "SUCCESS",
-          element: "Workspace settings members page",
+          element: E_WORKSPACE_MEMBERS,
         })
       )
       .catch((err) =>
@@ -184,7 +184,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
                     member_id: memberDetails.member.id,
                     changed_role: value ? getUserRole(value as number) : undefined,
                     state: "SUCCESS",
-                    element: "Workspace settings members page",
+                    element: E_WORKSPACE_MEMBERS,
                   })
                 )
                 .catch(() => {

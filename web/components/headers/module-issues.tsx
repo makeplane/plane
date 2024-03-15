@@ -39,6 +39,7 @@ import { ProjectLogo } from "components/project";
 import {
   DP_APPLIED,
   DP_REMOVED,
+  E_MODULE_ISSUES,
   elementFromPath,
   FILTER_APPLIED,
   FILTER_REMOVED,
@@ -337,7 +338,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 <Button
                   className="hidden sm:flex"
                   onClick={() => {
-                    setTrackElement("Module issues page");
+                    setTrackElement(E_MODULE_ISSUES);
                     toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                   }}
                   size="sm"

@@ -38,6 +38,7 @@ import { ProjectLogo } from "components/project";
 import {
   DP_APPLIED,
   DP_REMOVED,
+  E_CYCLE_ISSUES,
   elementFromPath,
   FILTER_APPLIED,
   FILTER_REMOVED,
@@ -329,7 +330,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 </Button>
                 <Button
                   onClick={() => {
-                    setTrackElement("Cycle issues page");
+                    setTrackElement(E_CYCLE_ISSUES);
                     toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                   }}
                   size="sm"

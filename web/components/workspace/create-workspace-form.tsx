@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { WORKSPACE_CREATED } from "constants/event-tracker";
+import { E_CREATE_WORKSPACE, WORKSPACE_CREATED } from "constants/event-tracker";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 // hooks
 import { useEventTracker, useWorkspace } from "hooks/store";
@@ -73,7 +73,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                 payload: {
                   ...res,
                   state: "SUCCESS",
-                  element: "Create workspace page",
+                  element: E_CREATE_WORKSPACE,
                 },
               });
               setToast({
@@ -89,7 +89,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                 eventName: WORKSPACE_CREATED,
                 payload: {
                   state: "FAILED",
-                  element: "Create workspace page",
+                  element: E_CREATE_WORKSPACE,
                 },
               });
               setToast({

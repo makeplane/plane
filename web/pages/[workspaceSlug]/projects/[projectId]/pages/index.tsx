@@ -23,6 +23,7 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
 import { EmptyStateType } from "constants/empty-state";
+import { E_PAGES_EMPTY_STATE } from "constants/event-tracker";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -207,7 +208,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
         <EmptyState
           type={EmptyStateType.PROJECT_PAGE}
           primaryButtonOnClick={() => {
-            setTrackElement("Pages empty state");
+            setTrackElement(E_PAGES_EMPTY_STATE);
             toggleCreatePageModal(true);
           }}
         />

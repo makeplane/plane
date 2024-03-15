@@ -8,7 +8,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
-import { LABEL_CREATED, LABEL_UPDATED } from "constants/event-tracker";
+import { E_LABELS, LABEL_CREATED, LABEL_UPDATED } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useLabel } from "hooks/store";
 // types
@@ -64,7 +64,7 @@ export const CreateUpdateLabelInline = observer(
             label_id: res.id,
             color: res.color,
             parent: res.parent,
-            element: "Project settings labels page",
+            element: E_LABELS,
             state: "SUCCESS",
           });
           handleClose();
@@ -91,7 +91,7 @@ export const CreateUpdateLabelInline = observer(
             color: res.color,
             parent: res.parent,
             change_details: Object.keys(dirtyFields),
-            element: "Project settings labels page",
+            element: E_LABELS,
             state: "SUCCESS",
           });
           reset(defaultValues);

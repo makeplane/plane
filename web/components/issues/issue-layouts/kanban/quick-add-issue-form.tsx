@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // hooks
 import { setPromiseToast } from "@plane/ui";
-import { ISSUE_CREATED } from "constants/event-tracker";
+import { E_KANBAN_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
 import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
@@ -122,14 +122,14 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
         .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...res, state: "SUCCESS", element: "Kanban quick add" },
+            payload: { ...res, state: "SUCCESS", element: E_KANBAN_QUICK_ADD },
             routePath: router.asPath,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...payload, state: "FAILED", element: "Kanban quick add" },
+            payload: { ...payload, state: "FAILED", element: E_KANBAN_QUICK_ADD },
             routePath: router.asPath,
           });
         });

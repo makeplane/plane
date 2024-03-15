@@ -12,6 +12,8 @@ import { useEventTracker, useIssueDetail } from "hooks/store";
 import { IUser, TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
+// constants
+import { E_ISSUE_DETAILS } from "constants/event-tracker";
 // ui
 // helpers
 // types
@@ -173,7 +175,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
           captureIssueEvent({
             eventName: "Sub-issue updated",
-            payload: { ...oldIssue, ...issueData, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...oldIssue, ...issueData, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: Object.keys(issueData).join(","),
               change_details:
@@ -190,7 +192,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         } catch (error) {
           captureIssueEvent({
             eventName: "Sub-issue updated",
-            payload: { ...oldIssue, ...issueData, state: "FAILED", element: "Issue detail page" },
+            payload: { ...oldIssue, ...issueData, state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: Object.keys(issueData).join(","),
               change_details:
@@ -216,7 +218,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: "Sub-issue removed",
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "parent_id",
               change_details: parentIssueId,
@@ -227,7 +229,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         } catch (error) {
           captureIssueEvent({
             eventName: "Sub-issue removed",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "parent_id",
               change_details: parentIssueId,
@@ -252,14 +254,14 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: "Sub-issue deleted",
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             routePath: router.asPath,
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
           captureIssueEvent({
             eventName: "Sub-issue removed",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
             routePath: router.asPath,
           });
           setToast({
@@ -354,7 +356,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     <div
                       className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                       onClick={() => {
-                        setTrackElement("Issue detail add sub-issue");
+                        setTrackElement(E_ISSUE_DETAILS);
                         handleIssueCrudState("create", parentIssueId, null);
                       }}
                     >
@@ -363,7 +365,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     <div
                       className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
                       onClick={() => {
-                        setTrackElement("Issue detail add sub-issue");
+                        setTrackElement(E_ISSUE_DETAILS);
                         handleIssueCrudState("existing", parentIssueId, null);
                       }}
                     >
@@ -406,7 +408,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                   >
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        setTrackElement("Issue detail nested sub-issue");
+                        setTrackElement(E_ISSUE_DETAILS);
                         handleIssueCrudState("create", parentIssueId, null);
                       }}
                     >
@@ -414,7 +416,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        setTrackElement("Issue detail nested sub-issue");
+                        setTrackElement(E_ISSUE_DETAILS);
                         handleIssueCrudState("existing", parentIssueId, null);
                       }}
                     >

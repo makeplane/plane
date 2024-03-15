@@ -8,7 +8,7 @@ import { Button, Input } from "@plane/ui";
 import { UserImageUploadModal } from "components/core";
 import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
 // constants
-import { USER_DETAILS } from "constants/event-tracker";
+import { E_ONBOARDING, USER_DETAILS } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 // assets
@@ -85,14 +85,14 @@ export const UserDetails: React.FC<Props> = observer((props) => {
         captureEvent(USER_DETAILS, {
           use_case: formData.use_case,
           state: "SUCCESS",
-          element: "Onboarding",
+          element: E_ONBOARDING,
         });
       })
       .catch(() => {
         captureEvent(USER_DETAILS, {
           use_case: formData.use_case,
           state: "FAILED",
-          element: "Onboarding",
+          element: E_ONBOARDING,
         });
       });
   };

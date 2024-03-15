@@ -31,7 +31,14 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
 import { DeleteModuleModal } from "components/modules";
 // constant
-import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
+import {
+  E_MODULE_SIDEBAR,
+  E_SIDEBAR,
+  MODULE_LINK_CREATED,
+  MODULE_LINK_DELETED,
+  MODULE_LINK_UPDATED,
+  MODULE_UPDATED,
+} from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
 // helpers
@@ -83,7 +90,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       .then((res) => {
         captureModuleEvent({
           eventName: MODULE_UPDATED,
-          payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
+          payload: { ...res, changed_properties: Object.keys(data)[0], element: E_SIDEBAR, state: "SUCCESS" },
         });
       })
       .catch(() => {
@@ -274,7 +281,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <CustomMenu placement="bottom-end" ellipsis>
                 <CustomMenu.MenuItem
                   onClick={() => {
-                    setTrackElement("Module peek-overview");
+                    setTrackElement(E_MODULE_SIDEBAR);
                     setModuleDeleteModal(true);
                   }}
                 >

@@ -8,7 +8,7 @@ import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucid
 // ui
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
+import { E_Notifications, ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 import { snoozeOptions } from "constants/notification";
 // helper
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
@@ -129,7 +129,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         markNotificationReadStatus(notification.id);
         captureEvent(ISSUE_OPENED, {
           issue_id: notification.data.issue.id,
-          element: "Notification",
+          element: E_Notifications,
           element_id: isArchivedTabOpen
             ? "archived"
             : isSnoozedTabOpen

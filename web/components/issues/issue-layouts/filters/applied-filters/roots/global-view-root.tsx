@@ -7,7 +7,7 @@ import { Button } from "@plane/ui";
 // components
 import { AppliedFiltersList } from "components/issues";
 // types
-import { GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
+import { E_SPREADSHEET_LAYOUT, GLOBAL_VIEW_UPDATED } from "constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "constants/workspace";
 // constants
@@ -99,7 +99,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         view_id: res.id,
         applied_filters: res.filters,
         state: "SUCCESS",
-        element: "Spreadsheet view",
+        element: E_SPREADSHEET_LAYOUT,
       });
     });
   };

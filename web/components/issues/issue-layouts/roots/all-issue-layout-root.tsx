@@ -19,6 +19,7 @@ import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
+import { E_GLOBAL_ISSUES_EMPTY_STATE } from "constants/event-tracker";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -165,12 +166,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               (workspaceProjectIds ?? []).length > 0
                 ? currentView !== "custom-view" && currentView !== "subscribed"
                   ? () => {
-                      setTrackElement("All issues empty state");
+                      setTrackElement(E_GLOBAL_ISSUES_EMPTY_STATE);
                       commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                     }
                   : undefined
                 : () => {
-                    setTrackElement("All issues empty state");
+                    setTrackElement(E_GLOBAL_ISSUES_EMPTY_STATE);
                     commandPaletteStore.toggleCreateProjectModal(true);
                   }
             }

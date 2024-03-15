@@ -21,7 +21,7 @@ import { useEventTracker, useIssueDetail } from "hooks/store";
 // types
 import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
 // constants
-import { ISSUE_OPENED } from "constants/event-tracker";
+import { E_DASHBOARD, ISSUE_OPENED } from "constants/event-tracker";
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;
@@ -40,7 +40,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const handleIssuePeekOverview = (issue: TIssue) => {
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
     captureEvent(ISSUE_OPENED, {
-      element: "Dashboard",
+      element: E_DASHBOARD,
       element_id: tab,
       mode: "peek",
       filters: {

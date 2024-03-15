@@ -11,6 +11,7 @@ import AllFiltersImage from "public/empty-state/project/all-filters.svg";
 import NameFilterImage from "public/empty-state/project/name-filter.svg";
 // constants
 import { EmptyStateType } from "constants/empty-state";
+import { E_PROJECT_EMPTY_STATE } from "constants/event-tracker";
 
 export const ProjectCardList = observer(() => {
   // store hooks
@@ -26,7 +27,7 @@ export const ProjectCardList = observer(() => {
       <EmptyState
         type={EmptyStateType.WORKSPACE_PROJECTS}
         primaryButtonOnClick={() => {
-          setTrackElement("Project empty state");
+          setTrackElement(E_PROJECT_EMPTY_STATE);
           commandPaletteStore.toggleCreateProjectModal(true);
         }}
       />

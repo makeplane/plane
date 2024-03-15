@@ -7,7 +7,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { PageHead } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
-import { MEMBER_INVITED } from "constants/event-tracker";
+import { E_WORKSPACE_MEMBERS, MEMBER_INVITED } from "constants/event-tracker";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { getUserRole } from "helpers/user.helper";
 import { useApplication, useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
@@ -59,7 +59,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
           emails: !instance?.is_telemetry_anonymous ? emailsEventPayload : undefined,
           project_id: undefined,
           state: "SUCCESS",
-          element: "Workspace settings member page",
+          element: E_WORKSPACE_MEMBERS,
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -72,7 +72,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
           emails: !instance?.is_telemetry_anonymous ? emailsEventPayload : undefined,
           project_id: undefined,
           state: "FAILED",
-          element: "Workspace settings member page",
+          element: E_WORKSPACE_MEMBERS,
         });
         setToast({
           type: TOAST_TYPE.ERROR,

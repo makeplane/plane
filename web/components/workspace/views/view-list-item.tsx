@@ -13,6 +13,8 @@ import { calculateTotalFilters } from "helpers/filter.helper";
 import { truncateText } from "helpers/string.helper";
 // store hooks
 import { useEventTracker, useGlobalView } from "hooks/store";
+// constants
+import { E_LIST_LAYOUT } from "constants/event-tracker";
 
 type Props = { viewId: string };
 
@@ -58,7 +60,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setTrackElement("List view");
+                        setTrackElement(E_LIST_LAYOUT);
                         setUpdateViewModal(true);
                       }}
                     >

@@ -9,7 +9,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { useEventTracker, useProjectView } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
-import { VIEW_DELETED } from "constants/event-tracker";
+import { E_VIEWS, VIEW_DELETED } from "constants/event-tracker";
 
 type Props = {
   data: IProjectView;
@@ -43,7 +43,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
         handleClose();
         captureEvent(VIEW_DELETED, {
           view_id: data.id,
-          element: "Views page",
+          element: E_VIEWS,
           state: "SUCCESS",
         });
         setToast({
@@ -55,7 +55,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
       .catch(() => {
         captureEvent(VIEW_DELETED, {
           view_id: data.id,
-          element: "Views page",
+          element: E_VIEWS,
           state: "FAILED",
         });
         setToast({

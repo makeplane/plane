@@ -15,8 +15,9 @@ import { useApplication, useEventTracker, useProject, useUser } from "hooks/stor
 // ui
 // components
 // helpers
-// constants
 import { IProject } from "@plane/types";
+// constants
+import { E_SIDEBAR } from "constants/event-tracker";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -151,7 +152,7 @@ export const ProjectSidebarList: FC = observer(() => {
                               <button
                                 className="opacity-0 group-hover:opacity-100"
                                 onClick={() => {
-                                  setTrackElement("Sidebar");
+                                  setTrackElement(E_SIDEBAR);
                                   setIsFavoriteProjectCreate(true);
                                   setIsProjectModalOpen(true);
                                 }}
@@ -230,7 +231,7 @@ export const ProjectSidebarList: FC = observer(() => {
                               <button
                                 className="opacity-0 group-hover:opacity-100"
                                 onClick={() => {
-                                  setTrackElement("Sidebar");
+                                  setTrackElement(E_SIDEBAR);
                                   setIsFavoriteProjectCreate(false);
                                   setIsProjectModalOpen(true);
                                 }}
@@ -281,7 +282,7 @@ export const ProjectSidebarList: FC = observer(() => {
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
-              setTrackElement("Sidebar");
+              setTrackElement(E_SIDEBAR);
               toggleCreateProjectModal(true);
             }}
           >

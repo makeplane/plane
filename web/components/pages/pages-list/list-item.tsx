@@ -21,7 +21,7 @@ import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import {
-  E_PROJECT_PAGES,
+  E_PAGES,
   PAGE_ARCHIVED,
   PAGE_FAVORITED,
   PAGE_RESTORED,
@@ -96,7 +96,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     addToFavorites().then(() => {
       captureEvent(PAGE_FAVORITED, {
         page_id: pageId,
-        element: E_PROJECT_PAGES,
+        element: E_PAGES,
         state: "SUCCESS",
       });
     });
@@ -109,7 +109,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
     removeFromFavorites().then(() => {
       captureEvent(PAGE_UNFAVORITED, {
         page_id: pageId,
-        element: E_PROJECT_PAGES,
+        element: E_PAGES,
         state: "SUCCESS",
       });
     });
@@ -123,7 +123,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_UPDATED, {
         page_id: pageId,
         access: "public",
-        element: E_PROJECT_PAGES,
+        element: E_PAGES,
         state: "SUCCESS",
       });
     });
@@ -137,7 +137,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_UPDATED, {
         page_id: pageId,
         access: "private",
-        element: E_PROJECT_PAGES,
+        element: E_PAGES,
         state: "SUCCESS",
       });
     });
@@ -151,7 +151,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_ARCHIVED, {
         page_id: pageId,
         access: access == 1 ? "private" : "public",
-        element: E_PROJECT_PAGES,
+        element: E_PAGES,
         state: "SUCCESS",
       });
     });
@@ -165,7 +165,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       captureEvent(PAGE_RESTORED, {
         page_id: pageId,
         access: access == 1 ? "private" : "public",
-        element: E_PROJECT_PAGES,
+        element: E_PAGES,
         state: "SUCCESS",
       });
     });
@@ -213,7 +213,7 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
               eventName: PAGE_VIEWED,
               payload: {
                 ...pageStore,
-                element: E_PROJECT_PAGES,
+                element: E_PAGES,
               },
             })
           }

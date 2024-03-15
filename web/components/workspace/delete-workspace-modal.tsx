@@ -7,7 +7,7 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { WORKSPACE_DELETED } from "constants/event-tracker";
+import { E_WORKSPACE_GENERAL, WORKSPACE_DELETED } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspace } from "hooks/store";
 // types
@@ -63,7 +63,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
           payload: {
             ...data,
             state: "SUCCESS",
-            element: "Workspace general settings page",
+            element: E_WORKSPACE_GENERAL,
           },
         });
         setToast({
@@ -83,7 +83,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
           payload: {
             ...data,
             state: "FAILED",
-            element: "Workspace general settings page",
+            element: E_WORKSPACE_GENERAL,
           },
         });
       });

@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 // hooks
 import { Button } from "@plane/ui";
 import { TourSidebar } from "components/onboarding";
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "constants/event-tracker";
+import { E_PRODUCT_TOUR, PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "constants/event-tracker";
 import { useApplication, useEventTracker, useUser } from "hooks/store";
 // components
 // ui
@@ -167,7 +167,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                   <Button
                     variant="primary"
                     onClick={() => {
-                      setTrackElement("Product tour");
+                      setTrackElement(E_PRODUCT_TOUR);
                       onComplete();
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}

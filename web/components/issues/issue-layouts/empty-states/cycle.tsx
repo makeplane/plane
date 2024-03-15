@@ -13,6 +13,7 @@ import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 import { EmptyStateType } from "constants/empty-state";
+import { E_CYCLE_ISSUES_EMPTY_STATE } from "constants/event-tracker";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -88,7 +89,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
           primaryButtonOnClick={
             !isCompletedCycleSnapshotAvailable && !isEmptyFilters
               ? () => {
-                  setTrackElement("Cycle issue empty state");
+                  setTrackElement(E_CYCLE_ISSUES_EMPTY_STATE);
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 }
               : undefined

@@ -11,7 +11,7 @@ import { useEventTracker, useLabel } from "hooks/store";
 // types
 import type { IIssueLabel } from "@plane/types";
 // constants
-import { LABEL_DELETED, LABEL_GROUP_DELETED } from "constants/event-tracker";
+import { E_LABELS, LABEL_DELETED, LABEL_GROUP_DELETED } from "constants/event-tracker";
 
 type Props = {
   isOpen: boolean;
@@ -47,13 +47,13 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
           captureEvent(LABEL_GROUP_DELETED, {
             group_id: data.id,
             children_count: labelChildCount,
-            element: "Project settings labels page",
+            element: E_LABELS,
             state: "SUCCESS",
           });
         } else {
           captureEvent(LABEL_DELETED, {
             label_id: data.id,
-            element: "Project settings labels page",
+            element: E_LABELS,
             state: "SUCCESS",
           });
         }

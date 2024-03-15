@@ -9,7 +9,7 @@ import { AlertTriangleIcon } from "lucide-react";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_MEMBER_LEFT } from "constants/event-tracker";
+import { E_PROJECT_MEMBERS, PROJECT_MEMBER_LEFT } from "constants/event-tracker";
 // hooks
 import { useEventTracker, useUser } from "hooks/store";
 // types
@@ -66,7 +66,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
               router.push(`/${workspaceSlug}/projects`);
               captureEvent(PROJECT_MEMBER_LEFT, {
                 state: "SUCCESS",
-                element: "Project settings members page",
+                element: E_PROJECT_MEMBERS,
               });
             })
             .catch(() => {
@@ -77,7 +77,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
               });
               captureEvent(PROJECT_MEMBER_LEFT, {
                 state: "FAILED",
-                element: "Project settings members page",
+                element: E_PROJECT_MEMBERS,
               });
             });
         } else {

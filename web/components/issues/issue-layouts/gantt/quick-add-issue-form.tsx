@@ -15,7 +15,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
 // types
 import { IProject, TIssue } from "@plane/types";
-import { ISSUE_CREATED } from "constants/event-tracker";
+import { E_Gantt_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
 // constants
 
 interface IInputProps {
@@ -128,14 +128,14 @@ export const GanttQuickAddIssueForm: React.FC<IGanttQuickAddIssueForm> = observe
         .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...res, state: "SUCCESS", element: "Gantt quick add" },
+            payload: { ...res, state: "SUCCESS", element: E_Gantt_QUICK_ADD },
             routePath: router.asPath,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...payload, state: "FAILED", element: "Gantt quick add" },
+            payload: { ...payload, state: "FAILED", element: E_Gantt_QUICK_ADD },
             routePath: router.asPath,
           });
         });

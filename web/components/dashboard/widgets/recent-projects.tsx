@@ -15,6 +15,7 @@ import { useApplication, useEventTracker, useDashboard, useProject, useUser } fr
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 import { ProjectLogo } from "components/project";
 // constants
+import { E_SIDEBAR } from "constants/event-tracker";
 
 const WIDGET_KEY = "recent_projects";
 
@@ -98,7 +99,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setTrackElement("Sidebar");
+              setTrackElement(E_SIDEBAR);
               toggleCreateProjectModal(true);
             }}
           >

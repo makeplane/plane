@@ -55,7 +55,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                     type="button"
                     className="flex items-center gap-2 px-2 text-custom-primary-100 outline-none hover:text-custom-primary-200"
                     onClick={() => {
-                      setTrackElement("PROJECT_SETTINGS_STATES_PAGE");
+                      PROJECT_SETTINGS_STATES_PAGE");
                       setActiveGroup(group as keyof StateGroup);
                     }}
                   >

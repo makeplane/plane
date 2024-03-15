@@ -11,7 +11,7 @@ import { useEventTracker, useProjectView } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
 // constants
-import { VIEW_CREATED, VIEW_UPDATED, elementFromPath } from "constants/event-tracker";
+import { E_VIEWS, VIEW_CREATED, VIEW_UPDATED, elementFromPath } from "constants/event-tracker";
 
 type Props = {
   data?: IProjectView | null;
@@ -70,7 +70,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
         captureEvent(VIEW_UPDATED, {
           view_id: res.id,
           filters: res.filters,
-          element: "Views page",
+          element: E_VIEWS,
           state: "SUCCESS",
         });
         handleClose();
@@ -78,7 +78,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
       .catch((err) => {
         captureEvent(VIEW_UPDATED, {
           view_id: data?.id,
-          element: "Views page",
+          element: E_VIEWS,
           state: "FAILED",
         });
         setToast({
