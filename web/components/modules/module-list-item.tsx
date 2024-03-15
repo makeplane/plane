@@ -18,7 +18,7 @@ import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
 import { usePlatformOS } from "hooks/use-platform-os";
@@ -150,8 +150,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const completionPercentage =
     ((moduleDetails.completed_issues + moduleDetails.cancelled_issues) / moduleDetails.total_issues) * 100;
 
-  const endDate = new Date(moduleDetails.target_date ?? "");
-  const startDate = new Date(moduleDetails.start_date ?? "");
+  const endDate = getDate(moduleDetails.target_date);
+  const startDate = getDate(moduleDetails.start_date);
 
   const renderDate = moduleDetails.start_date || moduleDetails.target_date;
 

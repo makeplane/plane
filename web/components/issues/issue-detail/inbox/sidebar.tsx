@@ -8,7 +8,7 @@ import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "c
 import { IssueLabel, TIssueOperations } from "components/issues";
 // icons
 // helper
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 type Props = {
@@ -33,7 +33,7 @@ export const InboxIssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const projectDetails = issue ? getProjectById(issue.project_id) : null;
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
   const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);

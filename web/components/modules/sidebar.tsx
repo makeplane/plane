@@ -35,7 +35,7 @@ import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_U
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
 import { useModule, useUser, useEventTracker } from "hooks/store";
@@ -207,8 +207,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       });
   }, [moduleDetails, reset]);
 
-  const isStartValid = new Date(`${moduleDetails?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${moduleDetails?.target_date}`) >= new Date(`${moduleDetails?.start_date}`);
+  const startDate = getDate(moduleDetails?.start_date);
+  const endDate = getDate(moduleDetails?.target_date);
+  const isStartValid = startDate && startDate <= new Date();
+  const isEndValid = startDate && endDate && endDate >= startDate;
 
   const progressPercentage = moduleDetails
     ? Math.round((moduleDetails.completed_issues / moduleDetails.total_issues) * 100)
@@ -348,26 +350,30 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <Controller
                   control={control}
                   name="target_date"
-                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                    <DateRangeDropdown
-                      buttonContainerClassName="w-full"
-                      buttonVariant="background-with-text"
-                      minDate={new Date()}
-                      value={{
-                        from: startDateValue ? new Date(startDateValue) : undefined,
-                        to: endDateValue ? new Date(endDateValue) : undefined,
-                      }}
-                      onSelect={(val) => {
-                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                        handleDateChange(val?.from, val?.to);
-                      }}
-                      placeholder={{
-                        from: "Start date",
-                        to: "Target date",
-                      }}
-                    />
-                  )}
+                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => {
+                    const startDate = getDate(startDateValue);
+                    const endDate = getDate(endDateValue);
+                    return (
+                      <DateRangeDropdown
+                        buttonContainerClassName="w-full"
+                        buttonVariant="background-with-text"
+                        minDate={new Date()}
+                        value={{
+                          from: startDate,
+                          to: endDate,
+                        }}
+                        onSelect={(val) => {
+                          onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                          onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                          handleDateChange(val?.from, val?.to);
+                        }}
+                        placeholder={{
+                          from: "Start date",
+                          to: "Target date",
+                        }}
+                      />
+                    );
+                  }}
                 />
               )}
             />

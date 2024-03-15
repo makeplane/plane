@@ -117,7 +117,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const notificationField = notification.data.issue_activity.field;
   const notificationTriggeredBy = notification.triggered_by_details;
 
-  if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
+  if (isSnoozedTabOpen && notification.snoozed_till! < new Date()) return null;
 
   return (
     <Link

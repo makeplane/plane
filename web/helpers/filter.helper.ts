@@ -1,4 +1,5 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import { getDate } from "./date-time.helper";
 
 type TFilters = {
   [key: string]: string[] | null;
@@ -31,9 +32,10 @@ export const calculateTotalFilters = (filters: TFilters): number =>
 export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
   const [value, operator, from] = filter.split(";");
 
-  if (!from) {
-    if (operator === "after") return date >= new Date(value);
-    if (operator === "before") return date <= new Date(value);
+  const dateValue = getDate(value);
+  if (!from && dateValue) {
+    if (operator === "after") return date >= dateValue;
+    if (operator === "before") return date <= dateValue;
   }
 
   if (from === "fromnow") {

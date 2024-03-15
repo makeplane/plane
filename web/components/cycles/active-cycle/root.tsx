@@ -28,7 +28,12 @@ import { EmptyState } from "components/empty-state";
 // icons
 import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 // helpers
-import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
+import {
+  renderFormattedDate,
+  findHowManyDaysLeft,
+  renderFormattedDateWithoutYear,
+  getDate,
+} from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 import { cn } from "helpers/common.helper";
 // types
@@ -124,8 +129,8 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
       );
   }
 
-  const endDate = new Date(activeCycle.end_date ?? "");
-  const startDate = new Date(activeCycle.start_date ?? "");
+  const endDate = getDate(activeCycle.end_date);
+  const startDate = getDate(activeCycle.start_date);
   const daysLeft = findHowManyDaysLeft(activeCycle.end_date) ?? 0;
   const cycleStatus = activeCycle.status.toLowerCase() as TCycleGroups;
 

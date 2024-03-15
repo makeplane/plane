@@ -17,7 +17,7 @@ import {
 import { ISSUE_UPDATED } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
 import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
 import { usePlatformOS } from "hooks/use-platform-os";
@@ -242,10 +242,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
   return (

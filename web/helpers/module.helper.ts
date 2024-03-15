@@ -1,6 +1,7 @@
 import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "helpers/filter.helper";
+import { getDate } from "./date-time.helper";
 // types
 import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
 
@@ -53,6 +54,9 @@ export const shouldFilterModule = (
   let fallsInFilters = true;
   Object.keys(filters).forEach((key) => {
     const filterKey = key as keyof TModuleFilters;
+    const startDate = getDate(module.start_date);
+    const endDate = getDate(module.target_date);
+
     if (filterKey === "status" && filters.status && filters.status.length > 0)
       fallsInFilters = fallsInFilters && filters.status.includes(module.status.toLowerCase());
     if (filterKey === "lead" && filters.lead && filters.lead.length > 0)
@@ -63,14 +67,12 @@ export const shouldFilterModule = (
     }
     if (filterKey === "start_date" && filters.start_date && filters.start_date.length > 0) {
       filters.start_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!module.start_date && satisfiesDateFilter(new Date(module.start_date), dateFilter);
+        fallsInFilters = fallsInFilters && !!startDate && satisfiesDateFilter(startDate, dateFilter);
       });
     }
     if (filterKey === "target_date" && filters.target_date && filters.target_date.length > 0) {
       filters.target_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!module.target_date && satisfiesDateFilter(new Date(module.target_date), dateFilter);
+        fallsInFilters = fallsInFilters && !!endDate && satisfiesDateFilter(endDate, dateFilter);
       });
     }
   });

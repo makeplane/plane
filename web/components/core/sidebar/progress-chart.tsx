@@ -3,7 +3,7 @@ import { eachDayOfInterval, isValid } from "date-fns";
 // ui
 import { LineGraph } from "components/ui";
 // helpers
-import { renderFormattedDateWithoutYear } from "helpers/date-time.helper";
+import { getDate, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
 //types
 import { TCompletionChartDistribution } from "@plane/types";
 
@@ -47,11 +47,11 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
   }));
 
   const generateXAxisTickValues = () => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = getDate(startDate);
+    const end = getDate(endDate);
 
     let dates: Date[] = [];
-    if (isValid(start) && isValid(end)) {
+    if (start && end && isValid(start) && isValid(end)) {
       dates = eachDayOfInterval({ start, end });
     }
 

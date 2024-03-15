@@ -24,6 +24,7 @@ import { FileService } from "services/file.service";
 // ui
 // assets
 // helpers
+import { getDate } from "helpers/date-time.helper";
 // types
 import { IPage } from "@plane/types";
 // fetch-keys
@@ -276,7 +277,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   ? {
                       action: archived_at ? unArchivePage : archivePage,
                       is_archived: archived_at ? true : false,
-                      archived_at: archived_at ? new Date(archived_at) : undefined,
+                      archived_at: archived_at ? getDate(archived_at) : undefined,
                     }
                   : undefined
               }

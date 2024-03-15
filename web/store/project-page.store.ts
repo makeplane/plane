@@ -73,8 +73,8 @@ export class ProjectPageStore implements IProjectPageStore {
 
     const allProjectIds = Object.keys(this.projectPageMap[projectId]);
     return allProjectIds.sort((a, b) => {
-      const dateA = new Date(this.projectPageMap[projectId][a].created_at).getTime();
-      const dateB = new Date(this.projectPageMap[projectId][b].created_at).getTime();
+      const dateA = this.projectPageMap[projectId][a].created_at.getTime();
+      const dateB = this.projectPageMap[projectId][b].created_at.getTime();
       return dateB - dateA;
     });
   }
@@ -84,8 +84,8 @@ export class ProjectPageStore implements IProjectPageStore {
     if (!projectId || !this.projectArchivedPageMap[projectId]) return [];
     const archivedPages = Object.keys(this.projectArchivedPageMap[projectId]);
     return archivedPages.sort((a, b) => {
-      const dateA = new Date(this.projectArchivedPageMap[projectId][a].created_at).getTime();
-      const dateB = new Date(this.projectArchivedPageMap[projectId][b].created_at).getTime();
+      const dateA = this.projectArchivedPageMap[projectId][a].created_at.getTime();
+      const dateB = this.projectArchivedPageMap[projectId][b].created_at.getTime();
       return dateB - dateA;
     });
   }
@@ -127,25 +127,21 @@ export class ProjectPageStore implements IProjectPageStore {
     if (!this.projectPageIds || !projectId) return;
 
     const today: string[] = this.projectPageIds.filter((page) =>
-      isToday(new Date(this.projectPageMap[projectId][page].updated_at))
+      isToday(this.projectPageMap[projectId][page].updated_at)
     );
 
     const yesterday: string[] = this.projectPageIds.filter((page) =>
-      isYesterday(new Date(this.projectPageMap[projectId][page].updated_at))
+      isYesterday(this.projectPageMap[projectId][page].updated_at)
     );
 
     const this_week: string[] = this.projectPageIds.filter((page) => {
       const pageUpdatedAt = this.projectPageMap[projectId][page].updated_at;
-      return (
-        isThisWeek(new Date(pageUpdatedAt)) &&
-        !isToday(new Date(pageUpdatedAt)) &&
-        !isYesterday(new Date(pageUpdatedAt))
-      );
+      return isThisWeek(pageUpdatedAt) && !isToday(pageUpdatedAt) && !isYesterday(pageUpdatedAt);
     });
 
     const older: string[] = this.projectPageIds.filter((page) => {
       const pageUpdatedAt = this.projectPageMap[projectId][page].updated_at;
-      return !isThisWeek(new Date(pageUpdatedAt)) && !isYesterday(new Date(pageUpdatedAt));
+      return !isThisWeek(pageUpdatedAt) && !isYesterday(pageUpdatedAt);
     });
 
     return { today, yesterday, this_week, older };

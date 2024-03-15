@@ -9,7 +9,7 @@ import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
 import { usePlatformOS } from "hooks/use-platform-os";
@@ -147,8 +147,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const completionPercentage = (moduleDetails.completed_issues / moduleTotalIssues) * 100;
 
-  const endDate = new Date(moduleDetails.target_date ?? "");
-  const startDate = new Date(moduleDetails.start_date ?? "");
+  const endDate = getDate(moduleDetails.target_date);
+  const startDate = getDate(moduleDetails.start_date);
 
   const isDateValid = moduleDetails.target_date || moduleDetails.start_date;
 
@@ -160,8 +160,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (

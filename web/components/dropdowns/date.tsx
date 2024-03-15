@@ -5,7 +5,7 @@ import { Combobox } from "@headlessui/react";
 import { CalendarDays, X } from "lucide-react";
 // hooks
 import { cn } from "helpers/common.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
@@ -168,8 +168,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             {...attributes.popper}
           >
             <DayPicker
-              selected={value ? new Date(value) : undefined}
-              defaultMonth={value ? new Date(value) : undefined}
+              selected={value ? getDate(value) : undefined}
+              defaultMonth={value ? getDate(value) : undefined}
               onSelect={(date) => {
                 dropdownOnChange(date ?? null);
               }}
