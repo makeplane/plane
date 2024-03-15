@@ -236,9 +236,11 @@ export const CommandPalette: FC = observer(() => {
           Object.keys(shortcutsList.project).includes(keyPressed) &&
           projectId &&
           canPerformProjectCreateActions()
-        )
+        ) {
+          e.preventDefault();
           // actions that can be performed only inside a project
           shortcutsList.project[keyPressed].action();
+        }
       }
     },
     [
