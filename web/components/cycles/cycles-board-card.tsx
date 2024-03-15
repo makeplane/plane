@@ -2,7 +2,7 @@ import { FC, MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react";
-// hooks
+// constants
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
@@ -12,7 +12,7 @@ import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } 
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
@@ -49,9 +49,9 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   if (!cycleDetails) return null;
 
   const cycleStatus = cycleDetails.status.toLocaleLowerCase();
-  const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+const isCompleted = cycleStatus === "completed";  
+const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
   const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;

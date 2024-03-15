@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 // helpers
+import { getDate } from "./date-time.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import {
@@ -157,7 +158,9 @@ export const shouldHighlightIssueDueDate = (
   // if the issue is completed or cancelled, don't highlight the due date
   if ([STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateGroup)) return false;
 
-  const parsedDate = new Date(date);
+  const parsedDate = getDate(date);
+  if (!parsedDate) return false;
+
   const targetDateDistance = differenceInCalendarDays(parsedDate, new Date());
 
   // if the issue is overdue, highlight the due date
@@ -168,6 +171,6 @@ export const renderIssueBlocksStructure = (blocks: TIssue[]): IGanttBlock[] =>
     data: block,
     id: block.id,
     sort_order: block.sort_order,
-    start_date: block.start_date ? new Date(block.start_date) : null,
-    target_date: block.target_date ? new Date(block.target_date) : null,
+    start_date: getDate(block.start_date),
+    target_date: getDate(block.target_date),
   }));

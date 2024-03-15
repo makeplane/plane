@@ -52,14 +52,14 @@ export const InfoPopover: React.FC<Props> = (props) => {
             <h6 className="text-xs text-custom-text-400">Last updated on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <History className="h-3 w-3" />
-              {renderDate(new Date(documentDetails.last_updated_at))}
+              {renderDate(documentDetails.last_updated_at)}
             </h5>
           </div>
           <div className="space-y-1.5">
             <h6 className="text-xs text-custom-text-400">Created on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <Calendar className="h-3 w-3" />
-              {renderDate(new Date(documentDetails.created_on))}
+              {renderDate(documentDetails.created_on)}
             </h5>
           </div>
         </div>
