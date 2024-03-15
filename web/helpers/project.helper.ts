@@ -1,4 +1,7 @@
+// types
 import { IProject } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 /**
  * Updates the sort order of the project.
@@ -46,3 +49,11 @@ export const orderJoinedProjects = (
 
 export const projectIdentifierSanitizer = (identifier: string): string =>
   identifier.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
+
+/**
+ * @description Checks if the project should be rendered or not based on the user role
+ * @param {IProject} project
+ * @returns {boolean}
+ */
+export const shouldRenderProject = (project: IProject): boolean =>
+  !!project.member_role && project.member_role >= EUserProjectRoles.MEMBER;
