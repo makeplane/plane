@@ -1,6 +1,5 @@
 # Python imports
 import json
-import logging
 
 import requests
 

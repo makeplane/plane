@@ -2,7 +2,6 @@
 import csv
 import io
 import json
-import logging
 import zipfile
 
 import boto3

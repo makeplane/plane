@@ -346,12 +346,12 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Workspace.DoesNotExist as e:
+        except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except serializers.ValidationError as e:
+        except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
@@ -410,7 +410,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                 {"error": "Project does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except serializers.ValidationError as e:
+        except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,

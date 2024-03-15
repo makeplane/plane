@@ -1,6 +1,5 @@
 # Python imports
 import json
-import logging
 from datetime import timedelta
 
 # Third party imports
