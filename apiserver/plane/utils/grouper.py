@@ -1,7 +1,7 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import F, Q, UUIDField, Value
+from django.db.models import Q, UUIDField, Value
 from django.db.models.functions import Coalesce
 
 # Module imports

@@ -243,73 +243,84 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             sub_group_by=sub_group_by,
         )
 
-        # List Paginate
-        if not group_by and not sub_group_by:
+        if group_by:
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {
+                            "error": "Group by and sub group by cannot have same parameters"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    return self.paginate(
+                        request=request,
+                        order_by=order_by_param,
+                        queryset=issue_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by,
+                            slug=slug,
+                            project_id=project_id,
+                            filters=filters,
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            project_id=project_id,
+                            filters=filters,
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            Q(issue_inbox__status=1)
+                            | Q(issue_inbox__status=-1)
+                            | Q(issue_inbox__status=2)
+                            | Q(issue_inbox__isnull=True),
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+            else:
+                # Group paginate
+                return self.paginate(
+                    request=request,
+                    order_by=order_by_param,
+                    queryset=issue_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by,
+                        slug=slug,
+                        project_id=project_id,
+                        filters=filters,
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        Q(issue_inbox__status=1)
+                        | Q(issue_inbox__status=-1)
+                        | Q(issue_inbox__status=2)
+                        | Q(issue_inbox__isnull=True),
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+        else:
             return self.paginate(
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
-            )
-
-        if group_by and not sub_group_by:
-            # Group paginate
-            return self.paginate(
-                request=request,
-                order_by=order_by_param,
-                queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
-                paginator_cls=GroupedOffsetPaginator,
-                group_by_fields=issue_group_values(
-                    field=group_by,
-                    slug=slug,
-                    project_id=project_id,
-                    filters=filters,
-                ),
-                group_by_field_name=group_by,
-                count_filter=Q(
-                    Q(issue_inbox__status=1)
-                    | Q(issue_inbox__status=-1)
-                    | Q(issue_inbox__status=2)
-                    | Q(issue_inbox__isnull=True),
-                    archived_at__isnull=True,
-                    is_draft=False,
-                ),
-            )
-        if group_by and sub_group_by:
-            return self.paginate(
-                request=request,
-                order_by=order_by_param,
-                queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
-                paginator_cls=SubGroupedOffsetPaginator,
-                group_by_fields=issue_group_values(
-                    field=group_by,
-                    slug=slug,
-                    project_id=project_id,
-                    filters=filters,
-                ),
-                sub_group_by_fields=issue_group_values(
-                    field=sub_group_by,
-                    slug=slug,
-                    project_id=project_id,
-                    filters=filters,
-                ),
-                group_by_field_name=group_by,
-                sub_group_by_field_name=sub_group_by,
-                count_filter=Q(
-                    Q(issue_inbox__status=1)
-                    | Q(issue_inbox__status=-1)
-                    | Q(issue_inbox__status=2)
-                    | Q(issue_inbox__isnull=True),
-                    archived_at__isnull=True,
-                    is_draft=False,
                 ),
             )
 
