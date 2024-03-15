@@ -113,14 +113,16 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               }}
             />
           )}
-          <LinkSelector
-            editor={props.editor}
-            isOpen={isLinkSelectorOpen}
-            setIsOpen={() => {
-              setIsLinkSelectorOpen(!isLinkSelectorOpen);
-              setIsNodeSelectorOpen(false);
-            }}
-          />
+          {!props.editor.isActive("code") && (
+            <LinkSelector
+              editor={props.editor}
+              isOpen={isLinkSelectorOpen}
+              setIsOpen={() => {
+                setIsLinkSelectorOpen(!isLinkSelectorOpen);
+                setIsNodeSelectorOpen(false);
+              }}
+            />
+          )}
           <div className="flex">
             {items.map((item) => (
               <button
