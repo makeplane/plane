@@ -1,9 +1,4 @@
-enum EPageAccess {
-  PUBLIC = 0,
-  PRIVATE = 1,
-}
-
-export type TPageAccess = EPageAccess.PRIVATE | EPageAccess.PUBLIC;
+import { EPageAccess } from "./enums";
 
 export type TPage = {
   id: string | undefined;
@@ -12,7 +7,7 @@ export type TPage = {
   color: string | undefined;
   labels: string[] | undefined;
   owned_by: string | undefined;
-  access: TPageAccess | undefined;
+  access: EPageAccess | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | undefined;

@@ -1,4 +1,7 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
+// hooks
+import { useProjectPages } from "hooks/store";
 // components
 import { PageListBlock } from "./";
 
@@ -7,15 +10,17 @@ type TPagesListRoot = {
   projectId: string;
 };
 
-export const PagesListRoot: FC<TPagesListRoot> = (props) => {
+export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
   const { workspaceSlug, projectId } = props;
+  // hooks
+  const { pageIds } = useProjectPages(projectId);
 
-  console.log("workspaceSlug", workspaceSlug);
-  console.log("projectId", projectId);
-
+  if (!pageIds) return <></>;
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto divide-y-[0.5px] divide-custom-border-200">
-      <PageListBlock />
+      {pageIds.map((pageId) => (
+        <PageListBlock key={pageId} workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} />
+      ))}
     </div>
   );
-};
+});

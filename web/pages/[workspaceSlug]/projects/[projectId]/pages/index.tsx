@@ -37,6 +37,7 @@ const ProjectPagesPage: NextPageWithLayout = () => {
         projectId={projectId.toString()}
         isModalOpen={modalOpen}
         handleModalClose={() => setModalOpen(false)}
+        redirectionEnabled
       />
     </>
   );

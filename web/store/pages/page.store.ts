@@ -1,10 +1,11 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import set from "lodash/set";
 // store
 import { RootStore } from "../root.store";
 // service
 import { PageService } from "services/page.service";
 // types
-import { TPage, TPageAccess } from "@plane/types";
+import { TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "constants/page";
 
@@ -14,10 +15,16 @@ export interface IPageStore extends TPage {
   // observables
   loader: TLoader;
   // computed
-  isContentEditable: boolean;
+  asJson: TPage | undefined;
+  isCurrentUserOwner: boolean; // it will give the user is the owner of the page or not
+  isPageEditable: boolean; // it will give the user permission to read the page or write the page
+  isPageDuplicated: boolean;
+  isPageArchived: boolean;
+  isPageLocked: boolean;
   // helper actions
   updateDescription: (description: string) => void;
   // actions
+  updatePage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
   lock: () => Promise<void>;
@@ -33,7 +40,7 @@ export class PageStore implements IPageStore {
   color: string | undefined;
   labels: string[] | undefined;
   owned_by: string | undefined;
-  access: TPageAccess | undefined;
+  access: EPageAccess | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | undefined;
@@ -70,10 +77,16 @@ export class PageStore implements IPageStore {
       // observables
       loader: observable.ref,
       // computed
-      isContentEditable: computed,
+      asJson: computed,
+      isCurrentUserOwner: computed,
+      isPageEditable: computed,
+      isPageDuplicated: computed,
+      isPageArchived: computed,
+      isPageLocked: computed,
       // helper actions
       updateDescription: action,
       // actions
+      updatePage: action,
       makePublic: action,
       makePrivate: action,
       lock: action,
@@ -86,6 +99,47 @@ export class PageStore implements IPageStore {
   }
 
   // computed
+  get asJson() {
+    return {
+      id: this.id,
+      name: this.name,
+      description_html: this.description_html,
+      color: this.color,
+      labels: this.labels,
+      owned_by: this.owned_by,
+      access: this.access,
+      is_favorite: this.is_favorite,
+      is_locked: this.is_locked,
+      archived_at: this.archived_at,
+      workspace: this.workspace,
+      project: this.project,
+      created_by: this.created_by,
+      updated_by: this.updated_by,
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+    };
+  }
+
+  get isCurrentUserOwner() {
+    const currentUserId = this.store.user.currentUser?.id;
+    if (!currentUserId) return false;
+    return this.owned_by === currentUserId ? true : false;
+  }
+
+  get isPageEditable() {
+    // const currentUserProjectMembershipRole;
+    return false;
+  }
+  get isPageDuplicated() {
+    return false;
+  }
+  get isPageArchived() {
+    return false;
+  }
+  get isPageLocked() {
+    return false;
+  }
+
   get isContentEditable() {
     const currentUserId = this.store.user.currentUser?.id;
     if (!currentUserId) return false;
@@ -102,6 +156,30 @@ export class PageStore implements IPageStore {
   }
 
   updateDescription = async () => {};
+
+  updatePage = async (pageData: Partial<TPage>) => {
+    const { workspaceSlug, projectId } = this.store.app.router;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
+
+    const currentPage = this.asJson;
+    try {
+      const currentPageResponse = await this.pageService.update(workspaceSlug, projectId, this.id, currentPage);
+      if (currentPageResponse)
+        runInAction(() => {
+          Object.keys(pageData).forEach((key) => {
+            const currentPageKey = key as keyof TPage;
+            set(this, key, currentPageResponse?.[currentPageKey] || undefined);
+          });
+        });
+    } catch {
+      runInAction(() => {
+        Object.keys(pageData).forEach((key) => {
+          const currentPageKey = key as keyof TPage;
+          set(this, key, currentPage?.[currentPageKey] || undefined);
+        });
+      });
+    }
+  };
 
   makePublic = async () => {
     const { workspaceSlug, projectId } = this.store.app.router;

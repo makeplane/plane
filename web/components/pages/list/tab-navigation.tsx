@@ -2,15 +2,17 @@ import { FC } from "react";
 import Link from "next/link";
 // helpers
 import { cn } from "helpers/common.helper";
+// types
+import { TPageNavigationTabs } from "@plane/types";
 
 type TPageTabNavigation = {
   workspaceSlug: string;
   projectId: string;
-  pageType: "public" | "private" | "archived";
+  pageType: TPageNavigationTabs;
 };
 
 // pages tab options
-const pageTabs = [
+const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   {
     key: "public",
     label: "Public",
@@ -28,10 +30,18 @@ const pageTabs = [
 export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
   const { workspaceSlug, projectId, pageType } = props;
 
+  const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
+    if (tabKey === pageType) e.preventDefault();
+  };
+
   return (
     <div className="relative flex items-center">
       {pageTabs.map((tab) => (
-        <Link key={tab.key} href={`/${workspaceSlug}/projects/${projectId}/pages?type=${tab.key}`}>
+        <Link
+          key={tab.key}
+          href={`/${workspaceSlug}/projects/${projectId}/pages?type=${tab.key}`}
+          onClick={(e) => handleTabClick(e, tab.key)}
+        >
           <div>
             <div
               className={cn(`p-3 py-4 text-sm font-medium transition-all`, {

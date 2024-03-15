@@ -19,7 +19,7 @@ import { TPageNavigationTabs } from "@plane/types";
 type TPageView = {
   workspaceSlug: string;
   projectId: string;
-  pageType?: TPageNavigationTabs;
+  pageType: TPageNavigationTabs;
   children: React.ReactNode;
 };
 
@@ -34,7 +34,7 @@ export const PageView: React.FC<TPageView> = observer((props) => {
 
   // fetching pages list
   useSWR(projectId && pageType ? `PROJECT_PAGES_${projectId}_${pageType}` : null, async () => {
-    projectId && pageType && (await getAllPages());
+    projectId && pageType && (await getAllPages(pageType));
   });
 
   // pages loader
@@ -45,8 +45,9 @@ export const PageView: React.FC<TPageView> = observer((props) => {
       <div className="flex-shrink-0 w-full border-b border-custom-border-200 px-3 relative flex items-center gap-4 justify-between">
         <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
 
-        <div className="h-full flex items-center gap-3 self-end">
+        <div className="h-full flex items-center gap-2 self-end">
           <PageSearchInput projectId={projectId} />
+
           <PageOrderByDropdown
             sortBy={filters.sortBy}
             sortKey={filters.sortKey}
@@ -55,6 +56,7 @@ export const PageView: React.FC<TPageView> = observer((props) => {
               if (val.order) updateFilters("sortBy", val.order);
             }}
           />
+
           <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
             <PageFiltersSelection
               filters={filters}

@@ -8,7 +8,9 @@ import { IPageStore, PageStore } from "store/pages/page.store";
 // services
 import { PageService } from "services/page.service";
 // types
-import { TPage, TPageFilters } from "@plane/types";
+import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+// page helper class
+import { PageHelpers } from "./helpers";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -17,6 +19,7 @@ type TError = { title: string; description: string };
 export interface IProjectPageStore {
   // observables
   loader: TLoader;
+  pageType: TPageNavigationTabs;
   data: Record<string, Record<string, IPageStore>>; // projectId => pageId => PageStore
   error: TError | undefined;
   filters: TPageFilters;
@@ -26,15 +29,16 @@ export interface IProjectPageStore {
   pageById: (pageId: string) => IPageStore | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   // actions
-  getAllPages: (_loader?: TLoader) => Promise<TPage[] | undefined>;
+  getAllPages: (pageType?: TPageNavigationTabs) => Promise<TPage[] | undefined>;
   getPageById: (pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
 }
 
-export class ProjectPageStore implements IProjectPageStore {
+export class ProjectPageStore extends PageHelpers implements IProjectPageStore {
   // observables
   loader: TLoader = "init-loader";
+  pageType: TPageNavigationTabs = "public";
   data: Record<string, Record<string, IPageStore>> = {}; // projectId => pageId => PageStore
   error: TError | undefined = undefined;
   filters: TPageFilters = {
@@ -46,9 +50,12 @@ export class ProjectPageStore implements IProjectPageStore {
   service: PageService;
 
   constructor(private store: RootStore) {
+    super();
+
     makeObservable(this, {
       // observables
       loader: observable.ref,
+      pageType: observable.ref,
       data: observable,
       error: observable,
       filters: observable,
@@ -70,7 +77,12 @@ export class ProjectPageStore implements IProjectPageStore {
     const { projectId } = this.store.app.router;
     if (!projectId) return undefined;
 
-    const pages = Object.keys(this?.data?.[projectId] || {}) || undefined;
+    // helps to filter pages based on the pageType
+    const filtersPages = this.filterPagesByPages(this.pageType, Object.values(this?.data?.[projectId] || {}));
+
+    // TODO: apply user filters
+
+    const pages = (filtersPages.map((page) => page.id) as string[]) || undefined;
     if (!pages) return undefined;
 
     return pages;
@@ -91,16 +103,14 @@ export class ProjectPageStore implements IProjectPageStore {
   };
 
   // actions
-  getAllPages = async () => {
+  getAllPages = async (pageType: TPageNavigationTabs = "public") => {
     try {
       const { workspaceSlug, projectId } = this.store.app.router;
       if (!workspaceSlug || !projectId) return undefined;
 
-      console.log("hello");
-
       const currentPageIds = this.pageIds;
-      console.log("currentPageIds", currentPageIds);
       runInAction(() => {
+        this.pageType = pageType;
         this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
         this.error = undefined;
       });

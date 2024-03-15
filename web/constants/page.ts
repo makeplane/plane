@@ -1,3 +1,4 @@
+import { Globe2, Lock, LucideIcon } from "lucide-react";
 // types
 import { TPageFiltersSortKey, TPageFiltersSortBy } from "@plane/types";
 
@@ -5,6 +6,15 @@ export enum EPageAccess {
   PUBLIC = 0,
   PRIVATE = 1,
 }
+
+export const PAGE_ACCESS_SPECIFIERS: {
+  key: EPageAccess;
+  label: string;
+  icon: LucideIcon;
+}[] = [
+  { key: EPageAccess.PUBLIC, label: "Public", icon: Globe2 },
+  { key: EPageAccess.PRIVATE, label: "Private", icon: Lock },
+];
 
 export const PAGE_SORTING_KEY_OPTIONS: {
   key: TPageFiltersSortKey;

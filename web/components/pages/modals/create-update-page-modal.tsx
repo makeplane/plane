@@ -1,15 +1,15 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // components
 import { PageForm } from "./";
-import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
-import { useEventTracker } from "hooks/store";
 // hooks
-// import { IPageStore } from "store/pages/page.store";
-// import { usePage } from "hooks/store/";
+import { useProjectPages, usePage, useEventTracker } from "hooks/store";
 // types
 import { TPage } from "@plane/types";
+// constants
+import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
+import { EPageAccess } from "constants/page";
 
 type TCreateUpdatePageModal = {
   workspaceSlug: string;
@@ -17,15 +17,29 @@ type TCreateUpdatePageModal = {
   isModalOpen: boolean;
   handleModalClose: () => void;
   data?: Partial<TPage> | undefined;
+  redirectionEnabled?: boolean;
 };
 
 export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
-  const { workspaceSlug, projectId, isModalOpen, handleModalClose, data: pageData } = props;
+  const { workspaceSlug, projectId, isModalOpen, handleModalClose, data: pageData, redirectionEnabled = false } = props;
+  const router = useRouter();
   // hooks
+  const { createPage } = useProjectPages(projectId);
+  const { updatePage, asJson: storePageData } = usePage(projectId, pageData?.id || undefined);
+  const { capturePageEvent } = useEventTracker();
   // states
-  const [pageFormData, setPageFormData] = useState<Partial<TPage>>({ name: "" });
+  const [pageFormData, setPageFormData] = useState<Partial<TPage>>({
+    id: undefined,
+    name: "",
+    access: EPageAccess.PUBLIC,
+  });
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));
+
+  const handleStateClear = () => {
+    setPageFormData({ id: undefined, name: "", access: EPageAccess.PUBLIC });
+    handleModalClose();
+  };
 
   useEffect(() => {
     if (pageData) {
@@ -37,76 +51,66 @@ export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
     }
   }, [pageData]);
 
-  // store hooks
-  // const { createPage } = useProjectPages();
-  // const { capturePageEvent } = useEventTracker();
-
-  const createProjectPage = async (payload: any) => {
-    if (!workspaceSlug) return;
-    // await createPage(workspaceSlug.toString(), projectId, payload)
-    //   .then((res) => {
-    //     capturePageEvent({
-    //       eventName: PAGE_CREATED,
-    //       payload: {
-    //         ...res,
-    //         state: "SUCCESS",
-    //       },
-    //     });
-    //   })
-    //   .catch(() => {
-    //     capturePageEvent({
-    //       eventName: PAGE_CREATED,
-    //       payload: {
-    //         state: "FAILED",
-    //       },
-    //     });
-    //   });
-  };
-
   const handleFormSubmit = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    if (pageFormData.id) {
+    console.log("pageFormData", pageFormData);
+
+    if (pageFormData.id && pageFormData.id != undefined) {
       try {
+        if (pageFormData.name === storePageData?.name && pageFormData.access === storePageData?.access) {
+          handleStateClear();
+          return;
+        }
+        const pageData = await updatePage(pageFormData);
+        if (pageData) {
+          capturePageEvent({
+            eventName: PAGE_UPDATED,
+            payload: {
+              ...pageData,
+              state: "SUCCESS",
+            },
+          });
+          handleStateClear();
+        }
       } catch {
-        console.log("something went wrong. Please try again later");
+        capturePageEvent({
+          eventName: PAGE_UPDATED,
+          payload: {
+            state: "FAILED",
+          },
+        });
       }
     } else {
       try {
+        const pageData = await createPage(pageFormData);
+        if (pageData) {
+          capturePageEvent({
+            eventName: PAGE_CREATED,
+            payload: {
+              ...pageData,
+              state: "SUCCESS",
+            },
+          });
+          handleStateClear();
+          if (redirectionEnabled) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${pageData.id}`);
+        }
       } catch {
-        console.log("something went wrong. Please try again later");
+        capturePageEvent({
+          eventName: PAGE_CREATED,
+          payload: {
+            state: "FAILED",
+          },
+        });
       }
     }
-
-    // try {
-    //   if (pageStore) {
-    //     if (pageStore.name !== formData.name) {
-    //       await pageStore.updateName(formData.name);
-    //     }
-    //     if (pageStore.access !== formData.access) {
-    //       formData.access === 1 ? await pageStore.makePrivate() : await pageStore.makePublic();
-    //     }
-    //     capturePageEvent({
-    //       eventName: PAGE_UPDATED,
-    //       payload: {
-    //         ...pageStore,
-    //         state: "SUCCESS",
-    //       },
-    //     });
-    //   } else {
-    //     await createProjectPage(formData);
-    //   }
-    //   handleModalClose();
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   return (
-    <Transition.Root show={isModalOpen} as={React.Fragment}>
+    <Transition.Root show={isModalOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleModalClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -120,7 +124,7 @@ export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="my-10 flex justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -132,7 +136,7 @@ export const CreateUpdatePageModal: FC<TCreateUpdatePageModal> = (props) => {
                 <PageForm
                   formData={pageFormData}
                   handleFormData={handlePageFormData}
-                  handleModalClose={handleModalClose}
+                  handleModalClose={handleStateClear}
                   handleFormSubmit={handleFormSubmit}
                 />
               </Dialog.Panel>
