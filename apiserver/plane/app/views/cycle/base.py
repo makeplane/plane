@@ -10,6 +10,7 @@ from django.db.models import (
     Count,
     Exists,
     F,
+    Func,
     OuterRef,
     Prefetch,
     Q,
@@ -19,8 +20,6 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework import status
