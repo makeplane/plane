@@ -50,6 +50,7 @@ COPY ./bin ./bin/
 
 RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
 RUN chmod -R 777 /code
+RUN chown -R captain:plane /code
 
 USER captain
 
