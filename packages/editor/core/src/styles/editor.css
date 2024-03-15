@@ -170,68 +170,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   }
 }
 
-#editor-container {
-  table {
-    border-collapse: collapse;
-    table-layout: fixed;
-    margin: 0.5em 0 0.5em 0;
-
-    border: 1px solid rgb(var(--color-border-200));
-    width: 100%;
-
-    td,
-    th {
-      min-width: 1em;
-      border: 1px solid rgb(var(--color-border-200));
-      padding: 10px 15px;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-      transition: background-color 0.3s ease;
-
-      > * {
-        margin-bottom: 0;
-      }
-    }
-
-    th {
-      font-weight: bold;
-      text-align: left;
-      background-color: rgb(var(--color-primary-100));
-    }
-
-    td:hover {
-      background-color: rgba(var(--color-primary-300), 0.1);
-    }
-
-    .selectedCell:after {
-      z-index: 2;
-      position: absolute;
-      content: "";
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      background-color: rgba(var(--color-primary-300), 0.1);
-      pointer-events: none;
-    }
-
-    .column-resize-handle {
-      position: absolute;
-      right: -2px;
-      top: 0;
-      bottom: -2px;
-      width: 2px;
-      background-color: rgb(var(--color-primary-400));
-      pointer-events: none;
-    }
-  }
-}
-
-.tableWrapper {
-  overflow-x: auto;
-}
-
 .resize-cursor {
   cursor: ew-resize;
   cursor: col-resize;

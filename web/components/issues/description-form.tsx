@@ -1,19 +1,19 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-// hooks
-import useReloadConfirmations from "hooks/use-reload-confirmation";
-// components
-import { Loader, TextArea } from "@plane/ui";
 import { RichTextEditor } from "components/editor/rich-text-editor";
 import { RichTextReadOnlyEditor } from "components/editor/rich-text-read-only-editor";
+import debounce from "lodash/debounce";
+import { observer } from "mobx-react";
+import { Controller, useForm } from "react-hook-form";
+// hooks
+import { Loader, TextArea } from "@plane/ui";
+import { useMention, useWorkspace } from "hooks/store";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
+// components
 // types
+import { FileService } from "services/file.service";
 import { TIssue } from "@plane/types";
 import { TIssueOperations } from "./issue-detail";
-// store
-import { useWorkspace } from "hooks/store";
-// utils
-import { isNil } from "lodash";
-import debounce from "lodash/debounce";
+// services
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -36,15 +36,18 @@ export interface IssueDetailsProps {
   setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
+const fileService = new FileService();
+
+export const IssueDescriptionForm: FC<IssueDetailsProps> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations, disabled, isSubmitting, setIsSubmitting } = props;
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
-
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
-
+  // hooks
   const { setShowAlert } = useReloadConfirmations();
+  // store hooks
+  const { mentionHighlights, mentionSuggestions } = useMention();
   // form info
   const {
     handleSubmit,
@@ -54,8 +57,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     formState: { errors },
   } = useForm<TIssue>({
     defaultValues: {
-      name: "",
-      description_html: "",
+      name: issue?.name,
+      description_html: issue?.description_html,
     },
   });
 
@@ -65,38 +68,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     description_html: issue.description_html,
   });
 
-  // adding issue.description_html or issue.name to dependency array causes
-  // editor rerendering on every save
-  useEffect(() => {
-    if (issue.id) {
-      setLocalTitleValue(issue.name);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [issue.id]); // TODO: verify the exhaustive-deps warning
-
-  useEffect(() => {
-    if (issue.description_html) {
-      setLocalIssueDescription((state) => {
-        if (!isNil(state.description_html)) return state;
-        return { id: issue.id, description_html: issue.description_html };
-      });
-    }
-  }, [issue.description_html]);
-
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<TIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
-      await issueOperations.update(
-        workspaceSlug,
-        projectId,
-        issueId,
-        {
-          name: formData.name ?? "",
-          description_html: formData.description_html ?? "<p></p>",
-        },
-        false
-      );
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        name: formData.name ?? "",
+        description_html: formData.description_html ?? "<p></p>",
+      });
     },
     [workspaceSlug, projectId, issueId, issueOperations]
   );
@@ -119,7 +98,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     reset({
       ...issue,
     });
-  }, [issue, reset]);
+    setLocalIssueDescription({
+      id: issue.id,
+      description_html: issue.description_html === "" ? "<p></p>" : issue.description_html,
+    });
+    setLocalTitleValue(issue.name);
+  }, [issue, issue.description_html, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
   // TODO: Verify the exhaustive-deps warning
@@ -153,7 +137,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                   debouncedFormSave();
                 }}
                 required
-                className="min-h-min block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
+                className="block min-h-min w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-medium outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
                 hasError={Boolean(errors?.name)}
                 role="textbox"
               />
@@ -173,22 +157,22 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <div className="relative">
-        {issue.description_html ? (
+        {localIssueDescription.description_html ? (
           <Controller
             name="description_html"
             control={control}
             render={({ field: { onChange } }) =>
               !disabled ? (
                 <RichTextEditor
-                  workspaceSlug={workspaceSlug}
                   workspaceId={workspaceId}
+                  workspaceSlug={workspaceSlug}
                   value={localIssueDescription.description_html}
                   rerenderOnPropsChange={localIssueDescription}
                   setShouldShowAlert={setShowAlert}
                   setIsSubmitting={setIsSubmitting}
                   dragDropEnabled
                   customClassName="min-h-[150px] shadow-sm"
-                  onChange={(description: Object, description_html: string) => {
+                  onChange={(description: any, description_html: string) => {
                     setShowAlert(true);
                     setIsSubmitting("submitting");
                     onChange(description_html);
@@ -212,4 +196,4 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
       </div>
     </div>
   );
-};
+});

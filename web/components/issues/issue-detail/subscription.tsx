@@ -1,11 +1,11 @@
 import { FC, useState } from "react";
-import { Bell, BellOff } from "lucide-react";
+import isNil from "lodash/isNil";
 import { observer } from "mobx-react-lite";
+import { Bell, BellOff } from "lucide-react";
 // UI
-import { Button } from "@plane/ui";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "hooks/store";
-import useToast from "hooks/use-toast";
 
 export type TIssueSubscription = {
   workspaceSlug: string;
@@ -21,47 +21,53 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
     createSubscription,
     removeSubscription,
   } = useIssueDetail();
-  const { setToastAlert } = useToast();
   // state
   const [loading, setLoading] = useState(false);
 
-  const subscription = getSubscriptionByIssueId(issueId);
+  const isSubscribed = getSubscriptionByIssueId(issueId);
 
   const handleSubscription = async () => {
     setLoading(true);
     try {
-      if (subscription?.subscribed) await removeSubscription(workspaceSlug, projectId, issueId);
+      if (isSubscribed) await removeSubscription(workspaceSlug, projectId, issueId);
       else await createSubscription(workspaceSlug, projectId, issueId);
-      setToastAlert({
-        type: "success",
-        title: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
-        message: `Issue ${subscription?.subscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
       });
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error",
         message: "Something went wrong. Please try again later.",
       });
     }
   };
 
+  if (isNil(isSubscribed))
+    return (
+      <Loader>
+        <Loader.Item width="106px" height="28px" />
+      </Loader>
+    );
+
   return (
     <div>
       <Button
         size="sm"
-        prependIcon={subscription?.subscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
+        prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
       >
         {loading ? (
           <span>
-            <span className="hidden sm:block">Loading</span>...
+            <span className="hidden sm:block">Loading...</span>
           </span>
-        ) : subscription?.subscribed ? (
+        ) : isSubscribed ? (
           <div className="hidden sm:block">Unsubscribe</div>
         ) : (
           <div className="hidden sm:block">Subscribe</div>

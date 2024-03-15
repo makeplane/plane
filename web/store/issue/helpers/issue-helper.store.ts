@@ -1,16 +1,16 @@
-import orderBy from "lodash/orderBy";
 import get from "lodash/get";
 import indexOf from "lodash/indexOf";
 import isEmpty from "lodash/isEmpty";
+import orderBy from "lodash/orderBy";
 import values from "lodash/values";
 // types
-import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
-import { IIssueRootStore } from "../root.store";
 // constants
 import { ISSUE_PRIORITIES } from "constants/issue";
 import { STATE_GROUPS } from "constants/state";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { TIssue, TIssueMap, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
+import { IIssueRootStore } from "../root.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -36,6 +36,8 @@ export type TIssueHelperStore = {
 
 const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   project: "project_id",
+  cycle: "cycle_id",
+  module: "module_ids",
   state: "state_id",
   "state_detail.group": "state_group" as keyof TIssue, // state_detail.group is only being used for state_group display,
   priority: "priority",
@@ -60,35 +62,35 @@ export class IssueHelperStore implements TIssueHelperStore {
     issues: TIssueMap,
     isCalendarIssues: boolean = false
   ) => {
-    const _issues: { [group_id: string]: string[] } = {};
-    if (!groupBy) return _issues;
+    const currentIssues: { [group_id: string]: string[] } = {};
+    if (!groupBy) return currentIssues;
 
     this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
-      _issues[group] = [];
+      currentIssues[group] = [];
     });
 
     const projectIssues = this.issuesSortWithOrderBy(issues, orderBy);
 
     for (const issue in projectIssues) {
-      const _issue = projectIssues[issue];
+      const currentIssue = projectIssues[issue];
       let groupArray = [];
 
       if (groupBy === "state_detail.group") {
-        const state_group =
-          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        // if groupBy state_detail.group is coming from the project level the we are using stateDetails from root store else we are looping through the stateMap
+        const state_group = (this.rootStore?.stateMap || {})?.[currentIssue?.state_id]?.group || "None";
         groupArray = [state_group];
       } else {
-        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
-        groupArray = groupValue !== undefined ? this.getGroupArray(groupValue, isCalendarIssues) : [];
+        const groupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+        groupArray = groupValue !== undefined ? this.getGroupArray(groupValue, isCalendarIssues) : ["None"];
       }
 
       for (const group of groupArray) {
-        if (group && _issues[group]) _issues[group].push(_issue.id);
-        else if (group) _issues[group] = [_issue.id];
+        if (group && currentIssues[group]) currentIssues[group].push(currentIssue.id);
+        else if (group) currentIssues[group] = [currentIssue.id];
       }
     }
 
-    return _issues;
+    return currentIssues;
   };
 
   subGroupedIssues = (
@@ -97,45 +99,47 @@ export class IssueHelperStore implements TIssueHelperStore {
     orderBy: TIssueOrderByOptions,
     issues: TIssueMap
   ) => {
-    const _issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
-    if (!subGroupBy || !groupBy) return _issues;
+    const currentIssues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
+    if (!subGroupBy || !groupBy) return currentIssues;
 
-    this.issueDisplayFiltersDefaultData(subGroupBy).forEach((sub_group: any) => {
+    this.issueDisplayFiltersDefaultData(subGroupBy).forEach((sub_group) => {
       const groupByIssues: { [group_id: string]: string[] } = {};
       this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
         groupByIssues[group] = [];
       });
-      _issues[sub_group] = groupByIssues;
+      currentIssues[sub_group] = groupByIssues;
     });
 
     const projectIssues = this.issuesSortWithOrderBy(issues, orderBy);
 
     for (const issue in projectIssues) {
-      const _issue = projectIssues[issue];
+      const currentIssue = projectIssues[issue];
       let subGroupArray = [];
       let groupArray = [];
       if (subGroupBy === "state_detail.group" || groupBy === "state_detail.group") {
-        const state_group =
-          this.rootStore?.stateDetails?.find((_state) => _state.id === _issue?.state_id)?.group || "None";
+        const state_group = (this.rootStore?.stateMap || {})?.[currentIssue?.state_id]?.group || "None";
+
         subGroupArray = [state_group];
         groupArray = [state_group];
       } else {
-        const subGroupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]);
-        const groupValue = get(_issue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
-        subGroupArray = subGroupValue != undefined ? this.getGroupArray(subGroupValue) : [];
-        groupArray = groupValue != undefined ? this.getGroupArray(groupValue) : [];
+        const subGroupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[subGroupBy]);
+        const groupValue = get(currentIssue, ISSUE_FILTER_DEFAULT_DATA[groupBy]);
+
+        subGroupArray = subGroupValue != undefined ? this.getGroupArray(subGroupValue) : ["None"];
+        groupArray = groupValue != undefined ? this.getGroupArray(groupValue) : ["None"];
       }
 
       for (const subGroup of subGroupArray) {
         for (const group of groupArray) {
-          if (subGroup && group && _issues?.[subGroup]?.[group]) _issues[subGroup][group].push(_issue.id);
-          else if (subGroup && group && _issues[subGroup]) _issues[subGroup][group] = [_issue.id];
-          else if (subGroup && group) _issues[subGroup] = { [group]: [_issue.id] };
+          if (subGroup && group && currentIssues?.[subGroup]?.[group])
+            currentIssues[subGroup][group].push(currentIssue.id);
+          else if (subGroup && group && currentIssues[subGroup]) currentIssues[subGroup][group] = [currentIssue.id];
+          else if (subGroup && group) currentIssues[subGroup] = { [group]: [currentIssue.id] };
         }
       }
     }
 
-    return _issues;
+    return currentIssues;
   };
 
   unGroupedIssues = (orderBy: TIssueOrderByOptions, issues: TIssueMap) =>
@@ -157,6 +161,10 @@ export class IssueHelperStore implements TIssueHelperStore {
         return Object.keys(this.rootStore?.workSpaceMemberRolesMap || {});
       case "project":
         return Object.keys(this.rootStore?.projectMap || {});
+      case "cycle":
+        return Object.keys(this.rootStore?.cycleMap || {});
+      case "module":
+        return Object.keys(this.rootStore?.moduleMap || {});
       default:
         return [];
     }
@@ -170,7 +178,7 @@ export class IssueHelperStore implements TIssueHelperStore {
    * @returns string | string[] of sortable fields to be used for sorting
    */
   populateIssueDataForSorting(
-    dataType: "state_id" | "label_ids" | "assignee_ids",
+    dataType: "state_id" | "label_ids" | "assignee_ids" | "module_ids" | "cycle_id",
     dataIds: string | string[] | null | undefined,
     order?: "asc" | "desc"
   ) {
@@ -202,7 +210,23 @@ export class IssueHelperStore implements TIssueHelperStore {
         if (!memberMap) break;
         for (const dataId of dataIdsArray) {
           const member = memberMap[dataId];
-          if (memberMap && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
+          if (member && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
+        }
+        break;
+      case "module_ids":
+        const moduleMap = this.rootStore?.moduleMap;
+        if (!moduleMap) break;
+        for (const dataId of dataIdsArray) {
+          const currentModule = moduleMap[dataId];
+          if (currentModule && currentModule.name) dataValues.push(currentModule.name.toLocaleLowerCase());
+        }
+        break;
+      case "cycle_id":
+        const cycleMap = this.rootStore?.cycleMap;
+        if (!cycleMap) break;
+        for (const dataId of dataIdsArray) {
+          const cycle = cycleMap[dataId];
+          if (cycle && cycle.name) dataValues.push(cycle.name.toLocaleLowerCase());
         }
         break;
     }
@@ -211,10 +235,10 @@ export class IssueHelperStore implements TIssueHelperStore {
   }
 
   /**
-   * This Method is mainly used to filter out empty values in the begining
+   * This Method is mainly used to filter out empty values in the beginning
    * @param key key of the value that is to be checked if empty
    * @param object any object in which the key's value is to be checked
-   * @returns 1 if emoty, 0 if not empty
+   * @returns 1 if empty, 0 if not empty
    */
   getSortOrderToFilterEmptyValues(key: string, object: any) {
     const value = object?.[key];
@@ -313,6 +337,36 @@ export class IssueHelperStore implements TIssueHelperStore {
           ["asc", "desc"]
         );
 
+      case "modules__name":
+        return orderBy(array, [
+          this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "asc"),
+        ]);
+      case "-modules__name":
+        return orderBy(
+          array,
+          [
+            this.getSortOrderToFilterEmptyValues.bind(null, "module_ids"), //preferring sorting based on empty values to always keep the empty values below
+            (issue) => this.populateIssueDataForSorting("module_ids", issue["module_ids"], "desc"),
+          ],
+          ["asc", "desc"]
+        );
+
+      case "cycle__name":
+        return orderBy(array, [
+          this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
+          (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "asc"),
+        ]);
+      case "-cycle__name":
+        return orderBy(
+          array,
+          [
+            this.getSortOrderToFilterEmptyValues.bind(null, "cycle_id"), //preferring sorting based on empty values to always keep the empty values below
+            (issue) => this.populateIssueDataForSorting("cycle_id", issue["cycle_id"], "desc"),
+          ],
+          ["asc", "desc"]
+        );
+
       case "assignees__first_name":
         return orderBy(array, [
           this.getSortOrderToFilterEmptyValues.bind(null, "assignee_ids"), //preferring sorting based on empty values to always keep the empty values below
@@ -336,7 +390,7 @@ export class IssueHelperStore implements TIssueHelperStore {
   getGroupArray(value: boolean | number | string | string[] | null, isDate: boolean = false): string[] {
     if (!value || value === null || value === undefined) return ["None"];
     if (Array.isArray(value))
-      if (value.length) return value;
+      if (value && value.length) return value;
       else return ["None"];
     else if (typeof value === "boolean") return [value ? "True" : "False"];
     else if (typeof value === "number") return [value.toString()];

@@ -1,7 +1,7 @@
 export * from "./github-importer";
 export * from "./jira-importer";
 
-import { IProjectLite } from "../projects";
+import { IProjectLite } from "../project";
 // types
 import { IUserLite } from "../users";
 

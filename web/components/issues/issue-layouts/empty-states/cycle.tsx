@@ -1,44 +1,41 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { PlusIcon } from "lucide-react";
+import isEmpty from "lodash/isEmpty";
 // hooks
-import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { EmptyState } from "components/common";
-import { ExistingIssuesListModal } from "components/core";
+import { useApplication, useCycle, useEventTracker, useIssues } from "hooks/store";
 // ui
-import { Button } from "@plane/ui";
-// assets
-import emptyIssue from "public/empty-state/issue.svg";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { ExistingIssuesListModal } from "components/core";
+// components
+import { EmptyState } from "components/empty-state";
 // types
-import { ISearchIssueResponse } from "@plane/types";
+import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
 import { EIssuesStoreType } from "constants/issue";
+import { EmptyStateType } from "constants/empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
+  activeLayout: TIssueLayouts | undefined;
+  handleClearAllFilters: () => void;
+  isEmptyFilters?: boolean;
 };
 
 export const CycleEmptyState: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, cycleId } = props;
+  const { workspaceSlug, projectId, cycleId, activeLayout, handleClearAllFilters, isEmptyFilters = false } = props;
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   // store hooks
+  const { getCycleById } = useCycle();
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
-  const { updateIssue, fetchIssue } = useIssueDetail();
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole: userRole },
-  } = useUser();
 
-  const { setToastAlert } = useToast();
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -47,20 +44,31 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     await issues
       .addIssueToCycle(workspaceSlug.toString(), projectId, cycleId.toString(), issueIds)
-      .then((res) => {
-        updateIssue(workspaceSlug, projectId, res.id, res);
-        fetchIssue(workspaceSlug, projectId, res.id);
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
+      .then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Issues added to the cycle successfully.",
+        })
+      )
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Selected issues could not be added to the cycle. Please try again.",
-        });
-      });
+        })
+      );
   };
 
-  const isEditingAllowed = !!userRole && userRole >= EUserProjectRoles.MEMBER;
+  const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
+
+  const emptyStateType = isCompletedCycleSnapshotAvailable
+    ? EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES
+    : isEmptyFilters
+    ? EmptyStateType.PROJECT_EMPTY_FILTER
+    : EmptyStateType.PROJECT_CYCLE_NO_ISSUES;
+  const additionalPath = isCompletedCycleSnapshotAvailable ? undefined : activeLayout ?? "list";
+  const emptyStateSize = isEmptyFilters ? "lg" : "sm";
 
   return (
     <>
@@ -74,28 +82,22 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
       />
       <div className="grid h-full w-full place-items-center">
         <EmptyState
-          title="Cycle issues will appear here"
-          description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-          image={emptyIssue}
-          primaryButton={{
-            text: "New issue",
-            icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-            onClick: () => {
-              setTrackElement("Cycle issue empty state");
-              toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
-            },
-          }}
-          secondaryButton={
-            <Button
-              variant="neutral-primary"
-              prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
-              onClick={() => setCycleIssuesListModal(true)}
-              disabled={!isEditingAllowed}
-            >
-              Add an existing issue
-            </Button>
+          type={emptyStateType}
+          additionalPath={additionalPath}
+          size={emptyStateSize}
+          primaryButtonOnClick={
+            !isCompletedCycleSnapshotAvailable && !isEmptyFilters
+              ? () => {
+                  setTrackElement("Cycle issue empty state");
+                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                }
+              : undefined
           }
-          disabled={!isEditingAllowed}
+          secondaryButtonOnClick={
+            !isCompletedCycleSnapshotAvailable && isEmptyFilters
+              ? handleClearAllFilters
+              : () => setCycleIssuesListModal(true)
+          }
         />
       </div>
     </>

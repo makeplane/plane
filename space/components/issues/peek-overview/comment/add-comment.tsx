@@ -93,7 +93,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               customClassName="p-2"
               editorContentCustomClassNames="min-h-[35px]"
               debouncedUpdatesEnabled={false}
-              onChange={(comment_json: Object, comment_html: string) => {
+              onChange={(comment_json: unknown, comment_html: string) => {
                 onChange(comment_html);
               }}
               submitButton={

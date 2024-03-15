@@ -1,11 +1,12 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import DatePicker from "react-datepicker";
+import { useRouter } from "next/router";
+import { DayPicker } from "react-day-picker";
 import { Popover } from "@headlessui/react";
-// hooks
-import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
+// icons
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   AcceptIssueModal,
@@ -13,14 +14,12 @@ import {
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
-// ui
-import { Button } from "@plane/ui";
-// icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
-// types
-import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
 import { ISSUE_DELETED } from "constants/event-tracker";
+import { EUserProjectRoles } from "constants/project";
+// hooks
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
+// types
+import type { TInboxDetailedStatus } from "@plane/types";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -30,7 +29,7 @@ type TInboxIssueActionsHeader = {
 };
 
 type TInboxIssueOperations = {
-  updateInboxIssueStatus: (data: TInboxStatus) => Promise<void>;
+  updateInboxIssueStatus: (data: TInboxDetailedStatus) => Promise<void>;
   removeInboxIssue: () => Promise<void>;
 };
 
@@ -51,7 +50,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { setToastAlert } = useToast();
 
   // states
   const [date, setDate] = useState(new Date());
@@ -74,8 +72,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId) throw new Error("Missing required parameters");
           await updateInboxIssueStatus(workspaceSlug, projectId, inboxId, inboxIssueId, data);
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Something went wrong while updating inbox status. Please try again.",
           });
@@ -92,14 +90,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
               id: inboxIssueId,
               state: "SUCCESS",
               element: "Inbox page",
-            }
+            },
           });
           router.push({
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
           });
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
@@ -122,7 +120,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       inboxIssueId,
       updateInboxIssueStatus,
       removeInboxIssue,
-      setToastAlert,
       captureIssueEvent,
       router,
     ]
@@ -131,6 +128,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const handleInboxIssueNavigation = useCallback(
     (direction: "next" | "prev") => {
       if (!inboxIssues || !inboxIssueId) return;
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && (activeElement.classList.contains("tiptap") || activeElement.id === "title-input")) return;
       const nextIssueIndex =
         direction === "next"
           ? (currentIssueIndex + 1) % inboxIssues.length
@@ -233,7 +232,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       )}
 
       {inboxIssueId && (
-        <div className="px-4 w-full h-full relative flex items-center gap-2 justify-between">
+        <div className="relative flex h-full w-full items-center justify-between gap-2 px-4">
           <div className="flex items-center gap-x-2">
             <button
               type="button"
@@ -266,15 +265,20 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   <Popover.Panel className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-custom-background-100 p-2 shadow-lg">
                     {({ close }) => (
                       <div className="flex h-full w-full flex-col gap-y-1">
-                        <DatePicker
-                          selected={date ? new Date(date) : null}
-                          onChange={(val) => {
-                            if (!val) return;
-                            setDate(val);
+                        <DayPicker
+                          selected={date ? new Date(date) : undefined}
+                          defaultMonth={date ? new Date(date) : undefined}
+                          onSelect={(date) => {
+                            if (!date) return;
+                            setDate(date);
                           }}
-                          dateFormat="dd-MM-yyyy"
-                          minDate={tomorrow}
-                          inline
+                          mode="single"
+                          className="rounded-md border border-custom-border-200 p-3"
+                          disabled={[
+                            {
+                              before: tomorrow,
+                            },
+                          ]}
                         />
                         <Button
                           variant="primary"

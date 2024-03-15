@@ -1,13 +1,15 @@
-import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 // services
-import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";
+import { ProjectService } from "services/project";
+// helpers
+import { orderModules, shouldFilterModule } from "helpers/module.helper";
 // types
-import { IModule, ILinkDetails } from "@plane/types";
 import { RootStore } from "store/root.store";
+import { IModule, ILinkDetails } from "@plane/types";
 
 export interface IModuleStore {
   //Loaders
@@ -18,10 +20,13 @@ export interface IModuleStore {
   // computed
   projectModuleIds: string[] | null;
   // computed actions
+  getFilteredModuleIds: (projectId: string) => string[] | null;
   getModuleById: (moduleId: string) => IModule | null;
+  getModuleNameById: (moduleId: string) => string;
   getProjectModuleIds: (projectId: string) => string[] | null;
   // actions
   // fetch
+  fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   // crud
@@ -73,6 +78,7 @@ export class ModulesStore implements IModuleStore {
       // computed
       projectModuleIds: computed,
       // actions
+      fetchWorkspaceModules: action,
       fetchModules: action,
       fetchModuleDetails: action,
       createModule: action,
@@ -99,11 +105,33 @@ export class ModulesStore implements IModuleStore {
   get projectModuleIds() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
-    let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId);
     projectModules = sortBy(projectModules, [(m) => m.sort_order]);
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds || null;
   }
+
+  /**
+   * @description returns filtered module ids based on display filters and filters
+   * @param {TModuleDisplayFilters} displayFilters
+   * @param {TModuleFilters} filters
+   * @returns {string[] | null}
+   */
+  getFilteredModuleIds = computedFn((projectId: string) => {
+    const displayFilters = this.rootStore.moduleFilter.getDisplayFiltersByProjectId(projectId);
+    const filters = this.rootStore.moduleFilter.getFiltersByProjectId(projectId);
+    const searchQuery = this.rootStore.moduleFilter.searchQuery;
+    if (!this.fetchedMap[projectId]) return null;
+    let modules = Object.values(this.moduleMap ?? {}).filter(
+      (m) =>
+        m.project_id === projectId &&
+        m.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        shouldFilterModule(m, displayFilters ?? {}, filters ?? {})
+    );
+    modules = orderModules(modules, displayFilters?.order_by);
+    const moduleIds = modules.map((m) => m.id);
+    return moduleIds;
+  });
 
   /**
    * @description get module by id
@@ -113,17 +141,39 @@ export class ModulesStore implements IModuleStore {
   getModuleById = computedFn((moduleId: string) => this.moduleMap?.[moduleId] || null);
 
   /**
+   * @description get module by id
+   * @param moduleId
+   * @returns IModule | null
+   */
+  getModuleNameById = computedFn((moduleId: string) => this.moduleMap?.[moduleId]?.name);
+
+  /**
    * @description returns list of module ids of the project id passed as argument
    * @param projectId
    */
   getProjectModuleIds = computedFn((projectId: string) => {
     if (!this.fetchedMap[projectId]) return null;
 
-    let projectModules = Object.values(this.moduleMap).filter((m) => m.project === projectId);
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId);
     projectModules = sortBy(projectModules, [(m) => m.sort_order]);
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
   });
+
+  /**
+   * @description fetch all modules
+   * @param workspaceSlug
+   * @returns IModule[]
+   */
+  fetchWorkspaceModules = async (workspaceSlug: string) =>
+    await this.moduleService.getWorkspaceModules(workspaceSlug).then((response) => {
+      runInAction(() => {
+        response.forEach((module) => {
+          set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+        });
+      });
+      return response;
+    });
 
   /**
    * @description fetch all modules
@@ -177,7 +227,6 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [response?.id], response);
       });
-      this.fetchModules(workspaceSlug, projectId);
       return response;
     });
 

@@ -3,6 +3,7 @@ import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { SettingIcon } from "components/icons";
 // types
 import { Props } from "components/icons/types";
+import { TProjectOrderByOptions } from "@plane/types";
 
 export enum EUserProjectRoles {
   GUEST = 5,
@@ -11,15 +12,22 @@ export enum EUserProjectRoles {
   ADMIN = 20,
 }
 
-export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: LucideIcon }[] = [
+export const NETWORK_CHOICES: {
+  key: 0 | 2;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+}[] = [
   {
     key: 0,
     label: "Private",
+    description: "Accessible only by invite",
     icon: Lock,
   },
   {
     key: 2,
     label: "Public",
+    description: "Anyone in the workspace can join",
     icon: Globe2,
   },
 ];
@@ -32,29 +40,12 @@ export const GROUP_CHOICES = {
   cancelled: "Cancelled",
 };
 
-export const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-export const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
 export const PROJECT_AUTOMATION_MONTHS = [
-  { label: "1 Month", value: 1 },
-  { label: "3 Months", value: 3 },
-  { label: "6 Months", value: 6 },
-  { label: "9 Months", value: 9 },
-  { label: "12 Months", value: 12 },
+  { label: "1 month", value: 1 },
+  { label: "3 months", value: 3 },
+  { label: "6 months", value: 6 },
+  { label: "9 months", value: 9 },
+  { label: "12 months", value: 12 },
 ];
 
 export const PROJECT_UNSPLASH_COVERS = [
@@ -147,5 +138,27 @@ export const PROJECT_SETTINGS_LINKS: {
     access: EUserProjectRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations`,
     Icon: SettingIcon,
+  },
+];
+
+export const PROJECT_ORDER_BY_OPTIONS: {
+  key: TProjectOrderByOptions;
+  label: string;
+}[] = [
+  {
+    key: "sort_order",
+    label: "Manual",
+  },
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "created_at",
+    label: "Created date",
+  },
+  {
+    key: "members_length",
+    label: "Number of members",
   },
 ];

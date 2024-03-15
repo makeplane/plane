@@ -1,9 +1,9 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 
 // helpers
+import { ICalendarPayload, ICalendarWeek } from "components/issues";
 import { generateCalendarData } from "helpers/calendar.helper";
 // types
-import { ICalendarPayload, ICalendarWeek } from "components/issues";
 import { getWeekNumberOfDate } from "helpers/date-time.helper";
 
 export interface ICalendarStore {
@@ -78,7 +78,7 @@ export class CalendarStore implements ICalendarStore {
     const { activeWeekDate } = this.calendarFilters;
 
     return this.calendarPayload[`y-${activeWeekDate.getFullYear()}`][`m-${activeWeekDate.getMonth()}`][
-      `w-${this.activeWeekNumber}`
+      `w-${this.activeWeekNumber - 1}`
     ];
   }
 

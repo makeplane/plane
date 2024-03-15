@@ -2,9 +2,9 @@ import React from "react";
 
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button, Loader } from "@plane/ui";
 // icons
-import { ChevronDown, ChevronUp } from "lucide-react";
 // types
 import { IProject } from "@plane/types";
 

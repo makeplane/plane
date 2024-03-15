@@ -1,11 +1,11 @@
-import { observer } from "mobx-react-lite";
 import isToday from "date-fns/isToday";
+import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail, useMember, useProject } from "hooks/store";
 // ui
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
 import { findTotalDaysInRange, renderFormattedDate } from "helpers/date-time.helper";
+import { useIssueDetail, useMember, useProject } from "hooks/store";
 // types
 import { TIssue, TWidgetIssue } from "@plane/types";
 
@@ -179,7 +179,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
           : "-"}
       </div>
       <div className="text-xs flex justify-center">
-        {issue.assignee_ids.length > 0 ? (
+        {issue.assignee_ids && issue.assignee_ids?.length > 0 ? (
           <AvatarGroup>
             {issue.assignee_ids?.map((assigneeId) => {
               const userDetails = getUserDetails(assigneeId);

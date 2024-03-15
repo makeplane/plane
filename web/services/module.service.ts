@@ -1,12 +1,20 @@
 // services
+import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 // types
 import type { IModule, TIssue, ILinkDetails, ModuleLink } from "@plane/types";
-import { API_BASE_URL } from "helpers/common.helper";
 
 export class ModuleService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  async getWorkspaceModules(workspaceSlug: string): Promise<IModule[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/modules/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async getModules(workspaceSlug: string, projectId: string): Promise<IModule[]> {

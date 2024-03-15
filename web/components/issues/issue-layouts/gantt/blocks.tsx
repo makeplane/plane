@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 // hooks
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
 
 type Props = {
   issueId: string;
@@ -29,7 +30,9 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const handleIssuePeekOverview = () =>
     workspaceSlug &&
     issueDetails &&
+    !issueDetails.tempId &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <div
@@ -41,6 +44,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+        isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
             <h5>{issueDetails?.name}</h5>
@@ -65,7 +69,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { issueId } = props;
   // store hooks
   const { getStateById } = useProjectState();
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
   } = useApplication();
@@ -75,13 +79,14 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   // derived values
   const issueDetails = getIssueById(issueId);
-  const projectDetails = issueDetails && getProjectById(issueDetails?.project_id);
+  const projectIdentifier = issueDetails && getProjectIdentifierById(issueDetails?.project_id);
   const stateDetails = issueDetails && getStateById(issueDetails?.state_id);
 
   const handleIssuePeekOverview = () =>
     workspaceSlug &&
     issueDetails &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <ControlLink
@@ -89,13 +94,14 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
       target="_blank"
       onClick={handleIssuePeekOverview}
       className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+      disabled={!!issueDetails?.tempId}
     >
-      <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
+      <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
         {stateDetails && <StateGroupIcon stateGroup={stateDetails?.group} color={stateDetails?.color} />}
         <div className="flex-shrink-0 text-xs text-custom-text-300">
-          {projectDetails?.identifier} {issueDetails?.sequence_id}
+          {projectIdentifier} {issueDetails?.sequence_id}
         </div>
-        <Tooltip tooltipHeading="Title" tooltipContent={issueDetails?.name}>
+        <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
           <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>

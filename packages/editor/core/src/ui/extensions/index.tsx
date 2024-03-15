@@ -25,7 +25,9 @@ import { DeleteImage } from "src/types/delete-image";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { RestoreImage } from "src/types/restore-image";
 import { CustomLinkExtension } from "src/ui/extensions/custom-link";
-import { CustomCodeInlineExtension } from "./code-inline";
+import { CustomCodeInlineExtension } from "src/ui/extensions/code-inline";
+import { CustomTypographyExtension } from "src/ui/extensions/typography";
+import { CustomHorizontalRule } from "src/ui/extensions/horizontal-rule/horizontal-rule";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -54,9 +56,7 @@ export const CoreEditorExtensions = (
     },
     code: false,
     codeBlock: false,
-    horizontalRule: {
-      HTMLAttributes: { class: "mt-4 mb-4" },
-    },
+    horizontalRule: false,
     blockquote: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
@@ -65,6 +65,9 @@ export const CoreEditorExtensions = (
   }),
   CustomQuoteExtension.configure({
     HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
+  }),
+  CustomHorizontalRule.configure({
+    HTMLAttributes: { class: "mt-4 mb-4" },
   }),
   CustomKeymap,
   ListKeymap,
@@ -79,6 +82,7 @@ export const CoreEditorExtensions = (
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
+  CustomTypographyExtension,
   ImageExtension(deleteFile, restoreFile, cancelUploadImage).configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",

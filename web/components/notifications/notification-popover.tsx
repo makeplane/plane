@@ -1,19 +1,21 @@
 import React, { Fragment } from "react";
+import { observer } from "mobx-react-lite";
 import { Popover, Transition } from "@headlessui/react";
 import { Bell } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication } from "hooks/store";
-import useUserNotification from "hooks/use-user-notifications";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
+import { Tooltip } from "@plane/ui";
 import { EmptyState } from "components/common";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
-import { Loader, Tooltip } from "@plane/ui";
+import { NotificationsLoader } from "components/ui";
+import { getNumberCount } from "helpers/string.helper";
+import { useApplication } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useUserNotification from "hooks/use-user-notifications";
+import { usePlatformOS } from "hooks/use-platform-os";
+// components
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
-import { getNumberCount } from "helpers/string.helper";
 
 export const NotificationPopover = observer(() => {
   // states
@@ -22,6 +24,8 @@ export const NotificationPopover = observer(() => {
   const { theme: themeStore } = useApplication();
   // refs
   const notificationPopoverRef = React.useRef<HTMLDivElement | null>(null);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   const {
     notifications,
@@ -66,7 +70,7 @@ export const NotificationPopover = observer(() => {
       />
       <Popover ref={notificationPopoverRef} className="md:relative w-full">
         <>
-          <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed}>
+          <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed} isMobile={isMobile}>
             <button
               className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                 isActive
@@ -124,7 +128,7 @@ export const NotificationPopover = observer(() => {
 
               {notifications ? (
                 notifications.length > 0 ? (
-                  <div className="h-full overflow-y-auto">
+                  <div className="h-full overflow-y-auto vertical-scrollbar scrollbar-md">
                     <div className="divide-y divide-custom-border-100">
                       {notifications.map((notification) => (
                         <NotificationCard
@@ -188,13 +192,7 @@ export const NotificationPopover = observer(() => {
                   </div>
                 )
               ) : (
-                <Loader className="space-y-4 overflow-y-auto p-5">
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                </Loader>
+                <NotificationsLoader />
               )}
             </Popover.Panel>
           </Transition>

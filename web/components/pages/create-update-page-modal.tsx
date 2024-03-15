@@ -2,15 +2,15 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 // components
-import { PageForm } from "./page-form";
-// hooks
+import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
 import { useEventTracker } from "hooks/store";
+// hooks
 // types
-import { IPage } from "@plane/types";
 import { useProjectPages } from "hooks/store/use-project-page";
 import { IPageStore } from "store/page.store";
+import { IPage } from "@plane/types";
+import { PageForm } from "./page-form";
 // constants
-import { PAGE_CREATED, PAGE_UPDATED } from "constants/event-tracker";
 
 type Props = {
   // data?: IPage | null;
@@ -68,7 +68,6 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
             state: "SUCCESS",
           },
         });
-        console.log("Page updated successfully", pageStore);
       } else {
         await createProjectPage(formData);
       }

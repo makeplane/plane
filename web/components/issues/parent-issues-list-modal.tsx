@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
+import { Rocket, Search } from "lucide-react";
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import useDebounce from "hooks/use-debounce";
 import { ProjectService } from "services/project";
 // hooks
-import useDebounce from "hooks/use-debounce";
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { Rocket, Search } from "lucide-react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 
@@ -39,7 +38,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-
+  const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const router = useRouter();
@@ -115,7 +114,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                     />
                   </div>
                   <div className="flex p-2 sm:justify-end">
-                    <Tooltip tooltipContent="Toggle workspace level search">
+                    <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                       <div
                         className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
                           isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
@@ -136,7 +135,10 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       </div>
                     </Tooltip>
                   </div>
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                  <Combobox.Options
+                    static
+                    className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
+                  >
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}

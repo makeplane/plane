@@ -1,24 +1,25 @@
 import { Dispatch, MutableRefObject, SetStateAction, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // icons
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-// constants
-import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
-// components
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import RenderIfVisible from "components/core/render-if-visible-HOC";
-import { IssueColumn } from "./issue-column";
 // ui
 import { ControlLink, Tooltip } from "@plane/ui";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useIssueDetail, useProject } from "hooks/store";
+// components
+import RenderIfVisible from "components/core/render-if-visible-HOC";
+// constants
+import { SPREADSHEET_PROPERTY_LIST } from "constants/spreadsheet";
 // helper
 import { cn } from "helpers/common.helper";
+// hooks
+import { useIssueDetail, useProject } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { usePlatformOS } from "hooks/use-platform-os";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
-import { EIssueActions } from "../types";
+// local components
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IssueColumn } from "./issue-column";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
@@ -29,7 +30,7 @@ interface Props {
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -45,7 +46,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     isEstimateEnabled,
     nestingLevel,
     portalElement,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     isScrolled,
@@ -75,7 +76,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           canEditProperties={canEditProperties}
           nestingLevel={nestingLevel}
           isEstimateEnabled={isEstimateEnabled}
-          handleIssues={handleIssues}
+          updateIssue={updateIssue}
           portalElement={portalElement}
           isScrolled={isScrolled}
           isExpanded={isExpanded}
@@ -95,7 +96,7 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
             isEstimateEnabled={isEstimateEnabled}
-            handleIssues={handleIssues}
+            updateIssue={updateIssue}
             portalElement={portalElement}
             isScrolled={isScrolled}
             containerRef={containerRef}
@@ -115,7 +116,7 @@ interface IssueRowDetailsProps {
     portalElement?: HTMLDivElement | null
   ) => React.ReactNode;
   canEditProperties: (projectId: string | undefined) => boolean;
-  handleIssues: (issue: TIssue, action: EIssueActions) => Promise<void>;
+  updateIssue: ((projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
@@ -131,7 +132,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     isEstimateEnabled,
     nestingLevel,
     portalElement,
-    handleIssues,
+    updateIssue,
     quickActions,
     canEditProperties,
     isScrolled,
@@ -142,8 +143,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   //hooks
-  const { getProjectById } = useProject();
+  const { getProjectIdentifierById } = useProject();
   const { peekIssue, setPeekIssue } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const menuActionRef = useRef<HTMLDivElement | null>(null);
@@ -187,8 +189,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   return (
     <>
       <td
+        id={`issue-${issueDetail.id}`}
         className={cn(
-          "sticky group left-0 h-11  w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] border-custom-border-200",
+          "sticky group left-0 h-11 w-[28rem] flex items-center bg-custom-background-100 text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200",
           {
             "border-b-[0.5px]": peekIssue?.issueId !== issueDetail.id,
           },
@@ -212,14 +215,12 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                   isMenuActive ? "opacity-0" : "opacity-100"
                 }`}
               >
-                {getProjectById(issueDetail.project_id)?.identifier}-{issueDetail.sequence_id}
+                {getProjectIdentifierById(issueDetail.project_id)}-{issueDetail.sequence_id}
               </span>
 
-              {canEditProperties(issueDetail.project_id) && (
-                <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
-                  {quickActions(issueDetail, customActionButton, portalElement.current)}
-                </div>
-              )}
+              <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+                {quickActions(issueDetail, customActionButton, portalElement.current)}
+              </div>
             </div>
 
             {issueDetail.sub_issues_count > 0 && (
@@ -239,10 +240,14 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           target="_blank"
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className="clickable w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+          disabled={!!issueDetail?.tempId}
         >
           <div className="w-full overflow-hidden">
-            <Tooltip tooltipHeading="Title" tooltipContent={issueDetail.name}>
-              <div className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100" tabIndex={-1}>
+            <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
+              <div
+                className="h-full w-full cursor-pointer truncate px-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                tabIndex={-1}
+              >
                 {issueDetail.name}
               </div>
             </Tooltip>
@@ -251,15 +256,16 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
       </td>
       {/* Rest of the columns */}
       {SPREADSHEET_PROPERTY_LIST.map((property) => (
-          <IssueColumn
-            displayProperties={displayProperties}
-            issueDetail={issueDetail}
-            disableUserActions={disableUserActions}
-            property={property}
-            handleIssues={handleIssues}
-            isEstimateEnabled={isEstimateEnabled}
-          />
-        ))}
+        <IssueColumn
+          key={property}
+          displayProperties={displayProperties}
+          issueDetail={issueDetail}
+          disableUserActions={disableUserActions}
+          property={property}
+          updateIssue={updateIssue}
+          isEstimateEnabled={isEstimateEnabled}
+        />
+      ))}
     </>
   );
 });

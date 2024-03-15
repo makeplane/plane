@@ -1,16 +1,17 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 // components
+import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
+import { TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { TIssue } from "@plane/types";
 import { TSubIssueOperations } from "./root";
 // import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
-import { observer } from "mobx-react-lite";
 
 export interface ISubIssues {
   workspaceSlug: string;
@@ -46,7 +47,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
-
+  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const currentIssueStateDetail =
@@ -117,7 +118,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               onClick={() => handleIssuePeekOverview(issue)}
               className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
             >
-              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                 <span>{issue.name}</span>
               </Tooltip>
             </ControlLink>

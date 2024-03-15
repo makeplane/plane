@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import {
   DragDropContext,
   Draggable,
@@ -19,13 +19,13 @@ import {
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
 } from "components/labels";
+import { EmptyState } from "components/empty-state";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { EmptyState } from "components/common";
-// images
-import emptyLabel from "public/empty-state/label.svg";
 // types
 import { IIssueLabel } from "@plane/types";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 
 const LABELS_ROOT = "labels.root";
 
@@ -68,16 +68,18 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     if (destination?.droppableId === LABELS_ROOT) parentLabel = null;
 
     if (result.reason == "DROP" && childLabel != parentLabel) {
-      updateLabelPosition(
-        workspaceSlug?.toString()!,
-        projectId?.toString()!,
-        childLabel,
-        parentLabel,
-        index,
-        prevParentLabel == parentLabel,
-        prevIndex
-      );
-      return;
+      if (workspaceSlug && projectId) {
+        updateLabelPosition(
+          workspaceSlug?.toString(),
+          projectId?.toString(),
+          childLabel,
+          parentLabel,
+          index,
+          prevParentLabel == parentLabel,
+          prevIndex
+        );
+        return;
+      }
     }
   };
 
@@ -94,9 +96,9 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           Add label
         </Button>
       </div>
-      <div className="w-full py-8">
+      <div className="h-full w-full py-8">
         {showLabelForm && (
-          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2 my-2">
+          <div className="my-2 w-full rounded border border-custom-border-200 px-3.5 py-2">
             <CreateUpdateLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}
@@ -111,15 +113,9 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         )}
         {projectLabels ? (
           projectLabels.length === 0 && !showLabelForm ? (
-            <EmptyState
-              title="No labels yet"
-              description="Create labels to help organize and filter issues in you project"
-              image={emptyLabel}
-              primaryButton={{
-                text: "Add label",
-                onClick: () => newLabel(),
-              }}
-            />
+            <div className="flex items-center justify-center h-full w-full">
+              <EmptyState type={EmptyStateType.PROJECT_SETTINGS_LABELS} />
+            </div>
           ) : (
             projectLabelsTree && (
               <DragDropContext

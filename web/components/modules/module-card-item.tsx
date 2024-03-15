@@ -1,22 +1,22 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // hooks
-import { useEventTracker, useModule, useUser } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
+import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-// ui
-import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-// constants
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { renderFormattedDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
+// components
+// ui
+// helpers
+// constants
 
 type Props = {
   moduleId: string;
@@ -30,38 +30,43 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast alert
-  const { setToastAlert } = useToast();
   // store hooks
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { getUserDetails } = useMember();
   const { setTrackElement, captureEvent } = useEventTracker();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-
+  const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
+    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
+      () => {
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
         });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the module to favorites. Please try again.",
-        });
-      });
+      }
+    );
+
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding module to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module added to favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the module to favorites. Please try again.",
+      },
+    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,29 +74,37 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
-        captureEvent(MODULE_UNFAVORITED, {
-          module_id: moduleId,
-          element: "Grid layout",
-          state: "SUCCESS",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the module from favorites. Please try again.",
-        });
+    const removeFromFavoritePromise = removeModuleFromFavorites(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      moduleId
+    ).then(() => {
+      captureEvent(MODULE_UNFAVORITED, {
+        module_id: moduleId,
+        element: "Grid layout",
+        state: "SUCCESS",
       });
+    });
+
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing module from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Module removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the module from favorites. Please try again.",
+      },
+    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`).then(() => {
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
         message: "Module link copied to clipboard.",
       });
@@ -163,11 +176,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
         />
       )}
       <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
-      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project}/modules/${moduleDetails.id}`}>
+      <Link href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
-              <Tooltip tooltipContent={moduleDetails.name} position="top">
+              <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
                 <span className="truncate text-base font-medium">{moduleDetails.name}</span>
               </Tooltip>
               <div className="flex items-center gap-2">
@@ -195,13 +208,14 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
               </div>
-              {moduleDetails.members_detail.length > 0 && (
-                <Tooltip tooltipContent={`${moduleDetails.members_detail.length} Members`}>
+              {moduleDetails.member_ids?.length > 0 && (
+                <Tooltip tooltipContent={`${moduleDetails.member_ids.length} Members`} isMobile={isMobile}>
                   <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
-                      {moduleDetails.members_detail.map((member) => (
-                        <Avatar key={member.id} name={member.display_name} src={member.avatar} />
-                      ))}
+                      {moduleDetails.member_ids.map((member_id) => {
+                        const member = getUserDetails(member_id);
+                        return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                      })}
                     </AvatarGroup>
                   </div>
                 </Tooltip>
@@ -209,6 +223,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             </div>
 
             <Tooltip
+              isMobile={isMobile}
               tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
               position="top-left"
             >
@@ -252,7 +267,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                     </button>
                   ))}
 
-                <CustomMenu ellipsis className="z-10">
+                <CustomMenu ellipsis className="z-10" placement="left-start">
                   {isEditingAllowed && (
                     <>
                       <CustomMenu.MenuItem onClick={handleEditModule}>

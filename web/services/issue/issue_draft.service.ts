@@ -1,6 +1,6 @@
+import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
 import { TIssue } from "@plane/types";
 
 export class IssueDraftService extends APIService {
@@ -42,8 +42,10 @@ export class IssueDraftService extends APIService {
       });
   }
 
-  async getDraftIssueById(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`)
+  async getDraftIssueById(workspaceSlug: string, projectId: string, issueId: string, queries?: any): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

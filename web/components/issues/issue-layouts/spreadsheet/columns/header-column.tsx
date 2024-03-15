@@ -1,5 +1,4 @@
 //ui
-import { CustomMenu } from "@plane/ui";
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
@@ -9,12 +8,13 @@ import {
   ListFilter,
   MoveRight,
 } from "lucide-react";
+import { CustomMenu } from "@plane/ui";
 //hooks
+import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 import useLocalStorage from "hooks/use-local-storage";
 //types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 //constants
-import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 
 interface Props {
   property: keyof IIssueDisplayProperties;
@@ -65,15 +65,16 @@ export const HeaderColumn = (props: Props) => {
         </div>
       }
       onMenuClose={onClose}
-      placement="bottom-end"
+      placement="bottom-start"
       closeOnSelect
     >
       <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
         <div
-          className={`flex items-center justify-between gap-1.5 px-1 ${selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
-            ? "text-custom-text-100"
-            : "text-custom-text-200 hover:text-custom-text-100"
-            }`}
+          className={`flex items-center justify-between gap-1.5 px-1 ${
+            selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
+              ? "text-custom-text-100"
+              : "text-custom-text-200 hover:text-custom-text-100"
+          }`}
         >
           <div className="flex items-center gap-2">
             <ArrowDownWideNarrow className="h-3 w-3 stroke-[1.5]" />
@@ -87,10 +88,11 @@ export const HeaderColumn = (props: Props) => {
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}>
         <div
-          className={`flex items-center justify-between gap-1.5 px-1 ${selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
-            ? "text-custom-text-100"
-            : "text-custom-text-200 hover:text-custom-text-100"
-            }`}
+          className={`flex items-center justify-between gap-1.5 px-1 ${
+            selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
+              ? "text-custom-text-100"
+              : "text-custom-text-200 hover:text-custom-text-100"
+          }`}
         >
           <div className="flex items-center gap-2">
             <ArrowUpNarrowWide className="h-3 w-3 stroke-[1.5]" />

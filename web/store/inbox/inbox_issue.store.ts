@@ -1,10 +1,10 @@
+import concat from "lodash/concat";
+import pull from "lodash/pull";
+import set from "lodash/set";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import set from "lodash/set";
-import update from "lodash/update";
-import concat from "lodash/concat";
-import uniq from "lodash/uniq";
-import pull from "lodash/pull";
 // services
 import { InboxIssueService } from "services/inbox/inbox-issue.service";
 // types
@@ -53,7 +53,7 @@ export interface IInboxIssue {
     inboxId: string,
     inboxIssueId: string,
     data: Partial<TInboxIssueExtendedDetail>
-  ) => Promise<TInboxIssueExtendedDetail>;
+  ) => Promise<void>;
   removeInboxIssue: (workspaceSlug: string, projectId: string, inboxId: string, issueId: string) => Promise<void>;
   updateInboxIssueStatus: (
     workspaceSlug: string,
@@ -61,7 +61,7 @@ export interface IInboxIssue {
     inboxId: string,
     inboxIssueId: string,
     data: TInboxDetailedStatus
-  ) => Promise<TInboxIssueExtendedDetail>;
+  ) => Promise<void>;
 }
 
 export class InboxIssue implements IInboxIssue {
@@ -215,22 +215,9 @@ export class InboxIssue implements IInboxIssue {
         issue: data,
       });
 
-      runInAction(() => {
-        const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
-        this.rootStore.inbox.rootStore.issue.issues.updateIssue(issue.id, issue);
-        const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
-        set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
-      });
-
-      runInAction(() => {
-        update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
-          if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
-          return uniq(concat(inboxIssueIds, response.id));
-        });
-      });
+      this.rootStore.inbox.rootStore.issue.issues.updateIssue(inboxIssueId, data);
 
       await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
-      return response as any;
     } catch (error) {
       throw error;
     }
@@ -238,7 +225,7 @@ export class InboxIssue implements IInboxIssue {
 
   removeInboxIssue = async (workspaceSlug: string, projectId: string, inboxId: string, inboxIssueId: string) => {
     try {
-      const response = await this.inboxIssueService.removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
+      await this.inboxIssueService.removeInboxIssue(workspaceSlug, projectId, inboxId, inboxIssueId);
 
       runInAction(() => {
         pull(this.inboxIssues[inboxId], inboxIssueId);
@@ -248,7 +235,6 @@ export class InboxIssue implements IInboxIssue {
       });
 
       await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
-      return response as any;
     } catch (error) {
       throw error;
     }
@@ -262,34 +248,18 @@ export class InboxIssue implements IInboxIssue {
     data: TInboxDetailedStatus
   ) => {
     try {
-      const response = await this.inboxIssueService.updateInboxIssueStatus(
-        workspaceSlug,
-        projectId,
-        inboxId,
-        inboxIssueId,
-        data
-      );
+      await this.inboxIssueService.updateInboxIssueStatus(workspaceSlug, projectId, inboxId, inboxIssueId, data);
 
       const pendingStatus = -2;
       runInAction(() => {
-        const { ["issue_inbox"]: issueInboxDetail, ...issue } = response;
-        this.rootStore.inbox.rootStore.issue.issues.addIssue([issue]);
-        const { ["id"]: omittedId, ...inboxIssue } = issueInboxDetail[0];
-        set(this.inboxIssueMap, [inboxId, response.id], inboxIssue);
+        set(this.inboxIssueMap, [inboxId, inboxIssueId, "status"], data.status);
+
         update(this.rootStore.inbox.inbox.inboxMap, [inboxId, "pending_issue_count"], (count: number = 0) =>
           data.status === pendingStatus ? count + 1 : count - 1
         );
       });
 
-      runInAction(() => {
-        update(this.inboxIssues, inboxId, (inboxIssueIds: string[] = []) => {
-          if (inboxIssueIds.includes(response.id)) return inboxIssueIds;
-          return uniq(concat(inboxIssueIds, response.id));
-        });
-      });
-
       await this.rootStore.issue.issueDetail.fetchActivities(workspaceSlug, projectId, inboxIssueId);
-      return response as any;
     } catch (error) {
       throw error;
     }
