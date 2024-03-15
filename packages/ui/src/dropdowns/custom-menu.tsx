@@ -114,7 +114,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  openDropdown();
+                  isOpen ? closeDropdown() : openDropdown();
                   if (menuButtonOnClick) menuButtonOnClick();
                 }}
                 className={customButtonClassName}
@@ -132,7 +132,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      openDropdown();
+                      isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
                     disabled={disabled}
@@ -158,7 +158,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     } ${buttonClassName}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      openDropdown();
+                      isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
                     }}
                     tabIndex={customButtonTabIndex}
