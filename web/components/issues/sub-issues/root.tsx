@@ -1,9 +1,9 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Plus, ChevronRight, ChevronDown, Loader } from "lucide-react";
+import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
 // hooks
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CircularProgressIndicator, CustomMenu, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -11,7 +11,7 @@ import { useEventTracker, useIssueDetail } from "hooks/store";
 // components
 import { IUser, TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
-import { ProgressBar } from "./progressbar";
+import { cn } from "helpers/common.helper";
 // ui
 // helpers
 // types
@@ -53,6 +53,10 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     updateSubIssue,
     removeSubIssue,
     deleteSubIssue,
+    isCreateIssueModalOpen,
+    toggleCreateIssueModal,
+    isSubIssuesModalOpen,
+    toggleSubIssuesModal,
   } = useIssueDetail();
   const { setTrackElement, captureIssueEvent } = useEventTracker();
   // state
@@ -310,55 +314,81 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
         <>
           {subIssues && subIssues?.length > 0 ? (
             <>
-              <div className="relative flex items-center gap-4 text-xs">
-                <div
-                  className="flex cursor-pointer select-none items-center gap-1 rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
-                  onClick={handleFetchSubIssues}
-                >
-                  <div className="flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center">
-                    {subIssueHelpers.preview_loader.includes(parentIssueId) ? (
-                      <Loader width={14} strokeWidth={2} className="animate-spin" />
-                    ) : subIssueHelpers.issue_visibility.includes(parentIssueId) ? (
-                      <ChevronDown width={16} strokeWidth={2} />
-                    ) : (
-                      <ChevronRight width={14} strokeWidth={2} />
-                    )}
+              <div className="relative flex items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 rounded py-1 px-2 transition-all hover:bg-custom-background-80 font-medium"
+                    onClick={handleFetchSubIssues}
+                  >
+                    <div className="flex flex-shrink-0 items-center justify-center">
+                      {subIssueHelpers.preview_loader.includes(parentIssueId) ? (
+                        <Loader strokeWidth={2} className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <ChevronRight
+                          className={cn("h-3 w-3 transition-all", {
+                            "rotate-90": subIssueHelpers.issue_visibility.includes(parentIssueId),
+                          })}
+                          strokeWidth={2}
+                        />
+                      )}
+                    </div>
+                    <div>Sub-issues</div>
+                  </button>
+                  <div className="flex items-center gap-2 text-custom-text-300">
+                    <CircularProgressIndicator
+                      size={16}
+                      percentage={
+                        subIssuesDistribution?.completed?.length && subIssues.length
+                          ? (subIssuesDistribution?.completed?.length / subIssues.length) * 100
+                          : 0
+                      }
+                      strokeWidth={3}
+                    />
+                    <span>
+                      {subIssuesDistribution?.completed?.length ?? 0}/{subIssues.length} Done
+                    </span>
                   </div>
-                  <div>Sub-issues</div>
-                  <div>({subIssues?.length || 0})</div>
-                </div>
-
-                <div className="w-full max-w-[250px] select-none">
-                  <ProgressBar
-                    total={subIssues?.length || 0}
-                    done={
-                      ((subIssuesDistribution?.cancelled ?? []).length || 0) +
-                      ((subIssuesDistribution?.completed ?? []).length || 0)
-                    }
-                  />
                 </div>
 
                 {!disabled && (
-                  <div className="ml-auto flex flex-shrink-0 select-none items-center gap-2">
-                    <div
-                      className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
+                  <CustomMenu
+                    label={
+                      <>
+                        <Plus className="h-3 w-3" />
+                        Add sub-issue
+                      </>
+                    }
+                    buttonClassName="whitespace-nowrap"
+                    placement="bottom-end"
+                    noBorder
+                    noChevron
+                  >
+                    <CustomMenu.MenuItem
                       onClick={() => {
-                        setTrackElement("Issue detail add sub-issue");
+                        setTrackElement("Issue detail nested sub-issue");
                         handleIssueCrudState("create", parentIssueId, null);
+                        toggleCreateIssueModal(true);
                       }}
                     >
-                      Add sub-issue
-                    </div>
-                    <div
-                      className="cursor-pointer rounded border border-custom-border-100 p-1.5 px-2 shadow transition-all hover:bg-custom-background-80"
+                      <div className="flex items-center gap-2">
+                        <Pencil className="h-3 w-3" />
+                        <span>Create new</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem
                       onClick={() => {
-                        setTrackElement("Issue detail add sub-issue");
+                        setTrackElement("Issue detail nested sub-issue");
                         handleIssueCrudState("existing", parentIssueId, null);
+                        toggleSubIssuesModal(true);
                       }}
                     >
-                      Add an existing issue
-                    </div>
-                  </div>
+                      <div className="flex items-center gap-2">
+                        <LayersIcon className="h-3 w-3" />
+                        <span>Add existing</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
                 )}
               </div>
 
@@ -379,62 +409,74 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           ) : (
             !disabled && (
               <div className="flex items-center justify-between">
-                <div className="py-2 text-xs italic text-custom-text-300">No Sub-Issues yet</div>
-                <div>
-                  <CustomMenu
-                    label={
-                      <>
-                        <Plus className="h-3 w-3" />
-                        Add sub-issue
-                      </>
-                    }
-                    buttonClassName="whitespace-nowrap"
-                    placement="bottom-end"
-                    noBorder
-                    noChevron
+                <div className="text-xs italic text-custom-text-300">No sub-issues yet</div>
+                <CustomMenu
+                  label={
+                    <>
+                      <Plus className="h-3 w-3" />
+                      Add sub-issue
+                    </>
+                  }
+                  buttonClassName="whitespace-nowrap"
+                  placement="bottom-end"
+                  noBorder
+                  noChevron
+                >
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      setTrackElement("Issue detail nested sub-issue");
+                      handleIssueCrudState("create", parentIssueId, null);
+                      toggleCreateIssueModal(true);
+                    }}
                   >
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setTrackElement("Issue detail nested sub-issue");
-                        handleIssueCrudState("create", parentIssueId, null);
-                      }}
-                    >
-                      Create new
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setTrackElement("Issue detail nested sub-issue");
-                        handleIssueCrudState("existing", parentIssueId, null);
-                      }}
-                    >
-                      Add an existing issue
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                </div>
+                    <div className="flex items-center gap-2">
+                      <Pencil className="h-3 w-3" />
+                      <span>Create new</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      setTrackElement("Issue detail nested sub-issue");
+                      handleIssueCrudState("existing", parentIssueId, null);
+                      toggleSubIssuesModal(true);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <LayersIcon className="h-3 w-3" />
+                      <span>Add existing</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
               </div>
             )
           )}
 
           {/* issue create, add from existing , update and delete modals */}
-          {issueCrudState?.create?.toggle && issueCrudState?.create?.parentIssueId && (
+          {issueCrudState?.create?.toggle && issueCrudState?.create?.parentIssueId && isCreateIssueModalOpen && (
             <CreateUpdateIssueModal
               isOpen={issueCrudState?.create?.toggle}
               data={{
                 parent_id: issueCrudState?.create?.parentIssueId,
               }}
-              onClose={() => handleIssueCrudState("create", null, null)}
+              onClose={() => {
+                handleIssueCrudState("create", null, null);
+                toggleCreateIssueModal(false);
+              }}
               onSubmit={async (_issue: TIssue) => {
                 await subIssueOperations.addSubIssue(workspaceSlug, projectId, parentIssueId, [_issue.id]);
               }}
             />
           )}
 
-          {issueCrudState?.existing?.toggle && issueCrudState?.existing?.parentIssueId && (
+          {issueCrudState?.existing?.toggle && issueCrudState?.existing?.parentIssueId && isSubIssuesModalOpen && (
             <ExistingIssuesListModal
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               isOpen={issueCrudState?.existing?.toggle}
-              handleClose={() => handleIssueCrudState("existing", null, null)}
+              handleClose={() => {
+                handleIssueCrudState("existing", null, null);
+                toggleSubIssuesModal(false);
+              }}
               searchParams={{ sub_issue: true, issue_id: issueCrudState?.existing?.parentIssueId }}
               handleOnSubmit={(_issue) =>
                 subIssueOperations.addSubIssue(
