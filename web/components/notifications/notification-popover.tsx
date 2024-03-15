@@ -1,21 +1,22 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { Popover, Transition } from "@headlessui/react";
-import { Bell } from "lucide-react";
 // hooks
-import { Tooltip } from "@plane/ui";
-import { EmptyState } from "components/common";
-import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
-import { NotificationsLoader } from "components/ui";
-import { getNumberCount } from "helpers/string.helper";
 import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useUserNotification from "hooks/use-user-notifications";
 import { usePlatformOS } from "hooks/use-platform-os";
+// icons
+import { Bell } from "lucide-react";
 // components
-// images
-import emptyNotification from "public/empty-state/notification.svg";
+import { Tooltip } from "@plane/ui";
+import { EmptyState } from "components/empty-state";
+import { NotificationsLoader } from "components/ui";
+import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
+// constants
+import { EmptyStateType } from "constants/empty-state";
 // helpers
+import { getNumberCount } from "helpers/string.helper";
 
 export const NotificationPopover = observer(() => {
   // states
@@ -59,6 +60,16 @@ export const NotificationPopover = observer(() => {
     if (selectedNotificationForSnooze === null) setIsActive(false);
   });
 
+  const currentTabEmptyState = snoozed
+    ? EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE
+    : archived
+    ? EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE
+    : selectedTab === "created"
+    ? EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE
+    : selectedTab === "watching"
+    ? EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE
+    : EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE;
+
   return (
     <>
       <SnoozeNotificationModal
@@ -70,7 +81,13 @@ export const NotificationPopover = observer(() => {
       />
       <Popover ref={notificationPopoverRef} className="md:relative w-full">
         <>
-          <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed} isMobile={isMobile}>
+          <Tooltip
+            tooltipContent="Notifications"
+            position="right"
+            className="ml-2"
+            disabled={!isSidebarCollapsed}
+            isMobile={isMobile}
+          >
             <button
               className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                 isActive
@@ -184,11 +201,7 @@ export const NotificationPopover = observer(() => {
                   </div>
                 ) : (
                   <div className="grid h-full w-full scale-75 place-items-center overflow-hidden">
-                    <EmptyState
-                      title="You're updated with all the notifications"
-                      description="You have read all the notifications."
-                      image={emptyNotification}
-                    />
+                    <EmptyState type={currentTabEmptyState} layout="screen-simple" />
                   </div>
                 )
               ) : (
