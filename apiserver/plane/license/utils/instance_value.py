@@ -83,7 +83,7 @@ def get_email_configuration():
     return (
         EMAIL_HOST,
         EMAIL_HOST_USER,
-        decrypt_data(EMAIL_HOST_PASSWORD),
+        EMAIL_HOST_PASSWORD,
         EMAIL_PORT,
         EMAIL_USE_TLS,
         EMAIL_FROM,
