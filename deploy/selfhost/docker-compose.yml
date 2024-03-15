@@ -71,7 +71,7 @@ services:
     deploy:
       replicas: ${API_REPLICAS:-1}
     volumes:
-      - logs/api:/code/plane/logs
+      - logs_api:/code/plane/logs
     depends_on:
       - plane-db
       - plane-redis
@@ -83,7 +83,7 @@ services:
     restart: unless-stopped
     command: ./bin/worker
     volumes:
-      - logs/worker:/code/plane/logs
+      - logs_worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -96,7 +96,7 @@ services:
     restart: unless-stopped
     command: ./bin/beat
     volumes:
-      - logs/beat-worker:/code/plane/logs
+      - logs_beat-worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -111,7 +111,7 @@ services:
       sh -c "python manage.py wait_for_db &&
            python manage.py migrate"
     volumes:
-      - logs/migrator:/code/plane/logs
+      - logs_migrator:/code/plane/logs
     depends_on:
       - plane-db
       - plane-redis
@@ -157,4 +157,7 @@ volumes:
   pgdata:
   redisdata:
   uploads:
-  logs:
+  logs_api:
+  logs_worker:
+  logs_beat-worker:
+  logs_migrator:
