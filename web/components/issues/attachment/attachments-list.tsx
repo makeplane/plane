@@ -21,23 +21,21 @@ export const IssueAttachmentsList: FC<TIssueAttachmentsList> = observer((props) 
   const {
     attachment: { getAttachmentsByIssueId },
   } = useIssueDetail();
-
+  // derived values
   const issueAttachments = getAttachmentsByIssueId(issueId);
 
   if (!issueAttachments) return <></>;
 
   return (
     <>
-      {issueAttachments &&
-        issueAttachments.length > 0 &&
-        issueAttachments.map((attachmentId) => (
-          <IssueAttachmentsDetail
-            key={attachmentId}
-            attachmentId={attachmentId}
-            disabled={disabled}
-            handleAttachmentOperations={handleAttachmentOperations}
-          />
-        ))}
+      {issueAttachments?.map((attachmentId) => (
+        <IssueAttachmentsDetail
+          key={attachmentId}
+          attachmentId={attachmentId}
+          disabled={disabled}
+          handleAttachmentOperations={handleAttachmentOperations}
+        />
+      ))}
     </>
   );
 });

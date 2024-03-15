@@ -4,7 +4,7 @@ import { RootStore } from "store/root.store";
 // services
 import { InstanceService } from "services/instance.service";
 // types
-import { IInstance } from "@plane/types";
+import { IInstance, IInstanceNotSetup } from "@plane/types";
 
 type TError = {
   status: string;
@@ -18,6 +18,7 @@ type TError = {
 export interface IInstanceStore {
   // issues
   isLoading: boolean;
+  instanceNotReady: IInstanceNotSetup | undefined;
   instance: IInstance | undefined;
   error: TError | undefined;
   // action
@@ -26,6 +27,7 @@ export interface IInstanceStore {
 
 export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
+  instanceNotReady: IInstanceNotSetup | undefined = undefined;
   instance: IInstance | undefined = undefined;
   error: TError | undefined = undefined;
   // services
@@ -53,9 +55,14 @@ export class InstanceStore implements IInstanceStore {
         this.isLoading = true;
         this.error = undefined;
       });
+
+      await this.instanceService.requestCSRFToken();
       const instance = await this.instanceService.getInstanceInfo();
 
-      if (instance.hasOwnProperty("is_activated") && instance.hasOwnProperty("is_setup_done"))
+      const isInstanceNotSetup = (instance: IInstance | IInstanceNotSetup): instance is IInstanceNotSetup =>
+        "is_activated" in instance && "is_setup_done" in instance;
+
+      if (isInstanceNotSetup(instance)) {
         runInAction(() => {
           this.isLoading = false;
           this.error = {
@@ -67,13 +74,13 @@ export class InstanceStore implements IInstanceStore {
             },
           };
         });
-      else
+      } else {
         runInAction(() => {
           this.isLoading = false;
           this.instance = instance;
         });
+      }
     } catch (error) {
-      console.log("Failed to fetch instance info", error);
       runInAction(() => {
         this.isLoading = false;
         this.error = {

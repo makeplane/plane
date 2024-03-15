@@ -5,22 +5,22 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import { Search } from "lucide-react";
-import { Button, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
-
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues, useProject } from "hooks/store";
 import { IssueService } from "services/issue";
 // ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
+import { Search } from "lucide-react";
 // types
 import { IUser, TIssue } from "@plane/types";
-// fetch keys
 // store hooks
+import { useIssues, useProject } from "hooks/store";
 // components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
+import { EmptyState } from "components/empty-state";
 // constants
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { EIssuesStoreType } from "constants/issue";
+import { EmptyStateType } from "constants/empty-state";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -178,12 +178,15 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                           </ul>
                         </li>
                       ) : (
-                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayersIcon height="56" width="56" />
-                          <h3 className="text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
-                          </h3>
+                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                          <EmptyState
+                            type={
+                              query === ""
+                                ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE
+                                : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
+                            }
+                            layout="screen-simple"
+                          />
                         </div>
                       )}
                     </Combobox.Options>

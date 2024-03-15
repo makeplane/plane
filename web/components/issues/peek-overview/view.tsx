@@ -11,13 +11,15 @@ import {
   PeekOverviewProperties,
   TIssueOperations,
   ArchiveIssueModal,
+  PeekOverviewIssueAttachments,
 } from "components/issues";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail, useUser } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
+import { SubIssuesRoot } from "../sub-issues";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -37,6 +39,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
+  const { currentUser } = useUser();
   const {
     setPeekIssue,
     isAnyModalOpen,
@@ -147,7 +150,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="relative flex flex-col gap-3 px-8 py-5">
+                      <div className="relative flex flex-col gap-3 px-8 py-5 space-y-3">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
@@ -156,6 +159,23 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disabled={disabled || is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
+                        />
+
+                        {currentUser && (
+                          <SubIssuesRoot
+                            workspaceSlug={workspaceSlug}
+                            projectId={projectId}
+                            parentIssueId={issueId}
+                            currentUser={currentUser}
+                            disabled={disabled || is_archived}
+                          />
+                        )}
+
+                        <PeekOverviewIssueAttachments
+                          disabled={disabled || is_archived}
+                          issueId={issueId}
+                          projectId={projectId}
+                          workspaceSlug={workspaceSlug}
                         />
 
                         <PeekOverviewProperties
@@ -169,9 +189,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
                       </div>
                     ) : (
-                      <div className={`vertical-scrollbar flex h-full w-full overflow-auto`}>
+                      <div className="vertical-scrollbar flex h-full w-full overflow-auto">
                         <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
-                          <div>
+                          <div className="space-y-3">
                             <PeekOverviewIssueDetails
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
@@ -180,6 +200,23 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               disabled={disabled || is_archived}
                               isSubmitting={isSubmitting}
                               setIsSubmitting={(value) => setIsSubmitting(value)}
+                            />
+
+                            {currentUser && (
+                              <SubIssuesRoot
+                                workspaceSlug={workspaceSlug}
+                                projectId={projectId}
+                                parentIssueId={issueId}
+                                currentUser={currentUser}
+                                disabled={disabled || is_archived}
+                              />
+                            )}
+
+                            <PeekOverviewIssueAttachments
+                              disabled={disabled || is_archived}
+                              issueId={issueId}
+                              projectId={projectId}
+                              workspaceSlug={workspaceSlug}
                             />
 
                             <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />

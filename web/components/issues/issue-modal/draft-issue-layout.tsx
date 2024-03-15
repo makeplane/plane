@@ -55,7 +55,10 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const handleCreateDraftIssue = async () => {
     if (!changesMade || !workspaceSlug || !projectId) return;
 
-    const payload = { ...changesMade };
+    const payload = {
+      ...changesMade,
+      name: changesMade.name?.trim() === "" ? "Untitled" : changesMade.name?.trim(),
+    };
 
     await issueDraftService
       .createDraftIssue(workspaceSlug.toString(), projectId.toString(), payload)

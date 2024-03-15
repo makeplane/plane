@@ -1,11 +1,11 @@
 import { FC, useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { CheckIcon, Eye, EyeOff } from "lucide-react";
+import { Button, Input } from "@plane/ui";
 // images
 import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
-import { Button, Input } from "@plane/ui";
-import { CheckIcon, Eye, EyeOff } from "lucide-react";
 
 type TForm = {
   first_name: string;
@@ -23,7 +23,7 @@ export const MiniGodModeForm: FC = (props) => {
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   // states
   const [revealPassword, setRevealPassword] = useState(false);
-  const [form, setForm] = useState<TForm>({
+  const [instanceFormData, setInstanceFormData] = useState<TForm>({
     first_name: "",
     last_name: "",
     email: "",
@@ -32,12 +32,18 @@ export const MiniGodModeForm: FC = (props) => {
     is_telemetry_enabled: true,
   });
   const handleFormChange = (key: keyof TForm, value: string | boolean) =>
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setInstanceFormData((prev) => ({ ...prev, [key]: value }));
 
-  // const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log(form);
-  // };
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(instanceFormData);
+
+    const formData = new FormData();
+
+    Object.entries(instanceFormData).forEach(([key, value]) => {
+      formData.append(key as keyof TForm, value);
+    });
+  };
 
   return (
     <div className="bg-onboarding-gradient-100 h-screen max-h-auto">
@@ -50,12 +56,7 @@ export const MiniGodModeForm: FC = (props) => {
             <div className="relative h-full rounded-t-md bg-onboarding-gradient-200 px-0 md:px-7">
               <div className="relative flex flex-col items-center pt-12 pb-20 gap-12">
                 <div className="text-2xl font-medium">Get started with Plane</div>
-                <form
-                  className="relative flex flex-col gap-4 px-5 md:px-0"
-                  // onSubmit={handleFormSubmit}
-                  action="http://localhost:8000/api/instances/admins/sign-in/"
-                  method="POST"
-                >
+                <form className="relative flex flex-col gap-4 px-5 md:px-0" onSubmit={handleFormSubmit}>
                   <div className="relative flex flex-col md:flex-row gap-4">
                     {/* first name */}
                     <div className="w-full space-y-2">
@@ -68,9 +69,8 @@ export const MiniGodModeForm: FC = (props) => {
                         name="first_name"
                         type="text"
                         placeholder="Wilbur"
-                        value={form.first_name}
+                        value={instanceFormData.first_name}
                         onChange={(e) => handleFormChange("first_name", e.target.value)}
-                        // hasError={Boolean(errors.email)}
                         required
                         autoFocus
                       />
@@ -85,9 +85,8 @@ export const MiniGodModeForm: FC = (props) => {
                         name="last_name"
                         type="text"
                         placeholder="Wright"
-                        value={form.last_name}
+                        value={instanceFormData.last_name}
                         onChange={(e) => handleFormChange("last_name", e.target.value)}
-                        // hasError={Boolean(errors.email)}
                       />
                     </div>
                   </div>
@@ -104,9 +103,8 @@ export const MiniGodModeForm: FC = (props) => {
                         name="email"
                         type="email"
                         placeholder="wilburwright@frstflit.com"
-                        value={form.email}
+                        value={instanceFormData.email}
                         onChange={(e) => handleFormChange("email", e.target.value)}
-                        // hasError={Boolean(errors.email)}
                         required
                       />
                     </div>
@@ -121,9 +119,8 @@ export const MiniGodModeForm: FC = (props) => {
                       name="company_name"
                       type="text"
                       placeholder="Plane"
-                      value={form.company_name}
+                      value={instanceFormData.company_name}
                       onChange={(e) => handleFormChange("company_name", e.target.value)}
-                      // hasError={Boolean(errors.email)}
                     />
                   </div>
 
@@ -139,10 +136,9 @@ export const MiniGodModeForm: FC = (props) => {
                         name="password"
                         type={revealPassword ? "text" : "password"}
                         placeholder="Set a strong password"
-                        value={form.password}
+                        value={instanceFormData.password}
                         onChange={(e) => handleFormChange("password", e.target.value)}
                         minLength={8}
-                        // hasError={Boolean(errors.password)}
                         required
                       />
                       {revealPassword ? (
@@ -163,16 +159,16 @@ export const MiniGodModeForm: FC = (props) => {
                   <div className="pt-4">
                     <div
                       className="relative flex items-center gap-2 cursor-pointer"
-                      onClick={() => handleFormChange("is_telemetry_enabled", !form?.is_telemetry_enabled)}
+                      onClick={() => handleFormChange("is_telemetry_enabled", !instanceFormData.is_telemetry_enabled)}
                     >
                       <div
                         className={`flex-shrink-0 w-4 h-4 rounded relative flex justify-center items-center border-[1.5px] ${
-                          form?.is_telemetry_enabled
+                          instanceFormData.is_telemetry_enabled
                             ? `text-white bg-custom-primary-100 border-custom-primary-100`
                             : `border-onboarding-border-100`
                         }`}
                       >
-                        {form?.is_telemetry_enabled && <CheckIcon className="w-3.5 h-3.5" />}
+                        {instanceFormData.is_telemetry_enabled && <CheckIcon className="w-3.5 h-3.5" />}
                       </div>
                       <div className="font-medium text-sm">Allow Plane to collect anonymous usage events</div>
                     </div>

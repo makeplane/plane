@@ -47,7 +47,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const pageTitle = project?.name ? `${project?.name} - Cycles` : undefined;
   // selected display filters
   const cycleTab = currentProjectDisplayFilters?.active_tab;
-  const cycleLayout = currentProjectDisplayFilters?.layout;
+  const cycleLayout = currentProjectDisplayFilters?.layout ?? "list";
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
     if (!projectId) return;
@@ -120,14 +120,12 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <ActiveCycleRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Tab.Panel>
               <Tab.Panel as="div" className="h-full overflow-y-auto">
-                {cycleTab && cycleLayout && (
-                  <CyclesView
-                    layout={cycleLayout}
-                    workspaceSlug={workspaceSlug.toString()}
-                    projectId={projectId.toString()}
-                    peekCycle={peekCycle?.toString()}
-                  />
-                )}
+                <CyclesView
+                  layout={cycleLayout}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
+                />
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>

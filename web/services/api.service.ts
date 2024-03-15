@@ -1,6 +1,5 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { tree } from "next/dist/build/templates/app-page";
 
 export abstract class APIService {
   protected baseURL: string;
@@ -8,6 +7,14 @@ export abstract class APIService {
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
+  }
+
+  setCSRFToken(token: string) {
+    Cookies.set("csrf_token", token, { expires: 30 });
+  }
+
+  getCSRFToken() {
+    return Cookies.get("csrf_token");
   }
 
   setRefreshToken(token: string) {
