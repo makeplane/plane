@@ -4,10 +4,12 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
 import useInstance from "hooks/use-instance";
+// ui
+import { Loader } from "@plane/ui";
 // icons
 import { Lightbulb } from "lucide-react";
 // components
-import { InstanceAIForm } from "components/forms";
+import { InstanceAIForm } from "components/ai";
 
 const InstanceAIPage = observer(() => {
   // store
@@ -23,7 +25,7 @@ const InstanceAIPage = observer(() => {
           Configure your AI API credentials so Plane AI features are turned on for all your workspaces.
         </div>
       </div>
-      {formattedConfig && (
+      {formattedConfig ? (
         <>
           <div>
             <div className="pb-1 text-xl font-medium text-custom-text-100">OpenAI</div>
@@ -37,6 +39,15 @@ const InstanceAIPage = observer(() => {
             </div>
           </div>
         </>
+      ) : (
+        <Loader className="space-y-8">
+          <Loader.Item height="50px" width="40%" />
+          <div className="w-2/3 grid grid-cols-2 gap-x-8 gap-y-4">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
+          <Loader.Item height="50px" width="20%" />
+        </Loader>
       )}
     </div>
   );

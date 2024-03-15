@@ -9,10 +9,9 @@ import { Menu, Transition } from "@headlessui/react";
 import { LogOut, UserCog2, Palette } from "lucide-react";
 // hooks
 import { useAppTheme } from "hooks/use-theme";
-import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // ui
-import { Avatar } from "@plane/ui";
+import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
 
 export const SidebarDropdown = observer(() => {
   // router
@@ -21,7 +20,6 @@ export const SidebarDropdown = observer(() => {
   const { sidebarCollapsed } = useAppTheme();
   const { signOut, currentUser } = useUser();
   // hooks
-  const { setToastAlert } = useToast();
   const { resolvedTheme, setTheme } = useTheme();
 
   const handleSignOut = async () => {
@@ -32,8 +30,8 @@ export const SidebarDropdown = observer(() => {
         router.push("/");
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
@@ -72,7 +70,7 @@ export const SidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none">
             <Avatar
               name={currentUser.display_name}
-              src={currentUser.avatar || undefined}
+              src={currentUser.avatar ?? undefined}
               size={24}
               shape="square"
               className="!text-base"

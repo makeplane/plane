@@ -1,7 +1,7 @@
 import { FC, useState, useRef } from "react";
 import { Transition } from "@headlessui/react";
 import Link from "next/link";
-import { FileText, HelpCircle, MessagesSquare, MoveLeft } from "lucide-react";
+import { FileText, HelpCircle, MoveLeft } from "lucide-react";
 // hooks
 import { useAppTheme } from "hooks/use-theme";
 // icons
@@ -24,12 +24,6 @@ const helpOptions = [
     name: "Report a bug",
     href: "https://github.com/makeplane/plane/issues/new/choose",
     Icon: GithubIcon,
-  },
-  {
-    name: "Chat with us",
-    href: null,
-    onClick: () => (window as any).$crisp.push(["do", "chat:show"]),
-    Icon: MessagesSquare,
   },
 ];
 
@@ -100,7 +94,7 @@ export const HelpSection: FC = () => {
             ref={helpOptionsRef}
           >
             <div className="space-y-1 pb-2">
-              {helpOptions.map(({ name, Icon, href, onClick }) => {
+              {helpOptions.map(({ name, Icon, href }) => {
                 if (href)
                   return (
                     <Link href={href} key={name} target="_blank">
@@ -120,7 +114,6 @@ export const HelpSection: FC = () => {
                     <button
                       key={name}
                       type="button"
-                      onClick={onClick ?? undefined}
                       className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
                     >
                       <div className="grid flex-shrink-0 place-items-center">
