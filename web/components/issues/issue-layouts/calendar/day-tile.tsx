@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // components
-import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "components/issues";
+import { CalendarIssueBlocks, ICalendarDate } from "components/issues";
 // helpers
 import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
@@ -52,7 +51,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     selectedDate,
     setSelectedDate,
   } = props;
-  const [showAllIssues, setShowAllIssues] = useState(false);
+
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const formattedDatePayload = renderFormattedPayloadDate(date.date);
@@ -105,41 +104,18 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 ref={provided.innerRef}
               >
                 <CalendarIssueBlocks
+                  date={date.date}
                   issues={issues}
                   issueIdList={issueIdList}
                   quickActions={quickActions}
-                  showAllIssues={showAllIssues}
                   isDragDisabled={readOnly}
+                  addIssuesToView={addIssuesToView}
+                  disableIssueCreation={disableIssueCreation}
+                  enableQuickIssueCreate={enableQuickIssueCreate}
+                  quickAddCallback={quickAddCallback}
+                  viewId={viewId}
+                  readOnly={readOnly}
                 />
-
-                {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
-                  <div className="px-2 py-1">
-                    <CalendarQuickAddIssueForm
-                      formKey="target_date"
-                      groupId={formattedDatePayload}
-                      prePopulatedData={{
-                        target_date: renderFormattedPayloadDate(date.date) ?? undefined,
-                      }}
-                      quickAddCallback={quickAddCallback}
-                      addIssuesToView={addIssuesToView}
-                      viewId={viewId}
-                      onOpen={() => setShowAllIssues(true)}
-                    />
-                  </div>
-                )}
-
-                {totalIssues > 4 && (
-                  <div className="flex items-center px-2.5 py-1">
-                    <button
-                      type="button"
-                      className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
-                      onClick={() => setShowAllIssues((prevData) => !prevData)}
-                    >
-                      {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
-                    </button>
-                  </div>
-                )}
-
                 {provided.placeholder}
               </div>
             )}

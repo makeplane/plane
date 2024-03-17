@@ -1,30 +1,62 @@
+import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // components
-import { CalendarIssueBlock } from "components/issues";
+import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "components/issues";
+// helpers
+import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { TIssue, TIssueMap } from "@plane/types";
+import useSize from "hooks/use-window-size";
 
 type Props = {
+  date: Date;
   issues: TIssueMap | undefined;
   issueIdList: string[] | null;
   quickActions: (issue: TIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  showAllIssues?: boolean;
   isDragDisabled?: boolean;
+  enableQuickIssueCreate?: boolean;
+  disableIssueCreation?: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    viewId?: string
+  ) => Promise<TIssue | undefined>;
+  addIssuesToView?: (issueIds: string[]) => Promise<any>;
+  viewId?: string;
+  readOnly?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
-  const { issues, issueIdList, quickActions, showAllIssues = false, isDragDisabled = false } = props;
+  const {
+    date,
+    issues,
+    issueIdList,
+    quickActions,
+    isDragDisabled = false,
+    enableQuickIssueCreate,
+    disableIssueCreation,
+    quickAddCallback,
+    addIssuesToView,
+    viewId,
+    readOnly,
+  } = props;
+  // states
+  const [showAllIssues, setShowAllIssues] = useState(false);
+  // hooks
+  const [windowWidth] = useSize();
+
+  const formattedDatePayload = renderFormattedPayloadDate(date);
+  const totalIssues = issueIdList?.length ?? 0;
+
+  if (!formattedDatePayload) return null;
 
   return (
     <>
-      {issueIdList?.slice(0, showAllIssues ? issueIdList.length : 4).map((issueId, index) => {
-        if (!issues?.[issueId]) return null;
-
-        const issue = issues?.[issueId];
-
-        return (
-          <Draggable key={issue.id} draggableId={issue.id} index={index} isDragDisabled={isDragDisabled}>
+      {issueIdList?.slice(0, showAllIssues || windowWidth <= 768 ? issueIdList.length : 4).map((issueId, index) =>
+        windowWidth > 768 ? (
+          <Draggable key={issueId} draggableId={issueId} index={index} isDragDisabled={isDragDisabled}>
             {(provided, snapshot) => (
               <div
                 className="relative cursor-pointer p-1 px-2"
@@ -32,12 +64,46 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
               >
-                <CalendarIssueBlock isDragging={snapshot.isDragging} issue={issue} quickActions={quickActions} />
+                <CalendarIssueBlockRoot
+                  issues={issues}
+                  issueId={issueId}
+                  quickActions={quickActions}
+                  isDragging={snapshot.isDragging}
+                />
               </div>
             )}
           </Draggable>
-        );
-      })}
+        ) : (
+          <CalendarIssueBlockRoot key={issueId} issues={issues} issueId={issueId} quickActions={quickActions} />
+        )
+      )}
+
+      {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
+        <div className="px-1 md:px-2 py-1 border-custom-border-200 border-b md:border-none">
+          <CalendarQuickAddIssueForm
+            formKey="target_date"
+            groupId={formattedDatePayload}
+            prePopulatedData={{
+              target_date: formattedDatePayload,
+            }}
+            quickAddCallback={quickAddCallback}
+            addIssuesToView={addIssuesToView}
+            viewId={viewId}
+            onOpen={() => setShowAllIssues(true)}
+          />
+        </div>
+      )}
+      {totalIssues > 4 && (
+        <div className="hidden md:flex items-center px-2.5 py-1">
+          <button
+            type="button"
+            className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
+            onClick={() => setShowAllIssues(!showAllIssues)}
+          >
+            {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
+          </button>
+        </div>
+      )}
     </>
   );
 });
