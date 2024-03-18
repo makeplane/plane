@@ -83,11 +83,11 @@ const DocumentEditor = ({
 
   const editor = useEditor({
     onChange(json, html) {
-      updateMarkings(json);
+      updateMarkings(html);
       onChange(json, html);
     },
-    onStart(json) {
-      updateMarkings(json);
+    onStart(_json, html) {
+      updateMarkings(html);
     },
     restoreFile,
     value,
