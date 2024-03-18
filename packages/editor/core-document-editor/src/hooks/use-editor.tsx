@@ -90,7 +90,7 @@ export const useEditor = ({
   useImperativeHandle(forwardedRef, () => {
     const editorItems = getEditorMenuItems(editorRef.current!, uploadFile);
 
-    const getEditorItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+    const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
 
     return {
       clearEditor: () => {
@@ -104,16 +104,16 @@ export const useEditor = ({
           insertContentAtSavedSelection(editorRef, content, savedSelection);
         }
       },
-      executeCommand: (itemName: EditorMenuItemNames) => {
-        const item = getEditorItem(itemName);
+      executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
+        const item = getEditorMenuItem(itemName);
         if (item) {
           item.command();
         } else {
           console.warn(`No command found for item: ${itemName}`);
         }
       },
-      isItemActive: (itemName: EditorMenuItemNames): boolean => {
-        const item = getEditorItem(itemName);
+      isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
+        const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },
     };

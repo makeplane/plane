@@ -1,6 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { UploadImage, DeleteImage, RestoreImage, getEditorClassNames, useEditor } from "@plane/editor-document-core";
+import {
+  UploadImage,
+  DeleteImage,
+  RestoreImage,
+  getEditorClassNames,
+  useEditor,
+  EditorRefApi,
+} from "@plane/editor-document-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
 import { EditorHeader } from "src/ui/components/editor-header";
@@ -41,15 +48,6 @@ interface IDocumentEditor {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-}
-interface DocumentEditorProps extends IDocumentEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
-
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-  setEditorValueAtCursorPosition: (content: string) => void;
 }
 
 const DocumentEditor = ({
@@ -165,7 +163,7 @@ const DocumentEditor = ({
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorHandle, IDocumentEditor>((props, ref) => (
+const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
   <DocumentEditor {...props} forwardedRef={ref} />
 ));
 
