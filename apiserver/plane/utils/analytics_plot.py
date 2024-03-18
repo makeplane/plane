@@ -1,18 +1,18 @@
 # Python imports
-from itertools import groupby
 from datetime import timedelta
+from itertools import groupby
 
 # Django import
 from django.db import models
-from django.utils import timezone
-from django.db.models.functions import TruncDate
-from django.db.models import Count, F, Sum, Value, Case, When, CharField
+from django.db.models import Case, CharField, Count, F, Sum, Value, When
 from django.db.models.functions import (
     Coalesce,
+    Concat,
     ExtractMonth,
     ExtractYear,
-    Concat,
+    TruncDate,
 )
+from django.utils import timezone
 
 # Module imports
 from plane.db.models import Issue
@@ -115,11 +115,16 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
     total_issues = queryset.total_issues
 
     if cycle_id:
-        # Get all dates between the two dates
-        date_range = [
-            queryset.start_date + timedelta(days=x)
-            for x in range((queryset.end_date - queryset.start_date).days + 1)
-        ]
+        if queryset.end_date and queryset.start_date:
+            # Get all dates between the two dates
+            date_range = [
+                queryset.start_date + timedelta(days=x)
+                for x in range(
+                    (queryset.end_date - queryset.start_date).days + 1
+                )
+            ]
+        else:
+            date_range = []
 
         chart_data = {str(date): 0 for date in date_range}
 

@@ -2,32 +2,33 @@
 import json
 
 # Django imports
-from django.db.models import Count, Prefetch, Q, F, Func, OuterRef
-from django.utils import timezone
 from django.core import serializers
+from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView, WebhookMixin
+from plane.api.serializers import (
+    IssueSerializer,
+    ModuleIssueSerializer,
+    ModuleSerializer,
+)
 from plane.app.permissions import ProjectEntityPermission
+from plane.bgtasks.issue_activites_task import issue_activity
 from plane.db.models import (
-    Project,
-    Module,
-    ModuleLink,
     Issue,
-    ModuleIssue,
     IssueAttachment,
     IssueLink,
+    Module,
+    ModuleIssue,
+    ModuleLink,
+    Project,
 )
-from plane.api.serializers import (
-    ModuleSerializer,
-    ModuleIssueSerializer,
-    IssueSerializer,
-)
-from plane.bgtasks.issue_activites_task import issue_activity
+
+from .base import BaseAPIView, WebhookMixin
 
 
 class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
