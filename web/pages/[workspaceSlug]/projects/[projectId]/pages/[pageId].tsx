@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/document-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
@@ -36,7 +36,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
 

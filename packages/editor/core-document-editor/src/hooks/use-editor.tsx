@@ -10,6 +10,8 @@ import { RestoreImage } from "src/types/restore-image";
 import { UploadImage } from "src/types/upload-image";
 import { Selection } from "@tiptap/pm/state";
 import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cursor-position";
+import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
+import { EditorRefApi } from "src/types/editor-ref-api";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -26,7 +28,7 @@ interface CustomEditorProps {
   onChange?: (json: any, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
-  forwardedRef?: any;
+  forwardedRef?: MutableRefObject<EditorRefApi | null>;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
 }
@@ -85,19 +87,37 @@ export const useEditor = ({
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
-  useImperativeHandle(forwardedRef, () => ({
-    clearEditor: () => {
-      editorRef.current?.commands.clearContent();
-    },
-    setEditorValue: (content: string) => {
-      editorRef.current?.commands.setContent(content);
-    },
-    setEditorValueAtCursorPosition: (content: string) => {
-      if (savedSelection) {
-        insertContentAtSavedSelection(editorRef, content, savedSelection);
-      }
-    },
-  }));
+  useImperativeHandle(forwardedRef, () => {
+    const editorItems = getEditorMenuItems(editorRef.current!, uploadFile);
+
+    const getEditorItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+
+    return {
+      clearEditor: () => {
+        editorRef.current?.commands.clearContent();
+      },
+      setEditorValue: (content: string) => {
+        editorRef.current?.commands.setContent(content);
+      },
+      setEditorValueAtCursorPosition: (content: string) => {
+        if (savedSelection) {
+          insertContentAtSavedSelection(editorRef, content, savedSelection);
+        }
+      },
+      executeCommand: (itemName: EditorMenuItemNames) => {
+        const item = getEditorItem(itemName);
+        if (item) {
+          item.command();
+        } else {
+          console.warn(`No command found for item: ${itemName}`);
+        }
+      },
+      isItemActive: (itemName: EditorMenuItemNames): boolean => {
+        const item = getEditorItem(itemName);
+        return item ? item.isActive() : false;
+      },
+    };
+  });
 
   if (!editor) {
     return null;
