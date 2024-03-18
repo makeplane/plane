@@ -88,7 +88,7 @@ export const IssuesMobileHeader = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
+      <div className="md:hidden flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-sm text-custom-text-200"
