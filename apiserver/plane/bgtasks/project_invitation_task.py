@@ -1,18 +1,18 @@
-# Python import
+# Python imports
+import logging
+
+# Third party imports
+from celery import shared_task
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.conf import settings
-
-# Third party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import Project, User, ProjectMemberInvite
+from plane.db.models import Project, ProjectMemberInvite, User
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.exception_logger import log_exception
 
 
 @shared_task
@@ -73,12 +73,10 @@ def project_invitation(email, project_id, token, current_site, invitor):
 
         msg.attach_alternative(html_content, "text/html")
         msg.send()
+        logging.getLogger("plane").info("Email sent successfully.")
         return
     except (Project.DoesNotExist, ProjectMemberInvite.DoesNotExist):
         return
     except Exception as e:
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return

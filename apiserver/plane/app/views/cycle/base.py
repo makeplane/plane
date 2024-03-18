@@ -15,10 +15,7 @@ from django.db.models import (
     Value,
     CharField,
 )
-from django.core import serializers
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import UUIDField
@@ -32,9 +29,7 @@ from rest_framework import status
 from .. import BaseViewSet, BaseAPIView, WebhookMixin
 from plane.app.serializers import (
     CycleSerializer,
-    CycleIssueSerializer,
     CycleFavoriteSerializer,
-    IssueSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
 )
@@ -48,13 +43,10 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     CycleFavorite,
-    IssueLink,
-    IssueAttachment,
     Label,
     CycleUserProperties,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
 
 

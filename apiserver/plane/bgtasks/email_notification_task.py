@@ -1,21 +1,22 @@
+import logging
 from datetime import datetime
+
 from bs4 import BeautifulSoup
 
 # Third party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.template.loader import render_to_string
 
 # Django imports
 from django.utils import timezone
-from django.core.mail import EmailMultiAlternatives, get_connection
-from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.conf import settings
 
 # Module imports
-from plane.db.models import EmailNotificationLog, User, Issue
+from plane.db.models import EmailNotificationLog, Issue, User
 from plane.license.utils.instance_value import get_email_configuration
 from plane.settings.redis import redis_instance
+from plane.utils.exception_logger import log_exception
 
 
 # acquire and delete redis lock
@@ -69,7 +70,9 @@ def stack_email_notification():
                 receiver_notification.get("entity_identifier"), {}
             ).setdefault(
                 str(receiver_notification.get("triggered_by_id")), []
-            ).append(receiver_notification.get("data"))
+            ).append(
+                receiver_notification.get("data")
+            )
             # append processed notifications
             processed_notifications.append(receiver_notification.get("id"))
             email_notification_ids.append(receiver_notification.get("id"))
@@ -296,7 +299,9 @@ def send_email_notification(
                 )
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
+                logging.getLogger("plane").info("Email Sent Successfully")
 
+                # Update the logs
                 EmailNotificationLog.objects.filter(
                     pk__in=email_notification_ids
                 ).update(sent_at=timezone.now())
@@ -305,15 +310,20 @@ def send_email_notification(
                 release_lock(lock_id=lock_id)
                 return
             except Exception as e:
-                capture_exception(e)
+                log_exception(e)
                 # release the lock
                 release_lock(lock_id=lock_id)
                 return
         else:
-            print("Duplicate task recived. Skipping...")
+            logging.getLogger("plane").info(
+                "Duplicate email received skipping"
+            )
             return
     except (Issue.DoesNotExist, User.DoesNotExist) as e:
-        if settings.DEBUG:
-            print(e)
+        log_exception(e)
+        release_lock(lock_id=lock_id)
+        return
+    except Exception as e:
+        log_exception(e)
         release_lock(lock_id=lock_id)
         return

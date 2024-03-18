@@ -2,21 +2,22 @@
 import csv
 import io
 import json
-import boto3
 import zipfile
+
+import boto3
+from botocore.client import Config
+
+# Third party imports
+from celery import shared_task
 
 # Django imports
 from django.conf import settings
 from django.utils import timezone
-
-# Third party imports
-from celery import shared_task
-from sentry_sdk import capture_exception
-from botocore.client import Config
 from openpyxl import Workbook
 
 # Module imports
-from plane.db.models import Issue, ExporterHistory
+from plane.db.models import ExporterHistory, Issue
+from plane.utils.exception_logger import log_exception
 
 
 def dateTimeConverter(time):
@@ -403,8 +404,5 @@ def issue_export_task(
         exporter_instance.status = "failed"
         exporter_instance.reason = str(e)
         exporter_instance.save(update_fields=["status", "reason"])
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return
