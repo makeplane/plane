@@ -16,10 +16,6 @@ interface IDocumentEditor {
   // document info
   documentDetails: DocumentDetails;
   value: string;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
-  };
 
   // file operations
   uploadFile: UploadImage;
@@ -40,13 +36,11 @@ interface IDocumentEditor {
   updatePageTitle: (title: string) => void;
   debouncedUpdatesEnabled?: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
-
+  tabIndex?: number;
   // embed configuration
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-
-  tabIndex?: number;
 }
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
@@ -76,7 +70,6 @@ const DocumentEditor = ({
   updatePageTitle,
   cancelUploadImage,
   onActionCompleteHandler,
-  rerenderOnPropsChange,
   tabIndex,
 }: IDocumentEditor) => {
   const { markings, updateMarkings } = useEditorMarkings();
@@ -105,7 +98,6 @@ const DocumentEditor = ({
     uploadFile,
     deleteFile,
     cancelUploadImage,
-    rerenderOnPropsChange,
     forwardedRef,
     extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction),
   });
