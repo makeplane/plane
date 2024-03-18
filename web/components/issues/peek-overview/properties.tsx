@@ -61,7 +61,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   maxDate?.setDate(maxDate.getDate());
 
   return (
-    <div className="mt-1">
+    <div>
       <h6 className="text-sm font-medium">Properties</h6>
       {/* TODO: render properties using a common component */}
       <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>

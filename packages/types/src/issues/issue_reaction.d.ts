@@ -1,7 +1,7 @@
 export type TIssueReaction = {
-  actor_id: string;
+  actor: string;
   id: string;
-  issue_id: string;
+  issue: string;
   reaction: string;
 };
 
