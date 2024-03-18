@@ -88,6 +88,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   useEffect(
     () => () => {
       if (pageStore) {
+        console.log("ran cleanup");
         pageStore.cleanup();
       }
     },
@@ -300,7 +301,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     deleteFile={fileService.getDeleteImageFunction(workspaceId)}
                     restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                     value={pageDescription}
-                    setShouldShowAlert={setShowAlert}
                     cancelUploadImage={fileService.cancelUpload}
                     ref={editorRef}
                     debouncedUpdatesEnabled={false}
@@ -308,7 +308,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     onActionCompleteHandler={actionCompleteAlert}
                     customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
                     onChange={(_description_json: any, description_html: string) => {
-                      setIsSubmitting?.("submitting");
+                      setIsSubmitting("submitting");
                       setShowAlert(true);
                       onChange(description_html);
                       handleSubmit(updatePage)();

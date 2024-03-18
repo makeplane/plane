@@ -36,8 +36,6 @@ interface IDocumentEditor {
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-  setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
   updatePageTitle: (title: string) => void;
   debouncedUpdatesEnabled?: boolean;
@@ -64,7 +62,6 @@ const DocumentEditor = ({
   documentDetails,
   onChange,
   debouncedUpdatesEnabled,
-  setShouldShowAlert,
   editorContentCustomClassNames,
   value,
   uploadFile,
@@ -104,7 +101,6 @@ const DocumentEditor = ({
     },
     debouncedUpdatesEnabled,
     restoreFile,
-    setShouldShowAlert,
     value,
     uploadFile,
     deleteFile,

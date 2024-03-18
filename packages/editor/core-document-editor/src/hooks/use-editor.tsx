@@ -20,7 +20,6 @@ interface CustomEditorProps {
   };
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
-  setShouldShowAlert?: (showAlert: boolean) => void;
   value: string;
   debouncedUpdatesEnabled?: boolean;
   onStart?: (json: any, html: string) => void;
@@ -44,7 +43,6 @@ export const useEditor = ({
   onChange,
   forwardedRef,
   restoreFile,
-  setShouldShowAlert,
   mentionHighlights,
   mentionSuggestions,
 }: CustomEditorProps) => {
@@ -75,7 +73,7 @@ export const useEditor = ({
       },
       onUpdate: async ({ editor }) => {
         // setIsSubmitting?.("submitting");
-        setShouldShowAlert?.(true);
+        // setShouldShowAlert?.(true);
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
     },
