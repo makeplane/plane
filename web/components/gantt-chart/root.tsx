@@ -1,6 +1,6 @@
 import { FC } from "react";
 // components
-import { ChartViewRoot, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
+import { ChartDataType, ChartViewRoot, IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 // context
 import { GanttStoreProvider } from "components/gantt-chart/contexts";
 
@@ -8,11 +8,13 @@ type GanttChartRootProps = {
   border?: boolean;
   title: string;
   loaderTitle: string;
-  blocks: IGanttBlock[] | null;
+  blockIds: string[];
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blockToRender: (data: any) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
   quickAdd?: React.JSX.Element | undefined;
+  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
+  loadMoreBlocks?: () => void;
   enableBlockLeftResize?: boolean;
   enableBlockRightResize?: boolean;
   enableBlockMove?: boolean;
@@ -26,11 +28,13 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
   const {
     border = true,
     title,
-    blocks,
+    blockIds,
     loaderTitle = "blocks",
     blockUpdateHandler,
     sidebarToRender,
     blockToRender,
+    getBlockById,
+    loadMoreBlocks,
     enableBlockLeftResize = false,
     enableBlockRightResize = false,
     enableBlockMove = false,
@@ -46,7 +50,9 @@ export const GanttChartRoot: FC<GanttChartRootProps> = (props) => {
       <ChartViewRoot
         border={border}
         title={title}
-        blocks={blocks}
+        blockIds={blockIds}
+        getBlockById={getBlockById}
+        loadMoreBlocks={loadMoreBlocks}
         loaderTitle={loaderTitle}
         blockUpdateHandler={blockUpdateHandler}
         sidebarToRender={sidebarToRender}

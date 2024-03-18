@@ -1,20 +1,22 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "components/gantt-chart";
+import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "components/gantt-chart";
 import { GanttQuickAddIssueForm, IssueGanttBlock } from "components/issues";
 import { EUserProjectRoles } from "constants/project";
-import { renderIssueBlocksStructure } from "helpers/issue.helper";
+import { getIssueBlocksStructure } from "helpers/issue.helper";
 import { useIssues, useUser } from "hooks/store";
 import { useIssuesActions } from "hooks/use-issues-actions";
 // components
 // helpers
 // types
-import { TIssue, TUnGroupedIssues } from "@plane/types";
+import { TIssue, TIssueGroup } from "@plane/types";
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "constants/issue";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
+import useSWR from "swr";
+import { getMonthChartItemPositionWidthInMonth } from "components/gantt-chart/views";
 
 type GanttStoreType =
   | EIssuesStoreType.PROJECT
@@ -32,19 +34,40 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { issues, issuesFilter } = useIssues(storeType);
-  const { updateIssue } = useIssuesActions(storeType);
+  const { issues, issuesFilter, issueMap } = useIssues(storeType);
+  const { fetchIssues, fetchNextIssues, updateIssue } = useIssuesActions(storeType);
   // store hooks
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { issueMap } = useIssues();
   const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
 
-  const issueIds = (issues.groupedIssueIds ?? []) as TUnGroupedIssues;
+  useSWR(`ISSUE_GANTT_LAYOUT_${storeType}`, () => fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }), {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+
+  const issuesObject = issues.groupedIssueIds?.["All Issues"] as TIssueGroup;
   const { enableIssueCreation } = issues?.viewFlags || {};
 
-  const issuesArray = issueIds.map((id) => issueMap?.[id]);
+  const loadMoreIssues = useCallback(() => {
+    fetchNextIssues();
+  }, [fetchNextIssues]);
+
+  const getBlockById = useCallback(
+    (id: string, currentViewData?: ChartDataType | undefined) => {
+      const issue = issueMap[id];
+      const block = getIssueBlocksStructure(issue);
+      if (currentViewData) {
+        return {
+          ...block,
+          position: getMonthChartItemPositionWidthInMonth(currentViewData, block),
+        };
+      }
+      return block;
+    },
+    [issueMap]
+  );
 
   const updateIssueBlockStructure = async (issue: TIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
@@ -64,7 +87,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           border={false}
           title="Issues"
           loaderTitle="Issues"
-          blocks={issues ? renderIssueBlocksStructure(issuesArray) : null}
+          blockIds={issuesObject?.issueIds}
+          getBlockById={getBlockById}
           blockUpdateHandler={updateIssueBlockStructure}
           blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
           sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
@@ -78,6 +102,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
               <GanttQuickAddIssueForm quickAddCallback={issues.quickAddIssue} viewId={viewId} />
             ) : undefined
           }
+          loadMoreBlocks={loadMoreIssues}
           showAllBlocks
         />
       </div>
