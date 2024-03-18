@@ -1,6 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { UploadImage, DeleteImage, RestoreImage, getEditorClassNames, useEditor } from "@plane/editor-document-core";
+import {
+  UploadImage,
+  DeleteImage,
+  RestoreImage,
+  getEditorClassNames,
+  useEditor,
+  EditorRefApi,
+} from "@plane/editor-document-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
 import { EditorHeader } from "src/ui/components/editor-header";
@@ -16,10 +23,6 @@ interface IDocumentEditor {
   // document info
   documentDetails: DocumentDetails;
   value: string;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
-  };
 
   // file operations
   uploadFile: UploadImage;
@@ -35,36 +38,21 @@ interface IDocumentEditor {
   }) => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
-  onChange: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-  setShouldShowAlert?: (showAlert: boolean) => void;
-  forwardedRef?: any;
+  onChange: (json: object, html: string) => void;
+  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   updatePageTitle: (title: string) => void;
-  debouncedUpdatesEnabled?: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
+  tabIndex?: number;
 
   // embed configuration
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
-
-  tabIndex?: number;
-}
-interface DocumentEditorProps extends IDocumentEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
-
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-  setEditorValueAtCursorPosition: (content: string) => void;
 }
 
 const DocumentEditor = ({
   documentDetails,
   onChange,
-  debouncedUpdatesEnabled,
-  setShouldShowAlert,
   editorContentCustomClassNames,
   value,
   uploadFile,
@@ -79,7 +67,6 @@ const DocumentEditor = ({
   updatePageTitle,
   cancelUploadImage,
   onActionCompleteHandler,
-  rerenderOnPropsChange,
   tabIndex,
 }: IDocumentEditor) => {
   const { markings, updateMarkings } = useEditorMarkings();
@@ -96,20 +83,17 @@ const DocumentEditor = ({
 
   const editor = useEditor({
     onChange(json, html) {
-      updateMarkings(json);
+      updateMarkings(html);
       onChange(json, html);
     },
-    onStart(json) {
-      updateMarkings(json);
+    onStart(_json, html) {
+      updateMarkings(html);
     },
-    debouncedUpdatesEnabled,
     restoreFile,
-    setShouldShowAlert,
     value,
     uploadFile,
     deleteFile,
     cancelUploadImage,
-    rerenderOnPropsChange,
     forwardedRef,
     extensions: DocumentEditorExtensions(uploadFile, setHideDragHandleFunction),
   });
@@ -177,8 +161,8 @@ const DocumentEditor = ({
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorHandle, IDocumentEditor>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref} />
+const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
+  <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 ));
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";

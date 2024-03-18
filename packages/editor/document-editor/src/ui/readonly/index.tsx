@@ -12,10 +12,6 @@ import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget
 
 interface IDocumentReadOnlyEditor {
   value: string;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
-  };
   noBorder: boolean;
   borderOnFocus: boolean;
   customClassName: string;
@@ -50,7 +46,6 @@ const DocumentReadOnlyEditor = ({
   pageDuplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  rerenderOnPropsChange,
   onActionCompleteHandler,
   tabIndex,
 }: DocumentReadOnlyEditorProps) => {
@@ -61,7 +56,6 @@ const DocumentReadOnlyEditor = ({
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
-    rerenderOnPropsChange,
     extensions: [IssueWidgetPlaceholder()],
   });
 

@@ -1,33 +1,38 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { Sparkle } from "lucide-react";
-// hooks
 
+// assets
+import { Sparkle } from "lucide-react";
+
+// ui
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-import { GptAssistantPopover, PageHead } from "components/core";
-import { PageDetailsHeader } from "components/headers/page-details";
-import { IssuePeekOverview } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
+
+// hooks
 import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-// services
+
+// layouts
 import { AppLayout } from "layouts/app-layout";
 import { NextPageWithLayout } from "lib/types";
+
+// services
 import { FileService } from "services/file.service";
-// layouts
+
 // components
-// ui
-// assets
-// helpers
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/document-editor";
+import { PageDetailsHeader } from "components/headers/page-details";
+import { IssuePeekOverview } from "components/issues";
+import { GptAssistantPopover, PageHead } from "components/core";
+
+// constants
+import { EUserProjectRoles } from "constants/project";
+
 // types
 import { IPage } from "@plane/types";
-// fetch-keys
-// constants
 
 // services
 const fileService = new FileService();
@@ -36,7 +41,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
 
@@ -88,6 +93,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   useEffect(
     () => () => {
       if (pageStore) {
+        console.log("ran cleanup");
         pageStore.cleanup();
       }
     },
@@ -296,11 +302,10 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       last_updated_at: updated_at,
                       last_updated_by: updated_by,
                     }}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting)}
                     deleteFile={fileService.getDeleteImageFunction(workspaceId)}
                     restoreFile={fileService.getRestoreImageFunction(workspaceId)}
                     value={pageDescription}
-                    setShouldShowAlert={setShowAlert}
                     cancelUploadImage={fileService.cancelUpload}
                     ref={editorRef}
                     debouncedUpdatesEnabled={false}
@@ -308,7 +313,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     onActionCompleteHandler={actionCompleteAlert}
                     customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
                     onChange={(_description_json: any, description_html: string) => {
-                      setIsSubmitting?.("submitting");
+                      setIsSubmitting("submitting");
                       setShowAlert(true);
                       onChange(description_html);
                       handleSubmit(updatePage)();

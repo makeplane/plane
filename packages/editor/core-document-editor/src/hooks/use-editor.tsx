@@ -10,6 +10,8 @@ import { RestoreImage } from "src/types/restore-image";
 import { UploadImage } from "src/types/upload-image";
 import { Selection } from "@tiptap/pm/state";
 import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cursor-position";
+import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
+import { EditorRefApi } from "src/types/editor-ref-api";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -20,14 +22,12 @@ interface CustomEditorProps {
   };
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
-  setShouldShowAlert?: (showAlert: boolean) => void;
   value: string;
-  debouncedUpdatesEnabled?: boolean;
-  onStart?: (json: any, html: string) => void;
-  onChange?: (json: any, html: string) => void;
+  onStart?: (json: object, html: string) => void;
+  onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
-  forwardedRef?: any;
+  forwardedRef?: MutableRefObject<EditorRefApi | null>;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
 }
@@ -44,7 +44,6 @@ export const useEditor = ({
   onChange,
   forwardedRef,
   restoreFile,
-  setShouldShowAlert,
   mentionHighlights,
   mentionSuggestions,
 }: CustomEditorProps) => {
@@ -75,7 +74,7 @@ export const useEditor = ({
       },
       onUpdate: async ({ editor }) => {
         // setIsSubmitting?.("submitting");
-        setShouldShowAlert?.(true);
+        // setShouldShowAlert?.(true);
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
     },
@@ -87,19 +86,37 @@ export const useEditor = ({
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
-  useImperativeHandle(forwardedRef, () => ({
-    clearEditor: () => {
-      editorRef.current?.commands.clearContent();
-    },
-    setEditorValue: (content: string) => {
-      editorRef.current?.commands.setContent(content);
-    },
-    setEditorValueAtCursorPosition: (content: string) => {
-      if (savedSelection) {
-        insertContentAtSavedSelection(editorRef, content, savedSelection);
-      }
-    },
-  }));
+  useImperativeHandle(forwardedRef, () => {
+    const editorItems = getEditorMenuItems(editorRef.current!, uploadFile);
+
+    const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+
+    return {
+      clearEditor: () => {
+        editorRef.current?.commands.clearContent();
+      },
+      setEditorValue: (content: string) => {
+        editorRef.current?.commands.setContent(content);
+      },
+      setEditorValueAtCursorPosition: (content: string) => {
+        if (savedSelection) {
+          insertContentAtSavedSelection(editorRef, content, savedSelection);
+        }
+      },
+      executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
+        const item = getEditorMenuItem(itemName);
+        if (item) {
+          item.command();
+        } else {
+          console.warn(`No command found for item: ${itemName}`);
+        }
+      },
+      isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
+        const item = getEditorMenuItem(itemName);
+        return item ? item.isActive() : false;
+      },
+    };
+  });
 
   if (!editor) {
     return null;
