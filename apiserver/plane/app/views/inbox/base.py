@@ -408,8 +408,42 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_id = Inbox.objects.filter(
             workspace_id=workspace.id, project_id=project_id
         ).first()
-        inbox_issue = InboxIssue.objects.get(
-            inbox_id=inbox_id.id, issue_id=issue_id, project_id=project_id
+        inbox_issue = (
+            InboxIssue.objects.select_related("issue")
+            .prefetch_related(
+                "issue__assignees",
+                "issue__labels",
+                "issue__issue_module__module",
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__labels__id",
+                        distinct=True,
+                        filter=~Q(issue__labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__assignees__id",
+                        distinct=True,
+                        filter=~Q(issue__assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(issue__issue_module__module_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .get(
+                inbox_id=inbox_id.id, issue_id=issue_id, project_id=project_id
+            )
         )
         issue = InboxIssueDetailSerializer(inbox_issue).data
         return Response(
