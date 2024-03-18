@@ -174,10 +174,12 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_id = Inbox.objects.filter(
             workspace_id=workspace.id, project_id=project_id
         ).first()
-        inbox_issue = InboxIssue.objects.filter(
-            inbox_id=inbox_id.id,
-            project_id=project_id,
-        ).select_related("issue")
+        inbox_issue = (
+            InboxIssue.objects.filter(
+                inbox_id=inbox_id.id,
+                project_id=project_id,
+            ).select_related("issue")
+        ).order_by(request.GET.get("order_by", "-issue__created_at"))
         # inbox status filter
         inbox_status = [
             item
@@ -415,6 +417,7 @@ class InboxIssueViewSet(BaseViewSet):
                 "issue__labels",
                 "issue__issue_module__module",
             )
+            .annotate(cycle_id=F("issue__issue_cycle__cycle_id"))
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
