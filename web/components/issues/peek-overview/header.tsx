@@ -23,7 +23,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 import { useEventTracker, useIssueDetail, useProjectState, useUser } from "hooks/store";
 import { usePlatformOS } from "hooks/use-platform-os";
 // constants
-import { ISSUE_OPENED, elementFromPath } from "constants/event-tracker";
+import { ISSUE_OPENED } from "constants/event-tracker";
 // helpers
 // components
 // helpers
@@ -126,6 +126,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           onClick={() => {
             removeRoutePeekId();
             captureEvent(ISSUE_OPENED, {
+              issue_id: issueId,
               element: "peek",
               mode: "detail",
             });
