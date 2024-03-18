@@ -1,33 +1,38 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/document-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { Sparkle } from "lucide-react";
-// hooks
 
+// assets
+import { Sparkle } from "lucide-react";
+
+// ui
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-import { GptAssistantPopover, PageHead } from "components/core";
-import { PageDetailsHeader } from "components/headers/page-details";
-import { IssuePeekOverview } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
+
+// hooks
 import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-// services
+
+// layouts
 import { AppLayout } from "layouts/app-layout";
 import { NextPageWithLayout } from "lib/types";
+
+// services
 import { FileService } from "services/file.service";
-// layouts
+
 // components
-// ui
-// assets
-// helpers
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/document-editor";
+import { PageDetailsHeader } from "components/headers/page-details";
+import { IssuePeekOverview } from "components/issues";
+import { GptAssistantPopover, PageHead } from "components/core";
+
+// constants
+import { EUserProjectRoles } from "constants/project";
+
 // types
 import { IPage } from "@plane/types";
-// fetch-keys
-// constants
 
 // services
 const fileService = new FileService();
