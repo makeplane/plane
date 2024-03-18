@@ -69,7 +69,7 @@ export class InstanceStore implements IInstanceStore {
         formData[config.key] = config.value;
         return formData;
       },
-      {}
+      {} as IFormattedInstanceConfiguration
     );
   }
 
