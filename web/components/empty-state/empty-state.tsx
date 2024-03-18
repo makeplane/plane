@@ -9,14 +9,14 @@ import { useUser } from "hooks/store";
 import { Button, TButtonVariant } from "@plane/ui";
 import { ComicBoxButton } from "./comic-box-button";
 // constant
-import { EMPTY_STATE_DETAILS, EmptyStateKeys } from "constants/empty-state";
+import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
 // helpers
 import { cn } from "helpers/common.helper";
 
 export type EmptyStateProps = {
-  type: EmptyStateKeys;
+  type: EmptyStateType;
   size?: "sm" | "md" | "lg";
-  layout?: "widget-simple" | "screen-detailed" | "screen-simple";
+  layout?: "screen-detailed" | "screen-simple";
   additionalPath?: string;
   primaryButtonOnClick?: () => void;
   primaryButtonLink?: string;
@@ -39,6 +39,10 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
   } = useUser();
   // theme
   const { resolvedTheme } = useTheme();
+
+  // if empty state type is not found
+  if (!EMPTY_STATE_DETAILS[type]) return null;
+
   // current empty state details
   const { key, title, description, path, primaryButton, secondaryButton, accessType, access } =
     EMPTY_STATE_DETAILS[type];
@@ -143,6 +147,28 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
               </>
             )}
           </div>
+        </div>
+      )}
+      {layout === "screen-simple" && (
+        <div className="text-center flex flex-col gap-2.5 items-center">
+          <div className="h-28 w-28">
+            <Image
+              src={resolvedEmptyStatePath}
+              alt={key || "button image"}
+              width={96}
+              height={96}
+              layout="responsive"
+              lazyBoundary="100%"
+            />
+          </div>
+          {description ? (
+            <>
+              <h3 className="text-lg font-medium text-custom-text-300 whitespace-pre-line">{title}</h3>
+              <p className="text-base font-medium text-custom-text-400 whitespace-pre-line">{description}</p>
+            </>
+          ) : (
+            <h3 className="text-sm font-medium text-custom-text-400 whitespace-pre-line">{title}</h3>
+          )}
         </div>
       )}
     </>

@@ -51,6 +51,7 @@ staticfiles
 mediafiles
 .env
 .DS_Store
+logs/
 
 node_modules/
 assets/dist/

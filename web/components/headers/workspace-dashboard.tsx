@@ -8,7 +8,6 @@ import githubWhiteImage from "/public/logos/github-white.png";
 // components
 import { Breadcrumbs } from "@plane/ui";
 import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // constants
 import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "constants/event-tracker";
 import { useEventTracker } from "hooks/store";
@@ -20,9 +19,8 @@ export const WorkspaceDashboardHeader = () => {
 
   return (
     <>
-      <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 overflow-ellipsis whitespace-nowrap">
-          <SidebarHamburgerToggle />
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem

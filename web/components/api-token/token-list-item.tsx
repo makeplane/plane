@@ -3,6 +3,7 @@ import { XCircle } from "lucide-react";
 // components
 import { Tooltip } from "@plane/ui";
 import { DeleteApiTokenModal } from "components/api-token";
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 // helpers
 import { renderFormattedDate, calculateTimeAgo } from "helpers/date-time.helper";
@@ -17,12 +18,14 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
       <div className="group relative flex flex-col justify-center border-b border-custom-border-200 px-4 py-3">
-        <Tooltip tooltipContent="Delete token">
+        <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
@@ -33,9 +36,8 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
         <div className="flex w-4/5 items-center">
           <h5 className="truncate text-sm font-medium">{token.label}</h5>
           <span
-            className={`${
-              token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-custom-text-400"
-            } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
+            className={`${token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-custom-text-400"
+              } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
           >
             {token.is_active ? "Active" : "Expired"}
           </span>

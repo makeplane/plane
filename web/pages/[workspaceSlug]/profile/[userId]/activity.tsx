@@ -54,12 +54,12 @@ const ProfileActivityPage: NextPageWithLayout = observer(() => {
     currentUser?.id === userId && !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <div className="h-full w-full px-5 py-5 md:px-9 flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between gap-2">
+    <div className="h-full w-full py-5 flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between gap-2 px-5 md:px-9">
         <h3 className="text-lg font-medium">Recent activity</h3>
         {canDownloadActivity && <DownloadActivityButton />}
       </div>
-      <div className="h-full flex flex-col overflow-y-auto">
+      <div className="h-full flex flex-col overflow-y-auto vertical-scrollbar scrollbar-md px-5 md:px-9">
         {activityPages}
         {pageCount < totalPages && resultsCount !== 0 && (
           <div className="flex items-center justify-center text-xs w-full">

@@ -2,18 +2,17 @@
 import json
 from datetime import timedelta
 
-# Django imports
-from django.utils import timezone
-from django.db.models import Q
-from django.conf import settings
-
 # Third party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
+from django.db.models import Q
+
+# Django imports
+from django.utils import timezone
 
 # Module imports
-from plane.db.models import Issue, Project, State
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.db.models import Issue, Project, State
+from plane.utils.exception_logger import log_exception
 
 
 @shared_task
@@ -96,9 +95,7 @@ def archive_old_issues():
                     ]
         return
     except Exception as e:
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return
 
 
@@ -179,7 +176,5 @@ def close_old_issues():
                     ]
         return
     except Exception as e:
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
+        log_exception(e)
         return

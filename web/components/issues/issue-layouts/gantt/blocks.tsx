@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, StateGroupIcon, ControlLink } from "@plane/ui";
 // helpers
@@ -31,6 +32,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     issueDetails &&
     !issueDetails.tempId &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <div
@@ -42,6 +44,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
+        isMobile={isMobile}
         tooltipContent={
           <div className="space-y-1">
             <h5>{issueDetails?.name}</h5>
@@ -83,6 +86,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
     workspaceSlug &&
     issueDetails &&
     setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
+  const { isMobile } = usePlatformOS();
 
   return (
     <ControlLink
@@ -97,7 +101,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
         <div className="flex-shrink-0 text-xs text-custom-text-300">
           {projectIdentifier} {issueDetails?.sequence_id}
         </div>
-        <Tooltip tooltipContent={issueDetails?.name}>
+        <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
           <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>

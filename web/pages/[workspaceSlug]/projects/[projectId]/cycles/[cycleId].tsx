@@ -17,6 +17,7 @@ import { AppLayout } from "layouts/app-layout";
 // assets
 import { NextPageWithLayout } from "lib/types";
 import emptyCycle from "public/empty-state/cycle.svg";
+import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
 // types
 
 const CycleDetailPage: NextPageWithLayout = observer(() => {
@@ -67,7 +68,7 @@ const CycleDetailPage: NextPageWithLayout = observer(() => {
             </div>
             {cycleId && !isSidebarCollapsed && (
               <div
-                className="flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 py-3.5 duration-300 vertical-scrollbar scrollbar-sm"
+                className="flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm"
                 style={{
                   boxShadow:
                     "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
@@ -85,7 +86,7 @@ const CycleDetailPage: NextPageWithLayout = observer(() => {
 
 CycleDetailPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
+    <AppLayout header={<CycleIssuesHeader />} mobileHeader={<CycleMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

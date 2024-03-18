@@ -3,13 +3,12 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 import { ArrowRight, PanelRight, Plus } from "lucide-react";
-import { Breadcrumbs, Button, CustomMenu, DiceIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { cn } from "helpers/common.helper";
@@ -66,6 +65,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+  // hooks
+  const { isMobile } = usePlatformOS();
   // store hooks
   const {
     issuesFilter: { issueFilters },
@@ -143,6 +144,12 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
+  const issueCount = moduleDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? moduleDetails.total_issues + moduleDetails.sub_issues
+      : moduleDetails.total_issues
+    : undefined;
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -151,9 +158,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         moduleDetails={moduleDetails ?? undefined}
       />
       <div className="relative z-[15] items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -198,15 +204,29 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     label={
                       <>
                         <DiceIcon className="h-3 w-3" />
-                        <div className="w-auto max-w-[70px] sm:max-w-[200px] inline-block truncate line-clamp-1 overflow-hidden whitespace-nowrap">
-                          {moduleDetails?.name && moduleDetails.name}
+                        <div className="flex items-center gap-2 w-auto max-w-[70px] sm:max-w-[200px] truncate">
+                          <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
+                          {issueCount && issueCount > 0 ? (
+                            <Tooltip
+                              isMobile={isMobile}
+                              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"
+                                } in this module`}
+                              position="bottom"
+                            >
+                              <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                                {issueCount}
+                              </span>
+                            </Tooltip>
+                          ) : null}
                         </div>
                       </>
                     }
                     className="ml-1.5 flex-shrink-0"
                     placement="bottom-start"
                   >
-                    {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}
+                    {projectModuleIds?.map((moduleId) => (
+                      <ModuleDropdownOption key={moduleId} moduleId={moduleId} />
+                    ))}
                   </CustomMenu>
                 }
               />
@@ -285,7 +305,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             </button>
           </div>
         </div>
-        <ModuleMobileHeader />
       </div>
     </>
   );

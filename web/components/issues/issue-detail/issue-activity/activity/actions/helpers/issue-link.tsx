@@ -2,6 +2,7 @@ import { FC } from "react";
 // hooks
 import { Tooltip } from "@plane/ui";
 import { useIssueDetail } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 
 type TIssueLink = {
@@ -14,12 +15,12 @@ export const IssueLink: FC<TIssueLink> = (props) => {
   const {
     activity: { getActivityById },
   } = useIssueDetail();
-
+  const { isMobile } = usePlatformOS();
   const activity = getActivityById(activityId);
 
   if (!activity) return <></>;
   return (
-    <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
+    <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"} isMobile={isMobile}>
       <a
         aria-disabled={activity.issue === null}
         href={`${

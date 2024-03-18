@@ -30,6 +30,7 @@ import { FileService } from "services/file.service";
 // ui
 // helpers
 import { getChangedIssuefields } from "helpers/issue.helper";
+import { shouldRenderProject } from "helpers/project.helper";
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
@@ -304,7 +305,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         handleFormChange();
                       }}
                       buttonVariant="border-with-text"
-                      // TODO: update tabIndex logic
+                      renderCondition={(project) => shouldRenderProject(project)}
                       tabIndex={getTabIndex("project_id")}
                     />
                   </div>
@@ -467,7 +468,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           }}
                           mentionHighlights={mentionHighlights}
                           mentionSuggestions={mentionSuggestions}
-                          // tabIndex={2}
+                          tabIndex={getTabIndex("description_html")}
                         />
                       )}
                     />
@@ -703,6 +704,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         setSelectedParentIssue(issue);
                       }}
                       projectId={projectId}
+                      issueId={data?.id}
                     />
                   )}
                 />

@@ -1,14 +1,21 @@
 import { useCallback, useState } from "react";
+import { observer } from "mobx-react";
 import router from "next/router";
+// icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+// ui
 import { CustomMenu } from "@plane/ui";
+// components
 import { ProjectAnalyticsModal } from "components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
+// hooks
 import { useIssues, useLabel, useMember, useModule, useProjectState } from "hooks/store";
+// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// constants
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "constants/issue";
 
-export const ModuleMobileHeader = () => {
+export const ModuleMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { getModuleById } = useModule();
   const layouts = [
@@ -83,7 +90,7 @@ export const ModuleMobileHeader = () => {
         onClose={() => setAnalyticsModal(false)}
         moduleDetails={moduleDetails ?? undefined}
       />
-      <div className="flex justify-evenly border-b border-custom-border-200 py-2">
+      <div className="flex justify-evenly border-b border-custom-border-200 bg-custom-background-100 py-2">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-sm text-custom-text-200"
@@ -161,4 +168,4 @@ export const ModuleMobileHeader = () => {
       </div>
     </div>
   );
-};
+});

@@ -24,10 +24,11 @@ interface ICalendarHeader {
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
+  setSelectedDate: (date: Date) => void;
 }
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
-  const { issuesFilterStore, updateFilters } = props;
+  const { issuesFilterStore, updateFilters, setSelectedDate } = props;
 
   const issueCalendarView = useCalendarView();
 
@@ -91,6 +92,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
       activeMonthDate: firstDayOfCurrentMonth,
       activeWeekDate: today,
     });
+    setSelectedDate(today);
   };
 
   return (

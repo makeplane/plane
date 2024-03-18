@@ -1,7 +1,5 @@
 # Python imports
 import json
-import random
-from itertools import chain
 
 # Django imports
 from django.utils import timezone
@@ -21,64 +19,38 @@ from django.db.models import (
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db import IntegrityError
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.db.models import UUIDField
 from django.db.models.functions import Coalesce
 
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView, WebhookMixin
 from plane.app.serializers import (
-    IssueActivitySerializer,
-    IssueCommentSerializer,
     IssuePropertySerializer,
     IssueSerializer,
     IssueCreateSerializer,
-    LabelSerializer,
-    IssueFlatSerializer,
-    IssueLinkSerializer,
-    IssueLiteSerializer,
-    IssueAttachmentSerializer,
-    IssueSubscriberSerializer,
-    ProjectMemberLiteSerializer,
-    IssueReactionSerializer,
-    CommentReactionSerializer,
-    IssueRelationSerializer,
-    RelatedIssueSerializer,
     IssueDetailSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
-    WorkSpaceAdminPermission,
-    ProjectMemberPermission,
     ProjectLitePermission,
 )
 from plane.db.models import (
     Project,
     Issue,
-    IssueActivity,
-    IssueComment,
     IssueProperty,
-    Label,
     IssueLink,
     IssueAttachment,
     IssueSubscriber,
-    ProjectMember,
     IssueReaction,
-    CommentReaction,
-    IssueRelation,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
-from collections import defaultdict
-from plane.utils.cache import invalidate_cache
 
 class IssueListEndpoint(BaseAPIView):
 

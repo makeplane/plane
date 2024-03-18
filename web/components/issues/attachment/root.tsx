@@ -101,7 +101,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
   return (
     <div className="relative py-3 space-y-3">
       <h3 className="text-lg">Attachments</h3>
-      <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <IssueAttachmentUpload
           workspaceSlug={workspaceSlug}
           disabled={disabled}

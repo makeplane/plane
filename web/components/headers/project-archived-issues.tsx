@@ -1,14 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { ArrowLeft } from "lucide-react";
 // hooks
+import { usePlatformOS } from "hooks/use-platform-os";
 // constants
 // ui
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helpers
@@ -31,10 +30,10 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-
   // for archived issues list layout is the only option
   const activeLayout = "list";
-
+  // hooks
+  const { isMobile } = usePlatformOS();
   const handleFiltersUpdate = (key: keyof IIssueFilterOptions, value: string | string[]) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -69,21 +68,17 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
     updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
   };
 
+  const issueCount = currentProjectDetails
+    ? issueFilters?.displayFilters?.sub_issue
+      ? currentProjectDetails.archived_issues + currentProjectDetails.archived_sub_issues
+      : currentProjectDetails.archived_issues
+    : undefined;
+
   return (
-    <div className="relative z-10 flex h-14 w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-14 w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <SidebarHamburgerToggle />
-        <div className="block md:hidden">
-          <button
-            type="button"
-            className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
-            onClick={() => router.back()}
-          >
-            <ArrowLeft fontSize={14} strokeWidth={2} />
-          </button>
-        </div>
-        <div>
-          <Breadcrumbs>
+        <div className="flex items-center gap-2.5">
+          <Breadcrumbs onBack={router.back}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
@@ -111,6 +106,17 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
               }
             />
           </Breadcrumbs>
+          {issueCount && issueCount > 0 ? (
+            <Tooltip
+              isMobile={isMobile}
+              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's archived`}
+              position="bottom"
+            >
+              <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+                {issueCount}
+              </span>
+            </Tooltip>
+          ) : null}
         </div>
       </div>
 

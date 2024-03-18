@@ -6,6 +6,7 @@ import { Tooltip, ControlLink } from "@plane/ui";
 import RenderIfVisible from "components/core/render-if-visible-HOC";
 import { cn } from "helpers/common.helper";
 import { useApplication, useIssueDetail, useProject } from "hooks/store";
+import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { IssueProperties } from "../properties/all-properties";
@@ -41,6 +42,7 @@ interface IssueDetailsBlockProps {
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props: IssueDetailsBlockProps) => {
   const { issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
   // hooks
+  const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
   const {
     router: { workspaceSlug },
@@ -66,7 +68,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       </WithDisplayPropertiesHOC>
 
       {issue?.is_draft ? (
-        <Tooltip tooltipContent={issue.name}>
+        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
           <span>{issue.name}</span>
         </Tooltip>
       ) : (
@@ -79,7 +81,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
           disabled={!!issue?.tempId}
         >
-          <Tooltip tooltipContent={issue.name}>
+          <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
             <span>{issue.name}</span>
           </Tooltip>
         </ControlLink>

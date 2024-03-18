@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import sortBy from "lodash/sortBy";
 // components
 import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "components/issues";
@@ -26,13 +27,23 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = labels?.filter((label) => label.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const sortedOptions = useMemo(() => {
+    const filteredOptions = (labels || []).filter((label) =>
+      label.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return sortBy(filteredOptions, [
+      (label) => !(appliedFilters ?? []).includes(label.id),
+      (label) => label.name.toLowerCase(),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleViewToggle = () => {
-    if (!filteredOptions) return;
+    if (!sortedOptions) return;
 
-    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
-    else setItemsToRender(filteredOptions.length);
+    if (itemsToRender === sortedOptions.length) setItemsToRender(5);
+    else setItemsToRender(sortedOptions.length);
   };
 
   return (
@@ -44,10 +55,10 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
+          {sortedOptions ? (
+            sortedOptions.length > 0 ? (
               <>
-                {filteredOptions.slice(0, itemsToRender).map((label) => (
+                {sortedOptions.slice(0, itemsToRender).map((label) => (
                   <FilterOption
                     key={label?.id}
                     isChecked={appliedFilters?.includes(label?.id) ? true : false}
@@ -56,13 +67,13 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
                     title={label.name}
                   />
                 ))}
-                {filteredOptions.length > 5 && (
+                {sortedOptions.length > 5 && (
                   <button
                     type="button"
                     className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
                   </button>
                 )}
               </>

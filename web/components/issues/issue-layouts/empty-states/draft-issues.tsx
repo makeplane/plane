@@ -31,7 +31,7 @@ export const ProjectDraftEmptyState: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
       ...newFilters,
