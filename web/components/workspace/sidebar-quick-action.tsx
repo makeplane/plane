@@ -11,6 +11,8 @@ import { useApplication, useEventTracker, useProject, useUser } from "hooks/stor
 import useLocalStorage from "hooks/use-local-storage";
 // types
 import { TIssue } from "@plane/types";
+// constants
+import { E_SIDEBAR } from "constants/event-tracker";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
@@ -93,7 +95,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                 isSidebarCollapsed ? "justify-center" : ""
               } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
               onClick={() => {
-                setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
+                setTrackElement(E_SIDEBAR);
                 commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
               disabled={disabled}

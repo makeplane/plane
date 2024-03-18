@@ -69,7 +69,7 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
         ) : null}
       </div>
       {/* peek overview */}
-      <IssuePeekOverview />
+      <IssuePeekOverview issuesFilter={issueFilters}/>
     </>
   );
 });

@@ -8,11 +8,12 @@ import { ChevronDown } from "lucide-react";
 // hooks
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
-import { useLabel } from "hooks/store";
+import { useEventTracker, useLabel } from "hooks/store";
 // ui
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // constants
+import { E_LABELS, LABEL_CREATED } from "constants/event-tracker";
 
 // types
 type Props = {
@@ -34,6 +35,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store hooks
   const { createLabel } = useLabel();
+  const { captureEvent } = useEventTracker();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -68,10 +70,20 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
 
     await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
+        captureEvent(LABEL_CREATED, {
+          label_id: res.id,
+          color: res.color,
+          parent: res.parent,
+          element: E_LABELS,
+          state: "SUCCESS",
+        });
         onClose();
         if (onSuccess) onSuccess(res);
       })
       .catch((error) => {
+        captureEvent(LABEL_CREATED, {
+          state: "FAILED",
+        });
         setToast({
           title: "Oops!",
           type: TOAST_TYPE.ERROR,

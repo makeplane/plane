@@ -17,9 +17,11 @@ import {
 // helpers
 import { cn } from "helpers/common.helper";
 import { getRedirectionFilters } from "helpers/dashboard.helper";
-import { useIssueDetail } from "hooks/store";
+import { useEventTracker, useIssueDetail } from "hooks/store";
 // types
 import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
+// constants
+import { E_DASHBOARD, ISSUE_OPENED } from "constants/event-tracker";
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;
@@ -33,9 +35,19 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const { isLoading, tab, type, widgetStats, workspaceSlug } = props;
   // store hooks
   const { setPeekIssue } = useIssueDetail();
+  const { captureEvent } = useEventTracker();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
+  const handleIssuePeekOverview = (issue: TIssue) => {
     setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+    captureEvent(ISSUE_OPENED, {
+      element: E_DASHBOARD,
+      element_id: tab,
+      mode: "peek",
+      filters: {
+        target_date: issue.target_date,
+      },
+    });
+  };
 
   const filterParams = getRedirectionFilters(tab);
 

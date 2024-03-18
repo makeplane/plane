@@ -10,11 +10,13 @@ import {
   WebhookSecretKey,
   WebhookToggle,
 } from "components/web-hooks";
-import { useWebhook } from "hooks/store";
+import { useEventTracker, useWebhook } from "hooks/store";
 // components
 // ui
 // types
 import { IWebhook, TWebhookEventTypes } from "@plane/types";
+// constants
+import { WEBHOOK_UPDATED } from "constants/event-tracker";
 
 type Props = {
   data?: Partial<IWebhook>;
@@ -37,17 +39,25 @@ export const WebhookForm: FC<Props> = observer((props) => {
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
   // store hooks
   const { webhookSecretKey } = useWebhook();
+  const { captureEvent } = useEventTracker();
   // use form
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, dirtyFields },
   } = useForm<IWebhook>({
     defaultValues: { ...initialWebhookPayload, ...data },
   });
 
   const handleFormSubmit = async (formData: IWebhook) => {
-    await onSubmit(formData, webhookEventType);
+    await onSubmit(formData, webhookEventType).then(() => {
+      if (!data) return;
+      captureEvent(WEBHOOK_UPDATED, {
+        webhook_id: data.id,
+        change_details: Object.keys(dirtyFields),
+        enabled: formData.is_active,
+      });
+    });
   };
 
   useEffect(() => {

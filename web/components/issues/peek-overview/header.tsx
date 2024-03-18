@@ -19,10 +19,14 @@ import { STATE_GROUPS } from "constants/state";
 // helpers
 import { cn } from "helpers/common.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
-// store hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 // hooks
+import { useEventTracker, useIssueDetail, useProjectState, useUser } from "hooks/store";
 import { usePlatformOS } from "hooks/use-platform-os";
+// constants
+import { ISSUE_OPENED } from "constants/event-tracker";
+// helpers
+// components
+// helpers
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -80,6 +84,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
+  const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
   // derived values
   const issueDetails = getIssueById(issueId);
@@ -116,7 +121,17 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
         </button>
 
-        <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
+        <Link
+          href={`/${issueLink}`}
+          onClick={() => {
+            removeRoutePeekId();
+            captureEvent(ISSUE_OPENED, {
+              issue_id: issueId,
+              element: "peek",
+              mode: "detail",
+            });
+          }}
+        >
           <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
         </Link>
         {currentMode && (

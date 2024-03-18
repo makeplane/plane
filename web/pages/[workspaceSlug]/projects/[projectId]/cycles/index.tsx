@@ -27,6 +27,7 @@ import { TCycleFilters } from "@plane/types";
 // constants
 import { CYCLE_TABS_LIST } from "constants/cycle";
 import { EmptyStateType } from "constants/empty-state";
+import { E_CYCLES_EMPTY_STATE } from "constants/event-tracker";
 import CyclesListMobileHeader from "components/cycles/cycles-list-mobile-header";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
@@ -86,7 +87,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             <EmptyState
               type={EmptyStateType.PROJECT_CYCLES}
               primaryButtonOnClick={() => {
-                setTrackElement("Cycle empty state");
+                setTrackElement(E_CYCLES_EMPTY_STATE);
                 setCreateModal(true);
               }}
             />

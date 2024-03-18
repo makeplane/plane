@@ -3,7 +3,7 @@ import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue 
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { WORKSPACE_CREATED } from "constants/event-tracker";
+import { E_ONBOARDING, WORKSPACE_CREATED } from "constants/event-tracker";
 import { RESTRICTED_URLS } from "constants/workspace";
 import { useEventTracker, useUser, useWorkspace } from "hooks/store";
 // services
@@ -56,7 +56,7 @@ export const Workspace: React.FC<Props> = (props) => {
                   ...res,
                   state: "SUCCESS",
                   first_time: true,
-                  element: "Onboarding",
+                  element: E_ONBOARDING,
                 },
               });
               await fetchWorkspaces();
@@ -68,7 +68,7 @@ export const Workspace: React.FC<Props> = (props) => {
                 payload: {
                   state: "FAILED",
                   first_time: true,
-                  element: "Onboarding",
+                  element: E_ONBOARDING,
                 },
               });
               setToast({

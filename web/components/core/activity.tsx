@@ -23,13 +23,17 @@ import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } 
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
-import { useEstimate, useLabel } from "hooks/store";
+import { useEstimate, useEventTracker, useLabel } from "hooks/store";
 // types
 import { IIssueActivity } from "@plane/types";
+// constants
+import { ISSUE_OPENED, elementFromPath } from "constants/event-tracker";
 
 export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
 
   return (
@@ -43,6 +47,13 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
           href={`${`/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
             activity.issue
           }`}`}
+          onClick={() => {
+            captureEvent(ISSUE_OPENED, {
+              ...elementFromPath(router.asPath),
+              element_id: "activity",
+              mode: "detail",
+            });
+          }}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
           className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"

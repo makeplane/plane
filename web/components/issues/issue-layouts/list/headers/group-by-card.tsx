@@ -14,6 +14,8 @@ import { EIssuesStoreType } from "constants/issue";
 import { useEventTracker } from "hooks/store";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
+// constants
+import { E_LIST_LAYOUT } from "constants/event-tracker";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -86,7 +88,7 @@ export const HeaderGroupByCard = observer(
               >
                 <CustomMenu.MenuItem
                   onClick={() => {
-                    setTrackElement("List layout");
+                    setTrackElement(E_LIST_LAYOUT);
                     setIsOpen(true);
                   }}
                 >
@@ -94,7 +96,7 @@ export const HeaderGroupByCard = observer(
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
                   onClick={() => {
-                    setTrackElement("List layout");
+                    setTrackElement(E_LIST_LAYOUT);
                     setOpenExistingIssueListModal(true);
                   }}
                 >
@@ -105,7 +107,7 @@ export const HeaderGroupByCard = observer(
               <div
                 className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
                 onClick={() => {
-                  setTrackElement("List layout");
+                  setTrackElement(E_LIST_LAYOUT);
                   setIsOpen(true);
                 }}
               >

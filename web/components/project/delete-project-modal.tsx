@@ -9,7 +9,7 @@ import { useEventTracker, useProject } from "hooks/store";
 // ui
 // types
 import type { IProject } from "@plane/types";
-import { PROJECT_DELETED } from "constants/event-tracker";
+import { E_PROJECT_GENERAL, PROJECT_DELETED } from "constants/event-tracker";
 // constants
 
 type DeleteProjectModal = {
@@ -61,7 +61,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         handleClose();
         captureProjectEvent({
           eventName: PROJECT_DELETED,
-          payload: { ...project, state: "SUCCESS", element: "Project general settings" },
+          payload: { ...project, state: "SUCCESS", element: E_PROJECT_GENERAL },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -72,7 +72,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
       .catch(() => {
         captureProjectEvent({
           eventName: PROJECT_DELETED,
-          payload: { ...project, state: "FAILED", element: "Project general settings" },
+          payload: { ...project, state: "FAILED", element: E_PROJECT_GENERAL },
         });
         setToast({
           type: TOAST_TYPE.ERROR,

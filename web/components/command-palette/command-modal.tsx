@@ -30,6 +30,8 @@ import {
 } from "components/command-palette";
 // types
 import { IWorkspaceSearchResults } from "@plane/types";
+// constants
+import { E_COMMAND_PALETTE } from "constants/event-tracker";
 // fetch-keys
 // constants
 import { EmptyStateType } from "constants/empty-state";
@@ -286,7 +288,7 @@ export const CommandModal: React.FC = observer(() => {
                             <Command.Item
                               onSelect={() => {
                                 closePalette();
-                                setTrackElement("Command Palette");
+                                setTrackElement(E_COMMAND_PALETTE);
                                 toggleCreateIssueModal(true);
                               }}
                               className="focus:bg-custom-background-80"
@@ -304,7 +306,7 @@ export const CommandModal: React.FC = observer(() => {
                               <Command.Item
                                 onSelect={() => {
                                   closePalette();
-                                  setTrackElement("Command palette");
+                                  setTrackElement(E_COMMAND_PALETTE);
                                   toggleCreateProjectModal(true);
                                 }}
                                 className="focus:outline-none"

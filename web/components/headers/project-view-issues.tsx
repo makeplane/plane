@@ -28,6 +28,18 @@ import {
 } from "hooks/store";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 import { ProjectLogo } from "components/project";
+// constants
+import {
+  DP_APPLIED,
+  DP_REMOVED,
+  E_VIEWS,
+  elementFromPath,
+  FILTER_APPLIED,
+  FILTER_REMOVED,
+  FILTER_SEARCHED,
+  LAYOUT_CHANGED,
+  LP_UPDATED,
+} from "constants/event-tracker";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
@@ -37,7 +49,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureEvent, captureIssuesFilterEvent, captureIssuesDisplayFilterEvent } =
+    useEventTracker();
   const {
     commandPalette: { toggleCreateIssueModal },
   } = useApplication();
@@ -63,9 +76,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         EIssueFilterType.DISPLAY_FILTERS,
         { layout: layout },
         viewId.toString()
+      ).then(() =>
+        captureEvent(LAYOUT_CHANGED, {
+          layout: layout,
+          ...elementFromPath(router.asPath),
+        })
       );
     },
-    [workspaceSlug, projectId, viewId, updateFilters]
+    [workspaceSlug, projectId, viewId, updateFilters, captureEvent, router.asPath]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -88,9 +106,19 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         EIssueFilterType.FILTERS,
         { [key]: newValues },
         viewId.toString()
-      );
+      ).then(() => {
+        captureIssuesFilterEvent({
+          eventName: (issueFilters?.filters?.[key] ?? []).length > newValues.length ? FILTER_REMOVED : FILTER_APPLIED,
+          payload: {
+            routePath: router.asPath,
+            filters: issueFilters,
+            filter_property: value,
+            filter_type: key,
+          },
+        });
+      });
     },
-    [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
+    [workspaceSlug, projectId, viewId, issueFilters, updateFilters, captureIssuesFilterEvent, router.asPath]
   );
 
   const handleDisplayFilters = useCallback(
@@ -102,9 +130,19 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         EIssueFilterType.DISPLAY_FILTERS,
         updatedDisplayFilter,
         viewId.toString()
+      ).then(() =>
+        captureIssuesDisplayFilterEvent({
+          eventName: LP_UPDATED,
+          payload: {
+            property_type: Object.keys(updatedDisplayFilter).join(","),
+            property: Object.values(updatedDisplayFilter)?.[0],
+            routePath: router.asPath,
+            filters: issueFilters,
+          },
+        })
       );
     },
-    [workspaceSlug, projectId, viewId, updateFilters]
+    [workspaceSlug, projectId, viewId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const handleDisplayProperties = useCallback(
@@ -116,9 +154,18 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         EIssueFilterType.DISPLAY_PROPERTIES,
         property,
         viewId.toString()
+      ).then(() =>
+        captureIssuesDisplayFilterEvent({
+          eventName: Object.values(property)?.[0] === true ? DP_APPLIED : DP_REMOVED,
+          payload: {
+            display_property: Object.keys(property).join(","),
+            routePath: router.asPath,
+            filters: issueFilters,
+          },
+        })
       );
     },
-    [workspaceSlug, projectId, viewId, updateFilters]
+    [workspaceSlug, projectId, viewId, updateFilters, issueFilters, captureIssuesDisplayFilterEvent, router.asPath]
   );
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
@@ -208,6 +255,16 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             labels={projectLabels}
             memberIds={projectMemberIds ?? undefined}
             states={projectStates}
+            onSearchCapture={() =>
+              captureIssuesFilterEvent({
+                eventName: FILTER_SEARCHED,
+                payload: {
+                  routePath: router.asPath,
+                  current_filters: issueFilters?.filters,
+                  layout: issueFilters?.displayFilters?.layout,
+                },
+              })
+            }
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">
@@ -224,7 +281,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         {canUserCreateIssue && (
           <Button
             onClick={() => {
-              setTrackElement("PROJECT_VIEW_PAGE_HEADER");
+              setTrackElement(E_VIEWS);
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             size="sm"

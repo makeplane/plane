@@ -12,6 +12,7 @@ import { Breadcrumbs, Button } from "@plane/ui";
 import { cn } from "helpers/common.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { E_PROJECTS } from "constants/event-tracker";
 import { FiltersDropdown } from "components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "components/project";
 import { TProjectFilters } from "@plane/types";
@@ -160,7 +161,7 @@ export const ProjectsHeader = observer(() => {
             prependIcon={<Plus />}
             size="sm"
             onClick={() => {
-              setTrackElement("Projects page");
+              setTrackElement(E_PROJECTS);
               commandPaletteStore.toggleCreateProjectModal(true);
             }}
             className="items-center gap-1"

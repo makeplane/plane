@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // hooks
 import { setPromiseToast } from "@plane/ui";
-import { ISSUE_CREATED } from "constants/event-tracker";
+import { E_LIST_QUICK_ADD, ISSUE_CREATED } from "constants/event-tracker";
 import { createIssuePayload } from "helpers/issue.helper";
 import { useEventTracker, useProject } from "hooks/store";
 import useKeypress from "hooks/use-keypress";
@@ -119,15 +119,15 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
         .then((res) => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...res, state: "SUCCESS", element: "List quick add" },
-            path: router.asPath,
+            payload: { ...res, state: "SUCCESS", element: E_LIST_QUICK_ADD },
+            routePath: router.asPath,
           });
         })
         .catch(() => {
           captureIssueEvent({
             eventName: ISSUE_CREATED,
-            payload: { ...payload, state: "FAILED", element: "List quick add" },
-            path: router.asPath,
+            payload: { ...payload, state: "FAILED", element: E_LIST_QUICK_ADD },
+            routePath: router.asPath,
           });
         });
     }

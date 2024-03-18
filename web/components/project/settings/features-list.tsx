@@ -7,6 +7,7 @@ import { ContrastIcon, DiceIcon, PhotoFilterIcon, ToggleSwitch, setPromiseToast 
 import { useEventTracker, useProject, useUser } from "hooks/store";
 // types
 import { IProject } from "@plane/types";
+import { E_FEATURES } from "constants/event-tracker";
 
 type Props = {
   workspaceSlug: string;
@@ -93,7 +94,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
             onChange={() => {
               captureEvent(`Toggle ${feature.title.toLowerCase()}`, {
                 enabled: !currentProjectDetails?.[feature.property as keyof IProject],
-                element: "Project settings feature page",
+                element: E_FEATURES,
               });
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],

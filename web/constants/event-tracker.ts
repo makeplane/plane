@@ -1,8 +1,10 @@
+import { ISSUE_ORDER_BY_OPTIONS } from "./issue";
+
 export type IssueEventProps = {
   eventName: string;
   payload: any;
   updates?: any;
-  path?: string;
+  routePath?: string;
 };
 
 export type EventProps = {
@@ -17,11 +19,11 @@ export const getWorkspaceEventPayload = (payload: any) => ({
   organization_size: payload.organization_size,
   first_time: payload.first_time,
   state: payload.state,
+  change_details: payload.change_details,
   element: payload.element,
 });
 
 export const getProjectEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
   project_id: payload.id,
   identifier: payload.identifier,
   project_visibility: payload.network == 2 ? "Public" : "Private",
@@ -34,8 +36,6 @@ export const getProjectEventPayload = (payload: any) => ({
 });
 
 export const getCycleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
   cycle_id: payload.id,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -48,8 +48,6 @@ export const getCycleEventPayload = (payload: any) => ({
 });
 
 export const getModuleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
   module_id: payload.id,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -64,8 +62,6 @@ export const getModuleEventPayload = (payload: any) => ({
 });
 
 export const getPageEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
   access: payload.access === 0 ? "Public" : "Private",
@@ -77,7 +73,7 @@ export const getPageEventPayload = (payload: any) => ({
 });
 
 export const getIssueEventPayload = (props: IssueEventProps) => {
-  const { eventName, payload, updates, path } = props;
+  const { eventName, payload, updates, routePath } = props;
   let eventPayload: any = {
     issue_id: payload.id,
     estimate_point: payload.estimate_point,
@@ -102,34 +98,20 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     module_id: payload.module_id,
     archived_at: payload.archived_at,
     state: payload.state,
-    view_id: path?.includes("workspace-views") || path?.includes("views") ? path.split("/").pop() : "",
+    view_id: routePath?.includes("workspace-views") || routePath?.includes("views") ? routePath.split("/").pop() : "",
   };
 
   if (eventName === ISSUE_UPDATED) {
     eventPayload = {
       ...eventPayload,
       ...updates,
-      updated_from: props.path?.includes("workspace-views")
-        ? "All views"
-        : props.path?.includes("cycles")
-          ? "Cycle"
-          : props.path?.includes("modules")
-            ? "Module"
-            : props.path?.includes("views")
-              ? "Project view"
-              : props.path?.includes("inbox")
-                ? "Inbox"
-                : props.path?.includes("draft")
-                  ? "Draft"
-                  : "Project",
+      updated_from: elementFromPath(routePath),
     };
   }
   return eventPayload;
 };
 
 export const getProjectStateEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.id,
   state_id: payload.id,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
@@ -138,9 +120,66 @@ export const getProjectStateEventPayload = (payload: any) => ({
   default: payload.default,
   state: payload.state,
   element: payload.element,
+  change_details: payload.change_details,
 });
 
-// Workspace crud Events
+export const getIssuesListOpenedPayload = (payload: any) => ({
+  ...elementFromPath(payload?.routePath),
+  layout: payload?.displayFilters?.layout,
+  filters: payload?.filters,
+  display_properties: payload?.displayProperties,
+});
+
+export const getIssuesFilterEventPayload = (payload: any) => ({
+  filter_type: payload?.filter_type,
+  filter_property: payload?.filter_property,
+  layout: payload?.filters?.displayFilters?.layout,
+  current_filters: payload?.filters?.filters,
+  ...elementFromPath(payload?.routePath),
+});
+
+export const getIssuesDisplayFilterPayload = (payload: any) => {
+  const property =
+    payload.property_type == "order_by"
+      ? ISSUE_ORDER_BY_OPTIONS?.filter((option) => option.key === payload.property)?.[0]
+          .title.toLocaleLowerCase()
+          .replaceAll(" ", "_")
+      : payload.property;
+  return {
+    layout: payload?.filters?.displayFilters?.layout,
+    current_display_properties: payload?.filters?.displayProperties,
+    ...elementFromPath(payload?.routePath),
+    display_property: payload.display_property,
+    property: property,
+    property_type: payload.property_type,
+  };
+};
+
+export const elementFromPath = (routePath?: string) => {
+  routePath = routePath?.split("?")?.[0];
+  if (!routePath) return;
+
+  let element = "Dashboard";
+  if (routePath.includes("workspace-views")) element = "Global view";
+  else if (routePath.includes("cycles")) element = "Cycle";
+  else if (routePath.includes("modules")) element = "Module";
+  else if (routePath.includes("pages")) element = "Project page";
+  else if (routePath.includes("views")) element = "Project view";
+  else if (routePath.includes("profile")) element = "Profile";
+  else if (routePath.includes("inbox")) element = "Inbox";
+  else if (routePath.includes("draft")) element = "Draft";
+  else if (routePath.includes("archived")) element = "Archive";
+  else if (routePath.includes("projects")) element = "Project";
+
+  return {
+    element: element,
+    element_id: ["Project", "Draft", "Archive"].includes(element)
+      ? routePath.split("/")?.at(-2)
+      : routePath.split("/")?.at(-1),
+  };
+};
+
+// Workspace CRUD Events
 export const WORKSPACE_CREATED = "Workspace created";
 export const WORKSPACE_UPDATED = "Workspace updated";
 export const WORKSPACE_DELETED = "Workspace deleted";
@@ -163,27 +202,101 @@ export const MODULE_UNFAVORITED = "Module unfavorited";
 export const MODULE_LINK_CREATED = "Module link created";
 export const MODULE_LINK_UPDATED = "Module link updated";
 export const MODULE_LINK_DELETED = "Module link deleted";
+// Project View Events
+export const VIEW_CREATED = "View created";
+export const VIEW_UPDATED = "View updated";
+export const VIEW_DELETED = "View deleted";
+export const VIEW_FAVORITED = "View favorited";
+export const VIEW_UNFAVORITED = "View unfavorited";
 // Issue Events
 export const ISSUE_CREATED = "Issue created";
 export const ISSUE_UPDATED = "Issue updated";
 export const ISSUE_DELETED = "Issue deleted";
 export const ISSUE_ARCHIVED = "Issue archived";
 export const ISSUE_RESTORED = "Issue restored";
+// Comment Events
+export const COMMENT_CREATED = "Comment created";
+export const COMMENT_UPDATED = "Comment updated";
+export const COMMENT_DELETED = "Comment deleted";
+// Issue Checkout Events
+export const ISSUES_LIST_OPENED = "Issues list opened";
 export const ISSUE_OPENED = "Issue opened";
+// Issues Filter Events
+export const FILTER_APPLIED = "Filter applied";
+export const FILTER_REMOVED = "Filter removed";
+export const FILTER_SEARCHED = "Filter searched";
+// Issues Display Property Events
+export const DP_APPLIED = "Display property applied";
+export const DP_REMOVED = "Display property removed";
+// Issues Layout Property Event
+export const LP_UPDATED = "Layout property updated";
+export const LAYOUT_CHANGED = "Layout changed";
 // Project State Events
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";
 export const STATE_DELETED = "State deleted";
+// Label Events
+export const LABEL_CREATED = "Label created";
+export const LABEL_UPDATED = "Label updated";
+export const LABEL_DELETED = "Label deleted";
+export const LABEL_GROUP_DELETED = "Label group deleted";
+export const LABEL_ADDED_G = "Label added to group";
+export const LABEL_REMOVED_G = "Label removed from group";
+// Project Automation events
+export const AUTO_ARCHIVE_TOGGLED = "Auto archive toggled";
+export const AUTO_ARCHIVE_UPDATED = "Auto archive updated";
+export const AUTO_CLOSE_Toggled = "Auto close toggled";
+export const AUTO_CLOSE_UPDATED = "Auto close updated";
+// Estimate Events
+export const ESTIMATE_CREATED = "Estimate created";
+export const ESTIMATE_UPDATED = "Estimate updated";
+export const ESTIMATE_DELETED = "Estimate deleted";
+export const ESTIMATE_USED = "Estimate used";
+export const ESTIMATE_DISABLED = "Estimate disabled";
 // Project Page Events
+export const PAGE_VIEWED = "Page viewed";
 export const PAGE_CREATED = "Page created";
 export const PAGE_UPDATED = "Page updated";
 export const PAGE_DELETED = "Page deleted";
-// Member Events
+export const PAGE_FAVORITED = "Page favorited";
+export const PAGE_UNFAVORITED = "Page unfavorited";
+export const PAGE_ARCHIVED = "Page archived";
+export const PAGE_LOCKED = "Page locked";
+export const PAGE_UNLOCKED = "Page unlocked";
+export const PAGE_DUPLICATED = "Page duplicated";
+export const PAGE_RESTORED = "Page restored";
+// AI Assistant Events
+export const AI_TRIGGERED = "AI triggered";
+export const AI_RES_USED = "AI response used";
+export const AI_RES_REGENERATED = "AI response regenerated";
+// Project Member Events
+export const PROJECT_MEMBER_ADDED = "Project member added";
+export const PROJECT_MEMBER_LEFT = "Project member left";
+export const PROJECT_MEMBER_REMOVED = "Project member removed";
+export const PM_ROLE_CHANGED = "Project member role changed";
+// Workspace Member Events
 export const MEMBER_INVITED = "Member invited";
 export const MEMBER_ACCEPTED = "Member accepted";
-export const PROJECT_MEMBER_ADDED = "Project member added";
-export const PROJECT_MEMBER_LEAVE = "Project member leave";
-export const WORKSPACE_MEMBER_lEAVE = "Workspace member leave";
+export const WORKSPACE_MEMBER_REMOVED = "Workspace member removed";
+export const WORKSPACE_MEMBER_LEFT = "Workspace member left";
+export const WM_ROLE_CHANGED = "Workspace member role changed";
+// Issues Export Events
+export const ISSUES_EXPORTED = "Issues exported";
+// Issues Import Events
+export const GITHUB_ISSUES_IMPORTED = "Github issues imported";
+export const JIRA_ISSUES_IMPORTED = "Jira issues imported";
+// Webhook Events
+export const WEBHOOK_CREATED = "Webhook created";
+export const WEBHOOK_UPDATED = "Webhook updated";
+export const WEBHOOK_DELETED = "Webhook deleted";
+export const WEBHOOK_ENABLED = "Webhook enabled";
+export const WEBHOOK_DISABLED = "Webhook diabled";
+export const WEBHOOK_KEY_REGEN = "Webhook secret key regenerated";
+// API Token Events
+export const API_TOKEN_CREATED = "API token created";
+export const API_TOKEN_UPDATED = "API token updated";
+export const API_TOKEN_DELETED = "API token deleted";
+export const API_TOKEN_REGEN = "API token regenerated";
 // Sign-in & Sign-up Events
 export const NAVIGATE_TO_SIGNUP = "Navigate to sign-up page";
 export const NAVIGATE_TO_SIGNIN = "Navigate to sign-in page";
@@ -222,3 +335,79 @@ export const SNOOZED_NOTIFICATIONS = "Snoozed notifications viewed";
 export const ARCHIVED_NOTIFICATIONS = "Archived notifications viewed";
 // Groups
 export const GROUP_WORKSPACE = "Workspace_metrics";
+
+// Elements
+// Cycle Elements
+export const E_CYCLES = "Cycles page";
+export const E_CYCLES_LIST_LAYOUT = "Cycles page list layout";
+export const E_CYCLES_GRID_LAYOUT = "Cycles page grid layout";
+export const E_CYCLE_SIDEBAR = "Cycle sidebar";
+export const E_CYCLE_ISSUES = "Cycle issues page";
+export const E_CYCLES_EMPTY_STATE = "Cycles empty state";
+export const E_CYCLE_ISSUES_EMPTY_STATE = "Cycle issues empty state";
+// Module Elements
+export const E_MODULES_LIST_LAYOUT = "Modules page list layout";
+export const E_MODULES_GRID_LAYOUT = "Modules page grid layout";
+export const E_MODULES = "Modules page";
+export const E_MODULE_SIDEBAR = "Module sidebar";
+export const E_MODULE_ISSUES = "Module issues page";
+export const E_MODULES_EMPTY_STATE = "Modules empty state";
+export const E_MODULES_ISSUES_EMPTY_STATE = "Module issues empty state";
+// Project Elements
+export const E_PROJECTS = "Projects page";
+export const E_PROJECT_EMPTY_STATE = "Project empty state";
+export const E_PROJECT_ISSUES_EMPTY_STATE = "Project issues empty state";
+export const E_PROJECT_ISSUES = "Project issues page";
+// Project Page Elements
+export const E_PAGES = "Project pages page";
+export const E_PAGE_DETAILS = "Project page details";
+export const E_PAGES_EMPTY_STATE = "Pages empty state";
+// Project Views Elements
+export const E_VIEWS = "Project views page";
+export const E_VIEWS_EMPTY_STATE = "Views empty state";
+export const E_VIEW_ISSUES_EMPTY_STATE = "View issues empty state";
+// Dashboard Elements
+export const E_DASHBOARD = "Dashboard";
+export const E_DASHBOARD_EMPTY_STATE = "Dashboard empty state";
+// Global Issues Elements
+export const E_GLOBAL_ISSUES_EMPTY_STATE = "Global issues empty state";
+export const E_GLOBAL_ISSUES = "Global issues page";
+// Issue Details Elements
+export const E_ISSUE_DETAILS = "Issue details page";
+// Layout Elements
+export const E_LIST_LAYOUT = "List layout";
+export const E_KANBAN_LAYOUT = "Kanban layout";
+export const E_GRID_LAYOUT = "Grid layout";
+export const E_SPREADSHEET_LAYOUT = "Spreadsheet layout";
+// Project Settings Elements
+export const E_PROJECT_GENERAL = "Project settings general page";
+export const E_PROJECT_MEMBERS = "Project settings members page";
+export const E_LABELS = "Project settings labels page";
+export const E_STATES = "Project settings states page";
+export const E_FEATURES = "Project settings features page";
+// Analytics Elements
+export const E_ANALYTICS_EMPTY_STATE = "Analytics empty state";
+// Onboarding Elements
+export const E_ONBOARDING = "Onboarding";
+export const E_PRODUCT_TOUR = "Product tour";
+// Workspace Settings Elements
+export const E_WORKSPACE_GENERAL = "Workspace settings general page";
+export const E_WORKSPACE_MEMBERS = "Workspace settings members page";
+export const E_WORKSPACE_INVITATION = "Workspace invitations page";
+export const E_CREATE_WORKSPACE = "Create workspace page";
+export const E_JIRA_IMPORT = "Jira import detail page";
+// Inbox Elements
+export const E_INBOX = "Inbox page";
+// Notifications Elements
+export const E_Notifications = "Notifications";
+// Core Elements
+export const E_SIDEBAR = "Sidebar";
+export const E_ISSUE_PEEK_VIEW = "Issue peek view";
+export const E_COMMAND_PALETTE = "Command palette";
+export const E_SHORTCUT_KEY = "Shortcut key";
+// Quick Add Elements
+export const E_KANBAN_QUICK_ADD = "Kanban quick add";
+export const E_LIST_QUICK_ADD = "List quick add";
+export const E_CALENDAR_QUICK_ADD = "Calendar quick add";
+export const E_SPREADSHEET_QUICK_ADD = "Spreadsheet quick add";
+export const E_Gantt_QUICK_ADD = "Gantt quick add";

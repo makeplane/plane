@@ -13,9 +13,11 @@ import { EUserProjectRoles } from "constants/project";
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
-import { useProjectView, useUser } from "hooks/store";
+import { useEventTracker, useProjectView, useUser } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
+// constants
+import { E_VIEWS, VIEW_FAVORITED, VIEW_UNFAVORITED } from "constants/event-tracker";
 
 type Props = {
   view: IProjectView;
@@ -34,17 +36,30 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
     membership: { currentProjectRole },
   } = useUser();
   const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
+  const { captureEvent } = useEventTracker();
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
+      captureEvent(VIEW_FAVORITED, {
+        view_id: view.id,
+        element: E_VIEWS,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId) return;
 
-    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id).then(() => {
+      captureEvent(VIEW_UNFAVORITED, {
+        view_id: view.id,
+        element: E_VIEWS,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {

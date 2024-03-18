@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
+// hooks
+import { useEventTracker } from "hooks/store";
 // icons
 import { ArrowLeft, Check, List, Settings } from "lucide-react";
 // services
@@ -25,6 +27,8 @@ import {
   TJiraIntegrationSteps,
   IJiraIntegrationData,
 } from ".";
+// constants
+import { JIRA_ISSUES_IMPORTED } from "constants/event-tracker";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -61,9 +65,11 @@ export const JiraImporterRoot: React.FC = () => {
     state: "import-configure",
   });
   const [disableTopBarAfter, setDisableTopBarAfter] = useState<TJiraIntegrationSteps | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const methods = useForm<IJiraImporterForm>({
     defaultValues: jiraFormDefaultValues,
@@ -81,6 +87,7 @@ export const JiraImporterRoot: React.FC = () => {
       .then(() => {
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug.toString()));
         router.push(`/${workspaceSlug}/settings/imports`);
+        captureEvent(JIRA_ISSUES_IMPORTED);
       })
       .catch((err) => {
         console.error(err);

@@ -20,10 +20,19 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import {
+  E_PAGES,
+  PAGE_ARCHIVED,
+  PAGE_FAVORITED,
+  PAGE_RESTORED,
+  PAGE_UNFAVORITED,
+  PAGE_UPDATED,
+  PAGE_VIEWED,
+} from "constants/event-tracker";
 import { renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
-import { useMember, usePage, useUser } from "hooks/store";
+import { useEventTracker, useMember, usePage, useUser } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { usePlatformOS } from "hooks/use-platform-os";
 import { IIssueLabel } from "@plane/types";
@@ -40,21 +49,22 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
 
   const pageStore = usePage(pageId);
 
-  // states
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-
   const [deletePageModal, setDeletePageModal] = useState(false);
+  // store hooks
   const { isMobile } = usePlatformOS();
   const {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-
   const {
     project: { getProjectMemberDetails },
   } = useMember();
+  const { captureEvent, capturePageEvent } = useEventTracker();
 
   if (!pageStore) return null;
 
@@ -83,42 +93,82 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
   const handleAddToFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    addToFavorites();
+    addToFavorites().then(() => {
+      captureEvent(PAGE_FAVORITED, {
+        page_id: pageId,
+        element: E_PAGES,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    removeFromFavorites();
+    removeFromFavorites().then(() => {
+      captureEvent(PAGE_UNFAVORITED, {
+        page_id: pageId,
+        element: E_PAGES,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleMakePublic = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    makePublic();
+    makePublic().then(() => {
+      captureEvent(PAGE_UPDATED, {
+        page_id: pageId,
+        access: "public",
+        element: E_PAGES,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleMakePrivate = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    makePrivate();
+    makePrivate().then(() => {
+      captureEvent(PAGE_UPDATED, {
+        page_id: pageId,
+        access: "private",
+        element: E_PAGES,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleArchivePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    await archivePage(workspaceSlug as string, projectId as string, pageId as string);
+    await archivePage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+      captureEvent(PAGE_ARCHIVED, {
+        page_id: pageId,
+        access: access == 1 ? "private" : "public",
+        element: E_PAGES,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleRestorePage = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    await restorePage(workspaceSlug as string, projectId as string, pageId as string);
+    await restorePage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+      captureEvent(PAGE_RESTORED, {
+        page_id: pageId,
+        access: access == 1 ? "private" : "public",
+        element: E_PAGES,
+        state: "SUCCESS",
+      });
+    });
   };
 
   const handleDeletePage = (e: React.MouseEvent<HTMLElement>) => {
@@ -156,7 +206,18 @@ export const PagesListItem: FC<IPagesListItem> = observer(({ pageId, projectId }
       />
       <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
       <li>
-        <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}>
+        <Link
+          href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
+          onClick={() =>
+            capturePageEvent({
+              eventName: PAGE_VIEWED,
+              payload: {
+                ...pageStore,
+                element: E_PAGES,
+              },
+            })
+          }
+        >
           <div className="relative rounded p-3 md:p-4 text-custom-text-200 hover:bg-custom-background-80">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 overflow-hidden">

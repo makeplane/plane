@@ -11,6 +11,7 @@ import { ProjectLogo } from "components/project";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
+import { E_MODULES } from "constants/event-tracker";
 // hooks
 import { usePlatformOS } from "hooks/use-platform-os";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "components/modules";
@@ -213,7 +214,7 @@ export const ModulesListHeader: React.FC = observer(() => {
             size="sm"
             prependIcon={<Plus />}
             onClick={() => {
-              setTrackElement("Modules page");
+              setTrackElement(E_MODULES);
               commandPaletteStore.toggleCreateModuleModal(true);
             }}
           >

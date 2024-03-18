@@ -13,6 +13,7 @@ import NameFilterImage from "public/empty-state/module/name-filter.svg";
 import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 // constants
 import { EmptyStateType } from "constants/empty-state";
+import { E_MODULES_EMPTY_STATE } from "constants/event-tracker";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
@@ -100,7 +101,7 @@ export const ModulesListView: React.FC = observer(() => {
         <EmptyState
           type={EmptyStateType.PROJECT_MODULE}
           primaryButtonOnClick={() => {
-            setTrackElement("Module empty state");
+            setTrackElement(E_MODULES_EMPTY_STATE);
             commandPaletteStore.toggleCreateModuleModal(true);
           }}
         />

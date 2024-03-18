@@ -32,13 +32,11 @@ export interface IAppProvider {
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store hooks
-  const {
-    currentUser,
-    membership: { currentProjectRole, currentWorkspaceRole },
-  } = useUser();
-  const { currentWorkspace } = useWorkspace();
+  const { currentUser } = useUser();
+  const { currentWorkspace, workspaces } = useWorkspace();
   const {
     config: { envConfig },
+    instance: { instance },
   } = useApplication();
   // themes
   const { resolvedTheme } = useTheme();
@@ -53,8 +51,9 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
             <PostHogProvider
               user={currentUser}
               currentWorkspaceId={currentWorkspace?.id}
-              workspaceRole={currentWorkspaceRole}
-              projectRole={currentProjectRole}
+              workspaceIds={Object.keys(workspaces)}
+              isCloud={!instance?.is_telemetry_anonymous || false}
+              telemetryEnabled={instance?.is_telemetry_enabled || false}
               posthogAPIKey={envConfig?.posthog_api_key || null}
               posthogHost={envConfig?.posthog_host || null}
             >

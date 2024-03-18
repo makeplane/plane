@@ -13,7 +13,7 @@ import {
 import { ListLayoutLoader } from "components/ui";
 import { EIssuesStoreType } from "constants/issue";
 // ui
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -21,6 +21,7 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
@@ -32,6 +33,10 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           projectId.toString(),
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -55,7 +60,7 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
           <div className="relative h-full w-full overflow-auto">
             <ArchivedIssueListLayout />
           </div>
-          <IssuePeekOverview is_archived />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} is_archived />
         </Fragment>
       )}
     </div>

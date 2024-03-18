@@ -7,6 +7,8 @@ import { useApplication, useEventTracker } from "hooks/store";
 // components
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
+// constants
+import { E_VIEW_ISSUES_EMPTY_STATE } from "constants/event-tracker";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks
@@ -23,7 +25,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
           text: "New issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
           onClick: () => {
-            setTrackElement("View issue empty state");
+            setTrackElement(E_VIEW_ISSUES_EMPTY_STATE);
             commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },
         }}

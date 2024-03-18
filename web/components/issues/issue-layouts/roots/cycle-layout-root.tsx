@@ -20,7 +20,7 @@ import {
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { useCycle, useIssues } from "hooks/store";
+import { useCycle, useEventTracker, useIssues } from "hooks/store";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -30,6 +30,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
+  const { captureIssuesListOpenedEvent } = useEventTracker();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
@@ -46,6 +47,10 @@ export const CycleLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader",
           cycleId.toString()
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -126,7 +131,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
               ) : null}
             </div>
             {/* peek overview */}
-            <IssuePeekOverview />
+            <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} />
           </Fragment>
         )}
       </div>

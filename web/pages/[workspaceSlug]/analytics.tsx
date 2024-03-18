@@ -16,6 +16,7 @@ import { NextPageWithLayout } from "lib/types";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 import { EmptyStateType } from "constants/empty-state";
+import { E_ANALYTICS_EMPTY_STATE } from "constants/event-tracker";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -70,7 +71,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
         <EmptyState
           type={EmptyStateType.WORKSPACE_ANALYTICS}
           primaryButtonOnClick={() => {
-            setTrackElement("Analytics empty state");
+            setTrackElement(E_ANALYTICS_EMPTY_STATE);
             toggleCreateProjectModal(true);
           }}
         />

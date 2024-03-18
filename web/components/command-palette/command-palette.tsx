@@ -23,6 +23,8 @@ import { EIssuesStoreType } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
 import { IssueService } from "services/issue";
+// constants
+import { E_SHORTCUT_KEY } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -222,7 +224,7 @@ export const CommandPalette: FC = observer(() => {
           toggleSidebar();
         }
       } else if (!isAnyModalOpen) {
-        setTrackElement("Shortcut key");
+        setTrackElement(E_SHORTCUT_KEY);
         if (Object.keys(shortcutsList.global).includes(keyPressed)) shortcutsList.global[keyPressed].action();
         // workspace authorized actions
         else if (

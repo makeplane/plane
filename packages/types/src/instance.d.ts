@@ -12,6 +12,7 @@ export interface IInstance {
   version: string;
   last_checked_at: string;
   namespace: string | null;
+  is_telemetry_anonymous: boolean;
   is_telemetry_enabled: boolean;
   is_support_required: boolean;
   created_by: string | null;

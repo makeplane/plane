@@ -11,6 +11,8 @@ import { BreadcrumbLink } from "components/common";
 import { EUserProjectRoles } from "constants/project";
 import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import { ProjectLogo } from "components/project";
+// constants
+import { E_CYCLES } from "constants/event-tracker";
 
 export const CyclesHeader: FC = observer(() => {
   // router
@@ -68,7 +70,7 @@ export const CyclesHeader: FC = observer(() => {
               size="sm"
               prependIcon={<Plus />}
               onClick={() => {
-                setTrackElement("Cycles page");
+                setTrackElement(E_CYCLES);
                 toggleCreateCycleModal(true);
               }}
             >

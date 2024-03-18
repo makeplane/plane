@@ -17,7 +17,7 @@ import {
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // types
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
@@ -26,6 +26,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
@@ -38,6 +39,10 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader",
           viewId.toString()
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -76,7 +81,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
           </div>
 
           {/* peek overview */}
-          <IssuePeekOverview />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} />
         </Fragment>
       )}
     </div>

@@ -13,6 +13,7 @@ import { ISearchIssueResponse, TIssueLayouts } from "@plane/types";
 // constants
 import { EIssuesStoreType } from "constants/issue";
 import { EmptyStateType } from "constants/empty-state";
+import { E_MODULES_ISSUES_EMPTY_STATE } from "constants/event-tracker";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -77,7 +78,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
             isEmptyFilters
               ? undefined
               : () => {
-                  setTrackElement("Module issue empty state");
+                  setTrackElement(E_MODULES_ISSUES_EMPTY_STATE);
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }
           }

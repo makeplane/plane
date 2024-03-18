@@ -9,6 +9,7 @@ import { useEventTracker, useIssues } from "hooks/store";
 // types
 import { TIssue } from "@plane/types";
 // constants
+import { E_SPREADSHEET_LAYOUT } from "constants/event-tracker";
 
 type Props = {
   issue: TIssue;
@@ -38,10 +39,10 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
         payload: {
           ...issue,
           cycle_id: cycleId,
-          element: "Spreadsheet layout",
+          element: E_SPREADSHEET_LAYOUT,
         },
         updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
-        path: router.asPath,
+        routePath: router.asPath,
       });
     },
     [workspaceSlug, issue, addIssueToCycle, removeIssueFromCycle, captureIssueEvent, router.asPath]

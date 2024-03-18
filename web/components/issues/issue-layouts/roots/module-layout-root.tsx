@@ -18,7 +18,7 @@ import {
 import { ActiveLoader } from "components/ui";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 
@@ -28,6 +28,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId && moduleId
@@ -42,6 +43,10 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
           issues?.groupedIssueIds ? "mutation" : "init-loader",
           moduleId.toString()
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -111,7 +116,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
             ) : null}
           </div>
           {/* peek overview */}
-          <IssuePeekOverview />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} />
         </Fragment>
       )}
     </div>

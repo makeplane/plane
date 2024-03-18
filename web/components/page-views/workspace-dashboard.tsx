@@ -11,7 +11,7 @@ import { UserGreetingsView } from "components/user";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
-import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
+import { E_DASHBOARD_EMPTY_STATE, PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
 import { EmptyStateType } from "constants/empty-state";
 
 export const WorkspaceDashboardView = observer(() => {
@@ -67,7 +67,7 @@ export const WorkspaceDashboardView = observer(() => {
             <EmptyState
               type={EmptyStateType.WORKSPACE_DASHBOARD}
               primaryButtonOnClick={() => {
-                setTrackElement("Dashboard empty state");
+                setTrackElement(E_DASHBOARD_EMPTY_STATE);
                 toggleCreateProjectModal(true);
               }}
             />

@@ -6,9 +6,10 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProjectView } from "hooks/store";
+import { useEventTracker, useProjectView } from "hooks/store";
 // types
 import { IProjectView } from "@plane/types";
+import { E_VIEWS, VIEW_DELETED } from "constants/event-tracker";
 
 type Props = {
   data: IProjectView;
@@ -25,6 +26,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store hooks
   const { deleteView } = useProjectView();
+  const { captureEvent } = useEventTracker();
 
   const handleClose = () => {
     onClose();
@@ -39,20 +41,29 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
     await deleteView(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         handleClose();
-
+        captureEvent(VIEW_DELETED, {
+          view_id: data.id,
+          element: E_VIEWS,
+          state: "SUCCESS",
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "View deleted successfully.",
         });
       })
-      .catch(() =>
+      .catch(() => {
+        captureEvent(VIEW_DELETED, {
+          view_id: data.id,
+          element: E_VIEWS,
+          state: "FAILED",
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be deleted. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => {
         setIsDeleteLoading(false);
       });

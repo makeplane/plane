@@ -6,7 +6,7 @@ import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // hooks
 import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { E_GRID_LAYOUT, E_MODULES_GRID_LAYOUT, MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
 import { renderFormattedDate } from "helpers/date-time.helper";
@@ -50,7 +50,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       () => {
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
-          element: "Grid layout",
+          element: E_GRID_LAYOUT,
           state: "SUCCESS",
         });
       }
@@ -81,7 +81,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ).then(() => {
       captureEvent(MODULE_UNFAVORITED, {
         module_id: moduleId,
-        element: "Grid layout",
+        element: E_GRID_LAYOUT,
         state: "SUCCESS",
       });
     });
@@ -114,14 +114,14 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Modules page grid layout");
+    setTrackElement(E_MODULES_GRID_LAYOUT);
     setEditModal(true);
   };
 
   const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Modules page grid layout");
+    setTrackElement(E_MODULES_GRID_LAYOUT);
     setDeleteModal(true);
   };
 
@@ -160,8 +160,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (

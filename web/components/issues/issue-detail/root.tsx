@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { EmptyState } from "components/common";
 import { IssuePeekOverview } from "components/issues";
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, E_ISSUE_DETAILS } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useApplication, useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
@@ -90,22 +90,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           await updateIssue(workspaceSlug, projectId, issueId, data);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...data, issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { state: "FAILED", element: "Issue detail page" },
+            payload: { state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
           setToast({
             title: "Issue update failed",
@@ -125,8 +125,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            path: router.asPath,
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
+            routePath: router.asPath,
           });
         } catch (error) {
           setToast({
@@ -136,8 +136,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            path: router.asPath,
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
+            routePath: router.asPath,
           });
         }
       },
@@ -151,8 +151,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
-            path: router.asPath,
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
+            routePath: router.asPath,
           });
         } catch (error) {
           setToast({
@@ -162,8 +162,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "FAILED", element: "Issue details page" },
-            path: router.asPath,
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
+            routePath: router.asPath,
           });
         }
       },
@@ -184,22 +184,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           await addToCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...issueIds, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...issueIds, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { state: "FAILED", element: "Issue detail page" },
+            payload: { state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -220,22 +220,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           await removeFromCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { state: "FAILED", element: "Issue detail page" },
+            payload: { state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -256,22 +256,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           const response = await addToModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
+            payload: { ...response, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -292,22 +292,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           await removeFromModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_DETAILS },
             updates: {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -344,6 +344,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       addModulesToIssue,
       removeIssueFromModule,
       removeModulesFromIssue,
+      captureIssueEvent,
+      router.asPath,
     ]
   );
 

@@ -19,6 +19,7 @@ import { TIssue, IIssueDisplayFilterOptions } from "@plane/types";
 import { EUserProjectRoles } from "constants/project";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EMPTY_STATE_DETAILS, EmptyStateType } from "constants/empty-state";
+import { E_GLOBAL_ISSUES_EMPTY_STATE } from "constants/event-tracker";
 
 export const AllIssueLayoutRoot: React.FC = observer(() => {
   // router
@@ -40,7 +41,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
   } = useUser();
   const { fetchAllGlobalViews } = useGlobalView();
   const { workspaceProjectIds } = useProject();
-  const { setTrackElement } = useEventTracker();
+  const { setTrackElement, captureIssuesListOpenedEvent } = useEventTracker();
 
   const isDefaultView = ["all-issues", "assigned", "created", "subscribed"].includes(groupedIssueIds.dataViewId);
   const currentView = isDefaultView ? groupedIssueIds.dataViewId : "custom-view";
@@ -94,6 +95,10 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
         await fetchIssues(workspaceSlug.toString(), globalViewId.toString(), issueIds ? "mutation" : "init-loader");
         routerFilterParams();
+        captureIssuesListOpenedEvent({
+          filters: globalViewId ? filters?.[globalViewId.toString()] : undefined,
+          routePath: router.asPath,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -161,12 +166,12 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               (workspaceProjectIds ?? []).length > 0
                 ? currentView !== "custom-view" && currentView !== "subscribed"
                   ? () => {
-                      setTrackElement("All issues empty state");
+                      setTrackElement(E_GLOBAL_ISSUES_EMPTY_STATE);
                       commandPaletteStore.toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
                     }
                   : undefined
                 : () => {
-                    setTrackElement("All issues empty state");
+                    setTrackElement(E_GLOBAL_ISSUES_EMPTY_STATE);
                     commandPaletteStore.toggleCreateProjectModal(true);
                   }
             }
@@ -184,7 +189,7 @@ export const AllIssueLayoutRoot: React.FC = observer(() => {
               viewId={globalViewId}
             />
             {/* peek overview */}
-            <IssuePeekOverview />
+            <IssuePeekOverview issuesFilter={issueFilters} />
           </Fragment>
         )}
       </div>

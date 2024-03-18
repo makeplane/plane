@@ -6,18 +6,27 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { IssueView } from "components/issues";
 // ui
 // components
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "constants/event-tracker";
+import {
+  ISSUE_UPDATED,
+  ISSUE_DELETED,
+  ISSUE_ARCHIVED,
+  ISSUE_RESTORED,
+  ISSUE_OPENED,
+  elementFromPath,
+  E_ISSUE_PEEK_VIEW,
+} from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
 import { useEventTracker, useIssueDetail, useIssues, useUser } from "hooks/store";
 // components
 // types
-import { TIssue } from "@plane/types";
+import { IIssueFilters, TIssue } from "@plane/types";
 // constants
 
 interface IIssuePeekOverview {
   is_archived?: boolean;
   is_draft?: boolean;
+  issuesFilter?: IIssueFilters;
 }
 
 export type TIssuePeekOperations = {
@@ -44,9 +53,10 @@ export type TIssuePeekOperations = {
 };
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { is_archived = false, is_draft = false } = props;
+  const { is_archived = false, is_draft = false, issuesFilter } = props;
   // router
   const router = useRouter();
+  const { userId } = router.query;
   const {
     membership: { currentWorkspaceAllProjectsRole },
   } = useUser();
@@ -62,7 +72,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   } = useIssueDetail();
   const { addIssueToCycle, removeIssueFromCycle, addModulesToIssue, removeIssueFromModule, removeModulesFromIssue } =
     useIssueDetail();
-  const { captureIssueEvent } = useEventTracker();
+  const { captureEvent, captureIssueEvent } = useEventTracker();
   // state
   const [loader, setLoader] = useState(false);
 
@@ -85,19 +95,19 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           .then(() => {
             captureIssueEvent({
               eventName: ISSUE_UPDATED,
-              payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              payload: { ...data, issueId, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
               updates: {
                 changed_property: Object.keys(data).join(","),
                 change_details: Object.values(data).join(","),
               },
-              path: router.asPath,
+              routePath: router.asPath,
             });
           })
           .catch(() => {
             captureIssueEvent({
               eventName: ISSUE_UPDATED,
-              payload: { state: "FAILED", element: "Issue peek-overview" },
-              path: router.asPath,
+              payload: { state: "FAILED", element: E_ISSUE_PEEK_VIEW },
+              routePath: router.asPath,
             });
             setToast({
               title: "Issue update failed",
@@ -116,8 +126,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: router.asPath,
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
+            routePath: router.asPath,
           });
         } catch (error) {
           setToast({
@@ -127,8 +137,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_PEEK_VIEW },
+            routePath: router.asPath,
           });
         }
       },
@@ -142,8 +152,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: router.asPath,
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
+            routePath: router.asPath,
           });
         } catch (error) {
           setToast({
@@ -153,8 +163,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_PEEK_VIEW },
+            routePath: router.asPath,
           });
         }
       },
@@ -168,8 +178,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: router.asPath,
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
+            routePath: router.asPath,
           });
         } catch (error) {
           setToast({
@@ -179,8 +189,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
-            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
-            path: router.asPath,
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_PEEK_VIEW },
+            routePath: router.asPath,
           });
         }
       },
@@ -201,22 +211,22 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           await addToCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { ...issueIds, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { state: "FAILED", element: "Issue peek-overview" },
+            payload: { state: "FAILED", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "cycle_id",
               change_details: cycleId,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -237,22 +247,22 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           await removeFromCyclePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { issueId, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { state: "FAILED", element: "Issue peek-overview" },
+            payload: { state: "FAILED", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "cycle_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -273,22 +283,22 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           const response = await addToModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { ...response, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "module_id",
               change_details: moduleIds,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -309,22 +319,22 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           await removeFromModulePromise;
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            payload: { id: issueId, state: "SUCCESS", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            payload: { id: issueId, state: "FAILED", element: E_ISSUE_PEEK_VIEW },
             updates: {
               changed_property: "module_id",
               change_details: "",
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -375,6 +385,19 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       });
     }
   }, [peekIssue, issueOperations]);
+
+  useEffect(() => {
+    if (peekIssue && issuesFilter) {
+      captureEvent(ISSUE_OPENED, {
+        layout: issuesFilter?.displayFilters?.layout,
+        display_properties: issuesFilter?.displayFilters,
+        filters: issuesFilter?.filters,
+        mode: "peek",
+        profile_id: userId,
+        ...elementFromPath(router.asPath),
+      });
+    }
+  }, [peekIssue, userId, captureEvent, router.asPath]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 

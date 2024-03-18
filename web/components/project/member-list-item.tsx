@@ -9,11 +9,13 @@ import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "constants/event-tracker";
+import { E_PROJECT_MEMBERS, PM_ROLE_CHANGED, PROJECT_MEMBER_LEFT, PROJECT_MEMBER_REMOVED } from "constants/event-tracker";
 import { EUserProjectRoles } from "constants/project";
 import { ROLE } from "constants/workspace";
 // hooks
 import { useEventTracker, useMember, useProject, useUser } from "hooks/store";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
@@ -48,9 +50,9 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     if (userDetails.member?.id === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
-          captureEvent(PROJECT_MEMBER_LEAVE, {
+          captureEvent(PROJECT_MEMBER_LEFT, {
             state: "SUCCESS",
-            element: "Project settings members page",
+            element: E_PROJECT_MEMBERS,
           });
           await fetchProjects(workspaceSlug.toString());
           router.push(`/${workspaceSlug}/projects`);
@@ -63,14 +65,23 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           })
         );
     } else
-      await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), userDetails.member?.id).catch(
-        (err) =>
+      await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), userDetails.member.id)
+        .then(() => {
+          captureEvent(PROJECT_MEMBER_REMOVED, {
+            member_id: userDetails.member.id,
+            role: getUserRole(userDetails.role as number),
+            removed_by_role: currentProjectRole ? getUserRole(currentProjectRole as number) : undefined,
+            state: "SUCCESS",
+            element: E_PROJECT_MEMBERS,
+          });
+        })
+        .catch((err) =>
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error",
             message: err?.error || "Something went wrong. Please try again.",
           })
-      );
+        );
   };
 
   if (!userDetails) return null;
@@ -145,16 +156,25 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
 
               updateMember(workspaceSlug.toString(), projectId.toString(), userDetails.member?.id, {
                 role: value,
-              }).catch((err) => {
-                const error = err.error;
-                const errorString = Array.isArray(error) ? error[0] : error;
+              })
+                .then(() => {
+                  captureEvent(PM_ROLE_CHANGED, {
+                    member_id: userDetails.member.id,
+                    changed_role: getUserRole(value as number),
+                    state: "SUCCESS",
+                    element: E_PROJECT_MEMBERS,
+                  });
+                })
+                .catch((err) => {
+                  const error = err.error;
+                  const errorString = Array.isArray(error) ? error[0] : error;
 
-                setToast({
-                  type: TOAST_TYPE.ERROR,
-                  title: "Error!",
-                  message: errorString ?? "An error occurred while updating member role. Please try again.",
+                  setToast({
+                    type: TOAST_TYPE.ERROR,
+                    title: "Error!",
+                    message: errorString ?? "An error occurred while updating member role. Please try again.",
+                  });
                 });
-              });
             }}
             disabled={
               userDetails.member?.id === currentUser?.id || !currentProjectRole || currentProjectRole < userDetails.role

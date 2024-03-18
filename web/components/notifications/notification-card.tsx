@@ -8,7 +8,7 @@ import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucid
 // ui
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
+import { E_Notifications, ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
 import { snoozeOptions } from "constants/notification";
 // helper
 import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
@@ -23,6 +23,8 @@ type NotificationCardProps = {
   selectedTab: NotificationType;
   notification: IUserNotification;
   isSnoozedTabOpen: boolean;
+  isArchivedTabOpen: boolean;
+  isUnreadTabOpen: boolean;
   closePopover: () => void;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
   markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
@@ -36,6 +38,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
     selectedTab,
     notification,
     isSnoozedTabOpen,
+    isArchivedTabOpen,
+    isUnreadTabOpen,
     closePopover,
     markNotificationReadStatus,
     markNotificationReadStatusToggle,
@@ -125,7 +129,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         markNotificationReadStatus(notification.id);
         captureEvent(ISSUE_OPENED, {
           issue_id: notification.data.issue.id,
-          element: "notification",
+          element: E_Notifications,
+          element_id: isArchivedTabOpen
+            ? "archived"
+            : isSnoozedTabOpen
+            ? "snoozed"
+            : isUnreadTabOpen
+            ? "unread"
+            : selectedTab,
         });
         closePopover();
       }}

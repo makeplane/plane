@@ -5,11 +5,13 @@ import { useRouter } from "next/router";
 import { Button } from "@plane/ui";
 import { AppliedFiltersList } from "components/issues";
 import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { useIssues, useLabel, useProjectState, useProjectView } from "hooks/store";
+import { useEventTracker, useIssues, useLabel, useProjectState, useProjectView } from "hooks/store";
 // components
 // ui
 // types
 import { IIssueFilterOptions } from "@plane/types";
+// constants
+import { VIEW_UPDATED } from "constants/event-tracker";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -22,6 +24,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
+  const { captureEvent } = useEventTracker();
   // derived values
   const viewDetails = viewId ? viewMap[viewId.toString()] : null;
   const userFilters = issueFilters?.filters;
@@ -89,7 +92,14 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
       filters: {
         ...(appliedFilters ?? {}),
       },
-    });
+    }).then((res) =>
+      captureEvent(VIEW_UPDATED, {
+        view_id: res.id,
+        filters: res.filters,
+        element: "View Navbar",
+        state: "SUCCESS",
+      })
+    );
   };
 
   return (

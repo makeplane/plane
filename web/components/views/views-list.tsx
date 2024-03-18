@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
 // hooks
-import { useApplication, useProjectView } from "hooks/store";
+import { useApplication, useEventTracker, useProjectView } from "hooks/store";
 // components
 import { EmptyState } from "components/empty-state";
 import { ViewListLoader } from "components/ui";
@@ -11,6 +11,7 @@ import { ProjectViewListItem } from "components/views";
 import { Input } from "@plane/ui";
 // constants
 import { EmptyStateType } from "constants/empty-state";
+import { E_VIEWS_EMPTY_STATE } from "constants/event-tracker";
 
 export const ProjectViewsList = observer(() => {
   // states
@@ -20,6 +21,7 @@ export const ProjectViewsList = observer(() => {
     commandPalette: { toggleCreateViewModal },
   } = useApplication();
   const { projectViewIds, getViewById, loader } = useProjectView();
+  const { setTrackElement } = useEventTracker();
 
   if (loader || !projectViewIds) return <ViewListLoader />;
 
@@ -52,7 +54,13 @@ export const ProjectViewsList = observer(() => {
           </div>
         </div>
       ) : (
-        <EmptyState type={EmptyStateType.PROJECT_VIEW} primaryButtonOnClick={() => toggleCreateViewModal(true)} />
+        <EmptyState
+          type={EmptyStateType.PROJECT_VIEW}
+          primaryButtonOnClick={() => {
+            setTrackElement(E_VIEWS_EMPTY_STATE);
+            toggleCreateViewModal(true);
+          }}
+        />
       )}
     </>
   );

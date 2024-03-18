@@ -8,7 +8,7 @@ import { Check, Info, Star, User2 } from "lucide-react";
 import { Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar, setPromiseToast } from "@plane/ui";
 import { CycleQuickActions } from "components/cycles";
 import { CYCLE_STATUS } from "constants/cycle";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, E_LIST_LAYOUT } from "constants/event-tracker";
 import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 // components
@@ -52,7 +52,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
       () => {
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
-          element: "List layout",
+          element: E_LIST_LAYOUT,
           state: "SUCCESS",
         });
       }
@@ -82,7 +82,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     ).then(() => {
       captureEvent(CYCLE_UNFAVORITED, {
         cycle_id: cycleId,
-        element: "List layout",
+        element: E_LIST_LAYOUT,
         state: "SUCCESS",
       });
     });

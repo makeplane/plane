@@ -8,8 +8,9 @@ import { BreadcrumbLink } from "components/common";
 // helpers
 import { EUserProjectRoles } from "constants/project";
 // constants
-import { useApplication, useProject, useUser } from "hooks/store";
+import { useApplication, useEventTracker, useProject, useUser } from "hooks/store";
 import { ProjectLogo } from "components/project";
+import { E_VIEWS } from "constants/event-tracker";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
@@ -23,6 +24,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
     membership: { currentProjectRole },
   } = useUser();
   const { currentProjectDetails } = useProject();
+  const { setTrackElement } = useEventTracker();
 
   const canUserCreateIssue =
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
@@ -65,7 +67,10 @@ export const ProjectViewsHeader: React.FC = observer(() => {
                 variant="primary"
                 size="sm"
                 prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
-                onClick={() => toggleCreateViewModal(true)}
+                onClick={() => {
+                  setTrackElement(E_VIEWS);
+                  toggleCreateViewModal(true);
+                }}
               >
                 Create View
               </Button>

@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { IssuePeekOverview } from "components/issues/peek-overview";
 import { ActiveLoader } from "components/ui";
 import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { useEventTracker, useIssues } from "hooks/store";
 // components
 import { ProjectDraftEmptyState } from "../empty-states";
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";
@@ -21,6 +21,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
+  const { captureIssuesListOpenedEvent } = useEventTracker();
 
   useSWR(
     workspaceSlug && projectId ? `DRAFT_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
@@ -32,6 +33,10 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
           projectId.toString(),
           issues?.groupedIssueIds ? "mutation" : "init-loader"
         );
+        captureIssuesListOpenedEvent({
+          routePath: router.asPath,
+          filters: issuesFilter?.issueFilters?.filters,
+        });
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -61,7 +66,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
             <DraftKanBanLayout />
           ) : null}
           {/* issue peek overview */}
-          <IssuePeekOverview is_draft />
+          <IssuePeekOverview issuesFilter={issuesFilter.issueFilters} is_draft />
         </div>
       )}
     </div>

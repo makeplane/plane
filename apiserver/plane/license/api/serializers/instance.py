@@ -1,14 +1,10 @@
 # Module imports
+from plane.app.serializers import BaseSerializer, UserAdminLiteSerializer
 from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
-from plane.app.serializers import BaseSerializer
-from plane.app.serializers import UserAdminLiteSerializer
 from plane.license.utils.encryption import decrypt_data
 
 
 class InstanceSerializer(BaseSerializer):
-    primary_owner_details = UserAdminLiteSerializer(
-        source="primary_owner", read_only=True
-    )
 
     class Meta:
         model = Instance

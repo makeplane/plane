@@ -10,7 +10,7 @@ import {
   Droppable,
 } from "@hello-pangea/dnd";
 // hooks
-import { useLabel } from "hooks/store";
+import { useEventTracker, useLabel } from "hooks/store";
 import useDraggableInPortal from "hooks/use-draggable-portal";
 // components
 import {
@@ -41,7 +41,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store hooks
-  const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
+  const { projectLabels, updateLabelPosition, projectLabelsTree, getLabelById } = useLabel();
+  const { captureLabelDragNDropEvent } = useEventTracker();
   // portal
   const renderDraggable = useDraggableInPortal();
 
@@ -68,6 +69,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     if (destination?.droppableId === LABELS_ROOT) parentLabel = null;
 
     if (result.reason == "DROP" && childLabel != parentLabel) {
+      const childLabelData = getLabelById(childLabel);
+      captureLabelDragNDropEvent(childLabelData?.parent, parentLabel, childLabel, projectLabelsTree);
       if (workspaceSlug && projectId) {
         updateLabelPosition(
           workspaceSlug?.toString(),

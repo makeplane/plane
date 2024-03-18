@@ -1,9 +1,11 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
 // stores
+import { RootStore } from "./root.store";
+// helpers
+import { getUserRole } from "helpers/user.helper";
+// constants
 import {
-  GROUP_WORKSPACE,
-  WORKSPACE_CREATED,
   EventProps,
   IssueEventProps,
   getCycleEventPayload,
@@ -13,14 +15,24 @@ import {
   getProjectStateEventPayload,
   getWorkspaceEventPayload,
   getPageEventPayload,
+  getIssuesListOpenedPayload,
+  getIssuesFilterEventPayload,
+  getIssuesDisplayFilterPayload,
+  LP_UPDATED,
+  ISSUES_LIST_OPENED,
+  GROUP_WORKSPACE,
+  WORKSPACE_CREATED,
+  LABEL_REMOVED_G,
+  LABEL_ADDED_G,
 } from "constants/event-tracker";
-import { RootStore } from "./root.store";
+import { IIssueLabelTree } from "@plane/types";
 
 export interface IEventTrackerStore {
   // properties
   trackElement: string | undefined;
   // computed
   getRequiredProperties: any;
+  getTrackElement: string | undefined;
   // actions
   resetSession: () => void;
   setTrackElement: (element: string) => void;
@@ -33,6 +45,15 @@ export interface IEventTrackerStore {
   capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
+  captureIssuesListOpenedEvent: (payload: any) => void;
+  captureIssuesFilterEvent: (props: EventProps) => void;
+  captureIssuesDisplayFilterEvent: (props: EventProps) => void;
+  captureLabelDragNDropEvent: (
+    childLabelParent: string | null | undefined,
+    parentLabel: string | null | undefined,
+    childLabel: string | null | undefined,
+    projectLabelsTree: IIssueLabelTree[] | undefined
+  ) => void;
 }
 
 export class EventTrackerStore implements IEventTrackerStore {
@@ -44,26 +65,46 @@ export class EventTrackerStore implements IEventTrackerStore {
       trackElement: observable,
       // computed
       getRequiredProperties: computed,
+      getTrackElement: computed,
       // actions
       resetSession: action,
       setTrackElement: action,
       captureEvent: action,
       captureProjectEvent: action,
       captureCycleEvent: action,
+      captureModuleEvent: action,
+      capturePageEvent: action,
+      captureIssueEvent: action,
+      captureProjectStateEvent: action,
+      captureIssuesListOpenedEvent: action,
+      joinWorkspaceMetricGroup: action,
+      captureWorkspaceEvent: action,
     });
     // store
     this.rootStore = _rootStore;
   }
 
   /**
+   * @description: Returns the current track element.
+   */
+  get getTrackElement() {
+    return this.trackElement;
+  }
+
+  /**
    * @description: Returns the necessary property for the event tracking
    */
   get getRequiredProperties() {
+    const currentWorkspaceRole = this.rootStore.user.membership.currentWorkspaceRole;
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
     const currentProjectDetails = this.rootStore.projectRoot.project.currentProjectDetails;
     return {
       workspace_id: currentWorkspaceDetails?.id,
       project_id: currentProjectDetails?.id,
+      user_project_role: currentProjectDetails?.member_role
+        ? getUserRole(currentProjectDetails?.member_role as number)
+        : undefined,
+      user_workspace_role: getUserRole(currentWorkspaceRole as number),
     };
   }
 
@@ -118,10 +159,11 @@ export class EventTrackerStore implements IEventTrackerStore {
     if (eventName === WORKSPACE_CREATED && payload.state == "SUCCESS") {
       this.joinWorkspaceMetricGroup(payload.id);
     }
-    const eventPayload: any = getWorkspaceEventPayload({
-      ...payload,
+    const eventPayload: any = {
+      ...getWorkspaceEventPayload(payload),
+      ...this.getRequiredProperties,
       element: payload.element ?? this.trackElement,
-    });
+    };
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
@@ -132,11 +174,11 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   captureProjectEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    const eventPayload: any = getProjectEventPayload({
+    const eventPayload: any = {
+      ...getProjectEventPayload(payload),
       ...this.getRequiredProperties,
-      ...payload,
       element: payload.element ?? this.trackElement,
-    });
+    };
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
@@ -147,11 +189,11 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   captureCycleEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    const eventPayload: any = getCycleEventPayload({
+    const eventPayload: any = {
+      ...getCycleEventPayload(payload),
       ...this.getRequiredProperties,
-      ...payload,
       element: payload.element ?? this.trackElement,
-    });
+    };
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
@@ -162,11 +204,11 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   captureModuleEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    const eventPayload: any = getModuleEventPayload({
+    const eventPayload: any = {
+      ...getModuleEventPayload(payload),
       ...this.getRequiredProperties,
-      ...payload,
       element: payload.element ?? this.trackElement,
-    });
+    };
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
@@ -177,11 +219,11 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   capturePageEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    const eventPayload: any = getPageEventPayload({
+    const eventPayload: any = {
+      ...getPageEventPayload(payload),
       ...this.getRequiredProperties,
-      ...payload,
       element: payload.element ?? this.trackElement,
-    });
+    };
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
@@ -208,12 +250,89 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   captureProjectStateEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    const eventPayload: any = getProjectStateEventPayload({
+    const eventPayload: any = {
+      ...getProjectStateEventPayload(payload),
       ...this.getRequiredProperties,
-      ...payload,
       element: payload.element ?? this.trackElement,
-    });
+    };
+
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
+  };
+
+  /**
+   * @description: Captures the event whenever the issues list is opened.
+   * @param {any} payload
+   */
+  captureIssuesListOpenedEvent = (payload: any) => {
+    const eventPayload = {
+      ...getIssuesListOpenedPayload(payload),
+      ...this.getRequiredProperties,
+      type: this.getRequiredProperties.project_id ? "Project" : "Workspace",
+    };
+    posthog?.capture(ISSUES_LIST_OPENED, eventPayload);
+    this.setTrackElement(undefined);
+  };
+
+  /**
+   * @description: Captures the event whenever the issues filters are changed.
+   * @param {IssueEventProps} props
+   */
+  captureIssuesFilterEvent = (props: EventProps) => {
+    const { eventName, payload } = props;
+    const eventPayload = {
+      ...getIssuesFilterEventPayload(payload),
+      ...this.getRequiredProperties,
+      type: this.getRequiredProperties.project_id ? "Project" : "Workspace",
+    };
+    posthog?.capture(eventName, eventPayload);
+    this.setTrackElement(undefined);
+  };
+
+  /**
+   * @description: Captures the event whenever the issues display-filters are changed.
+   * @param {IssueEventProps} props
+   */
+  captureIssuesDisplayFilterEvent = (props: EventProps) => {
+    const { eventName, payload } = props;
+    const eventPayload = {
+      ...getIssuesDisplayFilterPayload(payload),
+      ...this.getRequiredProperties,
+      type: this.getRequiredProperties.project_id ? "Project" : "Workspace",
+      current_display_filter: eventName === LP_UPDATED ? payload?.filters?.displayFilters : undefined,
+    };
+    posthog?.capture(eventName, eventPayload);
+    this.setTrackElement(undefined);
+  };
+
+  captureLabelDragNDropEvent = (
+    childLabelParent: string | null | undefined,
+    parentLabel: string | null | undefined,
+    childLabel: string | null | undefined,
+    projectLabelsTree: IIssueLabelTree[] | undefined
+  ) => {
+    if (childLabelParent != parentLabel) {
+      // if the child label has a parent, then remove it from the parent and add it to a new parent.
+      if (childLabelParent) {
+        this.captureEvent(LABEL_REMOVED_G, {
+          group_id: childLabelParent,
+          child_id: childLabel,
+          child_count: (projectLabelsTree?.find((label) => label.id === childLabelParent)?.children?.length ?? 0) - 1,
+        });
+        parentLabel &&
+          this.captureEvent(LABEL_ADDED_G, {
+            group_id: parentLabel,
+            child_id: childLabel,
+            child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
+          });
+      } else {
+        // if the child label has no parent, then add it to a new parent.
+        this.captureEvent(LABEL_ADDED_G, {
+          group_id: parentLabel,
+          child_id: childLabel,
+          child_count: (projectLabelsTree?.find((label) => label.id === parentLabel)?.children?.length ?? 0) + 1,
+        });
+      }
+    }
   };
 }

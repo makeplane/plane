@@ -20,12 +20,12 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // constants
-import { MEMBER_INVITED } from "constants/event-tracker";
+import { E_ONBOARDING, MEMBER_INVITED } from "constants/event-tracker";
 import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // helpers
 import { getUserRole } from "helpers/user.helper";
 // hooks
-import { useEventTracker } from "hooks/store";
+import { useApplication, useEventTracker } from "hooks/store";
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // assets
 import userDark from "public/onboarding/user-dark.svg";
@@ -271,6 +271,9 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const { captureEvent } = useEventTracker();
+  const {
+    instance: { instance },
+  } = useApplication();
 
   const {
     control,
@@ -310,15 +313,17 @@ export const InviteMembers: React.FC<Props> = (props) => {
       })
       .then(async () => {
         captureEvent(MEMBER_INVITED, {
-          emails: [
-            ...payload.emails.map((email) => ({
-              email: email.email,
-              role: getUserRole(email.role),
-            })),
-          ],
+          emails: !instance?.is_telemetry_anonymous
+            ? [
+                ...payload.emails.map((email) => ({
+                  email: email.email,
+                  role: getUserRole(email.role),
+                })),
+              ]
+            : undefined,
           project_id: undefined,
           state: "SUCCESS",
-          element: "Onboarding",
+          element: E_ONBOARDING,
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -332,7 +337,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         captureEvent(MEMBER_INVITED, {
           project_id: undefined,
           state: "FAILED",
-          element: "Onboarding",
+          element: E_ONBOARDING,
         });
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 // ui
 import { Dialog, Transition } from "@headlessui/react";
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
+import { useEventTracker } from "hooks/store";
 // components
 // helpers
 import { csvDownload } from "helpers/download.helper";
@@ -12,6 +14,8 @@ import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
 // utils
 import { getCurrentHookAsCSV } from "./utils";
+// constants
+import { WEBHOOK_CREATED } from "constants/event-tracker";
 // ui
 
 interface ICreateWebhookModal {
@@ -35,6 +39,8 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store hooks
+  const { captureEvent } = useEventTracker();
 
   const handleCreateWebhook = async (formData: IWebhook, webhookEventType: TWebhookEventTypes) => {
     if (!workspaceSlug) return;
@@ -64,6 +70,14 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
 
     await createWebhook(workspaceSlug.toString(), payload)
       .then(({ webHook, secretKey }) => {
+        captureEvent(WEBHOOK_CREATED, {
+          webhook_id: webHook.id,
+          event_type: webhookEventType,
+          events:
+            webhookEventType === "individual"
+              ? Object.keys(payload).filter((key) => key !== "url" && payload[key as keyof IWebhook] === true)
+              : undefined,
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",

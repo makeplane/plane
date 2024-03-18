@@ -11,6 +11,7 @@ import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { E_CYCLES_LIST_LAYOUT } from "constants/event-tracker";
 
 type Props = {
   cycleId: string;
@@ -52,14 +53,14 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const handleEditCycle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Cycles page list layout");
+    setTrackElement(E_CYCLES_LIST_LAYOUT);
     setUpdateModal(true);
   };
 
   const handleDeleteCycle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setTrackElement("Cycles page list layout");
+    setTrackElement(E_CYCLES_LIST_LAYOUT);
     setDeleteModal(true);
   };
 

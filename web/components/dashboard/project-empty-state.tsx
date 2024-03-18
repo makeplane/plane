@@ -8,6 +8,7 @@ import { useApplication, useEventTracker, useUser } from "hooks/store";
 // assets
 import ProjectEmptyStateImage from "public/empty-state/dashboard/project.svg";
 // constants
+import { E_PROJECT_EMPTY_STATE } from "constants/event-tracker";
 
 export const DashboardProjectEmptyState = observer(() => {
   // store hooks
@@ -35,7 +36,7 @@ export const DashboardProjectEmptyState = observer(() => {
           <Button
             variant="primary"
             onClick={() => {
-              setTrackElement("Project empty state");
+              setTrackElement(E_PROJECT_EMPTY_STATE);
               toggleCreateProjectModal(true);
             }}
           >

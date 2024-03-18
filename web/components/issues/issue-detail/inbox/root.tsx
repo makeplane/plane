@@ -12,6 +12,7 @@ import { TIssueOperations } from "../root";
 import { InboxIssueMainContent } from "./main-content";
 import { InboxIssueDetailsSidebar } from "./sidebar";
 // constants
+import { E_INBOX } from "constants/event-tracker";
 
 export type TInboxIssueDetailRoot = {
   workspaceSlug: string;
@@ -52,12 +53,12 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
           await updateInboxIssue(workspaceSlug, projectId, inboxId, issueId, data);
           captureIssueEvent({
             eventName: "Inbox issue updated",
-            payload: { ...data, state: "SUCCESS", element: "Inbox" },
+            payload: { ...data, state: "SUCCESS", element: E_INBOX },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         } catch (error) {
           setToast({
@@ -67,12 +68,12 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
           });
           captureIssueEvent({
             eventName: "Inbox issue updated",
-            payload: { state: "SUCCESS", element: "Inbox" },
+            payload: { state: "SUCCESS", element: E_INBOX },
             updates: {
               changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
+              change_details: !data.name && !data.description_html ? Object.values(data).join(",") : undefined,
             },
-            path: router.asPath,
+            routePath: router.asPath,
           });
         }
       },
@@ -86,14 +87,14 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
           });
           captureIssueEvent({
             eventName: "Inbox issue deleted",
-            payload: { id: issueId, state: "SUCCESS", element: "Inbox" },
-            path: router.asPath,
+            payload: { id: issueId, state: "SUCCESS", element: E_INBOX },
+            routePath: router.asPath,
           });
         } catch (error) {
           captureIssueEvent({
             eventName: "Inbox issue deleted",
-            payload: { id: issueId, state: "FAILED", element: "Inbox" },
-            path: router.asPath,
+            payload: { id: issueId, state: "FAILED", element: E_INBOX },
+            routePath: router.asPath,
           });
           setToast({
             title: "Issue delete failed",
@@ -103,7 +104,7 @@ export const InboxIssueDetailRoot: FC<TInboxIssueDetailRoot> = (props) => {
         }
       },
     }),
-    [inboxId, fetchInboxIssueById, updateInboxIssue, removeInboxIssue]
+    [inboxId, fetchInboxIssueById, updateInboxIssue, removeInboxIssue, captureIssueEvent, router.asPath]
   );
 
   useSWR(

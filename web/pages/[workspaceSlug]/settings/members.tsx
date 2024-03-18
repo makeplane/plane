@@ -7,10 +7,10 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { PageHead } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
-import { MEMBER_INVITED } from "constants/event-tracker";
+import { E_WORKSPACE_MEMBERS, MEMBER_INVITED } from "constants/event-tracker";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { getUserRole } from "helpers/user.helper";
-import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -32,6 +32,9 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   // store hooks
   const { captureEvent } = useEventTracker();
   const {
+    instance: { instance },
+  } = useApplication();
+  const {
     membership: { currentWorkspaceRole },
   } = useUser();
   const {
@@ -42,19 +45,21 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
 
+    const emailsEventPayload = [
+      ...data.emails.map((email) => ({
+        email: email.email,
+        role: getUserRole(email.role),
+      })),
+    ];
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
       .then(() => {
         setInviteModal(false);
+
         captureEvent(MEMBER_INVITED, {
-          emails: [
-            ...data.emails.map((email) => ({
-              email: email.email,
-              role: getUserRole(email.role),
-            })),
-          ],
+          emails: !instance?.is_telemetry_anonymous ? emailsEventPayload : undefined,
           project_id: undefined,
           state: "SUCCESS",
-          element: "Workspace settings member page",
+          element: E_WORKSPACE_MEMBERS,
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -64,15 +69,10 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
       })
       .catch((err) => {
         captureEvent(MEMBER_INVITED, {
-          emails: [
-            ...data.emails.map((email) => ({
-              email: email.email,
-              role: getUserRole(email.role),
-            })),
-          ],
+          emails: !instance?.is_telemetry_anonymous ? emailsEventPayload : undefined,
           project_id: undefined,
           state: "FAILED",
-          element: "Workspace settings member page",
+          element: E_WORKSPACE_MEMBERS,
         });
         setToast({
           type: TOAST_TYPE.ERROR,
