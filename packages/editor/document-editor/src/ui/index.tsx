@@ -38,12 +38,12 @@ interface IDocumentEditor {
   }) => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
-  onChange: (json: any, html: string) => void;
-  forwardedRef?: any;
+  onChange: (json: object, html: string) => void;
+  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   updatePageTitle: (title: string) => void;
-  debouncedUpdatesEnabled?: boolean;
   isSubmitting: "submitting" | "submitted" | "saved";
   tabIndex?: number;
+
   // embed configuration
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
@@ -53,7 +53,6 @@ interface IDocumentEditor {
 const DocumentEditor = ({
   documentDetails,
   onChange,
-  debouncedUpdatesEnabled,
   editorContentCustomClassNames,
   value,
   uploadFile,
@@ -90,7 +89,6 @@ const DocumentEditor = ({
     onStart(json) {
       updateMarkings(json);
     },
-    debouncedUpdatesEnabled,
     restoreFile,
     value,
     uploadFile,
@@ -164,7 +162,7 @@ const DocumentEditor = ({
 };
 
 const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref} />
+  <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 ));
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";

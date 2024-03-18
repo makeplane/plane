@@ -23,9 +23,8 @@ interface CustomEditorProps {
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
   value: string;
-  debouncedUpdatesEnabled?: boolean;
-  onStart?: (json: any, html: string) => void;
-  onChange?: (json: any, html: string) => void;
+  onStart?: (json: object, html: string) => void;
+  onChange?: (json: object, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
