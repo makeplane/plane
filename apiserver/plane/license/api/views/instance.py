@@ -5,6 +5,7 @@ from smtplib import (
     SMTPAuthenticationError,
     SMTPConnectError,
     SMTPRecipientsRefused,
+    SMTPSenderRefused,
     SMTPServerDisconnected,
 )
 from urllib.parse import urlencode
@@ -471,6 +472,11 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
         except SMTPConnectError:
             return Response(
                 {"error": "Could not connect with the SMTP server."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except SMTPSenderRefused:
+            return Response(
+                {"error": "From address is invalid."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except SMTPServerDisconnected:
