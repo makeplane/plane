@@ -1,6 +1,6 @@
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Module imports
 from . import ProjectBaseModel
