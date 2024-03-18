@@ -9,8 +9,6 @@ import { ArrowRight, Plus, PanelRight } from "lucide-react";
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { ProjectAnalyticsModal } from "components/analytics";
 import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EUserProjectRoles } from "constants/project";
@@ -159,9 +157,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         cycleDetails={cycleDetails ?? undefined}
       />
       <div className="relative z-[15] w-full items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -211,9 +208,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                           {issueCount && issueCount > 0 ? (
                             <Tooltip
                               isMobile={isMobile}
-                              tooltipContent={`There are ${issueCount} ${
-                                issueCount > 1 ? "issues" : "issue"
-                              } in this cycle`}
+                              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"
+                                } in this cycle`}
                               position="bottom"
                             >
                               <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
@@ -298,9 +294,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-        </div>
-        <div className="block sm:block md:hidden">
-          <CycleMobileHeader />
         </div>
       </div>
     </>

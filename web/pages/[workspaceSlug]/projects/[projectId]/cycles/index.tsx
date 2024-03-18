@@ -27,6 +27,7 @@ import { TCycleFilters } from "@plane/types";
 // constants
 import { CYCLE_TABS_LIST } from "constants/cycle";
 import { EmptyStateType } from "constants/empty-state";
+import CyclesListMobileHeader from "components/cycles/cycles-list-mobile-header";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // states
@@ -137,7 +138,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
 ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+    <AppLayout header={<CyclesHeader />} mobileHeader={<CyclesListMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

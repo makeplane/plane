@@ -16,6 +16,7 @@ import { AppLayout } from "layouts/app-layout";
 // assets
 import { NextPageWithLayout } from "lib/types";
 import emptyModule from "public/empty-state/module.svg";
+import { ModuleMobileHeader } from "components/modules/module-mobile-header";
 // types
 
 const ModuleIssuesPage: NextPageWithLayout = observer(() => {
@@ -83,7 +84,7 @@ const ModuleIssuesPage: NextPageWithLayout = observer(() => {
 
 ModuleIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ModuleIssuesHeader />} withProjectWrapper>
+    <AppLayout header={<ModuleIssuesHeader />} mobileHeader={<ModuleMobileHeader/>} withProjectWrapper>
       {page}
     </AppLayout>
   );

@@ -10,6 +10,7 @@ import { ProjectLayoutRoot } from "components/issues";
 import { useProject } from "hooks/store";
 import { AppLayout } from "layouts/app-layout";
 import { NextPageWithLayout } from "lib/types";
+import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
 // layouts
 // hooks
 
@@ -42,7 +43,7 @@ const ProjectIssuesPage: NextPageWithLayout = observer(() => {
 
 ProjectIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ProjectIssuesHeader />} withProjectWrapper>
+    <AppLayout header={<ProjectIssuesHeader />} mobileHeader={<IssuesMobileHeader/>} withProjectWrapper>
       {page}
     </AppLayout>
   );
