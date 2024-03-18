@@ -17,6 +17,7 @@ import { AppLayout } from "layouts/app-layout";
 // assets
 import { NextPageWithLayout } from "lib/types";
 import emptyCycle from "public/empty-state/cycle.svg";
+import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
 // types
 
 const CycleDetailPage: NextPageWithLayout = observer(() => {
@@ -85,7 +86,7 @@ const CycleDetailPage: NextPageWithLayout = observer(() => {
 
 CycleDetailPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
+    <AppLayout header={<CycleIssuesHeader />} mobileHeader={<CycleMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

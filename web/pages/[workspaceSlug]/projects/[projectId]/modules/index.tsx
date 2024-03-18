@@ -13,6 +13,7 @@ import { AppLayout } from "layouts/app-layout";
 import { NextPageWithLayout } from "lib/types";
 import { calculateTotalFilters } from "helpers/filter.helper";
 import { TModuleFilters } from "@plane/types";
+import ModulesListMobileHeader from "components/modules/moduels-list-mobile-header";
 
 const ProjectModulesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -59,7 +60,7 @@ const ProjectModulesPage: NextPageWithLayout = observer(() => {
 
 ProjectModulesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<ModulesListHeader />} withProjectWrapper>
+    <AppLayout header={<ModulesListHeader />} mobileHeader={<ModulesListMobileHeader/>} withProjectWrapper>
       {page}
     </AppLayout>
   );

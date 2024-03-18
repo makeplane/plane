@@ -44,20 +44,24 @@ export interface IIssueDetail
     IIssueCommentReactionStoreActions {
   // observables
   peekIssue: TPeekIssue | undefined;
+  isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
   isArchiveIssueModalOpen: boolean;
   isRelationModalOpen: TIssueRelationTypes | null;
+  isSubIssuesModalOpen: boolean;
   // computed
   isAnyModalOpen: boolean;
   // actions
   setPeekIssue: (peekIssue: TPeekIssue | undefined) => void;
+  toggleCreateIssueModal: (value: boolean) => void;
   toggleIssueLinkModal: (value: boolean) => void;
   toggleParentIssueModal: (value: boolean) => void;
   toggleDeleteIssueModal: (value: boolean) => void;
   toggleArchiveIssueModal: (value: boolean) => void;
   toggleRelationModal: (value: TIssueRelationTypes | null) => void;
+  toggleSubIssuesModal: (value: boolean) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -75,11 +79,13 @@ export interface IIssueDetail
 export class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
+  isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
   isArchiveIssueModalOpen: boolean = false;
   isRelationModalOpen: TIssueRelationTypes | null = null;
+  isSubIssuesModalOpen: boolean = false;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -97,20 +103,24 @@ export class IssueDetail implements IIssueDetail {
     makeObservable(this, {
       // observables
       peekIssue: observable,
+      isCreateIssueModalOpen: observable,
       isIssueLinkModalOpen: observable.ref,
       isParentIssueModalOpen: observable.ref,
       isDeleteIssueModalOpen: observable.ref,
       isArchiveIssueModalOpen: observable.ref,
       isRelationModalOpen: observable.ref,
+      isSubIssuesModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
       setPeekIssue: action,
+      toggleCreateIssueModal: action,
       toggleIssueLinkModal: action,
       toggleParentIssueModal: action,
       toggleDeleteIssueModal: action,
       toggleArchiveIssueModal: action,
       toggleRelationModal: action,
+      toggleSubIssuesModal: action,
     });
 
     // store
@@ -130,21 +140,25 @@ export class IssueDetail implements IIssueDetail {
   // computed
   get isAnyModalOpen() {
     return (
+      this.isCreateIssueModalOpen ||
       this.isIssueLinkModalOpen ||
       this.isParentIssueModalOpen ||
       this.isDeleteIssueModalOpen ||
       this.isArchiveIssueModalOpen ||
-      Boolean(this.isRelationModalOpen)
+      Boolean(this.isRelationModalOpen) ||
+      this.isSubIssuesModalOpen
     );
   }
 
   // actions
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);
+  toggleCreateIssueModal = (value: boolean) => (this.isCreateIssueModalOpen = value);
   toggleIssueLinkModal = (value: boolean) => (this.isIssueLinkModalOpen = value);
   toggleParentIssueModal = (value: boolean) => (this.isParentIssueModalOpen = value);
   toggleDeleteIssueModal = (value: boolean) => (this.isDeleteIssueModalOpen = value);
   toggleArchiveIssueModal = (value: boolean) => (this.isArchiveIssueModalOpen = value);
   toggleRelationModal = (value: TIssueRelationTypes | null) => (this.isRelationModalOpen = value);
+  toggleSubIssuesModal = (value: boolean) => (this.isSubIssuesModalOpen = value);
 
   // issue
   fetchIssue = async (

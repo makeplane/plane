@@ -28,6 +28,7 @@ import { TCycleFilters } from "@plane/types";
 import { CYCLE_TABS_LIST } from "constants/cycle";
 import { EmptyStateType } from "constants/empty-state";
 import { E_CYCLES_EMPTY_STATE } from "constants/event-tracker";
+import CyclesListMobileHeader from "components/cycles/cycles-list-mobile-header";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   // states
@@ -48,7 +49,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const pageTitle = project?.name ? `${project?.name} - Cycles` : undefined;
   // selected display filters
   const cycleTab = currentProjectDisplayFilters?.active_tab;
-  const cycleLayout = currentProjectDisplayFilters?.layout;
+  const cycleLayout = currentProjectDisplayFilters?.layout ?? "list";
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
     if (!projectId) return;
@@ -121,14 +122,12 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <ActiveCycleRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Tab.Panel>
               <Tab.Panel as="div" className="h-full overflow-y-auto">
-                {cycleTab && cycleLayout && (
-                  <CyclesView
-                    layout={cycleLayout}
-                    workspaceSlug={workspaceSlug.toString()}
-                    projectId={projectId.toString()}
-                    peekCycle={peekCycle?.toString()}
-                  />
-                )}
+                <CyclesView
+                  layout={cycleLayout}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
+                />
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
@@ -140,7 +139,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
 ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+    <AppLayout header={<CyclesHeader />} mobileHeader={<CyclesListMobileHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

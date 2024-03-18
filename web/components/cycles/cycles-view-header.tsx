@@ -42,6 +42,8 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+  // derived values
+  const activeLayout = currentProjectDisplayFilters?.layout ?? "list";
 
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
@@ -140,9 +142,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
                 <button
                   type="button"
                   className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                    currentProjectDisplayFilters?.layout == layout.key
-                      ? "bg-custom-background-100 shadow-custom-shadow-2xs"
-                      : ""
+                    activeLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
                   }`}
                   onClick={() =>
                     updateDisplayFilters(projectId, {
@@ -153,9 +153,7 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
                   <layout.icon
                     strokeWidth={2}
                     className={`h-3.5 w-3.5 ${
-                      currentProjectDisplayFilters?.layout == layout.key
-                        ? "text-custom-text-100"
-                        : "text-custom-text-200"
+                      activeLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
                     }`}
                   />
                 </button>
