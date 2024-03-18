@@ -28,6 +28,8 @@ type Props = {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   viewId?: string;
   readOnly?: boolean;
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
@@ -43,6 +45,8 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     addIssuesToView,
     viewId,
     readOnly = false,
+    selectedDate,
+    setSelectedDate,
   } = props;
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
@@ -52,7 +56,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`grid divide-x-[0.5px] divide-custom-border-200 ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
+      className={`grid md:divide-x-[0.5px] divide-custom-border-200 ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
         calendarLayout === "month" ? "" : "h-full"
       }`}
     >
@@ -61,6 +65,8 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
 
         return (
           <CalendarDayTile
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
             issuesFilterStore={issuesFilterStore}
             key={renderFormattedPayloadDate(date.date)}
             date={date}
