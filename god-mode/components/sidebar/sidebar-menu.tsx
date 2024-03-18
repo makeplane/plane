@@ -13,49 +13,56 @@ const INSTANCE_ADMIN_LINKS = [
     name: "General",
     description: "Identify your instances and get key details",
     href: `/`,
+    highlight: (pathname: string) => pathname === "/",
   },
   {
     Icon: Mail,
     name: "Email",
     description: "Set up emails to your users",
     href: `/email`,
+    highlight: (pathname: string) => pathname === "/email",
   },
   {
     Icon: Lock,
-    name: "SSO and OAuth",
-    description: "Configure your Google and GitHub SSOs",
-    href: `/authorization`,
+    name: "Authentication",
+    description: "Configure authentication modes",
+    href: `/authentication`,
+    highlight: (pathname: string) => pathname.includes("/authentication"),
   },
   {
     Icon: BrainCog,
     name: "Artificial intelligence",
     description: "Configure your OpenAI creds",
     href: `/ai`,
+    highlight: (pathname: string) => pathname === "/ai",
   },
   {
     Icon: Image,
     name: "Images in Plane",
     description: "Allow third-party image libraries",
     href: `/image`,
+    highlight: (pathname: string) => pathname === "/image",
   },
 ];
 
 export const SidebarMenu = observer(() => {
   // store hooks
-  const { sidebarCollapsed } = useAppTheme();
+  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   // router
   const pathName = usePathname();
+
+  const handleItemClick = () => {
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  };
 
   return (
     <div className="flex h-full w-full flex-col gap-2.5 overflow-y-auto px-4 py-6">
       {INSTANCE_ADMIN_LINKS.map((item, index) => {
-        const isActive =
-          item.name === "Settings"
-            ? pathName.includes(item.href)
-            : pathName === item.href;
-
+        const isActive = item.highlight(pathName);
         return (
-          <Link key={index} href={item.href}>
+          <Link key={index} href={item.href} onClick={handleItemClick}>
             <div>
               <Tooltip
                 tooltipContent={item.name}
