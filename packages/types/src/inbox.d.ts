@@ -6,9 +6,11 @@ export type TInboxIssueListResponse = TPaginationInfo & {
   results: TInboxIssue[];
 };
 
+export type TInboxIssueStatus = -2 | -1 | 0 | 1 | 2;
+
 export type TInboxIssue = {
   id: string;
-  status: -2 | -1 | 0 | 1 | 2;
+  status: TInboxIssueStatus;
   snoozed_till: Date | null;
   duplicate_to: string | null;
   source: string;

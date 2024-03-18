@@ -33,6 +33,7 @@ export interface IProjectInboxStore {
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
   updateInboxIssuePriorityFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+  applyResolvedInboxIssueFilter: (workspaceSlug: string, projectId: string) => void;
   updateInboxIssueStatusFilter: (workspaceSlug: string, projectId: string, value: number) => void;
   resetInboxFilters: (workspaceSlug: string, projectId: string) => void;
   resetInboxPriorityFilters: (workspaceSlug: string, projectId: string) => void;
@@ -64,6 +65,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       createInboxIssue: action,
       deleteInboxIssue: action,
       updateInboxIssuePriorityFilter: action,
+      applyResolvedInboxIssueFilter: action,
       updateInboxIssueStatusFilter: action,
       resetInboxFilters: action,
       resetInboxPriorityFilters: action,
@@ -226,6 +228,17 @@ export class ProjectInboxStore implements IProjectInboxStore {
           inbox_status: uniq(inboxStatusFilter),
         };
       }
+    });
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  };
+
+  applyResolvedInboxIssueFilter = (workspaceSlug: string, projectId: string) => {
+    runInAction(() => {
+      const resolvedStatus = [-1, 0, 1, 2];
+      this.inboxFilters = {
+        ...this.inboxFilters,
+        inbox_status: uniq(resolvedStatus),
+      };
     });
     this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
   };
