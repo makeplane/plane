@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useInstance from "hooks/use-instance";
@@ -6,11 +6,9 @@ import useInstance from "hooks/use-instance";
 import { Button, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ControllerInput, TControllerInputFormField } from "components/common";
+import { SendTestEmailModal } from "./send-test-email-modal";
 // types
-import {
-  IFormattedInstanceConfiguration,
-  TInstanceEmailConfigurationKeys,
-} from "@plane/types";
+import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
 
 type IInstanceEmailForm = {
   config: IFormattedInstanceConfiguration;
@@ -20,6 +18,8 @@ type EmailFormValues = Record<TInstanceEmailConfigurationKeys, string>;
 
 export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   const { config } = props;
+  // states
+  const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
   // store hooks
   const { updateInstanceConfigurations } = useInstance();
   // form data
@@ -101,6 +101,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
 
   return (
     <>
+      <SendTestEmailModal isOpen={isSendTestEmailModalOpen} handleClose={() => setIsSendTestEmailModalOpen(false)} />
       <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-center justify-between gap-x-20 gap-y-10 lg:grid-cols-2">
         {emailFormFields.map((field) => (
           <ControllerInput
@@ -120,12 +121,9 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
         <div className="mr-8 flex items-center gap-10 pt-4">
           <div className="grow">
             <div className="text-sm font-medium text-custom-text-100">
-              Turn TLS{" "}
-              {Boolean(parseInt(watch("EMAIL_USE_TLS"))) ? "off" : "on"}
+              Turn TLS {Boolean(parseInt(watch("EMAIL_USE_TLS"))) ? "off" : "on"}
             </div>
-            <div className="text-xs font-normal text-custom-text-300">
-              Use this if your email domain supports TLS.
-            </div>
+            <div className="text-xs font-normal text-custom-text-300">Use this if your email domain supports TLS.</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -135,9 +133,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
                 <ToggleSwitch
                   value={Boolean(parseInt(value))}
                   onChange={() => {
-                    Boolean(parseInt(value)) === true
-                      ? onChange("0")
-                      : onChange("1");
+                    Boolean(parseInt(value)) === true ? onChange("0") : onChange("1");
                   }}
                   size="sm"
                 />
@@ -173,13 +169,12 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
         </div> */}
       </div>
 
-      <div className="flex max-w-4xl items-center py-1">
-        <Button
-          variant="primary"
-          onClick={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-        >
+      <div className="flex max-w-4xl items-center py-1 gap-4">
+        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
+        </Button>
+        <Button variant="outline-primary" onClick={() => setIsSendTestEmailModalOpen(true)} loading={isSubmitting}>
+          Send test email
         </Button>
       </div>
     </>
