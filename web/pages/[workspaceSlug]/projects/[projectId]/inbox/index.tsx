@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { Inbox } from "lucide-react";
 // ui
 import { Loader } from "@plane/ui";
+import { Tab } from "@headlessui/react";
 // components
 import { PageHead } from "components/core";
 import { ProjectInboxHeader } from "components/headers";
@@ -54,7 +55,6 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
   useSWR(`PROJECT_INBOX_ISSUES_${projectId}`, () => fetchInboxIssues(workspaceSlug.toString(), projectId.toString()), {
     revalidateOnFocus: false,
   });
-
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Inbox` : undefined;
 
@@ -75,46 +75,104 @@ const ProjectInboxPage: NextPageWithLayout = observer(() => {
       <PageHead title={pageTitle} />
       <div className="relative flex h-full overflow-hidden">
         <div className="flex-shrink-0 w-[340px] h-full border-r border-custom-border-300">
-          <div className="relative flex flex-col w-full h-full">
-            <div className="flex-shrink-0 w-full h-[50px] relative flex justify-between items-center gap-2 p-2 px-3 border-b border-custom-border-300">
-              <div className="relative flex items-center gap-1">
-                <div className="relative w-6 h-6 flex justify-center items-center rounded bg-custom-background-80">
-                  <Inbox className="w-4 h-4" />
-                </div>
+          <Tab.Group>
+            <Tab.List className="flex-shrink-0 w-full h-[50px] relative flex justify-between items-center gap-2 p-2 px-3 border-b border-custom-border-300">
+              <div className="flex items-center gap-2">
+                <Tab
+                  className={({ selected }) =>
+                    `rounded-3xl text-sm px-2.5 py-0.5 border border-custom-border-200 text-custom-text-100 ${
+                      selected
+                        ? "bg-custom-background-100 text-custom-text-300 border-custom-border-400"
+                        : "text-custom-text-400 hover:text-custom-text-300"
+                    }`
+                  }
+                >
+                  Open
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                    `rounded-3xl text-sm px-2.5 py-0.5 border border-custom-border-200 text-custom-text-100 ${
+                      selected
+                        ? "bg-custom-background-100 text-custom-text-300 border-custom-border-400"
+                        : "text-custom-text-400 hover:text-custom-text-300"
+                    }`
+                  }
+                >
+                  Closed
+                </Tab>
               </div>
               <div className="z-20">
                 <InboxIssueFilterSelection workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </div>
-            </div>
-            <div className="w-full h-auto">
-              <InboxIssueAppliedFilter workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-            </div>
-            <div className="w-full h-full overflow-hidden">
-              <div className="overflow-y-auto w-full h-full vertical-scrollbar scrollbar-md" ref={containerRef}>
-                <InboxIssueList
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  projectIdentifier={currentProjectDetails?.identifier}
-                  inboxIssues={inboxIssuesArray}
-                />
-                <div className="mt-4" ref={elementRef}>
-                  {paginationInfo?.next_page_results && (
-                    <Loader className="mx-auto w-full space-y-4 pb-4">
-                      <Loader.Item height="64px" width="w-100" />
-                      <Loader.Item height="64px" width="w-100" />
-                    </Loader>
+            </Tab.List>
+            <Tab.Panels className="h-full overflow-y-auto">
+              <div className="w-full h-auto">
+                <InboxIssueAppliedFilter workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+              </div>
+              <Tab.Panel as="div" className="w-full h-full overflow-hidden">
+                <div className="overflow-y-auto w-full h-full vertical-scrollbar scrollbar-md" ref={containerRef}>
+                  <InboxIssueList
+                    workspaceSlug={workspaceSlug.toString()}
+                    projectId={projectId.toString()}
+                    projectIdentifier={currentProjectDetails?.identifier}
+                    inboxIssues={inboxIssuesArray}
+                    type="pending"
+                  />
+                  <div className="mt-4" ref={elementRef}>
+                    {paginationInfo?.next_page_results && (
+                      <Loader className="mx-auto w-full space-y-4 pb-4">
+                        <Loader.Item height="64px" width="w-100" />
+                        <Loader.Item height="64px" width="w-100" />
+                      </Loader>
+                    )}
+                  </div>
+                </div>
+              </Tab.Panel>
+              <Tab.Panel as="div" className="w-full h-full overflow-hidden">
+                <div className="overflow-y-auto w-full h-full vertical-scrollbar scrollbar-md" ref={containerRef}>
+                  <InboxIssueList
+                    workspaceSlug={workspaceSlug.toString()}
+                    projectId={projectId.toString()}
+                    projectIdentifier={currentProjectDetails?.identifier}
+                    inboxIssues={inboxIssuesArray}
+                    type="resolved"
+                  />
+                  <div className="mt-4" ref={elementRef}>
+                    {paginationInfo?.next_page_results && (
+                      <Loader className="mx-auto w-full space-y-4 pb-4">
+                        <Loader.Item height="64px" width="w-100" />
+                        <Loader.Item height="64px" width="w-100" />
+                      </Loader>
+                    )}
+                  </div>
+                </div>
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
+        </div>
+        <div className="w-full">
+          {inboxIssueId ? (
+            <InboxContentRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              inboxIssueId={inboxIssueId.toString()}
+            />
+          ) : (
+            <div className="grid h-full place-items-center p-4 text-custom-text-200">
+              <div className="grid h-full place-items-center">
+                <div className="my-5 flex flex-col items-center gap-4">
+                  <Inbox size={60} strokeWidth={1.5} />
+                  {inboxIssuesArray && inboxIssuesArray.length > 0 ? (
+                    <span className="text-custom-text-200">
+                      {inboxIssuesArray?.length} issues found. Select an issue from the sidebar to view its details.
+                    </span>
+                  ) : (
+                    <span className="text-custom-text-200">No issues found</span>
                   )}
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="w-full">
-          {/* <InboxContentRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            inboxIssueId={inboxIssueId?.toString() || undefined}
-          /> */}
+          )}
         </div>
       </div>
     </div>

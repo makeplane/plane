@@ -8,7 +8,7 @@ import { useEventTracker, useInboxIssues, useIssueDetail, useUser } from "hooks/
 // ui
 // types
 import { TIssue } from "@plane/types";
-import { TIssueOperations } from "../root";
+import { TIssueOperations } from "./root";
 import { InboxIssueMainContent } from "./main-content";
 import { InboxIssueDetailsSidebar } from "./sidebar";
 // constants

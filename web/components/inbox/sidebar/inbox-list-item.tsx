@@ -10,14 +10,14 @@ import { Tooltip, PriorityIcon } from "@plane/ui";
 import { InboxIssueStatus } from "components/inbox";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
-// types
-import { TInboxIssue } from "@plane/types";
+// store
+import { IInboxIssueStore } from "store/inbox-issue.store";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
   projectId: string;
   projectIdentifier?: string;
-  inboxIssue: TInboxIssue;
+  inboxIssue: IInboxIssueStore;
 };
 
 export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
@@ -71,7 +71,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
-              <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
+              <PriorityIcon priority={issue.priority ?? "none"} className="h-3.5 w-3.5" />
             </Tooltip>
             <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}>
               <div className="flex items-center gap-1 rounded border border-custom-border-200 px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">

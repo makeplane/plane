@@ -10,7 +10,6 @@ export class InboxIssueService extends APIService {
   }
 
   async list(workspaceSlug: string, projectId: string, params = {}): Promise<TInboxIssueListResponse> {
-    console.log("params", params);
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/`, {
       params,
     })
@@ -45,7 +44,7 @@ export class InboxIssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     inboxIssueId: string,
-    data: { issue: Partial<TIssue> }
+    data: Partial<TInboxIssue>
   ): Promise<TInboxIssue> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/`, data)
       .then((response) => response?.data)

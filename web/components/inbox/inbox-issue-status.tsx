@@ -2,13 +2,13 @@ import React from "react";
 import { observer } from "mobx-react";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
-// types
-import { TInboxIssue } from "@plane/types";
+// store
+import { IInboxIssueStore } from "store/inbox-issue.store";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  inboxIssue: TInboxIssue;
+  inboxIssue: IInboxIssueStore;
   iconSize?: number;
   showDescription?: boolean;
 };

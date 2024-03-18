@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-// hooks
+// ui
 import { StateGroupIcon } from "@plane/ui";
-import { IssueUpdateStatus, TIssueOperations } from "components/issues";
+// hooks
 import { useIssueDetail, useProjectState, useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
-import { InboxIssueStatus } from "../../../inbox/inbox-issue-status";
-import { IssueDescriptionInput } from "../../description-input";
-import { IssueTitleInput } from "../../title-input";
-import { IssueActivity } from "../issue-activity";
-import { IssueReaction } from "../reactions";
-// ui
+import {
+  IssueDescriptionInput,
+  IssueTitleInput,
+  IssueActivity,
+  IssueReaction,
+  IssueUpdateStatus,
+  TIssueOperations,
+} from "components/issues";
+import { InboxIssueStatus } from "../inbox-issue-status";
 
 type Props = {
   workspaceSlug: string;

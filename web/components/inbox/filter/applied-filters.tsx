@@ -24,7 +24,7 @@ export const InboxIssueAppliedFilter: FC<InboxIssueAppliedFilterProps> = observe
     resetInboxFilters,
   } = useProjectInbox();
 
-  console.log("inboxFilters", inboxFilters);
+  // console.log("inboxFilters", inboxFilters);
 
   if (!inboxFilters || inboxIssuesFiltersLength <= 0) return <></>;
 
@@ -45,7 +45,7 @@ export const InboxIssueAppliedFilter: FC<InboxIssueAppliedFilterProps> = observe
                     updateInboxIssuePriorityFilter(workspaceSlug, projectId, priority)
                   }
                 />
-                <button type="button" onClick={() => resetInboxPriorityFilters()}>
+                <button type="button" onClick={() => resetInboxPriorityFilters(workspaceSlug, projectId)}>
                   <X className="h-3 w-3" />
                 </button>
               </div>
@@ -67,7 +67,7 @@ export const InboxIssueAppliedFilter: FC<InboxIssueAppliedFilterProps> = observe
 
       <button
         type="button"
-        onClick={() => resetInboxFilters()}
+        onClick={() => resetInboxFilters(workspaceSlug, projectId)}
         className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>

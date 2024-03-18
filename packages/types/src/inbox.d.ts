@@ -13,6 +13,7 @@ export type TInboxIssue = {
   duplicate_to: string | null;
   source: string;
   issue: TIssue;
+  created_by: string;
 };
 
 export type TInboxIssueFilterOptions = {

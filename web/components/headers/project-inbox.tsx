@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCcw } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
@@ -26,7 +26,7 @@ export const ProjectInboxHeader: FC = observer(() => {
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <SidebarHamburgerToggle />
-        <div>
+        <div className="flex items-center gap-4">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -51,8 +51,13 @@ export const ProjectInboxHeader: FC = observer(() => {
                 <BreadcrumbLink label="Inbox Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
               }
             />
-            {isLoading && <span>Syncing...</span>}
           </Breadcrumbs>
+          {isLoading && (
+            <div className="flex items-center gap-1.5 text-custom-text-300">
+              <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
+              <p className="text-sm">Syncing...</p>
+            </div>
+          )}
         </div>
       </div>
 
