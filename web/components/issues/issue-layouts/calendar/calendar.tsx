@@ -174,6 +174,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               viewId={viewId}
               readOnly={readOnly}
               isDragDisabled
+              isMobileView
             />
           </div>
         </div>
