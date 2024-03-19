@@ -4,4 +4,6 @@ from .instance import (
     InstanceConfigurationEndpoint,
     InstanceAdminSignInEndpoint,
     SignUpScreenVisitedEndpoint,
+    ExportWorkspaceEndpoint,
+    ImportWorkspaceEndpoint,
 )

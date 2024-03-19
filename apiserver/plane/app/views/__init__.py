@@ -38,7 +38,6 @@ from .workspace.base import (
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
     ExportWorkspaceUserActivityEndpoint,
-    ExportWorkspaceEndpoint,
 )
 
 from .workspace.member import (

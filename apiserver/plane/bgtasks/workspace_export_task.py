@@ -152,23 +152,23 @@ def upload_to_s3(zip_file, workspace_id, slug):
 
 
 @shared_task
-def workspace_export(slug, origin, email):
+def workspace_export(workspace_id, email):
     # Get the workspace
-    workspace = Workspace.objects.get(slug=slug)
-    workspace_id = workspace.id
+    workspace = Workspace.objects.get(pk=workspace_id)
+    slug = workspace.slug
     # Store all files
     files = []
 
     # Users that need to be exported
-    emails = WorkspaceMember.objects.filter(workspace__slug=slug).values_list(
-        "member__email", flat=True
-    )
+    emails = WorkspaceMember.objects.filter(
+        workspace_id=workspace_id
+    ).values_list("member__email", flat=True)
     users = User.objects.filter(email__in=emails).values()
 
     users_json = json.dumps(list(users), cls=DjangoJSONEncoder)
     files.append({"filename": "users.json", "data": users_json})
 
-    workspace = list(Workspace.objects.filter(slug=slug).values())
+    workspace = list(Workspace.objects.filter(pk=workspace_id).values())
     workspace_json = json.dumps(workspace, cls=DjangoJSONEncoder)
     files.append({"filename": "workspaces.json", "data": workspace_json})
 

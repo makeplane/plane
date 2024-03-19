@@ -1,7 +1,6 @@
 from django.urls import path
 
 from plane.app.views import (
-    ExportWorkspaceEndpoint,
     ExportWorkspaceUserActivityEndpoint,
     TeamMemberViewSet,
     UserLastProjectWithWorkspaceEndpoint,
@@ -235,10 +234,5 @@ urlpatterns = [
         "workspaces/<str:slug>/cycles/",
         WorkspaceCyclesEndpoint.as_view(),
         name="workspace-cycles",
-    ),
-    path(
-        "workspaces/<str:slug>/export/",
-        ExportWorkspaceEndpoint.as_view(),
-        name="workspace-exports",
     ),
 ]

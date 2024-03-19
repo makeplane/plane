@@ -1,32 +1,38 @@
 # Python imports
 import uuid
+import zipfile
 
 # Django imports
-from django.utils import timezone
 from django.contrib.auth.hashers import make_password
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
-from rest_framework.response import Response
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Module imports
+from plane.app.serializers.workspace import WorkspaceLiteSerializer
 from plane.app.views import BaseAPIView
-from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
-from plane.license.api.serializers import (
-    InstanceSerializer,
-    InstanceAdminSerializer,
-    InstanceConfigurationSerializer,
-)
+from plane.bgtasks.workspace_export_task import workspace_export
+from plane.bgtasks.workspace_import_task import workspace_import
+from plane.db.models import User, Workspace
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
-from plane.db.models import User
+from plane.license.api.serializers import (
+    InstanceAdminSerializer,
+    InstanceConfigurationSerializer,
+    InstanceSerializer,
+)
+from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
 from plane.license.utils.encryption import encrypt_data
 from plane.utils.cache import cache_response, invalidate_cache
+
 
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
@@ -272,3 +278,84 @@ class SignUpScreenVisitedEndpoint(BaseAPIView):
         instance.is_signup_screen_visited = True
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InstanceWorkspacesEndpoint(BaseAPIView):
+
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
+
+    def get(self, request):
+        workspaces = Workspace.objects.all()
+        serializer = WorkspaceLiteSerializer(workspaces, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ExportWorkspaceEndpoint(BaseAPIView):
+
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
+
+    def post(self, request):
+        workspace_id = request.data.get("workspace_id", False)
+
+        if not workspace_id:
+            return Response(
+                {"error": "Workspace ID is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        workspace_export.delay(
+            workspace_id=workspace_id,
+            email=request.user.email,
+        )
+        return Response(
+            {
+                "message": "An email will be sent to download the exports when they are ready"
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class ImportWorkspaceEndpoint(BaseAPIView):
+
+    parser_classes = (
+        MultiPartParser,
+        FormParser,
+        JSONParser,
+    )
+
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
+
+    def post(self, request):
+        file_obj = request.FILES.get("zip_file")
+        if file_obj is None:
+            return Response(
+                "No file uploaded.", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Ensure the uploaded file is a ZIP file
+        if not zipfile.is_zipfile(file_obj):
+            return Response(
+                "Uploaded file is not a valid zip file.",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Reading contents of the ZIP file
+        file_contents = {}
+        with zipfile.ZipFile(file_obj, "r") as zip_ref:
+            for file_name in zip_ref.namelist():
+                with zip_ref.open(file_name) as file:
+                    # Assuming the file content is text. Use file.read() for binary content.
+                    content = file.read().decode("utf-8")
+                    file_contents[file_name] = content
+
+        workspace_import.delay(workspace_data=file_contents)
+        return Response(
+            {"message": "Files processed.", "file_count": len(file_contents)},
+            status=status.HTTP_200_OK,
+        )

@@ -1,10 +1,12 @@
 from django.urls import path
 
 from plane.license.api.views import (
-    InstanceEndpoint,
+    ExportWorkspaceEndpoint,
+    ImportWorkspaceEndpoint,
     InstanceAdminEndpoint,
-    InstanceConfigurationEndpoint,
     InstanceAdminSignInEndpoint,
+    InstanceConfigurationEndpoint,
+    InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
 )
 
@@ -38,5 +40,15 @@ urlpatterns = [
         "admins/sign-up-screen-visited/",
         SignUpScreenVisitedEndpoint.as_view(),
         name="instance-sign-up",
+    ),
+    path(
+        "export-workspace/",
+        ExportWorkspaceEndpoint.as_view(),
+        name="workspace-exports",
+    ),
+    path(
+        "import-workspace/",
+        ImportWorkspaceEndpoint.as_view(),
+        name="workspace-imports",
     ),
 ]

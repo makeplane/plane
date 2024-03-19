@@ -4,6 +4,8 @@ import io
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
+
+# Django imports
 from django.db import IntegrityError
 from django.db.models import (
     Count,
@@ -15,8 +17,6 @@ from django.db.models import (
 )
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
-
-# Django imports
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -36,7 +36,6 @@ from plane.app.serializers import (
     WorkspaceThemeSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
-from plane.bgtasks.workspace_export_task import workspace_export
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -416,28 +415,3 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
             'attachment; filename="workspace-user-activity.csv"'
         )
         return response
-
-
-class ExportWorkspaceEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
-
-    def post(self, request, slug):
-        current_origin = (
-            request.META.get("HTTP_ORIGIN")
-            or f"{request.scheme}://{request.get_host()}"
-        )
-
-        workspace_export.delay(
-            slug=slug,
-            origin=current_origin,
-            email=request.user.email,
-        )
-        return Response(
-            {
-                "message": "An email will be sent to download the exports when they are ready"
-            },
-            status=status.HTTP_200_OK,
-        )
