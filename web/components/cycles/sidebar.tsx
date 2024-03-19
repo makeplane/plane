@@ -18,12 +18,12 @@ import { CYCLE_STATUS } from "constants/cycle";
 import { CYCLE_UPDATED } from "constants/event-tracker";
 import { EUserWorkspaceRoles } from "constants/workspace";
 // helpers
-import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
 // hooks
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 // services
 import { CycleService } from "services/cycle.service";
+import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { ICycle } from "@plane/types";
 
@@ -182,8 +182,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
-  const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${cycleDetails?.end_date}`) >= new Date(`${cycleDetails?.start_date}`);
+  const startDate = getDate(cycleDetails?.start_date);
+  const endDate = getDate(cycleDetails?.end_date);
+
+  const isStartValid = startDate && startDate <= new Date();
+  const isEndValid = endDate && startDate && endDate >= startDate;
 
   const progressPercentage = cycleDetails
     ? isCompleted && cycleDetails?.progress_snapshot
@@ -313,8 +316,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                         buttonVariant="background-with-text"
                         minDate={new Date()}
                         value={{
-                          from: startDateValue ? new Date(startDateValue) : undefined,
-                          to: endDateValue ? new Date(endDateValue) : undefined,
+                          from: getDate(startDateValue),
+                          to: getDate(endDateValue),
                         }}
                         onSelect={(val) => {
                           onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);

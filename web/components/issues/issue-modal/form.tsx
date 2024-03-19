@@ -21,7 +21,6 @@ import {
 import { ParentIssuesListModal } from "components/issues";
 import { IssueLabelSelect } from "components/issues/select";
 import { CreateLabelModal } from "components/labels";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "hooks/store";
 // services
 import { AIService } from "services/ai.service";
@@ -31,6 +30,7 @@ import { FileService } from "services/file.service";
 // helpers
 import { getChangedIssuefields } from "helpers/issue.helper";
 import { shouldRenderProject } from "helpers/project.helper";
+import { renderFormattedPayloadDate, getDate } from "helpers/date-time.helper";
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
@@ -242,10 +242,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const startDate = watch("start_date");
   const targetDate = watch("target_date");
 
-  const minDate = startDate ? new Date(startDate) : null;
+  const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = targetDate ? new Date(targetDate) : null;
+  const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
 
   const projectDetails = getProjectById(projectId);

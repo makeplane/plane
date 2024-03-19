@@ -14,15 +14,19 @@ import {
   CycleDropdown,
   StateDropdown,
 } from "components/dropdowns";
+// helpers
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+
+import { cn } from "helpers/common.helper";
+// types
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
+// constants
 import { ISSUE_UPDATED } from "constants/event-tracker";
 import { EIssuesStoreType } from "constants/issue";
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
 import { usePlatformOS } from "hooks/use-platform-os";
 // components
-import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 import { IssuePropertyLabels } from "../properties/labels";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // helpers
@@ -242,10 +246,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
   return (
@@ -297,7 +301,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           <DateDropdown
             value={issue.start_date ?? null}
             onChange={handleStartDate}
-            maxDate={maxDate ?? undefined}
+            maxDate={maxDate}
             placeholder="Start date"
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
@@ -313,7 +317,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           <DateDropdown
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
-            minDate={minDate ?? undefined}
+            minDate={minDate}
             placeholder="Due date"
             icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}

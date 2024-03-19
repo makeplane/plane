@@ -2,7 +2,7 @@ import { useState, FC } from "react";
 // ui
 import { Button } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { IExportData } from "@plane/types";
 
@@ -18,7 +18,8 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
 
   const checkExpiry = (inputDateString: string) => {
     const currentDate = new Date();
-    const expiryDate = new Date(inputDateString);
+    const expiryDate = getDate(inputDateString);
+    if (!expiryDate) return false;
     expiryDate.setDate(expiryDate.getDate() + 7);
     return expiryDate > currentDate;
   };

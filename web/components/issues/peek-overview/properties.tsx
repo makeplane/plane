@@ -14,6 +14,7 @@ import {
 // hooks
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
+// components
 import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 import {
   IssueLinkRoot,
@@ -24,10 +25,9 @@ import {
   TIssueOperations,
   IssueRelationSelect,
 } from "components/issues";
-// components
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // helpers
+import { cn } from "helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 
@@ -54,10 +54,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
   return (

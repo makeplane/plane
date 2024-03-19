@@ -7,9 +7,15 @@ import { usePlatformOS } from "hooks/use-platform-os";
 import { Check, Info, Star, User2 } from "lucide-react";
 import { Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar, setPromiseToast } from "@plane/ui";
 import { CycleQuickActions } from "components/cycles";
+// components
+// import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
+// ui
+// icons
+// helpers
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "helpers/date-time.helper";
+// constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 // components
 // ui
@@ -119,8 +125,8 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   // TODO: change this logic once backend fix the response
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 

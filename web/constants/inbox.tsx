@@ -8,7 +8,12 @@ export const INBOX_STATUS: {
   status: number;
   icon: LucideIcon;
   title: string;
-  description: (workspaceSlug: string, projectId: string, issueId: string, snoozedTillDate: Date) => JSX.Element;
+  description: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    snoozedTillDate: Date | undefined
+  ) => JSX.Element;
   textColor: (snoozeDatePassed: boolean) => string;
   bgColor: (snoozeDatePassed: boolean) => string;
   borderColor: (snoozeDatePassed: boolean) => string;

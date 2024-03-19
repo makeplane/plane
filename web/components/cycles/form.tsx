@@ -5,8 +5,8 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { DateRangeDropdown, ProjectDropdown } from "components/dropdowns";
 // ui
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { shouldRenderProject } from "helpers/project.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "@plane/types";
 
@@ -137,8 +137,8 @@ export const CycleForm: React.FC<Props> = (props) => {
                         className="h-7"
                         minDate={new Date()}
                         value={{
-                          from: startDateValue ? new Date(startDateValue) : undefined,
-                          to: endDateValue ? new Date(endDateValue) : undefined,
+                          from: getDate(startDateValue),
+                          to: getDate(endDateValue),
                         }}
                         onSelect={(val) => {
                           onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);

@@ -41,15 +41,17 @@ import {
   IssueLabel,
   ArchiveIssueModal,
 } from "components/issues";
+// helpers
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
+import { cn } from "helpers/common.helper";
+import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+// types
+import type { TIssueOperations } from "./root";
 import { STATE_GROUPS } from "constants/state";
 // types
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
 import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
 // components
-import type { TIssueOperations } from "./root";
 import { IssueSubscription } from "./subscription";
 // icons
 // helpers
@@ -112,10 +114,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const isInArchivableGroup =
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
   return (

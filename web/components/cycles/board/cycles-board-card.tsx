@@ -11,10 +11,12 @@ import { CycleQuickActions } from "components/cycles";
 // ui
 // icons
 // helpers
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "helpers/date-time.helper";
+// import { copyTextToClipboard } from "helpers/string.helper";
+// constants
 import { CYCLE_STATUS } from "constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
 //.types
@@ -45,8 +47,9 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   if (!cycleDetails) return null;
 
   const cycleStatus = cycleDetails.status.toLocaleLowerCase();
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  // const isCompleted = cycleStatus === "completed";
+  const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
   const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;

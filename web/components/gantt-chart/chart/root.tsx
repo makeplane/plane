@@ -64,9 +64,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     useGanttChart();
 
   // rendering the block structure
-  const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
+  const renderBlockStructure = (view: ChartDataType, blocks: IGanttBlock[] | null) =>
     blocks
-      ? blocks.map((block: any) => ({
+      ? blocks.map((block: IGanttBlock) => ({
           ...block,
           position: getMonthChartItemPositionWidthInMonth(view, block),
         }))
