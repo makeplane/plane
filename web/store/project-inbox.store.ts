@@ -9,7 +9,14 @@ import uniq from "lodash/uniq";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
-import { TInboxIssueFilterOptions, TInboxIssue, TIssue, TPaginationInfo, TInboxIssueStatus } from "@plane/types";
+import {
+  TInboxIssueFilterOptions,
+  TInboxIssue,
+  TIssue,
+  TPaginationInfo,
+  TInboxIssueStatus,
+  TInboxIssueDisplayFilters,
+} from "@plane/types";
 // root store
 import { RootStore } from "./root.store";
 import { IInboxIssueStore, InboxIssueStore } from "./inbox-issue.store";
@@ -17,6 +24,7 @@ import { IInboxIssueStore, InboxIssueStore } from "./inbox-issue.store";
 export interface IProjectInboxStore {
   isLoading: boolean;
   inboxIssues: Record<string, IInboxIssueStore>;
+  displayFilters: TInboxIssueDisplayFilters | undefined;
   inboxFilters: Partial<TInboxIssueFilterOptions>;
   inboxIssuePaginationInfo: Partial<TPaginationInfo>;
   // computed
@@ -33,6 +41,7 @@ export interface IProjectInboxStore {
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 
+  updateDisplayFilters: (displayFilters: TInboxIssueDisplayFilters) => void;
   updateInboxIssueStatusFilter: (workspaceSlug: string, projectId: string, value: TInboxIssueStatus) => void;
   updateInboxIssuePriorityFilter: (workspaceSlug: string, projectId: string, value: string) => void;
   updateInboxIssueAssigneeFilter: (workspaceSlug: string, projectId: string, value: string) => void;
@@ -51,6 +60,9 @@ export interface IProjectInboxStore {
 export class ProjectInboxStore implements IProjectInboxStore {
   isLoading: boolean = false;
   inboxIssues: Record<string, IInboxIssueStore> = {};
+  displayFilters: TInboxIssueDisplayFilters = {
+    order_by: "-issue__created_at",
+  };
   inboxFilters: Partial<TInboxIssueFilterOptions> = {};
   inboxIssuePaginationInfo: Partial<TPaginationInfo> = {};
   PER_PAGE_COUNT = 10;
@@ -62,6 +74,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       isLoading: observable.ref,
       inboxIssues: observable,
       inboxFilters: observable,
+      displayFilters: observable,
       inboxIssuePaginationInfo: observable,
       // computed
       inboxIssuesArray: computed,
@@ -72,6 +85,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       fetchInboxIssuesNextPage: action,
       createInboxIssue: action,
       deleteInboxIssue: action,
+      updateDisplayFilters: action,
       updateInboxIssueStatusFilter: action,
       updateInboxIssuePriorityFilter: action,
       updateInboxIssueAssigneeFilter: action,
@@ -199,6 +213,15 @@ export class ProjectInboxStore implements IProjectInboxStore {
     runInAction(() => {
       delete this.inboxIssues[inboxIssueId];
     });
+  };
+
+  /**
+   * @description update display filters of a project
+   * @param {string} projectId
+   * @param {TInboxIssueDisplayFilters} displayFilters
+   */
+  updateDisplayFilters = (displayFilters: TInboxIssueDisplayFilters) => {
+    this.displayFilters = displayFilters;
   };
 
   /**

@@ -2,6 +2,8 @@
 import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, LucideIcon, XCircle } from "lucide-react";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
+// types
+import { TInboxIssueOrderByOptions } from "@plane/types";
 
 export const INBOX_STATUS: {
   key: string;
@@ -84,3 +86,18 @@ export const INBOX_STATUS: {
 ];
 
 export const INBOX_ISSUE_SOURCE = "in-app";
+
+export const INBOX_ISSUE_ORDER_BY_OPTIONS: { key: TInboxIssueOrderByOptions; label: string }[] = [
+  {
+    key: "issue__created_at",
+    label: "Date created",
+  },
+  {
+    key: "issue__updated_at",
+    label: "Date updated",
+  },
+  {
+    key: "issue__sequence_id",
+    label: "ID",
+  },
+];

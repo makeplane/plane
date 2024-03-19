@@ -88,3 +88,15 @@ export interface IInboxQueryParams {
   priority: string | null;
   inbox_status: string | null;
 }
+
+export type TInboxIssueOrderByOptions =
+  | "-issue__created_at"
+  | "issue__created_at"
+  | "-issue__updated_at"
+  | "issue__updated_at"
+  | "issue__sequence_id"
+  | "-issue__sequence_id";
+
+export type TInboxIssueDisplayFilters = {
+  order_by: TInboxIssueOrderByOptions;
+};

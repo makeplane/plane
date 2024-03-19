@@ -6,13 +6,15 @@ import { ListFilter } from "lucide-react";
 import { useIntersectionObserver } from "hooks/use-intersection-observer";
 import { useLabel, useMember, useProject, useProjectInbox } from "hooks/store";
 // components
-import { InboxIssueFilterSelection } from "../filter";
+import { InboxIssueFilterSelection, InboxIssueOrderByDropdown } from "../filter";
 import { InboxIssueList } from "./inbox-list";
 import { FiltersDropdown } from "components/issues";
 // ui
 import { Loader } from "@plane/ui";
 // types
 import { TInboxIssueFilterOptions } from "@plane/types";
+// helpers
+import { orderInboxIssue } from "helpers/inbox";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;
@@ -32,8 +34,10 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     inboxIssuePaginationInfo: paginationInfo,
     fetchInboxIssuesNextPage,
     applyResolvedInboxIssueFilter,
+    displayFilters,
     inboxFilters,
     resetInboxFilters,
+    updateDisplayFilters,
     updateInboxIssueStatusFilter,
     updateInboxIssuePriorityFilter,
     updateInboxIssueLabelFilter,
@@ -130,6 +134,8 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     ]
   );
 
+  const orderedInboxIssue = orderInboxIssue(inboxIssuesArray, displayFilters?.order_by ?? "issue__created_at");
+
   return (
     <div className="flex-shrink-0 w-2/5 h-full border-r border-custom-border-300">
       <Tab.Group
@@ -179,14 +185,25 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             </Tab>
           </div>
 
-          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
-            <InboxIssueFilterSelection
-              inboxFilters={inboxFilters}
-              handleFiltersUpdate={handleFiltersUpdate}
-              memberIds={projectMemberIds}
-              labels={projectLabels}
+          <div className="flex items-center gap-2">
+            <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+              <InboxIssueFilterSelection
+                inboxFilters={inboxFilters}
+                handleFiltersUpdate={handleFiltersUpdate}
+                memberIds={projectMemberIds}
+                labels={projectLabels}
+              />
+            </FiltersDropdown>
+            <InboxIssueOrderByDropdown
+              value={displayFilters?.order_by}
+              onChange={(val) => {
+                if (!projectId || val === displayFilters?.order_by) return;
+                updateDisplayFilters({
+                  order_by: val,
+                });
+              }}
             />
-          </FiltersDropdown>
+          </div>
         </Tab.List>
         <Tab.Panels className="h-full overflow-y-auto">
           <Tab.Panel as="div" className="w-full h-full overflow-hidden">
@@ -195,7 +212,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssues={inboxIssuesArray}
+                inboxIssues={orderedInboxIssue}
               />
               <div className="mt-4" ref={elementRef}>
                 {paginationInfo?.next_page_results && (
@@ -213,7 +230,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssues={inboxIssuesArray}
+                inboxIssues={orderedInboxIssue}
               />
               <div className="mt-4" ref={elementRef}>
                 {paginationInfo?.next_page_results && (
