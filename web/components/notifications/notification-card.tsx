@@ -13,7 +13,7 @@ import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { snoozeOptions } from "constants/notification";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
-import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
+import { calculateTimeAgo, renderFormattedTime, renderFormattedDate, getDate } from "helpers/date-time.helper";
 // type
 import type { IUserNotification, NotificationType } from "@plane/types";
 // constants
@@ -119,7 +119,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const notificationField = notification.data.issue_activity.field;
   const notificationTriggeredBy = notification.triggered_by_details;
 
-  if (isSnoozedTabOpen && notification.snoozed_till! < new Date()) return null;
+  const snoozedTillDate = getDate(notification?.snoozed_till);
+
+  if (snoozedTillDate && isSnoozedTabOpen && snoozedTillDate < new Date()) return null;
 
   return (
     <Link

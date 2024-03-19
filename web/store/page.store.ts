@@ -10,7 +10,7 @@ export interface IPageStore {
   access: number;
   archived_at: string | null;
   color: string;
-  created_at: Date;
+  created_at: string | null;
   created_by: string;
   description: string;
   description_html: string;
@@ -23,7 +23,7 @@ export interface IPageStore {
   name: string;
   owned_by: string;
   project: string;
-  updated_at: Date;
+  updated_at: string | null;
   updated_by: string;
   workspace: string;
 
@@ -52,7 +52,7 @@ export class PageStore implements IPageStore {
   isSubmitting: "submitting" | "submitted" | "saved" = "saved";
   archived_at: string | null;
   color: string;
-  created_at: Date;
+  created_at: string | null;
   created_by: string;
   description: string;
   description_html = "";
@@ -64,7 +64,7 @@ export class PageStore implements IPageStore {
   name = "";
   owned_by: string;
   project: string;
-  updated_at: Date;
+  updated_at: string | null;
   updated_by: string;
   workspace: string;
   oldName = "";
@@ -94,9 +94,9 @@ export class PageStore implements IPageStore {
       cleanup: action,
     });
     this.created_by = page?.created_by || "";
-    this.created_at = page?.created_at || new Date();
+    this.created_at = page?.created_at ?? "";
     this.color = page?.color || "";
-    this.archived_at = page?.archived_at || null;
+    this.archived_at = page?.archived_at ?? null;
     this.name = page?.name || "";
     this.description = page?.description || "";
     this.description_stripped = page?.description_stripped || "";
@@ -104,7 +104,7 @@ export class PageStore implements IPageStore {
     this.access = page?.access || 0;
     this.workspace = page?.workspace || "";
     this.updated_by = page?.updated_by || "";
-    this.updated_at = page?.updated_at || new Date();
+    this.updated_at = page?.updated_at ?? "";
     this.project = page?.project || "";
     this.owned_by = page?.owned_by || "";
     this.labels = page?.labels || [];

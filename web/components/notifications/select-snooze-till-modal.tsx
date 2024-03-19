@@ -12,6 +12,8 @@ import useToast from "hooks/use-toast";
 import { Button, CustomSelect } from "@plane/ui";
 // types
 import type { IUserNotification } from "@plane/types";
+// helpers
+import { getDate } from "helpers/date-time.helper";
 
 type SnoozeModalProps = {
   isOpen: boolean;
@@ -60,7 +62,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
 
     if (!formDataDate) return timeStamps;
 
-    const isToday = today.toDateString() === formDataDate.toDateString();
+    const isToday = today.toDateString() === getDate(formDataDate)?.toDateString();
 
     if (!isToday) return timeStamps;
 
@@ -93,9 +95,9 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
     );
     const minutes = parseInt(time[1]);
 
-    const dateTime = formData.date;
-    dateTime.setHours(hours);
-    dateTime.setMinutes(minutes);
+    const dateTime: Date | undefined = getDate(formData?.date);
+    dateTime?.setHours(hours);
+    dateTime?.setMinutes(minutes);
 
     await handleSubmitSnooze(notification.id, dateTime).then(() => {
       handleClose();
@@ -214,10 +216,11 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "AM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "AM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
+                                  watch("period") === "AM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                  }`}
+                                }`}
                               >
                                 AM
                               </div>
@@ -225,10 +228,11 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                                 onClick={() => {
                                   setValue("period", "PM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${watch("period") === "PM"
+                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
+                                  watch("period") === "PM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
                                     : "bg-custom-background-80"
-                                  }`}
+                                }`}
                               >
                                 PM
                               </div>
