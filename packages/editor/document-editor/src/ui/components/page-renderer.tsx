@@ -16,11 +16,9 @@ import {
 } from "@floating-ui/react";
 // ui
 import { TextArea } from "@plane/ui";
-// types
-import { DocumentDetails } from "src/types/editor-types";
 
 type IPageRenderer = {
-  documentDetails: DocumentDetails;
+  title: string;
   updatePageTitle: (title: string) => void;
   editor: Editor;
   editorClassNames: string;
@@ -32,7 +30,7 @@ type IPageRenderer = {
 
 export const PageRenderer = (props: IPageRenderer) => {
   const {
-    documentDetails,
+    title,
     tabIndex,
     editor,
     editorClassNames,
@@ -42,7 +40,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     hideDragHandle,
   } = props;
 
-  const [pageTitle, setPageTitle] = useState(documentDetails.title);
+  const [pageTitle, setPageTitle] = useState(title);
 
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -151,13 +149,14 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="w-full h-full pb-20 pl-7 pt-5 page-renderer">
+    <div className="w-full h-full pb-20 pt-5 page-renderer">
       {readonly ? (
         <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
       ) : (
         <TextArea
           onChange={(e) => handlePageTitleChange(e.target.value)}
           className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none"
+          placeholder="Untitled Page"
           value={pageTitle}
         />
       )}
@@ -173,7 +172,7 @@ export const PageRenderer = (props: IPageRenderer) => {
       {isOpen && linkViewProps && coordinates && (
         <div
           style={{ ...floatingStyles, left: `${coordinates.x}px`, top: `${coordinates.y}px` }}
-          className={`absolute`}
+          className="absolute"
           ref={refs.setFloating}
         >
           <LinkView {...linkViewProps} style={floatingStyles} {...getFloatingProps()} />

@@ -5,14 +5,12 @@ import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-c
 // components
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
-// types
-import { DocumentDetails } from "src/types/editor-types";
 
 interface IDocumentReadOnlyEditor {
   value: string;
   customClassName: string;
   tabIndex?: number;
-  documentDetails: DocumentDetails;
+  title: string;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -25,7 +23,8 @@ interface EditorHandle {
 }
 
 const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
-  const { customClassName, value, documentDetails, forwardedRef, tabIndex } = props;
+  const {  customClassName, value, title, forwardedRef, tabIndex } =
+    props;
   const { updateMarkings } = useEditorMarkings();
 
   const editor = useReadOnlyEditor({
@@ -56,7 +55,7 @@ const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
         readonly
         editor={editor}
         editorClassNames={editorClassNames}
-        documentDetails={documentDetails}
+        title={title}
       />
     </div>
   );

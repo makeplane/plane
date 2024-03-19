@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Lock, Sparkle } from "lucide-react";
+import { Lock, RefreshCw, Sparkle } from "lucide-react";
 // hooks
 import { useApplication } from "hooks/store";
 // components
@@ -9,19 +9,23 @@ import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar }
 // ui
 import { ArchiveIcon } from "@plane/ui";
 // helpers
+import { cn } from "helpers/common.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { EditorRefApi } from "@plane/document-editor";
 import { IPageStore } from "store/page.store";
 
 type Props = {
-  editorRef: EditorRefApi;
+  editorRef: React.RefObject<EditorRefApi>;
+  handleDuplicatePage: () => void;
   pageStore: IPageStore;
   projectId: string;
+  sidePeekVisible: boolean;
+  setSidePeekVisible: (sidePeekState: boolean) => void;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorRef, pageStore, projectId } = props;
+  const { editorRef, handleDuplicatePage, pageStore, projectId, sidePeekVisible, setSidePeekVisible } = props;
   // states
   const [gptModalOpen, setGptModal] = useState(false);
   // store hooks
@@ -29,19 +33,40 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     config: { envConfig },
     router: { workspaceSlug },
   } = useApplication();
+  // derived values
+  const isSubmitting = pageStore.isSubmitting;
 
   const handleAiAssistance = async (response: string) => {
-    if (!workspaceSlug || !projectId) return;
-    editorRef.setEditorValueAtCursorPosition(response);
+    if (!workspaceSlug || !projectId || !editorRef) return;
+    editorRef.current?.setEditorValueAtCursorPosition(response);
   };
+
+  if (!editorRef.current) return null;
 
   return (
     <div className="flex items-center py-2 px-3 md:px-5 border-b border-custom-border-200">
       <div className="md:w-56 flex-shrink-0 lg:w-72">
-        <PageSummaryPopover editorRef={editorRef} markings={[]} />
+        <PageSummaryPopover
+          editorRef={editorRef.current}
+          markings={[]}
+          sidePeekVisible={sidePeekVisible}
+          setSidePeekVisible={setSidePeekVisible}
+        />
       </div>
-      <PageToolbar editorRef={editorRef} />
+      <PageToolbar editorRef={editorRef.current} />
       <div className="flex flex-grow items-center justify-end gap-3">
+        {!pageStore.is_locked && !pageStore.archived_at && (
+          <div
+            className={cn("absolute right-[120px] flex items-center gap-x-2 transition-all duration-300 fadeIn", {
+              fadeOut: isSubmitting === "saved",
+            })}
+          >
+            {isSubmitting === "submitting" && <RefreshCw className="h-4 w-4 stroke-custom-text-300" />}
+            <span className="text-sm text-custom-text-300">
+              {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+            </span>
+          </div>
+        )}
         {pageStore.is_locked && (
           <div className="flex items-center gap-2 h-7 rounded-full px-3 py-0.5 text-xs font-medium bg-custom-background-80 text-custom-text-300">
             <Lock className="h-3 w-3" />
@@ -79,7 +104,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           />
         )}
         <PageInfoPopover pageStore={pageStore} />
-        <PageOptionsDropdown pageStore={pageStore} />
+        <PageOptionsDropdown handleDuplicatePage={handleDuplicatePage} pageStore={pageStore} />
       </div>
     </div>
   );
