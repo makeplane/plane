@@ -1,9 +1,8 @@
+import { useCallback, useRef, useState } from "react";
 import { EditorContainer, EditorContentWrapper } from "@plane/editor-document-core";
 import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";
-import { useCallback, useRef, useState } from "react";
-import { DocumentDetails } from "src/types/editor-types";
 import { LinkView, LinkViewProps } from "./links/link-view";
 import {
   autoUpdate,
@@ -15,6 +14,10 @@ import {
   useFloating,
   useInteractions,
 } from "@floating-ui/react";
+// ui
+import { TextArea } from "@plane/ui";
+// types
+import { DocumentDetails } from "src/types/editor-types";
 
 type IPageRenderer = {
   documentDetails: DocumentDetails;
@@ -44,7 +47,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     hideDragHandle,
   } = props;
 
-  const [pageTitle, setPagetitle] = useState(documentDetails.title);
+  const [pageTitle, setPageTitle] = useState(documentDetails.title);
 
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -64,11 +67,11 @@ export const PageRenderer = (props: IPageRenderer) => {
   const { getFloatingProps } = useInteractions([dismiss]);
 
   const handlePageTitleChange = (title: string) => {
-    setPagetitle(title);
+    setPageTitle(title);
     updatePageTitle(title);
   };
 
-  const [cleanup, setcleanup] = useState(() => () => {});
+  const [cleanup, setCleanup] = useState(() => () => {});
 
   const floatingElementRef = useRef<HTMLElement | null>(null);
 
@@ -148,25 +151,20 @@ export const PageRenderer = (props: IPageRenderer) => {
         });
       });
 
-      setcleanup(cleanupFunc);
+      setCleanup(cleanupFunc);
     },
     [editor, cleanup]
   );
 
   return (
     <div className="w-full h-full pb-20 pl-7 pt-5 page-renderer">
-      {!readonly ? (
-        <input
-          onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
-          value={pageTitle}
-        />
+      {readonly ? (
+        <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
       ) : (
-        <input
+        <TextArea
           onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full overflow-x-clip break-words border-none bg-custom-background pr-5 text-4xl font-bold outline-none"
+          className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none"
           value={pageTitle}
-          disabled
         />
       )}
       <div className="flex relative h-full w-full flex-col pr-5 editor-renderer" onMouseOver={handleLinkHover}>

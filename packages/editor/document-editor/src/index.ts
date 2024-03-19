@@ -6,3 +6,5 @@ export { FixedMenu } from "src/ui/menu/fixed-menu";
 export { useEditorMarkings } from "src/hooks/use-editor-markings";
 
 export type { EditorRefApi } from "@plane/editor-document-core";
+
+export type { IMarking } from "src/types/editor-types";

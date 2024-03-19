@@ -1,31 +1,17 @@
 import { useState } from "react";
 import { usePopper } from "react-popper";
 import { Calendar, History, Info } from "lucide-react";
+// helpers
+import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { DocumentDetails } from "src/types/editor-types";
+import { IPageStore } from "store/page.store";
 
 type Props = {
-  documentDetails: DocumentDetails;
+  pageStore: IPageStore;
 };
 
-// function to render a Date in the format- 25 May 2023 at 2:53PM
-const renderDate = (date: Date): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  };
-
-  const formattedDate: string = new Intl.DateTimeFormat("en-US", options).format(date);
-
-  return formattedDate;
-};
-
-export const InfoPopover: React.FC<Props> = (props) => {
-  const { documentDetails } = props;
+export const PageInfoPopover: React.FC<Props> = (props) => {
+  const { pageStore } = props;
 
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
 
@@ -52,14 +38,14 @@ export const InfoPopover: React.FC<Props> = (props) => {
             <h6 className="text-xs text-custom-text-400">Last updated on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <History className="h-3 w-3" />
-              {renderDate(new Date(documentDetails.last_updated_at))}
+              {renderFormattedDate(new Date(pageStore.updated_at))}
             </h5>
           </div>
           <div className="space-y-1.5">
             <h6 className="text-xs text-custom-text-400">Created on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <Calendar className="h-3 w-3" />
-              {renderDate(new Date(documentDetails.created_on))}
+              {renderFormattedDate(new Date(pageStore.created_at))}
             </h5>
           </div>
         </div>

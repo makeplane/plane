@@ -1,77 +1,60 @@
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-
-// assets
-import { Sparkle } from "lucide-react";
-
-// ui
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-
 // hooks
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
+import { usePage, useUser, useWorkspace } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-
+// services
+import { FileService } from "services/file.service";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { NextPageWithLayout } from "lib/types";
-
-// services
-import { FileService } from "services/file.service";
-
 // components
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/document-editor";
+import {
+  DocumentEditorWithRef,
+  DocumentReadOnlyEditorWithRef,
+  EditorRefApi,
+  useEditorMarkings,
+} from "@plane/document-editor";
 import { PageDetailsHeader } from "components/headers/page-details";
 import { IssuePeekOverview } from "components/issues";
-import { GptAssistantPopover, PageHead } from "components/core";
-
-// constants
-import { EUserProjectRoles } from "constants/project";
-
+// ui
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { PageHead } from "components/core";
 // types
 import { IPage } from "@plane/types";
+// constants
+import { EUserProjectRoles } from "constants/project";
+import { PageContentBrowser, PageEditorHeaderRoot } from "components/pages";
 
 // services
 const fileService = new FileService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
-  // states
-  const [gptModalOpen, setGptModal] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useRouter();
-
   const { workspaceSlug, projectId, pageId } = router.query;
   const workspaceStore = useWorkspace();
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
-
   // store hooks
   const {
-    config: { envConfig },
-  } = useApplication();
-  const {
-    currentUser,
     membership: { currentProjectRole },
   } = useUser();
-
+  const { projectPageMap, projectArchivedPageMap, fetchProjectPages, fetchArchivedProjectPages } = useProjectPages();
+  // form info
   const { handleSubmit, getValues, control, reset } = useForm<IPage>({
-    defaultValues: { name: "", description_html: "" },
+    defaultValues: {
+      name: "",
+      description_html: "",
+    },
   });
-
-  const {
-    archivePage: archivePageAction,
-    restorePage: restorePageAction,
-    createPage: createPageAction,
-    projectPageMap,
-    projectArchivedPageMap,
-    fetchProjectPages,
-    fetchArchivedProjectPages,
-  } = useProjectPages();
-
+  // editor markings hook
+  const { markings } = useEditorMarkings();
   useSWR(
     workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
     workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
@@ -92,34 +75,27 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   useEffect(
     () => () => {
-      if (pageStore) {
-        console.log("ran cleanup");
-        pageStore.cleanup();
-      }
+      if (pageStore) pageStore.cleanup();
     },
     [pageStore]
   );
 
-  if (!pageStore) {
+  if (!pageStore)
     return (
       <div className="grid h-full w-full place-items-center">
         <Spinner />
       </div>
     );
-  }
 
   // We need to get the values of title and description from the page store but we don't have to subscribe to those values
   const pageTitle = pageStore?.name;
   const pageDescription = pageStore?.description_html;
   const {
-    lockPage: lockPageAction,
-    unlockPage: unlockPageAction,
     updateName: updateNameAction,
     updateDescription: updateDescriptionAction,
     id: pageIdMobx,
     isSubmitting,
     setIsSubmitting,
-    owned_by,
     is_locked,
     archived_at,
     created_at,
@@ -131,12 +107,6 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
     updateDescriptionAction(formData.description_html);
-  };
-
-  const handleAiAssistance = async (response: string) => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-
-    editorRef.current?.setEditorValueAtCursorPosition(response);
   };
 
   const actionCompleteAlert = ({
@@ -159,208 +129,83 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     if (!workspaceSlug || !projectId || !pageId) return;
     updateNameAction(title);
   };
-
-  const createPage = async (payload: Partial<IPage>) => {
-    if (!workspaceSlug || !projectId) return;
-    await createPageAction(workspaceSlug as string, projectId as string, payload);
-  };
-
-  // ================ Page Menu Actions ==================
-  const duplicate_page = async () => {
-    const currentPageValues = getValues();
-
-    if (!currentPageValues?.description_html) {
-      // TODO: We need to get latest data the above variable will give us stale data
-      currentPageValues.description_html = pageDescription as string;
-    }
-
-    const formData: Partial<IPage> = {
-      name: "Copy of " + pageTitle,
-      description_html: currentPageValues.description_html,
-    };
-
-    try {
-      await createPage(formData);
-    } catch (error) {
-      actionCompleteAlert({
-        title: `Page could not be duplicated`,
-        message: `Sorry, page could not be duplicated, please try again later`,
-        type: "error",
-      });
-    }
-  };
-
-  const archivePage = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-    try {
-      await archivePageAction(workspaceSlug as string, projectId as string, pageId as string);
-    } catch (error) {
-      actionCompleteAlert({
-        title: `Page could not be archived`,
-        message: `Sorry, page could not be archived, please try again later`,
-        type: "error",
-      });
-    }
-  };
-
-  const unArchivePage = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-    try {
-      await restorePageAction(workspaceSlug as string, projectId as string, pageId as string);
-    } catch (error) {
-      actionCompleteAlert({
-        title: `Page could not be restored`,
-        message: `Sorry, page could not be restored, please try again later`,
-        type: "error",
-      });
-    }
-  };
-
-  const lockPage = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-    try {
-      await lockPageAction();
-    } catch (error) {
-      actionCompleteAlert({
-        title: `Page could not be locked`,
-        message: `Sorry, page could not be locked, please try again later`,
-        type: "error",
-      });
-    }
-  };
-
-  const unlockPage = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-    try {
-      await unlockPageAction();
-    } catch (error) {
-      actionCompleteAlert({
-        title: `Page could not be unlocked`,
-        message: `Sorry, page could not be unlocked, please try again later`,
-        type: "error",
-      });
-    }
-  };
-
+  // auth
   const isPageReadOnly =
     is_locked ||
     archived_at ||
     (currentProjectRole && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(currentProjectRole));
 
-  const isCurrentUserOwner = owned_by === currentUser?.id;
-
-  const userCanDuplicate =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
-  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserProjectRoles.ADMIN;
-  const userCanLock =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
-
   return pageIdMobx ? (
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full flex-col justify-between">
-        <div className="h-full w-full overflow-hidden">
-          {isPageReadOnly ? (
-            <DocumentReadOnlyEditorWithRef
-              onActionCompleteHandler={actionCompleteAlert}
-              ref={editorRef}
-              value={pageDescription}
-              customClassName={"tracking-tight w-full px-0"}
-              borderOnFocus={false}
-              noBorder
-              documentDetails={{
-                title: pageTitle,
-                created_by: created_by,
-                created_on: created_at,
-                last_updated_at: updated_at,
-                last_updated_by: updated_by,
-              }}
-              pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
-              pageDuplicationConfig={userCanDuplicate && !archived_at ? { action: duplicate_page } : undefined}
-              pageArchiveConfig={
-                userCanArchive
-                  ? {
-                      action: archived_at ? unArchivePage : archivePage,
-                      is_archived: archived_at ? true : false,
-                      archived_at: archived_at ? new Date(archived_at) : undefined,
-                    }
-                  : undefined
-              }
+        <div className="h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
+          {editorRef.current && projectId && (
+            <PageEditorHeaderRoot
+              editorRef={editorRef.current}
+              pageStore={pageStore}
+              projectId={projectId.toString()}
             />
-          ) : (
-            <div className="relative h-full w-full overflow-hidden">
-              <Controller
-                name="description_html"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <DocumentEditorWithRef
-                    isSubmitting={isSubmitting}
-                    documentDetails={{
-                      title: pageTitle,
-                      created_by: created_by,
-                      created_on: created_at,
-                      last_updated_at: updated_at,
-                      last_updated_by: updated_by,
-                    }}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting)}
-                    deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                    restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                    value={pageDescription}
-                    cancelUploadImage={fileService.cancelUpload}
-                    ref={editorRef}
-                    debouncedUpdatesEnabled={false}
-                    updatePageTitle={updatePageTitle}
-                    onActionCompleteHandler={actionCompleteAlert}
-                    customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
-                    onChange={(_description_json: any, description_html: string) => {
-                      setIsSubmitting("submitting");
-                      setShowAlert(true);
-                      onChange(description_html);
-                      handleSubmit(updatePage)();
-                    }}
-                    duplicationConfig={userCanDuplicate ? { action: duplicate_page } : undefined}
-                    pageArchiveConfig={
-                      userCanArchive
-                        ? {
-                            is_archived: archived_at ? true : false,
-                            action: archived_at ? unArchivePage : archivePage,
-                          }
-                        : undefined
-                    }
-                    pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
-                  />
-                )}
-              />
-              {projectId && envConfig?.has_openai_configured && (
-                <div className="absolute right-[68px] top-2.5">
-                  <GptAssistantPopover
-                    isOpen={gptModalOpen}
-                    projectId={projectId.toString()}
-                    handleClose={() => {
-                      setGptModal((prevData) => !prevData);
-                      // this is done so that the title do not reset after gpt popover closed
-                      reset(getValues());
-                    }}
-                    onResponse={(response) => {
-                      handleAiAssistance(response);
-                    }}
-                    placement="top-end"
-                    button={
-                      <button
-                        type="button"
-                        className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-                        onClick={() => setGptModal((prevData) => !prevData)}
-                      >
-                        <Sparkle className="h-4 w-4" />
-                        AI
-                      </button>
-                    }
-                    className="!min-w-[38rem]"
-                  />
-                </div>
+          )}
+          <div className="flex items-center h-full w-full overflow-y-auto">
+            {editorRef.current && (
+              <div className="sticky top-0 h-full flex-shrink-0 w-56 lg:w-72 hidden md:block p-5">
+                <PageContentBrowser editorRef={editorRef.current} markings={markings} />
+              </div>
+            )}
+            <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
+              {isPageReadOnly ? (
+                <DocumentReadOnlyEditorWithRef
+                  onActionCompleteHandler={actionCompleteAlert}
+                  ref={editorRef}
+                  value={pageDescription}
+                  customClassName={"tracking-tight w-full px-0"}
+                  borderOnFocus={false}
+                  noBorder
+                  documentDetails={{
+                    title: pageTitle,
+                    created_by: created_by,
+                    created_on: created_at,
+                    last_updated_at: updated_at,
+                    last_updated_by: updated_by,
+                  }}
+                />
+              ) : (
+                <Controller
+                  name="description_html"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <DocumentEditorWithRef
+                      isSubmitting={isSubmitting}
+                      documentDetails={{
+                        title: pageTitle,
+                        created_by: created_by,
+                        created_on: created_at,
+                        last_updated_at: updated_at,
+                        last_updated_by: updated_by,
+                      }}
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting)}
+                      deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                      restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                      value={pageDescription}
+                      cancelUploadImage={fileService.cancelUpload}
+                      ref={editorRef}
+                      updatePageTitle={updatePageTitle}
+                      onActionCompleteHandler={actionCompleteAlert}
+                      customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
+                      onChange={(_description_json, description_html) => {
+                        setIsSubmitting("submitting");
+                        setShowAlert(true);
+                        onChange(description_html);
+                        handleSubmit(updatePage)();
+                      }}
+                    />
+                  )}
+                />
               )}
             </div>
-          )}
+            <div className="h-full w-56 lg:w-72 flex-shrink-0 hidden lg:block" />
+          </div>
           <IssuePeekOverview />
         </div>
       </div>

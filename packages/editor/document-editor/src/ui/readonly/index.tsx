@@ -1,30 +1,25 @@
-import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-core";
-import { useRouter } from "next/router";
-import { useState, forwardRef, useEffect } from "react";
-import { EditorHeader } from "src/ui/components/editor-header";
-import { PageRenderer } from "src/ui/components/page-renderer";
-import { SummarySideBar } from "src/ui/components/summary-side-bar";
+import { forwardRef, useEffect } from "react";
+// hooks
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
-import { DocumentDetails } from "src/types/editor-types";
-import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "src/types/menu-actions";
-import { getMenuOptions } from "src/utils/menu-options";
+import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-core";
+// components
+import { PageRenderer } from "src/ui/components/page-renderer";
 import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
+// types
+import { DocumentDetails } from "src/types/editor-types";
 
 interface IDocumentReadOnlyEditor {
   value: string;
   noBorder: boolean;
   borderOnFocus: boolean;
   customClassName: string;
-  documentDetails: DocumentDetails;
-  pageLockConfig?: IPageLockConfig;
-  pageArchiveConfig?: IPageArchiveConfig;
-  pageDuplicationConfig?: IDuplicationConfig;
   onActionCompleteHandler: (action: {
     title: string;
     message: string;
     type: "success" | "error" | "warning" | "info";
   }) => void;
   tabIndex?: number;
+  documentDetails: DocumentDetails;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -36,22 +31,18 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const DocumentReadOnlyEditor = ({
-  noBorder,
-  borderOnFocus,
-  customClassName,
-  value,
-  documentDetails,
-  forwardedRef,
-  pageDuplicationConfig,
-  pageLockConfig,
-  pageArchiveConfig,
-  onActionCompleteHandler,
-  tabIndex,
-}: DocumentReadOnlyEditorProps) => {
-  const router = useRouter();
-  const [sidePeekVisible, setSidePeekVisible] = useState(true);
-  const { markings, updateMarkings } = useEditorMarkings();
+const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
+  const {
+    noBorder,
+    borderOnFocus,
+    customClassName,
+    value,
+    documentDetails,
+    forwardedRef,
+    onActionCompleteHandler,
+    tabIndex,
+  } = props;
+  const { updateMarkings } = useEditorMarkings();
 
   const editor = useReadOnlyEditor({
     value,
@@ -61,7 +52,7 @@ const DocumentReadOnlyEditor = ({
 
   useEffect(() => {
     if (editor) {
-      updateMarkings(editor.getJSON());
+      updateMarkings(editor.getHTML());
     }
   }, [editor]);
 
@@ -75,46 +66,17 @@ const DocumentReadOnlyEditor = ({
     customClassName,
   });
 
-  const KanbanMenuOptions = getMenuOptions({
-    editor: editor,
-    router: router,
-    pageArchiveConfig: pageArchiveConfig,
-    pageLockConfig: pageLockConfig,
-    duplicationConfig: pageDuplicationConfig,
-    onActionCompleteHandler,
-  });
-
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden">
-      <EditorHeader
-        isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
-        isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
+    <div className="h-full w-full frame-renderer">
+      <PageRenderer
+        tabIndex={tabIndex}
+        onActionCompleteHandler={onActionCompleteHandler}
+        updatePageTitle={() => Promise.resolve()}
         readonly
         editor={editor}
-        sidePeekVisible={sidePeekVisible}
-        setSidePeekVisible={setSidePeekVisible}
-        KanbanMenuOptions={KanbanMenuOptions}
-        markings={markings}
+        editorClassNames={editorClassNames}
         documentDetails={documentDetails}
-        archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
       />
-      <div className="flex h-full w-full overflow-y-auto frame-renderer">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-80">
-          <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
-        </div>
-        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
-          <PageRenderer
-            tabIndex={tabIndex}
-            onActionCompleteHandler={onActionCompleteHandler}
-            updatePageTitle={() => Promise.resolve()}
-            readonly
-            editor={editor}
-            editorClassNames={editorClassNames}
-            documentDetails={documentDetails}
-          />
-        </div>
-        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-80" />
-      </div>
     </div>
   );
 };

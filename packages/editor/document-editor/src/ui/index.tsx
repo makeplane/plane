@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   UploadImage,
   DeleteImage,
@@ -9,15 +9,9 @@ import {
   EditorRefApi,
 } from "@plane/editor-document-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
-import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "src/types/menu-actions";
-import { EditorHeader } from "src/ui/components/editor-header";
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
-import { SummarySideBar } from "src/ui/components/summary-side-bar";
 import { DocumentDetails } from "src/types/editor-types";
 import { PageRenderer } from "src/ui/components/page-renderer";
-import { getMenuOptions } from "src/utils/menu-options";
-import { useRouter } from "next/router";
-import { FixedMenu } from "src";
 
 interface IDocumentEditor {
   // document info
@@ -43,11 +37,6 @@ interface IDocumentEditor {
   updatePageTitle: (title: string) => void;
   isSubmitting: "submitting" | "submitted" | "saved";
   tabIndex?: number;
-
-  // embed configuration
-  duplicationConfig?: IDuplicationConfig;
-  pageLockConfig?: IPageLockConfig;
-  pageArchiveConfig?: IPageArchiveConfig;
 }
 
 const DocumentEditor = ({
@@ -58,20 +47,14 @@ const DocumentEditor = ({
   uploadFile,
   deleteFile,
   restoreFile,
-  isSubmitting,
   customClassName,
   forwardedRef,
-  duplicationConfig,
-  pageLockConfig,
-  pageArchiveConfig,
   updatePageTitle,
   cancelUploadImage,
   onActionCompleteHandler,
   tabIndex,
 }: IDocumentEditor) => {
-  const { markings, updateMarkings } = useEditorMarkings();
-  const [sidePeekVisible, setSidePeekVisible] = useState(true);
-  const router = useRouter();
+  const { updateMarkings } = useEditorMarkings();
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
 
@@ -102,15 +85,6 @@ const DocumentEditor = ({
     return null;
   }
 
-  const KanbanMenuOptions = getMenuOptions({
-    editor: editor,
-    router: router,
-    duplicationConfig: duplicationConfig,
-    pageLockConfig: pageLockConfig,
-    pageArchiveConfig: pageArchiveConfig,
-    onActionCompleteHandler,
-  });
-
   const editorClassNames = getEditorClassNames({
     noBorder: true,
     borderOnFocus: false,
@@ -120,43 +94,18 @@ const DocumentEditor = ({
   if (!editor) return null;
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden">
-      <EditorHeader
+    <div className="h-full w-full frame-renderer">
+      <PageRenderer
+        tabIndex={tabIndex}
+        onActionCompleteHandler={onActionCompleteHandler}
+        hideDragHandle={hideDragHandleOnMouseLeave}
         readonly={false}
-        KanbanMenuOptions={KanbanMenuOptions}
         editor={editor}
-        sidePeekVisible={sidePeekVisible}
-        setSidePeekVisible={(val) => setSidePeekVisible(val)}
-        markings={markings}
-        uploadFile={uploadFile}
-        isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
-        isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
-        archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
+        editorContentCustomClassNames={editorContentCustomClassNames}
+        editorClassNames={editorClassNames}
         documentDetails={documentDetails}
-        isSubmitting={isSubmitting}
+        updatePageTitle={updatePageTitle}
       />
-      <div className="flex-shrink-0 md:hidden border-b border-custom-border-200 pl-3 py-2">
-        {uploadFile && <FixedMenu editor={editor} uploadFile={uploadFile} />}
-      </div>
-      <div className="flex h-full w-full overflow-y-auto frame-renderer">
-        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72 hidden md:block">
-          <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
-        </div>
-        <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] page-renderer">
-          <PageRenderer
-            tabIndex={tabIndex}
-            onActionCompleteHandler={onActionCompleteHandler}
-            hideDragHandle={hideDragHandleOnMouseLeave}
-            readonly={false}
-            editor={editor}
-            editorContentCustomClassNames={editorContentCustomClassNames}
-            editorClassNames={editorClassNames}
-            documentDetails={documentDetails}
-            updatePageTitle={updatePageTitle}
-          />
-        </div>
-        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-72" />
-      </div>
     </div>
   );
 };
