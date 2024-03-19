@@ -107,6 +107,10 @@ export const useEditor = ({
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },
+      getMarkDown: (): string => {
+        const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
+        return markdownOutput;
+      },
     };
   });
 

@@ -6,4 +6,5 @@ export interface EditorRefApi {
   setEditorValueAtCursorPosition: (content: string) => void;
   executeMenuItemCommand: (itemName: EditorMenuItemNames) => void;
   isMenuItemActive: (itemName: EditorMenuItemNames) => boolean;
+  getMarkDown: () => string;
 }

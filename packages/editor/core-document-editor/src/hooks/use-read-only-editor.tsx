@@ -4,10 +4,11 @@ import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
+import { EditorRefApi } from "src/types/editor-ref-api";
 
 interface CustomReadOnlyEditorProps {
   value: string;
-  forwardedRef?: any;
+  forwardedRef?: MutableRefObject<Pick<EditorRefApi, "getMarkDown" | "setEditorValue" | "clearEditor"> | null>;
   extensions?: any;
   editorProps?: EditorProps;
   mentionHighlights?: string[];
@@ -47,6 +48,10 @@ export const useReadOnlyEditor = ({
     },
     setEditorValue: (content: string) => {
       editorRef.current?.commands.setContent(content);
+    },
+    getMarkDown: (): string => {
+      const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
+      return markdownOutput;
     },
   }));
 
