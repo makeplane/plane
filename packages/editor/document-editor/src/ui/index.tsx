@@ -10,12 +10,11 @@ import {
 } from "@plane/editor-document-core";
 import { DocumentEditorExtensions } from "src/ui/extensions";
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
-import { DocumentDetails } from "src/types/editor-types";
 import { PageRenderer } from "src/ui/components/page-renderer";
 
 interface IDocumentEditor {
   // document info
-  documentDetails: DocumentDetails;
+  title: string;
   value: string;
 
   // file operations
@@ -39,21 +38,22 @@ interface IDocumentEditor {
   tabIndex?: number;
 }
 
-const DocumentEditor = ({
-  documentDetails,
-  onChange,
-  editorContentCustomClassNames,
-  value,
-  uploadFile,
-  deleteFile,
-  restoreFile,
-  customClassName,
-  forwardedRef,
-  updatePageTitle,
-  cancelUploadImage,
-  onActionCompleteHandler,
-  tabIndex,
-}: IDocumentEditor) => {
+const DocumentEditor = (props: IDocumentEditor) => {
+  const {
+    title,
+    onChange,
+    editorContentCustomClassNames,
+    value,
+    uploadFile,
+    deleteFile,
+    restoreFile,
+    customClassName,
+    forwardedRef,
+    updatePageTitle,
+    cancelUploadImage,
+    onActionCompleteHandler,
+    tabIndex,
+  } = props;
   const { updateMarkings } = useEditorMarkings();
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
@@ -103,7 +103,7 @@ const DocumentEditor = ({
         editor={editor}
         editorContentCustomClassNames={editorContentCustomClassNames}
         editorClassNames={editorClassNames}
-        documentDetails={documentDetails}
+        title={title}
         updatePageTitle={updatePageTitle}
       />
     </div>

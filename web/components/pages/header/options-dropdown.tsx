@@ -7,16 +7,16 @@ import { useProjectPages } from "hooks/store/use-project-specific-pages";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // types
 import { IPageStore } from "store/page.store";
-import { IPage } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
 type Props = {
+  handleDuplicatePage: () => void;
   pageStore: IPageStore;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { pageStore } = props;
+  const { handleDuplicatePage, pageStore } = props;
   // store values
   const { lockPage, unlockPage, owned_by } = pageStore;
   // store hooks
@@ -27,36 +27,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { archivePage, createPage, restorePage } = useProjectPages();
-
-  const handleCreatePage = async (payload: Partial<IPage>) => {
-    if (!workspaceSlug || !projectId) return;
-    await createPage(workspaceSlug.toString(), projectId.toString(), payload);
-  };
-
-  const handleDuplicatePage = async () => {
-    const currentPageValues = getValues();
-
-    if (!currentPageValues?.description_html) {
-      // TODO: We need to get latest data the above variable will give us stale data
-      currentPageValues.description_html = pageStore.description_html;
-    }
-
-    const formData: Partial<IPage> = {
-      name: "Copy of " + pageStore.name,
-      description_html: currentPageValues.description_html,
-    };
-
-    try {
-      await handleCreatePage(formData);
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be duplicated. Please try again later.",
-      });
-    }
-  };
+  const { archivePage, restorePage } = useProjectPages();
 
   const handleArchivePage = async () => {
     if (!workspaceSlug || !projectId) return;
