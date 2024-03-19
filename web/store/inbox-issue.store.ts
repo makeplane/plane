@@ -93,7 +93,10 @@ export class InboxIssueStore implements IInboxIssueStore {
       runInAction(() => {
         this.snoozed_till = date;
       });
-      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.id, { snoozed_till: date });
+      await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.id, {
+        status: 0,
+        snoozed_till: date,
+      });
     } catch (error) {
       runInAction(() => {
         this.snoozed_till = oldValue;

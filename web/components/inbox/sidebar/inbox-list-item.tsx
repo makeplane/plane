@@ -67,12 +67,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
             <p className="flex-shrink-0 text-xs font-medium text-custom-text-300">
               {projectIdentifier}-{issue.sequence_id}
             </p>
-            <InboxIssueStatus
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              inboxIssue={inboxIssue}
-              iconSize={14}
-            />
+            {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={14} />}
           </div>
           <div>
             <h3 className="text-sm truncate w-full">{issue.name}</h3>
@@ -81,7 +76,11 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
             <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`} isMobile={isMobile}>
               <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
             </Tooltip>
-            <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`} isMobile={isMobile}>
+            <Tooltip
+              tooltipHeading="Created on"
+              tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
+              isMobile={isMobile}
+            >
               <div className="flex items-center gap-1 rounded border border-custom-border-200 px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">
                 <CalendarDays size={12} strokeWidth={1.5} />
                 <span>{renderFormattedDate(issue.created_at ?? "")}</span>
