@@ -53,22 +53,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // editor markings hook
   const { markings } = useEditorMarkings();
 
-  const actionCompleteAlert = ({
-    title,
-    message,
-    type,
-  }: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => {
-    setToast({
-      title,
-      message,
-      type: type as TOAST_TYPE,
-    });
-  };
-
   const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
 
   // auth
@@ -80,7 +64,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       {editorRef.current && (
         <div
           className={cn(
-            "sticky top-0 h-full flex-shrink-0 w-56 lg:w-72 hidden md:block p-5 duration-200 -translate-x-full",
+            "sticky top-0 hidden h-full w-56 flex-shrink-0 -translate-x-full p-5 duration-200 md:block lg:w-72",
             {
               "translate-x-0": sidePeekVisible,
             }
@@ -89,16 +73,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           <PageContentBrowser editorRef={editorRef.current} markings={markings} />
         </div>
       )}
-      <div className="h-full w-full md:w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)] pl-5 pr-5 md:pr-0">
+      <div className="h-full w-full pl-5 pr-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
         {isPageReadOnly ? (
           <DocumentReadOnlyEditorWithRef
-            onActionCompleteHandler={actionCompleteAlert}
             ref={editorRef}
             title={pageTitle}
             value={pageDescription}
             customClassName={"tracking-tight w-full px-0"}
-            borderOnFocus={false}
-            noBorder
           />
         ) : (
           <Controller
@@ -115,7 +96,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 cancelUploadImage={fileService.cancelUpload}
                 ref={editorRef}
                 updatePageTitle={updateName}
-                onActionCompleteHandler={actionCompleteAlert}
                 customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
                 onChange={(_description_json, description_html) => {
                   setIsSubmitting("submitting");
@@ -128,7 +108,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           />
         )}
       </div>
-      <div className="h-full w-56 lg:w-72 flex-shrink-0 hidden lg:block" />
+      <div className="hidden h-full w-56 flex-shrink-0 lg:block lg:w-72" />
     </>
   );
 });

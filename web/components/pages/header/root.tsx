@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { Lock, RefreshCw, Sparkle } from "lucide-react";
 // hooks
 import { useApplication } from "hooks/store";
+import { useUser } from "hooks/store";
 // components
 import { GptAssistantPopover } from "components/core";
 import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar } from "components/pages";
@@ -14,6 +15,8 @@ import { renderFormattedDate } from "helpers/date-time.helper";
 // types
 import { EditorRefApi } from "@plane/document-editor";
 import { IPageStore } from "store/page.store";
+// constants
+import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -41,11 +44,21 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     editorRef.current?.setEditorValueAtCursorPosition(response);
   };
 
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+
   if (!editorRef.current) return null;
 
+  // auth
+  const isPageReadOnly =
+    pageStore.is_locked ||
+    pageStore.archived_at ||
+    (!!currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER);
+
   return (
-    <div className="flex items-center py-2 px-3 md:px-5 border-b border-custom-border-200">
-      <div className="md:w-56 flex-shrink-0 lg:w-72">
+    <div className="flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
+      <div className="flex-shrink-0 md:w-56 lg:w-72">
         <PageSummaryPopover
           editorRef={editorRef.current}
           markings={[]}
@@ -53,11 +66,11 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           setSidePeekVisible={setSidePeekVisible}
         />
       </div>
-      <PageToolbar editorRef={editorRef.current} />
+      {!isPageReadOnly && <PageToolbar editorRef={editorRef?.current} />}
       <div className="flex flex-grow items-center justify-end gap-3">
         {!pageStore.is_locked && !pageStore.archived_at && (
           <div
-            className={cn("absolute right-[120px] flex items-center gap-x-2 transition-all duration-300 fadeIn", {
+            className={cn("fadeIn absolute right-[120px] flex items-center gap-x-2 transition-all duration-300", {
               fadeOut: isSubmitting === "saved",
             })}
           >
@@ -68,13 +81,13 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           </div>
         )}
         {pageStore.is_locked && (
-          <div className="flex items-center gap-2 h-7 rounded-full px-3 py-0.5 text-xs font-medium bg-custom-background-80 text-custom-text-300">
+          <div className="flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
             <Lock className="h-3 w-3" />
             <span>Locked</span>
           </div>
         )}
         {pageStore.archived_at && (
-          <div className="flex items-center gap-2 h-7 rounded-full px-3 py-0.5 text-xs font-medium bg-blue-500/20 text-blue-500">
+          <div className="flex h-7 items-center gap-2 rounded-full bg-blue-500/20 px-3 py-0.5 text-xs font-medium text-blue-500">
             <ArchiveIcon className="h-3 w-3" />
             <span>Archived at {renderFormattedDate(pageStore.archived_at)}</span>
           </div>

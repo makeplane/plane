@@ -16,10 +16,6 @@ import { EditorRefApi } from "src/types/editor-ref-api";
 interface CustomEditorProps {
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
-  };
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
   value: string;
@@ -38,7 +34,6 @@ export const useEditor = ({
   cancelUploadImage,
   editorProps = {},
   value,
-  rerenderOnPropsChange,
   extensions = [],
   onStart,
   onChange,
@@ -47,39 +42,36 @@ export const useEditor = ({
   mentionHighlights,
   mentionSuggestions,
 }: CustomEditorProps) => {
-  const editor = useCustomEditor(
-    {
-      editorProps: {
-        ...CoreEditorProps(uploadFile),
-        ...editorProps,
-      },
-      extensions: [
-        ...CoreEditorExtensions(
-          {
-            mentionSuggestions: mentionSuggestions ?? [],
-            mentionHighlights: mentionHighlights ?? [],
-          },
-          deleteFile,
-          restoreFile,
-          cancelUploadImage
-        ),
-        ...extensions,
-      ],
-      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-      onCreate: async ({ editor }) => {
-        onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
-      },
-      onTransaction: async ({ editor }) => {
-        setSavedSelection(editor.state.selection);
-      },
-      onUpdate: async ({ editor }) => {
-        // setIsSubmitting?.("submitting");
-        // setShouldShowAlert?.(true);
-        onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
-      },
+  const editor = useCustomEditor({
+    editorProps: {
+      ...CoreEditorProps(uploadFile),
+      ...editorProps,
     },
-    [rerenderOnPropsChange]
-  );
+    extensions: [
+      ...CoreEditorExtensions(
+        {
+          mentionSuggestions: mentionSuggestions ?? [],
+          mentionHighlights: mentionHighlights ?? [],
+        },
+        deleteFile,
+        restoreFile,
+        cancelUploadImage
+      ),
+      ...extensions,
+    ],
+    content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+    onCreate: async ({ editor }) => {
+      onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
+    },
+    onTransaction: async ({ editor }) => {
+      setSavedSelection(editor.state.selection);
+    },
+    onUpdate: async ({ editor }) => {
+      // setIsSubmitting?.("submitting");
+      // setShouldShowAlert?.(true);
+      onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
+    },
+  });
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;

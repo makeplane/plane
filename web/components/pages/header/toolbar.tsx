@@ -95,17 +95,17 @@ export const PageToolbar: React.FC<Props> = (props) => {
           <button
             key={item.name}
             type="button"
-            onClick={() => editorRef.executeMenuItemCommand(item.name)}
+            onClick={() => editorRef?.executeMenuItemCommand(item.name)}
             className={cn(
               "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "bg-custom-background-80 text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "bg-custom-background-80 text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               }
             )}
           >
             <item.icon
               className={cn("h-4 w-4", {
-                "text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               })}
             />
           </button>
@@ -120,13 +120,13 @@ export const PageToolbar: React.FC<Props> = (props) => {
             className={cn(
               "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "bg-custom-background-80 text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "bg-custom-background-80 text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               }
             )}
           >
             <item.icon
               className={cn("h-4 w-4", {
-                "text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               })}
             />
           </button>
@@ -141,13 +141,13 @@ export const PageToolbar: React.FC<Props> = (props) => {
             className={cn(
               "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "bg-custom-background-80 text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "bg-custom-background-80 text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               }
             )}
           >
             <item.icon
               className={cn("h-4 w-4", {
-                "text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               })}
             />
           </button>
@@ -162,13 +162,13 @@ export const PageToolbar: React.FC<Props> = (props) => {
             className={cn(
               "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "bg-custom-background-80 text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "bg-custom-background-80 text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               }
             )}
           >
             <item.icon
               className={cn("h-4 w-4", {
-                "text-custom-text-100": editorRef.isMenuItemActive(item.name),
+                "text-custom-text-100": editorRef?.isMenuItemActive(item.name),
               })}
             />
           </button>

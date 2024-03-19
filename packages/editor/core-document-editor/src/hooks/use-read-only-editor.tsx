@@ -10,10 +10,6 @@ interface CustomReadOnlyEditorProps {
   forwardedRef?: any;
   extensions?: any;
   editorProps?: EditorProps;
-  rerenderOnPropsChange?: {
-    id: string;
-    description_html: string;
-  };
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
 }
@@ -23,28 +19,24 @@ export const useReadOnlyEditor = ({
   forwardedRef,
   extensions = [],
   editorProps = {},
-  rerenderOnPropsChange,
   mentionHighlights,
   mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
-  const editor = useCustomEditor(
-    {
-      editable: false,
-      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-      editorProps: {
-        ...CoreReadOnlyEditorProps,
-        ...editorProps,
-      },
-      extensions: [
-        ...CoreReadOnlyEditorExtensions({
-          mentionSuggestions: mentionSuggestions ?? [],
-          mentionHighlights: mentionHighlights ?? [],
-        }),
-        ...extensions,
-      ],
+  const editor = useCustomEditor({
+    editable: false,
+    content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+    editorProps: {
+      ...CoreReadOnlyEditorProps,
+      ...editorProps,
     },
-    [rerenderOnPropsChange]
-  );
+    extensions: [
+      ...CoreReadOnlyEditorExtensions({
+        mentionSuggestions: mentionSuggestions ?? [],
+        mentionHighlights: mentionHighlights ?? [],
+      }),
+      ...extensions,
+    ],
+  });
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
