@@ -24,12 +24,6 @@ interface IDocumentEditor {
   restoreFile: RestoreImage;
   cancelUploadImage: () => any;
 
-  // editor state managers
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: object, html: string) => void;
@@ -51,7 +45,6 @@ const DocumentEditor = ({
   forwardedRef,
   updatePageTitle,
   cancelUploadImage,
-  onActionCompleteHandler,
   tabIndex,
 }: IDocumentEditor) => {
   const { updateMarkings } = useEditorMarkings();
@@ -97,7 +90,6 @@ const DocumentEditor = ({
     <div className="h-full w-full frame-renderer">
       <PageRenderer
         tabIndex={tabIndex}
-        onActionCompleteHandler={onActionCompleteHandler}
         hideDragHandle={hideDragHandleOnMouseLeave}
         readonly={false}
         editor={editor}

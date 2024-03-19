@@ -23,11 +23,6 @@ type IPageRenderer = {
   documentDetails: DocumentDetails;
   updatePageTitle: (title: string) => void;
   editor: Editor;
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
   editorClassNames: string;
   editorContentCustomClassNames?: string;
   hideDragHandle?: () => void;
@@ -140,7 +135,6 @@ export const PageRenderer = (props: IPageRenderer) => {
           setCoordinates({ x: x - 300, y: y - 50 });
           setIsOpen(true);
           setLinkViewProps({
-            onActionCompleteHandler: props.onActionCompleteHandler,
             closeLinkView: closeLinkView,
             view: "LinkPreview",
             url: href,

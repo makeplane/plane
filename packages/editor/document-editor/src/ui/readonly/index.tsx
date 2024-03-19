@@ -10,14 +10,7 @@ import { DocumentDetails } from "src/types/editor-types";
 
 interface IDocumentReadOnlyEditor {
   value: string;
-  noBorder: boolean;
-  borderOnFocus: boolean;
   customClassName: string;
-  onActionCompleteHandler: (action: {
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-  }) => void;
   tabIndex?: number;
   documentDetails: DocumentDetails;
 }
@@ -32,16 +25,7 @@ interface EditorHandle {
 }
 
 const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
-  const {
-    noBorder,
-    borderOnFocus,
-    customClassName,
-    value,
-    documentDetails,
-    forwardedRef,
-    onActionCompleteHandler,
-    tabIndex,
-  } = props;
+  const { customClassName, value, documentDetails, forwardedRef, tabIndex } = props;
   const { updateMarkings } = useEditorMarkings();
 
   const editor = useReadOnlyEditor({
@@ -61,8 +45,6 @@ const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
   }
 
   const editorClassNames = getEditorClassNames({
-    noBorder,
-    borderOnFocus,
     customClassName,
   });
 
@@ -70,7 +52,6 @@ const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
     <div className="h-full w-full frame-renderer">
       <PageRenderer
         tabIndex={tabIndex}
-        onActionCompleteHandler={onActionCompleteHandler}
         updatePageTitle={() => Promise.resolve()}
         readonly
         editor={editor}

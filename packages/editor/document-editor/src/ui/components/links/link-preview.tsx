@@ -12,21 +12,11 @@ export const LinkPreview = ({
 
   const removeLink = () => {
     editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
-    viewProps.onActionCompleteHandler({
-      title: "Link successfully removed",
-      message: "The link was removed from the text.",
-      type: "success",
-    });
     viewProps.closeLinkView();
   };
 
   const copyLinkToClipboard = () => {
     navigator.clipboard.writeText(url);
-    viewProps.onActionCompleteHandler({
-      title: "Link successfully copied",
-      message: "The link was copied to the clipboard.",
-      type: "success",
-    });
     viewProps.closeLinkView();
   };
 
