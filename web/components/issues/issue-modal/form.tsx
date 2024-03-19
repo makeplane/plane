@@ -26,10 +26,10 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "components/dropdowns";
-// ui
+//ui
 import { Button, CustomMenu, Input, Loader, ToggleSwitch } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
 
@@ -236,10 +236,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const startDate = watch("start_date");
   const targetDate = watch("target_date");
 
-  const minDate = startDate ? new Date(startDate) : null;
+  const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = targetDate ? new Date(targetDate) : null;
+  const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
 
   const projectDetails = getProjectById(projectId);

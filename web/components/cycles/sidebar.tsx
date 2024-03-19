@@ -18,8 +18,8 @@ import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
 // icons
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
 // helpers
+import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { findHowManyDaysLeft, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "@plane/types";
 // constants
@@ -186,8 +186,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const cycleStatus = cycleDetails?.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
 
-  const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${cycleDetails?.end_date}`) >= new Date(`${cycleDetails?.start_date}`);
+  const startDate = getDate(cycleDetails?.start_date);
+  const endDate = getDate(cycleDetails?.end_date);
+
+  const isStartValid = startDate && startDate <= new Date();
+  const isEndValid = endDate && startDate && endDate >= startDate;
 
   const progressPercentage = cycleDetails
     ? isCompleted && cycleDetails?.progress_snapshot
@@ -317,8 +320,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                         buttonVariant="background-with-text"
                         minDate={new Date()}
                         value={{
-                          from: startDateValue ? new Date(startDateValue) : undefined,
-                          to: endDateValue ? new Date(endDateValue) : undefined,
+                          from: getDate(startDateValue),
+                          to: getDate(endDateValue),
                         }}
                         onSelect={(val) => {
                           onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);

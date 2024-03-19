@@ -26,9 +26,9 @@ import {
 } from "components/issues";
 import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // components
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
 // helpers
 import { cn } from "helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 
 interface IPeekOverviewProperties {
@@ -54,10 +54,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
   return (

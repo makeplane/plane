@@ -8,6 +8,7 @@ import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/
 import { CycleGanttBlock } from "components/cycles";
 // types
 import { ICycle } from "@plane/types";
+import { getDate } from "helpers/date-time.helper";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
@@ -45,8 +46,8 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
       data: block,
       id: block?.id ?? "",
       sort_order: block?.sort_order ?? 0,
-      start_date: new Date(block?.start_date ?? ""),
-      target_date: new Date(block?.end_date ?? ""),
+      start_date: getDate(block?.start_date),
+      target_date: getDate(block?.end_date),
     }));
 
     return structuredBlocks;
