@@ -1,14 +1,18 @@
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Tab } from "@headlessui/react";
 import { observer } from "mobx-react";
+import { ListFilter } from "lucide-react";
 // hooks
 import { useIntersectionObserver } from "hooks/use-intersection-observer";
-import { useProject, useProjectInbox } from "hooks/store";
+import { useLabel, useMember, useProject, useProjectInbox } from "hooks/store";
 // components
 import { InboxIssueFilterSelection } from "../filter";
 import { InboxIssueList } from "./inbox-list";
+import { FiltersDropdown } from "components/issues";
 // ui
 import { Loader } from "@plane/ui";
+// types
+import { TInboxIssueFilterOptions } from "@plane/types";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;
@@ -28,9 +32,21 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     inboxIssuePaginationInfo: paginationInfo,
     fetchInboxIssuesNextPage,
     applyResolvedInboxIssueFilter,
-    resetInboxStatusFilters,
+    inboxFilters,
+    resetInboxFilters,
+    updateInboxIssueStatusFilter,
+    updateInboxIssuePriorityFilter,
+    updateInboxIssueLabelFilter,
+    updateInboxIssueAssigneeFilter,
+    updateInboxIssueCreatedByFilter,
+    updateInboxIssueCreatedAtFilter,
+    updateInboxIssueUpdatedAtFilter,
   } = useProjectInbox();
   const { currentProjectDetails } = useProject();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
+  const { projectLabels } = useLabel();
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -46,8 +62,11 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     rootMargin: "20%",
   });
 
-  const handleOpenTab = () => resetInboxStatusFilters(workspaceSlug, projectId);
-  const handleClosedTab = () => applyResolvedInboxIssueFilter(workspaceSlug, projectId);
+  const handleOpenTab = () => resetInboxFilters(workspaceSlug, projectId);
+  const handleClosedTab = () => {
+    resetInboxFilters(workspaceSlug, projectId);
+    applyResolvedInboxIssueFilter(workspaceSlug, projectId);
+  };
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -62,12 +81,54 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
 
   useEffect(() => {
     if (tab === "Open") {
-      resetInboxStatusFilters(workspaceSlug, projectId);
+      resetInboxFilters(workspaceSlug, projectId);
     }
     if (tab === "Closed") {
       applyResolvedInboxIssueFilter(workspaceSlug, projectId);
     }
-  }, [projectId, tab]);
+  }, [projectId, tab, applyResolvedInboxIssueFilter, resetInboxFilters, workspaceSlug]);
+
+  const handleFiltersUpdate = useCallback(
+    (key: keyof TInboxIssueFilterOptions, value: any) => {
+      if (!workspaceSlug || !projectId) return;
+      switch (key) {
+        case "inbox_status":
+          updateInboxIssueStatusFilter(workspaceSlug, projectId, value);
+          break;
+        case "priority":
+          updateInboxIssuePriorityFilter(workspaceSlug, projectId, value);
+          break;
+        case "label":
+          updateInboxIssueLabelFilter(workspaceSlug, projectId, value);
+          break;
+        case "assignee":
+          updateInboxIssueAssigneeFilter(workspaceSlug, projectId, value);
+          break;
+        case "created_by":
+          updateInboxIssueCreatedByFilter(workspaceSlug, projectId, value);
+          break;
+        case "created_at":
+          updateInboxIssueCreatedAtFilter(workspaceSlug, projectId, value);
+          break;
+        case "updated_at":
+          updateInboxIssueUpdatedAtFilter(workspaceSlug, projectId, value);
+          break;
+        default:
+          break;
+      }
+    },
+    [
+      workspaceSlug,
+      projectId,
+      updateInboxIssueStatusFilter,
+      updateInboxIssuePriorityFilter,
+      updateInboxIssueLabelFilter,
+      updateInboxIssueAssigneeFilter,
+      updateInboxIssueCreatedByFilter,
+      updateInboxIssueCreatedAtFilter,
+      updateInboxIssueUpdatedAtFilter,
+    ]
+  );
 
   return (
     <div className="flex-shrink-0 w-2/5 h-full border-r border-custom-border-300">
@@ -117,9 +178,15 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               Closed
             </Tab>
           </div>
-          <div className="z-20">
-            <InboxIssueFilterSelection workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-          </div>
+
+          <FiltersDropdown icon={<ListFilter className="h-3 w-3" />} title="Filters" placement="bottom-end">
+            <InboxIssueFilterSelection
+              inboxFilters={inboxFilters}
+              handleFiltersUpdate={handleFiltersUpdate}
+              memberIds={projectMemberIds}
+              labels={projectLabels}
+            />
+          </FiltersDropdown>
         </Tab.List>
         <Tab.Panels className="h-full overflow-y-auto">
           <Tab.Panel as="div" className="w-full h-full overflow-hidden">

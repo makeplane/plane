@@ -9,7 +9,7 @@ import uniq from "lodash/uniq";
 // services
 import { InboxIssueService } from "services/inbox";
 // types
-import { TInboxIssueFilterOptions, TInboxIssue, TIssue, TPaginationInfo } from "@plane/types";
+import { TInboxIssueFilterOptions, TInboxIssue, TIssue, TPaginationInfo, TInboxIssueStatus } from "@plane/types";
 // root store
 import { RootStore } from "./root.store";
 import { IInboxIssueStore, InboxIssueStore } from "./inbox-issue.store";
@@ -32,9 +32,17 @@ export interface IProjectInboxStore {
   fetchInboxIssuesNextPage: (workspaceSlug: string, projectId: string) => Promise<void>;
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
+
+  updateInboxIssueStatusFilter: (workspaceSlug: string, projectId: string, value: TInboxIssueStatus) => void;
   updateInboxIssuePriorityFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+  updateInboxIssueAssigneeFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+  updateInboxIssueCreatedByFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+  updateInboxIssueLabelFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+  updateInboxIssueCreatedAtFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+  updateInboxIssueUpdatedAtFilter: (workspaceSlug: string, projectId: string, value: string) => void;
+
   applyResolvedInboxIssueFilter: (workspaceSlug: string, projectId: string) => void;
-  updateInboxIssueStatusFilter: (workspaceSlug: string, projectId: string, value: number) => void;
+  // updateFilters: (workspaceSlug: string, projectId: string, filters: TInboxIssueFilterOptions) => void;
   resetInboxFilters: (workspaceSlug: string, projectId: string) => void;
   resetInboxPriorityFilters: (workspaceSlug: string, projectId: string) => void;
   resetInboxStatusFilters: (workspaceSlug: string, projectId: string) => void;
@@ -64,9 +72,15 @@ export class ProjectInboxStore implements IProjectInboxStore {
       fetchInboxIssuesNextPage: action,
       createInboxIssue: action,
       deleteInboxIssue: action,
-      updateInboxIssuePriorityFilter: action,
-      applyResolvedInboxIssueFilter: action,
       updateInboxIssueStatusFilter: action,
+      updateInboxIssuePriorityFilter: action,
+      updateInboxIssueAssigneeFilter: action,
+      updateInboxIssueCreatedByFilter: action,
+      updateInboxIssueLabelFilter: action,
+      updateInboxIssueCreatedAtFilter: action,
+      updateInboxIssueUpdatedAtFilter: action,
+      applyResolvedInboxIssueFilter: action,
+      // updateFilters: action,
       resetInboxFilters: action,
       resetInboxPriorityFilters: action,
       resetInboxStatusFilters: action,
@@ -188,6 +202,28 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   /**
+   * update inbox issue status filters
+   * @param projectId
+   * @param key
+   * @param value
+   */
+  updateInboxIssueStatusFilter = (workspaceSlug: string, projectId: string, value: TInboxIssueStatus) => {
+    runInAction(() => {
+      const inboxStatusFilter = this.inboxFilters?.inbox_status ?? [];
+      if (includes(inboxStatusFilter, value)) {
+        pull(inboxStatusFilter, value);
+      } else {
+        inboxStatusFilter.push(value);
+        this.inboxFilters = {
+          ...this.inboxFilters,
+          inbox_status: uniq(inboxStatusFilter),
+        };
+      }
+    });
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  };
+
+  /**
    * update inbox issue priority filters
    * @param projectId
    * @param key
@@ -211,30 +247,110 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   /**
-   * update inbox issue status filters
+   * update inbox issue priority filters
    * @param projectId
    * @param key
    * @param value
    */
-  updateInboxIssueStatusFilter = (workspaceSlug: string, projectId: string, value: number) => {
+  updateInboxIssueAssigneeFilter = (workspaceSlug: string, projectId: string, value: string) => {
     runInAction(() => {
-      const inboxStatusFilter = this.inboxFilters?.inbox_status ?? [];
-      if (includes(inboxStatusFilter, value)) {
-        pull(inboxStatusFilter, value);
+      const assigneeList = this.inboxFilters?.assignee ?? [];
+      if (includes(assigneeList, value)) {
+        pull(assigneeList, value);
       } else {
-        inboxStatusFilter.push(value);
+        assigneeList.push(value);
         this.inboxFilters = {
           ...this.inboxFilters,
-          inbox_status: uniq(inboxStatusFilter),
+          assignee: uniq(assigneeList),
         };
       }
     });
     this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
   };
 
+  updateInboxIssueCreatedByFilter = (workspaceSlug: string, projectId: string, value: string) => {
+    runInAction(() => {
+      const createdByList = this.inboxFilters?.created_by ?? [];
+      if (includes(createdByList, value)) {
+        pull(createdByList, value);
+      } else {
+        createdByList.push(value);
+        this.inboxFilters = {
+          ...this.inboxFilters,
+          created_by: uniq(createdByList),
+        };
+      }
+    });
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  };
+
+  updateInboxIssueLabelFilter = (workspaceSlug: string, projectId: string, value: string) => {
+    runInAction(() => {
+      const labelList = this.inboxFilters?.label ?? [];
+      if (includes(labelList, value)) {
+        pull(labelList, value);
+      } else {
+        labelList.push(value);
+        this.inboxFilters = {
+          ...this.inboxFilters,
+          label: uniq(labelList),
+        };
+      }
+    });
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  };
+
+  updateInboxIssueCreatedAtFilter = (workspaceSlug: string, projectId: string, value: string) => {
+    runInAction(() => {
+      // check if the value is already in the array
+      const createdAtList = this.inboxFilters?.created_at ?? [];
+      if (includes(createdAtList, value)) {
+        pull(createdAtList, value);
+      } else {
+        createdAtList.push(value);
+        this.inboxFilters = {
+          ...this.inboxFilters,
+          created_at: uniq(createdAtList),
+        };
+      }
+    });
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  };
+
+  updateInboxIssueUpdatedAtFilter = (workspaceSlug: string, projectId: string, value: string) => {
+    runInAction(() => {
+      // check if the value is already in the array
+      const updatedAtList = this.inboxFilters?.updated_at ?? [];
+      if (includes(updatedAtList, value)) {
+        pull(updatedAtList, value);
+      } else {
+        updatedAtList.push(value);
+        this.inboxFilters = {
+          ...this.inboxFilters,
+          updated_at: uniq(updatedAtList),
+        };
+      }
+    });
+    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  };
+
+  // /**
+  //  * @description update filters of a project
+  //  * @param {string} projectId
+  //  * @param {TInboxIssueFilterOptions} filters
+  //  */
+  // updateFilters = (workspaceSlug: string, projectId: string, filters: TInboxIssueFilterOptions) => {
+  //   runInAction(() => {
+  //     Object.keys(filters).forEach((key) => {
+  //       set(this.inboxFilters, [projectId, key], filters[key as keyof TInboxIssueFilterOptions]);
+  //     });
+  //   });
+  //   this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  // };
+
   applyResolvedInboxIssueFilter = (workspaceSlug: string, projectId: string) => {
     runInAction(() => {
-      const resolvedStatus = [-1, 0, 1, 2];
+      const resolvedStatus = [-1, 0, 1, 2] as TInboxIssueStatus[];
       this.inboxFilters = {
         ...this.inboxFilters,
         inbox_status: uniq(resolvedStatus),

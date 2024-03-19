@@ -19,8 +19,13 @@ export type TInboxIssue = {
 };
 
 export type TInboxIssueFilterOptions = {
+  inbox_status: TInboxIssueStatus[];
   priority: string[];
-  inbox_status: number[];
+  assignee: string[];
+  created_by: string[];
+  label: string[];
+  created_at: string[];
+  updated_at: string[];
 };
 
 export type TInboxIssueQueryParams = "priority" | "inbox_status";
