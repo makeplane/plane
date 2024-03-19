@@ -15,7 +15,6 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import {
   ArchiveIcon,
@@ -28,7 +27,13 @@ import {
   TOAST_TYPE,
   setToast,
 } from "@plane/ui";
-import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  MemberDropdown,
+  StateDropdown,
+} from "@/components/dropdowns";
 // ui
 // helpers
 import {
@@ -40,18 +45,19 @@ import {
   IssueParentSelect,
   IssueLabel,
   ArchiveIssueModal,
-} from "components/issues";
+} from "@/components/issues";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { cn } from "helpers/common.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
 // types
-import type { TIssueOperations } from "./root";
-import { STATE_GROUPS } from "constants/state";
+import { STATE_GROUPS } from "@/constants/state";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "hooks/store";
+import { useEstimate, useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
+import type { TIssueOperations } from "./root";
 import { IssueSubscription } from "./subscription";
 // icons
 // helpers

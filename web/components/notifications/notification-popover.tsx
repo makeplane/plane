@@ -1,22 +1,22 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react-lite";
+import { Bell } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
-import { useApplication } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useUserNotification from "hooks/use-user-notifications";
-import { usePlatformOS } from "hooks/use-platform-os";
 // icons
-import { Bell } from "lucide-react";
 // components
 import { Tooltip } from "@plane/ui";
-import { EmptyState } from "components/empty-state";
-import { NotificationsLoader } from "components/ui";
-import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
+import { EmptyState } from "@/components/empty-state";
+import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "@/components/notifications";
+import { NotificationsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "constants/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
 // helpers
-import { getNumberCount } from "helpers/string.helper";
+import { getNumberCount } from "@/helpers/string.helper";
+import { useApplication } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import useUserNotification from "@/hooks/use-user-notifications";
 
 export const NotificationPopover = observer(() => {
   // states
@@ -63,12 +63,12 @@ export const NotificationPopover = observer(() => {
   const currentTabEmptyState = snoozed
     ? EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE
     : archived
-    ? EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE
-    : selectedTab === "created"
-    ? EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE
-    : selectedTab === "watching"
-    ? EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE
-    : EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE;
+      ? EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE
+      : selectedTab === "created"
+        ? EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE
+        : selectedTab === "watching"
+          ? EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE
+          : EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE;
 
   return (
     <>

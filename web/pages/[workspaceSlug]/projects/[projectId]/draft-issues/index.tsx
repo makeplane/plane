@@ -4,14 +4,14 @@ import { useRouter } from "next/router";
 import { X, PenSquare } from "lucide-react";
 // layouts
 // components
-import { PageHead } from "components/core";
-import { ProjectDraftIssueHeader } from "components/headers";
-import { DraftIssueLayoutRoot } from "components/issues/issue-layouts/roots/draft-issue-layout-root";
+import { PageHead } from "@/components/core";
+import { ProjectDraftIssueHeader } from "@/components/headers";
+import { DraftIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/draft-issue-layout-root";
 // types
 // hooks
-import { useProject } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
+import { useProject } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectDraftIssuesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();

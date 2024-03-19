@@ -2,25 +2,25 @@ import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { Info, Star } from "lucide-react";
+import type { TCycleGroups } from "@plane/types";
 import { Avatar, AvatarGroup, Tooltip, LayersIcon, CycleGroupIcon, setPromiseToast } from "@plane/ui";
-import { CycleQuickActions } from "components/cycles";
+import { CycleQuickActions } from "@/components/cycles";
+// hooks
 // ui
 // icons
 // helpers
-import { findHowManyDaysLeft, getDate, renderFormattedDate } from "helpers/date-time.helper";
-// import { copyTextToClipboard } from "helpers/string.helper";
+// import { copyTextToClipboard } from "@/helpers/string.helper";
 // constants
-import { CYCLE_STATUS } from "constants/cycle";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 // constants
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 //.types
-import { TCycleGroups } from "@plane/types";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -69,8 +69,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycleDetails.completed_issues
-      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-      : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
+        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+        : `${cycleDetails.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {

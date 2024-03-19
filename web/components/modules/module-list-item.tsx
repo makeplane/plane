@@ -14,17 +14,17 @@ import {
   setToast,
   setPromiseToast,
 } from "@plane/ui";
-import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
+import { CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 // constants
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
+import { MODULE_STATUS } from "@/constants/module";
+import { EUserProjectRoles } from "@/constants/project";
+import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useUser, useEventTracker, useMember } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useModule, useUser, useEventTracker, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 // ui
 // helpers

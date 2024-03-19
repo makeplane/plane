@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import type { TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { ConfirmIssueDiscard } from "components/issues";
-import { IssueFormRoot } from "components/issues/issue-modal/form";
-import { useEventTracker } from "hooks/store";
+import { ConfirmIssueDiscard } from "@/components/issues";
+import { IssueFormRoot } from "@/components/issues/issue-modal/form";
+import { useEventTracker } from "@/hooks/store";
 // services
-import { IssueDraftService } from "services/issue";
+import { IssueDraftService } from "@/services/issue";
 // ui
 // components
 // types
-import type { TIssue } from "@plane/types";
 
 export interface DraftIssueProps {
   changesMade: Partial<TIssue> | null;

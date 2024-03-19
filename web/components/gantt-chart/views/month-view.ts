@@ -1,6 +1,6 @@
 // types
+import { findTotalDaysInRange } from "@/helpers/date-time.helper";
 import { weeks, months } from "../data";
-import { findTotalDaysInRange } from "helpers/date-time.helper";
 import { ChartDataType, IGanttBlock } from "../types";
 // data
 // helpers

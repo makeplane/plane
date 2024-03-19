@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { Lock } from "lucide-react";
+import { IProject, IWorkspace } from "@plane/types";
 // ui
 import {
   Button,
@@ -14,20 +15,19 @@ import {
   EmojiIconPickerTypes,
 } from "@plane/ui";
 // components
-import { ImagePickerPopover } from "components/core";
+import { ImagePickerPopover } from "@/components/core";
 // constants
-import { PROJECT_UPDATED } from "constants/event-tracker";
-import { NETWORK_CHOICES } from "constants/project";
+import { PROJECT_UPDATED } from "@/constants/event-tracker";
+import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useEventTracker, useProject } from "hooks/store";
+import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { useEventTracker, useProject } from "@/hooks/store";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService } from "@/services/project";
 // types
-import { IProject, IWorkspace } from "@plane/types";
 import { ProjectLogo } from "./project-logo";
-import { convertHexEmojiToDecimal } from "helpers/emoji.helper";
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;

@@ -5,7 +5,7 @@ import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
 // hooks
 import { Spinner } from "@plane/ui";
-import { useUser, useWorkspace } from "hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 // ui
 
 export interface IUserAuthWrapper {

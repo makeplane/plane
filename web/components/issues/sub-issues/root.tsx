@@ -2,16 +2,16 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
+import { IUser, TIssue } from "@plane/types";
 // hooks
 import { CircularProgressIndicator, CustomMenu, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { useEventTracker, useIssueDetail } from "hooks/store";
+import { ExistingIssuesListModal } from "@/components/core";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { cn } from "@/helpers/common.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useIssueDetail } from "@/hooks/store";
 // components
-import { IUser, TIssue } from "@plane/types";
 import { IssueList } from "./issues-list";
-import { cn } from "helpers/common.helper";
 // ui
 // helpers
 // types

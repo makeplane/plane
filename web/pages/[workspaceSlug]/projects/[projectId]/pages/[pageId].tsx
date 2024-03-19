@@ -1,32 +1,32 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { Sparkle } from "lucide-react";
+import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
+import { IPage } from "@plane/types";
 // hooks
 
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-import { GptAssistantPopover, PageHead } from "components/core";
-import { PageDetailsHeader } from "components/headers/page-details";
-import { IssuePeekOverview } from "components/issues";
-import { EUserProjectRoles } from "constants/project";
-import { useApplication, usePage, useUser, useWorkspace } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
+import { GptAssistantPopover, PageHead } from "@/components/core";
+import { PageDetailsHeader } from "@/components/headers/page-details";
+import { IssuePeekOverview } from "@/components/issues";
+import { EUserProjectRoles } from "@/constants/project";
+import { getDate } from "@/helpers/date-time.helper";
+import { useApplication, usePage, useUser, useWorkspace } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
-import { FileService } from "services/file.service";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { FileService } from "@/services/file.service";
 // layouts
 // components
 // ui
 // assets
 // helpers
-import { getDate } from "helpers/date-time.helper";
 // types
-import { IPage } from "@plane/types";
 // fetch-keys
 // constants
 

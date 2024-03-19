@@ -2,14 +2,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
+import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
-import useSize from "hooks/use-window-size";
 // ui
 // icons
-import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
-import { ToggleSwitch } from "@plane/ui";
-// types
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -17,14 +14,17 @@ import {
   TCalendarLayouts,
   TIssueKanbanFilters,
 } from "@plane/types";
+import { ToggleSwitch } from "@plane/ui";
+// types
 // constants
-import { CALENDAR_LAYOUTS } from "constants/calendar";
-import { EIssueFilterType } from "constants/issue";
-import { useCalendarView } from "hooks/store";
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { CALENDAR_LAYOUTS } from "@/constants/calendar";
+import { EIssueFilterType } from "@/constants/issue";
+import { useCalendarView } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

@@ -1,22 +1,22 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Tab } from "@headlessui/react";
 import { ListFilter, Search, X } from "lucide-react";
-// hooks
-import { useCycleFilter } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
-// components
-import { CycleFiltersSelection } from "components/cycles";
-import { FiltersDropdown } from "components/issues";
-// ui
-import { Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "helpers/common.helper";
-// types
+import { Tab } from "@headlessui/react";
 import { TCycleFilters } from "@plane/types";
+// hooks
+import { Tooltip } from "@plane/ui";
+import { CycleFiltersSelection } from "@/components/cycles";
+import { FiltersDropdown } from "@/components/issues";
+import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
+import { cn } from "@/helpers/common.helper";
+import { useCycleFilter } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// components
+// ui
+// helpers
+// types
 // constants
-import { CYCLE_TABS_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 
 type Props = {
   projectId: string;

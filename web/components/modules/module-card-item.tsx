@@ -6,17 +6,17 @@ import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // components
-import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
+import { CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // constants
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { MODULE_STATUS } from "@/constants/module";
+import { EUserProjectRoles } from "@/constants/project";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { getDate, renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useMember, useModule, useUser } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
@@ -160,8 +160,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === moduleDetails.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${moduleDetails.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   return (

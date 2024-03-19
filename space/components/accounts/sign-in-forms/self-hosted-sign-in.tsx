@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
-import { AuthService } from "services/authentication.service";
+import { Button, Input } from "@plane/ui";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/authentication.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "types/auth";
 

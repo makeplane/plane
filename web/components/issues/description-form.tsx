@@ -1,16 +1,16 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
-import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
+import { TIssue } from "@plane/types";
 // hooks
 import { Loader, TextArea } from "@plane/ui";
-import { useMention, useWorkspace } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
+import { useMention, useWorkspace } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // components
 // types
-import { FileService } from "services/file.service";
-import { TIssue } from "@plane/types";
+import { FileService } from "@/services/file.service";
 import { TIssueOperations } from "./issue-detail";
 // services
 

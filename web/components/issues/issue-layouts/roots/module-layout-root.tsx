@@ -3,6 +3,7 @@ import size from "lodash/size";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { IIssueFilterOptions } from "@plane/types";
 // mobx store
 // components
 import {
@@ -14,13 +15,12 @@ import {
   ModuleKanBanLayout,
   ModuleListLayout,
   ModuleSpreadsheetLayout,
-} from "components/issues";
-import { ActiveLoader } from "components/ui";
+} from "@/components/issues";
+import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 // types
-import { IIssueFilterOptions } from "@plane/types";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   // router

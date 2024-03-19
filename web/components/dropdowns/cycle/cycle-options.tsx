@@ -3,15 +3,15 @@ import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 // components
+import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // icon
-import { Check, Search } from "lucide-react";
+import { TCycleGroups } from "@plane/types";
 // ui
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // store hooks
-import { useApplication, useCycle } from "hooks/store";
+import { useApplication, useCycle } from "@/hooks/store";
 // types
-import { TCycleGroups } from "@plane/types";
 
 type DropdownOptions =
   | {

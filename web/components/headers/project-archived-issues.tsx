@@ -1,20 +1,20 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // constants
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "components/common";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
-import { useIssues, useLabel, useMember, useProject, useProjectState } from "hooks/store";
+import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 // types
-import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
-import { ProjectLogo } from "components/project";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ProjectArchivedIssuesHeader: FC = observer(() => {
   // router

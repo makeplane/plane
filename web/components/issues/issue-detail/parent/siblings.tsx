@@ -1,10 +1,10 @@
 import { FC } from "react";
 import useSWR from "swr";
+import { TIssue } from "@plane/types";
 // components
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // types
-import { TIssue } from "@plane/types";
 import { IssueParentSiblingItem } from "./sibling-item";
 
 export type TIssueParentSiblings = {

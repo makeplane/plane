@@ -5,42 +5,42 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
-import { useApplication, useEventTracker, useUser, useProject } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-page";
-import useLocalStorage from "hooks/use-local-storage";
-import useUserAuth from "hooks/use-user-auth";
-import useSize from "hooks/use-window-size";
+import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
+import { PagesHeader } from "@/components/headers";
+import { RecentPagesList, CreateUpdatePageModal } from "@/components/pages";
+import { PagesLoader } from "@/components/ui";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PAGE_TABS_LIST } from "@/constants/page";
+import { useApplication, useEventTracker, useUser, useProject } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-page";
+import useLocalStorage from "@/hooks/use-local-storage";
+import useUserAuth from "@/hooks/use-user-auth";
+import useSize from "@/hooks/use-window-size";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // components
-import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
-import { EmptyState } from "components/empty-state";
-import { PagesHeader } from "components/headers";
-import { PagesLoader } from "components/ui";
-import { PageHead } from "components/core";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { PAGE_TABS_LIST } from "constants/page";
-import { EmptyStateType } from "constants/empty-state";
 
-const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
+const AllPagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.AllPagesList), {
   ssr: false,
 });
 
-const FavoritePagesList = dynamic<any>(() => import("components/pages").then((a) => a.FavoritePagesList), {
+const FavoritePagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.FavoritePagesList), {
   ssr: false,
 });
 
-const PrivatePagesList = dynamic<any>(() => import("components/pages").then((a) => a.PrivatePagesList), {
+const PrivatePagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.PrivatePagesList), {
   ssr: false,
 });
 
-const ArchivedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.ArchivedPagesList), {
+const ArchivedPagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.ArchivedPagesList), {
   ssr: false,
 });
 
-const SharedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.SharedPagesList), {
+const SharedPagesList = dynamic<any>(() => import("@/components/pages").then((a) => a.SharedPagesList), {
   ssr: false,
 });
 

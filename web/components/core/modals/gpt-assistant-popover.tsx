@@ -4,14 +4,14 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
 // ui
+import { AlertCircle } from "lucide-react";
+import { Popover, Transition } from "@headlessui/react";
+import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
-import { AlertCircle } from "lucide-react";
 // components
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
-import { Popover, Transition } from "@headlessui/react";
 // hooks
-import { AIService } from "services/ai.service";
+import { AIService } from "@/services/ai.service";
 
 type Props = {
   isOpen: boolean;
@@ -173,8 +173,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const generateResponseButtonText = isSubmitting
     ? "Generating response..."
     : response === ""
-    ? "Generate response"
-    : "Generate again";
+      ? "Generate response"
+      : "Generate again";
 
   return (
     <Popover as="div" className={`relative w-min text-left`}>

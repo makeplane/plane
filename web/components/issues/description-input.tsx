@@ -3,10 +3,10 @@ import { FC, useState, useEffect } from "react";
 import { RichReadOnlyEditor, RichTextEditor } from "@plane/rich-text-editor";
 import { Loader } from "@plane/ui";
 // hooks
-import { useMention, useWorkspace } from "hooks/store";
-import useDebounce from "hooks/use-debounce";
+import { useMention, useWorkspace } from "@/hooks/store";
+import useDebounce from "@/hooks/use-debounce";
 // services
-import { FileService } from "services/file.service";
+import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // types
 import { TIssueOperations } from "./issue-detail";

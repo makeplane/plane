@@ -1,5 +1,5 @@
 // components
-import { CyclesBoardCard } from "components/cycles";
+import { CyclesBoardCard } from "@/components/cycles";
 
 type Props = {
   cycleIds: string[];

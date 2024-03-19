@@ -3,6 +3,7 @@ import xor from "lodash/xor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // hooks
 import { Tooltip } from "@plane/ui";
 import {
@@ -13,19 +14,18 @@ import {
   ModuleDropdown,
   CycleDropdown,
   StateDropdown,
-} from "components/dropdowns";
+} from "@/components/dropdowns";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 
-import { cn } from "helpers/common.helper";
 // types
-import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // constants
-import { ISSUE_UPDATED } from "constants/event-tracker";
-import { EIssuesStoreType } from "constants/issue";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { ISSUE_UPDATED } from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { useEventTracker, useEstimate, useLabel, useIssues, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssuePropertyLabels } from "../properties/labels";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";

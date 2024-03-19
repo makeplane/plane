@@ -1,15 +1,15 @@
 import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
-import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
+import { Transition, Dialog } from "@headlessui/react";
+import type { IUserNotification } from "@plane/types";
 import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
-import { DateDropdown } from "components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns";
 // constants
-import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification";
+import { allTimeIn30MinutesInterval12HoursFormat } from "@/constants/notification";
 // ui
 // types
-import type { IUserNotification } from "@plane/types";
 
 type SnoozeModalProps = {
   isOpen: boolean;

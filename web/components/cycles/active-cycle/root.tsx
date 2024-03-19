@@ -3,10 +3,8 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import useSWR from "swr";
 // hooks
-import { useCycle, useCycleFilter, useIssues, useMember, useProject } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-// ui
-import { SingleProgressStats } from "components/core";
+import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
+import { ICycle, TCycleGroups } from "@plane/types";
 import {
   AvatarGroup,
   Loader,
@@ -20,29 +18,31 @@ import {
   setPromiseToast,
   getButtonStyling,
 } from "@plane/ui";
+import { SingleProgressStats } from "@/components/core";
+// ui
 // components
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { ActiveCycleProgressStats, UpcomingCyclesList } from "components/cycles";
-import { StateDropdown } from "components/dropdowns";
-import { EmptyState } from "components/empty-state";
+import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { ActiveCycleProgressStats, UpcomingCyclesList } from "@/components/cycles";
+import { StateDropdown } from "@/components/dropdowns";
+import { EmptyState } from "@/components/empty-state";
 // icons
-import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 // helpers
+// types
+// constants
+import { CYCLE_STATE_GROUPS_DETAILS } from "@/constants/cycle";
+import { EmptyStateType } from "@/constants/empty-state";
+import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+import { cn } from "@/helpers/common.helper";
 import {
   renderFormattedDate,
   findHowManyDaysLeft,
   renderFormattedDateWithoutYear,
   getDate,
-} from "helpers/date-time.helper";
-import { truncateText } from "helpers/string.helper";
-import { cn } from "helpers/common.helper";
-// types
-import { ICycle, TCycleGroups } from "@plane/types";
-// constants
-import { EIssuesStoreType } from "constants/issue";
-import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
-import { EmptyStateType } from "constants/empty-state";
+} from "@/helpers/date-time.helper";
+import { truncateText } from "@/helpers/string.helper";
+import { useCycle, useCycleFilter, useIssues, useMember, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;

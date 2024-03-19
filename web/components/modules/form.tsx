@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { IModule } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // components
-import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "components/dropdowns";
-import { ModuleStatusSelect } from "components/modules";
+import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "@/components/dropdowns";
+import { ModuleStatusSelect } from "@/components/modules";
 // helpers
-import { shouldRenderProject } from "helpers/project.helper";
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
 // types
-import { IModule } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;

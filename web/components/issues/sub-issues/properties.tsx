@@ -1,7 +1,7 @@
 import React from "react";
 // hooks
-import { PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
-import { useIssueDetail } from "hooks/store";
+import { PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
+import { useIssueDetail } from "@/hooks/store";
 // components
 // types
 import { TSubIssueOperations } from "./root";

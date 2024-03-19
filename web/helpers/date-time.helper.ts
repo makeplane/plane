@@ -204,7 +204,7 @@ export const checkIfDatesAreEqual = (
 /**
  * This method returns a date from string of type yyyy-mm-dd
  * This method is recommended to use instead of new Date() as this does not introduce any timezone offsets
- * @param date 
+ * @param date
  * @returns date or undefined
  */
 export const getDate = (date: string | Date | undefined | null): Date | undefined => {

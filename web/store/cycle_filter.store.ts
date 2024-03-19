@@ -2,7 +2,7 @@ import { action, computed, observable, makeObservable, runInAction, autorun } fr
 import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 // types
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import { TCycleDisplayFilters, TCycleFilters } from "@plane/types";
 
 export interface ICycleFilterStore {

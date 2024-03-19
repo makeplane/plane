@@ -1,12 +1,12 @@
 import React from "react";
 
 // ui
-import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Disclosure, Transition } from "@headlessui/react";
+import { IProject } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // icons
 // types
-import { IProject } from "@plane/types";
 
 export interface IDeleteProjectSection {
   projectDetails: IProject;

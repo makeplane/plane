@@ -1,14 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { ICycle } from "@plane/types";
 // hooks
-import { CycleGanttBlock } from "components/cycles";
-import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
-import { useCycle } from "hooks/store";
+import { CycleGanttBlock } from "@/components/cycles";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "@/components/gantt-chart";
+import { getDate } from "@/helpers/date-time.helper";
+import { useCycle } from "@/hooks/store";
 // components
 // types
-import { ICycle } from "@plane/types";
-import { getDate } from "helpers/date-time.helper";
 // constants
 
 type Props = {

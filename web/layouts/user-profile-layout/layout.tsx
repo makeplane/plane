@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // components
-import { ProfileNavbar, ProfileSidebar } from "components/profile";
+import { ProfileNavbar, ProfileSidebar } from "@/components/profile";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 
 type Props = {
   children: React.ReactNode;

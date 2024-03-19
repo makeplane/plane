@@ -3,17 +3,17 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // lucide icons
 import { CircleDashed, Plus } from "lucide-react";
+import { TIssue, ISearchIssueResponse } from "@plane/types";
 // components
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal } from "components/issues";
+import { ExistingIssuesListModal } from "@/components/core";
+import { CreateUpdateIssueModal } from "@/components/issues";
 // ui
 // mobx
 // hooks
-import { EIssuesStoreType } from "constants/issue";
-import { useEventTracker } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useEventTracker } from "@/hooks/store";
 // types
-import { TIssue, ISearchIssueResponse } from "@plane/types";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;

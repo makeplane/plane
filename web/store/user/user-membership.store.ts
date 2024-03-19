@@ -1,11 +1,11 @@
 import { set } from "lodash";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // services
-import { EUserProjectRoles } from "constants/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { ProjectMemberService } from "services/project";
-import { UserService } from "services/user.service";
-import { WorkspaceService } from "services/workspace.service";
+import { EUserProjectRoles } from "@/constants/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { ProjectMemberService } from "@/services/project";
+import { UserService } from "@/services/user.service";
+import { WorkspaceService } from "@/services/workspace.service";
 // interfaces
 import { IWorkspaceMemberMe, IProjectMember, IUserProjectsRole } from "@plane/types";
 import { RootStore } from "../root.store";

@@ -4,13 +4,13 @@ import { ExternalLink, Link, RotateCcw, Trash2 } from "lucide-react";
 // hooks
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 
-import { DeleteIssueModal } from "components/issues";
+import { DeleteIssueModal } from "@/components/issues";
 // ui
 // components
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useEventTracker, useIssues, useUser } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useIssues, useUser } from "@/hooks/store";
 // components
 // helpers
 // types

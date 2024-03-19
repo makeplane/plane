@@ -1,14 +1,14 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Combobox } from "@headlessui/react";
 import { ChevronDown, X } from "lucide-react";
+import { Combobox } from "@headlessui/react";
 // hooks
 import { DiceIcon, Tooltip } from "@plane/ui";
-import { cn } from "helpers/common.helper";
-import { useModule } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { cn } from "@/helpers/common.helper";
+import { useModule } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "../buttons";
 // icons
@@ -94,7 +94,12 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
-                    <Tooltip tooltipHeading="Title" tooltipContent={moduleDetails?.name} disabled={!showTooltip} isMobile={isMobile}>
+                    <Tooltip
+                      tooltipHeading="Title"
+                      tooltipContent={moduleDetails?.name}
+                      disabled={!showTooltip}
+                      isMobile={isMobile}
+                    >
                       <span className="max-w-40 flex-grow truncate text-xs font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}

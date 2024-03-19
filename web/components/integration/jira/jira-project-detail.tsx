@@ -6,17 +6,16 @@ import { useRouter } from "next/router";
 // swr
 import { useFormContext, Controller } from "react-hook-form";
 import useSWR from "swr";
+import { IJiraImporterForm, IJiraMetadata } from "@plane/types";
 
 // react hook form
 
 // services
 import { ToggleSwitch, Spinner } from "@plane/ui";
-import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";
-import { JiraImporterService } from "services/integrations";
+import { JIRA_IMPORTER_DETAIL } from "@/constants/fetch-keys";
+import { JiraImporterService } from "@/services/integrations";
 
 // fetch keys
-
-import { IJiraImporterForm, IJiraMetadata } from "@plane/types";
 
 // components
 

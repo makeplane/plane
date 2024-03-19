@@ -4,7 +4,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // base class
-import { IssueService, IssueArchiveService } from "services/issue";
+import { IssueService, IssueArchiveService } from "@/services/issue";
 import { TIssue, TGroupedIssues, TSubGroupedIssues, TLoader, TUnGroupedIssues, ViewFlags } from "@plane/types";
 import { IssueHelperStore } from "../helpers/issue-helper.store";
 // services

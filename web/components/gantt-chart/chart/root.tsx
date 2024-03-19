@@ -2,10 +2,10 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
 // components
-import { GanttChartHeader, GanttChartMainContent } from "components/gantt-chart";
+import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // views
 // helpers
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // types
 // data
 import { SIDEBAR_WIDTH } from "../constants";

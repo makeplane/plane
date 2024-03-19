@@ -1,16 +1,16 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { PageHead } from "components/core";
-import ExportGuide from "components/exporter/guide";
-import { WorkspaceSettingHeader } from "components/headers";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useUser, useWorkspace } from "hooks/store";
+import { PageHead } from "@/components/core";
+import ExportGuide from "@/components/exporter/guide";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useUser, useWorkspace } from "@/hooks/store";
 // layout
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
 // components
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
 
 const ExportsPage: NextPageWithLayout = observer(() => {

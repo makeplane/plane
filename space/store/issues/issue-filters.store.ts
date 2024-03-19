@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
-import { RootStore } from "store/root";
+import { RootStore } from "@/store/root";
 import { IIssueFilterOptions, TIssueParams } from "./types";
 import { handleIssueQueryParamsByLayout } from "./helpers";
 import { IssueFilterBaseStore } from "./base-issue-filter.store";

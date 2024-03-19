@@ -2,22 +2,27 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 import { Menu } from "@headlessui/react";
 // icons
-import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
+import type { IUserNotification, NotificationType } from "@plane/types";
 // ui
 import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ISSUE_OPENED, NOTIFICATIONS_READ, NOTIFICATION_ARCHIVED, NOTIFICATION_SNOOZED } from "constants/event-tracker";
-import { snoozeOptions } from "constants/notification";
+import {
+  ISSUE_OPENED,
+  NOTIFICATIONS_READ,
+  NOTIFICATION_ARCHIVED,
+  NOTIFICATION_SNOOZED,
+} from "@/constants/event-tracker";
+import { snoozeOptions } from "@/constants/notification";
 // helper
-import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "helpers/date-time.helper";
-import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
+import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "@/helpers/date-time.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useEventTracker } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // type
-import type { IUserNotification, NotificationType } from "@plane/types";
 
 type NotificationCardProps = {
   selectedTab: NotificationType;

@@ -2,27 +2,27 @@ import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { IProject } from "@plane/types";
 // hooks
-import { IntegrationsSettingsLoader } from "components/ui";
+import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
+import { ProjectSettingHeader } from "@/components/headers";
+import { IntegrationCard } from "@/components/project";
+import { IntegrationsSettingsLoader } from "@/components/ui";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProjectSettingLayout } from "@/layouts/settings-layout";
 // services
-import { NextPageWithLayout } from "lib/types";
-import { IntegrationService } from "services/integrations";
-import { ProjectService } from "services/project";
+import { NextPageWithLayout } from "@/lib/types";
+import { IntegrationService } from "@/services/integrations";
+import { ProjectService } from "@/services/project";
 // components
-import { PageHead } from "components/core";
-import { IntegrationCard } from "components/project";
-import { ProjectSettingHeader } from "components/headers";
-import { EmptyState } from "components/empty-state";
 // ui
 // types
-import { IProject } from "@plane/types";
 // fetch-keys
-import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 // constants
-import { EmptyStateType } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();

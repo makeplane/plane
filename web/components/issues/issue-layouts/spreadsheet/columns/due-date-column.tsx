@@ -1,16 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { CalendarCheck2 } from "lucide-react";
+import { TIssue } from "@plane/types";
 // hooks
 // components
-import { DateDropdown } from "components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { cn } from "helpers/common.helper";
-import { useProjectState } from "hooks/store";
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { useProjectState } from "@/hooks/store";
 // types
-import { TIssue } from "@plane/types";
 
 type Props = {
   issue: TIssue;

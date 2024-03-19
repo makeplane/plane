@@ -1,11 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { TIssueTypeFilters } from "@plane/types";
 
 // components
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // types
-import { ISSUE_FILTER_OPTIONS } from "constants/issue";
-import { TIssueTypeFilters } from "@plane/types";
+import { ISSUE_FILTER_OPTIONS } from "@/constants/issue";
 // constants
 
 type Props = {

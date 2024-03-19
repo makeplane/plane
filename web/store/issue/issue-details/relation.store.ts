@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // services
-import { IssueRelationService } from "services/issue";
+import { IssueRelationService } from "@/services/issue";
 // types
 import { TIssueRelationIdMap, TIssueRelationMap, TIssueRelationTypes, TIssueRelation, TIssue } from "@plane/types";
 import { IIssueDetail } from "./root.store";

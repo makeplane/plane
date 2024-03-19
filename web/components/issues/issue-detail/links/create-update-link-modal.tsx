@@ -1,10 +1,10 @@
 import { FC, useEffect, Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
+import type { TIssueLinkEditableFields } from "@plane/types";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { TIssueLinkEditableFields } from "@plane/types";
 import { TLinkOperations } from "./root";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;

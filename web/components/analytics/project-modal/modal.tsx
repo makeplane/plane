@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+import { ICycle, IModule, IProject } from "@plane/types";
 
 // components
-import { ProjectAnalyticsModalHeader, ProjectAnalyticsModalMainContent } from "components/analytics";
+import { ProjectAnalyticsModalHeader, ProjectAnalyticsModalMainContent } from "@/components/analytics";
 // types
-import { ICycle, IModule, IProject } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

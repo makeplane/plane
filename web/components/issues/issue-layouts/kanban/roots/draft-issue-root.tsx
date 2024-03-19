@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 // components
-import { ProjectIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
+import { ProjectIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
 export interface IKanBanLayout {}

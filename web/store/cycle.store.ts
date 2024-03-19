@@ -4,14 +4,14 @@ import sortBy from "lodash/sortBy";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // helpers
-import { getDate } from "helpers/date-time.helper";
-import { orderCycles, shouldFilterCycle } from "helpers/cycle.helper";
+import { getDate } from "@/helpers/date-time.helper";
+import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
 // services
-import { CycleService } from "services/cycle.service";
-import { IssueService } from "services/issue";
-import { ProjectService } from "services/project";
+import { CycleService } from "@/services/cycle.service";
+import { IssueService } from "@/services/issue";
+import { ProjectService } from "@/services/project";
 // mobx
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 // types
 import { ICycle, CycleDateCheckData } from "@plane/types";
 

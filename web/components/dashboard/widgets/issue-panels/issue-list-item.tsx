@@ -1,13 +1,13 @@
 import isToday from "date-fns/isToday";
 import { observer } from "mobx-react-lite";
+import { TIssue, TWidgetIssue } from "@plane/types";
 // hooks
 // ui
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
-import { useIssueDetail, useMember, useProject } from "hooks/store";
-import { findTotalDaysInRange, getDate, renderFormattedDate } from "helpers/date-time.helper";
+import { findTotalDaysInRange, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // types
-import { TIssue, TWidgetIssue } from "@plane/types";
 
 export type IssueListItemProps = {
   issueId: string;

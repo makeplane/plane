@@ -15,7 +15,13 @@ import {
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
 // components
-import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  MemberDropdown,
+  StateDropdown,
+} from "@/components/dropdowns";
 import {
   IssueLinkRoot,
   IssueCycleSelect,
@@ -24,12 +30,12 @@ import {
   IssueLabel,
   TIssueOperations,
   IssueRelationSelect,
-} from "components/issues";
+} from "@/components/issues";
 // helpers
-import { cn } from "helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;

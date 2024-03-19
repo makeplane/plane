@@ -2,10 +2,10 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
-import { ViewListLoader } from "components/ui";
-import { GlobalViewListItem } from "components/workspace";
+import { ViewListLoader } from "@/components/ui";
+import { GlobalViewListItem } from "@/components/workspace";
 // store hooks
-import { useGlobalView } from "hooks/store";
+import { useGlobalView } from "@/hooks/store";
 
 type Props = {
   searchQuery: string;

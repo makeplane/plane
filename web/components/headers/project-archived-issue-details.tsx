@@ -4,14 +4,14 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
-import { ISSUE_DETAILS } from "constants/fetch-keys";
-import { useProject } from "hooks/store";
+import { BreadcrumbLink } from "@/components/common";
+import { ProjectLogo } from "@/components/project";
+import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+import { useProject } from "@/hooks/store";
 // components
-import { ProjectLogo } from "components/project";
 // ui
 // types
-import { IssueArchiveService } from "services/issue";
+import { IssueArchiveService } from "@/services/issue";
 // constants
 // services
 // helpers

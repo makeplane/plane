@@ -1,7 +1,7 @@
 // services
-import APIService from "services/api.service";
+import APIService from "@/services/api.service";
 // helpers
-import { API_BASE_URL } from "helpers/common.helper";
+import { API_BASE_URL } from "@/helpers/common.helper";
 import axios from "axios";
 
 interface UnSplashImage {

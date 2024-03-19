@@ -3,21 +3,21 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { EmptyState } from "components/common";
-import { PageHead } from "components/core";
-import { CycleDetailsSidebar } from "components/cycles";
-import { CycleIssuesHeader } from "components/headers";
-import { CycleLayoutRoot } from "components/issues/issue-layouts";
-import { useCycle, useProject } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+import { EmptyState } from "@/components/common";
+import { PageHead } from "@/components/core";
+import { CycleDetailsSidebar } from "@/components/cycles";
+import { CycleMobileHeader } from "@/components/cycles/cycle-mobile-header";
+import { CycleIssuesHeader } from "@/components/headers";
+import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
+import { useCycle, useProject } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { AppLayout } from "@/layouts/app-layout";
 // components
 // ui
 // assets
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 import emptyCycle from "public/empty-state/cycle.svg";
-import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
 // types
 
 const CycleDetailPage: NextPageWithLayout = observer(() => {

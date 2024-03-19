@@ -1,15 +1,18 @@
 import React from "react";
+
 import { observer } from "mobx-react-lite";
+
 import { CalendarCheck2, Signal, Tag } from "lucide-react";
+
 // hooks
 // components
 import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
-import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
-import { IssueLabel, TIssueOperations } from "components/issues";
+import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
+import { IssueLabel, TIssueOperations } from "@/components/issues";
 // icons
 // helper
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;

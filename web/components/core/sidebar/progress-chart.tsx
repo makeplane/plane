@@ -1,11 +1,11 @@
 import React from "react";
 import { eachDayOfInterval, isValid } from "date-fns";
-// ui
-import { LineGraph } from "components/ui";
-// helpers
-import { getDate, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
-//types
 import { TCompletionChartDistribution } from "@plane/types";
+// ui
+import { LineGraph } from "@/components/ui";
+// helpers
+import { getDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+//types
 
 type Props = {
   distribution: TCompletionChartDistribution;

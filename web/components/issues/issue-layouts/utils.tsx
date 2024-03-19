@@ -1,20 +1,20 @@
 import { ContrastIcon } from "lucide-react";
+import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
-import { ProjectLogo } from "components/project";
+import { ProjectLogo } from "@/components/project";
 // stores
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { STATE_GROUPS } from "constants/state";
-import { ICycleStore } from "store/cycle.store";
-import { ILabelStore } from "store/label.store";
-import { IMemberRootStore } from "store/member";
-import { IModuleStore } from "store/module.store";
-import { IProjectStore } from "store/project/project.store";
-import { IStateStore } from "store/state.store";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
+import { STATE_GROUPS } from "@/constants/state";
+import { ICycleStore } from "@/store/cycle.store";
+import { ILabelStore } from "@/store/label.store";
+import { IMemberRootStore } from "@/store/member";
+import { IModuleStore } from "@/store/module.store";
+import { IProjectStore } from "@/store/project/project.store";
+import { IStateStore } from "@/store/state.store";
 // helpers
 // constants
 // types
-import { GroupByColumnTypes, IGroupByColumn, TCycleGroups } from "@plane/types";
 
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,

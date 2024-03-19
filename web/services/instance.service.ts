@@ -1,5 +1,5 @@
-import { API_BASE_URL } from "helpers/common.helper";
-import { APIService } from "services/api.service";
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "@/services/api.service";
 // helpers
 // types
 import type { IFormattedInstanceConfiguration, IInstance, IInstanceAdmin, IInstanceConfiguration } from "@plane/types";

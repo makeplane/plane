@@ -1,13 +1,13 @@
 import { Copy } from "lucide-react";
+import { IApiToken } from "@plane/types";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
-import { IApiToken } from "@plane/types";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   handleClose: () => void;

@@ -2,18 +2,18 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
+import { IWorkspaceIntegration } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { SelectRepository, SelectChannel } from "components/integration";
+import { SelectRepository, SelectChannel } from "@/components/integration";
 // constants
-import { PROJECT_GITHUB_REPOSITORY } from "constants/fetch-keys";
+import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
 // icons
+import { ProjectService } from "@/services/project";
 import GithubLogo from "public/logos/github-square.png";
 import SlackLogo from "public/services/slack.png";
 // types
-import { IWorkspaceIntegration } from "@plane/types";
-import { ProjectService } from "services/project";
 
 type Props = {
   integration: IWorkspaceIntegration;

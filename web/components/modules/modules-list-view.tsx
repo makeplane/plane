@@ -1,18 +1,18 @@
-import Image from "next/image";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
 import { useRouter } from "next/router";
 // hooks
-import { useApplication, useEventTracker, useModule, useModuleFilter } from "hooks/store";
 // components
-import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
-import { EmptyState } from "components/empty-state";
+import { EmptyState } from "@/components/empty-state";
+import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 // ui
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "components/ui";
+import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
 // assets
-import NameFilterImage from "public/empty-state/module/name-filter.svg";
-import AllFiltersImage from "public/empty-state/module/all-filters.svg";
 // constants
-import { EmptyStateType } from "constants/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { useApplication, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
+import AllFiltersImage from "public/empty-state/module/all-filters.svg";
+import NameFilterImage from "public/empty-state/module/name-filter.svg";
 
 export const ModulesListView: React.FC = observer(() => {
   // router

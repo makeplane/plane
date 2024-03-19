@@ -9,11 +9,11 @@ import {
   ArchivedIssueAppliedFiltersRoot,
   ProjectArchivedEmptyState,
   IssuePeekOverview,
-} from "components/issues";
-import { ListLayoutLoader } from "components/ui";
-import { EIssuesStoreType } from "constants/issue";
+} from "@/components/issues";
+import { ListLayoutLoader } from "@/components/ui";
+import { EIssuesStoreType } from "@/constants/issue";
 // ui
-import { useIssues } from "hooks/store";
+import { useIssues } from "@/hooks/store";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router

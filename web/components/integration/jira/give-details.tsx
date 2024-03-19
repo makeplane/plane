@@ -3,14 +3,14 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
 import { Plus } from "lucide-react";
+import { IJiraImporterForm } from "@plane/types";
 // hooks
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
-import { useApplication, useEventTracker, useProject } from "hooks/store";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { useApplication, useEventTracker, useProject } from "@/hooks/store";
 // types
-import { IJiraImporterForm } from "@plane/types";
 
 export const JiraGetImportDetail: React.FC = observer(() => {
   // store hooks

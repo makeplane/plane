@@ -8,11 +8,11 @@ import {
   SignInPasswordForm,
   OAuthOptions,
   SignInOptionalSetPasswordForm,
-} from "components/account";
-import { LatestFeatureBlock } from "components/common";
-import { NAVIGATE_TO_SIGNUP } from "constants/event-tracker";
-import { useApplication, useEventTracker } from "hooks/store";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
+} from "@/components/account";
+import { LatestFeatureBlock } from "@/components/common";
+import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
+import { useApplication, useEventTracker } from "@/hooks/store";
+import useSignInRedirection from "@/hooks/use-sign-in-redirection";
 // components
 // constants
 

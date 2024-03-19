@@ -2,23 +2,23 @@ import { useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Search } from "lucide-react";
+import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { PageHead } from "components/core";
-import { WorkspaceSettingHeader } from "components/headers";
-import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/workspace";
-import { MEMBER_INVITED } from "constants/event-tracker";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { getUserRole } from "helpers/user.helper";
-import { useEventTracker, useMember, useUser, useWorkspace } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
+import { MEMBER_INVITED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { getUserRole } from "@/helpers/user.helper";
+import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
 // components
 // ui
 // types
-import { NextPageWithLayout } from "lib/types";
-import { IWorkspaceBulkInviteFormData } from "@plane/types";
+import { NextPageWithLayout } from "@/lib/types";
 // helpers
 // constants
 

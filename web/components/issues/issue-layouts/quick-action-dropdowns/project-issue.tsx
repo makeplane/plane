@@ -4,18 +4,18 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // hooks
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { TIssue } from "@plane/types";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
-import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { STATE_GROUPS } from "constants/state";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useEventTracker, useIssues, useProjectState, useUser } from "hooks/store";
+import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { STATE_GROUPS } from "@/constants/state";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useIssues, useProjectState, useUser } from "@/hooks/store";
 // ui
 // components
 // helpers
 // types
-import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 // constant
 

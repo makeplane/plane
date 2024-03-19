@@ -2,17 +2,17 @@ import { FC, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip } from "@plane/ui";
 // components
 // icons
-import { getFileIcon } from "components/icons";
+import { getFileIcon } from "@/components/icons";
 // helper
-import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { truncateText } from "helpers/string.helper";
-import { useIssueDetail, useMember } from "hooks/store";
+import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { truncateText } from "@/helpers/string.helper";
+import { useIssueDetail, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueAttachmentDeleteModal } from "./delete-attachment-confirmation-modal";
 // types
 import { TAttachmentOperations } from "./root";

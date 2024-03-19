@@ -3,19 +3,19 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
 // hooks
-import { useApplication, useEventTracker, useProject, useWorkspace } from "hooks/store";
 // layouts
-import { AppLayout } from "layouts/app-layout";
 // components
-import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
-import { PageHead } from "components/core";
-import { EmptyState } from "components/empty-state";
-import { WorkspaceAnalyticsHeader } from "components/headers";
+import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
+import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/empty-state";
+import { WorkspaceAnalyticsHeader } from "@/components/headers";
 // type
-import { NextPageWithLayout } from "lib/types";
 // constants
-import { ANALYTICS_TABS } from "constants/analytics";
-import { EmptyStateType } from "constants/empty-state";
+import { ANALYTICS_TABS } from "@/constants/analytics";
+import { EmptyStateType } from "@/constants/empty-state";
+import { useApplication, useEventTracker, useProject, useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();

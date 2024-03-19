@@ -3,28 +3,28 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 import { Check, Info, Star, User2 } from "lucide-react";
+import type { TCycleGroups } from "@plane/types";
 import { Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar, setPromiseToast } from "@plane/ui";
-import { CycleQuickActions } from "components/cycles";
+import { CycleQuickActions } from "@/components/cycles";
 // components
-// import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
+// import { CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
 // ui
 // icons
 // helpers
-import { findHowManyDaysLeft, getDate, renderFormattedDate } from "helpers/date-time.helper";
 // constants
-import { CYCLE_STATUS } from "constants/cycle";
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "constants/event-tracker";
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 // components
 // ui
 // icons
 // helpers
 // constants
 // types
-import { TCycleGroups } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
+import { EUserProjectRoles } from "@/constants/project";
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TCyclesListItem = {
   cycleId: string;

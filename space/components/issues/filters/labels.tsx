@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
 // components
-import { FilterHeader, FilterOption } from "./helpers";
 // ui
 import { Loader } from "@plane/ui";
 // types
 import { IIssueLabel } from "types/issue";
+import { FilterHeader, FilterOption } from "./helpers";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
