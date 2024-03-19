@@ -13,8 +13,6 @@ import { FiltersDropdown } from "components/issues";
 import { Loader } from "@plane/ui";
 // types
 import { TInboxIssueFilterOptions } from "@plane/types";
-// helpers
-import { orderInboxIssue } from "helpers/inbox";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;
@@ -30,6 +28,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const elementRef = useRef<HTMLDivElement>(null);
   // store
   const {
+    totalIssues,
     inboxIssuesArray,
     inboxIssuePaginationInfo: paginationInfo,
     fetchInboxIssuesNextPage,
@@ -134,8 +133,6 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     ]
   );
 
-  const orderedInboxIssue = orderInboxIssue(inboxIssuesArray, displayFilters?.order_by ?? "issue__created_at");
-
   return (
     <div className="flex-shrink-0 w-2/5 h-full border-r border-custom-border-300">
       <Tab.Group
@@ -167,7 +164,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               Open
               {tab === "Open" && (
                 <span className="cursor-default flex items-center text-center justify-center px-2 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                  {inboxIssuesArray.length}
+                  {totalIssues}
                 </span>
               )}
             </Tab>
@@ -198,7 +195,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               value={displayFilters?.order_by}
               onChange={(val) => {
                 if (!projectId || val === displayFilters?.order_by) return;
-                updateDisplayFilters({
+                updateDisplayFilters(workspaceSlug, projectId, {
                   order_by: val,
                 });
               }}
@@ -212,7 +209,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssues={orderedInboxIssue}
+                inboxIssues={inboxIssuesArray}
               />
               <div className="mt-4" ref={elementRef}>
                 {paginationInfo?.next_page_results && (
@@ -230,7 +227,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssues={orderedInboxIssue}
+                inboxIssues={inboxIssuesArray}
               />
               <div className="mt-4" ref={elementRef}>
                 {paginationInfo?.next_page_results && (

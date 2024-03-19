@@ -27,6 +27,7 @@ export interface IProjectInboxStore {
   displayFilters: TInboxIssueDisplayFilters | undefined;
   inboxFilters: Partial<TInboxIssueFilterOptions>;
   inboxIssuePaginationInfo: Partial<TPaginationInfo>;
+  totalIssues: number;
   // computed
   inboxIssuesArray: IInboxIssueStore[];
   inboxIssuesFiltersLength: number;
@@ -41,7 +42,7 @@ export interface IProjectInboxStore {
   createInboxIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TInboxIssue>;
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 
-  updateDisplayFilters: (displayFilters: TInboxIssueDisplayFilters) => void;
+  updateDisplayFilters: (workspaceSlug: string, projectId: string, displayFilters: TInboxIssueDisplayFilters) => void;
   updateInboxIssueStatusFilter: (workspaceSlug: string, projectId: string, value: TInboxIssueStatus) => void;
   updateInboxIssuePriorityFilter: (workspaceSlug: string, projectId: string, value: string) => void;
   updateInboxIssueAssigneeFilter: (workspaceSlug: string, projectId: string, value: string) => void;
@@ -65,6 +66,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
   inboxFilters: Partial<TInboxIssueFilterOptions> = {};
   inboxIssuePaginationInfo: Partial<TPaginationInfo> = {};
+  totalIssues: number = 0;
   PER_PAGE_COUNT = 10;
   rootStore;
   inboxIssueService;
@@ -76,6 +78,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       inboxFilters: observable,
       displayFilters: observable,
       inboxIssuePaginationInfo: observable,
+      totalIssues: observable,
       // computed
       inboxIssuesArray: computed,
       inboxIssuesFiltersLength: computed,
@@ -120,6 +123,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
     });
   }
 
+  get inboxDisplayFiltersParams() {
+    return this.displayFilters;
+  }
+
   getIssueInboxByIssueId = (issueId: string) =>
     Object.values(this.inboxIssues).find((issue) => issue.issue?.id === issueId);
 
@@ -137,10 +144,14 @@ export class ProjectInboxStore implements IProjectInboxStore {
         this.inboxIssues = {};
         this.inboxIssuePaginationInfo = {};
       });
-      const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, {
-        ...params,
-        per_page: this.PER_PAGE_COUNT,
-      });
+      const { results, total_results, ...paginationInfo } = await this.inboxIssueService.list(
+        workspaceSlug,
+        projectId,
+        {
+          ...params,
+          per_page: this.PER_PAGE_COUNT,
+        }
+      );
       runInAction(() => {
         this.inboxIssues = mapValues(
           keyBy(results, "id"),
@@ -148,6 +159,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         );
         this.isLoading = false;
         this.inboxIssuePaginationInfo = { ...this.inboxIssuePaginationInfo, ...paginationInfo };
+        this.totalIssues = total_results;
       });
       return results;
     } catch (error) {
@@ -220,8 +232,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @param {string} projectId
    * @param {TInboxIssueDisplayFilters} displayFilters
    */
-  updateDisplayFilters = (displayFilters: TInboxIssueDisplayFilters) => {
-    this.displayFilters = displayFilters;
+  updateDisplayFilters = (workspaceSlug: string, projectId: string, displayFilters: TInboxIssueDisplayFilters) => {
+    runInAction(() => {
+      this.displayFilters = displayFilters;
+    });
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   /**
@@ -243,7 +258,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   /**
@@ -266,7 +281,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   /**
@@ -288,7 +303,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   updateInboxIssueCreatedByFilter = (workspaceSlug: string, projectId: string, value: string) => {
@@ -304,7 +319,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   updateInboxIssueLabelFilter = (workspaceSlug: string, projectId: string, value: string) => {
@@ -320,7 +335,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   updateInboxIssueCreatedAtFilter = (workspaceSlug: string, projectId: string, value: string) => {
@@ -337,7 +352,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   updateInboxIssueUpdatedAtFilter = (workspaceSlug: string, projectId: string, value: string) => {
@@ -354,7 +369,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         };
       }
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   // /**
@@ -368,7 +383,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   //       set(this.inboxFilters, [projectId, key], filters[key as keyof TInboxIssueFilterOptions]);
   //     });
   //   });
-  //   this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+  //   this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   // };
 
   applyResolvedInboxIssueFilter = (workspaceSlug: string, projectId: string) => {
@@ -379,7 +394,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         inbox_status: uniq(resolvedStatus),
       };
     });
-    this.fetchInboxIssues(workspaceSlug, projectId, this.inboxFiltersParams);
+    this.fetchInboxIssues(workspaceSlug, projectId, { ...this.inboxFiltersParams, ...this.inboxDisplayFiltersParams });
   };
 
   /**
