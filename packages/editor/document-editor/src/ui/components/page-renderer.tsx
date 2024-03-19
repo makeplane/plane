@@ -149,7 +149,7 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="w-full h-full pb-20 pt-5 page-renderer">
+    <div className="h-full w-full pb-20 pt-5 page-renderer">
       {readonly ? (
         <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
       ) : (
