@@ -12,7 +12,7 @@ import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 // constants
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
@@ -135,8 +135,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const completionPercentage = (moduleDetails.completed_issues / moduleTotalIssues) * 100;
 
-  const endDate = new Date(moduleDetails.target_date ?? "");
-  const startDate = new Date(moduleDetails.start_date ?? "");
+  const endDate = getDate(moduleDetails.target_date);
+  const startDate = getDate(moduleDetails.start_date);
 
   const isDateValid = moduleDetails.target_date || moduleDetails.start_date;
 

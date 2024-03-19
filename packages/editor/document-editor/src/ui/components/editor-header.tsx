@@ -72,7 +72,7 @@ export const EditorHeader = (props: IEditorHeader) => {
             Icon={Archive}
             backgroundColor="bg-blue-500/20"
             textColor="text-blue-500"
-            label={`Archived at ${new Date(archivedAt).toLocaleString()}`}
+            label={`Archived at ${archivedAt.toLocaleString()}`}
           />
         )}
 

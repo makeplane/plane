@@ -60,7 +60,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
 
     if (!formDataDate) return timeStamps;
 
-    const isToday = today.toDateString() === new Date(formDataDate).toDateString();
+    const isToday = today.toDateString() === formDataDate.toDateString();
 
     if (!isToday) return timeStamps;
 
@@ -93,7 +93,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
     );
     const minutes = parseInt(time[1]);
 
-    const dateTime = new Date(formData.date);
+    const dateTime = formData.date;
     dateTime.setHours(hours);
     dateTime.setMinutes(minutes);
 

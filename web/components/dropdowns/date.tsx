@@ -9,7 +9,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { DropdownButton } from "./buttons";
 // helpers
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { cn } from "helpers/common.helper";
 // types
 import { TDropdownProps } from "./types";
@@ -168,8 +168,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             {...attributes.popper}
           >
             <DayPicker
-              selected={value ? new Date(value) : undefined}
-              defaultMonth={value ? new Date(value) : undefined}
+              selected={getDate(value)}
+              defaultMonth={getDate(value)}
               onSelect={(date) => {
                 dropdownOnChange(date ?? null);
               }}

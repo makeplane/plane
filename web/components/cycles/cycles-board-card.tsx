@@ -12,7 +12,7 @@ import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } 
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
@@ -50,8 +50,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
 
   const cycleStatus = cycleDetails.status.toLocaleLowerCase();
   const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
   const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;

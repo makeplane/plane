@@ -4,6 +4,10 @@ import { isFuture, isPast, isToday } from "date-fns";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 // types
+// helpers
+import { getDate } from "helpers/date-time.helper";
+// mobx
+// services
 import { ICycle, CycleDateCheckData } from "@plane/types";
 // mobx
 import { RootStore } from "store/root.store";
@@ -118,8 +122,9 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
-      const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
-      const isEndDateToday = isToday(new Date(c.end_date ?? ""));
+      const endDate = getDate(c.end_date);
+      const hasEndDatePassed = endDate && isPast(endDate);
+      const isEndDateToday = endDate && isToday(endDate);
       return c.project_id === projectId && hasEndDatePassed && !isEndDateToday;
     });
     completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
@@ -134,7 +139,8 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let upcomingCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
-      const isStartDateUpcoming = isFuture(new Date(c.start_date ?? ""));
+      const startDate = getDate(c.start_date);
+      const isStartDateUpcoming = startDate && isFuture(startDate);
       return c.project_id === projectId && isStartDateUpcoming;
     });
     upcomingCycles = sortBy(upcomingCycles, [(c) => c.sort_order]);
@@ -149,7 +155,8 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
-      const hasEndDatePassed = isPast(new Date(c.end_date ?? ""));
+      const endDate = getDate(c.end_date);
+      const hasEndDatePassed = endDate && isPast(endDate);
       return c.project_id === projectId && !hasEndDatePassed;
     });
     incompleteCycles = sortBy(incompleteCycles, [(c) => c.sort_order]);

@@ -6,7 +6,7 @@ import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "components/d
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 // types
 import { IModule } from "@plane/types";
 
@@ -147,8 +147,8 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       className="h-7"
                       minDate={new Date()}
                       value={{
-                        from: startDateValue ? new Date(startDateValue) : undefined,
-                        to: endDateValue ? new Date(endDateValue) : undefined,
+                        from: getDate(startDateValue),
+                        to: getDate(endDateValue),
                       }}
                       onSelect={(val) => {
                         onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);

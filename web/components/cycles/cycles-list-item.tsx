@@ -12,7 +12,7 @@ import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarG
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
-import { findHowManyDaysLeft, renderFormattedDate } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
@@ -137,8 +137,8 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   // TODO: change this logic once backend fix the response
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isCompleted = cycleStatus === "completed";
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  const endDate = getDate(cycleDetails.end_date);
+  const startDate = getDate(cycleDetails.start_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 

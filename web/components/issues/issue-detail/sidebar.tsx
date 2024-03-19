@@ -28,12 +28,13 @@ import {
   IssueLabel,
   ArchiveIssueModal,
 } from "components/issues";
+// components
 import { IssueSubscription } from "./subscription";
 import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
 // icons
 import { ArchiveIcon, ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, Tooltip, UserGroupIcon } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { cn } from "helpers/common.helper";
 import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
@@ -99,10 +100,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const isInArchivableGroup =
     !!stateDetails && [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key].includes(stateDetails?.group);
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
   return (
