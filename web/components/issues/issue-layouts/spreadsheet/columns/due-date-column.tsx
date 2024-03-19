@@ -30,7 +30,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <DateDropdown
         value={issue.target_date}
-        minDate={issue.start_date ? getDate(issue.start_date) : undefined}
+        minDate={getDate(issue.start_date)}
         onChange={(data) => {
           const targetDate = data ? renderFormattedPayloadDate(data) : null;
           onChange(

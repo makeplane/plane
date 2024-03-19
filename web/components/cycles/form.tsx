@@ -135,8 +135,8 @@ export const CycleForm: React.FC<Props> = (props) => {
                         className="h-7"
                         minDate={new Date()}
                         value={{
-                          from: startDateValue ? getDate(startDateValue) : undefined,
-                          to: endDateValue ? getDate(endDateValue) : undefined,
+                          from: getDate(startDateValue),
+                          to: getDate(endDateValue),
                         }}
                         onSelect={(val) => {
                           onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);

@@ -17,10 +17,6 @@ import { getDate, renderFormattedDate } from "helpers/date-time.helper";
 import { MODULE_STATUS } from "constants/module";
 import { EUserProjectRoles } from "constants/project";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "constants/event-tracker";
-// components
-// ui
-// helpers
-// constants
 
 type Props = {
   moduleId: string;

@@ -271,8 +271,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                     {({ close }) => (
                       <div className="flex h-full w-full flex-col gap-y-1">
                         <DayPicker
-                          selected={date ? getDate(date) : undefined}
-                          defaultMonth={date ? getDate(date) : undefined}
+                          selected={getDate(date)}
+                          defaultMonth={getDate(date)}
                           onSelect={(date) => {
                             if (!date) return;
                             setDate(date);

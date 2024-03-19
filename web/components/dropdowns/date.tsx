@@ -168,8 +168,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
             {...attributes.popper}
           >
             <DayPicker
-              selected={value ? getDate(value) : undefined}
-              defaultMonth={value ? getDate(value) : undefined}
+              selected={getDate(value)}
+              defaultMonth={getDate(value)}
               onSelect={(date) => {
                 dropdownOnChange(date ?? null);
               }}

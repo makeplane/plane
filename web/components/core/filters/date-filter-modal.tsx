@@ -116,8 +116,8 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           const date1Value = getDate(watch("date1"));
                           return (
                             <DayPicker
-                              selected={value ? dateValue : undefined}
-                              defaultMonth={value ? dateValue : undefined}
+                              selected={dateValue}
+                              defaultMonth={dateValue}
                               onSelect={(date) => {
                                 if (!date) return;
                                 onChange(date);

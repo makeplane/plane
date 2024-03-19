@@ -22,7 +22,7 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Prop
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <DateDropdown
         value={issue.start_date}
-        maxDate={issue.target_date ? getDate(issue.target_date) : undefined}
+        maxDate={getDate(issue.target_date)}
         onChange={(data) => {
           const startDate = data ? renderFormattedPayloadDate(data) : null;
           onChange(
