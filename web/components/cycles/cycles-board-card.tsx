@@ -49,8 +49,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   if (!cycleDetails) return null;
 
   const cycleStatus = cycleDetails.status.toLocaleLowerCase();
-const isCompleted = cycleStatus === "completed";  
-const endDate = getDate(cycleDetails.end_date);
+  const isCompleted = cycleStatus === "completed";
+  const endDate = getDate(cycleDetails.end_date);
   const startDate = getDate(cycleDetails.start_date);
   const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
 
