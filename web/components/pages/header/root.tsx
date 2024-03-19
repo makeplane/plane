@@ -2,8 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Lock, RefreshCw, Sparkle } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
-import { useUser } from "hooks/store";
+import { useApplication, useUser } from "hooks/store";
 // components
 import { GptAssistantPopover } from "components/core";
 import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar } from "components/pages";
@@ -117,7 +116,11 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           />
         )}
         <PageInfoPopover pageStore={pageStore} />
-        <PageOptionsDropdown handleDuplicatePage={handleDuplicatePage} pageStore={pageStore} />
+        <PageOptionsDropdown
+          editorRef={editorRef.current}
+          handleDuplicatePage={handleDuplicatePage}
+          pageStore={pageStore}
+        />
       </div>
     </div>
   );

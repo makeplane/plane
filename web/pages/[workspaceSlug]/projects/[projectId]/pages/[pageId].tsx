@@ -43,14 +43,18 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
   // fetch all pages from API
   useSWR(
-    workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
+      ? `ALL_PAGES_LIST_${projectId}`
+      : null,
     workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
       ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString())
       : null
   );
   // fetch all archived pages from API
   useSWR(
-    workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId && !projectArchivedPageMap[projectId as string] && !projectPageMap[projectId as string]
+      ? `ALL_ARCHIVED_PAGES_LIST_${projectId}`
+      : null,
     workspaceSlug && projectId && !projectArchivedPageMap[projectId as string] && !projectPageMap[projectId as string]
       ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString())
       : null

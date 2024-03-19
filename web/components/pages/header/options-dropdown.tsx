@@ -5,18 +5,22 @@ import { useApplication, useUser } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { copyTextToClipboard, copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IPageStore } from "store/page.store";
+import { EditorRefApi } from "@plane/document-editor";
 // constants
 import { EUserProjectRoles } from "constants/project";
 
 type Props = {
+  editorRef: EditorRefApi;
   handleDuplicatePage: () => void;
   pageStore: IPageStore;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { handleDuplicatePage, pageStore } = props;
+  const { editorRef, handleDuplicatePage, pageStore } = props;
   // store values
   const { lockPage, unlockPage, owned_by } = pageStore;
   // store hooks
@@ -94,14 +98,30 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   }[] = [
     {
       key: "copy-markdown",
-      action: () => {},
+      action: () => {
+        copyTextToClipboard(editorRef.getMarkDown()).then(() =>
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Successful!",
+            message: "Markdown copied to clipboard.",
+          })
+        );
+      },
       label: "Copy markdown",
       icon: Clipboard,
       shouldRender: true,
     },
     {
       key: "copy-page-;ink",
-      action: () => {},
+      action: () => {
+        copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/pages/${pageStore.id}`).then(() =>
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Successful!",
+            message: "Page link copied to clipboard.",
+          })
+        );
+      },
       label: "Copy page link",
       icon: Link,
       shouldRender: true,
