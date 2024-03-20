@@ -56,7 +56,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: "bottom-end",
     modifiers: [
       {
         name: "preventOverflow",

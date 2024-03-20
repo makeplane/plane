@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { action, computed, observable, makeObservable, runInAction, autorun } from "mobx";
+import { action, computed, observable, makeObservable, runInAction, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TCycleDisplayFilters, TCycleFilters, TCycleFiltersByState } from "@plane/types";
@@ -58,11 +58,13 @@ export class CycleFilterStore implements ICycleFilterStore {
     // root store
     this.rootStore = _rootStore;
     // initialize display filters of the current project
-    autorun(() => {
-      const projectId = this.rootStore.app.router.projectId;
-      if (!projectId) return;
-      this.initProjectCycleFilters(projectId);
-    });
+    reaction(
+      () => this.rootStore.app.router.projectId,
+      (projectId) => {
+        if (!projectId) return;
+        this.initProjectCycleFilters(projectId);
+      }
+    );
   }
 
   /**
@@ -121,7 +123,7 @@ export class CycleFilterStore implements ICycleFilterStore {
         active_tab: displayFilters?.active_tab || "active",
         layout: displayFilters?.layout || "list",
       };
-      this.filters[projectId] = {
+      this.filters[projectId] = this.filters[projectId] ?? {
         default: {},
         archived: {},
       };

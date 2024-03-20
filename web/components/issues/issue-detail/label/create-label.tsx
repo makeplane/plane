@@ -7,6 +7,8 @@ import { IIssueLabel } from "@plane/types";
 // hooks
 import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
+// helpers
+import { cn } from "helpers/common.helper";
 // ui
 // types
 import { TLabelOperations } from "./root";
@@ -29,6 +31,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   // hooks
   const {
     issue: { getIssueById },
+    peekIssue,
   } = useIssueDetail();
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
@@ -82,13 +85,13 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       </div>
 
       {isCreateToggle && (
-        <form className="flex items-center gap-x-2" onSubmit={handleSubmit(handleLabel)}>
+        <form className="relative flex items-center gap-x-2" onSubmit={handleSubmit(handleLabel)}>
           <div>
             <Controller
               name="color"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <Popover className="relative">
+                <Popover>
                   <>
                     <Popover.Button className="grid place-items-center outline-none">
                       {value && value?.trim() !== "" && (
@@ -110,8 +113,14 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
                       leaveFrom="opacity-100 translate-y-0"
                       leaveTo="opacity-0 translate-y-1"
                     >
-                      <Popover.Panel className="absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0">
-                        <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
+                      <Popover.Panel
+                        className={cn("absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0", !peekIssue ? "right-0" : "")}
+                      >
+                        <TwitterPicker
+                          triangle={!peekIssue ? "hide" : "top-left"}
+                          color={value}
+                          onChange={(value) => onChange(value.hex)}
+                        />
                       </Popover.Panel>
                     </Transition>
                   </>
