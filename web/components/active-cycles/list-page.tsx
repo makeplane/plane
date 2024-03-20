@@ -3,7 +3,7 @@ import useSWR from "swr";
 // ui
 import { Spinner } from "@plane/ui";
 // components
-import { ActiveCycleInfoCard } from "@/components/cycles/active-cycles";
+import { ActiveCycleInfoCard } from "@/components/active-cycles";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 // services

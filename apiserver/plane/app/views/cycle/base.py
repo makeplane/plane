@@ -1266,7 +1266,86 @@ class ActiveCycleEndpoint(BaseAPIView):
 
     def get_results_controller(self, results, active_cycles=None):
         for cycle in results:
+            assignee_distribution = (
+                Issue.issue_objects.filter(
+                    issue_cycle__cycle_id=cycle["id"],
+                    project_id=cycle["project_id"],
+                    workspace__slug=self.kwargs.get("slug"),
+                )
+                .annotate(display_name=F("assignees__display_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .annotate(avatar=F("assignees__avatar"))
+                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    total_issues=Count(
+                        "assignee_id",
+                        filter=Q(archived_at__isnull=True, is_draft=False),
+                    ),
+                )
+                .annotate(
+                    completed_issues=Count(
+                        "assignee_id",
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "assignee_id",
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("display_name")
+            )
+
+            label_distribution = (
+                Issue.issue_objects.filter(
+                    issue_cycle__cycle_id=cycle["id"],
+                    project_id=cycle["project_id"],
+                    workspace__slug=self.kwargs.get("slug"),
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(
+                    total_issues=Count(
+                        "label_id",
+                        filter=Q(archived_at__isnull=True, is_draft=False),
+                    )
+                )
+                .annotate(
+                    completed_issues=Count(
+                        "label_id",
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "label_id",
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("label_name")
+            )
             cycle["distribution"] = {
+                "assignees": assignee_distribution,
+                "labels": label_distribution,
                 "completion_chart": {},
             }
             if cycle["start_date"] and cycle["end_date"]:
@@ -1289,6 +1368,7 @@ class ActiveCycleEndpoint(BaseAPIView):
             Cycle.objects.filter(
                 workspace__slug=slug,
                 project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
                 start_date__lte=timezone.now(),
                 end_date__gte=timezone.now(),
             )

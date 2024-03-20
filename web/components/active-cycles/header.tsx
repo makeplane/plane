@@ -1,11 +1,9 @@
 import { FC } from "react";
 import Link from "next/link";
-// icons
-import { UserCircle2 } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { Tooltip, CycleGroupIcon, getButtonStyling } from "@plane/ui";
+import { Tooltip, CycleGroupIcon, getButtonStyling, Avatar, AvatarGroup } from "@plane/ui";
 // helpers
 import { renderFormattedDate, findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { truncateText } from "@/helpers/string.helper";
@@ -26,8 +24,11 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
 
   const daysLeft = findHowManyDaysLeft(cycle.end_date) ?? 0;
   const currentCycleStatus = cycle.status.toLocaleLowerCase() as TCycleGroups;
+
+  const cycleAssignee = (cycle.distribution?.assignees ?? []).filter((assignee) => assignee.display_name);
+
   return (
-    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg border-[0.5px] border-custom-border-100 bg-custom-background-90">
+    <div className="flex items-center justify-between px-3 py-1.5 rounded border-[0.5px] border-custom-border-100 bg-custom-background-90">
       <div className="flex items-center gap-2 cursor-default">
         <CycleGroupIcon cycleGroup={currentCycleStatus} className="h-4 w-4" />
         <Tooltip tooltipContent={cycle.name} position="top-left">
@@ -46,32 +47,27 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
       </div>
       <div className="flex items-center gap-4">
         <div className="rounded-sm text-sm">
-          <div className="flex gap-2 text-sm whitespace-nowrap text-custom-text-300 font-medium">
-            <span className="flex items-center gap-1.5">
-              <UserCircle2 className="h-4 w-4" />
-              <span className="text-base leading-5">Lead</span>
-            </span>
-            <div className="flex items-center gap-1.5">
-              {cycleOwnerDetails?.avatar && cycleOwnerDetails?.avatar !== "" ? (
-                <img
-                  src={cycleOwnerDetails?.avatar}
-                  height={18}
-                  width={18}
-                  className="rounded-full"
-                  alt={cycleOwnerDetails?.display_name}
-                />
-              ) : (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
-                  {cycleOwnerDetails?.display_name.charAt(0)}
-                </span>
-              )}
-              <span className="text-base leading-5">{cycleOwnerDetails?.display_name}</span>
-            </div>
+          <div className="flex gap-2 divide-x spac divide-x-border-300 text-sm whitespace-nowrap text-custom-text-300 font-medium">
+            <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
+            {cycleAssignee.length > 0 && (
+              <span className="pl-2">
+                <AvatarGroup showTooltip>
+                  {cycleAssignee.map((member) => (
+                    <Avatar
+                      key={member.assignee_id}
+                      name={member?.display_name ?? ""}
+                      src={member?.avatar ?? ""}
+                      showTooltip={false}
+                    />
+                  ))}
+                </AvatarGroup>
+              </span>
+            )}
           </div>
         </div>
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
-          className={`${getButtonStyling("primary", "sm")} cursor-pointer`}
+          className={`${getButtonStyling("outline-primary", "sm")} cursor-pointer`}
         >
           View Cycle
         </Link>

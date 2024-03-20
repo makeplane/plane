@@ -7,8 +7,8 @@ import {
   ActiveCycleHeader,
   ActiveCycleProgress,
   ActiveCycleProductivity,
-  ActiveCyclePriorityIssues,
-} from "@/components/cycles/active-cycles";
+  ActiveCycleStats,
+} from "@/components/active-cycles";
 
 export type ActiveCycleInfoCardProps = {
   cycle: IActiveCycle;
@@ -31,7 +31,7 @@ export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
         <ActiveCycleProgress cycle={cycle} />
         <ActiveCycleProductivity cycle={cycle} />
-        <ActiveCyclePriorityIssues cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
+        <ActiveCycleStats cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
     </div>
   );

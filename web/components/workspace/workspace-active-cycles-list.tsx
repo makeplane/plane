@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // ui
 import { Button } from "@plane/ui";
 // components
-import { ActiveCyclesListPage } from "@/components/cycles/active-cycles";
+import { ActiveCyclesListPage } from "@/components/active-cycles";
 // import { EmptyState, getEmptyStateImagePath } from "@/components/empty-state";
 // constants
 // import { EUserWorkspaceRoles } from "@/constants/workspace";
@@ -66,7 +66,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   // const isEditingAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <div className="h-full w-full bg-custom-background-90">
+    <div className="h-full w-full overflow-y-scroll bg-custom-background-90 vertical-scrollbar scrollbar-md">
       {activeCyclesPages}
 
       {pageCount < totalPages && resultsCount !== 0 && (
