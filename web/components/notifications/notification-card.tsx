@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ArchiveRestore, Clock, MessageSquare, MoreVertical, User2 } from "lucide-react";
 import { Menu } from "@headlessui/react";
-// icons
+// type
 import type { IUserNotification, NotificationType } from "@plane/types";
 // ui
-import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, Tooltip, TOAST_TYPE, setToast  } from "@plane/ui";
 // constants
 import {
   ISSUE_OPENED,
@@ -16,13 +16,13 @@ import {
   NOTIFICATION_SNOOZED,
 } from "@/constants/event-tracker";
 import { snoozeOptions } from "@/constants/notification";
-// helper
-import { calculateTimeAgo, renderFormattedTime, renderFormattedDate } from "@/helpers/date-time.helper";
-import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// type
+// helper
+import { calculateTimeAgo, renderFormattedTime, renderFormattedDate, getDate } from "helpers/date-time.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
+
 
 type NotificationCardProps = {
   selectedTab: NotificationType;
@@ -122,7 +122,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const notificationField = notification.data.issue_activity.field;
   const notificationTriggeredBy = notification.triggered_by_details;
 
-  if (isSnoozedTabOpen && notification.snoozed_till! < new Date()) return null;
+  const snoozedTillDate = getDate(notification?.snoozed_till);
+
+  if (snoozedTillDate && isSnoozedTabOpen && snoozedTillDate < new Date()) return null;
 
   return (
     <Link

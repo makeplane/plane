@@ -8,7 +8,7 @@ import isNumber from "lodash/isNumber";
  * @param {Date | string} date
  * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
  */
-export const renderFormattedDate = (date: string | Date | undefined): string | null => {
+export const renderFormattedDate = (date: string | Date | undefined | null): string | null => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
@@ -44,7 +44,7 @@ export const renderFormattedDateWithoutYear = (date: string | Date): string => {
  * @param {Date | string} date
  * @example renderFormattedPayloadDate("Jan 01, 20224") // "2024-01-01"
  */
-export const renderFormattedPayloadDate = (date: Date | string): string | null => {
+export const renderFormattedPayloadDate = (date: Date | string | undefined | null): string | null => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
@@ -67,7 +67,7 @@ export const renderFormattedPayloadDate = (date: Date | string): string | null =
  */
 export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
   // Parse the date to check if it is valid
-  const parsedDate = getDate(date);
+  const parsedDate = new Date(date);
   // return if undefined
   if (!parsedDate) return "";
   // Check if the parsed date is valid
@@ -208,14 +208,19 @@ export const checkIfDatesAreEqual = (
  * @returns date or undefined
  */
 export const getDate = (date: string | Date | undefined | null): Date | undefined => {
-  if (!date || date === "") return;
+  try {
+    if (!date || date === "") return;
 
-  if (typeof date !== "string" && !(date instanceof String)) return date;
-  const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
-  const year = parseInt(yearString);
-  const month = parseInt(monthString);
-  const day = parseInt(dayString);
-  if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
+    if (typeof date !== "string" && !(date instanceof String)) return date;
 
-  return new Date(year, month - 1, day);
+    const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
+    const year = parseInt(yearString);
+    const month = parseInt(monthString);
+    const day = parseInt(dayString);
+    if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
+
+    return new Date(year, month - 1, day);
+  } catch (e) {
+    return undefined;
+  }
 };
