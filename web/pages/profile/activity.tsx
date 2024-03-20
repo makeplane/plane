@@ -2,16 +2,16 @@ import { ReactElement, useState } from "react";
 import { observer } from "mobx-react";
 //hooks
 import { Button } from "@plane/ui";
-import { PageHead } from "components/core";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { ProfileActivityListPage } from "components/profile";
-import { useApplication } from "hooks/store";
+import { PageHead } from "@/components/core";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { ProfileActivityListPage } from "@/components/profile";
+import { useApplication } from "@/hooks/store";
 // layouts
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // components
 // ui
 // type
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const PER_PAGE = 100;
 

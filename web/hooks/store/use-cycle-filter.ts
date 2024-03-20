@@ -1,8 +1,8 @@
 import { useContext } from "react";
 // mobx store
-import { StoreContext } from "contexts/store-context";
+import { StoreContext } from "@/contexts/store-context";
 // types
-import { ICycleFilterStore } from "store/cycle_filter.store";
+import { ICycleFilterStore } from "@/store/cycle_filter.store";
 
 export const useCycleFilter = (): ICycleFilterStore => {
   const context = useContext(StoreContext);

@@ -149,18 +149,18 @@ export const PageRenderer = (props: IPageRenderer) => {
   );
 
   return (
-    <div className="w-full h-full pb-20 pt-5 page-renderer">
+    <div className="h-full w-full pb-20 pt-5 page-renderer">
       {readonly ? (
         <h6 className="-mt-2 break-words bg-transparent text-4xl font-bold">{pageTitle}</h6>
       ) : (
         <TextArea
           onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none"
+          className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
           placeholder="Untitled Page"
           value={pageTitle}
         />
       )}
-      <div className="flex relative h-full w-full flex-col pr-5 editor-renderer" onMouseOver={handleLinkHover}>
+      <div className="flex relative h-full w-full flex-col pr-5" onMouseOver={handleLinkHover}>
         <EditorContainer hideDragHandle={hideDragHandle} editor={editor} editorClassNames={editorClassNames}>
           <EditorContentWrapper
             tabIndex={tabIndex}

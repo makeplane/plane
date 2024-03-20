@@ -1,18 +1,5 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react-lite";
-// constants
-// hooks
-import {
-  useCycle,
-  useIssueDetail,
-  useKanbanView,
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectState,
-} from "hooks/store";
-// types
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -24,12 +11,25 @@ import {
   TUnGroupedIssues,
   TIssueKanbanFilters,
 } from "@plane/types";
+// constants
+// hooks
+import {
+  useCycle,
+  useIssueDetail,
+  useKanbanView,
+  useLabel,
+  useMember,
+  useModule,
+  useProject,
+  useProjectState,
+} from "@/hooks/store";
+// types
 // parent components
 import { getGroupByColumns } from "../utils";
 // components
+import { KanbanStoreType } from "./base-kanban-root";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
-import { KanbanStoreType } from "./base-kanban-root";
 
 export interface IGroupByKanBan {
   issuesMap: IIssueMap;

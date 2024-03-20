@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // components
 import { TextArea } from "@plane/ui";
 // types
-import useDebounce from "hooks/use-debounce";
+import useDebounce from "@/hooks/use-debounce";
 import { TIssueOperations } from "./issue-detail";
 // hooks
 

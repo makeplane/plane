@@ -1,18 +1,18 @@
 // hooks
-import useToast from "hooks/use-toast";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // icons
-import { Icon } from "components/ui";
+import { Icon } from "@/components/ui";
 // helpers
-import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
-import { renderFullDate } from "helpers/date-time.helper";
-import { dueDateIconDetails } from "../board-views/block-due-date";
+import { issueGroupFilter, issuePriorityFilter } from "@/constants/data";
+import { renderFullDate } from "@/helpers/date-time.helper";
+import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // types
-import { IIssue } from "types/issue";
-import { IPeekMode } from "store/issue_details";
+import { IPeekMode } from "@/store/issue_details";
 // constants
-import { issueGroupFilter, issuePriorityFilter } from "constants/data";
+import useToast from "hooks/use-toast";
+import { IIssue } from "types/issue";
+import { dueDateIconDetails } from "../board-views/block-due-date";
 
 type Props = {
   issueDetails: IIssue;

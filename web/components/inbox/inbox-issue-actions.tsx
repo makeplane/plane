@@ -2,9 +2,10 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { DayPicker } from "react-day-picker";
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+import type { TInboxDetailedStatus } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -13,13 +14,14 @@ import {
   DeclineIssueModal,
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
-} from "components/inbox";
-import { ISSUE_DELETED } from "constants/event-tracker";
-import { EUserProjectRoles } from "constants/project";
+} from "@/components/inbox";
+import { ISSUE_DELETED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
+import { getDate } from "@/helpers/date-time.helper";
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "@/hooks/store";
 // types
-import type { TInboxDetailedStatus } from "@plane/types";
+//helpers
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -168,11 +170,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  const tomorrow = getDate(today);
+  tomorrow?.setDate(today.getDate() + 1);
   useEffect(() => {
     if (!issueStatus || !issueStatus.snoozed_till) return;
-    setDate(new Date(issueStatus.snoozed_till));
+    setDate(issueStatus.snoozed_till);
   }, [issueStatus]);
 
   if (!issueStatus || !issue || !inboxIssues) return <></>;
@@ -266,19 +268,23 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                     {({ close }) => (
                       <div className="flex h-full w-full flex-col gap-y-1">
                         <DayPicker
-                          selected={date ? new Date(date) : undefined}
-                          defaultMonth={date ? new Date(date) : undefined}
+                          selected={getDate(date)}
+                          defaultMonth={getDate(date)}
                           onSelect={(date) => {
                             if (!date) return;
                             setDate(date);
                           }}
                           mode="single"
-                          className="rounded-md border border-custom-border-200 p-3"
-                          disabled={[
-                            {
-                              before: tomorrow,
-                            },
-                          ]}
+                          className="border border-custom-border-200 rounded-md p-3"
+                          disabled={
+                            tomorrow
+                              ? [
+                                  {
+                                    before: tomorrow,
+                                  },
+                                ]
+                              : undefined
+                          }
                         />
                         <Button
                           variant="primary"
@@ -286,7 +292,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                             close();
                             inboxIssueOperations.updateInboxIssueStatus({
                               status: 0,
-                              snoozed_till: new Date(date),
+                              snoozed_till: date,
                             });
                           }}
                         >

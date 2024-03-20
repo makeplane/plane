@@ -2,17 +2,17 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
+import { Combobox } from "@headlessui/react";
+import { IIssueLabel } from "@plane/types";
 // hooks
 import { Tooltip } from "@plane/ui";
-import { useApplication, useLabel } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useApplication, useLabel } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 // types
-import { IIssueLabel } from "@plane/types";
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -232,8 +232,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-              ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
+                ? "cursor-pointer"
+                : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={handleOnClick}
         >

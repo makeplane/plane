@@ -67,7 +67,7 @@ export const CoreEditorExtensions = (
     HTMLAttributes: { className: "border-l-4 border-custom-border-300" },
   }),
   CustomHorizontalRule.configure({
-    HTMLAttributes: { class: "mt-4 mb-4" },
+    HTMLAttributes: { class: "my-4" },
   }),
   CustomKeymap,
   ListKeymap,

@@ -3,19 +3,18 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { ArrowRight, Plus, PanelRight } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { CycleMobileHeader } from "components/cycles/cycle-mobile-header";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { cn } from "helpers/common.helper";
-import { truncateText } from "helpers/string.helper";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { cn } from "@/helpers/common.helper";
+import { truncateText } from "@/helpers/string.helper";
 import {
   useApplication,
   useEventTracker,
@@ -26,14 +25,13 @@ import {
   useProjectState,
   useUser,
   useIssues,
-} from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
+} from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 // ui
 // icons
 // helpers
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-import { ProjectLogo } from "components/project";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
@@ -86,7 +84,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-  const { isMobile } = usePlatformOS()
+  const { isMobile } = usePlatformOS();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -159,9 +157,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         cycleDetails={cycleDetails ?? undefined}
       />
       <div className="relative z-[15] w-full items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
           <div className="flex items-center gap-2">
-            <SidebarHamburgerToggle />
             <Breadcrumbs onBack={router.back}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -227,9 +224,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     className="ml-1.5 flex-shrink-0 truncate"
                     placement="bottom-start"
                   >
-                    {currentProjectCycleIds?.map((cycleId) => (
-                      <CycleDropdownOption key={cycleId} cycleId={cycleId} />
-                    ))}
+                    {currentProjectCycleIds?.map((cycleId) => <CycleDropdownOption key={cycleId} cycleId={cycleId} />)}
                   </CustomMenu>
                 }
               />
@@ -298,9 +293,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("w-4 h-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-        </div>
-        <div className="block sm:block md:hidden">
-          <CycleMobileHeader />
         </div>
       </div>
     </>

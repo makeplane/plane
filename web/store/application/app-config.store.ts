@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { AppConfigService } from "services/app_config.service";
+import { AppConfigService } from "@/services/app_config.service";
 import { IAppConfig } from "@plane/types";
 // services
 

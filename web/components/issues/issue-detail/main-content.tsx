@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 import { StateGroupIcon } from "@plane/ui";
-import { IssueAttachmentRoot, IssueUpdateStatus } from "components/issues";
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
+import { IssueAttachmentRoot, IssueUpdateStatus } from "@/components/issues";
+import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
+import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // components
 import { IssueDescriptionInput } from "../description-input";
 import { SubIssuesRoot } from "../sub-issues";

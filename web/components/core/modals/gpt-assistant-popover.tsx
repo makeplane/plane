@@ -3,14 +3,15 @@ import { Placement } from "@popperjs/core";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
-import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
-import { Popover, Transition } from "@headlessui/react";
-// hooks
 // ui
+import { AlertCircle } from "lucide-react";
+import { Popover, Transition } from "@headlessui/react";
+import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// icons
 // components
-// types
-import { AIService } from "services/ai.service";
+// hooks
+import { AIService } from "@/services/ai.service";
 
 type Props = {
   isOpen: boolean;
@@ -247,8 +248,17 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
               />
             )}
           />
-          <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
-            {responseActionButton}
+          <div className="flex gap-2 justify-between">
+            {responseActionButton ? (
+              <>{responseActionButton}</>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-2 text-sm text-custom-primary">
+                  <AlertCircle className="h-4 w-4" />
+                  <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
+                </div>
+              </>
+            )}
             <div className="flex items-center gap-2">
               <Button variant="neutral-primary" size="sm" onClick={onClose}>
                 Close

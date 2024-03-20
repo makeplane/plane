@@ -5,6 +5,8 @@ export * from "./types.d";
 export * from "./day-tile";
 export * from "./header";
 export * from "./issue-blocks";
+export * from "./issue-block-root";
+export * from "./issue-block";
 export * from "./week-days";
 export * from "./week-header";
 export * from "./quick-add-issue-form";

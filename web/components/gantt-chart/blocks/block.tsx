@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 // hooks
 // components
 // helpers
-import { cn } from "helpers/common.helper";
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { useIssueDetail } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { useIssueDetail } from "@/hooks/store";
 // types
 // constants
 import { BLOCK_HEIGHT } from "../constants";

@@ -1,25 +1,27 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
+import { PageEditorBody, PageEditorHeaderRoot } from "components/pages";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-// hooks
-import { usePage } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-specific-pages";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-import { NextPageWithLayout } from "lib/types";
-// components
 import { EditorRefApi } from "@plane/document-editor";
-import { PageDetailsHeader } from "components/headers/page-details";
-import { IssuePeekOverview } from "components/issues";
-// ui
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-import { PageHead } from "components/core";
-// types
 import { IPage } from "@plane/types";
+// hooks
+
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { PageDetailsHeader } from "@/components/headers/page-details";
+import { IssuePeekOverview } from "@/components/issues";
+import { usePage } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-specific-pages";
+// services
+import { AppLayout } from "@/layouts/app-layout";
+import { NextPageWithLayout } from "@/lib/types";
+// layouts
+// components
+// types
+// fetch-keys
 // constants
-import { PageEditorBody, PageEditorHeaderRoot } from "components/pages";
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   // states
@@ -45,14 +47,18 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
   // fetch all pages from API
   useSWR(
-    workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
+      ? `ALL_PAGES_LIST_${projectId}`
+      : null,
     workspaceSlug && projectId && !projectPageMap[projectId as string] && !projectArchivedPageMap[projectId as string]
       ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString())
       : null
   );
   // fetch all archived pages from API
   useSWR(
-    workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId && !projectArchivedPageMap[projectId as string] && !projectPageMap[projectId as string]
+      ? `ALL_ARCHIVED_PAGES_LIST_${projectId}`
+      : null,
     workspaceSlug && projectId && !projectArchivedPageMap[projectId as string] && !projectPageMap[projectId as string]
       ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString())
       : null

@@ -5,13 +5,13 @@ import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { mutate } from "swr";
 // components
+import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 import { Avatar, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-import { useApplication, useUser } from "hooks/store";
+import { useApplication, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 
 // Static Data

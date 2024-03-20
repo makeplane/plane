@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { DiceIcon } from "@plane/ui";
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons

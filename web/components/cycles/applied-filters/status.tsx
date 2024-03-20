@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
-import { CYCLE_STATUS } from "constants/cycle";
-import { cn } from "helpers/common.helper";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { cn } from "@/helpers/common.helper";
 
 type Props = {
   handleRemove: (val: string) => void;

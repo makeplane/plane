@@ -3,19 +3,19 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // icons
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { IWebhook } from "@plane/types";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { csvDownload } from "helpers/download.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { csvDownload } from "@/helpers/download.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useWebhook, useWorkspace } from "hooks/store";
+import { useWebhook, useWorkspace } from "@/hooks/store";
 // types
-import { IWebhook } from "@plane/types";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 
 type Props = {
   data: Partial<IWebhook>;

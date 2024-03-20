@@ -8,8 +8,6 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { FileService } from "services/file.service";
 // components
 import { PageContentBrowser } from "components/pages";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "helpers/common.helper";
 // types
@@ -25,6 +23,7 @@ import { IPage } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
 import { useRef } from "react";
+import { useEffect } from "react";
 
 // services
 const fileService = new FileService();
@@ -67,9 +66,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageDescription = pageStore?.description_html;
   const { is_locked, archived_at, updateName, isSubmitting, setIsSubmitting } = pageStore;
   // editor markings hook
-  const { markings } = useEditorMarkings();
+  const { markings, updateMarkings } = useEditorMarkings();
 
   const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
+
+  useEffect(() => {
+    updateMarkings(pageStore.description_html);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // auth
   const isPageReadOnly =
@@ -96,7 +100,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             title={pageTitle}
             value={pageDescription}
             handleEditorReady={handleReadOnlyEditorReady}
-            customClassName={"tracking-tight w-full px-0"}
+            customClassName="tracking-tight w-full px-0"
           />
         ) : (
           <Controller
@@ -123,7 +127,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     setShowAlert(true);
                     onChange(description_html);
                     handleSubmit();
-                  }}
+                    updateMarkings(description_html);
+                }}
                 />
               );
             }}

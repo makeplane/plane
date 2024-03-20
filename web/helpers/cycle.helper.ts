@@ -1,6 +1,6 @@
 import sortBy from "lodash/sortBy";
 // helpers
-import { satisfiesDateFilter } from "helpers/filter.helper";
+import { satisfiesDateFilter } from "@/helpers/filter.helper";
 // types
 import { ICycle, TCycleFilters } from "@plane/types";
 

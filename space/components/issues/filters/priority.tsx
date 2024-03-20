@@ -3,9 +3,9 @@ import { observer } from "mobx-react-lite";
 // ui
 import { PriorityIcon } from "@plane/ui";
 // components
+import { issuePriorityFilters } from "@/constants/data";
 import { FilterHeader, FilterOption } from "./helpers";
 // constants
-import { issuePriorityFilters } from "constants/data";
 
 type Props = {
   appliedFilters: string[] | null;

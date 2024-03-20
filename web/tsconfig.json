@@ -5,6 +5,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "preserve",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@/*": ["*"]
+    }
   }
 }

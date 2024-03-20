@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
 // hooks
 import { Loader } from "@plane/ui";
-import { InboxIssueActionsHeader } from "components/inbox";
-import { InboxIssueDetailRoot } from "components/issues/issue-detail/inbox";
-import { useInboxIssues } from "hooks/store";
+import { InboxIssueActionsHeader } from "@/components/inbox";
+import { InboxIssueDetailRoot } from "@/components/issues/issue-detail/inbox";
+import { useInboxIssues } from "@/hooks/store";
 // components
 // ui
 

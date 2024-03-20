@@ -6,15 +6,15 @@ import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { mutate } from "swr";
 // ui
+import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { Check, ChevronDown, CircleUserRound, LogOut, Mails, PlusSquare, Settings, UserCircle2 } from "lucide-react";
+import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useUser, useWorkspace } from "@/hooks/store";
 // types
-import { IWorkspace } from "@plane/types";
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {

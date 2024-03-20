@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
 import {
@@ -9,12 +10,11 @@ import {
   WebhookOptions,
   WebhookSecretKey,
   WebhookToggle,
-} from "components/web-hooks";
-import { useWebhook } from "hooks/store";
+} from "@/components/web-hooks";
+import { useWebhook } from "@/hooks/store";
 // components
 // ui
 // types
-import { IWebhook, TWebhookEventTypes } from "@plane/types";
 
 type Props = {
   data?: Partial<IWebhook>;

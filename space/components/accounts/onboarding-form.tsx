@@ -1,19 +1,19 @@
 import { useEffect, Fragment } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Listbox, Transition } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
+import { Listbox, Transition } from "@headlessui/react";
 // mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Button, Input } from "@plane/ui";
+import { USER_ROLES } from "@/constants/workspace";
+import { useMobxStore } from "@/lib/mobx/store-provider";
 // constants
-import { USER_ROLES } from "constants/workspace";
 // hooks
+import { UserService } from "@/services/user.service";
 import useToast from "hooks/use-toast";
 // services
-import { UserService } from "services/user.service";
 // ui
-import { Button, Input } from "@plane/ui";
 
 const defaultValues = {
   first_name: "",

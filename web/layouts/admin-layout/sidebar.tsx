@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { InstanceAdminSidebarMenu, InstanceHelpSection, InstanceSidebarDropdown } from "components/instance";
-import { useApplication } from "hooks/store";
+import { InstanceAdminSidebarMenu, InstanceHelpSection, InstanceSidebarDropdown } from "@/components/instance";
+import { useApplication } from "@/hooks/store";
 // components
 
 export interface IInstanceAdminSidebar {}

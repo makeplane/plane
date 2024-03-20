@@ -1,21 +1,20 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, Plus, Briefcase, X, ListFilter } from "lucide-react";
+import { TProjectFilters } from "@plane/types";
 // hooks
-import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "hooks/store";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
+import { BreadcrumbLink } from "@/components/common";
 // helpers
-import { cn } from "helpers/common.helper";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { FiltersDropdown } from "components/issues";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "components/project";
-import { TProjectFilters } from "@plane/types";
+import { FiltersDropdown } from "@/components/issues";
+import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useEventTracker, useMember, useProject, useProjectFilter, useUser } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ProjectsHeader = observer(() => {
   // states
@@ -77,9 +76,8 @@ export const ProjectsHeader = observer(() => {
   };
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <SidebarHamburgerToggle />
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem

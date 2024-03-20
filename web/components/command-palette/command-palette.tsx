@@ -5,26 +5,26 @@ import useSWR from "swr";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
 
-import { CommandModal, ShortcutsModal } from "components/command-palette";
+import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // ui
 // components
-import { BulkDeleteIssuesModal } from "components/core";
-import { CycleCreateUpdateModal } from "components/cycles";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { CreateUpdateModuleModal } from "components/modules";
-import { CreateUpdatePageModal } from "components/pages";
-import { CreateProjectModal } from "components/project";
-import { CreateUpdateProjectViewModal } from "components/views";
+import { BulkDeleteIssuesModal } from "@/components/core";
+import { CycleCreateUpdateModal } from "@/components/cycles";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { CreateUpdateModuleModal } from "@/components/modules";
+import { CreateUpdatePageModal } from "@/components/pages";
+import { CreateProjectModal } from "@/components/project";
+import { CreateUpdateProjectViewModal } from "@/components/views";
 // helpers
 // services
 // fetch keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
-import { EIssuesStoreType } from "constants/issue";
-import { copyTextToClipboard } from "helpers/string.helper";
-import { useApplication, useEventTracker, useIssues, useUser } from "hooks/store";
-import { IssueService } from "services/issue";
-import { EUserProjectRoles } from "constants/project";
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { copyTextToClipboard } from "@/helpers/string.helper";
+import { useApplication, useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
 
 // services
 const issueService = new IssueService();

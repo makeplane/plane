@@ -1,13 +1,13 @@
 import { FC, Fragment, Dispatch, SetStateAction, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import type { TIssueAttachment } from "@plane/types";
 // headless ui
 // ui
 import { Button } from "@plane/ui";
 // helper
-import { getFileName } from "helpers/attachment.helper";
+import { getFileName } from "@/helpers/attachment.helper";
 // types
-import type { TIssueAttachment } from "@plane/types";
 import { TAttachmentOperations } from "./root";
 
 export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;

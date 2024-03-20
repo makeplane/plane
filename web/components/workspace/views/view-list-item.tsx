@@ -7,12 +7,12 @@ import { Pencil, Trash2 } from "lucide-react";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
+import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // helpers
-import { calculateTotalFilters } from "helpers/filter.helper";
-import { truncateText } from "helpers/string.helper";
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { truncateText } from "@/helpers/string.helper";
 // store hooks
-import { useEventTracker, useGlobalView } from "hooks/store";
+import { useEventTracker, useGlobalView } from "@/hooks/store";
 
 type Props = { viewId: string };
 

@@ -1,15 +1,15 @@
 import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
-import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
+import { Transition, Dialog } from "@headlessui/react";
+import type { IUserNotification } from "@plane/types";
 import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
-import { DateDropdown } from "components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns";
 // constants
-import { allTimeIn30MinutesInterval12HoursFormat } from "constants/notification";
+import { allTimeIn30MinutesInterval12HoursFormat } from "@/constants/notification";
 // ui
 // types
-import type { IUserNotification } from "@plane/types";
 
 type SnoozeModalProps = {
   isOpen: boolean;
@@ -56,7 +56,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
 
     if (!formDataDate) return timeStamps;
 
-    const isToday = today.toDateString() === new Date(formDataDate).toDateString();
+    const isToday = today.toDateString() === formDataDate.toDateString();
 
     if (!isToday) return timeStamps;
 
@@ -89,7 +89,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
     );
     const minutes = parseInt(time[1]);
 
-    const dateTime = new Date(formData.date);
+    const dateTime = formData.date;
     dateTime.setHours(hours);
     dateTime.setMinutes(minutes);
 

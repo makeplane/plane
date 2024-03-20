@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { observer } from "mobx-react-lite";
 import sortBy from "lodash/sortBy";
+import { observer } from "mobx-react-lite";
 // hooks
-import { useMember } from "hooks/store";
-// components
-import { FilterHeader, FilterOption } from "components/issues";
-// ui
 import { Avatar, Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues";
+import { useMember } from "@/hooks/store";
+// components
+// ui
 
 type Props = {
   appliedFilters: string[] | null;
@@ -26,8 +26,8 @@ export const FilterMembers: React.FC<Props> = observer((props: Props) => {
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {
-    const filteredOptions = (memberIds || []).filter((memberId) =>
-      getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredOptions = (memberIds || []).filter(
+      (memberId) => getUserDetails(memberId)?.display_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return sortBy(filteredOptions, [

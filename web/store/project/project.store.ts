@@ -3,11 +3,11 @@ import sortBy from "lodash/sortBy";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IssueLabelService, IssueService } from "services/issue";
-import { ProjectService, ProjectStateService } from "services/project";
+import { IssueLabelService, IssueService } from "@/services/issue";
+import { ProjectService, ProjectStateService } from "@/services/project";
 import { IProject } from "@plane/types";
 import { RootStore } from "../root.store";
-import { orderProjects, shouldFilterProject } from "helpers/project.helper";
+import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
 // services
 export interface IProjectStore {
   // observables

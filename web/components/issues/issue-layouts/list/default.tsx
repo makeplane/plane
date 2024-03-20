@@ -1,10 +1,5 @@
 import { useRef } from "react";
 // components
-import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
-// hooks
-import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "hooks/store";
-// constants
-// types
 import {
   GroupByColumnTypes,
   TGroupedIssues,
@@ -14,9 +9,14 @@ import {
   TUnGroupedIssues,
   IGroupByColumn,
 } from "@plane/types";
+import { IssueBlocksList, ListQuickAddIssueForm } from "@/components/issues";
+// hooks
+import { EIssuesStoreType } from "@/constants/issue";
+import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+// constants
+// types
 import { getGroupByColumns } from "../utils";
 import { HeaderGroupByCard } from "./headers/group-by-card";
-import { EIssuesStoreType } from "constants/issue";
 
 export interface IGroupByList {
   issueIds: TGroupedIssues | TUnGroupedIssues | any;

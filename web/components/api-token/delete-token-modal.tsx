@@ -2,13 +2,13 @@ import { useState, Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
+import { IApiToken } from "@plane/types";
 // services
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { API_TOKENS_LIST } from "constants/fetch-keys";
-import { APITokenService } from "services/api_token.service";
+import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { APITokenService } from "@/services/api_token.service";
 // ui
 // types
-import { IApiToken } from "@plane/types";
 // fetch-keys
 
 type Props = {

@@ -3,11 +3,11 @@ import { Controller, useForm } from "react-hook-form";
 // services
 import { Eye, EyeOff } from "lucide-react";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { ESignUpSteps } from "components/account";
-import { PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "constants/event-tracker";
-import { checkEmailValidity } from "helpers/string.helper";
-import { useEventTracker } from "hooks/store";
-import { AuthService } from "services/auth.service";
+import { ESignUpSteps } from "@/components/account";
+import { PASSWORD_CREATE_SKIPPED, SETUP_PASSWORD } from "@/constants/event-tracker";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { useEventTracker } from "@/hooks/store";
+import { AuthService } from "@/services/auth.service";
 // hooks
 // ui
 // helpers

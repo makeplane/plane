@@ -2,17 +2,17 @@ import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { WORKSPACE_CREATED } from "constants/event-tracker";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+import { WORKSPACE_CREATED } from "@/constants/event-tracker";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useWorkspace } from "hooks/store";
+import { useEventTracker, useWorkspace } from "@/hooks/store";
 // ui
 // types
-import { IWorkspace } from "@plane/types";
-import { WorkspaceService } from "services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;

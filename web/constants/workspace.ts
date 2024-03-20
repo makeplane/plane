@@ -1,6 +1,6 @@
 // services images
-import { SettingIcon } from "components/icons";
-import { Props } from "components/icons/types";
+import { SettingIcon } from "@/components/icons";
+import { Props } from "@/components/icons/types";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import GithubLogo from "public/services/github.png";

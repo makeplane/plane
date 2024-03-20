@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
-// components
-import { FilterLead, FilterMembers, FilterStartDate, FilterStatus, FilterTargetDate } from "components/modules";
-import { FilterOption } from "components/issues";
-// types
 import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
+// components
 import { TModuleStatus } from "@plane/ui";
+import { FilterOption } from "@/components/issues";
+import { FilterLead, FilterMembers, FilterStartDate, FilterStatus, FilterTargetDate } from "@/components/modules";
+// types
 
 type Props = {
   displayFilters: TModuleDisplayFilters;

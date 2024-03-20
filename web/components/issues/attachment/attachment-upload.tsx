@@ -3,10 +3,10 @@ import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
 // hooks
 // constants
-import { MAX_FILE_SIZE } from "constants/common";
+import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
-import { generateFileName } from "helpers/attachment.helper";
-import { useApplication } from "hooks/store";
+import { generateFileName } from "@/helpers/attachment.helper";
+import { useApplication } from "@/hooks/store";
 // types
 import { TAttachmentOperations } from "./root";
 

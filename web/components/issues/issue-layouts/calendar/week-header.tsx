@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 
 // constants
-import { DAYS_LIST } from "constants/calendar";
+import { DAYS_LIST } from "@/constants/calendar";
 
 type Props = {
   isLoading: boolean;
@@ -13,7 +13,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`relative sticky top-0 z-[1] grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium ${
+      className={`relative sticky top-0 z-[1] grid md:divide-x-[0.5px] divide-custom-border-200 text-sm font-medium ${
         showWeekends ? "grid-cols-7" : "grid-cols-5"
       }`}
     >
@@ -24,7 +24,10 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
         if (!showWeekends && (day.shortTitle === "Sat" || day.shortTitle === "Sun")) return null;
 
         return (
-          <div key={day.shortTitle} className="flex h-11 items-center justify-end bg-custom-background-90 px-4">
+          <div
+            key={day.shortTitle}
+            className="flex h-11 items-center justify-center md:justify-end bg-custom-background-90 px-4"
+          >
             {day.shortTitle}
           </div>
         );

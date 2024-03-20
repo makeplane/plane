@@ -1,8 +1,8 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { InstanceAdminRestriction } from "components/instance";
-import { useApplication, useUser } from "hooks/store";
+import { InstanceAdminRestriction } from "@/components/instance";
+import { useApplication, useUser } from "@/hooks/store";
 // components
 
 export interface IAdminAuthWrapper {

@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 // hooks
-import { useCycle } from "hooks/store";
+import { UpcomingCycleListItem } from "@/components/cycles";
+import { useCycle } from "@/hooks/store";
 // components
-import { UpcomingCycleListItem } from "components/cycles";
 
 export const UpcomingCyclesList = observer(() => {
   // store hooks

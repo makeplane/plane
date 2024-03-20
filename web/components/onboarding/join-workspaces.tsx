@@ -1,12 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { IWorkspace, TOnboardingSteps } from "@plane/types";
 // hooks
-import { Invitations, OnboardingSidebar, OnboardingStepIndicator, Workspace } from "components/onboarding";
-import { useUser } from "hooks/store";
+import { Invitations, OnboardingSidebar, OnboardingStepIndicator, Workspace } from "@/components/onboarding";
+import { useUser } from "@/hooks/store";
 // components
 // types
-import { IWorkspace, TOnboardingSteps } from "@plane/types";
 
 type Props = {
   finishOnboarding: () => Promise<void>;

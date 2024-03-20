@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useGanttChart } from "components/gantt-chart/hooks/use-gantt-chart";
+import { useGanttChart } from "@/components/gantt-chart/hooks/use-gantt-chart";
 
 export const WeekChartView: FC<any> = observer(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

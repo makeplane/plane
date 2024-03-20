@@ -6,11 +6,11 @@ import { Crown } from "lucide-react";
 // ui
 import { getButtonStyling } from "@plane/ui";
 // constants
-import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "constants/cycle";
+import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
-import { cn } from "helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks

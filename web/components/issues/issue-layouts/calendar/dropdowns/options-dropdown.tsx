@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { usePopper } from "react-popper";
+import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
 // icons
-import { Check, ChevronUp } from "lucide-react";
-import { ToggleSwitch } from "@plane/ui";
-// types
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -16,14 +14,17 @@ import {
   TCalendarLayouts,
   TIssueKanbanFilters,
 } from "@plane/types";
+import { ToggleSwitch } from "@plane/ui";
+// types
 // constants
-import { CALENDAR_LAYOUTS } from "constants/calendar";
-import { EIssueFilterType } from "constants/issue";
-import { useCalendarView } from "hooks/store";
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { CALENDAR_LAYOUTS } from "@/constants/calendar";
+import { EIssueFilterType } from "@/constants/issue";
+import { useCalendarView } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -41,6 +42,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const { projectId } = router.query;
 
   const issueCalendarView = useCalendarView();
+  const [windowWidth] = useSize();
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -60,7 +62,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
-  const handleLayoutChange = (layout: TCalendarLayouts) => {
+  const handleLayoutChange = (layout: TCalendarLayouts, closePopover: any) => {
     if (!projectId || !updateFilters) return;
 
     updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
@@ -75,6 +77,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
         ? issueCalendarView.calendarFilters.activeMonthDate
         : issueCalendarView.calendarFilters.activeWeekDate
     );
+    if (windowWidth <= 768) closePopover(); // close the popover on mobile
   };
 
   const handleToggleWeekends = () => {
@@ -92,21 +95,24 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
 
   return (
     <Popover className="relative">
-      {({ open }) => (
+      {({ open, close: closePopover }) => (
         <>
           <Popover.Button as={React.Fragment}>
-            <button
-              type="button"
-              ref={setReferenceElement}
-              className={`flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
-                open ? "text-custom-text-100" : "text-custom-text-200"
-              }`}
-            >
-              <div className="font-medium">Options</div>
+            <button type="button" ref={setReferenceElement}>
               <div
-                className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
+                className={`hidden md:flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
+                  open ? "text-custom-text-100" : "text-custom-text-200"
+                }`}
               >
-                <ChevronUp width={12} strokeWidth={2} />
+                <div className="font-medium">Options</div>
+                <div
+                  className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
+                >
+                  <ChevronUp width={12} strokeWidth={2} />
+                </div>
+              </div>
+              <div className="md:hidden">
+                <MoreVerticalIcon className="h-4 text-custom-text-200" strokeWidth={2} />
               </div>
             </button>
           </Popover.Button>
@@ -132,7 +138,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                       key={layout}
                       type="button"
                       className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
-                      onClick={() => handleLayoutChange(layoutDetails.key)}
+                      onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
                       {calendarLayout === layout && <Check size={12} strokeWidth={2} />}
@@ -144,7 +150,12 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                     onClick={handleToggleWeekends}
                   >
                     Show weekends
-                    <ToggleSwitch value={showWeekends} onChange={() => {}} />
+                    <ToggleSwitch
+                      value={showWeekends}
+                      onChange={() => {
+                        if (windowWidth <= 768) closePopover(); // close the popover on mobile
+                      }}
+                    />
                   </button>
                 </div>
               </div>

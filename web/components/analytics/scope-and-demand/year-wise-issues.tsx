@@ -1,10 +1,10 @@
 // ui
-import { LineGraph, ProfileEmptyState } from "components/ui";
+import { IDefaultAnalyticsResponse } from "@plane/types";
+import { LineGraph, ProfileEmptyState } from "@/components/ui";
 // image
-import { MONTHS_LIST } from "constants/calendar";
+import { MONTHS_LIST } from "@/constants/calendar";
 import emptyGraph from "public/empty-state/empty_graph.svg";
 // types
-import { IDefaultAnalyticsResponse } from "@plane/types";
 // constants
 
 type Props = {

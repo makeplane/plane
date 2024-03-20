@@ -3,16 +3,6 @@ import React from "react";
 import Image from "next/image";
 // headless ui
 import { Tab } from "@headlessui/react";
-// hooks
-import { Avatar, StateGroupIcon } from "@plane/ui";
-import { SingleProgressStats } from "components/core";
-import useLocalStorage from "hooks/use-local-storage";
-// images
-import emptyLabel from "public/empty-state/empty_label.svg";
-import emptyMembers from "public/empty-state/empty_members.svg";
-// components
-// ui
-// types
 import {
   IModule,
   TAssigneesDistribution,
@@ -20,6 +10,16 @@ import {
   TLabelsDistribution,
   TStateGroups,
 } from "@plane/types";
+// hooks
+import { Avatar, StateGroupIcon } from "@plane/ui";
+import { SingleProgressStats } from "@/components/core";
+import useLocalStorage from "@/hooks/use-local-storage";
+// images
+import emptyLabel from "public/empty-state/empty_label.svg";
+import emptyMembers from "public/empty-state/empty_members.svg";
+// components
+// ui
+// types
 
 type Props = {
   distribution: {

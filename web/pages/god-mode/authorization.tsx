@@ -5,12 +5,12 @@ import useSWR from "swr";
 // layouts
 import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 
-import { PageHead } from "components/core";
-import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
-import { useApplication } from "hooks/store";
-import { InstanceAdminLayout } from "layouts/admin-layout";
+import { PageHead } from "@/components/core";
+import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "@/components/instance";
+import { useApplication } from "@/hooks/store";
+import { InstanceAdminLayout } from "@/layouts/admin-layout";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // hooks
 // ui
 // components
@@ -91,12 +91,11 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
                 <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
                   <ToggleSwitch
                     value={Boolean(parseInt(enableMagicLogin))}
-                    // onChange={() => {
-                    //   Boolean(parseInt(enableMagicLogin)) === true
-                    //     ? updateConfig("ENABLE_MAGIC_LINK_LOGIN", "0")
-                    //     : updateConfig("ENABLE_MAGIC_LINK_LOGIN", "1");
-                    // }}
-                    onChange={() => {}}
+                    onChange={() => {
+                      Boolean(parseInt(enableMagicLogin)) === true
+                        ? updateConfig("ENABLE_MAGIC_LINK_LOGIN", "0")
+                        : updateConfig("ENABLE_MAGIC_LINK_LOGIN", "1");
+                    }}
                     size="sm"
                     disabled={isSubmitting}
                   />
