@@ -133,11 +133,23 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           </CustomMenu.MenuItem>
         )}
         {isEditingAllowed && !isArchived && (
-          <CustomMenu.MenuItem onClick={handleArchiveCycle}>
-            <span className="flex items-center justify-start gap-2">
-              <ArchiveIcon className="h-3 w-3" />
-              <span>Archive cycle</span>
-            </span>
+          <CustomMenu.MenuItem onClick={handleArchiveCycle} disabled={!isCompleted}>
+            {isCompleted ? (
+              <div className="flex items-center gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                Archive cycle
+              </div>
+            ) : (
+              <div className="flex items-start gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                <div className="-mt-1">
+                  <p>Archive cycle</p>
+                  <p className="text-xs text-custom-text-400">
+                    Only completed cycle <br /> can be archived.
+                  </p>
+                </div>
+              </div>
+            )}
           </CustomMenu.MenuItem>
         )}
         {isEditingAllowed && isArchived && (

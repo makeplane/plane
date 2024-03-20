@@ -298,11 +298,23 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
                 {!isArchived && (
-                  <CustomMenu.MenuItem onClick={() => setArchiveCycleModal(true)}>
-                    <span className="flex items-center justify-start gap-2">
-                      <ArchiveIcon className="h-3 w-3" />
-                      <span>Archive cycle</span>
-                    </span>
+                  <CustomMenu.MenuItem onClick={() => setArchiveCycleModal(true)} disabled={!isCompleted}>
+                    {isCompleted ? (
+                      <div className="flex items-center gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        Archive cycle
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        <div className="-mt-1">
+                          <p>Archive cycle</p>
+                          <p className="text-xs text-custom-text-400">
+                            Only completed cycle <br /> can be archived.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </CustomMenu.MenuItem>
                 )}
                 {isArchived && (
