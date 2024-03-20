@@ -74,6 +74,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .filter(cycle_id=self.kwargs.get("cycle_id"))
             .select_related("project")
             .select_related("workspace")
