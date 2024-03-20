@@ -52,6 +52,7 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 
+
 class IssueListEndpoint(BaseAPIView):
 
     permission_classes = [
@@ -114,7 +115,8 @@ class IssueListEndpoint(BaseAPIView):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -308,7 +310,8 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True),
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
