@@ -45,6 +45,8 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     setPeekIssue,
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
+    toggleCreateIssueModal,
+    toggleDeleteIssueModal,
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
@@ -139,7 +141,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
           <div className="flex-shrink-0 text-sm">
             <CustomMenu placement="bottom-end" ellipsis>
               {disabled && (
-                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("update", parentIssueId, { ...issue })}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    handleIssueCrudState("update", parentIssueId, { ...issue });
+                    toggleCreateIssueModal(true);
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Edit issue</span>
@@ -148,7 +155,12 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               )}
 
               {disabled && (
-                <CustomMenu.MenuItem onClick={() => handleIssueCrudState("delete", parentIssueId, issue)}>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    handleIssueCrudState("delete", parentIssueId, issue);
+                    toggleDeleteIssueModal(true);
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <Trash className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Delete issue</span>
