@@ -52,6 +52,7 @@ const defaultValues: Partial<TIssue> = {
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
+  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
@@ -93,6 +94,7 @@ const getTabIndex = (key: string) => TAB_INDICES.findIndex((tabIndex) => tabInde
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     data,
+    issueTitleRef,
     onChange,
     onClose,
     onSubmit,
@@ -366,11 +368,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       onChange(e.target.value);
                       handleFormChange();
                     }}
-                    ref={ref}
+                    ref={issueTitleRef || ref}
                     hasError={Boolean(errors.name)}
                     placeholder="Issue Title"
                     className="w-full resize-none text-xl"
                     tabIndex={getTabIndex("name")}
+                    autoFocus
                   />
                 )}
               />
