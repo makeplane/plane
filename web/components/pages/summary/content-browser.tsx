@@ -15,6 +15,7 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
     editorRef?.scrollSummary(marking);
     if (setSidePeekVisible) setSidePeekVisible(false);
   };
+  console.log("length of markings", markings.length);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">

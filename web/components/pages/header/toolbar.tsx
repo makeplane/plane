@@ -97,7 +97,11 @@ const COMPLEX_ITEMS: MenuItem[] = [
 
 export const PageToolbar: React.FC<Props> = (props) => {
   const { editorRef } = props;
-  if (!editorRef) return null;
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log(
+    "PageToolbar editorRef: %s--------------------------------------------------------------------",
+    JSON.stringify(editorRef)
+  ); // __AUTO_GENERATED_PRINT_VAR_END__
 
   return (
     <div className="flex flex-wrap items-center divide-x divide-custom-border-200">
@@ -127,7 +131,7 @@ export const PageToolbar: React.FC<Props> = (props) => {
           <button
             key={item.name}
             type="button"
-            onClick={() => editorRef.executeMenuItemCommand(item.name)}
+            onClick={() => editorRef?.executeMenuItemCommand(item.name)}
             className={cn(
               "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
@@ -148,7 +152,7 @@ export const PageToolbar: React.FC<Props> = (props) => {
           <button
             key={item.name}
             type="button"
-            onClick={() => editorRef.executeMenuItemCommand(item.name)}
+            onClick={() => editorRef?.executeMenuItemCommand(item.name)}
             className={cn(
               "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
@@ -169,7 +173,7 @@ export const PageToolbar: React.FC<Props> = (props) => {
           <button
             key={item.name}
             type="button"
-            onClick={() => editorRef.executeMenuItemCommand(item.name)}
+            onClick={() => editorRef?.executeMenuItemCommand(item.name)}
             className={cn(
               "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {

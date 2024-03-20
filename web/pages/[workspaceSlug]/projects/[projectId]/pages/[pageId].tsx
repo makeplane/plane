@@ -74,9 +74,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const [editorReady, setEditorReady] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
 
-  const handleEditorReady = () => {
+  const handleEditorReady = (value: boolean) => {
     console.log("11111111111");
-    setEditorReady(true);
+    setEditorReady(value);
   };
   const handleReadOnlyEditorReady = () => {
     console.log("sssssssssss");

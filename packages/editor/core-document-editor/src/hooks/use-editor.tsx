@@ -64,7 +64,8 @@ export const useEditor = ({
     ],
     content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
     onCreate: async ({ editor }) => {
-      handleEditorReady();
+      console.log("CREATED");
+      handleEditorReady(true);
       onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
     },
     onTransaction: async ({ editor }) => {
@@ -74,6 +75,10 @@ export const useEditor = ({
       // setIsSubmitting?.("submitting");
       // setShouldShowAlert?.(true);
       onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
+    },
+    onDestroy: async () => {
+      console.log("DESTROYED 💣");
+      handleEditorReady(false);
     },
   });
 

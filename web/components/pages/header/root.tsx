@@ -69,6 +69,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     pageStore.archived_at ||
     (!!currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER);
 
+  console.log("is this true?", (editorReady || readOnlyEditorReady) && !isPageReadOnly);
   return (
     <div className="flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
       <div className="flex-shrink-0 md:w-56 lg:w-72">
@@ -105,7 +106,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
             <span>Archived at {renderFormattedDate(pageStore.archived_at)}</span>
           </div>
         )}
-        {envConfig?.has_openai_configured && (
+        {!isPageReadOnly && envConfig?.has_openai_configured && (
           <GptAssistantPopover
             isOpen={gptModalOpen}
             projectId={projectId}
@@ -131,7 +132,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
         )}
         <PageInfoPopover pageStore={pageStore} />
         <PageOptionsDropdown
-          editorRef={editorRef.current}
+          editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
           handleDuplicatePage={handleDuplicatePage}
           pageStore={pageStore}
         />

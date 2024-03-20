@@ -34,7 +34,7 @@ export const useReadOnlyEditor = ({
       ...editorProps,
     },
     onCreate: async () => {
-      handleEditorReady?.();
+      handleEditorReady?.(true);
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
@@ -43,6 +43,9 @@ export const useReadOnlyEditor = ({
       }),
       ...extensions,
     ],
+    onDestroy: () => {
+      handleEditorReady?.(false);
+    },
   });
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);

@@ -70,9 +70,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { setShowAlert } = useReloadConfirmations(pageStore?.isSubmitting === "submitting");
 
   useEffect(() => {
+    console.log(pageStore.description_html);
     updateMarkings(pageStore.description_html);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  console.log("markings", markings);
 
   // auth
   const isPageReadOnly =
@@ -80,18 +82,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {editorRef.current && (
-        <div
-          className={cn(
-            "sticky top-0 hidden h-full w-56 flex-shrink-0 -translate-x-full p-5 duration-200 md:block lg:w-72",
-            {
-              "translate-x-0": sidePeekVisible,
-            }
-          )}
-        >
-          <PageContentBrowser editorRef={editorRef.current} markings={markings} />
-        </div>
-      )}
+      <div
+        className={cn(
+          "sticky top-0 hidden h-full w-56 flex-shrink-0 -translate-x-full p-5 duration-200 md:block lg:w-72",
+          {
+            "translate-x-0": sidePeekVisible,
+          }
+        )}
+      >
+        <PageContentBrowser editorRef={editorRef.current} markings={markings} />
+      </div>
       <div className="h-full w-full pl-5 pr-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
         {isPageReadOnly ? (
           <DocumentReadOnlyEditorWithRef
