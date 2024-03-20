@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import { Breadcrumbs, LayersIcon } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, LayersIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { ProjectLogo } from "@/components/project";
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
@@ -39,7 +39,7 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
   );
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-14 w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
           <Breadcrumbs>
@@ -59,18 +59,26 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
                 />
               }
             />
-
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects/${projectId}/archived-issues`}
-                  label="Archived issues"
+                  href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
+                  label="Archives"
+                  icon={<ArchiveIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
+            />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
+                  label="Issues"
                   icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />
-
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={

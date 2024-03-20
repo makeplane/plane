@@ -481,7 +481,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def list(self, request, slug, project_id):
+    def get(self, request, slug, project_id):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),

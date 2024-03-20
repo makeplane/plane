@@ -16,12 +16,13 @@ type Props = {
   handleDeleteLink: (linkId: string) => void;
   handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth }) => {
+export const LinksList: React.FC<Props> = observer(({ links, handleDeleteLink, handleEditLink, userAuth, disabled }) => {
   const { getUserDetails } = useMember();
   const { isMobile } = usePlatformOS();
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
