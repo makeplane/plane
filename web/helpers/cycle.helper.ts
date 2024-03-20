@@ -1,6 +1,7 @@
 import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
+import { getDate } from "@/helpers/date-time.helper";
 // types
 import { ICycle, TCycleFilters } from "@plane/types";
 
@@ -43,14 +44,14 @@ export const shouldFilterCycle = (cycle: ICycle, filter: TCycleFilters): boolean
       fallsInFilters = fallsInFilters && filter.status.includes(cycle.status.toLowerCase());
     if (filterKey === "start_date" && filter.start_date && filter.start_date.length > 0) {
       filter.start_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!cycle.start_date && satisfiesDateFilter(new Date(cycle.start_date), dateFilter);
+        const startDate = getDate(cycle.start_date);
+        fallsInFilters = fallsInFilters && !!startDate && satisfiesDateFilter(startDate, dateFilter);
       });
     }
     if (filterKey === "end_date" && filter.end_date && filter.end_date.length > 0) {
+      const endDate = getDate(cycle.end_date);
       filter.end_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!cycle.end_date && satisfiesDateFilter(new Date(cycle.end_date), dateFilter);
+        fallsInFilters = fallsInFilters && !!endDate && satisfiesDateFilter(endDate, dateFilter);
       });
     }
   });

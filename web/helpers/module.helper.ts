@@ -1,6 +1,7 @@
 import sortBy from "lodash/sortBy";
 // helpers
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
+import { getDate } from "@/helpers/date-time.helper";
 // types
 import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
 
@@ -63,14 +64,14 @@ export const shouldFilterModule = (
     }
     if (filterKey === "start_date" && filters.start_date && filters.start_date.length > 0) {
       filters.start_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!module.start_date && satisfiesDateFilter(new Date(module.start_date), dateFilter);
+        const startDate = getDate(module.start_date);
+        fallsInFilters = fallsInFilters && !!startDate && satisfiesDateFilter(startDate, dateFilter);
       });
     }
     if (filterKey === "target_date" && filters.target_date && filters.target_date.length > 0) {
       filters.target_date.forEach((dateFilter) => {
-        fallsInFilters =
-          fallsInFilters && !!module.target_date && satisfiesDateFilter(new Date(module.target_date), dateFilter);
+        const endDate = getDate(module.target_date);
+        fallsInFilters = fallsInFilters && !!endDate && satisfiesDateFilter(endDate, dateFilter);
       });
     }
   });

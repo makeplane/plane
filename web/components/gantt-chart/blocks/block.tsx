@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // components
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { useIssueDetail } from "@/hooks/store";
 // types
 // constants
@@ -45,12 +45,12 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     totalBlockShifts: number,
     dragDirection: "left" | "right" | "move"
   ) => {
-    if (!block.start_date || !block.target_date) return;
+    const originalStartDate = getDate(block.start_date);
+    const originalTargetDate = getDate(block.target_date);
 
-    const originalStartDate = new Date(block.start_date);
+    if (!originalStartDate || !originalTargetDate) return;
+
     const updatedStartDate = new Date(originalStartDate);
-
-    const originalTargetDate = new Date(block.target_date);
     const updatedTargetDate = new Date(originalTargetDate);
 
     // update the start date on left resize

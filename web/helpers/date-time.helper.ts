@@ -44,7 +44,7 @@ export const renderFormattedDateWithoutYear = (date: string | Date): string => {
  * @param {Date | string} date
  * @example renderFormattedPayloadDate("Jan 01, 20224") // "2024-01-01"
  */
-export const renderFormattedPayloadDate = (date: Date | string): string | null => {
+export const renderFormattedPayloadDate = (date: Date | string | undefined | null): string | null => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
