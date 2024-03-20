@@ -107,6 +107,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -117,6 +118,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -127,6 +129,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -137,6 +140,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
@@ -147,6 +151,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                     ),
+                    distinct=True,
                 )
             )
             .annotate(
