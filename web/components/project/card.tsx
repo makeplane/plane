@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Check, LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import { ArchiveRestoreIcon, Check, LinkIcon, Lock, Pencil, Star, Trash2 } from "lucide-react";
+import { cn } from "@plane/editor-core";
 import type { IProject } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // components
-import { DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
+import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
 // helpers
 import { EUserProjectRoles } from "@/constants/project";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -28,6 +29,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
+  const [restoreProject, setRestoreProject] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -41,6 +43,8 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   // auth
   const isOwner = project.member_role === EUserProjectRoles.ADMIN;
   const isMember = project.member_role === EUserProjectRoles.MEMBER;
+  // archive
+  const isArchived = !!project.archived_at;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -102,13 +106,23 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           handleClose={() => setJoinProjectModal(false)}
         />
       )}
+      {/* Restore project modal */}
+      {workspaceSlug && project && (
+        <ArchiveRestoreProjectModal
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={project.id}
+          isOpen={restoreProject}
+          onClose={() => setRestoreProject(false)}
+          archive={false}
+        />
+      )}
       <Link
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
         onClick={(e) => {
-          if (!project.is_member) {
+          if (!project.is_member || isArchived) {
             e.preventDefault();
             e.stopPropagation();
-            setJoinProjectModal(true);
+            if (!isArchived) setJoinProjectModal(true);
           }
         }}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
@@ -140,35 +154,41 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               </div>
             </div>
 
-            <div className="flex h-full flex-shrink-0 items-center gap-2">
-              <button
-                className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleCopyText();
-                }}
-              >
-                <LinkIcon className="h-3 w-3 text-white" />
-              </button>
-              <button
-                className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (project.is_favorite) handleRemoveFromFavorites();
-                  else handleAddToFavorites();
-                }}
-              >
-                <Star
-                  className={`h-3 w-3 ${project.is_favorite ? "fill-amber-400 text-transparent" : "text-white"} `}
-                />
-              </button>
-            </div>
+            {!isArchived && (
+              <div className="flex h-full flex-shrink-0 items-center gap-2">
+                <button
+                  className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleCopyText();
+                  }}
+                >
+                  <LinkIcon className="h-3 w-3 text-white" />
+                </button>
+                <button
+                  className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (project.is_favorite) handleRemoveFromFavorites();
+                    else handleAddToFavorites();
+                  }}
+                >
+                  <Star
+                    className={`h-3 w-3 ${project.is_favorite ? "fill-amber-400 text-transparent" : "text-white"} `}
+                  />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex h-[104px] w-full flex-col justify-between rounded-b p-4">
+        <div
+          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b p-4", {
+            "opacity-90": isArchived,
+          })}
+        >
           <p className="line-clamp-2 break-words text-sm text-custom-text-300">
             {project.description && project.description.trim() !== ""
               ? project.description
@@ -199,37 +219,69 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 <span className="text-sm italic text-custom-text-400">No Member Yet</span>
               )}
             </Tooltip>
-            {project.is_member &&
-              (isOwner || isMember ? (
-                <Link
-                  className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  href={`/${workspaceSlug}/projects/${project.id}/settings`}
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </Link>
-              ) : (
-                <span className="flex items-center gap-1 text-custom-text-400 text-sm">
-                  <Check className="h-3.5 w-3.5" />
-                  Joined
-                </span>
-              ))}
-            {!project.is_member && (
-              <div className="flex items-center">
-                <Button
-                  variant="link-primary"
-                  className="!p-0 font-semibold"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setJoinProjectModal(true);
-                  }}
-                >
-                  Join
-                </Button>
-              </div>
+            {isArchived ? (
+              isOwner && (
+                <div className="flex items-center justify-center gap-2">
+                  <div
+                    className="flex items-center justify-center text-sm text-custom-text-400 hover:text-custom-text-200"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setRestoreProject(true);
+                    }}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <ArchiveRestoreIcon className="h-3.5 w-3.5" />
+                      Restore
+                    </div>
+                  </div>
+                  <div
+                    className="flex items-center justify-center text-sm text-custom-text-400 hover:text-custom-text-200"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDeleteProjectModal(true);
+                    }}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </div>
+                </div>
+              )
+            ) : (
+              <>
+                {project.is_member &&
+                  (isOwner || isMember ? (
+                    <Link
+                      className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                      href={`/${workspaceSlug}/projects/${project.id}/settings`}
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Link>
+                  ) : (
+                    <span className="flex items-center gap-1 text-custom-text-400 text-sm">
+                      <Check className="h-3.5 w-3.5" />
+                      Joined
+                    </span>
+                  ))}
+                {!project.is_member && (
+                  <div className="flex items-center">
+                    <Button
+                      variant="link-primary"
+                      className="!p-0 font-semibold"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setJoinProjectModal(true);
+                      }}
+                    >
+                      Join
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

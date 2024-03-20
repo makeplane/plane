@@ -1,11 +1,11 @@
 import sortBy from "lodash/sortBy";
-// helpers
-import { satisfiesDateFilter } from "@/helpers/filter.helper";
-import { getDate } from "@/helpers/date-time.helper";
 // types
 import { IProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { getDate } from "@/helpers/date-time.helper";
+import { satisfiesDateFilter } from "@/helpers/filter.helper";
 
 /**
  * Updates the sort order of the project.
@@ -93,6 +93,8 @@ export const shouldFilterProject = (
     }
   });
   if (displayFilters.my_projects && !project.is_member) fallsInFilters = false;
+  if (displayFilters.archived_projects && !project.archived_at) fallsInFilters = false;
+  if (project.archived_at) fallsInFilters = displayFilters.archived_projects ? fallsInFilters : false;
 
   return fallsInFilters;
 };

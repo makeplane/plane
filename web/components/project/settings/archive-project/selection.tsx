@@ -6,23 +6,22 @@ import { IProject } from "@plane/types";
 // ui
 import { Button, Loader } from "@plane/ui";
 
-export interface IDeleteProjectSection {
+export interface IArchiveProject {
   projectDetails: IProject;
-  handleDelete: () => void;
+  handleArchive: () => void;
 }
 
-export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => {
-  const { projectDetails, handleDelete } = props;
+export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
+  const { projectDetails, handleArchive } = props;
 
   return (
     <Disclosure as="div" className="border-t border-custom-border-100 py-4">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Delete Project</span>
+            <span className="text-xl tracking-tight">Archive project</span>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Disclosure.Button>
-
           <Transition
             show={open}
             enter="transition duration-100 ease-out"
@@ -35,15 +34,14 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
                 <span className="text-sm tracking-tight">
-                  The danger zone of the project delete page is a critical area that requires careful consideration and
-                  attention. When deleting a project, all of the data and resources within that project will be
-                  permanently removed and cannot be recovered.
+                  Archiving a project will unlist your project from your side navigation although you will still be able
+                  to access it from your projects page. You can restore the project or delete it whenever you want.
                 </span>
                 <div>
                   {projectDetails ? (
                     <div>
-                      <Button variant="danger" onClick={handleDelete}>
-                        Delete my project
+                      <Button variant="outline-danger" onClick={handleArchive}>
+                        Archive project
                       </Button>
                     </div>
                   ) : (
