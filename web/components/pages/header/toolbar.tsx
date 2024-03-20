@@ -15,12 +15,12 @@ import {
 } from "lucide-react";
 // editor
 import { EditorRefApi } from "@plane/document-editor";
-import { EditorMenuItemNames } from "@plane/editor-document-core";
+import { EditorMenuItemNames, EditorReadOnlyRefApi } from "@plane/editor-document-core";
 // helpers
 import { cn } from "helpers/common.helper";
 
 type Props = {
-  editorRef: EditorRefApi;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi;
 };
 
 type MenuItem = {
@@ -87,6 +87,7 @@ const COMPLEX_ITEMS: MenuItem[] = [
 
 export const PageToolbar: React.FC<Props> = (props) => {
   const { editorRef } = props;
+  if (!editorRef) return null;
 
   return (
     <div className="flex flex-wrap items-center divide-x divide-custom-border-200">

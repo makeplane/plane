@@ -84,24 +84,28 @@ export const useEditor = ({
     [rerenderOnPropsChange]
   );
 
+  console.log("useEditor: Editor instance created", editor);
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
-  useImperativeHandle(forwardedRef, () => ({
-    clearEditor: () => {
-      editorRef.current?.commands.clearContent();
-    },
-    setEditorValue: (content: string) => {
-      editorRef.current?.commands.setContent(content);
-    },
-    setEditorValueAtCursorPosition: (content: string) => {
-      if (savedSelection) {
-        insertContentAtSavedSelection(editorRef, content, savedSelection);
-      }
-    },
-  }));
+  useImperativeHandle(forwardedRef, () => {
+    console.log("useEditor: Attaching methods to forwardedRef", forwardedRef);
+    return {
+      clearEditor: () => {
+        editorRef.current?.commands.clearContent();
+      },
+      setEditorValue: (content: string) => {
+        editorRef.current?.commands.setContent(content);
+      },
+      setEditorValueAtCursorPosition: (content: string) => {
+        if (savedSelection) {
+          insertContentAtSavedSelection(editorRef, content, savedSelection);
+        }
+      },
+    };
+  });
 
   if (!editor) {
     return null;

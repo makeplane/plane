@@ -18,11 +18,13 @@ import {
   DocumentReadOnlyEditorWithRef,
   EditorRefApi,
   useEditorMarkings,
+  EditorReadOnlyRefApi,
 } from "@plane/document-editor";
 import { IPageStore } from "store/page.store";
 import { IPage } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
+import { useRef } from "react";
 
 // services
 const fileService = new FileService();
@@ -30,13 +32,27 @@ const fileService = new FileService();
 type Props = {
   control: Control<IPage, any>;
   editorRef: React.RefObject<EditorRefApi>;
+  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleSubmit: () => void;
   pageStore: IPageStore;
   sidePeekVisible: boolean;
+  handleEditorReady: () => void;
+  handleReadOnlyEditorReady: () => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
-  const { control, editorRef, handleSubmit, pageStore, sidePeekVisible } = props;
+  console.log("PageEditorBody: Received editorRef", props.editorRef.current);
+  const {
+    control,
+    handleReadOnlyEditorReady,
+    handleEditorReady,
+    editorRef,
+    readOnlyEditorRef,
+    handleSubmit,
+    pageStore,
+    sidePeekVisible,
+  } = props;
+
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -76,35 +92,41 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       <div className="h-full w-full pl-5 pr-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
         {isPageReadOnly ? (
           <DocumentReadOnlyEditorWithRef
-            ref={editorRef}
+            ref={readOnlyEditorRef}
             title={pageTitle}
             value={pageDescription}
+            handleEditorReady={handleReadOnlyEditorReady}
             customClassName={"tracking-tight w-full px-0"}
           />
         ) : (
           <Controller
             name="description_html"
             control={control}
-            render={({ field: { onChange } }) => (
-              <DocumentEditorWithRef
-                isSubmitting={isSubmitting}
-                title={pageTitle}
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting)}
-                deleteFile={fileService.getDeleteImageFunction(workspaceId)}
-                restoreFile={fileService.getRestoreImageFunction(workspaceId)}
-                value={pageDescription}
-                cancelUploadImage={fileService.cancelUpload}
-                ref={editorRef}
-                updatePageTitle={updateName}
-                customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
-                onChange={(_description_json, description_html) => {
-                  setIsSubmitting("submitting");
-                  setShowAlert(true);
-                  onChange(description_html);
-                  handleSubmit();
-                }}
-              />
-            )}
+            render={({ field: { onChange } }) => {
+              console.log("PageEditorBody: Passing editorRef to DocumentEditorWithRef", props.editorRef.current);
+
+              return (
+                <DocumentEditorWithRef
+                  isSubmitting={isSubmitting}
+                  title={pageTitle}
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting)}
+                  handleEditorReady={handleEditorReady}
+                  deleteFile={fileService.getDeleteImageFunction(workspaceId)}
+                  restoreFile={fileService.getRestoreImageFunction(workspaceId)}
+                  value={pageDescription}
+                  cancelUploadImage={fileService.cancelUpload}
+                  ref={editorRef}
+                  updatePageTitle={updateName}
+                  customClassName="tracking-tight self-center h-full w-full right-[0.675rem]"
+                  onChange={(_description_json, description_html) => {
+                    setIsSubmitting("submitting");
+                    setShowAlert(true);
+                    onChange(description_html);
+                    handleSubmit();
+                  }}
+                />
+              );
+            }}
           />
         )}
       </div>

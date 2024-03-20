@@ -26,6 +26,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  const readOnlyEditorRef = useRef<EditorRefApi>(null);
+  console.log("PageDetailsPage: Initialized editorRef", editorRef.current);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -62,6 +64,18 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     },
     [pageStore]
   );
+
+  const [editorReady, setEditorReady] = useState(false);
+  const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
+
+  const handleEditorReady = () => {
+    console.log("11111111111");
+    setEditorReady(true);
+  };
+  const handleReadOnlyEditorReady = () => {
+    console.log("sssssssssss");
+    setReadOnlyEditorReady(true);
+  };
 
   if (!pageStore || !pageStore.id)
     return (
@@ -104,6 +118,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   };
 
+  console.log("PageDetailsPage: Rendering with editorRef", editorRef.current);
   return (
     <>
       <PageHead title={pageTitle} />
@@ -112,6 +127,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
           {projectId && (
             <PageEditorHeaderRoot
               editorRef={editorRef}
+              readOnlyEditorRef={readOnlyEditorRef}
+              editorReady={editorReady}
+              readOnlyEditorReady={readOnlyEditorReady}
               handleDuplicatePage={handleDuplicatePage}
               pageStore={pageStore}
               projectId={projectId.toString()}
@@ -123,6 +141,9 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
             <PageEditorBody
               control={control}
               editorRef={editorRef}
+              handleEditorReady={handleEditorReady}
+              readOnlyEditorRef={readOnlyEditorRef}
+              handleReadOnlyEditorReady={handleReadOnlyEditorReady}
               handleSubmit={() => handleSubmit(handleUpdatePage)()}
               pageStore={pageStore}
               sidePeekVisible={sidePeekVisible}

@@ -4,10 +4,10 @@ import { List } from "lucide-react";
 // components
 import { PageContentBrowser } from "./content-browser";
 // types
-import { EditorRefApi, IMarking } from "@plane/document-editor";
+import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
 
 type Props = {
-  editorRef: EditorRefApi;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi;
   markings: IMarking[];
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;
@@ -39,7 +39,7 @@ export const PageSummaryPopover: React.FC<Props> = (props) => {
       >
         <List className="h-4 w-4" />
       </button>
-      <div className="md:hidden block">
+      <div className="block md:hidden">
         {sidePeekVisible && (
           <div
             className="z-10 max-h-80 w-64 overflow-y-auto rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3 shadow-custom-shadow-rg"

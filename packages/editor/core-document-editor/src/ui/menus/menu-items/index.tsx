@@ -153,7 +153,10 @@ export const ImageItem = (editor: Editor, uploadFile: UploadImage) =>
     icon: ImageIcon,
   }) as const satisfies EditorMenuItem;
 
-export function getEditorMenuItems(editor: Editor, uploadFile: UploadImage) {
+export function getEditorMenuItems(editor: Editor | null, uploadFile: UploadImage) {
+  if (!editor) {
+    return [];
+  }
   return [
     HeadingOneItem(editor),
     HeadingTwoItem(editor),

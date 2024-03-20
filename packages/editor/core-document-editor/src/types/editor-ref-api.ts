@@ -8,3 +8,5 @@ export interface EditorRefApi {
   isMenuItemActive: (itemName: EditorMenuItemNames) => boolean;
   getMarkDown: () => string;
 }
+
+export type EditorReadOnlyRefApi = Pick<EditorRefApi, "getMarkDown" | "clearEditor" | "setEditorValue">;

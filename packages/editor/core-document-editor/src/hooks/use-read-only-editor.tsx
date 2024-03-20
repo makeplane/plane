@@ -4,15 +4,16 @@ import { CoreReadOnlyEditorExtensions } from "src/ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
-import { EditorRefApi } from "src/types/editor-ref-api";
+import { EditorReadOnlyRefApi } from "src/types/editor-ref-api";
 
 interface CustomReadOnlyEditorProps {
   value: string;
-  forwardedRef?: MutableRefObject<Pick<EditorRefApi, "getMarkDown" | "setEditorValue" | "clearEditor"> | null>;
+  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   extensions?: any;
   editorProps?: EditorProps;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
+  handleEditorReady: () => void;
 }
 
 export const useReadOnlyEditor = ({
@@ -20,6 +21,7 @@ export const useReadOnlyEditor = ({
   forwardedRef,
   extensions = [],
   editorProps = {},
+  handleEditorReady,
   mentionHighlights,
   mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
@@ -29,6 +31,9 @@ export const useReadOnlyEditor = ({
     editorProps: {
       ...CoreReadOnlyEditorProps,
       ...editorProps,
+    },
+    onCreate: async () => {
+      handleEditorReady?.();
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
@@ -40,7 +45,6 @@ export const useReadOnlyEditor = ({
   });
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
-  editorRef.current = editor;
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: () => {
@@ -59,5 +63,6 @@ export const useReadOnlyEditor = ({
     return null;
   }
 
+  editorRef.current = editor;
   return editor;
 };

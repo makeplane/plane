@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import {
   UploadImage,
@@ -13,16 +12,13 @@ import { useEditorMarkings } from "src/hooks/use-editor-markings";
 import { PageRenderer } from "src/ui/components/page-renderer";
 
 interface IDocumentEditor {
-  // document info
   title: string;
   value: string;
-
-  // file operations
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
   restoreFile: RestoreImage;
   cancelUploadImage: () => any;
-
+  handleEditorReady: () => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: object, html: string) => void;
@@ -42,17 +38,19 @@ const DocumentEditor = (props: IDocumentEditor) => {
     deleteFile,
     restoreFile,
     customClassName,
+    handleEditorReady,
     forwardedRef,
     updatePageTitle,
     cancelUploadImage,
     tabIndex,
   } = props;
+
+  console.log("DocumentEditor: Received forwardedRef", forwardedRef?.current);
+
   const { updateMarkings } = useEditorMarkings();
 
   const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = React.useState<() => void>(() => {});
 
-  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
-  // loads such that we can invoke it from react when the cursor leaves the container
   const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
     setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
   };
@@ -68,6 +66,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     restoreFile,
     value,
     uploadFile,
+    handleEditorReady,
     deleteFile,
     cancelUploadImage,
     forwardedRef,
@@ -83,8 +82,6 @@ const DocumentEditor = (props: IDocumentEditor) => {
     borderOnFocus: false,
     customClassName,
   });
-
-  if (!editor) return null;
 
   return (
     <div className="h-full w-full frame-renderer">
@@ -102,9 +99,10 @@ const DocumentEditor = (props: IDocumentEditor) => {
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-));
+const DocumentEditorWithRef = React.forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => {
+  console.log("DocumentEditorWithRef: Forwarding ref", ref);
+  return <DocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />;
+});
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
 

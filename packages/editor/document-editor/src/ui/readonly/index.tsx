@@ -1,7 +1,7 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef, MutableRefObject, useEffect } from "react";
 // hooks
 import { useEditorMarkings } from "src/hooks/use-editor-markings";
-import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-core";
+import { EditorReadOnlyRefApi, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-document-core";
 // components
 import { PageRenderer } from "src/ui/components/page-renderer";
 import { IssueWidgetPlaceholder } from "../extensions/widgets/issue-embed-widget";
@@ -11,25 +11,18 @@ interface IDocumentReadOnlyEditor {
   customClassName: string;
   tabIndex?: number;
   title: string;
+  handleEditorReady: () => void;
+  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 
-interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
-  forwardedRef?: React.Ref<EditorHandle>;
-}
-
-interface EditorHandle {
-  clearEditor: () => void;
-  setEditorValue: (content: string) => void;
-}
-
-const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
-  const {  customClassName, value, title, forwardedRef, tabIndex } =
-    props;
+const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
+  const { customClassName, value, title, forwardedRef, tabIndex, handleEditorReady } = props;
   const { updateMarkings } = useEditorMarkings();
 
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
+    handleEditorReady,
     extensions: [IssueWidgetPlaceholder()],
   });
 
@@ -61,8 +54,8 @@ const DocumentReadOnlyEditor = (props: DocumentReadOnlyEditorProps) => {
   );
 };
 
-const DocumentReadOnlyEditorWithRef = forwardRef<EditorHandle, IDocumentReadOnlyEditor>((props, ref) => (
-  <DocumentReadOnlyEditor {...props} forwardedRef={ref} />
+const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (
+  <DocumentReadOnlyEditor {...props} forwardedRef={ref as MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 
 DocumentReadOnlyEditorWithRef.displayName = "DocumentReadOnlyEditorWithRef";

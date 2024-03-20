@@ -1,5 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject, useState } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
 import { CoreEditorProps } from "src/ui/props";
 import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
@@ -26,6 +26,7 @@ interface CustomEditorProps {
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
+  handleEditorReady: () => void;
 }
 
 export const useEditor = ({
@@ -39,6 +40,7 @@ export const useEditor = ({
   onChange,
   forwardedRef,
   restoreFile,
+  handleEditorReady,
   mentionHighlights,
   mentionSuggestions,
 }: CustomEditorProps) => {
@@ -61,6 +63,7 @@ export const useEditor = ({
     ],
     content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
     onCreate: async ({ editor }) => {
+      handleEditorReady();
       onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
     },
     onTransaction: async ({ editor }) => {
@@ -74,49 +77,62 @@ export const useEditor = ({
   });
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
-  editorRef.current = editor;
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
 
-  useImperativeHandle(forwardedRef, () => {
-    const editorItems = getEditorMenuItems(editorRef.current!, uploadFile);
+  useImperativeHandle(
+    forwardedRef,
+    () => {
+      console.log("useEditor: Attaching methods to forwardedRef", forwardedRef);
 
-    const getEditorMenuItem = (itemName: EditorMenuItemNames) => editorItems.find((item) => item.name === itemName);
+      return {
+        clearEditor: () => {
+          editorRef.current?.commands.clearContent();
+        },
+        setEditorValue: (content: string) => {
+          editorRef.current?.commands.setContent(content);
+        },
+        setEditorValueAtCursorPosition: (content: string) => {
+          if (savedSelection) {
+            insertContentAtSavedSelection(editorRef, content, savedSelection);
+          }
+        },
+        executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
+          const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
 
-    return {
-      clearEditor: () => {
-        editorRef.current?.commands.clearContent();
-      },
-      setEditorValue: (content: string) => {
-        editorRef.current?.commands.setContent(content);
-      },
-      setEditorValueAtCursorPosition: (content: string) => {
-        if (savedSelection) {
-          insertContentAtSavedSelection(editorRef, content, savedSelection);
-        }
-      },
-      executeMenuItemCommand: (itemName: EditorMenuItemNames) => {
-        const item = getEditorMenuItem(itemName);
-        if (item) {
-          item.command();
-        } else {
-          console.warn(`No command found for item: ${itemName}`);
-        }
-      },
-      isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
-        const item = getEditorMenuItem(itemName);
-        return item ? item.isActive() : false;
-      },
-      getMarkDown: (): string => {
-        const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
-        return markdownOutput;
-      },
-    };
-  });
+          const getEditorMenuItem = (itemName: EditorMenuItemNames) =>
+            editorItems.find((item) => item.name === itemName);
+
+          const item = getEditorMenuItem(itemName);
+          if (item) {
+            item.command();
+          } else {
+            console.warn(`No command found for item: ${itemName}`);
+          }
+        },
+        isMenuItemActive: (itemName: EditorMenuItemNames): boolean => {
+          const editorItems = getEditorMenuItems(editorRef.current, uploadFile);
+
+          const getEditorMenuItem = (itemName: EditorMenuItemNames) =>
+            editorItems.find((item) => item.name === itemName);
+          const item = getEditorMenuItem(itemName);
+          return item ? item.isActive() : false;
+        },
+        getMarkDown: (): string => {
+          const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
+          return markdownOutput;
+        },
+      };
+    },
+    [editorRef]
+  );
 
   if (!editor) {
     return null;
   }
+
+  editorRef.current = editor;
+  console.log("useEditor: Editor instance created", editor);
 
   return editor;
 };
