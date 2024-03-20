@@ -1,3 +1,4 @@
+import { IMarking } from "src/helpers/scroll-to-node";
 import { EditorMenuItemNames } from "src/ui/menus/menu-items";
 
 export interface EditorRefApi {
@@ -7,6 +8,10 @@ export interface EditorRefApi {
   executeMenuItemCommand: (itemName: EditorMenuItemNames) => void;
   isMenuItemActive: (itemName: EditorMenuItemNames) => boolean;
   getMarkDown: () => string;
+  scrollSummary: (marking: IMarking) => void;
 }
 
-export type EditorReadOnlyRefApi = Pick<EditorRefApi, "getMarkDown" | "clearEditor" | "setEditorValue">;
+export type EditorReadOnlyRefApi = Pick<
+  EditorRefApi,
+  "getMarkDown" | "clearEditor" | "setEditorValue" | "scrollSummary"
+>;

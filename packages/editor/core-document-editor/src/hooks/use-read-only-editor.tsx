@@ -5,6 +5,7 @@ import { CoreReadOnlyEditorProps } from "src/ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
 import { IMentionSuggestion } from "src/types/mention-suggestion";
 import { EditorReadOnlyRefApi } from "src/types/editor-ref-api";
+import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
 
 interface CustomReadOnlyEditorProps {
   value: string;
@@ -56,6 +57,10 @@ export const useReadOnlyEditor = ({
     getMarkDown: (): string => {
       const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
       return markdownOutput;
+    },
+    scrollSummary: (marking: IMarking): void => {
+      if (!editorRef.current) return;
+      scrollSummary(editorRef.current, marking);
     },
   }));
 

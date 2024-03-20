@@ -12,6 +12,7 @@ import { Selection } from "@tiptap/pm/state";
 import { insertContentAtSavedSelection } from "src/helpers/insert-content-at-cursor-position";
 import { EditorMenuItemNames, getEditorMenuItems } from "src/ui/menus/menu-items";
 import { EditorRefApi } from "src/types/editor-ref-api";
+import { IMarking, scrollSummary } from "src/helpers/scroll-to-node";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -121,6 +122,10 @@ export const useEditor = ({
         getMarkDown: (): string => {
           const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
           return markdownOutput;
+        },
+        scrollSummary: (marking: IMarking): void => {
+          if (!editorRef.current) return;
+          scrollSummary(editorRef.current, marking);
         },
       };
     },

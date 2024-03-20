@@ -12,7 +12,7 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
   const { editorRef, markings, setSidePeekVisible } = props;
 
   const handleOnClick = (marking: IMarking) => {
-    // scrollSummary(editor, marking);
+    editorRef?.scrollSummary(marking);
     if (setSidePeekVisible) setSidePeekVisible(false);
   };
 

@@ -22,7 +22,6 @@ import { IPageStore } from "store/page.store";
 import { IPage } from "@plane/types";
 // constants
 import { EUserProjectRoles } from "constants/project";
-import { useRef } from "react";
 import { useEffect } from "react";
 
 // services
@@ -128,7 +127,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     onChange(description_html);
                     handleSubmit();
                     updateMarkings(description_html);
-                }}
+                  }}
                 />
               );
             }}
