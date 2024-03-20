@@ -8,7 +8,7 @@ import isNumber from "lodash/isNumber";
  * @param {Date | string} date
  * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
  */
-export const renderFormattedDate = (date: string | Date | undefined): string | null => {
+export const renderFormattedDate = (date: string | Date | undefined | null): string | null => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
@@ -65,7 +65,10 @@ export const renderFormattedPayloadDate = (date: Date | string): string | null =
  * @example renderFormattedTime("2024-01-01 13:00:00") // 13:00
  * @example renderFormattedTime("2024-01-01 13:00:00", "12-hour") // 01:00 PM
  */
-export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
+export const renderFormattedTime = (
+  date: string | Date | undefined | null,
+  timeFormat: "12-hour" | "24-hour" = "24-hour"
+): string => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined

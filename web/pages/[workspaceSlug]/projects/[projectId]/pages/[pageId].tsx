@@ -266,8 +266,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
               documentDetails={{
                 title: pageTitle,
                 created_by: created_by,
-                created_on: created_at,
-                last_updated_at: updated_at,
+                created_on: getDate(created_at) ?? new Date(created_at ?? ""),
+                last_updated_at: getDate(updated_at) ?? new Date(created_at ?? ""),
                 last_updated_by: updated_by,
               }}
               pageLockConfig={userCanLock && !archived_at ? { action: unlockPage, is_locked: is_locked } : undefined}
@@ -277,7 +277,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   ? {
                       action: archived_at ? unArchivePage : archivePage,
                       is_archived: archived_at ? true : false,
-                      archived_at: archived_at ? getDate(archived_at) : undefined,
+                      archived_at: getDate(archived_at),
                     }
                   : undefined
               }
@@ -293,8 +293,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                     documentDetails={{
                       title: pageTitle,
                       created_by: created_by,
-                      created_on: created_at,
-                      last_updated_at: updated_at,
+                      created_on: getDate(created_at) ?? new Date(created_at ?? ""),
+                      last_updated_at: getDate(updated_at) ?? new Date(created_at ?? ""),
                       last_updated_by: updated_by,
                     }}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
