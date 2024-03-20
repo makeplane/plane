@@ -7,6 +7,7 @@ import { cn } from "@/helpers/common.helper";
 import { useMember } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 // components
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
@@ -84,6 +85,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   return (
     <Combobox

@@ -9,6 +9,7 @@ import { cn } from "@/helpers/common.helper";
 import { useApplication, useProjectState } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 // components
 import { DropdownButton } from "./buttons";
 // icons
@@ -128,6 +129,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {

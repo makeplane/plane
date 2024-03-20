@@ -10,6 +10,7 @@ import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // icons
 // helpers
@@ -360,12 +361,13 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-      ? BackgroundButton
-      : TransparentButton;
+    ? BackgroundButton
+    : TransparentButton;
 
   useEffect(() => {
     if (isOpen && inputRef.current) {

@@ -9,6 +9,7 @@ import { IssueLabelsList } from "@/components/ui";
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 // ui
 // icons
 
@@ -76,6 +77,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   useEffect(() => {
     if (isDropdownOpen && inputRef.current) {

@@ -9,6 +9,7 @@ import { cn } from "@/helpers/common.helper";
 import { useApplication, useEstimate } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 // components
 import { DropdownButton } from "./buttons";
 // helpers
@@ -146,6 +147,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {

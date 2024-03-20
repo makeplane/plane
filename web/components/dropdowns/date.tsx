@@ -9,6 +9,7 @@ import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 // components
 import { DropdownButton } from "./buttons";
 // types
@@ -103,6 +104,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   const disabledDays: Matcher[] = [];
   if (minDate) disabledDays.push({ before: minDate });
