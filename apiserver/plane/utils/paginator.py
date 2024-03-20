@@ -232,7 +232,9 @@ class GroupedOffsetPaginator(OffsetPaginator):
             queryset.values(self.group_by_field_name)
             .annotate(
                 count=Count(
-                    self.group_by_field_name,
+                    "id",
+                    filter=self.count_filter,
+                    distinct=True,
                 )
             )
             .order_by("-count")[0]["count"]
@@ -247,11 +249,16 @@ class GroupedOffsetPaginator(OffsetPaginator):
         )
 
     def __get_total_queryset(self):
-        return self.queryset.values(self.group_by_field_name).annotate(
-            count=Count(
-                self.group_by_field_name,
-                filter=self.count_filter,
+        return (
+            self.queryset.values(self.group_by_field_name)
+            .annotate(
+                count=Count(
+                    "id",
+                    filter=self.count_filter,
+                    distinct=True,
+                )
             )
+            .order_by()
         )
 
     def __get_total_dict(self):
@@ -419,7 +426,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             queryset.values(self.group_by_field_name)
             .annotate(
                 count=Count(
-                    self.group_by_field_name,
+                    "id",
+                    filter=self.count_filter,
+                    distinct=True,
                 )
             )
             .order_by("-count")[0]["count"]
@@ -439,8 +448,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             .values(self.group_by_field_name)
             .annotate(
                 count=Count(
-                    self.group_by_field_name,
+                    "id",
                     filter=self.count_filter,
+                    distinct=True,
                 )
             )
             .distinct()
@@ -449,8 +459,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
     def __get_subgroup_total_queryset(self):
         return self.queryset.values(self.sub_group_by_field_name).annotate(
             count=Count(
-                self.sub_group_by_field_name,
+                "id",
                 filter=self.count_filter,
+                distinct=True,
             )
         )
 
