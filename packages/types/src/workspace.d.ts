@@ -1,4 +1,4 @@
-import { EUserWorkspaceRoles } from "constants/workspace";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
 import type {
   ICycle,
   IProjectMember,

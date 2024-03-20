@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-//hooks
-import { useCalendarView } from "hooks/store";
-// icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Popover, Transition } from "@headlessui/react";
+//hooks
+// icons
 // constants
-import { MONTHS_LIST } from "constants/calendar";
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
+import { MONTHS_LIST } from "@/constants/calendar";
+import { getDate } from "@/helpers/date-time.helper";
+import { useCalendarView } from "@/hooks/store";
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // helpers
-import { getDate } from "helpers/date-time.helper";
 
 interface Props {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

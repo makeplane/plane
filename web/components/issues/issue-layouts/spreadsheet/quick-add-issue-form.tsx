@@ -1,19 +1,20 @@
 import { useEffect, useState, useRef } from "react";
+import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// hooks
-import { useEventTracker, useProject, useWorkspace } from "hooks/store";
-import useToast from "hooks/use-toast";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// helpers
-import { createIssuePayload } from "helpers/issue.helper";
-// types
 import { TIssue } from "@plane/types";
+// hooks
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { createIssuePayload } from "@/helpers/issue.helper";
+import { useEventTracker, useProject, useWorkspace } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// helpers
+// ui
+// types
 // constants
-import { ISSUE_CREATED } from "constants/event-tracker";
 
 type Props = {
   formKey: keyof TIssue;
@@ -84,7 +85,6 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // hooks
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-  const { setToastAlert } = useToast();
 
   useEffect(() => {
     setFocus("name");
@@ -100,13 +100,13 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     Object.keys(errors).forEach((key) => {
       const error = errors[key as keyof TIssue];
 
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: error?.message?.toString() || "Some error occurred. Please try again.",
       });
     });
-  }, [errors, setToastAlert]);
+  }, [errors]);
 
   // const onSubmitHandler = async (formData: TIssue) => {
   //   if (isSubmitting || !workspaceSlug || !projectId) return;
@@ -130,8 +130,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //       payload
   //     );
 
-  //     setToastAlert({
-  //       type: "success",
+  //     setToast({
+  //       type: TOAST_TYPE.SUCCESS,
   //       title: "Success!",
   //       message: "Issue created successfully.",
   //     });
@@ -140,8 +140,8 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   //       const error = err?.[key];
   //       const errorTitle = error ? (Array.isArray(error) ? error.join(", ") : error) : null;
 
-  //       setToastAlert({
-  //         type: "error",
+  //       setToast({
+  //         type: TOAST_TYPE.ERROR,
   //         title: "Error!",
   //         message: errorTitle || "Some error occurred. Please try again.",
   //       });
@@ -159,34 +159,41 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
       ...formData,
     });
 
-    try {
-      quickAddCallback &&
-        (await quickAddCallback(currentWorkspace.slug, currentProjectDetails.id, { ...payload } as TIssue, viewId).then(
-          (res) => {
-            captureIssueEvent({
-              eventName: ISSUE_CREATED,
-              payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
-              path: router.asPath,
-            });
-          }
-        ));
-      setToastAlert({
-        type: "success",
-        title: "Success!",
-        message: "Issue created successfully.",
+    if (quickAddCallback) {
+      const quickAddPromise = quickAddCallback(
+        currentWorkspace.slug,
+        currentProjectDetails.id,
+        { ...payload } as TIssue,
+        viewId
+      );
+      setPromiseToast<any>(quickAddPromise, {
+        loading: "Adding issue...",
+        success: {
+          title: "Success!",
+          message: () => "Issue created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: (err) => err?.message || "Some error occurred. Please try again.",
+        },
       });
-    } catch (err: any) {
-      captureIssueEvent({
-        eventName: ISSUE_CREATED,
-        payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
-        path: router.asPath,
-      });
-      console.error(err);
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.message || "Some error occurred. Please try again.",
-      });
+
+      await quickAddPromise
+        .then((res) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...res, state: "SUCCESS", element: "Spreadsheet quick add" },
+            path: router.asPath,
+          });
+        })
+        .catch((err) => {
+          captureIssueEvent({
+            eventName: ISSUE_CREATED,
+            payload: { ...payload, state: "FAILED", element: "Spreadsheet quick add" },
+            path: router.asPath,
+          });
+          console.error(err);
+        });
     }
   };
 

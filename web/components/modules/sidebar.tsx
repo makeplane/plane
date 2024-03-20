@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
 import {
   AlertCircle,
   CalendarClock,
@@ -14,25 +13,39 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
-// hooks
-import { useModule, useUser, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
-import { DeleteModuleModal } from "components/modules";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { DateRangeDropdown, MemberDropdown } from "components/dropdowns";
-// ui
-import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon, UserGroupIcon } from "@plane/ui";
-// helpers
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-// types
+import { Disclosure, Transition } from "@headlessui/react";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+// ui
+import {
+  CustomMenu,
+  Loader,
+  LayersIcon,
+  CustomSelect,
+  ModuleStatusIcon,
+  UserGroupIcon,
+  TOAST_TYPE,
+  setToast,
+} from "@plane/ui";
+// components
+import { LinkModal, LinksList, SidebarProgressStats } from "@/components/core";
+import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DeleteModuleModal } from "@/components/modules";
 // constant
-import { MODULE_STATUS } from "constants/module";
-import { EUserProjectRoles } from "constants/project";
-import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "constants/event-tracker";
+import {
+  MODULE_LINK_CREATED,
+  MODULE_LINK_DELETED,
+  MODULE_LINK_UPDATED,
+  MODULE_UPDATED,
+} from "@/constants/event-tracker";
+import { MODULE_STATUS } from "@/constants/module";
+import { EUserProjectRoles } from "@/constants/project";
+// helpers
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useModule, useUser, useEventTracker } from "@/hooks/store";
+// types
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -64,8 +77,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
-
-  const { setToastAlert } = useToast();
 
   const { reset, control } = useForm({
     defaultValues,
@@ -99,15 +110,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link created",
           message: "Module link created successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -125,15 +136,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link updated",
           message: "Module link updated successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -149,15 +160,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           module_id: moduleId,
           state: "SUCCESS",
         });
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Module link deleted",
           message: "Module link deleted successfully.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -167,15 +178,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link copied",
           message: "Module link copied to clipboard",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
         });
@@ -187,8 +198,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
       target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
     });
-    setToastAlert({
-      type: "success",
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
       title: "Success!",
       message: "Module updated successfully.",
     });
@@ -238,7 +249,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
 
   return (
-    <>
+    <div className="relative">
       <LinkModal
         isOpen={moduleLinkModal}
         handleClose={() => {
@@ -253,7 +264,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
 
       <>
-        <div className="flex w-full items-center justify-between">
+        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
@@ -336,7 +347,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <CalendarClock className="h-4 w-4" />
             <span className="text-base">Date range</span>
           </div>
-          <div className="w-3/5 h-7">
+          <div className="h-7 w-3/5">
             <Controller
               control={control}
               name="start_date"
@@ -384,7 +395,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               control={control}
               name="lead_id"
               render={({ field: { value } }) => (
-                <div className="w-3/5 h-7">
+                <div className="h-7 w-3/5">
                   <MemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
@@ -408,7 +419,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               control={control}
               name="member_ids"
               render={({ field: { value } }) => (
-                <div className="w-3/5 h-7">
+                <div className="h-7 w-3/5">
                   <MemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
@@ -429,7 +440,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="h-7 w-3/5 flex items-center">
+            <div className="flex h-7 w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>
@@ -590,6 +601,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </>
-    </>
+    </div>
   );
 });

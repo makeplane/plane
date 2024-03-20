@@ -1,13 +1,12 @@
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-// ui
-import { Button, Input } from "@plane/ui";
-// types
 import { IFormattedInstanceConfiguration } from "@plane/types";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+// types
+import { useApplication } from "@/hooks/store";
 // hooks
-import { useApplication } from "hooks/store";
-import useToast from "hooks/use-toast";
 
 export interface IInstanceImageConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -23,8 +22,6 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
   const [showPassword, setShowPassword] = useState(false);
   // store hooks
   const { instance: instanceStore } = useApplication();
-  // toast
-  const { setToastAlert } = useToast();
   // form data
   const {
     handleSubmit,
@@ -42,9 +39,9 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
     await instanceStore
       .updateInstanceConfigurations(payload)
       .then(() =>
-        setToastAlert({
+        setToast({
           title: "Success",
-          type: "success",
+          type: TOAST_TYPE.SUCCESS,
           message: "Image Configuration Settings updated successfully",
         })
       )

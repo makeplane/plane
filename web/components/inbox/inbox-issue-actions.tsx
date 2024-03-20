@@ -1,28 +1,27 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import { DayPicker } from "react-day-picker";
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
 import { Popover } from "@headlessui/react";
-// hooks
-import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "hooks/store";
-import useToast from "hooks/use-toast";
+// icons
+import type { TInboxDetailedStatus } from "@plane/types";
+// ui
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   AcceptIssueModal,
   DeclineIssueModal,
   DeleteInboxIssueModal,
   SelectDuplicateInboxIssueModal,
-} from "components/inbox";
-// ui
-import { Button } from "@plane/ui";
-// icons
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Trash2, XCircle } from "lucide-react";
+} from "@/components/inbox";
+import { ISSUE_DELETED } from "@/constants/event-tracker";
+import { EUserProjectRoles } from "@/constants/project";
+// hooks
+import { getDate } from "@/helpers/date-time.helper";
+import { useUser, useInboxIssues, useIssueDetail, useWorkspace, useEventTracker } from "@/hooks/store";
 // types
-import type { TInboxStatus, TInboxDetailedStatus } from "@plane/types";
-import { EUserProjectRoles } from "constants/project";
-import { ISSUE_DELETED } from "constants/event-tracker";
 //helpers
-import { getDate } from "helpers/date-time.helper";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;
@@ -32,7 +31,7 @@ type TInboxIssueActionsHeader = {
 };
 
 type TInboxIssueOperations = {
-  updateInboxIssueStatus: (data: TInboxStatus) => Promise<void>;
+  updateInboxIssueStatus: (data: TInboxDetailedStatus) => Promise<void>;
   removeInboxIssue: () => Promise<void>;
 };
 
@@ -53,7 +52,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     currentUser,
     membership: { currentProjectRole },
   } = useUser();
-  const { setToastAlert } = useToast();
 
   // states
   const [date, setDate] = useState(new Date());
@@ -76,8 +74,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId) throw new Error("Missing required parameters");
           await updateInboxIssueStatus(workspaceSlug, projectId, inboxId, inboxIssueId, data);
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Something went wrong while updating inbox status. Please try again.",
           });
@@ -100,8 +98,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
           });
         } catch (error) {
-          setToastAlert({
-            type: "error",
+          setToast({
+            type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Something went wrong while deleting inbox issue. Please try again.",
           });
@@ -124,7 +122,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       inboxIssueId,
       updateInboxIssueStatus,
       removeInboxIssue,
-      setToastAlert,
       captureIssueEvent,
       router,
     ]
@@ -237,7 +234,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
       )}
 
       {inboxIssueId && (
-        <div className="px-4 w-full h-full relative flex items-center gap-2 justify-between">
+        <div className="relative flex h-full w-full items-center justify-between gap-2 px-4">
           <div className="flex items-center gap-x-2">
             <button
               type="button"

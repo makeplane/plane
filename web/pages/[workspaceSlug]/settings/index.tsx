@@ -1,16 +1,16 @@
 import { ReactElement } from "react";
 import { observer } from "mobx-react";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { WorkspaceDetails } from "@/components/workspace";
+import { useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
 // hooks
-import { useWorkspace } from "hooks/store";
 // components
-import { WorkspaceSettingHeader } from "components/headers";
-import { WorkspaceDetails } from "components/workspace";
-import { PageHead } from "components/core";
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const WorkspaceSettingsPage: NextPageWithLayout = observer(() => {
   // store hooks

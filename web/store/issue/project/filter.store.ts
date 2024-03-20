@@ -1,14 +1,12 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import pickBy from "lodash/pickBy";
 import isArray from "lodash/isArray";
+import isEmpty from "lodash/isEmpty";
+import pickBy from "lodash/pickBy";
+import set from "lodash/set";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-// types
-import { IIssueRootStore } from "../root.store";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { IssueFiltersService } from "@/services/issue_filter.service";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -17,10 +15,12 @@ import {
   IIssueFilters,
   TIssueParams,
 } from "@plane/types";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+// helpers
+// types
+import { IIssueRootStore } from "../root.store";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // services
-import { IssueFiltersService } from "services/issue_filter.service";
 
 export interface IProjectIssuesFilter {
   // observables
@@ -188,7 +188,6 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             _filters.displayFilters.group_by = "state";
             updatedDisplayFilters.group_by = "state";
           }
-
 
           runInAction(() => {
             Object.keys(updatedDisplayFilters).forEach((_key) => {

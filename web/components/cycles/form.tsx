@@ -1,13 +1,14 @@
 import { useEffect } from "react";
+
 import { Controller, useForm } from "react-hook-form";
-// components
-import { DateRangeDropdown, ProjectDropdown } from "components/dropdowns";
-// ui
-import { Button, Input, TextArea } from "@plane/ui";
-// helpers
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-// types
 import { ICycle } from "@plane/types";
+
+import { Button, Input, TextArea } from "@plane/ui";
+
+import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
+
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
@@ -66,6 +67,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     setActiveProject(val);
                   }}
                   buttonVariant="background-with-text"
+                  renderCondition={(project) => shouldRenderProject(project)}
                   tabIndex={7}
                 />
               )}

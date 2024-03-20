@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 // services
-import { WorkspaceService } from "services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 // types
 import { IUser } from "@plane/types";
 

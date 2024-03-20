@@ -1,16 +1,15 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useCycle, useUser } from "hooks/store";
-// components
-import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
-import { CycleGanttBlock } from "components/cycles";
-// types
+import { useRouter } from "next/router";
 import { ICycle } from "@plane/types";
-import { getDate } from "helpers/date-time.helper";
+// hooks
+import { CycleGanttBlock } from "@/components/cycles";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "@/components/gantt-chart";
+import { getDate } from "@/helpers/date-time.helper";
+import { useCycle } from "@/hooks/store";
+// components
+// types
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   workspaceSlug: string;
@@ -23,9 +22,6 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { getCycleById, updateCycleDetails } = useCycle();
 
   const handleCycleUpdate = async (cycle: ICycle, data: IBlockUpdateData) => {
@@ -53,9 +49,6 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
     return structuredBlocks;
   };
 
-  const isAllowed =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
-
   return (
     <div className="h-full w-full overflow-y-auto">
       <GanttChartRoot
@@ -68,7 +61,7 @@ export const CyclesListGanttChartView: FC<Props> = observer((props) => {
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}
-        enableReorder={isAllowed}
+        enableReorder={false}
       />
     </div>
   );

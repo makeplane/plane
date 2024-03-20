@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useIssueDetail } from "hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityList } from "./activity/activity-list";
 import { IssueCommentCard } from "./comments/comment-card";
@@ -31,6 +31,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
       {activityComments.map((activityComment, index) =>
         activityComment.activity_type === "COMMENT" ? (
           <IssueCommentCard
+            key={activityComment.id}
             workspaceSlug={workspaceSlug}
             commentId={activityComment.id}
             activityOperations={activityOperations}

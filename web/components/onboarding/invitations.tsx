@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-// components
-import { Button } from "@plane/ui";
-// helpers
-import { truncateText } from "helpers/string.helper";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// constants
-import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
-import { ROLE } from "constants/workspace";
-import { MEMBER_ACCEPTED } from "constants/event-tracker";
-// types
-import { IWorkspaceMemberInvitation } from "@plane/types";
-// icons
 import { CheckCircle2, Search } from "lucide-react";
-import {} from "hooks/store/use-event-tracker";
-import { getUserRole } from "helpers/user.helper";
+import { IWorkspaceMemberInvitation } from "@plane/types";
+import { Button } from "@plane/ui";
+import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
+import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "@/constants/fetch-keys";
+import { ROLE } from "@/constants/workspace";
+import { truncateText } from "@/helpers/string.helper";
+import { getUserRole } from "@/helpers/user.helper";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+// components
+// helpers
+// services
+import { WorkspaceService } from "@/services/workspace.service";
+// constants
+// types
+// icons
+import {} from "@/hooks/store/use-event-tracker";
 
 type Props = {
   handleNextStep: () => void;
@@ -57,17 +57,18 @@ export const Invitations: React.FC<Props> = (props) => {
   };
 
   const submitInvitations = async () => {
-    if (invitationsRespond.length <= 0) return;
+    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
+
+    if (invitationsRespond.length <= 0 && !invitation?.role) return;
 
     setIsJoiningWorkspaces(true);
-    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async () => {
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          role: getUserRole(invitation?.role!),
+          role: getUserRole(invitation?.role as any),
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",
@@ -83,7 +84,7 @@ export const Invitations: React.FC<Props> = (props) => {
         console.error(error);
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
-          role: getUserRole(invitation?.role!),
+          role: getUserRole(invitation?.role as any),
           project_id: undefined,
           accepted_from: "App",
           state: "FAILED",

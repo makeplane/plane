@@ -1,14 +1,14 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import concat from "lodash/concat";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
-import update from "lodash/update";
-import concat from "lodash/concat";
 import uniq from "lodash/uniq";
+import update from "lodash/update";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { IssueActivityService } from "services/issue";
+import { IssueActivityService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
 import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
+import { IIssueDetail } from "./root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 

@@ -42,6 +42,7 @@ interface ILiteTextEditor {
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
   submitButton?: React.ReactNode;
+  tabIndex?: number;
 }
 
 interface LiteTextEditorProps extends ILiteTextEditor {
@@ -74,6 +75,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     mentionHighlights,
     mentionSuggestions,
     submitButton,
+    tabIndex,
   } = props;
 
   const editor = useEditor({
@@ -103,7 +105,11 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+        <EditorContentWrapper
+          tabIndex={tabIndex}
+          editor={editor}
+          editorContentCustomClassNames={editorContentCustomClassNames}
+        />
         <div className="mt-4 w-full">
           <FixedMenu
             editor={editor}

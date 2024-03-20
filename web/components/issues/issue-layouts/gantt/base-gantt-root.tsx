@@ -1,50 +1,49 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import { useIssues, useUser } from "hooks/store";
-// components
-import { GanttQuickAddIssueForm, IssueGanttBlock } from "components/issues";
-import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "components/gantt-chart";
-// helpers
-import { renderIssueBlocksStructure } from "helpers/issue.helper";
-// types
+import { useRouter } from "next/router";
 import { TIssue, TUnGroupedIssues } from "@plane/types";
-import { ICycleIssues, ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssues, IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "store/issue/project-views";
+// hooks
+import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
+import { GanttQuickAddIssueForm, IssueGanttBlock } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { renderIssueBlocksStructure } from "@/helpers/issue.helper";
+import { useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+// components
+// helpers
+// types
 // constants
-import { EUserProjectRoles } from "constants/project";
-import { EIssueActions } from "../types";
 
+type GanttStoreType =
+  | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.CYCLE
+  | EIssuesStoreType.PROJECT_VIEW;
 interface IBaseGanttRoot {
-  issueFiltersStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  issueStore: IProjectIssues | IModuleIssues | ICycleIssues | IProjectViewIssues;
   viewId?: string;
-  issueActions: {
-    [EIssueActions.DELETE]: (issue: TIssue) => Promise<void>;
-    [EIssueActions.UPDATE]?: (issue: TIssue) => Promise<void>;
-    [EIssueActions.REMOVE]?: (issue: TIssue) => Promise<void>;
-  };
+  storeType: GanttStoreType;
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { issueFiltersStore, issueStore, viewId } = props;
+  const { viewId, storeType } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { issues, issuesFilter } = useIssues(storeType);
+  const { updateIssue } = useIssuesActions(storeType);
   // store hooks
   const {
     membership: { currentProjectRole },
   } = useUser();
   const { issueMap } = useIssues();
-  const appliedDisplayFilters = issueFiltersStore.issueFilters?.displayFilters;
+  const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
 
-  const issueIds = (issueStore.groupedIssueIds ?? []) as TUnGroupedIssues;
-  const { enableIssueCreation } = issueStore?.viewFlags || {};
+  const issueIds = (issues.groupedIssueIds ?? []) as TUnGroupedIssues;
+  const { enableIssueCreation } = issues?.viewFlags || {};
 
-  const issues = issueIds.map((id) => issueMap?.[id]);
+  const issuesArray = issueIds.map((id) => issueMap?.[id]);
 
   const updateIssueBlockStructure = async (issue: TIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
@@ -52,7 +51,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    await issueStore.updateIssue(workspaceSlug.toString(), issue.project_id, issue.id, payload, viewId);
+    updateIssue && (await updateIssue(issue.project_id, issue.id, payload));
   };
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
@@ -64,7 +63,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           border={false}
           title="Issues"
           loaderTitle="Issues"
-          blocks={issues ? renderIssueBlocksStructure(issues as TIssue[]) : null}
+          blocks={issues ? renderIssueBlocksStructure(issuesArray) : null}
           blockUpdateHandler={updateIssueBlockStructure}
           blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
           sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
@@ -75,7 +74,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableAddBlock={isAllowed}
           quickAdd={
             enableIssueCreation && isAllowed ? (
-              <GanttQuickAddIssueForm quickAddCallback={issueStore.quickAddIssue} viewId={viewId} />
+              <GanttQuickAddIssueForm quickAddCallback={issues.quickAddIssue} viewId={viewId} />
             ) : undefined
           }
           showAllBlocks

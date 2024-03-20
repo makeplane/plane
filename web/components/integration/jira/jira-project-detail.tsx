@@ -4,21 +4,20 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 // swr
-import useSWR from "swr";
-
-// react hook form
 import { useFormContext, Controller } from "react-hook-form";
-
-// services
-import { JiraImporterService } from "services/integrations";
-
-// fetch keys
-import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";
-
+import useSWR from "swr";
 import { IJiraImporterForm, IJiraMetadata } from "@plane/types";
 
-// components
+// react hook form
+
+// services
 import { ToggleSwitch, Spinner } from "@plane/ui";
+import { JIRA_IMPORTER_DETAIL } from "@/constants/fetch-keys";
+import { JiraImporterService } from "@/services/integrations";
+
+// fetch keys
+
+// components
 
 import type { IJiraIntegrationData, TJiraIntegrationSteps } from ".";
 

@@ -1,26 +1,25 @@
 # Python imports
 import zoneinfo
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 
 # Django imports
 from django.urls import resolve
-from django.conf import settings
 from django.utils import timezone
-from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Third part imports
 from rest_framework import status
-from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
 from rest_framework.exceptions import APIException
-from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
-from sentry_sdk import capture_exception
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 # Module imports
+from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 
 
@@ -58,7 +57,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
         try:
             return self.model.objects.all()
         except Exception as e:
-            capture_exception(e)
+            log_exception(e)
             raise APIException(
                 "Please check the view", status.HTTP_400_BAD_REQUEST
             )
@@ -85,23 +84,19 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 )
 
             if isinstance(e, ObjectDoesNotExist):
-                model_name = str(exc).split(" matching query does not exist.")[
-                    0
-                ]
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
-                capture_exception(e)
+                log_exception(e)
                 return Response(
                     {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            print(e) if settings.DEBUG else print("Server Error")
-            capture_exception(e)
+            log_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -179,7 +174,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if isinstance(e, ObjectDoesNotExist):
                 return Response(
-                    {"error": f"The required object does not exist."},
+                    {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
@@ -189,9 +184,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if settings.DEBUG:
-                print(e)
-            capture_exception(e)
+            log_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

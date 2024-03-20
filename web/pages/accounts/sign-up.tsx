@@ -1,19 +1,19 @@
 import React from "react";
-import Image from "next/image";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-// components
-import { SignUpRoot } from "components/account";
-import { PageHead } from "components/core";
-// ui
 import { Spinner } from "@plane/ui";
+import { SignUpRoot } from "@/components/account";
+import { PageHead } from "@/components/core";
+import { useApplication, useUser } from "@/hooks/store";
+// layouts
+import DefaultLayout from "@/layouts/default-layout";
+// components
+// ui
 // assets
+import { NextPageWithLayout } from "@/lib/types";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import { NextPageWithLayout } from "lib/types";
 
 const SignUpPage: NextPageWithLayout = observer(() => {
   // store hooks

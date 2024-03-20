@@ -12,9 +12,16 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon, RelatedIcon } from "@plane/ui";
+// components
+import {
+  DateDropdown,
+  EstimateDropdown,
+  PriorityDropdown,
+  MemberDropdown,
+  StateDropdown,
+} from "@/components/dropdowns";
 import {
   IssueLinkRoot,
   IssueCycleSelect,
@@ -23,13 +30,12 @@ import {
   IssueLabel,
   TIssueOperations,
   IssueRelationSelect,
-} from "components/issues";
-import { DateDropdown, EstimateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "components/dropdowns";
-// components
+} from "@/components/issues";
 // helpers
-import { cn } from "helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "helpers/issue.helper";
+import { cn } from "@/helpers/common.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -61,7 +67,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   maxDate?.setDate(maxDate.getDate());
 
   return (
-    <div className="mt-1">
+    <div>
       <h6 className="text-sm font-medium">Properties</h6>
       {/* TODO: render properties using a common component */}
       <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>

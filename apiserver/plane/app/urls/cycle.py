@@ -8,16 +8,11 @@ from plane.app.views import (
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
-    ActiveCycleEndpoint,
+    CycleArchiveUnarchiveEndpoint,
 )
 
 
 urlpatterns = [
-    path(
-        "workspaces/<str:slug>/active-cycles/",
-        ActiveCycleEndpoint.as_view(),
-        name="workspace-active-cycle",
-    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/",
         CycleViewSet.as_view(
@@ -95,5 +90,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/user-properties/",
         CycleUserPropertiesEndpoint.as_view(),
         name="cycle-user-filters",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/archive/",
+        CycleArchiveUnarchiveEndpoint.as_view(),
+        name="cycle-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/",
+        CycleArchiveUnarchiveEndpoint.as_view(),
+        name="cycle-archive-unarchive",
     ),
 ]

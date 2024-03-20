@@ -1,25 +1,24 @@
 import { useState, ReactElement } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
-import useToast from "hooks/use-toast";
-import { useIssueDetail, useIssues, useProject, useUser } from "hooks/store";
-// layouts
-import { AppLayout } from "layouts/app-layout";
-// components
-import { IssueDetailRoot } from "components/issues";
-import { ProjectArchivedIssueDetailsHeader } from "components/headers";
-import { PageHead } from "components/core";
-// ui
-import { ArchiveIcon, Button, Loader } from "@plane/ui";
-// icons
 import { RotateCcw } from "lucide-react";
+import { ArchiveIcon, Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { PageHead } from "@/components/core";
+import { ProjectArchivedIssueDetailsHeader } from "@/components/headers";
+import { IssueDetailRoot } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
+// layouts
+import { AppLayout } from "@/layouts/app-layout";
+// components
+// ui
+// icons
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
 
 const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
@@ -35,7 +34,6 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   const {
     issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { setToastAlert } = useToast();
   const { getProjectById } = useProject();
   const {
     membership: { currentProjectRole },
@@ -66,20 +64,21 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
 
     await restoreIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Success",
           message:
             issue &&
-            `${getProjectById(issue.project_id)?.identifier}-${
-              issue?.sequence_id
-            } is restored successfully under the project ${getProjectById(issue.project_id)?.name}`,
+            `${getProjectById(issue.project_id)
+              ?.identifier}-${issue?.sequence_id} is restored successfully under the project ${getProjectById(
+              issue.project_id
+            )?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });

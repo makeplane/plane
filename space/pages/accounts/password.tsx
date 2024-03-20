@@ -3,20 +3,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { Lightbulb } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
+import { Lightbulb } from "lucide-react";
 // services
-import { AuthService } from "services/authentication.service";
-// hooks
-import useToast from "hooks/use-toast";
-import useSignInRedirection from "hooks/use-sign-in-redirection";
-// ui
 import { Button, Input } from "@plane/ui";
+import { checkEmailValidity } from "@/helpers/string.helper";
+import { AuthService } from "@/services/authentication.service";
+// hooks
+import useSignInRedirection from "hooks/use-sign-in-redirection";
+import useToast from "hooks/use-toast";
+// ui
 // images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 import latestFeatures from "public/onboarding/onboarding-pages.svg";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 // helpers
-import { checkEmailValidity } from "helpers/string.helper";
 
 type TResetPasswordFormValues = {
   email: string;

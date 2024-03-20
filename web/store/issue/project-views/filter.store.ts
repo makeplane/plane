@@ -1,14 +1,12 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import pickBy from "lodash/pickBy";
 import isArray from "lodash/isArray";
+import isEmpty from "lodash/isEmpty";
+import pickBy from "lodash/pickBy";
+import set from "lodash/set";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-// types
-import { IIssueRootStore } from "../root.store";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { ViewService } from "@/services/view.service";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -17,10 +15,12 @@ import {
   IIssueFilters,
   TIssueParams,
 } from "@plane/types";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+// helpers
+// types
+import { IIssueRootStore } from "../root.store";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // services
-import { ViewService } from "services/view.service";
 
 export interface IProjectViewIssuesFilter {
   // observables
@@ -35,7 +35,7 @@ export interface IProjectViewIssuesFilter {
     projectId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<void>;
 }
 
@@ -134,11 +134,9 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     projectId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId: string | undefined = undefined
+    viewId: string
   ) => {
     try {
-      if (!viewId) throw new Error("View id is required");
-
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
 
       const _filters = {

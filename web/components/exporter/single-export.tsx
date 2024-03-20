@@ -1,10 +1,10 @@
 import { useState, FC } from "react";
 // ui
+import { IExportData } from "@plane/types";
 import { Button } from "@plane/ui";
 // helpers
-import { getDate, renderFormattedDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 // types
-import { IExportData } from "@plane/types";
 
 type Props = {
   service: IExportData;
@@ -39,12 +39,12 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
               service.status === "completed"
                 ? "bg-green-500/20 text-green-500"
                 : service.status === "processing"
-                ? "bg-yellow-500/20 text-yellow-500"
-                : service.status === "failed"
-                ? "bg-red-500/20 text-red-500"
-                : service.status === "expired"
-                ? "bg-orange-500/20 text-orange-500"
-                : ""
+                  ? "bg-yellow-500/20 text-yellow-500"
+                  : service.status === "failed"
+                    ? "bg-red-500/20 text-red-500"
+                    : service.status === "expired"
+                      ? "bg-orange-500/20 text-orange-500"
+                      : ""
             }`}
           >
             {refreshing ? "Refreshing..." : service.status}

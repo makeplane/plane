@@ -1,6 +1,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // services
-import IssueService from "services/issue.service";
+import IssueService from "@/services/issue.service";
 // store
 import { RootStore } from "./root";
 // types

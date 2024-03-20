@@ -1,14 +1,15 @@
 import { Fragment } from "react";
-import { Controller, useForm } from "react-hook-form";
+
 import { DayPicker } from "react-day-picker";
-import { Dialog, Transition } from "@headlessui/react";
+import { Controller, useForm } from "react-hook-form";
+
 import { X } from "lucide-react";
-// components
-import { DateFilterSelect } from "./date-filter-select";
-// ui
+import { Dialog, Transition } from "@headlessui/react";
+
 import { Button } from "@plane/ui";
-// helpers
-import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "helpers/date-time.helper";
+
+import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
+import { DateFilterSelect } from "./date-filter-select";
 
 type Props = {
   title: string;
@@ -37,7 +38,8 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
   const handleFormSubmit = (formData: TFormValues) => {
     const { filterType, date1, date2 } = formData;
 
-    if (filterType === "range") onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
+    if (filterType === "range")
+      onSelect([`${renderFormattedPayloadDate(date1)};after`, `${renderFormattedPayloadDate(date2)};before`]);
     else onSelect([`${renderFormattedPayloadDate(date1)};${filterType}`]);
 
     handleClose();

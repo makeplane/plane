@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-// components
-import { ModuleStatusSelect } from "components/modules";
-import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "components/dropdowns";
+import { IModule } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
+// components
+import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "@/components/dropdowns";
+import { ModuleStatusSelect } from "@/components/modules";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { shouldRenderProject } from "@/helpers/project.helper";
 // types
-import { IModule } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
@@ -78,6 +79,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       setActiveProject(val);
                     }}
                     buttonVariant="border-with-text"
+                    renderCondition={(project) => shouldRenderProject(project)}
                     tabIndex={10}
                   />
                 </div>

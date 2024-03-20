@@ -1,14 +1,14 @@
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
+import { TIssuesListTypes } from "@plane/types";
 // helpers
-import { cn } from "helpers/common.helper";
+import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "@/constants/dashboard";
+import { cn } from "@/helpers/common.helper";
 // types
-import { TDurationFilterOptions, TIssuesListTypes } from "@plane/types";
 // constants
-import { FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "constants/dashboard";
 
 type Props = {
-  durationFilter: TDurationFilterOptions;
+  durationFilter: EDurationFilters;
   selectedTab: TIssuesListTypes;
 };
 
@@ -48,7 +48,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
           className={cn(
             "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
             {
-              "text-custom-text-100 bg-custom-background-100": selectedTab === tab.key,
+              "text-custom-text-100": selectedTab === tab.key,
               "hover:text-custom-text-300": selectedTab !== tab.key,
             }
           )}

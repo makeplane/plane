@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // components
-import { FilterPriority, FilterState } from "./";
 // types
 
 // filter helpers
-import { ILayoutDisplayFiltersOptions } from "store/issues/helpers";
-import { IIssueFilterOptions } from "store/issues/types";
+import { ILayoutDisplayFiltersOptions } from "@/store/issues/helpers";
+import { IIssueFilterOptions } from "@/store/issues/types";
 import { IIssueState, IIssueLabel } from "types/issue";
+import { FilterPriority, FilterState } from "./";
 
 type Props = {
   filters: IIssueFilterOptions;

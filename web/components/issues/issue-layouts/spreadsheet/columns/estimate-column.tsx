@@ -1,8 +1,8 @@
 // components
-import { EstimateDropdown } from "components/dropdowns";
 import { observer } from "mobx-react-lite";
-// types
 import { TIssue } from "@plane/types";
+import { EstimateDropdown } from "@/components/dropdowns";
+// types
 
 type Props = {
   issue: TIssue;

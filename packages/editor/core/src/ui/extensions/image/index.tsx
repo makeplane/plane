@@ -5,6 +5,8 @@ import ImageExt from "@tiptap/extension-image";
 import { onNodeDeleted, onNodeRestored } from "src/ui/plugins/delete-image";
 import { DeleteImage } from "src/types/delete-image";
 import { RestoreImage } from "src/types/restore-image";
+import { insertLineBelowImageAction } from "./utilities/insert-line-below-image";
+import { insertLineAboveImageAction } from "./utilities/insert-line-above-image";
 
 interface ImageNode extends ProseMirrorNode {
   attrs: {
@@ -18,6 +20,12 @@ const IMAGE_NODE_TYPE = "image";
 
 export const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreImage, cancelUploadImage?: () => any) =>
   ImageExt.extend({
+    addKeyboardShortcuts() {
+      return {
+        ArrowDown: insertLineBelowImageAction,
+        ArrowUp: insertLineAboveImageAction,
+      };
+    },
     addProseMirrorPlugins() {
       return [
         UploadImagesPlugin(cancelUploadImage),

@@ -1,14 +1,12 @@
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import pickBy from "lodash/pickBy";
 import isArray from "lodash/isArray";
+import isEmpty from "lodash/isEmpty";
+import pickBy from "lodash/pickBy";
+import set from "lodash/set";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
-import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-// types
-import { IIssueRootStore } from "../root.store";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { WorkspaceService } from "@/services/workspace.service";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -18,10 +16,12 @@ import {
   TIssueParams,
   TStaticViewTypes,
 } from "@plane/types";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+// helpers
+// types
+import { IIssueRootStore } from "../root.store";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
 // services
-import { WorkspaceService } from "services/workspace.service";
 
 type TWorkspaceFilters = "all-issues" | "assigned" | "created" | "subscribed" | string;
 export interface IWorkspaceIssuesFilter {
@@ -37,7 +37,7 @@ export interface IWorkspaceIssuesFilter {
     projectId: string | undefined,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId?: string | undefined
+    viewId: string
   ) => Promise<void>;
   //helper action
   getIssueFilters: (viewId: string | undefined) => IIssueFilters | undefined;
@@ -156,10 +156,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     projectId: string | undefined,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId: string | undefined = undefined
+    viewId: string
   ) => {
     try {
-      if (!viewId) throw new Error("View id is required");
       const issueFilters = this.getIssueFilters(viewId);
 
       if (!issueFilters || isEmpty(filters)) return;

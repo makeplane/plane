@@ -1,17 +1,18 @@
 import { Fragment, useEffect, useRef, useState } from "react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
-// hooks
-import { useApplication, useLabel } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// components
 import { Combobox } from "@headlessui/react";
-import { Tooltip } from "@plane/ui";
-// types
-import { Placement } from "@popperjs/core";
 import { IIssueLabel } from "@plane/types";
+// hooks
+import { Tooltip } from "@plane/ui";
+import { useApplication, useLabel } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// components
+// types
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -56,13 +57,13 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   // store hooks
   const {
     router: { workspaceSlug },
   } = useApplication();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
-
+  const { isMobile } = usePlatformOS();
   const storeLabels = getProjectLabels(projectId);
 
   const onOpen = () => {
@@ -149,7 +150,13 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             {projectLabels
               ?.filter((l) => value.includes(l?.id))
               .map((label) => (
-                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
+                <Tooltip
+                  key={label.id}
+                  position="top"
+                  tooltipHeading="Labels"
+                  tooltipContent={label?.name ?? ""}
+                  isMobile={isMobile}
+                >
                   <div
                     key={label?.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
@@ -176,6 +183,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             }`}
           >
             <Tooltip
+              isMobile={isMobile}
               position="top"
               tooltipHeading="Labels"
               tooltipContent={projectLabels
@@ -191,7 +199,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         )
       ) : (
-        <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
+        <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None" isMobile={isMobile}>
           <div
             className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
               noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
@@ -224,8 +232,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-              ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
+                ? "cursor-pointer"
+                : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={handleOnClick}
         >

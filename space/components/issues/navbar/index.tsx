@@ -1,35 +1,20 @@
 import { useEffect } from "react";
-
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-// mobx
-import { observer } from "mobx-react-lite";
 // components
-// import { NavbarSearch } from "./search";
+import { Briefcase } from "lucide-react";
+import { Avatar, Button } from "@plane/ui";
+import { ProjectLogo } from "@/components/common";
+import { IssueFiltersDropdown } from "@/components/issues/filters";
+// ui
+// lib
+import { useMobxStore } from "@/lib/mobx/store-provider";
+// store
+import { RootStore } from "@/store/root";
+import { TIssueBoardKeys } from "types/issue";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
-import { IssueFiltersDropdown } from "components/issues/filters";
-// ui
-import { Avatar, Button } from "@plane/ui";
-import { Briefcase } from "lucide-react";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
-// store
-import { RootStore } from "store/root";
-import { TIssueBoardKeys } from "types/issue";
-
-const renderEmoji = (emoji: string | { name: string; color: string }) => {
-  if (!emoji) return;
-
-  if (typeof emoji === "object")
-    return (
-      <span style={{ color: emoji.color }} className="material-symbols-rounded text-lg">
-        {emoji.name}
-      </span>
-    );
-  else return isNaN(parseInt(emoji)) ? emoji : String.fromCodePoint(parseInt(emoji));
-};
 
 const IssueNavbar = observer(() => {
   const {
@@ -123,27 +108,15 @@ const IssueNavbar = observer(() => {
     <div className="relative flex w-full items-center gap-4 px-5">
       {/* project detail */}
       <div className="flex flex-shrink-0 items-center gap-2">
-        <div className="flex h-4 w-4 items-center justify-center">
-          {projectStore.project ? (
-            projectStore.project?.emoji ? (
-              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                {renderEmoji(projectStore.project.emoji)}
-              </span>
-            ) : projectStore.project?.icon_prop ? (
-              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                {renderEmoji(projectStore.project.icon_prop)}
-              </div>
-            ) : (
-              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                {projectStore.project?.name.charAt(0)}
-              </span>
-            )
-          ) : (
-            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-              <Briefcase className="h-4 w-4" />
-            </span>
-          )}
-        </div>
+        {projectStore.project ? (
+          <span className="h-7 w-7 flex-shrink-0 grid place-items-center">
+            <ProjectLogo logo={projectStore.project.logo_props} className="text-lg" />
+          </span>
+        ) : (
+          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+            <Briefcase className="h-4 w-4" />
+          </span>
+        )}
         <div className="line-clamp-1 max-w-[300px] overflow-hidden text-lg font-medium">
           {projectStore?.project?.name || `...`}
         </div>

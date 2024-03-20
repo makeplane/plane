@@ -1,40 +1,29 @@
 import { useEffect } from "react";
-import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "hooks/store";
 // components
-import { TourRoot } from "components/onboarding";
-import { UserGreetingsView } from "components/user";
-import { IssuePeekOverview } from "components/issues";
-import { DashboardWidgets } from "components/dashboard";
-import { EmptyState, getEmptyStateImagePath } from "components/empty-state";
-// ui
 import { Spinner } from "@plane/ui";
+import { DashboardWidgets } from "@/components/dashboard";
+import { EmptyState } from "@/components/empty-state";
+import { IssuePeekOverview } from "@/components/issues";
+import { TourRoot } from "@/components/onboarding";
+import { UserGreetingsView } from "@/components/user";
+// ui
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { PRODUCT_TOUR_COMPLETED } from "constants/event-tracker";
-import { WORKSPACE_EMPTY_STATE_DETAILS } from "constants/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
+import { useApplication, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
 
 export const WorkspaceDashboardView = observer(() => {
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { captureEvent, setTrackElement } = useEventTracker();
   const {
     commandPalette: { toggleCreateProjectModal },
     router: { workspaceSlug },
   } = useApplication();
-  const {
-    currentUser,
-    updateTourCompleted,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { currentUser, updateTourCompleted } = useUser();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds } = useProject();
-
-  const isLightMode = resolvedTheme ? resolvedTheme === "light" : currentUser?.theme.theme === "light";
-  const emptyStateImage = getEmptyStateImagePath("onboarding", "dashboard", isLightMode);
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -56,8 +45,6 @@ export const WorkspaceDashboardView = observer(() => {
     fetchHomeDashboardWidgets(workspaceSlug);
   }, [fetchHomeDashboardWidgets, workspaceSlug]);
 
-  const isEditingAllowed = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-
   return (
     <>
       {currentUser && !currentUser.is_tour_completed && (
@@ -78,22 +65,11 @@ export const WorkspaceDashboardView = observer(() => {
             </>
           ) : (
             <EmptyState
-              image={emptyStateImage}
-              title={WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].title}
-              description={WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].description}
-              primaryButton={{
-                text: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].primaryButton.text,
-                onClick: () => {
-                  setTrackElement("Dashboard empty state");
-                  toggleCreateProjectModal(true);
-                },
+              type={EmptyStateType.WORKSPACE_DASHBOARD}
+              primaryButtonOnClick={() => {
+                setTrackElement("Dashboard empty state");
+                toggleCreateProjectModal(true);
               }}
-              comicBox={{
-                title: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].comicBox.title,
-                description: WORKSPACE_EMPTY_STATE_DETAILS["dashboard"].comicBox.description,
-              }}
-              size="lg"
-              disabled={!isEditingAllowed}
             />
           )}
         </>

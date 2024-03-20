@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
 import isEmpty from "lodash/isEmpty";
-// services
-import { CycleService } from "services/cycle.service";
-// hooks
-import { useEventTracker, useCycle, useUser, useMember } from "hooks/store";
-import useToast from "hooks/use-toast";
-// components
-import { SidebarProgressStats } from "components/core";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { CycleDeleteModal } from "components/cycles/delete-modal";
-// ui
-import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
-// icons
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, CalendarClock } from "lucide-react";
-// helpers
-import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
-// types
+import { Disclosure, Transition } from "@headlessui/react";
+// icons
 import { ICycle } from "@plane/types";
+// ui
+import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import { SidebarProgressStats } from "@/components/core";
+import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { CycleDeleteModal } from "@/components/cycles/delete-modal";
+import { DateRangeDropdown } from "@/components/dropdowns";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { CYCLE_UPDATED } from "constants/event-tracker";
-// fetch-keys
-import { CYCLE_STATUS } from "constants/cycle";
-import { DateRangeDropdown } from "components/dropdowns";
+import { CYCLE_STATUS } from "@/constants/cycle";
+import { CYCLE_UPDATED } from "@/constants/event-tracker";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+// hooks
+import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+// services
+import { CycleService } from "@/services/cycle.service";
+// types
 
 type Props = {
   cycleId: string;
@@ -60,8 +58,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
-  // toast alert
-  const { setToastAlert } = useToast();
   // form info
   const { control, reset } = useForm({
     defaultValues,
@@ -98,15 +94,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`)
       .then(() => {
-        setToastAlert({
-          type: "success",
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
           title: "Link Copied!",
           message: "Cycle link copied to clipboard.",
         });
       })
       .catch(() => {
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Some error occurred",
         });
       });
@@ -147,14 +143,14 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     if (isDateValid) {
       submitChanges(payload, "date_range");
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Cycle updated successfully.",
       });
     } else {
-      setToastAlert({
-        type: "error",
+      setToast({
+        type: TOAST_TYPE.ERROR,
         title: "Error!",
         message:
           "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
@@ -223,15 +219,15 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-      ? "0 Issue"
-      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+        ? "0 Issue"
+        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <>
+    <div className="relative">
       {cycleDetails && workspaceSlug && projectId && (
         <CycleDeleteModal
           cycle={cycleDetails}
@@ -243,7 +239,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       )}
 
       <>
-        <div className="flex w-full items-center justify-between">
+        <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
@@ -305,7 +301,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <CalendarClock className="h-4 w-4" />
               <span className="text-base">Date range</span>
             </div>
-            <div className="w-3/5 h-7">
+            <div className="h-7 w-3/5">
               <Controller
                 control={control}
                 name="start_date"
@@ -512,6 +508,6 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </>
-    </>
+    </div>
   );
 });

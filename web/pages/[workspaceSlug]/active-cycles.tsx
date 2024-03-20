@@ -1,15 +1,14 @@
 import { ReactElement } from "react";
 import { observer } from "mobx-react";
 // components
-import { WorkspaceActiveCyclesList } from "components/workspace";
-import { PageHead } from "components/core";
-import { WorkspaceActiveCycleHeader } from "components/headers";
+import { PageHead } from "@/components/core";
+import { WorkspaceActiveCycleHeader } from "@/components/headers";
+import { WorkspaceActiveCyclesList } from "@/components/workspace";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
 // types
-import { NextPageWithLayout } from "lib/types";
-// hooks
-import { useWorkspace } from "hooks/store";
+import { NextPageWithLayout } from "@/lib/types";
 
 const WorkspaceActiveCyclesPage: NextPageWithLayout = observer(() => {
   const { currentWorkspace } = useWorkspace();

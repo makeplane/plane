@@ -1,5 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 
 // components
 import {
@@ -9,10 +10,9 @@ import {
   FilterIssueType,
   FilterOrderBy,
   FilterSubGroupBy,
-} from "components/issues";
+} from "@/components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
-import { ILayoutDisplayFiltersOptions } from "constants/issue";
+import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -37,7 +37,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
 
   return (
-    <div className="relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
+    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">

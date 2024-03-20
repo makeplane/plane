@@ -1,13 +1,13 @@
 import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 
 // components
-import { LoginView } from "components/views";
+import { LoginView } from "@/components/views";
 // store
-import { RootStore } from "store/root";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+import { RootStore } from "@/store/root";
 
 const Index: NextPage = observer(() => {
   const router = useRouter();

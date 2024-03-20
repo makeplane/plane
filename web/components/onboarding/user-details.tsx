@@ -1,21 +1,22 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
-import { observer } from "mobx-react-lite";
 import { Camera, User2 } from "lucide-react";
-// hooks
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-// components
-import { Button, Input } from "@plane/ui";
-import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
-import { UserImageUploadModal } from "components/core";
-// types
 import { IUser } from "@plane/types";
-// services
-import { FileService } from "services/file.service";
+import { Button, Input } from "@plane/ui";
+// components
+import { UserImageUploadModal } from "@/components/core";
+import { OnboardingSidebar, OnboardingStepIndicator } from "@/components/onboarding";
+// constants
+import { USER_DETAILS } from "@/constants/event-tracker";
+// hooks
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
 // assets
+import { FileService } from "@/services/file.service";
 import IssuesSvg from "public/onboarding/onboarding-issues.webp";
-import { USER_DETAILS } from "constants/event-tracker";
+// services
+// types
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -183,7 +184,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                         name="first_name"
                         type="text"
                         value={value}
-                        autoFocus={true}
+                        autoFocus
                         onChange={(event) => {
                           setUserName(event.target.value);
                           onChange(event);
@@ -220,6 +221,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                   <div className="flex flex-wrap overflow-auto break-all">
                     {USE_CASES.map((useCase) => (
                       <div
+                        key={useCase}
                         className={`mb-3 flex-shrink-0 border hover:cursor-pointer hover:bg-onboarding-background-300/30 ${
                           value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
                         } mr-3 rounded-sm p-3 text-sm font-medium`}

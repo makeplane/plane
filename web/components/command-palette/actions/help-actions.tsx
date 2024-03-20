@@ -1,9 +1,9 @@
 import { Command } from "cmdk";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // hooks
-import { useApplication } from "hooks/store";
-// ui
 import { DiscordIcon } from "@plane/ui";
+import { useApplication } from "@/hooks/store";
+// ui
 
 type Props = {
   closePalette: () => void;

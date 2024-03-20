@@ -1,22 +1,23 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
-import { ArchiveIcon, CustomMenu } from "@plane/ui";
-import { observer } from "mobx-react";
-import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import omit from "lodash/omit";
-// hooks
-import useToast from "hooks/use-toast";
-import { useEventTracker, useProjectState } from "hooks/store";
-// components
-import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-// types
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import { TIssue } from "@plane/types";
+// hooks
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+// ui
+// components
+import { EIssuesStoreType } from "@/constants/issue";
+import { STATE_GROUPS } from "@/constants/state";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useEventTracker, useProjectState } from "@/hooks/store";
+// components
+// helpers
+// types
 import { IQuickActionProps } from "../list/list-view-types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { STATE_GROUPS } from "constants/state";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
@@ -39,8 +40,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { getStateById } = useProjectState();
-  // toast alert
-  const { setToastAlert } = useToast();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const isEditingAllowed = !readOnly;
@@ -54,8 +53,8 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(issueLink).then(() =>
-      setToastAlert({
-        type: "success",
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Issue link copied to clipboard",
       })
@@ -91,7 +90,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         }}
         data={issueToEdit ?? duplicateIssuePayload}
         onSubmit={async (data) => {
-          if (issueToEdit && handleUpdate) await handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.PROJECT}
       />
@@ -100,6 +99,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         placement="bottom-start"
         customButton={customActionButton}
         portalElement={portalElement}
+        maxHeight="lg"
         closeOnSelect
         ellipsis
       >

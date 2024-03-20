@@ -2,17 +2,18 @@ import { FC, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 // hooks
-import { useIssueDetail, useMember } from "hooks/store";
 // ui
 import { Tooltip } from "@plane/ui";
 // components
-import { IssueAttachmentDeleteModal } from "./delete-attachment-confirmation-modal";
 // icons
-import { getFileIcon } from "components/icons";
+import { getFileIcon } from "@/components/icons";
 // helper
-import { truncateText } from "helpers/string.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
-import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
+import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { truncateText } from "@/helpers/string.helper";
+import { useIssueDetail, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { IssueAttachmentDeleteModal } from "./delete-attachment-confirmation-modal";
 // types
 import { TAttachmentOperations } from "./root";
 
@@ -34,7 +35,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
   } = useIssueDetail();
   // states
   const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
-
+  const { isMobile } = usePlatformOS();
   const attachment = attachmentId && getAttachmentById(attachmentId);
 
   if (!attachment) return <></>;
@@ -56,10 +57,11 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = (props) => {
             <div className="h-7 w-7">{getFileIcon(getFileExtension(attachment.asset))}</div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Tooltip tooltipContent={getFileName(attachment.attributes.name)}>
+                <Tooltip tooltipContent={getFileName(attachment.attributes.name)} isMobile={isMobile}>
                   <span className="text-sm">{truncateText(`${getFileName(attachment.attributes.name)}`, 10)}</span>
                 </Tooltip>
                 <Tooltip
+                  isMobile={isMobile}
                   tooltipContent={`${
                     getUserDetails(attachment.updated_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}

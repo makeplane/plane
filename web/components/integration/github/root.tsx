@@ -1,34 +1,36 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
 // services
-import { IntegrationService, GithubIntegrationService } from "services/integrations";
-// hooks
-import useToast from "hooks/use-toast";
 // components
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
+import { UserGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import {
   GithubImportConfigure,
   GithubImportData,
   GithubRepoDetails,
   GithubImportUsers,
   GithubImportConfirm,
-} from "components/integration";
+} from "@/components/integration";
 // icons
-import { UserGroupIcon } from "@plane/ui";
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
+import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
+import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 import GithubLogo from "public/services/github.png";
+// hooks
+// components
+// icons
+// images
 // types
-import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // fetch-keys
-import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 export type TIntegrationSteps = "import-configure" | "import-data" | "repo-details" | "import-users" | "import-confirm";
 export interface IIntegrationData {
@@ -92,8 +94,6 @@ export const GithubImporterRoot: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
 
-  const { setToastAlert } = useToast();
-
   const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,
   });
@@ -149,8 +149,8 @@ export const GithubImporterRoot: React.FC = () => {
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
+        setToast({
+          type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Import was unsuccessful. Please try again.",
         })

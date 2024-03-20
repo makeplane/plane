@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 // components
 import { TextArea } from "@plane/ui";
 // types
+import useDebounce from "@/hooks/use-debounce";
 import { TIssueOperations } from "./issue-detail";
 // hooks
-import useDebounce from "hooks/use-debounce";
 
 export type IssueTitleInputProps = {
   disabled?: boolean;
@@ -32,7 +32,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   useEffect(() => {
     const textarea = document.querySelector("#title-input");
     if (debouncedValue && debouncedValue !== value) {
-      issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }, false).finally(() => {
+      issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }).finally(() => {
         setIsSubmitting("saved");
         if (textarea && !textarea.matches(":focus")) {
           const trimmedTitle = debouncedValue.trim();

@@ -1,12 +1,13 @@
 import React, { Fragment, useState } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-import size from "lodash/size";
 import isEmpty from "lodash/isEmpty";
+import size from "lodash/size";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { IIssueFilterOptions } from "@plane/types";
 // hooks
-import { useCycle, useIssues } from "hooks/store";
 // components
+import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
 import {
   CycleAppliedFiltersRoot,
   CycleCalendarLayout,
@@ -16,13 +17,12 @@ import {
   CycleListLayout,
   CycleSpreadsheetLayout,
   IssuePeekOverview,
-} from "components/issues";
-import { TransferIssues, TransferIssuesModal } from "components/cycles";
-import { ActiveLoader } from "components/ui";
+} from "@/components/issues";
+import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { useCycle, useIssues } from "@/hooks/store";
 // types
-import { IIssueFilterOptions } from "@plane/types";
 
 export const CycleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -68,7 +68,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId || !cycleId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     issuesFilter.updateFilters(
       workspaceSlug.toString(),

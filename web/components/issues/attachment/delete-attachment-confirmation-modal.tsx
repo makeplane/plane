@@ -1,13 +1,13 @@
 import { FC, Fragment, Dispatch, SetStateAction, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+import type { TIssueAttachment } from "@plane/types";
+// headless ui
 // ui
 import { Button } from "@plane/ui";
 // helper
-import { getFileName } from "helpers/attachment.helper";
+import { getFileName } from "@/helpers/attachment.helper";
 // types
-import type { TIssueAttachment } from "@plane/types";
 import { TAttachmentOperations } from "./root";
 
 export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
@@ -69,7 +69,7 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
                       </div>
                       <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                         <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                          Delete Attachment
+                          Delete attachment
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-custom-text-200">
@@ -94,7 +94,7 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
                       }}
                       disabled={loader}
                     >
-                      {loader ? "Deleting..." : "Delete"}
+                      {loader ? "Deleting" : "Delete"}
                     </Button>
                   </div>
                 </Dialog.Panel>

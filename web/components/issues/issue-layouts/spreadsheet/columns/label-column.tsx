@@ -1,11 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { IssuePropertyLabels } from "../../properties";
-// hooks
-import { useLabel } from "hooks/store";
-// types
 import { TIssue } from "@plane/types";
+// components
+// hooks
+import { useLabel } from "@/hooks/store";
+// types
+import { IssuePropertyLabels } from "../../properties";
 
 type Props = {
   issue: TIssue;
