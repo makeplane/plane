@@ -1,8 +1,8 @@
 import { FC } from "react";
-// components
-import ProgressChart from "components/core/sidebar/progress-chart";
 // types
 import { ICycle } from "@plane/types";
+// components
+import ProgressChart from "@/components/core/sidebar/progress-chart";
 
 export type ActiveCycleProductivityProps = {
   cycle: ICycle;

@@ -1,25 +1,25 @@
 import { FC, Fragment } from "react";
-import useSWR from "swr";
-import Link from "next/link";
 import { observer } from "mobx-react";
+import Link from "next/link";
+import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 import { Tab } from "@headlessui/react";
-// components
-import { SingleProgressStats } from "components/core";
-import { StateDropdown } from "components/dropdowns";
-// ui
-import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
-// helper
-import { cn } from "helpers/common.helper";
-import { renderFormattedDate, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
-// hooks
-import { useIssues, useProject } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
 // types
 import { ICycle, TIssue } from "@plane/types";
+// ui
+import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
+// components
+import { SingleProgressStats } from "@/components/core";
+import { StateDropdown } from "@/components/dropdowns";
 // constants
-import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { EIssuesStoreType } from "constants/issue";
+import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+// helper
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+// hooks
+import { useIssues, useProject } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
