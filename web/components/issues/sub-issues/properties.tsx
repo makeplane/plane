@@ -72,8 +72,8 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
           }
           disabled={!disabled}
           multiple
-          buttonVariant={issue.assignee_ids.length > 0 ? "transparent-without-text" : "border-without-text"}
-          buttonClassName={issue.assignee_ids.length > 0 ? "hover:bg-transparent px-0" : ""}
+          buttonVariant={(issue?.assignee_ids || []).length > 0 ? "transparent-without-text" : "border-without-text"}
+          buttonClassName={(issue?.assignee_ids || []).length > 0 ? "hover:bg-transparent px-0" : ""}
         />
       </div>
     </div>

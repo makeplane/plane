@@ -1,10 +1,9 @@
 import concat from "lodash/concat";
 import pull from "lodash/pull";
 import set from "lodash/set";
+import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// services
-import { IssueService } from "@/services/issue";
 // types
 import {
   TIssue,
@@ -13,6 +12,9 @@ import {
   TIssueSubIssuesIdMap,
   TSubIssuesStateDistribution,
 } from "@plane/types";
+// services
+import { IssueService } from "@/services/issue";
+// store
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueSubIssuesStoreActions {
@@ -116,6 +118,25 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       this.rootIssueDetailStore.rootIssueStore.issues.addIssue(subIssues);
 
+      // fetch other issues states and members when sub-issues are from different project
+      if (subIssues && subIssues.length > 0) {
+        const otherProjectIds = uniq(subIssues.map((issue) => issue.project_id).filter((id) => id !== projectId));
+        if (otherProjectIds.length > 0) {
+          for (const currentProjectId of otherProjectIds) {
+            // fetching other project states
+            this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(
+              workspaceSlug,
+              currentProjectId
+            );
+            // fetching other project members
+            this.rootIssueDetailStore.rootIssueStore.rootStore.memberRoot.project.fetchProjectMembers(
+              workspaceSlug,
+              currentProjectId
+            );
+          }
+        }
+      }
+
       runInAction(() => {
         set(this.subIssuesStateDistribution, parentIssueId, subIssuesStateDistribution);
         set(
@@ -139,6 +160,25 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
       const subIssuesStateDistribution = response?.state_distribution;
       const subIssues = response.sub_issues as TIssue[];
+
+      // fetch other issues states and members when sub-issues are from different project
+      if (subIssues && subIssues.length > 0) {
+        const otherProjectIds = uniq(subIssues.map((issue) => issue.project_id).filter((id) => id !== projectId));
+        if (otherProjectIds.length > 0) {
+          for (const currentProjectId of otherProjectIds) {
+            // fetching other project states
+            this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(
+              workspaceSlug,
+              currentProjectId
+            );
+            // fetching other project members
+            this.rootIssueDetailStore.rootIssueStore.rootStore.memberRoot.project.fetchProjectMembers(
+              workspaceSlug,
+              currentProjectId
+            );
+          }
+        }
+      }
 
       runInAction(() => {
         Object.keys(subIssuesStateDistribution).forEach((key) => {
