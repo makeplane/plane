@@ -90,7 +90,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           }
         )}
       >
-        <PageContentBrowser editorRef={editorRef.current} markings={markings} />
+        <PageContentBrowser
+          editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
+          markings={markings}
+        />
       </div>
       <div className="h-full w-full pl-5 pr-5 md:w-[calc(100%-14rem)] md:pr-0 lg:w-[calc(100%-18rem-18rem)]">
         {isPageReadOnly ? (
