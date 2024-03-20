@@ -43,6 +43,7 @@ export const ProfileLayoutSidebar = observer(() => {
   const { currentUser, currentUserSettings, signOut } = useUser();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
+
   const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
