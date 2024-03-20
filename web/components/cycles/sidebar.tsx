@@ -18,7 +18,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { ICycle } from "@plane/types";
 // ui
-import { Avatar, ArchiveIcon, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { Avatar, ArchiveIcon, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
 // components
 import { SidebarProgressStats } from "@/components/core";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
@@ -363,9 +363,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         {cycleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {cycleDetails.description}
-          </span>
+          <TextArea
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            value={cycleDetails.description}
+            disabled
+          />
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">

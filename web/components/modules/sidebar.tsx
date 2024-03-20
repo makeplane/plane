@@ -27,6 +27,7 @@ import {
   TOAST_TYPE,
   setToast,
   ArchiveIcon,
+  TextArea,
 } from "@plane/ui";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "@/components/core";
@@ -407,9 +408,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         {moduleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {moduleDetails.description}
-          </span>
+          <TextArea
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            value={moduleDetails.description}
+            disabled
+          />
         )}
 
         <div className="flex items-center justify-start gap-1">
