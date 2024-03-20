@@ -23,7 +23,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
 
   const redirectToIssueDetail = () => {
     router.push({
-      pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archived-issues" : "issues"}/${
+      pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
         issue.id
       }`,
       hash: "sub-issues",

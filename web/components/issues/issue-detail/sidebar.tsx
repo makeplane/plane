@@ -110,7 +110,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleArchiveIssue = async () => {
     if (!issueOperations.archive) return;
     await issueOperations.archive(workspaceSlug, projectId, issueId);
-    router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`);
+    router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
   };
   // derived values
   const projectDetails = getProjectById(issue.project_id);

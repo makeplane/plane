@@ -14,10 +14,18 @@ type Props = {
   handleDisplayFiltersUpdate: (updatedDisplayProperties: Partial<TModuleDisplayFilters>) => void;
   handleFiltersUpdate: (key: keyof TModuleFilters, value: string | string[]) => void;
   memberIds?: string[] | undefined;
+  isArchived?: boolean;
 };
 
 export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
-  const { displayFilters, filters, handleDisplayFiltersUpdate, handleFiltersUpdate, memberIds } = props;
+  const {
+    displayFilters,
+    filters,
+    handleDisplayFiltersUpdate,
+    handleFiltersUpdate,
+    memberIds,
+    isArchived = false,
+  } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -42,26 +50,30 @@ export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
-        <div className="py-2">
-          <FilterOption
-            isChecked={!!displayFilters.favorites}
-            onClick={() =>
-              handleDisplayFiltersUpdate({
-                favorites: !displayFilters.favorites,
-              })
-            }
-            title="Favorites"
-          />
-        </div>
+        {!isArchived && (
+          <div className="py-2">
+            <FilterOption
+              isChecked={!!displayFilters.favorites}
+              onClick={() =>
+                handleDisplayFiltersUpdate({
+                  favorites: !displayFilters.favorites,
+                })
+              }
+              title="Favorites"
+            />
+          </div>
+        )}
 
         {/* status */}
-        <div className="py-2">
-          <FilterStatus
-            appliedFilters={(filters.status as TModuleStatus[]) ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("status", val)}
-            searchQuery={filtersSearchQuery}
-          />
-        </div>
+        {!isArchived && (
+          <div className="py-2">
+            <FilterStatus
+              appliedFilters={(filters.status as TModuleStatus[]) ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("status", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
 
         {/* lead */}
         <div className="py-2">
