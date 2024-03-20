@@ -30,9 +30,9 @@ export const CyclePeekOverview: React.FC<Props> = observer(({ projectId, workspa
   };
 
   useEffect(() => {
-    if (!peekCycle) return;
+    if (!peekCycle || isArchived) return;
     fetchCycleDetails(workspaceSlug, projectId, peekCycle.toString());
-  }, [fetchCycleDetails, peekCycle, projectId, workspaceSlug]);
+  }, [fetchCycleDetails, isArchived, peekCycle, projectId, workspaceSlug]);
 
   return (
     <>
