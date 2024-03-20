@@ -128,7 +128,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   placeholder="Description..."
-                  className="h-24 w-full resize-none text-sm"
+                  className="w-full resize-none text-sm"
                   hasError={Boolean(errors?.description)}
                   tabIndex={2}
                 />
