@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // store hooks
@@ -12,6 +12,7 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { checkDuplicates } from "helpers/array.helper";
 // types
 import { IEstimate, IEstimateFormData } from "@plane/types";
+import { PlusIcon, XMarkIcon } from "../icons";
 
 type Props = {
   isOpen: boolean;
@@ -22,12 +23,12 @@ type Props = {
 const defaultValues = {
   name: "",
   description: "",
-  value1: "",
-  value2: "",
-  value3: "",
-  value4: "",
-  value5: "",
-  value6: "",
+  points: [
+    {
+      key: 0,
+      value: "",
+    },
+  ],
 };
 
 type FormValues = typeof defaultValues;
@@ -50,6 +51,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   } = useForm<FormValues>({
     defaultValues,
   });
+
+  const { fields: points, append, remove } = useFieldArray({ name: "points", control });
 
   const onClose = () => {
     handleClose();
@@ -108,12 +111,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     }
 
     if (
-      formData.value1 === "" ||
-      formData.value2 === "" ||
-      formData.value3 === "" ||
-      formData.value4 === "" ||
-      formData.value5 === "" ||
-      formData.value6 === ""
+      formData.points.some(
+        (value) => value.value.trim() === ""
+      )
     ) {
       setToastAlert({
         type: "error",
@@ -124,12 +124,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     }
 
     if (
-      formData.value1.length > 20 ||
-      formData.value2.length > 20 ||
-      formData.value3.length > 20 ||
-      formData.value4.length > 20 ||
-      formData.value5.length > 20 ||
-      formData.value6.length > 20
+      formData.points.some(
+        (value) => value.value.length > 20
+      )
     ) {
       setToastAlert({
         type: "error",
@@ -140,14 +137,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     }
 
     if (
-      checkDuplicates([
-        formData.value1,
-        formData.value2,
-        formData.value3,
-        formData.value4,
-        formData.value5,
-        formData.value6,
-      ])
+      checkDuplicates(formData.points.map((value) => value.value))
     ) {
       setToastAlert({
         type: "error",
@@ -162,22 +152,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
         name: formData.name,
         description: formData.description,
       },
-      estimate_points: [],
+      estimate_points: formData.points.map((point, index) => ({ key: point.key, value: point.value, id: data?.points?.[index]?.id })),
     };
-
-    for (let i = 0; i < 6; i++) {
-      const point = {
-        key: i,
-        value: formData[`value${i + 1}` as keyof FormValues],
-      };
-
-      if (data)
-        payload.estimate_points.push({
-          id: data.points[i].id,
-          ...point,
-        });
-      else payload.estimate_points.push({ ...point });
-    }
 
     if (data) await handleUpdateEstimate(payload);
     else await handleCreateEstimate(payload);
@@ -188,15 +164,10 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       reset({
         ...defaultValues,
         ...data,
-        value1: data.points[0]?.value,
-        value2: data.points[1]?.value,
-        value3: data.points[2]?.value,
-        value4: data.points[3]?.value,
-        value5: data.points[4]?.value,
-        value6: data.points[5]?.value,
+        points: data.points,
       });
     else reset({ ...defaultValues });
-  }, [data, reset]);
+  }, [data, reset, isOpen]);
 
   return (
     <>
@@ -269,8 +240,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                       {/* list of all the points */}
                       {/* since they are all the same, we can use a loop to render them */}
                       <div className="grid grid-cols-3 gap-3">
-                        {Array(6)
-                          .fill(0)
+                        {points
                           .map((_, i) => (
                             <div className="flex items-center">
                               <span className="flex h-full items-center rounded-lg bg-custom-background-80">
@@ -278,14 +248,14 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                                 <span className="rounded-r-lg bg-custom-background-100">
                                   <Controller
                                     control={control}
-                                    name={`value${i + 1}` as keyof FormValues}
+                                    name={`points.${i}.value`}
                                     rules={{
                                       maxLength: {
                                         value: 20,
                                         message: "Estimate point must at most be of 20 characters",
                                       },
                                     }}
-                                    render={({ field: { value, onChange, ref } }) => (
+                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                       <Input
                                         ref={ref}
                                         type="text"
@@ -295,7 +265,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                                         name={`value${i + 1}`}
                                         placeholder={`Point ${i + 1}`}
                                         className="w-full rounded-l-none"
-                                        hasError={Boolean(errors[`value${i + 1}` as keyof FormValues])}
+                                        hasError={Boolean(error)}
                                       />
                                     )}
                                   />
@@ -303,6 +273,10 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                               </span>
                             </div>
                           ))}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Button variant="outline-danger" onClick={() => remove(points.length - 1)} disabled={points.length <= 1}><XMarkIcon /></Button>
+                        <Button variant="outline-primary" onClick={() => append({ value: "", key: points.length })}><PlusIcon /></Button>
                       </div>
                     </div>
                     <div className="mt-5 flex justify-end gap-2">
@@ -315,8 +289,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
+                            ? "Creating Estimate..."
+                            : "Create Estimate"}
                       </Button>
                     </div>
                   </form>
