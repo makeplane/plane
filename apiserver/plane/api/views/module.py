@@ -541,7 +541,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    def list(self, request, slug, project_id):
+    def get(self, request, slug, project_id):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),

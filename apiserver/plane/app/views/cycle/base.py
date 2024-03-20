@@ -820,7 +820,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def list(self, request, slug, project_id):
+    def get(self, request, slug, project_id):
         queryset = (
             self.get_queryset()
             .annotate(

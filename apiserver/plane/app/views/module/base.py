@@ -582,7 +582,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             .order_by("-is_favorite", "-created_at")
         )
 
-    def list(self, request, slug, project_id):
+    def get(self, request, slug, project_id):
         queryset = self.get_queryset()
         modules = queryset.values(  # Required fields
             "id",
