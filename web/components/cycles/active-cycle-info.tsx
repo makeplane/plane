@@ -1,4 +1,7 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
+// types
+import { IActiveCycle } from "@plane/types";
 // components
 import {
   ActiveCyclesProjectTitle,
@@ -6,12 +9,9 @@ import {
   ActiveCycleProgress,
   ActiveCycleProductivity,
   ActiveCyclePriorityIssues,
-} from "components/cycles/active-cycles";
-// types
-import { IActiveCycle } from "@plane/types";
+} from "@/components/cycles/active-cycles";
 // hooks
-import { useProject } from "hooks/store";
-import { observer } from "mobx-react";
+import { useProject } from "@/hooks/store";
 
 export type ActiveCycleInfoProps = {
   cycle: IActiveCycle;

@@ -68,6 +68,7 @@ export interface IProjectLite {
   name: string;
   identifier: string;
   emoji: string | null;
+  logo_props: TProjectLogoProps;
   icon_prop: {
     name: string;
     color: string;

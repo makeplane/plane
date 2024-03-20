@@ -1,22 +1,22 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { observer } from "mobx-react";
-// ui
-import { Tooltip, Loader, PriorityIcon } from "@plane/ui";
-// hooks
-import { useIssues, useProjectState } from "hooks/store";
 // icons
 import { CalendarCheck } from "lucide-react";
 // types
 import { IActiveCycle } from "@plane/types";
+// ui
+import { Tooltip, Loader, PriorityIcon } from "@plane/ui";
 // components
-import { StateDropdown } from "components/dropdowns";
-// helpers
-import { renderFormattedDate, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
+import { StateDropdown } from "@/components/dropdowns";
 // constants
-import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { EIssuesStoreType } from "constants/issue";
+import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+// helpers
+import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+// hooks
+import { useIssues, useProjectState } from "@/hooks/store";
 
 export type ActiveCyclePriorityIssuesProps = {
   workspaceSlug: string;
@@ -77,7 +77,7 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
                     value={issue.state_id ?? undefined}
                     onChange={() => {}}
                     projectId={projectId?.toString() ?? ""}
-                    disabled={true}
+                    disabled
                     buttonVariant="background-with-text"
                     buttonContainerClassName="cursor-pointer"
                     buttonClassName="group-hover:bg-custom-background-100"

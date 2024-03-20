@@ -2,7 +2,6 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Crown } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // components

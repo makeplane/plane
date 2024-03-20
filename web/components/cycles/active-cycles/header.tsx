@@ -1,15 +1,16 @@
 import { FC } from "react";
 import Link from "next/link";
-// ui
-import { Tooltip, CycleGroupIcon, getButtonStyling } from "@plane/ui";
 // icons
 import { UserCircle2 } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
+// ui
+import { Tooltip, CycleGroupIcon, getButtonStyling } from "@plane/ui";
 // helpers
-import { truncateText } from "helpers/string.helper";
-import { renderFormattedDate, findHowManyDaysLeft } from "helpers/date-time.helper";
-import { useMember } from "hooks/store";
+import { renderFormattedDate, findHowManyDaysLeft } from "@/helpers/date-time.helper";
+import { truncateText } from "@/helpers/string.helper";
+// hooks
+import { useMember } from "@/hooks/store";
 
 export type ActiveCycleHeaderProps = {
   cycle: ICycle;

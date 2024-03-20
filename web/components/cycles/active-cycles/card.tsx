@@ -1,4 +1,6 @@
 import { FC } from "react";
+// types
+import { IActiveCycle } from "@plane/types";
 // components
 import {
   ActiveCyclesProjectTitle,
@@ -6,9 +8,7 @@ import {
   ActiveCycleProgress,
   ActiveCycleProductivity,
   ActiveCyclePriorityIssues,
-} from "components/cycles/active-cycles";
-// types
-import { IActiveCycle } from "@plane/types";
+} from "@/components/cycles/active-cycles";
 
 export type ActiveCycleInfoCardProps = {
   cycle: IActiveCycle;

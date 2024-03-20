@@ -1,14 +1,14 @@
 import { FC, useEffect } from "react";
 import useSWR from "swr";
-// components
-import { ActiveCycleInfoCard } from "components/cycles/active-cycles";
-// constants
-import { WORKSPACE_ACTIVE_CYCLES_LIST } from "constants/fetch-keys";
-// services
-import { CycleService } from "services/cycle.service";
-const cycleService = new CycleService();
 // ui
 import { Spinner } from "@plane/ui";
+// components
+import { ActiveCycleInfoCard } from "@/components/cycles/active-cycles";
+// constants
+import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
+// services
+import { CycleService } from "@/services/cycle.service";
+const cycleService = new CycleService();
 
 export type ActiveCyclesListPageProps = {
   workspaceSlug: string;

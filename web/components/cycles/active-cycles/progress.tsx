@@ -1,10 +1,10 @@
 import { FC } from "react";
-// ui
-import { LinearProgressIndicator } from "@plane/ui";
 // types
 import { ICycle } from "@plane/types";
+// ui
+import { LinearProgressIndicator } from "@plane/ui";
 // constants
-import { WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
+import { WORKSPACE_ACTIVE_CYCLE_STATE_GROUPS_DETAILS } from "@/constants/cycle";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle;
