@@ -4,7 +4,7 @@ import { renderFormattedDate, renderFormattedPayloadDate } from "./date-time.hel
 // types
 import { TIssuesListTypes } from "@plane/types";
 // constants
-import { DURATION_FILTER_OPTIONS, EDurationFilters } from "constants/dashboard";
+import { DURATION_FILTER_OPTIONS, EDurationFilters } from "@/constants/dashboard";
 
 /**
  * @description returns date range based on the duration filter

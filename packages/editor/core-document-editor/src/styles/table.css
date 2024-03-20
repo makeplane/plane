@@ -92,6 +92,7 @@
   margin: 3px 0;
 }
 
+/* table dropdown */
 .tableWrapper table .column-resize-handle {
   position: absolute;
   right: -2px;

@@ -2,16 +2,15 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 import { Breadcrumbs, Button, LayersIcon, Tooltip } from "@plane/ui";
-import { ProjectAnalyticsModal } from "components/analytics";
-import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { IssuesMobileHeader } from "components/issues/issues-mobile-header";
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
+import { ProjectAnalyticsModal } from "@/components/analytics";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { ProjectLogo } from "@/components/project";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
 import {
   useApplication,
   useEventTracker,
@@ -20,13 +19,12 @@ import {
   useProjectState,
   useUser,
   useMember,
-} from "hooks/store";
-import { useIssues } from "hooks/store/use-issues";
+} from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // components
 // ui
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
-import { ProjectLogo } from "components/project";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 // helper
 
@@ -117,9 +115,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         projectDetails={currentProjectDetails ?? undefined}
       />
       <div className="relative z-[15] items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-2 p-4 border-b border-custom-border-200 bg-custom-sidebar-background-100">
+        <div className="flex items-center gap-2 p-4 bg-custom-sidebar-background-100">
           <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-            <SidebarHamburgerToggle />
             <div className="flex items-center gap-2.5">
               <Breadcrumbs onBack={() => router.back()}>
                 <Breadcrumbs.BreadcrumbItem
@@ -230,9 +227,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </Button>
             </>
           )}
-        </div>
-        <div className="block md:hidden">
-          <IssuesMobileHeader />
         </div>
       </div>
     </>

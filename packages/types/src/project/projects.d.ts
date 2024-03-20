@@ -1,4 +1,4 @@
-import { EUserProjectRoles } from "constants/project";
+import { EUserProjectRoles } from "@/constants/project";
 import type {
   IProjectViewProps,
   IUser,

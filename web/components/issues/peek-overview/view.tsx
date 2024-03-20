@@ -12,11 +12,11 @@ import {
   TIssueOperations,
   ArchiveIssueModal,
   PeekOverviewIssueAttachments,
-} from "components/issues";
+} from "@/components/issues";
 // hooks
-import { useIssueDetail, useUser } from "hooks/store";
-import useKeypress from "hooks/use-keypress";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { useIssueDetail, useUser } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
 import { SubIssuesRoot } from "../sub-issues";

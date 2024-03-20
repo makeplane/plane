@@ -2,17 +2,17 @@ import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // layouts
-import { PageHead } from "components/core";
-import { GlobalIssuesHeader } from "components/headers";
-import { AllIssueLayoutRoot } from "components/issues";
-import { GlobalViewsHeader } from "components/workspace";
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
-import { useGlobalView, useWorkspace } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
+import { PageHead } from "@/components/core";
+import { GlobalIssuesHeader } from "@/components/headers";
+import { AllIssueLayoutRoot } from "@/components/issues";
+import { GlobalViewsHeader } from "@/components/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
+import { useGlobalView, useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
 // hooks
 // components
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // constants
 
 const GlobalViewIssuesPage: NextPageWithLayout = observer(() => {

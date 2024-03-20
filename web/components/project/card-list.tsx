@@ -1,16 +1,16 @@
-import Image from "next/image";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
 // hooks
-import { useApplication, useEventTracker, useProject, useProjectFilter } from "hooks/store";
 // components
-import { EmptyState } from "components/empty-state";
-import { ProjectCard } from "components/project";
-import { ProjectsLoader } from "components/ui";
+import { EmptyState } from "@/components/empty-state";
+import { ProjectCard } from "@/components/project";
+import { ProjectsLoader } from "@/components/ui";
 // assets
+import { EmptyStateType } from "@/constants/empty-state";
+import { useApplication, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
 import AllFiltersImage from "public/empty-state/project/all-filters.svg";
 import NameFilterImage from "public/empty-state/project/name-filter.svg";
 // constants
-import { EmptyStateType } from "constants/empty-state";
 
 export const ProjectCardList = observer(() => {
   // store hooks

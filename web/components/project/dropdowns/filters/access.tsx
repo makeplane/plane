@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { NETWORK_CHOICES } from "constants/project";
+import { NETWORK_CHOICES } from "@/constants/project";
 
 type Props = {
   appliedFilters: string[] | null;

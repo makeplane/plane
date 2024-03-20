@@ -1,17 +1,17 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { TIssue } from "@plane/types";
 // components
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
-import { useIssueDetail, useProject, useProjectState } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-import { TIssue } from "@plane/types";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
 // types
 import { TSubIssueOperations } from "./root";
-import { cn } from "helpers/common.helper";
 // import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 export interface ISubIssues {

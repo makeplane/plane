@@ -1,15 +1,15 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import type { IProject } from "@plane/types";
 // hooks
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { useEventTracker, useProject } from "hooks/store";
+import { PROJECT_DELETED } from "@/constants/event-tracker";
+import { useEventTracker, useProject } from "@/hooks/store";
 // ui
 // types
-import type { IProject } from "@plane/types";
-import { PROJECT_DELETED } from "constants/event-tracker";
 // constants
 
 type DeleteProjectModal = {

@@ -1,23 +1,23 @@
 import { Fragment, useRef, useState } from "react";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { Sparkle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { TIssue } from "@plane/types";
 // hooks
 import { Button, Input, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-import { GptAssistantPopover } from "components/core";
-import { PriorityDropdown } from "components/dropdowns";
-import { ISSUE_CREATED } from "constants/event-tracker";
-import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "hooks/store";
+import { GptAssistantPopover } from "@/components/core";
+import { PriorityDropdown } from "@/components/dropdowns";
+import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { useApplication, useEventTracker, useWorkspace, useInboxIssues, useMention } from "@/hooks/store";
 // services
-import { AIService } from "services/ai.service";
-import { FileService } from "services/file.service";
+import { AIService } from "@/services/ai.service";
+import { FileService } from "@/services/file.service";
 // components
 // ui
 // types
-import { TIssue } from "@plane/types";
 // constants
 
 type Props = {

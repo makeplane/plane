@@ -3,22 +3,21 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 import { List, PlusIcon, Sheet } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
 // components
-import { CreateUpdateWorkspaceViewModal } from "components/workspace";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // ui
 // icons
 // types
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useLabel, useMember, useUser, useIssues } from "hooks/store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -109,9 +108,8 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-[15] flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
         <div className="relative flex gap-2">
-          <SidebarHamburgerToggle />
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"

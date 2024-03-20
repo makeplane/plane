@@ -1,13 +1,13 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-// components
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "components/issues";
-// hooks
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { useIssues, useLabel } from "hooks/store";
-// constants
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
+// components
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
+// hooks
+import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { useIssues, useLabel } from "@/hooks/store";
+// constants
 
 export const ProfileIssuesFilter = observer(() => {
   // router

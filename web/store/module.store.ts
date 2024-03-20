@@ -3,12 +3,12 @@ import sortBy from "lodash/sortBy";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // services
-import { ModuleService } from "services/module.service";
-import { ProjectService } from "services/project";
+import { ModuleService } from "@/services/module.service";
+import { ProjectService } from "@/services/project";
 // helpers
-import { orderModules, shouldFilterModule } from "helpers/module.helper";
+import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
 // types
-import { RootStore } from "store/root.store";
+import { RootStore } from "@/store/root.store";
 import { IModule, ILinkDetails } from "@plane/types";
 
 export interface IModuleStore {

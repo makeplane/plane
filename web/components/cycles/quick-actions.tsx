@@ -2,15 +2,15 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { LinkIcon, Pencil, Trash2 } from "lucide-react";
 // hooks
-import { useCycle, useEventTracker, useUser } from "hooks/store";
 // components
-import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
-// ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
+// ui
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { EUserProjectRoles } from "@/constants/project";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 // constants
-import { EUserProjectRoles } from "constants/project";
+import { useCycle, useEventTracker, useUser } from "@/hooks/store";
 
 type Props = {
   cycleId: string;

@@ -5,27 +5,27 @@ import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { Menu, Transition } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+import { IUser, TOnboardingSteps } from "@plane/types";
 // hooks
 import { Avatar, Spinner } from "@plane/ui";
-import { PageHead } from "components/core";
-import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "components/onboarding";
-import { USER_ONBOARDING_COMPLETED } from "constants/event-tracker";
-import { useEventTracker, useUser, useWorkspace } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
+import { PageHead } from "@/components/core";
+import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "@/components/onboarding";
+import { USER_ONBOARDING_COMPLETED } from "@/constants/event-tracker";
+import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
 // services
-import { UserAuthWrapper } from "layouts/auth-layout";
-import DefaultLayout from "layouts/default-layout";
-import { NextPageWithLayout } from "lib/types";
+import { UserAuthWrapper } from "@/layouts/auth-layout";
+import DefaultLayout from "@/layouts/default-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { WorkspaceService } from "@/services/workspace.service";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import { WorkspaceService } from "services/workspace.service";
 // layouts
 // components
 // ui
 // images
 // types
-import { IUser, TOnboardingSteps } from "@plane/types";
 // constants
 
 // services

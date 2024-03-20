@@ -1,17 +1,17 @@
 import { ReactElement, useCallback } from "react";
 import { observer } from "mobx-react";
-// components
-import { PageHead } from "components/core";
-import { ProjectsHeader } from "components/headers";
-import { ProjectAppliedFiltersList, ProjectCardList } from "components/project";
-// layouts
-import { useApplication, useProject, useProjectFilter, useWorkspace } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-// helpers
-import { calculateTotalFilters } from "helpers/filter.helper";
-// types
-import { NextPageWithLayout } from "lib/types";
 import { TProjectFilters } from "@plane/types";
+// components
+import { PageHead } from "@/components/core";
+import { ProjectsHeader } from "@/components/headers";
+import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
+// layouts
+import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { useApplication, useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+// helpers
+// types
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProjectsPage: NextPageWithLayout = observer(() => {
   // store

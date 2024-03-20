@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
-import { ProjectIssueQuickActions } from "components/issues";
-import { EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useUser } from "hooks/store";
+import { ProjectIssueQuickActions } from "@/components/issues";
+import { EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useUser } from "@/hooks/store";
 // components
 // types
 // constants

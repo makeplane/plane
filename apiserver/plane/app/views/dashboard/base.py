@@ -38,7 +38,6 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     IssueRelation,
-    IssueAssignee,
     User,
 )
 from plane.app.serializers import (

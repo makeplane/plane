@@ -3,12 +3,12 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
 // components
-import { ModuleIssueQuickActions } from "components/issues";
-import { BaseCalendarRoot } from "../base-calendar-root";
+import { ModuleIssueQuickActions } from "@/components/issues";
 // types
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
+import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const ModuleCalendarLayout: React.FC = observer(() => {
   const router = useRouter();

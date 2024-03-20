@@ -1,8 +1,8 @@
 // icons
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { SettingIcon } from "components/icons";
+import { SettingIcon } from "@/components/icons";
 // types
-import { Props } from "components/icons/types";
+import { Props } from "@/components/icons/types";
 import { TProjectOrderByOptions } from "@plane/types";
 
 export enum EUserProjectRoles {

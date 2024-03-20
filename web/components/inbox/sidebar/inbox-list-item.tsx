@@ -5,14 +5,14 @@ import { useRouter } from "next/router";
 // icons
 import { CalendarDays } from "lucide-react";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // helpers
-import { InboxIssueStatus } from "components/inbox/inbox-issue-status";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { InboxIssueStatus } from "@/components/inbox/inbox-issue-status";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // components
-import { useInboxIssues, useIssueDetail, useProject } from "hooks/store";
+import { useInboxIssues, useIssueDetail, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueListItem = {
   workspaceSlug: string;
@@ -87,7 +87,11 @@ export const InboxIssueListItem: FC<TInboxIssueListItem> = observer((props) => {
             <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`} isMobile={isMobile}>
               <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
             </Tooltip>
-            <Tooltip tooltipHeading="Created on" tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`} isMobile={isMobile}>
+            <Tooltip
+              tooltipHeading="Created on"
+              tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
+              isMobile={isMobile}
+            >
               <div className="flex items-center gap-1 rounded border border-custom-border-200 px-2 py-[0.19rem] text-xs text-custom-text-200 shadow-sm">
                 <CalendarDays size={12} strokeWidth={1.5} />
                 <span>{renderFormattedDate(issue.created_at ?? "")}</span>

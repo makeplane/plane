@@ -3,10 +3,8 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import useSWR from "swr";
 // hooks
-import { useCycle, useCycleFilter, useIssues, useMember, useProject } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
-// ui
-import { SingleProgressStats } from "components/core";
+import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
+import { ICycle, TCycleGroups } from "@plane/types";
 import {
   AvatarGroup,
   Loader,
@@ -20,24 +18,31 @@ import {
   setPromiseToast,
   getButtonStyling,
 } from "@plane/ui";
+import { SingleProgressStats } from "@/components/core";
+// ui
 // components
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { ActiveCycleProgressStats, UpcomingCyclesList } from "components/cycles";
-import { StateDropdown } from "components/dropdowns";
-import { EmptyState } from "components/empty-state";
+import ProgressChart from "@/components/core/sidebar/progress-chart";
+import { ActiveCycleProgressStats, UpcomingCyclesList } from "@/components/cycles";
+import { StateDropdown } from "@/components/dropdowns";
+import { EmptyState } from "@/components/empty-state";
 // icons
-import { ArrowRight, CalendarCheck, CalendarDays, Star, Target } from "lucide-react";
 // helpers
-import { renderFormattedDate, findHowManyDaysLeft, renderFormattedDateWithoutYear } from "helpers/date-time.helper";
-import { truncateText } from "helpers/string.helper";
-import { cn } from "helpers/common.helper";
 // types
-import { ICycle, TCycleGroups } from "@plane/types";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { CYCLE_STATE_GROUPS_DETAILS } from "constants/cycle";
-import { EmptyStateType } from "constants/empty-state";
+import { CYCLE_STATE_GROUPS_DETAILS } from "@/constants/cycle";
+import { EmptyStateType } from "@/constants/empty-state";
+import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
+import { EIssuesStoreType } from "@/constants/issue";
+import { cn } from "@/helpers/common.helper";
+import {
+  renderFormattedDate,
+  findHowManyDaysLeft,
+  renderFormattedDateWithoutYear,
+  getDate,
+} from "@/helpers/date-time.helper";
+import { truncateText } from "@/helpers/string.helper";
+import { useCycle, useCycleFilter, useIssues, useMember, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -124,8 +129,8 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
       );
   }
 
-  const endDate = new Date(activeCycle.end_date ?? "");
-  const startDate = new Date(activeCycle.start_date ?? "");
+  const endDate = getDate(activeCycle.end_date);
+  const startDate = getDate(activeCycle.start_date);
   const daysLeft = findHowManyDaysLeft(activeCycle.end_date) ?? 0;
   const cycleStatus = activeCycle.status.toLowerCase() as TCycleGroups;
 
@@ -349,7 +354,11 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                         buttonVariant="background-with-text"
                       />
                       {issue.target_date && (
-                        <Tooltip tooltipHeading="Target Date" tooltipContent={renderFormattedDate(issue.target_date)} isMobile={isMobile}>
+                        <Tooltip
+                          tooltipHeading="Target Date"
+                          tooltipContent={renderFormattedDate(issue.target_date)}
+                          isMobile={isMobile}
+                        >
                           <div className="flex h-full cursor-not-allowed items-center gap-1.5 rounded bg-custom-background-80 px-2 py-0.5 text-xs">
                             <CalendarCheck className="h-3 w-3 flex-shrink-0" />
                             <span className="text-xs">{renderFormattedDateWithoutYear(issue.target_date)}</span>

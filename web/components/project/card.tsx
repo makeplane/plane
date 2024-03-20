@@ -3,21 +3,21 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Check, LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import type { IProject } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup, Button, Tooltip, TOAST_TYPE, setToast, setPromiseToast } from "@plane/ui";
 // components
-import { DeleteProjectModal, JoinProjectModal, ProjectLogo } from "components/project";
+import { DeleteProjectModal, JoinProjectModal, ProjectLogo } from "@/components/project";
 // helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { EUserProjectRoles } from "@/constants/project";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useProject } from "hooks/store";
+import { useProject } from "@/hooks/store";
 // types
-import type { IProject } from "@plane/types";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   project: IProject;

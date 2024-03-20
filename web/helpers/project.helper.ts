@@ -1,10 +1,10 @@
 import sortBy from "lodash/sortBy";
 // helpers
-import { satisfiesDateFilter } from "helpers/filter.helper";
+import { satisfiesDateFilter } from "@/helpers/filter.helper";
 // types
 import { IProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "constants/project";
+import { EUserProjectRoles } from "@/constants/project";
 
 /**
  * Updates the sort order of the project.

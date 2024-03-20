@@ -5,10 +5,10 @@ import { observer } from "mobx-react-lite";
 import { PriorityIcon } from "@plane/ui";
 
 // components
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 
 // constants
-import { ISSUE_PRIORITIES } from "constants/issue";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 
 type Props = {
   appliedFilters: string[] | null;

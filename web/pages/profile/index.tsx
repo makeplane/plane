@@ -1,12 +1,13 @@
 import React, { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { ChevronDown, User2 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
 // hooks
 // layouts
 // components
-import { ChevronDown, User2 } from "lucide-react";
+import type { IUser } from "@plane/types";
 import {
   Button,
   CustomSelect,
@@ -17,26 +18,25 @@ import {
   setPromiseToast,
   setToast,
 } from "@plane/ui";
-import { DeactivateAccountModal } from "components/account";
-import { ImagePickerPopover, UserImageUploadModal, PageHead } from "components/core";
+import { DeactivateAccountModal } from "@/components/account";
+import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
 // ui
 // icons
 // components
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 // constants
-import { TIME_ZONES } from "constants/timezones";
-import { USER_ROLES } from "constants/workspace";
+import { TIME_ZONES } from "@/constants/timezones";
+import { USER_ROLES } from "@/constants/workspace";
 // hooks
-import { useApplication, useUser } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { useApplication, useUser } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
 // lib types
-import type { NextPageWithLayout } from "lib/types";
-import { FileService } from "services/file.service";
+import type { NextPageWithLayout } from "@/lib/types";
+import { FileService } from "@/services/file.service";
 // services
 // types
-import type { IUser } from "@plane/types";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",

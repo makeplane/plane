@@ -1,6 +1,6 @@
 import sortBy from "lodash/sortBy";
 // helpers
-import { satisfiesDateFilter } from "helpers/filter.helper";
+import { satisfiesDateFilter } from "@/helpers/filter.helper";
 // types
 import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
 

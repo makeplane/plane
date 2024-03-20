@@ -155,7 +155,7 @@ export const PageRenderer = (props: IPageRenderer) => {
       ) : (
         <TextArea
           onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none"
+          className="-mt-2 w-full bg-custom-background text-4xl font-bold outline-none p-0 border-none resize-none rounded-none"
           placeholder="Untitled Page"
           value={pageTitle}
         />

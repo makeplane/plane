@@ -1,10 +1,10 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-import { Combobox } from "@headlessui/react";
 import { Check, Search, Tag } from "lucide-react";
+import { Combobox } from "@headlessui/react";
 // hooks
-import { useIssueDetail, useLabel } from "hooks/store";
+import { useIssueDetail, useLabel } from "@/hooks/store";
 // components
 
 export interface IIssueLabelSelect {

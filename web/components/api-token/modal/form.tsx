@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { DateDropdown } from "components/dropdowns";
 import { Calendar } from "lucide-react";
+import { IApiToken } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { renderFormattedDate, renderFormattedPayloadDate } from "helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
-import { IApiToken } from "@plane/types";
 
 type Props = {
   handleClose: () => void;

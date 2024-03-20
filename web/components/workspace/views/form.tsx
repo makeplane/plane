@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // components
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // hooks
-import { useLabel, useMember } from "hooks/store";
+import { useLabel, useMember } from "@/hooks/store";
 // types
-import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;

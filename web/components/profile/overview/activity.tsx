@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 //hooks
 import { Loader } from "@plane/ui";
-import { ActivityMessage, IssueLink } from "components/core";
-import { ProfileEmptyState } from "components/ui";
-import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
-import { calculateTimeAgo } from "helpers/date-time.helper";
-import { useUser } from "hooks/store";
+import { ActivityMessage, IssueLink } from "@/components/core";
+import { ProfileEmptyState } from "@/components/ui";
+import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { useUser } from "@/hooks/store";
 // services
+import { UserService } from "@/services/user.service";
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
-import { UserService } from "services/user.service";
 // components
 // ui
 // image

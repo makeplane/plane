@@ -5,24 +5,24 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 // hooks
-import { useUser } from "hooks/store";
-import useUserAuth from "hooks/use-user-auth";
-// services
-import { IntegrationService } from "services/integrations";
-// components
-import { ImportExportSettingsLoader } from "components/ui";
-import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
-import { EmptyState } from "components/empty-state";
-// ui
-import { Button } from "@plane/ui";
-// icons
 import { RefreshCw } from "lucide-react";
-// types
 import { IImporterService } from "@plane/types";
+import { Button } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
+import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
+import { ImportExportSettingsLoader } from "@/components/ui";
+import { EmptyStateType } from "@/constants/empty-state";
+import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+import { IMPORTERS_LIST } from "@/constants/workspace";
+import { useUser } from "@/hooks/store";
+import useUserAuth from "@/hooks/use-user-auth";
+// services
+import { IntegrationService } from "@/services/integrations";
+// components
+// ui
+// icons
+// types
 // constants
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
-import { IMPORTERS_LIST } from "constants/workspace";
-import { EmptyStateType } from "constants/empty-state";
 
 // services
 const integrationService = new IntegrationService();

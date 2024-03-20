@@ -2,16 +2,16 @@ import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
+import { IAnalyticsParams } from "@plane/types";
 // services
 // components
-import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "components/analytics";
+import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "@/components/analytics";
 // types
 // fetch-keys
-import { ANALYTICS } from "constants/fetch-keys";
-import { cn } from "helpers/common.helper";
-import { useApplication } from "hooks/store";
-import { AnalyticsService } from "services/analytics.service";
-import { IAnalyticsParams } from "@plane/types";
+import { ANALYTICS } from "@/constants/fetch-keys";
+import { cn } from "@/helpers/common.helper";
+import { useApplication } from "@/hooks/store";
+import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
   additionalParams?: Partial<IAnalyticsParams>;

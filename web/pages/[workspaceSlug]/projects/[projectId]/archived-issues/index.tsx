@@ -2,15 +2,15 @@ import { ReactElement } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 // layouts
-import { PageHead } from "components/core";
-import { ProjectArchivedIssuesHeader } from "components/headers";
-import { ArchivedIssueLayoutRoot } from "components/issues";
-import { useProject } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
+import { PageHead } from "@/components/core";
+import { ProjectArchivedIssuesHeader } from "@/components/headers";
+import { ArchivedIssueLayoutRoot } from "@/components/issues";
+import { useProject } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
 // contexts
 // components
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // hooks
 
 const ProjectArchivedIssuesPage: NextPageWithLayout = observer(() => {

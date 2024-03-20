@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 // hooks
-import { useModule } from "hooks/store";
+import { useModule } from "@/hooks/store";
 // components
 import { ModuleDetailsSidebar } from "./sidebar";
 

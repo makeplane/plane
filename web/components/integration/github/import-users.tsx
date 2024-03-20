@@ -5,7 +5,7 @@ import { UseFormWatch } from "react-hook-form";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { IUserDetails, SingleUserSelect, TFormValues, TIntegrationSteps } from "components/integration";
+import { IUserDetails, SingleUserSelect, TFormValues, TIntegrationSteps } from "@/components/integration";
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;

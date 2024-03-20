@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { usePopper } from "react-popper";
-import { Calendar, History, Info } from "lucide-react";
 // helpers
 import { renderFormattedDate } from "helpers/date-time.helper";
+import { usePopper } from "react-popper";
 // types
 import { IPageStore } from "store/page.store";
+import { Calendar, History, Info } from "lucide-react";
 
 type Props = {
   pageStore: IPageStore;
@@ -38,14 +38,14 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
             <h6 className="text-xs text-custom-text-400">Last updated on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <History className="h-3 w-3" />
-              {renderFormattedDate(new Date(pageStore.updated_at))}
+              {renderFormattedDate(pageStore.updated_at)}
             </h5>
           </div>
           <div className="space-y-1.5">
             <h6 className="text-xs text-custom-text-400">Created on</h6>
             <h5 className="flex items-center gap-1 text-sm">
               <Calendar className="h-3 w-3" />
-              {renderFormattedDate(new Date(pageStore.created_at))}
+              {renderFormattedDate(pageStore.created_at)}
             </h5>
           </div>
         </div>

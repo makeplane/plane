@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Settings } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // icons
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 
 export interface IInstanceAdminHeader {
   title?: string;

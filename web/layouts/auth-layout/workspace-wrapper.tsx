@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // hooks
 import { Button, Spinner } from "@plane/ui";
-import { useLabel, useMember, useProject, useUser } from "hooks/store";
+import { useLabel, useMember, useProject, useUser } from "@/hooks/store";
 // icons
 
 export interface IWorkspaceAuthWrapper {

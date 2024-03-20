@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useProject, useProjectState } from "hooks/store";
 // icons
-import { Search } from "lucide-react";
 // components
-import { EmptyState } from "components/empty-state";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
 // services
-import { IssueService } from "services/issue";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { EmptyStateType } from "constants/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
+import { PROJECT_ISSUES_LIST } from "@/constants/fetch-keys";
+import { useProject, useProjectState } from "@/hooks/store";
+import { IssueService } from "@/services/issue";
 
 type Props = {
   isOpen: boolean;

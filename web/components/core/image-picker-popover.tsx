@@ -8,12 +8,12 @@ import useSWR from "swr";
 import { Tab, Popover } from "@headlessui/react";
 // hooks
 import { Button, Input, Loader } from "@plane/ui";
-import { MAX_FILE_SIZE } from "constants/common";
-import { useApplication, useWorkspace } from "hooks/store";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
+import { MAX_FILE_SIZE } from "@/constants/common";
+import { useApplication, useWorkspace } from "@/hooks/store";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { FileService } from "services/file.service";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { FileService } from "@/services/file.service";
 // hooks
 // components
 // constants

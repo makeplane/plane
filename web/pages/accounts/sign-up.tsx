@@ -3,15 +3,15 @@ import { observer } from "mobx-react-lite";
 import Image from "next/image";
 // hooks
 import { Spinner } from "@plane/ui";
-import { SignUpRoot } from "components/account";
-import { PageHead } from "components/core";
-import { useApplication, useUser } from "hooks/store";
+import { SignUpRoot } from "@/components/account";
+import { PageHead } from "@/components/core";
+import { useApplication, useUser } from "@/hooks/store";
 // layouts
-import DefaultLayout from "layouts/default-layout";
+import DefaultLayout from "@/layouts/default-layout";
 // components
 // ui
 // assets
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 
