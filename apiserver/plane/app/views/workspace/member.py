@@ -1,40 +1,42 @@
 # Django imports
 from django.db.models import (
-    Q,
+    CharField,
     Count,
+    Q,
 )
 from django.db.models.functions import Cast
-from django.db.models import CharField
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
-from plane.app.serializers import (
-    WorkSpaceMemberSerializer,
-    TeamSerializer,
-    UserLiteSerializer,
-    WorkspaceMemberAdminSerializer,
-    WorkspaceMemberMeSerializer,
-    ProjectMemberRoleSerializer,
-)
-from plane.app.views.base import BaseAPIView
-from .. import BaseViewSet
-from plane.db.models import (
-    User,
-    Workspace,
-    Team,
-    ProjectMember,
-    Project,
-    WorkspaceMember,
-)
 from plane.app.permissions import (
     WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
     WorkspaceUserPermission,
 )
+
+# Module imports
+from plane.app.serializers import (
+    ProjectMemberRoleSerializer,
+    TeamSerializer,
+    UserLiteSerializer,
+    WorkspaceMemberAdminSerializer,
+    WorkspaceMemberMeSerializer,
+    WorkSpaceMemberSerializer,
+)
+from plane.app.views.base import BaseAPIView
+from plane.db.models import (
+    Project,
+    ProjectMember,
+    Team,
+    User,
+    Workspace,
+    WorkspaceMember,
+)
 from plane.utils.cache import cache_response, invalidate_cache
+
+from .. import BaseViewSet
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
@@ -147,6 +149,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/workspaces/:slug/members/", url_params=True, user=False
     )
+    @invalidate_cache(path="/api/users/me/settings/")
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
@@ -214,6 +217,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/workspaces/:slug/members/", url_params=True, user=False
     )
+    @invalidate_cache(path="/api/users/me/settings/")
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,

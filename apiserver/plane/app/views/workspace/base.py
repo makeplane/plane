@@ -1,48 +1,50 @@
 # Python imports
-from datetime import date
-from dateutil.relativedelta import relativedelta
 import csv
 import io
+from datetime import date
 
+from dateutil.relativedelta import relativedelta
+from django.db import IntegrityError
+from django.db.models import (
+    Count,
+    F,
+    Func,
+    OuterRef,
+    Prefetch,
+    Q,
+)
+from django.db.models.fields import DateField
+from django.db.models.functions import Cast, ExtractDay, ExtractWeek
 
 # Django imports
 from django.http import HttpResponse
-from django.db import IntegrityError
 from django.utils import timezone
-from django.db.models import (
-    Prefetch,
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Count,
-)
-from django.db.models.functions import ExtractWeek, Cast, ExtractDay
-from django.db.models.fields import DateField
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
+
+from plane.app.permissions import (
+    WorkSpaceAdminPermission,
+    WorkSpaceBasePermission,
+    WorkspaceEntityPermission,
+)
 
 # Module imports
 from plane.app.serializers import (
     WorkSpaceSerializer,
     WorkspaceThemeSerializer,
 )
-from plane.app.views.base import BaseViewSet, BaseAPIView
+from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
-    Workspace,
-    IssueActivity,
     Issue,
-    WorkspaceTheme,
+    IssueActivity,
+    Workspace,
     WorkspaceMember,
-)
-from plane.app.permissions import (
-    WorkSpaceBasePermission,
-    WorkSpaceAdminPermission,
-    WorkspaceEntityPermission,
+    WorkspaceTheme,
 )
 from plane.utils.cache import cache_response, invalidate_cache
+
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -138,6 +140,7 @@ class WorkSpaceViewSet(BaseViewSet):
                     {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_410_GONE,
                 )
+
     @cache_response(60 * 60 * 2)
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -149,6 +152,7 @@ class WorkSpaceViewSet(BaseViewSet):
 
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/")
+    @invalidate_cache(path="/api/users/me/settings/")
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
