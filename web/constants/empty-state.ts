@@ -51,6 +51,7 @@ export enum EmptyStateType {
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
   PROJECT_CYCLE_ALL = "project-cycle-all",
   PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
+  PROJECT_ARCHIVED_NO_CYCLES = "project-archived-no-cycles",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
   PROJECT_DRAFT_EMPTY_FILTER = "project-draft-empty-filter",
@@ -62,6 +63,7 @@ export enum EmptyStateType {
   MEMBERS_EMPTY_SEARCH = "members-empty-search",
   PROJECT_MODULE_ISSUES = "project-module-issues",
   PROJECT_MODULE = "project-module",
+  PROJECT_ARCHIVED_NO_MODULES = "project-archived-no-modules",
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
   PROJECT_PAGE_ALL = "project-page-all",
@@ -308,6 +310,12 @@ const emptyStateDetails = {
       "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
     path: "/empty-state/cycle/completed-no-issues",
   },
+  [EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES,
+    title: "No archived cycles yet",
+    description: "To tidy up your project, archive completed cycles. Find them here once archived.",
+    path: "/empty-state/archived/empty-cycles",
+  },
   [EmptyStateType.PROJECT_CYCLE_ALL]: {
     key: EmptyStateType.PROJECT_CYCLE_ALL,
     title: "No cycles",
@@ -368,7 +376,7 @@ const emptyStateDetails = {
     key: EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES,
     title: "No archived issues yet",
     description:
-      "Archived issues help you remove issues you completed or cancelled from focus. You can set automation to auto archive issues and find them here.",
+      "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
     path: "/empty-state/archived/empty-issues",
     primaryButton: {
       text: "Set automation",
@@ -431,6 +439,12 @@ const emptyStateDetails = {
     },
     accessType: "project",
     access: EUserProjectRoles.MEMBER,
+  },
+  [EmptyStateType.PROJECT_ARCHIVED_NO_MODULES]: {
+    key: EmptyStateType.PROJECT_ARCHIVED_NO_MODULES,
+    title: "No archived Modules yet",
+    description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+    path: "/empty-state/archived/empty-modules",
   },
   // project views
   [EmptyStateType.PROJECT_VIEW]: {

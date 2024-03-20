@@ -67,10 +67,9 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
           />
         </div>
       )}
-      {/* TODO: Update to archived module empty state */}
       {totalArchivedModules === 0 ? (
         <div className="h-full place-items-center">
-          <EmptyState type={EmptyStateType.PROJECT_MODULE} />
+          <EmptyState type={EmptyStateType.PROJECT_ARCHIVED_NO_MODULES} />
         </div>
       ) : (
         <div className="relative h-full w-full overflow-auto">

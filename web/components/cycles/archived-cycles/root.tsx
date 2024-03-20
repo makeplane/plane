@@ -63,10 +63,9 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
           />
         </div>
       )}
-      {/* TODO: Update to archived cycle empty state */}
       {totalArchivedCycles === 0 ? (
         <div className="h-full place-items-center">
-          <EmptyState type={EmptyStateType.PROJECT_CYCLES} />
+          <EmptyState type={EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES} />
         </div>
       ) : (
         <div className="relative h-full w-full overflow-auto">
