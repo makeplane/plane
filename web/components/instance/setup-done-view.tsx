@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 // hooks
 import { UserCog2 } from "lucide-react";
 import { Button } from "@plane/ui";
-import { useApplication } from "hooks/store";
+import { useApplication } from "@/hooks/store";
 // ui
 // images
 import instanceSetupDone from "public/instance-setup-done.webp";

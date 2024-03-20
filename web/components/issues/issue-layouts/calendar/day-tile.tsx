@@ -1,18 +1,18 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
-// components
-import { CalendarIssueBlocks, ICalendarDate } from "components/issues";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { cn } from "helpers/common.helper";
-// constants
-import { MONTHS_LIST } from "constants/calendar";
-// types
-import { ICycleIssuesFilter } from "store/issue/cycle";
-import { IModuleIssuesFilter } from "store/issue/module";
-import { IProjectIssuesFilter } from "store/issue/project";
-import { IProjectViewIssuesFilter } from "store/issue/project-views";
 import { TGroupedIssues, TIssue, TIssueMap } from "@plane/types";
+// components
+import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
+// helpers
+import { MONTHS_LIST } from "@/constants/calendar";
+import { cn } from "@/helpers/common.helper";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// constants
+// types
+import { ICycleIssuesFilter } from "@/store/issue/cycle";
+import { IModuleIssuesFilter } from "@/store/issue/module";
+import { IProjectIssuesFilter } from "@/store/issue/project";
+import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 type Props = {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

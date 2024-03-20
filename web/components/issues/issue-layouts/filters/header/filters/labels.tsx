@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from "react";
-import { observer } from "mobx-react";
 import sortBy from "lodash/sortBy";
+import { observer } from "mobx-react";
+import { IIssueLabel } from "@plane/types";
 // components
 import { Loader } from "@plane/ui";
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues";
 // ui
 // types
-import { IIssueLabel } from "@plane/types";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />

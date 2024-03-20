@@ -1,5 +1,5 @@
 // ui
-import { ProfileEmptyState } from "components/ui";
+import { ProfileEmptyState } from "@/components/ui";
 // image
 import emptyUsers from "public/empty-state/empty_users.svg";
 

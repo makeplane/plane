@@ -1,7 +1,7 @@
-import { CustomMenu } from "@plane/ui";
-import { MODULE_VIEW_LAYOUTS } from "constants/module";
-import { useModuleFilter, useProject } from "hooks/store";
 import { observer } from "mobx-react";
+import { CustomMenu } from "@plane/ui";
+import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
+import { useModuleFilter, useProject } from "@/hooks/store";
 
 const ModulesListMobileHeader = observer(() => {
   const { currentProjectDetails } = useProject();

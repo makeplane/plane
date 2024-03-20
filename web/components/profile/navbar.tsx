@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // components
-import { ProfileIssuesFilter } from "components/profile";
+import { ProfileIssuesFilter } from "@/components/profile";
 // constants
-import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "constants/profile";
+import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 
 type Props = {
   isAuthorized: boolean;

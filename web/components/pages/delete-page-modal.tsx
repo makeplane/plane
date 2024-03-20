@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PAGE_DELETED } from "constants/event-tracker";
+import { PAGE_DELETED } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, usePage } from "hooks/store";
-import { useProjectPages } from "hooks/store/use-project-page";
+import { useEventTracker, usePage } from "@/hooks/store";
+import { useProjectPages } from "@/hooks/store/use-project-page";
 // types
 
 type TConfirmPageDeletionProps = {

@@ -2,7 +2,7 @@ import { FC } from "react";
 // ui
 import { Settings } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 
 interface IProfileSettingHeader {
   title: string;

@@ -1,12 +1,12 @@
 // ui
 import { Trash2 } from "lucide-react";
+import { IImporterService } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // icons
 // helpers
-import { IMPORTERS_LIST } from "constants/workspace";
-import { renderFormattedDate } from "helpers/date-time.helper";
+import { IMPORTERS_LIST } from "@/constants/workspace";
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 // types
-import { IImporterService } from "@plane/types";
 // constants
 
 type Props = {

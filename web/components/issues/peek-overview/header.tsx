@@ -1,6 +1,6 @@
 import { FC } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { MoveRight, MoveDiagonal, Link2, Trash2, RotateCcw } from "lucide-react";
 // ui
 import {
@@ -14,15 +14,15 @@ import {
   setToast,
 } from "@plane/ui";
 // components
-import { IssueSubscription, IssueUpdateStatus } from "components/issues";
-import { STATE_GROUPS } from "constants/state";
+import { IssueSubscription, IssueUpdateStatus } from "@/components/issues";
+import { STATE_GROUPS } from "@/constants/state";
 // helpers
-import { cn } from "helpers/common.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { cn } from "@/helpers/common.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 // store hooks
-import { useIssueDetail, useProjectState, useUser } from "hooks/store";
+import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 

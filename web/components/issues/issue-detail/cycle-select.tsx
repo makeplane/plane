@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 // hooks
 // components
-import { CycleDropdown } from "components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns";
 // ui
 // helpers
-import { cn } from "helpers/common.helper";
-import { useIssueDetail } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { useIssueDetail } from "@/hooks/store";
 // types
 import type { TIssueOperations } from "./root";
 

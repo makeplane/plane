@@ -1,15 +1,15 @@
 import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
+import { ILinkDetails, UserAuth } from "@plane/types";
 // ui
 import { ExternalLinkIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { calculateTimeAgo } from "helpers/date-time.helper";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useMember } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { ILinkDetails, UserAuth } from "@plane/types";
 
 type Props = {
   links: ILinkDetails[];

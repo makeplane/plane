@@ -6,10 +6,10 @@ import { FileText, Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
 // helpers
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 // components
-import { useApplication, usePage, useProject } from "hooks/store";
-import { ProjectLogo } from "components/project";
+import { ProjectLogo } from "@/components/project";
+import { useApplication, usePage, useProject } from "@/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;

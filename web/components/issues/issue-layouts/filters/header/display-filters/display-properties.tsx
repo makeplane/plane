@@ -1,8 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { ISSUE_DISPLAY_PROPERTIES } from "constants/issue";
 import { IIssueDisplayProperties } from "@plane/types";
+// components
+import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 import { FilterHeader } from "../helpers/filter-header";
 // types
 // constants

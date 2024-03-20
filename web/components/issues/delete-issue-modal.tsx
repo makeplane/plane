@@ -1,12 +1,12 @@
 import { useEffect, useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { TIssue } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { TIssue } from "@plane/types";
+import { useIssues, useProject } from "@/hooks/store";
 // hooks
-import { useIssues, useProject } from "hooks/store";
 
 type Props = {
   isOpen: boolean;

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { IUserLite } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
-import { useUser } from "hooks/store";
+import { useUser } from "@/hooks/store";
 // ui
 // types
-import { IUserLite } from "@plane/types";
 
 type Props = {
   data: IUserLite;

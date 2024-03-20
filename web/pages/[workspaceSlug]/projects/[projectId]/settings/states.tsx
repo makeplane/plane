@@ -1,15 +1,15 @@
 import { ReactElement } from "react";
 import { observer } from "mobx-react";
 // layout
-import { PageHead } from "components/core";
-import { ProjectSettingHeader } from "components/headers";
-import { ProjectSettingStateList } from "components/states";
-import { useProject } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/settings-layout";
+import { PageHead } from "@/components/core";
+import { ProjectSettingHeader } from "@/components/headers";
+import { ProjectSettingStateList } from "@/components/states";
+import { useProject } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProjectSettingLayout } from "@/layouts/settings-layout";
 // components
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 // hook
 
 const StatesSettingsPage: NextPageWithLayout = observer(() => {

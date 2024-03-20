@@ -4,12 +4,12 @@ import { Plus } from "lucide-react";
 // hooks
 // components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 // helpers
-import { EUserProjectRoles } from "constants/project";
+import { ProjectLogo } from "@/components/project";
+import { EUserProjectRoles } from "@/constants/project";
 // constants
-import { useApplication, useProject, useUser } from "hooks/store";
-import { ProjectLogo } from "components/project";
+import { useApplication, useProject, useUser } from "@/hooks/store";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router

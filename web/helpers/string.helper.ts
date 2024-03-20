@@ -4,7 +4,7 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   VIEW_ISSUES,
-} from "constants/fetch-keys";
+} from "@/constants/fetch-keys";
 
 export const addSpaceIfCamelCase = (str: string) => {
   if (str === undefined || str === null) return "";

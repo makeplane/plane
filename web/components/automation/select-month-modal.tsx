@@ -4,10 +4,10 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
+import type { IProject } from "@plane/types";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IProject } from "@plane/types";
 
 // types
 type Props = {

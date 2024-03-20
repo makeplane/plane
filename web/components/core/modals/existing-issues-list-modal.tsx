@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Rocket, Search, X } from "lucide-react";
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // services
-import { ProjectService } from "services/project";
+import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import useDebounce from "@/hooks/use-debounce";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { ProjectService } from "@/services/project";
 // hooks
-import useDebounce from "hooks/use-debounce";
-import { usePlatformOS } from "hooks/use-platform-os";
 // components
 import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
 // ui
-import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // types
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 
 type Props = {
   workspaceSlug: string | undefined;

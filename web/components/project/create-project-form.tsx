@@ -2,6 +2,7 @@ import { useState, FC, ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { Info, X } from "lucide-react";
+import { IProject } from "@plane/types";
 // ui
 import {
   Button,
@@ -15,21 +16,20 @@ import {
   Tooltip,
 } from "@plane/ui";
 // components
-import { ImagePickerPopover } from "components/core";
-import { MemberDropdown } from "components/dropdowns";
-import { ProjectLogo } from "./project-logo";
+import { ImagePickerPopover } from "@/components/core";
+import { MemberDropdown } from "@/components/dropdowns";
 // constants
-import { PROJECT_CREATED } from "constants/event-tracker";
-import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+import { PROJECT_CREATED } from "@/constants/event-tracker";
+import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "@/constants/project";
 // helpers
-import { convertHexEmojiToDecimal, getRandomEmoji } from "helpers/emoji.helper";
-import { cn } from "helpers/common.helper";
-import { projectIdentifierSanitizer } from "helpers/project.helper";
+import { cn } from "@/helpers/common.helper";
+import { convertHexEmojiToDecimal, getRandomEmoji } from "@/helpers/emoji.helper";
+import { projectIdentifierSanitizer } from "@/helpers/project.helper";
 // hooks
-import { useEventTracker, useProject } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { useEventTracker, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { IProject } from "@plane/types";
+import { ProjectLogo } from "./project-logo";
 
 type Props = {
   setToFavorite?: boolean;

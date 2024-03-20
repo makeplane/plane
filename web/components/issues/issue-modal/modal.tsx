@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+import type { TIssue } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
 
-import { ISSUE_CREATED, ISSUE_UPDATED } from "constants/event-tracker";
-import { EIssuesStoreType } from "constants/issue";
+import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
+import { EIssuesStoreType } from "@/constants/issue";
 import {
   useApplication,
   useEventTracker,
@@ -15,11 +16,10 @@ import {
   useModule,
   useProject,
   useIssueDetail,
-} from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
-import { useIssuesActions } from "hooks/use-issues-actions";
+} from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+import useLocalStorage from "@/hooks/use-local-storage";
 // components
-import type { TIssue } from "@plane/types";
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
 // ui

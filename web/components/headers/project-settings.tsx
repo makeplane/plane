@@ -4,11 +4,11 @@ import { useRouter } from "next/router";
 // ui
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
 // helper
-import { BreadcrumbLink } from "components/common";
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "constants/project";
+import { BreadcrumbLink } from "@/components/common";
+import { ProjectLogo } from "@/components/project";
+import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "hooks/store";
-import { ProjectLogo } from "components/project";
+import { useProject, useUser } from "@/hooks/store";
 // constants
 // components
 

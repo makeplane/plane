@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // services
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { CycleForm } from "components/cycles";
-import { CYCLE_CREATED, CYCLE_UPDATED } from "constants/event-tracker";
-import { useEventTracker, useCycle, useProject } from "hooks/store";
-import useLocalStorage from "hooks/use-local-storage";
-import { CycleService } from "services/cycle.service";
+import { CycleForm } from "@/components/cycles";
+import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";
+import { useEventTracker, useCycle, useProject } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { CycleService } from "@/services/cycle.service";
 // hooks
 // components
 // ui
 // types
-import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // constants
 
 type CycleModalProps = {

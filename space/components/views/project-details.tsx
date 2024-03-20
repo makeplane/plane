@@ -1,18 +1,18 @@
 import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 // components
-import { IssueListView } from "components/issues/board-views/list";
-import { IssueKanbanView } from "components/issues/board-views/kanban";
-import { IssueCalendarView } from "components/issues/board-views/calendar";
-import { IssueSpreadsheetView } from "components/issues/board-views/spreadsheet";
-import { IssueGanttView } from "components/issues/board-views/gantt";
-import { IssuePeekOverview } from "components/issues/peek-overview";
-import { IssueAppliedFilters } from "components/issues/filters/applied-filters/root";
+import { IssueCalendarView } from "@/components/issues/board-views/calendar";
+import { IssueGanttView } from "@/components/issues/board-views/gantt";
+import { IssueKanbanView } from "@/components/issues/board-views/kanban";
+import { IssueListView } from "@/components/issues/board-views/list";
+import { IssueSpreadsheetView } from "@/components/issues/board-views/spreadsheet";
+import { IssueAppliedFilters } from "@/components/issues/filters/applied-filters/root";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // mobx store
-import { RootStore } from "store/root";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useMobxStore } from "@/lib/mobx/store-provider";
+import { RootStore } from "@/store/root";
 // assets
 import SomethingWentWrongImage from "public/something-went-wrong.svg";
 

@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import type { IState } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { STATE_DELETED } from "constants/event-tracker";
+import { STATE_DELETED } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useProjectState } from "hooks/store";
+import { useEventTracker, useProjectState } from "@/hooks/store";
 // types
-import type { IState } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

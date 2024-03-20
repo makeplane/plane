@@ -2,17 +2,17 @@ import { FC, useCallback, useRef, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+import { TIssue } from "@plane/types";
 // hooks
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-import { DeleteIssueModal } from "components/issues";
-import { ISSUE_DELETED } from "constants/event-tracker";
-import { EIssueFilterType, EIssuesStoreType } from "constants/issue";
-import { EUserProjectRoles } from "constants/project";
-import { useEventTracker, useIssues, useUser } from "hooks/store";
-import { useIssuesActions } from "hooks/use-issues-actions";
+import { DeleteIssueModal } from "@/components/issues";
+import { ISSUE_DELETED } from "@/constants/event-tracker";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EUserProjectRoles } from "@/constants/project";
+import { useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // ui
 // types
-import { TIssue } from "@plane/types";
 import { IQuickActionProps } from "../list/list-view-types";
 //components
 import { KanBan } from "./default";

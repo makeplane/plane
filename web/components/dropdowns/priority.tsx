@@ -1,19 +1,19 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
+import { Combobox } from "@headlessui/react";
+import { TIssuePriorities } from "@plane/types";
 // hooks
 import { PriorityIcon, Tooltip } from "@plane/ui";
-import { ISSUE_PRIORITIES } from "constants/issue";
-import { cn } from "helpers/common.helper";
-import { useDropdownKeyDown } from "hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
+import { cn } from "@/helpers/common.helper";
+import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // icons
 // helpers
 // types
-import { TIssuePriorities } from "@plane/types";
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 // constants
@@ -65,7 +65,12 @@ const BorderButton = (props: ButtonProps) => {
   const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip} isMobile={isMobile}>
+    <Tooltip
+      tooltipHeading="Priority"
+      tooltipContent={priorityDetails?.title ?? "None"}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
@@ -136,7 +141,12 @@ const BackgroundButton = (props: ButtonProps) => {
   const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip} isMobile={isMobile}>
+    <Tooltip
+      tooltipHeading="Priority"
+      tooltipContent={priorityDetails?.title ?? "None"}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
@@ -208,7 +218,12 @@ const TransparentButton = (props: ButtonProps) => {
   const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={priorityDetails?.title ?? "None"} disabled={!showTooltip} isMobile={isMobile}>
+    <Tooltip
+      tooltipHeading="Priority"
+      tooltipContent={priorityDetails?.title ?? "None"}
+      disabled={!showTooltip}
+      isMobile={isMobile}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",

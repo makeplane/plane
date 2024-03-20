@@ -8,7 +8,7 @@ import {
   TWITTER_USER_NAME,
   SITE_KEYWORDS,
   SITE_TITLE,
-} from "constants/seo-variables";
+} from "@/constants/seo-variables";
 
 class MyDocument extends Document {
   render() {

@@ -1,12 +1,12 @@
 import { X } from "lucide-react";
-// components
-import { AppliedAccessFilters, AppliedDateFilters, AppliedMembersFilters } from "components/project";
-// ui
-import { Tooltip } from "@plane/ui";
-// helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// types
 import { TProjectFilters } from "@plane/types";
+// components
+import { Tooltip } from "@plane/ui";
+import { AppliedAccessFilters, AppliedDateFilters, AppliedMembersFilters } from "@/components/project";
+// ui
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+// types
 
 type Props = {
   appliedFilters: TProjectFilters;

@@ -1,8 +1,9 @@
 import React from "react";
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
+import type { NotificationType, NotificationCount } from "@plane/types";
 // components
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 // ui
 // hooks
 import {
@@ -10,13 +11,12 @@ import {
   NOTIFICATIONS_READ,
   SNOOZED_NOTIFICATIONS,
   UNREAD_NOTIFICATIONS,
-} from "constants/event-tracker";
-import { getNumberCount } from "helpers/string.helper";
-import { useEventTracker } from "hooks/store";
-import { usePlatformOS } from "hooks/use-platform-os";
+} from "@/constants/event-tracker";
+import { getNumberCount } from "@/helpers/string.helper";
+import { useEventTracker } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // helpers
 // type
-import type { NotificationType, NotificationCount } from "@plane/types";
 // constants
 
 type NotificationHeaderProps = {

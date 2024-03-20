@@ -1,11 +1,11 @@
 import { FC, ReactNode } from "react";
 // layouts
 import { observer } from "mobx-react-lite";
-import { CommandPalette } from "components/command-palette";
-import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "layouts/auth-layout";
+import { CommandPalette } from "@/components/command-palette";
+import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "@/layouts/auth-layout";
 // components
 import { AppSidebar } from "./sidebar";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 export interface IAppLayout {
   children: ReactNode;

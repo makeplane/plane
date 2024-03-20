@@ -1,13 +1,13 @@
 import React, { ReactElement } from "react";
 // layouts
-import { PageHead } from "components/core";
-import { UserProfileHeader } from "components/headers";
-import { ProfileIssuesPage } from "components/profile/profile-issues";
-import { AppLayout } from "layouts/app-layout";
-import { ProfileAuthWrapper } from "layouts/user-profile-layout";
+import { PageHead } from "@/components/core";
+import { UserProfileHeader } from "@/components/headers";
+import { ProfileIssuesPage } from "@/components/profile/profile-issues";
+import { AppLayout } from "@/layouts/app-layout";
+import { ProfileAuthWrapper } from "@/layouts/user-profile-layout";
 // components
 // types
-import { NextPageWithLayout } from "lib/types";
+import { NextPageWithLayout } from "@/lib/types";
 
 const ProfileAssignedIssuesPage: NextPageWithLayout = () => (
   <>

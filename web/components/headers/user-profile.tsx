@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { Breadcrumbs, CustomMenu } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
+import { BreadcrumbLink } from "@/components/common";
 // components
-import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "constants/profile";
-import { cn } from "helpers/common.helper";
-import { useApplication, useUser } from "hooks/store";
+import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useUser } from "@/hooks/store";
 
 type TUserProfileHeader = {
   type?: string | undefined;

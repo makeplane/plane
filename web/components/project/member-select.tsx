@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Ban } from "lucide-react";
 // hooks
 import { Avatar, CustomSearchSelect } from "@plane/ui";
-import { useMember } from "hooks/store";
+import { useMember } from "@/hooks/store";
 // ui
 
 type Props = {

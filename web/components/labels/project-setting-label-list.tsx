@@ -1,6 +1,4 @@
 import React, { useState, useRef } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react";
 import {
   DragDropContext,
   Draggable,
@@ -9,23 +7,25 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
+import { IIssueLabel } from "@plane/types";
 // hooks
-import { useLabel } from "hooks/store";
-import useDraggableInPortal from "hooks/use-draggable-portal";
-// components
+import { Button, Loader } from "@plane/ui";
+import { EmptyState } from "@/components/empty-state";
 import {
   CreateUpdateLabelInline,
   DeleteLabelModal,
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
-} from "components/labels";
-import { EmptyState } from "components/empty-state";
+} from "@/components/labels";
+import { EmptyStateType } from "@/constants/empty-state";
+import { useLabel } from "@/hooks/store";
+import useDraggableInPortal from "@/hooks/use-draggable-portal";
+// components
 // ui
-import { Button, Loader } from "@plane/ui";
 // types
-import { IIssueLabel } from "@plane/types";
 // constants
-import { EmptyStateType } from "constants/empty-state";
 
 const LABELS_ROOT = "labels.root";
 

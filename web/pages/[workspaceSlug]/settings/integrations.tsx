@@ -6,21 +6,21 @@ import useSWR from "swr";
 // services
 // layouts
 // components
-import { PageHead } from "components/core";
-import { WorkspaceSettingHeader } from "components/headers";
-import { SingleIntegrationCard } from "components/integration";
+import { PageHead } from "@/components/core";
+import { WorkspaceSettingHeader } from "@/components/headers";
+import { SingleIntegrationCard } from "@/components/integration";
 // ui
-import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "components/ui";
+import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
 // types
 // fetch-keys
-import { APP_INTEGRATIONS } from "constants/fetch-keys";
+import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 // constants
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useUser, useWorkspace } from "hooks/store";
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
-import { NextPageWithLayout } from "lib/types";
-import { IntegrationService } from "services/integrations";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useUser, useWorkspace } from "@/hooks/store";
+import { AppLayout } from "@/layouts/app-layout";
+import { WorkspaceSettingLayout } from "@/layouts/settings-layout";
+import { NextPageWithLayout } from "@/lib/types";
+import { IntegrationService } from "@/services/integrations";
 
 const integrationService = new IntegrationService();
 

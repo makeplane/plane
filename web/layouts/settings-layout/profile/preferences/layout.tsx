@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChevronDown } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
-import { SidebarHamburgerToggle } from "components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { useApplication } from "hooks/store";
-import { ProfileSettingsLayout } from "layouts/settings-layout";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+import { useApplication } from "@/hooks/store";
+import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 import { ProfilePreferenceSettingsSidebar } from "./sidebar";
 
 interface IProfilePreferenceSettingsLayout {

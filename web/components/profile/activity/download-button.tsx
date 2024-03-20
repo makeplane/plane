@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 // ui
 import { Button } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-import { UserService } from "services/user.service";
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { UserService } from "@/services/user.service";
 
 const userService = new UserService();
 

@@ -13,12 +13,12 @@ import {
 } from "react-hook-form";
 // react-color
 // component
-import { Popover, Transition } from "@headlessui/react";
 import { Palette } from "lucide-react";
+import { Popover, Transition } from "@headlessui/react";
+import { IUserTheme } from "@plane/types";
 import { Input } from "@plane/ui";
 // icons
 // types
-import { IUserTheme } from "@plane/types";
 
 type Props = {
   name: keyof IUserTheme;

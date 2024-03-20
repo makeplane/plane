@@ -14,13 +14,13 @@ import {
   ProjectSpreadsheetLayout,
   ProjectEmptyState,
   IssuePeekOverview,
-} from "components/issues";
+} from "@/components/issues";
 // hooks
 // helpers
-import { ActiveLoader } from "components/ui";
+import { ActiveLoader } from "@/components/ui";
 // constants
-import { EIssuesStoreType } from "constants/issue";
-import { useIssues } from "hooks/store";
+import { EIssuesStoreType } from "@/constants/issue";
+import { useIssues } from "@/hooks/store";
 
 export const ProjectLayoutRoot: FC = observer(() => {
   // router

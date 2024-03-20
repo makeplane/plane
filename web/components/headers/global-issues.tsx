@@ -3,21 +3,21 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
-import { usePlatformOS } from "hooks/use-platform-os";
 import { List, PlusIcon, Sheet } from "lucide-react";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
-import { BreadcrumbLink } from "components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
+import { BreadcrumbLink } from "@/components/common";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
 // components
-import { CreateUpdateWorkspaceViewModal } from "components/workspace";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // ui
 // icons
 // types
 // constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EUserWorkspaceRoles } from "constants/workspace";
-import { useLabel, useMember, useUser, useIssues } from "hooks/store";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { useLabel, useMember, useUser, useIssues } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -135,8 +135,9 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                 <span>
                   <Tooltip tooltipContent={layout.title} isMobile={isMobile}>
                     <div
-                      className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                        }`}
+                      className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
+                        activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                      }`}
                     >
                       <layout.icon
                         size={14}

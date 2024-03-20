@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
-// components
-import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "components/issues";
-// helpers
-import { renderFormattedPayloadDate } from "helpers/date-time.helper";
-// types
 import { TIssue, TIssueMap } from "@plane/types";
+// components
+import { CalendarQuickAddIssueForm, CalendarIssueBlockRoot } from "@/components/issues";
+// helpers
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// types
 
 type Props = {
   date: Date;

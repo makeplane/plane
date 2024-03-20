@@ -1,16 +1,16 @@
 import { useState, useRef } from "react";
-import { MoreHorizontal } from "lucide-react";
 import { observer } from "mobx-react";
+import { MoreHorizontal } from "lucide-react";
+import { TIssue } from "@plane/types";
 // components
 import { Tooltip, ControlLink } from "@plane/ui";
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import { useApplication, useIssueDetail, useProject, useProjectState } from "hooks/store";
+import { cn } from "@/helpers/common.helper";
+import { useApplication, useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // helpers
-import { cn } from "helpers/common.helper";
 // types
-import { TIssue } from "@plane/types";
-import { usePlatformOS } from "hooks/use-platform-os";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   issue: TIssue;

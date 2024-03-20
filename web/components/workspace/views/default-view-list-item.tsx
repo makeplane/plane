@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // helpers
-import { truncateText } from "helpers/string.helper";
+import { truncateText } from "@/helpers/string.helper";
 
 type Props = { view: { key: string; label: string } };
 

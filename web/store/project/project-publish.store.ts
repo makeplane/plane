@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { ProjectPublishService } from "services/project";
+import { ProjectPublishService } from "@/services/project";
 import { ProjectRootStore } from "./";
 // services
 

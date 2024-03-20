@@ -6,11 +6,11 @@ import { Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "components/common";
-import { CreateInboxIssueModal } from "components/inbox";
+import { BreadcrumbLink } from "@/components/common";
+import { CreateInboxIssueModal } from "@/components/inbox";
 // helper
-import { useProject } from "hooks/store";
-import { ProjectLogo } from "components/project";
+import { ProjectLogo } from "@/components/project";
+import { useProject } from "@/hooks/store";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states

@@ -4,7 +4,7 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IssueService } from "services/issue";
+import { IssueService } from "@/services/issue";
 import { TIssue } from "@plane/types";
 //services
 

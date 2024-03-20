@@ -8,17 +8,17 @@ import { SWRConfig } from "swr";
 // ui
 import { Toast } from "@plane/ui";
 // constants
-import { SWR_CONFIG } from "constants/swr-config";
+import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
-import { resolveGeneralTheme } from "helpers/theme.helper";
+import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // hooks
-import { useApplication, useUser, useWorkspace } from "hooks/store";
+import { useApplication, useUser, useWorkspace } from "@/hooks/store";
 // layouts
-import InstanceLayout from "layouts/instance-layout";
+import InstanceLayout from "@/layouts/instance-layout";
 // dynamic imports
-const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
-const PostHogProvider = dynamic(() => import("lib/posthog-provider"), { ssr: false });
-const CrispWrapper = dynamic(() => import("lib/wrappers/crisp-wrapper"), { ssr: false });
+const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
+const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
+const CrispWrapper = dynamic(() => import("@/lib/wrappers/crisp-wrapper"), { ssr: false });
 // nprogress
 NProgress.configure({ showSpinner: false });
 Router.events.on("routeChangeStart", NProgress.start);
