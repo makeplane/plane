@@ -41,6 +41,9 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const isEditingAllowed =
     !!currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.MEMBER;
 
+  const moduleState = moduleDetails?.status.toLocaleLowerCase();
+  const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
+
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -125,11 +128,23 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           </CustomMenu.MenuItem>
         )}
         {isEditingAllowed && !isArchived && (
-          <CustomMenu.MenuItem onClick={handleArchiveModule}>
-            <span className="flex items-center justify-start gap-2">
-              <ArchiveIcon className="h-3 w-3" />
-              <span>Archive module</span>
-            </span>
+          <CustomMenu.MenuItem onClick={handleArchiveModule} disabled={!isInArchivableGroup}>
+            {isInArchivableGroup ? (
+              <div className="flex items-center gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                Archive module
+              </div>
+            ) : (
+              <div className="flex items-start gap-2">
+                <ArchiveIcon className="h-3 w-3" />
+                <div className="-mt-1">
+                  <p>Archive module</p>
+                  <p className="text-xs text-custom-text-400">
+                    Only completed or cancelled <br /> module can be archived.
+                  </p>
+                </div>
+              </div>
+            )}
           </CustomMenu.MenuItem>
         )}
         {isEditingAllowed && isArchived && (
