@@ -1,33 +1,39 @@
+import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
-import set from "lodash/set";
 // types
+import { TCycleDisplayFilters, TCycleFilters, TCycleFiltersByState } from "@plane/types";
+// store
 import { RootStore } from "@/store/root.store";
-import { TCycleDisplayFilters, TCycleFilters } from "@plane/types";
 
 export interface ICycleFilterStore {
   // observables
   displayFilters: Record<string, TCycleDisplayFilters>;
-  filters: Record<string, TCycleFilters>;
+  filters: Record<string, TCycleFiltersByState>;
   searchQuery: string;
+  archivedCyclesSearchQuery: string;
   // computed
   currentProjectDisplayFilters: TCycleDisplayFilters | undefined;
   currentProjectFilters: TCycleFilters | undefined;
+  currentProjectArchivedFilters: TCycleFilters | undefined;
   // computed functions
   getDisplayFiltersByProjectId: (projectId: string) => TCycleDisplayFilters | undefined;
   getFiltersByProjectId: (projectId: string) => TCycleFilters | undefined;
+  getArchivedFiltersByProjectId: (projectId: string) => TCycleFilters | undefined;
   // actions
   updateDisplayFilters: (projectId: string, displayFilters: TCycleDisplayFilters) => void;
-  updateFilters: (projectId: string, filters: TCycleFilters) => void;
+  updateFilters: (projectId: string, filters: TCycleFilters, state?: keyof TCycleFiltersByState) => void;
   updateSearchQuery: (query: string) => void;
-  clearAllFilters: (projectId: string) => void;
+  updateArchivedCyclesSearchQuery: (query: string) => void;
+  clearAllFilters: (projectId: string, state?: keyof TCycleFiltersByState) => void;
 }
 
 export class CycleFilterStore implements ICycleFilterStore {
   // observables
   displayFilters: Record<string, TCycleDisplayFilters> = {};
-  filters: Record<string, TCycleFilters> = {};
+  filters: Record<string, TCycleFiltersByState> = {};
   searchQuery: string = "";
+  archivedCyclesSearchQuery: string = "";
   // root store
   rootStore: RootStore;
 
@@ -37,13 +43,16 @@ export class CycleFilterStore implements ICycleFilterStore {
       displayFilters: observable,
       filters: observable,
       searchQuery: observable.ref,
+      archivedCyclesSearchQuery: observable.ref,
       // computed
       currentProjectDisplayFilters: computed,
       currentProjectFilters: computed,
+      currentProjectArchivedFilters: computed,
       // actions
       updateDisplayFilters: action,
       updateFilters: action,
       updateSearchQuery: action,
+      updateArchivedCyclesSearchQuery: action,
       clearAllFilters: action,
     });
     // root store
@@ -73,7 +82,16 @@ export class CycleFilterStore implements ICycleFilterStore {
   get currentProjectFilters() {
     const projectId = this.rootStore.app.router.projectId;
     if (!projectId) return;
-    return this.filters[projectId];
+    return this.filters[projectId]?.default ?? {};
+  }
+
+  /**
+   * @description get archived filters of the current project
+   */
+  get currentProjectArchivedFilters() {
+    const projectId = this.rootStore.app.router.projectId;
+    if (!projectId) return;
+    return this.filters[projectId].archived;
   }
 
   /**
@@ -86,7 +104,13 @@ export class CycleFilterStore implements ICycleFilterStore {
    * @description get filters of a project by projectId
    * @param {string} projectId
    */
-  getFiltersByProjectId = computedFn((projectId: string) => this.filters[projectId]);
+  getFiltersByProjectId = computedFn((projectId: string) => this.filters[projectId]?.default ?? {});
+
+  /**
+   * @description get archived filters of a project by projectId
+   * @param {string} projectId
+   */
+  getArchivedFiltersByProjectId = computedFn((projectId: string) => this.filters[projectId].archived);
 
   /**
    * @description initialize display filters and filters of a project
@@ -99,7 +123,10 @@ export class CycleFilterStore implements ICycleFilterStore {
         active_tab: displayFilters?.active_tab || "active",
         layout: displayFilters?.layout || "list",
       };
-      this.filters[projectId] = this.filters[projectId] ?? {};
+      this.filters[projectId] = this.filters[projectId] ?? {
+        default: {},
+        archived: {},
+      };
     });
   };
 
@@ -121,10 +148,10 @@ export class CycleFilterStore implements ICycleFilterStore {
    * @param {string} projectId
    * @param {TCycleFilters} filters
    */
-  updateFilters = (projectId: string, filters: TCycleFilters) => {
+  updateFilters = (projectId: string, filters: TCycleFilters, state: keyof TCycleFiltersByState = "default") => {
     runInAction(() => {
       Object.keys(filters).forEach((key) => {
-        set(this.filters, [projectId, key], filters[key as keyof TCycleFilters]);
+        set(this.filters, [projectId, state, key], filters[key as keyof TCycleFilters]);
       });
     });
   };
@@ -136,12 +163,18 @@ export class CycleFilterStore implements ICycleFilterStore {
   updateSearchQuery = (query: string) => (this.searchQuery = query);
 
   /**
+   * @description update archived search query
+   * @param {string} query
+   */
+  updateArchivedCyclesSearchQuery = (query: string) => (this.archivedCyclesSearchQuery = query);
+
+  /**
    * @description clear all filters of a project
    * @param {string} projectId
    */
-  clearAllFilters = (projectId: string) => {
+  clearAllFilters = (projectId: string, state: keyof TCycleFiltersByState = "default") => {
     runInAction(() => {
-      this.filters[projectId] = {};
+      this.filters[projectId][state] = {};
     });
   };
 }

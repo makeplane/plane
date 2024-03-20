@@ -13,6 +13,11 @@ export type TCycleFilters = {
   status?: string[] | null;
 };
 
+export type TCycleFiltersByState = {
+  default: TCycleFilters;
+  archived: TCycleFilters;
+};
+
 export type TCycleStoredFilters = {
   display_filters?: TCycleDisplayFilters;
   filters?: TCycleFilters;

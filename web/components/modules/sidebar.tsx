@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import {
   AlertCircle,
+  ArchiveRestoreIcon,
   CalendarClock,
   ChevronDown,
   ChevronRight,
@@ -25,13 +26,14 @@ import {
   UserGroupIcon,
   TOAST_TYPE,
   setToast,
+  ArchiveIcon,
   TextArea,
 } from "@plane/ui";
 // components
 import { LinkModal, LinksList, SidebarProgressStats } from "@/components/core";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
-import { DeleteModuleModal } from "@/components/modules";
+import { ArchiveModuleModal, DeleteModuleModal } from "@/components/modules";
 // constant
 import {
   MODULE_LINK_CREATED,
@@ -59,13 +61,15 @@ const defaultValues: Partial<IModule> = {
 type Props = {
   moduleId: string;
   handleClose: () => void;
+  isArchived?: boolean;
 };
 
 // TODO: refactor this component
 export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { moduleId, handleClose } = props;
+  const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
+  const [archiveModuleModal, setArchiveModuleModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // router
@@ -75,9 +79,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
+  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
+    useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
   const moduleDetails = getModuleById(moduleId);
+
+  const moduleState = moduleDetails?.status.toLocaleLowerCase();
+  const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
   const { reset, control } = useForm({
     defaultValues,
@@ -206,6 +214,30 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     });
   };
 
+  const handleRestoreModule = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!workspaceSlug || !projectId || !moduleId) return;
+
+    await restoreModule(workspaceSlug.toString(), projectId.toString(), moduleId)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Restore success",
+          message: "Your module can be found in project modules.",
+        });
+        router.push(`/${workspaceSlug}/projects/${projectId}/modules/${moduleId}`);
+      })
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Module could not be restored. Please try again.",
+        })
+      );
+  };
+
   useEffect(() => {
     if (moduleDetails)
       reset({
@@ -262,8 +294,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         createIssueLink={handleCreateLink}
         updateIssueLink={handleUpdateLink}
       />
+      {workspaceSlug && projectId && (
+        <ArchiveModuleModal
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          moduleId={moduleId}
+          isOpen={archiveModuleModal}
+          handleClose={() => setArchiveModuleModal(false)}
+        />
+      )}
       <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
-
       <>
         <div className="sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 py-5">
           <div>
@@ -275,11 +315,41 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
           </div>
           <div className="flex items-center gap-3.5">
-            <button onClick={handleCopyText}>
-              <LinkIcon className="h-3 w-3 text-custom-text-300" />
-            </button>
+            {!isArchived && (
+              <button onClick={handleCopyText}>
+                <LinkIcon className="h-3 w-3 text-custom-text-300" />
+              </button>
+            )}
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
+                {!isArchived && (
+                  <CustomMenu.MenuItem onClick={() => setArchiveModuleModal(true)} disabled={!isInArchivableGroup}>
+                    {isInArchivableGroup ? (
+                      <div className="flex items-center gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        Archive module
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2">
+                        <ArchiveIcon className="h-3 w-3" />
+                        <div className="-mt-1">
+                          <p>Archive module</p>
+                          <p className="text-xs text-custom-text-400">
+                            Only completed or cancelled <br /> module can be archived.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CustomMenu.MenuItem>
+                )}
+                {isArchived && (
+                  <CustomMenu.MenuItem onClick={handleRestoreModule}>
+                    <span className="flex items-center justify-start gap-2">
+                      <ArchiveRestoreIcon className="h-3 w-3" />
+                      <span>Restore module</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
                 <CustomMenu.MenuItem
                   onClick={() => {
                     setTrackElement("Module peek-overview");
@@ -306,7 +376,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   customButton={
                     <span
                       className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
-                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                        isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
@@ -320,7 +390,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   onChange={(value: any) => {
                     submitChanges({ status: value });
                   }}
-                  disabled={!isEditingAllowed}
+                  disabled={!isEditingAllowed || isArchived}
                 >
                   {MODULE_STATUS.map((status) => (
                     <CustomSelect.Option key={status.value} value={status.value}>
@@ -379,6 +449,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                           from: "Start date",
                           to: "Target date",
                         }}
+                        disabled={isArchived}
                       />
                     );
                   }}
@@ -408,6 +479,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     multiple={false}
                     buttonVariant="background-with-text"
                     placeholder="Lead"
+                    disabled={isArchived}
                   />
                 </div>
               )}
@@ -432,7 +504,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     projectId={projectId?.toString() ?? ""}
                     buttonVariant={value && value?.length > 0 ? "transparent-without-text" : "background-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
-                    disabled={!isEditingAllowed}
+                    disabled={!isEditingAllowed || isArchived}
                   />
                 </div>
               )}
@@ -556,7 +628,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                       <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
                         {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
-                            {isEditingAllowed && (
+                            {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
                                 <button
                                   className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
@@ -578,6 +650,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 isMember: currentProjectRole === EUserProjectRoles.MEMBER,
                                 isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
                               }}
+                              disabled={isArchived}
                             />
                           </>
                         ) : (
@@ -586,13 +659,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                               <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
                             </div>
-                            <button
-                              className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
-                              onClick={() => setModuleLinkModal(true)}
-                            >
-                              <Plus className="h-3 w-3" />
-                              Add link
-                            </button>
+                            {isEditingAllowed && !isArchived && (
+                              <button
+                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                onClick={() => setModuleLinkModal(true)}
+                              >
+                                <Plus className="h-3 w-3" />
+                                Add link
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

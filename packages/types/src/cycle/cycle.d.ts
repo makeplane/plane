@@ -31,6 +31,7 @@ export interface ICycle {
   unstarted_issues: number;
   updated_at: Date;
   updated_by: string;
+  archived_at: string | null;
   assignee_ids: string[];
   view_props: {
     filters: IIssueFilterOptions;
