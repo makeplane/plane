@@ -1,4 +1,4 @@
-import { action, computed, observable, makeObservable, runInAction, autorun } from "mobx";
+import { action, computed, observable, makeObservable, runInAction, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 // types
@@ -49,11 +49,13 @@ export class ProjectFilterStore implements IProjectFilterStore {
     // root store
     this.rootStore = _rootStore;
     // initialize display filters of the current workspace
-    autorun(() => {
-      const workspaceSlug = this.rootStore.app.router.workspaceSlug;
-      if (!workspaceSlug) return;
-      this.initWorkspaceFilters(workspaceSlug);
-    });
+    reaction(
+      () => this.rootStore.app.router.workspaceSlug,
+      (workspaceSlug) => {
+        if (!workspaceSlug) return;
+        this.initWorkspaceFilters(workspaceSlug);
+      }
+    );
   }
 
   /**
@@ -96,7 +98,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
       this.displayFilters[workspaceSlug] = {
         order_by: displayFilters?.order_by || "created_at",
       };
-      this.filters[workspaceSlug] = {};
+      this.filters[workspaceSlug] = this.filters[workspaceSlug] ?? {};
     });
   };
 

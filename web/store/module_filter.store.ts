@@ -1,4 +1,4 @@
-import { action, computed, observable, makeObservable, runInAction, autorun } from "mobx";
+import { action, computed, observable, makeObservable, runInAction, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 import set from "lodash/set";
 // types
@@ -49,11 +49,13 @@ export class ModuleFilterStore implements IModuleFilterStore {
     // root store
     this.rootStore = _rootStore;
     // initialize display filters of the current project
-    autorun(() => {
-      const projectId = this.rootStore.app.router.projectId;
-      if (!projectId) return;
-      this.initProjectModuleFilters(projectId);
-    });
+    reaction(
+      () => this.rootStore.app.router.projectId,
+      (projectId) => {
+        if (!projectId) return;
+        this.initProjectModuleFilters(projectId);
+      }
+    );
   }
 
   /**
@@ -98,7 +100,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
         layout: displayFilters?.layout || "list",
         order_by: displayFilters?.order_by || "name",
       };
-      this.filters[projectId] = {};
+      this.filters[projectId] = this.filters[projectId] ?? {};
     });
   };
 
