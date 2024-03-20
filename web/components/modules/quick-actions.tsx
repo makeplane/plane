@@ -140,12 +140,14 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
             </span>
           </CustomMenu.MenuItem>
         )}
-        <CustomMenu.MenuItem onClick={handleCopyText}>
-          <span className="flex items-center justify-start gap-2">
-            <LinkIcon className="h-3 w-3" />
-            <span>Copy module link</span>
-          </span>
-        </CustomMenu.MenuItem>
+        {!isArchived && (
+          <CustomMenu.MenuItem onClick={handleCopyText}>
+            <span className="flex items-center justify-start gap-2">
+              <LinkIcon className="h-3 w-3" />
+              <span>Copy module link</span>
+            </span>
+          </CustomMenu.MenuItem>
+        )}
         {isEditingAllowed && (
           <div className="border-t pt-1 mt-1">
             <CustomMenu.MenuItem onClick={handleDeleteModule}>

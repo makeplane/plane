@@ -311,9 +311,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
           </div>
           <div className="flex items-center gap-3.5">
-            <button onClick={handleCopyText}>
-              <LinkIcon className="h-3 w-3 text-custom-text-300" />
-            </button>
+            {!isArchived && (
+              <button onClick={handleCopyText}>
+                <LinkIcon className="h-3 w-3 text-custom-text-300" />
+              </button>
+            )}
             {isEditingAllowed && (
               <CustomMenu placement="bottom-end" ellipsis>
                 {!isArchived && (
