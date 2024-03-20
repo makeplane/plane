@@ -48,7 +48,7 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
 
-  if (loader) {
+  if (loader || !currentProjectArchivedCycleIds) {
     return <CycleModuleListLayout />;
   }
 
