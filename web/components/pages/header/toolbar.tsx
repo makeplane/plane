@@ -1,12 +1,15 @@
+import { cn } from "helpers/common.helper";
 import {
   Bold,
-  Code,
+  Code2,
   Heading1,
   Heading2,
   Heading3,
+  Image,
   Italic,
   List,
   ListOrdered,
+  ListTodo,
   LucideIcon,
   Quote,
   Strikethrough,
@@ -17,7 +20,6 @@ import {
 import { EditorRefApi } from "@plane/document-editor";
 import { EditorMenuItemNames } from "@plane/editor-document-core";
 // helpers
-import { cn } from "helpers/common.helper";
 
 type Props = {
   editorRef: EditorRefApi;
@@ -67,6 +69,10 @@ const LIST_ITEMS: MenuItem[] = [
     name: "ordered-list",
     icon: ListOrdered,
   },
+  {
+    name: "To-do List",
+    icon: ListTodo,
+  },
 ];
 const USER_ACTION_ITEMS: MenuItem[] = [
   {
@@ -75,13 +81,17 @@ const USER_ACTION_ITEMS: MenuItem[] = [
   },
   {
     name: "code",
-    icon: Code,
+    icon: Code2,
   },
 ];
 const COMPLEX_ITEMS: MenuItem[] = [
   {
     name: "table",
     icon: Table,
+  },
+  {
+    name: "image",
+    icon: Image,
   },
 ];
 

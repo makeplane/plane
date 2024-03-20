@@ -160,7 +160,7 @@ export const PageRenderer = (props: IPageRenderer) => {
           value={pageTitle}
         />
       )}
-      <div className="flex relative h-full w-full flex-col pr-5 editor-renderer" onMouseOver={handleLinkHover}>
+      <div className="flex relative h-full w-full flex-col pr-5" onMouseOver={handleLinkHover}>
         <EditorContainer hideDragHandle={hideDragHandle} editor={editor} editorClassNames={editorClassNames}>
           <EditorContentWrapper
             tabIndex={tabIndex}
