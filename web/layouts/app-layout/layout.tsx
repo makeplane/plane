@@ -1,11 +1,11 @@
 import { FC, ReactNode } from "react";
-// layouts
 import { observer } from "mobx-react-lite";
-import { CommandPalette } from "@/components/command-palette";
-import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "@/layouts/auth-layout";
 // components
-import { AppSidebar } from "./sidebar";
+import { CommandPalette } from "@/components/command-palette";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+// layouts
+import { UserAuthWrapper, WorkspaceAuthWrapper, ProjectAuthWrapper } from "@/layouts/auth-layout";
+import { AppSidebar } from "./sidebar";
 
 export interface IAppLayout {
   children: ReactNode;
@@ -19,8 +19,8 @@ export const AppLayout: FC<IAppLayout> = observer((props) => {
 
   return (
     <>
-      <CommandPalette />
       <UserAuthWrapper>
+        <CommandPalette />
         <WorkspaceAuthWrapper>
           <div className="relative flex h-screen w-full overflow-hidden">
             <AppSidebar />
