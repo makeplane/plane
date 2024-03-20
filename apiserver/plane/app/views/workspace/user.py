@@ -124,7 +124,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 | Q(issue_subscribers__subscriber_id=user_id),
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True
+                project__project_projectmember__is_active=True,
             )
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
@@ -299,6 +299,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     project_projectmember__member=request.user,
                     project_projectmember__is_active=True,
+                    archived_at__isnull=True,
                 )
                 .annotate(
                     created_issues=Count(
@@ -387,6 +388,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
             actor=user_id,
         ).select_related("actor", "workspace", "issue", "project")
 
@@ -498,6 +500,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 subscriber_id=user_id,
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
             .filter(**filters)
             .count()

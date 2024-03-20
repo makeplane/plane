@@ -165,6 +165,11 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         module = Module.objects.get(
             pk=pk, project_id=project_id, workspace__slug=slug
         )
+        if module.archived_at:
+            return Response(
+                {"error": "Archived module cannot be edited"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = ModuleSerializer(
             module,
             data=request.data,
@@ -197,7 +202,9 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def get(self, request, slug, project_id, pk=None):
         if pk:
-            queryset = self.get_queryset().get(pk=pk)
+            queryset = (
+                self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
+            )
             data = ModuleSerializer(
                 queryset,
                 fields=self.fields,
@@ -209,7 +216,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             )
         return self.paginate(
             request=request,
-            queryset=(self.get_queryset()),
+            queryset=(self.get_queryset().filter(archived_at__isnull=True)),
             on_results=lambda modules: ModuleSerializer(
                 modules,
                 many=True,
@@ -279,6 +286,7 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .select_related("module")
@@ -445,4 +453,118 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get_queryset(self):
+        return (
+            Module.objects.filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(archived_at__isnull=False)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("lead")
+            .prefetch_related("members")
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related(
+                        "module", "created_by"
+                    ),
+                )
+            )
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                ),
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        )
+
+    def list(self, request, slug, project_id):
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset()),
+            on_results=lambda modules: ModuleSerializer(
+                modules,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
+        )
+
+    def post(self, request, slug, project_id, pk):
+        module = Module.objects.get(
+            pk=pk, project_id=project_id, workspace__slug=slug
+        )
+        module.archived_at = timezone.now()
+        module.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def delete(self, request, slug, project_id, pk):
+        module = Module.objects.get(
+            pk=pk, project_id=project_id, workspace__slug=slug
+        )
+        module.archived_at = None
+        module.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
