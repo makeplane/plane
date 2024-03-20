@@ -65,12 +65,9 @@ export const renderFormattedPayloadDate = (date: Date | string | undefined | nul
  * @example renderFormattedTime("2024-01-01 13:00:00") // 13:00
  * @example renderFormattedTime("2024-01-01 13:00:00", "12-hour") // 01:00 PM
  */
-export const renderFormattedTime = (
-  date: string | Date | undefined | null,
-  timeFormat: "12-hour" | "24-hour" = "24-hour"
-): string => {
+export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" | "24-hour" = "24-hour"): string => {
   // Parse the date to check if it is valid
-  const parsedDate = getDate(date);
+  const parsedDate = new Date(date);
   // return if undefined
   if (!parsedDate) return "";
   // Check if the parsed date is valid
@@ -215,6 +212,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
     if (!date || date === "") return;
 
     if (typeof date !== "string" && !(date instanceof String)) return date;
+
     const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
     const year = parseInt(yearString);
     const month = parseInt(monthString);
