@@ -63,14 +63,14 @@ export const shouldFilterModule = (
       fallsInFilters = fallsInFilters && filters.members.some((memberId) => memberIds.includes(memberId));
     }
     if (filterKey === "start_date" && filters.start_date && filters.start_date.length > 0) {
+      const startDate = getDate(module.start_date);
       filters.start_date.forEach((dateFilter) => {
-        const startDate = getDate(module.start_date);
         fallsInFilters = fallsInFilters && !!startDate && satisfiesDateFilter(startDate, dateFilter);
       });
     }
     if (filterKey === "target_date" && filters.target_date && filters.target_date.length > 0) {
+      const endDate = getDate(module.target_date);
       filters.target_date.forEach((dateFilter) => {
-        const endDate = getDate(module.target_date);
         fallsInFilters = fallsInFilters && !!endDate && satisfiesDateFilter(endDate, dateFilter);
       });
     }

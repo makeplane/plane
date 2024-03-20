@@ -43,8 +43,8 @@ export const shouldFilterCycle = (cycle: ICycle, filter: TCycleFilters): boolean
     if (filterKey === "status" && filter.status && filter.status.length > 0)
       fallsInFilters = fallsInFilters && filter.status.includes(cycle.status.toLowerCase());
     if (filterKey === "start_date" && filter.start_date && filter.start_date.length > 0) {
+      const startDate = getDate(cycle.start_date);
       filter.start_date.forEach((dateFilter) => {
-        const startDate = getDate(cycle.start_date);
         fallsInFilters = fallsInFilters && !!startDate && satisfiesDateFilter(startDate, dateFilter);
       });
     }
