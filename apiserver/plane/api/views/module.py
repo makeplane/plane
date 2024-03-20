@@ -48,7 +48,6 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
         return (
             Module.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .select_related("lead")
@@ -203,7 +202,9 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def get(self, request, slug, project_id, pk=None):
         if pk:
-            queryset = self.get_queryset().get(pk=pk)
+            queryset = (
+                self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
+            )
             data = ModuleSerializer(
                 queryset,
                 fields=self.fields,
@@ -215,7 +216,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             )
         return self.paginate(
             request=request,
-            queryset=(self.get_queryset()),
+            queryset=(self.get_queryset().filter(archived_at__isnull=True)),
             on_results=lambda modules: ModuleSerializer(
                 modules,
                 many=True,

@@ -66,7 +66,6 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             .get_queryset()
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(archived_at__isnull=True)
             .annotate(is_favorite=Exists(favorite_subquery))
             .select_related("project")
             .select_related("workspace")
@@ -197,7 +196,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
             modules = ModuleSerializer(
                 queryset,
@@ -239,6 +238,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset()
+            .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Issue.issue_objects.filter(
@@ -375,15 +375,15 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def partial_update(self, request, slug, project_id, pk):
-        module = self.get_queryset().filter(pk=pk).first()
+        module = self.get_queryset().filter(pk=pk)
 
-        if module.archived_at:
+        if module.first().archived_at:
             return Response(
                 {"error": "Archived module cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = ModuleWriteSerializer(
-            module, data=request.data, partial=True
+            module.first(), data=request.data, partial=True
         )
 
         if serializer.is_valid():

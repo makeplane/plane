@@ -75,7 +75,6 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(archived_at__isnull=True)
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(
                 project__project_projectmember__member=self.request.user,
@@ -186,13 +185,17 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset().annotate(
-            total_issues=Count(
-                "issue_cycle",
-                filter=Q(
-                    issue_cycle__issue__archived_at__isnull=True,
-                    issue_cycle__issue__is_draft=False,
-                ),
+        queryset = (
+            self.get_queryset()
+            .filter(archived_at__isnull=True)
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle",
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                    ),
+                )
             )
         )
         cycle_view = request.GET.get("cycle_view", "all")
@@ -485,6 +488,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset()
+            .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Count(

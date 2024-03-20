@@ -180,6 +180,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
+            .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Issue.issue_objects.filter(

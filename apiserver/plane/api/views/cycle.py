@@ -49,7 +49,6 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
-            .filter(archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .select_related("owned_by")
@@ -141,7 +140,9 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
 
     def get(self, request, slug, project_id, pk=None):
         if pk:
-            queryset = self.get_queryset().get(pk=pk)
+            queryset = (
+                self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
+            )
             data = CycleSerializer(
                 queryset,
                 fields=self.fields,
@@ -151,7 +152,9 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 data,
                 status=status.HTTP_200_OK,
             )
-        queryset = self.get_queryset()
+        queryset = (
+            self.get_queryset().filter(archived_at__isnull=True)
+        )
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Current Cycle
