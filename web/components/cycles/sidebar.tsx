@@ -8,7 +8,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // icons
 import { ICycle } from "@plane/types";
 // ui
-import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { Avatar, CustomMenu, Loader, LayersIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
 // components
 import { SidebarProgressStats } from "@/components/core";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
@@ -219,8 +219,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         ? "0 Issue"
         : `${cycleDetails.progress_snapshot.completed_issues}/${cycleDetails.progress_snapshot.total_issues}`
       : cycleDetails.total_issues === 0
-        ? "0 Issue"
-        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+      ? "0 Issue"
+      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
@@ -290,9 +290,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         {cycleDetails.description && (
-          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
-            {cycleDetails.description}
-          </span>
+          <TextArea
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            value={cycleDetails.description}
+            disabled
+          />
         )}
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
