@@ -106,10 +106,18 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     e.preventDefault();
     e.stopPropagation();
 
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekCycle: cycleId },
-    });
+    if (query.peekCycle) {
+      delete query.peekCycle;
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { ...query, peekCycle: cycleId },
+      });
+    }
   };
 
   const cycleDetails = getCycleById(cycleId);

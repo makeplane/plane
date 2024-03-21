@@ -131,6 +131,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     ref={setReferenceElement}
                     type="button"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();
@@ -157,6 +158,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                         : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       isOpen ? closeDropdown() : openDropdown();
                       if (menuButtonOnClick) menuButtonOnClick();

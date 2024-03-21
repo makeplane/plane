@@ -13,7 +13,7 @@ import {
 } from "@plane/types";
 // components
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
-import { getGroupByColumns } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel } from "../utils";
 import { KanbanStoreType } from "./base-kanban-root";
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
@@ -291,7 +291,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     projectModule,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
   const subGroupByList = getGroupByColumns(
     sub_group_by as GroupByColumnTypes,
@@ -300,7 +302,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     projectModule,
     label,
     projectState,
-    member
+    member,
+    true,
+    isWorkspaceLevel(storeType)
   );
 
   if (!groupByList || !subGroupByList) return null;
