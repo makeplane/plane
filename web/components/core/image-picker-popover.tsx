@@ -160,7 +160,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
+          className="absolute right-0 z-20 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
           static
         >
           <div
