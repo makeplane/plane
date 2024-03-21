@@ -89,8 +89,9 @@ export const useEditor = ({
   useImperativeHandle(
     forwardedRef,
     () => {
-      console.log("useEditor: Attaching methods to forwardedRef", forwardedRef);
+      // console.log("useEditor: Attaching methods to forwardedRef", forwardedRef);
 
+      const a = 10;
       return {
         clearEditor: () => {
           editorRef.current?.commands.clearContent();
@@ -124,6 +125,17 @@ export const useEditor = ({
           const item = getEditorMenuItem(itemName);
           return item ? item.isActive() : false;
         },
+        onStateChange: (callback: () => void) => {
+          // Subscribe to editor state changes
+          editorRef.current?.on("transaction", () => {
+            console.log("transaction ran");
+            callback();
+          });
+          // Return a function to unsubscribe
+          return () => {
+            editorRef.current?.off("transaction");
+          };
+        },
         getMarkDown: (): string => {
           const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
           return markdownOutput;
@@ -142,7 +154,7 @@ export const useEditor = ({
   }
 
   editorRef.current = editor;
-  console.log("useEditor: Editor instance created", editor);
+  // console.log("useEditor: Editor instance created", editor);
 
   return editor;
 };

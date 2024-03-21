@@ -9,6 +9,7 @@ export interface EditorRefApi {
   isMenuItemActive: (itemName: EditorMenuItemNames) => boolean;
   getMarkDown: () => string;
   scrollSummary: (marking: IMarking) => void;
+  onStateChange: (callback: () => void) => () => void;
 }
 
 export type EditorReadOnlyRefApi = Pick<

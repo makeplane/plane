@@ -49,8 +49,6 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
 
   // refs
   const editorRef = useRef<any>(null);
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("IssueCommentCreate editorRef: %s", editorRef.current); // __AUTO_GENERATED_PRINT_VAR_END__
   // react hook form
   const {
     handleSubmit,
@@ -63,7 +61,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const onSubmit = async (formData: Partial<TIssueComment>) => {
     await activityOperations.createComment(formData).finally(() => {
       reset({ comment_html: "" });
-      // editorRef.current?.clearEditor();
+      editorRef.current?.clearEditor();
     });
   };
 

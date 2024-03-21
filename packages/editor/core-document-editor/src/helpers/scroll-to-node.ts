@@ -33,7 +33,7 @@ function scrollToNode(editor: Editor, pos: number): void {
 }
 
 export function scrollSummary(editor: Editor, marking: IMarking) {
-  console.log("srollllllllll", editor);
+  // console.log("srollllllllll", editor);
   if (editor) {
     const pos = findNthH1(editor, marking.sequence, marking.level);
     scrollToNode(editor, pos);

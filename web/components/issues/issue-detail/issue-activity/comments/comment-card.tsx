@@ -37,8 +37,6 @@ export const IssueCommentCard: FC<TIssueCommentCard> = (props) => {
   const { mentionHighlights, mentionSuggestions } = useMention();
   // refs
   const editorRef = useRef<any>(null);
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("IssueCommentCard editorRef: %s", editorRef); // __AUTO_GENERATED_PRINT_VAR_END__
   const showEditorRef = useRef<any>(null);
   // state
   const [isEditing, setIsEditing] = useState(false);
