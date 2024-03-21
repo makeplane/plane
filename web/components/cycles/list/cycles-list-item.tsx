@@ -198,7 +198,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
               {renderDate && `${renderFormattedDate(startDate) ?? `_ _`} - ${renderFormattedDate(endDate) ?? `_ _`}`}
             </div>
           </div>
-          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 overflow-hidden md:w-auto md:flex-shrink-0 md:justify-end">
+          <div className="relative flex w-full flex-shrink-0 items-center justify-between gap-2.5 md:w-auto md:flex-shrink-0 md:justify-end">
             {currentCycle && (
               <div
                 className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
