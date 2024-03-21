@@ -23,7 +23,7 @@ export type TProjectLogoProps = {
 
 export interface IProject {
   archive_in: number;
-  archived_at: Date | null;
+  archived_at: string | null;
   archived_issues: number;
   archived_sub_issues: number;
   close_in: number;
