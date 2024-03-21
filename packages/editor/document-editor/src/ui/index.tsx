@@ -18,7 +18,7 @@ interface IDocumentEditor {
   deleteFile: DeleteImage;
   restoreFile: RestoreImage;
   cancelUploadImage: () => any;
-  handleEditorReady: () => void;
+  handleEditorReady: (value: boolean) => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: object, html: string) => void;
@@ -84,7 +84,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
   });
 
   return (
-    <div className="h-full w-full frame-renderer">
+    <div className="frame-renderer h-full w-full">
       <PageRenderer
         tabIndex={tabIndex}
         hideDragHandle={hideDragHandleOnMouseLeave}

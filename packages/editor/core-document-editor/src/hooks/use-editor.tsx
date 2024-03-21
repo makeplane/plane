@@ -1,5 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useState } from "react";
 import { CoreEditorProps } from "src/ui/props";
 import { CoreEditorExtensions } from "src/ui/extensions";
 import { EditorProps } from "@tiptap/pm/view";
@@ -27,7 +27,7 @@ interface CustomEditorProps {
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-  handleEditorReady: () => void;
+  handleEditorReady: (value: boolean) => void;
 }
 
 export const useEditor = ({

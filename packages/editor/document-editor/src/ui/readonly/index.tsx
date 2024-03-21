@@ -11,7 +11,7 @@ interface IDocumentReadOnlyEditor {
   customClassName: string;
   tabIndex?: number;
   title: string;
-  handleEditorReady: () => void;
+  handleEditorReady: (value: boolean) => void;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 
@@ -41,7 +41,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   });
 
   return (
-    <div className="h-full w-full frame-renderer">
+    <div className="frame-renderer h-full w-full">
       <PageRenderer
         tabIndex={tabIndex}
         updatePageTitle={() => Promise.resolve()}

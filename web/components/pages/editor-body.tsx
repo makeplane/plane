@@ -34,7 +34,7 @@ type Props = {
   handleSubmit: () => void;
   pageStore: IPageStore;
   sidePeekVisible: boolean;
-  handleEditorReady: () => void;
+  handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: () => void;
 };
 
