@@ -170,7 +170,7 @@ export class ProjectFilterStore implements IProjectFilterStore {
   clearAllAppliedDisplayFilters = (workspaceSlug: string) => {
     runInAction(() => {
       if (!this.currentWorkspaceAppliedDisplayFilters) return;
-      Object.keys(this.currentWorkspaceAppliedDisplayFilters).forEach((key) => {
+      this.currentWorkspaceAppliedDisplayFilters.forEach((key) => {
         set(this.displayFilters, [workspaceSlug, key], false);
       });
     });
