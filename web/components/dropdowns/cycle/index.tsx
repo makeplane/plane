@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChevronDown } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -8,7 +8,6 @@ import { cn } from "@/helpers/common.helper";
 import { useCycle } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 // components
 import { DropdownButton } from "../buttons";
 // icons
@@ -24,6 +23,8 @@ type Props = TDropdownProps & {
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string | null) => void;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
   projectId: string;
   value: string | null;
@@ -41,6 +42,8 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     dropdownArrowClassName = "",
     hideIcon = false,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placeholder = "Cycle",
     placement,
@@ -68,6 +71,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
 
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (!isOpen) onDropdownOpen && onDropdownOpen();
     if (isOpen) onClose && onClose();
   };
 
@@ -85,7 +89,13 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
-  useOutsideKeydownDetector(dropdownRef, handleClose);
+
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox

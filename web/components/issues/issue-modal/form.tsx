@@ -5,9 +5,9 @@ import { Controller, useForm } from "react-hook-form";
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import type { TIssue, ISearchIssueResponse } from "@plane/types";
-// editor
 // hooks
 import { Button, CustomMenu, Input, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { GptAssistantPopover } from "@/components/core";
 import {
   CycleDropdown,
@@ -22,17 +22,15 @@ import {
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
+// helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
+// hooks
 import { useApplication, useEstimate, useIssueDetail, useMention, useProject, useWorkspace } from "@/hooks/store";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
-// components
-// ui
-// helpers
-// types
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -65,6 +63,19 @@ export interface IssueFormProps {
 // services
 const aiService = new AIService();
 const fileService = new FileService();
+
+type TCurrentDropdownChoices =
+  | "state_id"
+  | "priority"
+  | "assignee_ids"
+  | "label_ids"
+  | "start_date"
+  | "target_date"
+  | "cycle_id"
+  | "module_ids"
+  | "estimate_point"
+  | "parent_id"
+  | undefined;
 
 const TAB_INDICES = [
   "name",
@@ -109,6 +120,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+  const [currentDropdownState, setCurrentDropdownState] = useState<TCurrentDropdownChoices>(undefined);
+  const handleCurrentDropdownState = (value: TCurrentDropdownChoices) => setCurrentDropdownState(value);
 
   // refs
   const editorRef = useRef<any>(null);
@@ -493,10 +506,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         projectId={projectId}
                         buttonVariant="border-with-text"
                         tabIndex={getTabIndex("state_id")}
+                        // handling the current dropdown state
+                        isDropdownOpened={currentDropdownState === "state_id" ? true : false}
+                        onOpen={() => handleCurrentDropdownState("state_id")}
+                        onClose={() => handleCurrentDropdownState(undefined)}
                       />
                     </div>
                   )}
                 />
+
                 <Controller
                   control={control}
                   name="priority"
@@ -510,6 +528,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         }}
                         buttonVariant="border-with-text"
                         tabIndex={getTabIndex("priority")}
+                        // handling the current dropdown state
+                        isDropdownOpened={currentDropdownState === "priority" ? true : false}
+                        onOpen={() => handleCurrentDropdownState("priority")}
+                        onClose={() => handleCurrentDropdownState(undefined)}
                       />
                     </div>
                   )}
@@ -531,6 +553,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         placeholder="Assignees"
                         multiple
                         tabIndex={getTabIndex("assignee_ids")}
+                        // handling the current dropdown state
+                        isDropdownOpened={currentDropdownState === "assignee_ids" ? true : false}
+                        onOpen={() => handleCurrentDropdownState("assignee_ids")}
+                        onClose={() => handleCurrentDropdownState(undefined)}
                       />
                     </div>
                   )}
@@ -539,7 +565,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   control={control}
                   name="label_ids"
                   render={({ field: { value, onChange } }) => (
-                    <div className="h-7">
+                    <div className="h-7" tabIndex={getTabIndex("label_ids")}>
                       <IssueLabelSelect
                         setIsOpen={setLabelModal}
                         value={value}
@@ -549,6 +575,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         }}
                         projectId={projectId}
                         tabIndex={getTabIndex("label_ids")}
+                        // handling the current dropdown state
+                        isDropdownOpened={currentDropdownState === "label_ids" ? true : false}
+                        onOpen={() => handleCurrentDropdownState("label_ids")}
+                        onClose={() => handleCurrentDropdownState(undefined)}
                       />
                     </div>
                   )}
@@ -565,6 +595,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         maxDate={maxDate ?? undefined}
                         placeholder="Start date"
                         tabIndex={getTabIndex("start_date")}
+                        // handling the current dropdown state
+                        isDropdownOpened={currentDropdownState === "start_date" ? true : false}
+                        onOpen={() => handleCurrentDropdownState("start_date")}
+                        onClose={() => handleCurrentDropdownState(undefined)}
                       />
                     </div>
                   )}
@@ -581,6 +615,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                         minDate={minDate ?? undefined}
                         placeholder="Due date"
                         tabIndex={getTabIndex("target_date")}
+                        // handling the current dropdown state
+                        isDropdownOpened={currentDropdownState === "target_date" ? true : false}
+                        onOpen={() => handleCurrentDropdownState("target_date")}
+                        onClose={() => handleCurrentDropdownState(undefined)}
                       />
                     </div>
                   )}
@@ -600,6 +638,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           value={value}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("cycle_id")}
+                          // handling the current dropdown state
+                          isDropdownOpened={currentDropdownState === "cycle_id" ? true : false}
+                          onOpen={() => handleCurrentDropdownState("cycle_id")}
+                          onClose={() => handleCurrentDropdownState(undefined)}
                         />
                       </div>
                     )}
@@ -622,6 +664,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           tabIndex={getTabIndex("module_ids")}
                           multiple
                           showCount
+                          // handling the current dropdown state
+                          isDropdownOpened={currentDropdownState === "module_ids" ? true : false}
+                          onOpen={() => handleCurrentDropdownState("module_ids")}
+                          onClose={() => handleCurrentDropdownState(undefined)}
                         />
                       </div>
                     )}
@@ -642,6 +688,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                           projectId={projectId}
                           buttonVariant="border-with-text"
                           tabIndex={getTabIndex("estimate_point")}
+                          // handling the current dropdown state
+                          isDropdownOpened={currentDropdownState === "estimate_point" ? true : false}
+                          onOpen={() => handleCurrentDropdownState("estimate_point")}
+                          onClose={() => handleCurrentDropdownState(undefined)}
                         />
                       </div>
                     )}
@@ -672,6 +722,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   }
                   placement="bottom-start"
                   tabIndex={getTabIndex("parent_id")}
+                  onOpen={() => handleCurrentDropdownState("parent_id")}
+                  onMenuClose={() => handleCurrentDropdownState(undefined)}
                 >
                   {watch("parent_id") ? (
                     <>

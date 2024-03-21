@@ -10,7 +10,6 @@ import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // icons
 // helpers
@@ -25,6 +24,8 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   highlightUrgent?: boolean;
   onChange: (val: TIssuePriorities) => void;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
   value: TIssuePriorities;
 };
@@ -284,6 +285,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     hideIcon = false,
     highlightUrgent = true,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placement,
     showTooltip = false,
@@ -337,6 +340,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
 
   const toggleDropdown = () => {
     setIsOpen((prevIsOpen) => !prevIsOpen);
+    if (!isOpen) onDropdownOpen && onDropdownOpen();
     if (isOpen) onClose && onClose();
   };
 
@@ -361,7 +365,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
-  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
@@ -374,6 +377,13 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox

@@ -9,7 +9,6 @@ import { cn } from "@/helpers/common.helper";
 import { useApplication, useProjectState } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
-import useOutsideKeydownDetector from "@/hooks/use-outside-keydown-detector";
 // components
 import { DropdownButton } from "./buttons";
 // icons
@@ -24,6 +23,8 @@ type Props = TDropdownProps & {
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
+  isDropdownOpened?: boolean;
+  onOpen?: () => void;
   onClose?: () => void;
   projectId: string;
   value: string;
@@ -41,6 +42,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     dropdownArrowClassName = "",
     hideIcon = false,
     onChange,
+    isDropdownOpened,
+    onOpen: onDropdownOpen,
     onClose,
     placement,
     projectId,
@@ -103,7 +106,10 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   };
 
   const toggleDropdown = () => {
-    if (!isOpen) onOpen();
+    if (!isOpen) {
+      onOpen();
+      onDropdownOpen && onDropdownOpen();
+    }
     setIsOpen((prevIsOpen) => !prevIsOpen);
     if (isOpen) onClose && onClose();
   };
@@ -129,13 +135,18 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
   };
 
   useOutsideClickDetector(dropdownRef, handleClose);
-  useOutsideKeydownDetector(dropdownRef, handleClose);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened && !isOpen) setIsOpen(true);
+  }, [isDropdownOpened, isOpen]);
+  useEffect(() => {
+    if (isDropdownOpened === false) setIsOpen(false);
+  }, [isDropdownOpened]);
 
   return (
     <Combobox
