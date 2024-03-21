@@ -1,26 +1,28 @@
+import { EUserProjectRoles } from "constants/project";
 import { useState } from "react";
-import { observer } from "mobx-react";
-import { Lock, RefreshCw, Sparkle } from "lucide-react";
-// hooks
-import { useApplication, useUser } from "hooks/store";
-// components
 import { GptAssistantPopover } from "components/core";
 import { PageInfoPopover, PageOptionsDropdown, PageSummaryPopover, PageToolbar } from "components/pages";
-// ui
-import { ArchiveIcon } from "@plane/ui";
-// helpers
 import { cn } from "helpers/common.helper";
 import { renderFormattedDate } from "helpers/date-time.helper";
 // types
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/document-editor";
+import { useApplication, useUser } from "hooks/store";
+import { observer } from "mobx-react";
 import { IPageStore } from "store/page.store";
+import { Lock, RefreshCw, Sparkle } from "lucide-react";
+// hooks
+// components
+// ui
+import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
+import { ArchiveIcon } from "@plane/ui";
+// helpers
+// types
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDuplicatePage: () => void;
+  markings: IMarking[];
   pageStore: IPageStore;
   projectId: string;
   sidePeekVisible: boolean;
@@ -34,6 +36,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     editorRef,
     readOnlyEditorRef,
     editorReady,
+    markings,
     readOnlyEditorReady,
     handleDuplicatePage,
     pageStore,
@@ -75,12 +78,14 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
       <div className="flex-shrink-0 md:w-56 lg:w-72">
         <PageSummaryPopover
           editorRef={isPageReadOnly ? readOnlyEditorRef.current : editorRef.current}
-          markings={[]}
+          markings={markings}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}
         />
       </div>
-      {(editorReady || readOnlyEditorReady) && !isPageReadOnly && <PageToolbar editorRef={editorRef?.current} />}
+      {(editorReady || readOnlyEditorReady) && !isPageReadOnly && editorRef.current && (
+        <PageToolbar editorRef={editorRef?.current} />
+      )}
       <div className="flex flex-grow items-center justify-end gap-3">
         {!pageStore.is_locked && !pageStore.archived_at && (
           <div

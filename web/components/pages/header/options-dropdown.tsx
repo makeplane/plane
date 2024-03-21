@@ -1,17 +1,17 @@
-import { observer } from "mobx-react";
-import { Clipboard, Copy, Link, Lock } from "lucide-react";
-// hooks
+import { EUserProjectRoles } from "constants/project";
+import { copyTextToClipboard, copyUrlToClipboard } from "helpers/string.helper";
 import { useApplication, useUser } from "hooks/store";
 import { useProjectPages } from "hooks/store/use-project-specific-pages";
+import { observer } from "mobx-react";
+import { IPageStore } from "store/page.store";
+import { Clipboard, Copy, Link, Lock } from "lucide-react";
+// hooks
 // ui
+import { EditorRefApi } from "@plane/document-editor";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard, copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IPageStore } from "store/page.store";
-import { EditorRefApi } from "@plane/document-editor";
 // constants
-import { EUserProjectRoles } from "constants/project";
 
 type Props = {
   editorRef: EditorRefApi;
